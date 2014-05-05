@@ -323,15 +323,19 @@ sub create_boost_asio_content
   mkdir("$boost_asio_name/libs");
 
   # Copy files.
-  system("cp -vR ../boost/doc/html/boost_asio.html $boost_asio_name/doc/html");
-  system("cp -vR ../boost/doc/html/boost_asio $boost_asio_name/doc/html");
-  system("cp -vR ../boost/boost/asio.hpp $boost_asio_name/boost");
-  system("cp -vR ../boost/boost/asio $boost_asio_name/boost");
-  system("cp -vR ../boost/boost/cerrno.hpp $boost_asio_name/boost");
-  system("cp -vR ../boost/boost/config/warning_disable.hpp $boost_asio_name/boost/config");
-  system("cp -vR ../boost/boost/system $boost_asio_name/boost");
-  system("cp -vR ../boost/libs/asio $boost_asio_name/libs");
-  system("cp -vR ../boost/libs/system $boost_asio_name/libs");
+  system("cp -vLR ../boost/doc/html/boost_asio.html $boost_asio_name/doc/html");
+  system("cp -vLR ../boost/doc/html/boost_asio $boost_asio_name/doc/html");
+  system("cp -vLR ../boost/boost/asio.hpp $boost_asio_name/boost");
+  system("cp -vLR ../boost/boost/asio $boost_asio_name/boost");
+  system("cp -vLR ../boost/boost/cerrno.hpp $boost_asio_name/boost");
+  system("cp -vLR ../boost/boost/config/warning_disable.hpp $boost_asio_name/boost/config");
+  system("cp -vLR ../boost/boost/system $boost_asio_name/boost");
+  system("cp -vLR ../boost/libs/asio $boost_asio_name/libs");
+  system("cp -vLR ../boost/libs/system $boost_asio_name/libs");
+
+  # Remove modular boost include directories.
+  system("rm -rf $boost_asio_name/libs/asio/include");
+  system("rm -rf $boost_asio_name/libs/system/include");
 
   # Add dummy definitions of BOOST_SYMBOL* to boost/system/config.hpp.
   my $from = "$boost_asio_name/boost/system/config.hpp";
@@ -379,8 +383,11 @@ sub create_boost_asio_content
   print($output $boost_system_jamfile);
   close($output);
 
-  # Remove SVN files.
+  # Remove SVN and git files.
   system("find $boost_asio_name -name .svn -exec rm -rf {} \\;");
+  system("find $boost_asio_name -name .git -exec rm -rf {} \\;");
+  system("find $boost_asio_name -name .gitignore -exec rm -rf {} \\;");
+  system("find $boost_asio_name -name .gitattributes -exec rm -rf {} \\;");
 }
 
 sub make_boost_asio_packages
