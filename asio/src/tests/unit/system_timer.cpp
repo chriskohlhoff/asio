@@ -245,7 +245,7 @@ void system_timer_cancel_test()
     asio::system_timer t;
     timer() : t(io_service)
     {
-      t.expires_at(asio::system_timer::time_point::max());
+      t.expires_at((asio::system_timer::time_point::max)());
     }
   } timers[50];
 
@@ -294,13 +294,13 @@ void system_timer_custom_allocation_test()
 
   for (int i = 0; i < 50; ++i)
   {
-    timers[i].t.expires_at(asio::system_timer::time_point::max());
+    timers[i].t.expires_at((asio::system_timer::time_point::max)());
     timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
   }
 
   for (int i = 50; i < 100; ++i)
   {
-    timers[i].t.expires_at(asio::system_timer::time_point::min());
+    timers[i].t.expires_at((asio::system_timer::time_point::min)());
     timers[i].t.async_wait(custom_allocation_timer_handler(&allocation_count));
   }
 

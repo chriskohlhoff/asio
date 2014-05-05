@@ -89,13 +89,13 @@ struct stream_core
   // Helper function for obtaining a time value that always fires.
   static asio::steady_timer::time_point neg_infin()
   {
-    return asio::steady_timer::time_point::min();
+    return (asio::steady_timer::time_point::min)();
   }
 
   // Helper function for obtaining a time value that never fires.
   static asio::steady_timer::time_point pos_infin()
   {
-    return asio::steady_timer::time_point::max();
+    return (asio::steady_timer::time_point::max)();
   }
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
