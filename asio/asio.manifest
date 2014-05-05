@@ -3782,6 +3782,7 @@
 /include/asio/detail/win_iocp_overlapped_ptr.hpp
 /include/asio/detail/win_iocp_serial_port_service.hpp
 /include/asio/detail/win_iocp_socket_accept_op.hpp
+/include/asio/detail/win_iocp_socket_connect_op.hpp
 /include/asio/detail/win_iocp_socket_recvfrom_op.hpp
 /include/asio/detail/win_iocp_socket_recvmsg_op.hpp
 /include/asio/detail/win_iocp_socket_recv_op.hpp
@@ -4125,6 +4126,8 @@
 /src/examples/cpp03/socks4/
 /src/examples/cpp03/socks4/socks4.hpp
 /src/examples/cpp03/socks4/sync_client.cpp
+/src/examples/cpp03/spawn/
+/src/examples/cpp03/spawn/echo_server.cpp
 /src/examples/cpp03/ssl/
 /src/examples/cpp03/ssl/ca.pem
 /src/examples/cpp03/ssl/client.cpp
@@ -4206,6 +4209,8 @@
 /src/examples/cpp11/http/server/server.hpp
 /src/examples/cpp11/Makefile.am
 /src/examples/cpp11/Makefile.in
+/src/examples/cpp11/spawn/
+/src/examples/cpp11/spawn/echo_server.cpp
 /src/Makefile.am
 /src/Makefile.in
 /src/Makefile.mgw
