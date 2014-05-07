@@ -394,6 +394,7 @@ nobase_include_HEADERS = \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
 	asio/unyield.hpp \
+	asio/unspecified_executor.hpp \
 	asio/use_future.hpp \
 	asio/uses_executor.hpp \
 	asio/version.hpp \

@@ -105,6 +105,7 @@
 #include "asio/system_executor.hpp"
 #include "asio/thread.hpp"
 #include "asio/time_traits.hpp"
+#include "asio/unspecified_executor.hpp"
 #include "asio/uses_executor.hpp"
 #include "asio/version.hpp"
 #include "asio/wait_traits.hpp"
