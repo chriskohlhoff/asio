@@ -317,6 +317,7 @@ nobase_include_HEADERS = \
 	asio/ip/udp.hpp \
 	asio/ip/unicast.hpp \
 	asio/ip/v6_only.hpp \
+	asio/is_executor.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \
 	asio/local/basic_endpoint.hpp \
