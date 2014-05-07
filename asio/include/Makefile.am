@@ -393,6 +393,7 @@ nobase_include_HEADERS = \
 	asio/time_traits.hpp \
 	asio/unyield.hpp \
 	asio/use_future.hpp \
+	asio/uses_executor.hpp \
 	asio/version.hpp \
 	asio/waitable_timer_service.hpp \
 	asio/wait_traits.hpp \
