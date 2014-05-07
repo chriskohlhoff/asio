@@ -43,14 +43,14 @@
 
 # define ASIO_PRIVATE_CTR_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
-  explicit basic_socket_iostream(ASIO_VARIADIC_PARAMS(n)) \
+  explicit basic_socket_iostream(ASIO_VARIADIC_BYVAL_PARAMS(n)) \
     : std::basic_iostream<char>( \
         &this->detail::socket_iostream_base< \
           Protocol, StreamSocketService, Time, \
           TimeTraits, TimerService>::streambuf_) \
   { \
     this->setf(std::ios_base::unitbuf); \
-    if (rdbuf()->connect(ASIO_VARIADIC_ARGS(n)) == 0) \
+    if (rdbuf()->connect(ASIO_VARIADIC_BYVAL_ARGS(n)) == 0) \
       this->setstate(std::ios_base::failbit); \
   } \
   /**/
@@ -66,9 +66,9 @@
 
 # define ASIO_PRIVATE_CONNECT_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
-  void connect(ASIO_VARIADIC_PARAMS(n)) \
+  void connect(ASIO_VARIADIC_BYVAL_PARAMS(n)) \
   { \
-    if (rdbuf()->connect(ASIO_VARIADIC_ARGS(n)) == 0) \
+    if (rdbuf()->connect(ASIO_VARIADIC_BYVAL_ARGS(n)) == 0) \
       this->setstate(std::ios_base::failbit); \
   } \
   /**/
