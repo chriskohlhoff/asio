@@ -285,6 +285,7 @@ nobase_include_HEADERS = \
 	asio/impl/spawn.hpp \
 	asio/impl/src.cpp \
 	asio/impl/src.hpp \
+	asio/impl/system_executor.hpp \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
@@ -388,6 +389,7 @@ nobase_include_HEADERS = \
 	asio/streambuf.hpp \
 	asio/stream_socket_service.hpp \
 	asio/system_error.hpp \
+	asio/system_executor.hpp \
 	asio/system_timer.hpp \
 	asio/thread.hpp \
 	asio/time_traits.hpp \
