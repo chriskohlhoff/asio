@@ -16,91 +16,31 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-/// Default handler type traits provided for all handlers.
+/// Default handler type traits provided for all completion token types.
 /**
  * The handler_type traits class is used for determining the concrete handler
  * type to be used for an asynchronous operation. It allows the handler type to
  * be determined at the point where the specific completion handler signature
  * is known.
  *
- * This template may be specialised for user-defined handler types.
+ * This template may be specialised for user-defined completion token types.
  */
-template <typename Handler, typename Signature>
+template <typename CompletionToken, typename Signature, typename = void>
 struct handler_type
 {
   /// The handler type for the specific signature.
-  typedef Handler type;
+  typedef typename conditional<
+    is_same<CompletionToken, typename decay<CompletionToken>::type>::value,
+    decay<CompletionToken>,
+    handler_type<typename decay<CompletionToken>::type, Signature>
+  >::type::type type;
 };
-
-#if !defined(GENERATING_DOCUMENTATION)
-
-template <typename Handler, typename Signature>
-struct handler_type<const Handler, Signature>
-  : handler_type<Handler, Signature> {};
-
-template <typename Handler, typename Signature>
-struct handler_type<volatile Handler, Signature>
-  : handler_type<Handler, Signature> {};
-
-template <typename Handler, typename Signature>
-struct handler_type<const volatile Handler, Signature>
-  : handler_type<Handler, Signature> {};
-
-template <typename Handler, typename Signature>
-struct handler_type<const Handler&, Signature>
-  : handler_type<Handler, Signature> {};
-
-template <typename Handler, typename Signature>
-struct handler_type<volatile Handler&, Signature>
-  : handler_type<Handler, Signature> {};
-
-template <typename Handler, typename Signature>
-struct handler_type<const volatile Handler&, Signature>
-  : handler_type<Handler, Signature> {};
-
-template <typename Handler, typename Signature>
-struct handler_type<Handler&, Signature>
-  : handler_type<Handler, Signature> {};
-
-#if defined(ASIO_HAS_MOVE)
-template <typename Handler, typename Signature>
-struct handler_type<Handler&&, Signature>
-  : handler_type<Handler, Signature> {};
-#endif // defined(ASIO_HAS_MOVE)
-
-template <typename ReturnType, typename Signature>
-struct handler_type<ReturnType(), Signature>
-  : handler_type<ReturnType(*)(), Signature> {};
-
-template <typename ReturnType, typename Arg1, typename Signature>
-struct handler_type<ReturnType(Arg1), Signature>
-  : handler_type<ReturnType(*)(Arg1), Signature> {};
-
-template <typename ReturnType, typename Arg1, typename Arg2, typename Signature>
-struct handler_type<ReturnType(Arg1, Arg2), Signature>
-  : handler_type<ReturnType(*)(Arg1, Arg2), Signature> {};
-
-template <typename ReturnType, typename Arg1, typename Arg2, typename Arg3,
-    typename Signature>
-struct handler_type<ReturnType(Arg1, Arg2, Arg3), Signature>
-  : handler_type<ReturnType(*)(Arg1, Arg2, Arg3), Signature> {};
-
-template <typename ReturnType, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Signature>
-struct handler_type<ReturnType(Arg1, Arg2, Arg3, Arg4), Signature>
-  : handler_type<ReturnType(*)(Arg1, Arg2, Arg3, Arg4), Signature> {};
-
-template <typename ReturnType, typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Signature>
-struct handler_type<ReturnType(Arg1, Arg2, Arg3, Arg4, Arg5), Signature>
-  : handler_type<ReturnType(*)(Arg1, Arg2, Arg3, Arg4, Arg5), Signature> {};
-
-#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 
