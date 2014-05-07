@@ -253,6 +253,7 @@ nobase_include_HEADERS = \
 	asio/detail/wrapped_handler.hpp \
 	asio/error_code.hpp \
 	asio/error.hpp \
+	asio/execution_context.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
@@ -271,6 +272,8 @@ nobase_include_HEADERS = \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
+	asio/impl/execution_context.hpp \
+	asio/impl/execution_context.ipp \
 	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_service.hpp \
 	asio/impl/io_service.ipp \

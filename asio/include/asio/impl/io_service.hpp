@@ -29,7 +29,7 @@ inline Service& use_service(io_service& ios)
   (void)static_cast<io_service::service*>(static_cast<Service*>(0));
   (void)static_cast<const io_service::id*>(&Service::id);
 
-  return ios.service_registry_->template use_service<Service>();
+  return ios.service_registry_->template use_service<Service>(ios);
 }
 
 template <>
@@ -37,26 +37,6 @@ inline detail::io_service_impl& use_service<detail::io_service_impl>(
     io_service& ios)
 {
   return ios.impl_;
-}
-
-template <typename Service>
-inline void add_service(io_service& ios, Service* svc)
-{
-  // Check that Service meets the necessary type requirements.
-  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
-  (void)static_cast<const io_service::id*>(&Service::id);
-
-  ios.service_registry_->template add_service<Service>(svc);
-}
-
-template <typename Service>
-inline bool has_service(io_service& ios)
-{
-  // Check that Service meets the necessary type requirements.
-  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
-  (void)static_cast<const io_service::id*>(&Service::id);
-
-  return ios.service_registry_->template has_service<Service>();
 }
 
 } // namespace asio
@@ -142,7 +122,7 @@ inline asio::io_service& io_service::work::get_io_service()
 
 inline asio::io_service& io_service::service::get_io_service()
 {
-  return owner_;
+  return static_cast<asio::io_service&>(context());
 }
 
 } // namespace asio
