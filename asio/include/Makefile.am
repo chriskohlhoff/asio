@@ -118,6 +118,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
+	asio/detail/is_callable.hpp \
 	asio/detail/keyword_tss_ptr.hpp \
 	asio/detail/kqueue_reactor.hpp \
 	asio/detail/limits.hpp \
@@ -327,6 +328,7 @@ nobase_include_HEADERS = \
 	asio/local/detail/endpoint.hpp \
 	asio/local/detail/impl/endpoint.ipp \
 	asio/local/stream_protocol.hpp \
+	asio/make_executor.hpp \
 	asio/placeholders.hpp \
 	asio/posix/basic_descriptor.hpp \
 	asio/posix/basic_stream_descriptor.hpp \

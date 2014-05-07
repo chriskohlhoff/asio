@@ -80,6 +80,7 @@
 #include "asio/local/connect_pair.hpp"
 #include "asio/local/datagram_protocol.hpp"
 #include "asio/local/stream_protocol.hpp"
+#include "asio/make_executor.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/posix/basic_descriptor.hpp"
 #include "asio/posix/basic_stream_descriptor.hpp"
