@@ -26,6 +26,7 @@ nobase_include_HEADERS = \
 	asio/buffers_iterator.hpp \
 	asio/completion_condition.hpp \
 	asio/connect.hpp \
+	asio/continuation_of.hpp \
 	asio/coroutine.hpp \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
