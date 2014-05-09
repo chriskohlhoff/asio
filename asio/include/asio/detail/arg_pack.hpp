@@ -29,6 +29,20 @@ template <typename Signature>
 class arg_pack
 {
 public:
+  arg_pack(const arg_pack& other)
+    : value_(other.value_),
+      next_(other.next_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  arg_pack(arg_pack&& other)
+    : value_(ASIO_MOVE_CAST(value_type)(other.value_)),
+      next_(ASIO_MOVE_CAST(next_type)(other.next_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename T0, typename... Tn>
@@ -88,7 +102,8 @@ public:
 private:
   typedef typename decay<typename type_list<Signature>::head>::type value_type;
   value_type value_;
-  arg_pack<typename type_list<Signature>::tail> next_;
+  typedef arg_pack<typename type_list<Signature>::tail> next_type;
+  next_type next_;
 };
 
 template <typename Result>

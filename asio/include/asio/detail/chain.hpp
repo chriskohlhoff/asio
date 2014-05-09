@@ -36,6 +36,22 @@ template <typename Signature, typename CompletionTokens>
 class chain_invoker
 {
 public:
+  typedef passive_chain<Signature, CompletionTokens> passive;
+
+  chain_invoker(const chain_invoker& other)
+    : passive_(other.passive_),
+      args_(other.args_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  chain_invoker(chain_invoker&& other)
+    : passive_(ASIO_MOVE_CAST(passive)(other.passive_)),
+      args_(ASIO_MOVE_CAST(arg_pack<Signature>)(other.args_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename C, typename... Tn>
@@ -47,6 +63,12 @@ public:
   }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+  template <typename C>
+  explicit chain_invoker(ASIO_MOVE_ARG(C) c)
+    : passive_(ASIO_MOVE_CAST(C)(c))
+  {
+  }
 
 #define ASIO_PRIVATE_CHAIN_INVOKER_CTOR_DEF(n) \
   template <typename C, ASIO_VARIADIC_TPARAMS(n)> \
@@ -61,6 +83,7 @@ public:
 #undef ASIO_PRIVATE_CHAIN_INVOKER_CTOR_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
   void operator()()
   {
     args_.invoke(passive_);
@@ -80,6 +103,20 @@ public:
   typedef typename passive::terminal_handler terminal_handler;
   typedef typename passive::executor executor;
   typedef typename passive::initial_executor initial_executor;
+
+  active_chain(const active_chain& other)
+    : passive_(other.passive_),
+      work_(other.work_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  active_chain(active_chain&& other)
+    : passive_(ASIO_MOVE_CAST(passive)(other.passive_)),
+      work_(ASIO_MOVE_CAST(typename executor::work)(other.work_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
@@ -171,6 +208,18 @@ public:
   typedef typename make_executor_result<handler>::type executor;
   typedef executor initial_executor;
 
+  passive_chain(const passive_chain& other)
+    : handler_(other.handler_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  passive_chain(passive_chain&& other)
+    : handler_(ASIO_MOVE_CAST(handler)(other.handler_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
   template <typename T>
   explicit passive_chain(ASIO_MOVE_ARG(T) token)
     : handler_(ASIO_MOVE_CAST(T)(token))
@@ -236,6 +285,20 @@ public:
   typedef typename make_executor_result<handler>::type executor;
   typedef typename conditional<is_same<executor, unspecified_executor>::value,
     typename tail::initial_executor, executor>::type initial_executor;
+
+  passive_chain(const passive_chain& other)
+    : handler_(other.handler_),
+      tail_(other.tail_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  passive_chain(passive_chain&& other)
+    : handler_(ASIO_MOVE_CAST(handler)(other.handler_)),
+      tail_(ASIO_MOVE_CAST(tail)(other.tail_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
