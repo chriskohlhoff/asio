@@ -35,11 +35,12 @@ public:
   /// Tracks outstanding work associated with the executor.
   class work
   {
+  public:
     /// Constructor.
     /**
      * For the unspecified executor, this is a no-op.
      */
-    explicit work(system_executor&)
+    explicit work(system_executor)
     {
     }
 
