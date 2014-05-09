@@ -454,6 +454,36 @@ public:
   }
 };
 
+template <typename Signature, typename CompletionTokens>
+inline typename detail::passive_chain<
+  Signature, CompletionTokens>::initial_executor
+make_executor(const detail::passive_chain<Signature, CompletionTokens>& chain)
+{
+  return chain.make_initial_executor();
+}
+
+template <typename Signature, typename CompletionTokens>
+struct make_executor_result<detail::passive_chain<Signature, CompletionTokens> >
+{
+  typedef typename detail::passive_chain<
+    Signature, CompletionTokens>::initial_executor type;
+};
+
+template <typename Signature, typename CompletionTokens>
+inline typename detail::active_chain<
+  Signature, CompletionTokens>::initial_executor
+make_executor(const detail::active_chain<Signature, CompletionTokens>& chain)
+{
+  return chain.make_initial_executor();
+}
+
+template <typename Signature, typename CompletionTokens>
+struct make_executor_result<detail::active_chain<Signature, CompletionTokens> >
+{
+  typedef typename detail::active_chain<
+    Signature, CompletionTokens>::initial_executor type;
+};
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
