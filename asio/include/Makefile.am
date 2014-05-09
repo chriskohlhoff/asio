@@ -32,6 +32,7 @@ nobase_include_HEADERS = \
 	asio/datagram_socket_service.hpp \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
+	asio/defer.hpp \
 	asio/detail/addressof.hpp \
 	asio/detail/arg_pack.hpp \
 	asio/detail/array_fwd.hpp \
@@ -278,6 +279,7 @@ nobase_include_HEADERS = \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/chain.hpp \
 	asio/impl/connect.hpp \
+	asio/impl/defer.hpp \
 	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
