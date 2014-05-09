@@ -84,23 +84,23 @@ struct result_type_function<R(T::*)() const>
 #define ASIO_PRIVATE_RESULT_TYPE_FUNCTION(n) \
   \
   template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  struct result_type_function<R(ASIO_VARIADIC_TTYPES(n))> \
+  struct result_type_function<R(ASIO_VARIADIC_TARGS(n))> \
     : result_type_base<R> {}; \
   \
   template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  struct result_type_function<R(*)(ASIO_VARIADIC_TTYPES(n))> \
+  struct result_type_function<R(*)(ASIO_VARIADIC_TARGS(n))> \
     : result_type_base<R> {}; \
   \
   template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  struct result_type_function<R(&)(ASIO_VARIADIC_TTYPES(n))> \
+  struct result_type_function<R(&)(ASIO_VARIADIC_TARGS(n))> \
     : result_type_base<R> {}; \
   \
   template <typename R, typename T, ASIO_VARIADIC_TPARAMS(n)> \
-  struct result_type_function<R(T::*)(ASIO_VARIADIC_TTYPES(n))> \
+  struct result_type_function<R(T::*)(ASIO_VARIADIC_TARGS(n))> \
     : result_type_base<R> {}; \
   \
   template <typename R, typename T, ASIO_VARIADIC_TPARAMS(n)> \
-  struct result_type_function<R(T::*)(ASIO_VARIADIC_TTYPES(n)) const> \
+  struct result_type_function<R(T::*)(ASIO_VARIADIC_TARGS(n)) const> \
     : result_type_base<R> {}; \
   /**/
 
