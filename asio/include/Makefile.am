@@ -24,6 +24,7 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream.hpp \
 	asio/buffer.hpp \
 	asio/buffers_iterator.hpp \
+	asio/chain.hpp \
 	asio/completion_condition.hpp \
 	asio/connect.hpp \
 	asio/continuation_of.hpp \
@@ -32,6 +33,7 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
 	asio/detail/addressof.hpp \
+	asio/detail/arg_pack.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
@@ -42,6 +44,7 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/chain.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
 	asio/detail/config.hpp \
@@ -208,6 +211,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
 	asio/detail/tss_ptr.hpp \
+	asio/detail/type_list.hpp \
 	asio/detail/type_traits.hpp \
 	asio/detail/variadic_templates.hpp \
 	asio/detail/wait_handler.hpp \
@@ -271,6 +275,7 @@ nobase_include_HEADERS = \
 	asio.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
+	asio/impl/chain.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \

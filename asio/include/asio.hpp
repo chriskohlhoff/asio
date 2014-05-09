@@ -37,6 +37,7 @@
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffered_write_stream.hpp"
 #include "asio/buffers_iterator.hpp"
+#include "asio/chain.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/connect.hpp"
 #include "asio/continuation_of.hpp"
