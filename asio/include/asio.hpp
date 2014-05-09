@@ -45,6 +45,7 @@
 #include "asio/datagram_socket_service.hpp"
 #include "asio/deadline_timer_service.hpp"
 #include "asio/deadline_timer.hpp"
+#include "asio/dispatch.hpp"
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
