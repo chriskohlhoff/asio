@@ -22,6 +22,7 @@
 #include "asio/detail/type_list.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/handler_type.hpp"
+#include "asio/is_executor.hpp"
 #include "asio/make_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -389,6 +390,32 @@ public:
 protected:
   handler handler_;
   tail tail_;
+};
+
+template <typename CompletionTokens>
+struct chain_result
+{
+  typedef typename async_result<passive_chain<
+    void(), CompletionTokens> >::type type;
+};
+
+struct chain_no_result {};
+
+template <typename CompletionTokens>
+struct chain_result_without_executor
+  : conditional<
+      is_executor<typename decay<
+        typename type_list<CompletionTokens>::head>::type>::value,
+      chain_no_result, chain_result<CompletionTokens> >::type
+{
+};
+
+template <typename Executor, typename CompletionTokens>
+struct chain_result_with_executor
+  : conditional<
+      is_executor<typename decay<Executor>::type>::value,
+      chain_result<CompletionTokens>, chain_no_result>::type
+{
 };
 
 } // namespace detail

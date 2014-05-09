@@ -257,6 +257,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_thread.hpp \
 	asio/detail/win_tss_ptr.hpp \
 	asio/detail/wrapped_handler.hpp \
+	asio/dispatch.hpp \
 	asio/error_code.hpp \
 	asio/error.hpp \
 	asio/execution_context.hpp \
@@ -277,6 +278,7 @@ nobase_include_HEADERS = \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/chain.hpp \
 	asio/impl/connect.hpp \
+	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
 	asio/impl/execution_context.hpp \
