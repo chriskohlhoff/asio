@@ -286,6 +286,7 @@ nobase_include_HEADERS = \
 	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_service.hpp \
 	asio/impl/io_service.ipp \
+	asio/impl/post.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
 	asio/impl/read_until.hpp \
@@ -343,6 +344,7 @@ nobase_include_HEADERS = \
 	asio/posix/descriptor_base.hpp \
 	asio/posix/stream_descriptor.hpp \
 	asio/posix/stream_descriptor_service.hpp \
+	asio/post.hpp \
 	asio/raw_socket_service.hpp \
 	asio/read_at.hpp \
 	asio/read.hpp \

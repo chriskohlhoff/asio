@@ -90,6 +90,7 @@
 #include "asio/posix/descriptor_base.hpp"
 #include "asio/posix/stream_descriptor.hpp"
 #include "asio/posix/stream_descriptor_service.hpp"
+#include "asio/post.hpp"
 #include "asio/raw_socket_service.hpp"
 #include "asio/read.hpp"
 #include "asio/read_at.hpp"
