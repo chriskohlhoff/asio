@@ -74,17 +74,10 @@ private:
   static T val();
 public:
   typedef decltype(make_executor((make_executor_result::val)())) type;
+#else // defined(ASIO_HAS_DECLTYPE)
+  typedef unspecified_executor type;
 #endif // defined(ASIO_HAS_DECLTYPE)
 };
-
-#if !defined(GENERATING_DOCUMENTATION)
-template <typename T>
-struct make_executor_result<T,
-    typename enable_if<detail::is_callable<T>::value>::type>
-{
-  typedef unspecified_executor type;
-};
-#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

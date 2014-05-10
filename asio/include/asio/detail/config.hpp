@@ -110,6 +110,7 @@
 // references and perfect forwarding.
 #if defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
 # define ASIO_MOVE_ARG(type) type&&
+# define ASIO_MOVE_ARG2(type1, type2) type1, type2&&
 # define ASIO_MOVE_CAST(type) static_cast<type&&>
 # define ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
 #endif // defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
