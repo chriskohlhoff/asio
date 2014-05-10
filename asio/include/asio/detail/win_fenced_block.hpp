@@ -20,6 +20,7 @@
 #if defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"
 
