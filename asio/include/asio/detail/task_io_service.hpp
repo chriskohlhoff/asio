@@ -20,7 +20,7 @@
 #if !defined(ASIO_HAS_IOCP)
 
 #include "asio/error_code.hpp"
-#include "asio/io_service.hpp"
+#include "asio/execution_context.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/event.hpp"
@@ -37,14 +37,14 @@ namespace detail {
 struct task_io_service_thread_info;
 
 class task_io_service
-  : public asio::detail::service_base<task_io_service>
+  : public asio::detail::execution_context_service_base<task_io_service>
 {
 public:
   typedef task_io_service_operation operation;
 
   // Constructor. Specifies the number of concurrent threads that are likely to
   // run the io_service. If set to 1 certain optimisation are performed.
-  ASIO_DECL task_io_service(asio::io_service& io_service,
+  ASIO_DECL task_io_service(asio::execution_context& context,
       std::size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.

@@ -117,7 +117,7 @@ inline io_service::work::~work()
 
 inline asio::io_service& io_service::work::get_io_service()
 {
-  return io_service_impl_.get_io_service();
+  return static_cast<asio::io_service&>(io_service_impl_.context());
 }
 
 inline asio::io_service& io_service::service::get_io_service()

@@ -61,6 +61,7 @@ nobase_include_HEADERS = \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
+	asio/detail/executor_op.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
 	asio/detail/function.hpp \
@@ -133,6 +134,7 @@ nobase_include_HEADERS = \
 	asio/detail/noncopyable.hpp \
 	asio/detail/null_event.hpp \
 	asio/detail/null_fenced_block.hpp \
+	asio/detail/null_global.hpp \
 	asio/detail/null_mutex.hpp \
 	asio/detail/null_reactor.hpp \
 	asio/detail/null_signal_blocker.hpp \
@@ -148,6 +150,7 @@ nobase_include_HEADERS = \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \
 	asio/detail/posix_fd_set_adapter.hpp \
+	asio/detail/posix_global.hpp \
 	asio/detail/posix_mutex.hpp \
 	asio/detail/posix_signal_blocker.hpp \
 	asio/detail/posix_static_mutex.hpp \
@@ -194,6 +197,7 @@ nobase_include_HEADERS = \
 	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/static_mutex.hpp \
 	asio/detail/std_event.hpp \
+	asio/detail/std_global.hpp \
 	asio/detail/std_mutex.hpp \
 	asio/detail/std_static_mutex.hpp \
 	asio/detail/std_thread.hpp \
@@ -222,6 +226,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_event.hpp \
 	asio/detail/win_fd_set_adapter.hpp \
 	asio/detail/win_fenced_block.hpp \
+	asio/detail/win_global.hpp \
 	asio/detail/win_iocp_handle_read_op.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
 	asio/detail/win_iocp_handle_write_op.hpp \

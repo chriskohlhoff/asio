@@ -478,6 +478,27 @@
 # endif // !defined(ASIO_DISABLE_STD_MUTEX_AND_CONDVAR)
 #endif // !defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
 
+// Standard library support for the call_once function.
+#if !defined(ASIO_HAS_STD_CALL_ONCE)
+# if !defined(ASIO_DISABLE_STD_CALL_ONCE)
+#  if defined(ASIO_HAS_CLANG_LIBCXX)
+#   define ASIO_HAS_STD_CALL_ONCE 1
+#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_CALL_ONCE 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_CALL_ONCE 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_CALL_ONCE)
+#endif // !defined(ASIO_HAS_STD_CALL_ONCE)
+
 // WinRT target.
 #if !defined(ASIO_WINDOWS_RUNTIME)
 # if defined(__cplusplus_winrt)

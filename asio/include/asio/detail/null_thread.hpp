@@ -49,6 +49,12 @@ public:
   void join()
   {
   }
+
+  // Get number of CPUs.
+  static std::size_t hardware_concurrency()
+  {
+    return 1;
+  }
 };
 
 } // namespace detail

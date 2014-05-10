@@ -1,6 +1,6 @@
 //
-// unspecified_executor.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// system_executor.hpp
+// ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -52,6 +53,9 @@ public:
     {
     }
   };
+
+  /// Obtain the underlying execution context.
+  inline execution_context& context();
 
   /// Request the system executor to invoke the given function object.
   /**

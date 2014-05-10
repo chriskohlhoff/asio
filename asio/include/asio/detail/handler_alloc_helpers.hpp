@@ -77,6 +77,32 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
   } \
   /**/
 
+#define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op, alloc) \
+  struct ptr \
+  { \
+    typename alloc::template rebind<op>::type a; \
+    void* v; \
+    op* p; \
+    ~ptr() \
+    { \
+      reset(); \
+    } \
+    void reset() \
+    { \
+      if (p) \
+      { \
+        p->~op(); \
+        p = 0; \
+      } \
+      if (v) \
+      { \
+        a.deallocate(static_cast<op*>(v), 1); \
+        v = 0; \
+      } \
+    } \
+  } \
+  /**/
+
 #include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_HANDLER_ALLOC_HELPERS_HPP

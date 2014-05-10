@@ -31,6 +31,9 @@ class task_io_service;
 class task_io_service_operation ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
+  typedef task_io_service owner_type;
+  typedef task_io_service_operation operation_type;
+
   void complete(task_io_service& owner,
       const asio::error_code& ec, std::size_t bytes_transferred)
   {

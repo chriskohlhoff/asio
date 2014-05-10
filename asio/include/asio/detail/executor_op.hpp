@@ -1,6 +1,6 @@
 //
-// detail/completion_handler.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/executor_op.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,46 +8,46 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_COMPLETION_HANDLER_HPP
-#define ASIO_DETAIL_COMPLETION_HANDLER_HPP
+#ifndef ASIO_DETAIL_EXECUTOR_OP_HPP
+#define ASIO_DETAIL_EXECUTOR_OP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/config.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/operation.hpp"
+#include "asio/detail/task_io_service_operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Handler>
-class completion_handler : public operation
+template <typename Handler, typename Alloc>
+class executor_op : public task_io_service_operation
 {
 public:
-  ASIO_DEFINE_HANDLER_PTR(completion_handler);
+  ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(executor_op, Alloc);
 
-  completion_handler(Handler& h)
-    : operation(&completion_handler::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(h))
+  executor_op(Handler& h, const Alloc& allocator)
+    : task_io_service_operation(&executor_op::do_complete),
+      handler_(ASIO_MOVE_CAST(Handler)(h)),
+      allocator_(allocator)
   {
   }
 
-  static void do_complete(owner_type* owner, operation* base,
+  static void do_complete(task_io_service* owner,
+      task_io_service_operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
-    completion_handler* h(static_cast<completion_handler*>(base));
-    ptr p = { asio::detail::addressof(h->handler_), h, h };
+    executor_op* o(static_cast<executor_op*>(base));
+    ptr p = { o->allocator_, o, o };
 
-    ASIO_HANDLER_COMPLETION((h));
+    ASIO_HANDLER_COMPLETION((o));
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
@@ -55,8 +55,7 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    Handler handler(ASIO_MOVE_CAST(Handler)(h->handler_));
-    p.h = asio::detail::addressof(handler);
+    Handler handler(ASIO_MOVE_CAST(Handler)(o->handler_));
     p.reset();
 
     // Make the upcall if required.
@@ -64,13 +63,14 @@ public:
     {
       fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN(());
-      asio_handler_invoke_helpers::invoke(handler, handler);
+      handler();
       ASIO_HANDLER_INVOCATION_END;
     }
   }
 
 private:
   Handler handler_;
+  Alloc allocator_;
 };
 
 } // namespace detail
@@ -78,4 +78,4 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_COMPLETION_HANDLER_HPP
+#endif // ASIO_DETAIL_EXECUTOR_OP_HPP

@@ -50,6 +50,9 @@ public:
   // Wait for the thread to exit.
   ASIO_DECL void join();
 
+  // Get number of CPUs.
+  ASIO_DECL static std::size_t hardware_concurrency();
+
 private:
   friend void* asio_detail_posix_thread_function(void* arg);
 

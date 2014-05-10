@@ -86,8 +86,8 @@ struct task_io_service::work_cleanup
 };
 
 task_io_service::task_io_service(
-    asio::io_service& io_service, std::size_t concurrency_hint)
-  : asio::detail::service_base<task_io_service>(io_service),
+    asio::execution_context& context, std::size_t concurrency_hint)
+  : asio::detail::execution_context_service_base<task_io_service>(context),
     one_thread_(concurrency_hint == 1),
     mutex_(),
     task_(0),
@@ -123,7 +123,8 @@ void task_io_service::init_task()
   mutex::scoped_lock lock(mutex_);
   if (!shutdown_ && !task_)
   {
-    task_ = &use_service<reactor>(this->get_io_service());
+    task_ = &use_service<reactor>(
+        static_cast<asio::io_service&>(this->context()));
     op_queue_.push(&task_operation_);
     wake_one_thread_and_unlock(lock);
   }

@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/system_executor.hpp"
 
@@ -53,6 +54,12 @@ public:
     }
   };
 
+  /// Obtain the underlying execution context.
+  execution_context& context()
+  {
+    return system_executor().context();
+  }
+
   /// Request the unspecified executor to invoke the given function object.
   /**
    * This function is used to ask the executor to execute the given function
@@ -81,7 +88,7 @@ public:
   template <typename Function>
   void post(ASIO_MOVE_ARG(Function) f)
   {
-    system_executor().dispatch(ASIO_MOVE_CAST(Function)(f));
+    system_executor().post(ASIO_MOVE_CAST(Function)(f));
   }
 
   /// Request the unspecified executor to invoke the given function object.
@@ -97,7 +104,7 @@ public:
   template <typename Function>
   void defer(ASIO_MOVE_ARG(Function) f)
   {
-    system_executor().dispatch(ASIO_MOVE_CAST(Function)(f));
+    system_executor().defer(ASIO_MOVE_CAST(Function)(f));
   }
 };
 
