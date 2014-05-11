@@ -759,9 +759,8 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
-        detail::async_result_init<
-          ConnectHandler, void (asio::error_code)> init(
-            ASIO_MOVE_CAST(ConnectHandler)(handler));
+        async_completion<ConnectHandler,
+          void (asio::error_code)> init(handler);
 
         this->get_io_service().post(
             asio::detail::bind_handler(

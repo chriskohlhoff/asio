@@ -101,9 +101,8 @@ public:
   async_wait(implementation_type& impl,
       ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    detail::async_result_init<
-      SignalHandler, void (asio::error_code, int)> init(
-        ASIO_MOVE_CAST(SignalHandler)(handler));
+    async_completion<SignalHandler,
+      void (asio::error_code, int)> init(handler);
 
     service_impl_.async_wait(impl, init.handler);
 

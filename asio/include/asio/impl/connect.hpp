@@ -330,9 +330,8 @@ async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::async_result_init<ComposedConnectHandler,
-    void (asio::error_code, Iterator)> init(
-      ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
+  async_completion<ComposedConnectHandler,
+    void (asio::error_code, Iterator)> init(handler);
 
   detail::connect_op<Protocol, SocketService, Iterator,
     detail::default_connect_condition, ASIO_HANDLER_TYPE(
@@ -356,9 +355,8 @@ async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::async_result_init<ComposedConnectHandler,
-    void (asio::error_code, Iterator)> init(
-      ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
+  async_completion<ComposedConnectHandler,
+    void (asio::error_code, Iterator)> init(handler);
 
   detail::connect_op<Protocol, SocketService, Iterator,
     detail::default_connect_condition, ASIO_HANDLER_TYPE(
@@ -382,9 +380,8 @@ async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::async_result_init<ComposedConnectHandler,
-    void (asio::error_code, Iterator)> init(
-      ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
+  async_completion<ComposedConnectHandler,
+    void (asio::error_code, Iterator)> init(handler);
 
   detail::connect_op<Protocol, SocketService, Iterator,
     ConnectCondition, ASIO_HANDLER_TYPE(
@@ -408,9 +405,8 @@ async_connect(basic_socket<Protocol, SocketService>& s,
   ASIO_COMPOSED_CONNECT_HANDLER_CHECK(
       ComposedConnectHandler, handler, Iterator) type_check;
 
-  detail::async_result_init<ComposedConnectHandler,
-    void (asio::error_code, Iterator)> init(
-      ASIO_MOVE_CAST(ComposedConnectHandler)(handler));
+  async_completion<ComposedConnectHandler,
+    void (asio::error_code, Iterator)> init(handler);
 
   detail::connect_op<Protocol, SocketService, Iterator,
     ConnectCondition, ASIO_HANDLER_TYPE(

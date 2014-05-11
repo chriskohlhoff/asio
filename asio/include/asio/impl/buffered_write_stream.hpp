@@ -134,9 +134,8 @@ buffered_write_stream<Stream>::async_flush(
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   async_write(next_layer_, buffer(storage_.data(), storage_.size()),
       detail::buffered_flush_handler<ASIO_HANDLER_TYPE(
@@ -293,9 +292,8 @@ buffered_write_stream<Stream>::async_write_some(
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   if (asio::buffer_size(buffers) == 0
       || storage_.size() < storage_.capacity())

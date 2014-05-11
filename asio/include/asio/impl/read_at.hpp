@@ -576,9 +576,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(ReadHandler,
@@ -601,9 +600,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(ReadHandler,
@@ -763,9 +761,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
     CompletionCondition, ASIO_HANDLER_TYPE(ReadHandler,
@@ -788,9 +785,8 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(ReadHandler,

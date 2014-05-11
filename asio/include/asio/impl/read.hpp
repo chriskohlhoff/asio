@@ -526,9 +526,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(
@@ -550,9 +549,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(
@@ -707,9 +705,8 @@ async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_streambuf_op<AsyncReadStream, Allocator,
     CompletionCondition, ASIO_HANDLER_TYPE(
@@ -731,9 +728,8 @@ async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_streambuf_op<AsyncReadStream, Allocator,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(

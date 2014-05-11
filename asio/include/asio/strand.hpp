@@ -150,9 +150,7 @@ public:
     // not meet the documented type requirements for a CompletionHandler.
     ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-    detail::async_result_init<
-      CompletionHandler, void ()> init(
-        ASIO_MOVE_CAST(CompletionHandler)(handler));
+    async_completion<CompletionHandler, void ()> init(handler);
 
     service_.dispatch(impl_, init.handler);
 
@@ -183,9 +181,7 @@ public:
     // not meet the documented type requirements for a CompletionHandler.
     ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-    detail::async_result_init<
-      CompletionHandler, void ()> init(
-        ASIO_MOVE_CAST(CompletionHandler)(handler));
+    async_completion<CompletionHandler, void ()> init(handler);
 
     service_.post(impl_, init.handler);
 

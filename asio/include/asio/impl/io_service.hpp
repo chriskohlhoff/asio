@@ -61,9 +61,7 @@ io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
   // not meet the documented type requirements for a CompletionHandler.
   ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  detail::async_result_init<
-    CompletionHandler, void ()> init(
-      ASIO_MOVE_CAST(CompletionHandler)(handler));
+  async_completion<CompletionHandler, void ()> init(handler);
 
   impl_.dispatch(init.handler);
 
@@ -78,9 +76,7 @@ io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
   // not meet the documented type requirements for a CompletionHandler.
   ASIO_COMPLETION_HANDLER_CHECK(CompletionHandler, handler) type_check;
 
-  detail::async_result_init<
-    CompletionHandler, void ()> init(
-      ASIO_MOVE_CAST(CompletionHandler)(handler));
+  async_completion<CompletionHandler, void ()> init(handler);
 
   impl_.post(init.handler);
 

@@ -589,9 +589,8 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(
@@ -613,9 +612,8 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(
@@ -721,9 +719,8 @@ async_write(AsyncWriteStream& s,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   async_write(s, b.data(), completion_condition,
     detail::write_streambuf_handler<Allocator, ASIO_HANDLER_TYPE(
@@ -744,9 +741,8 @@ async_write(AsyncWriteStream& s,
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   async_write(s, b.data(), transfer_all(),
     detail::write_streambuf_handler<Allocator, ASIO_HANDLER_TYPE(

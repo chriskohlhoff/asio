@@ -162,9 +162,8 @@ public:
       const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    asio::detail::async_result_init<
-      WriteHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(WriteHandler)(handler));
+    asio::async_completion<WriteHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     service_impl_.async_write_some(impl, buffers, init.handler);
 
@@ -187,9 +186,8 @@ public:
       const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    asio::detail::async_result_init<
-      ReadHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(ReadHandler)(handler));
+    asio::async_completion<ReadHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     service_impl_.async_read_some(impl, buffers, init.handler);
 
