@@ -110,6 +110,7 @@
 #include "asio/system_error.hpp"
 #include "asio/system_executor.hpp"
 #include "asio/thread.hpp"
+#include "asio/thread_pool.hpp"
 #include "asio/time_traits.hpp"
 #include "asio/unspecified_executor.hpp"
 #include "asio/uses_executor.hpp"

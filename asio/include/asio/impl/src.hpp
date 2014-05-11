@@ -25,6 +25,8 @@
 #include "asio/impl/handler_alloc_hook.ipp"
 #include "asio/impl/io_service.ipp"
 #include "asio/impl/serial_port_base.ipp"
+#include "asio/impl/system_executor.ipp"
+#include "asio/impl/thread_pool.ipp"
 #include "asio/detail/impl/buffer_sequence_adapter.ipp"
 #include "asio/detail/impl/descriptor_ops.ipp"
 #include "asio/detail/impl/dev_poll_reactor.ipp"

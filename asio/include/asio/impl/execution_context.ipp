@@ -30,6 +30,8 @@ execution_context::execution_context()
 
 execution_context::~execution_context()
 {
+  shutdown_context();
+  destroy_context();
   delete service_registry_;
 }
 

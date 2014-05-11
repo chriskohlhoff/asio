@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/task_io_service.hpp"
+#include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 
@@ -55,7 +57,7 @@ public:
   };
 
   /// Obtain the underlying execution context.
-  inline execution_context& context();
+  execution_context& context();
 
   /// Request the system executor to invoke the given function object.
   /**
@@ -94,6 +96,26 @@ public:
    */
   template <typename Function>
   void defer(ASIO_MOVE_ARG(Function) f);
+
+private:
+  struct thread_function;
+
+  // Hidden implementation of the system execution context.
+  struct context_impl
+    : public execution_context
+  {
+    // Constructor creates all threads in the system thread pool.
+    ASIO_DECL context_impl();
+
+    // Destructor shuts down all threads in the system thread pool.
+    ASIO_DECL ~context_impl();
+
+    // The underlying scheduler.
+    detail::task_io_service& scheduler_;
+
+    // The threads in the system thread pool.
+    detail::thread_group threads_;
+  };
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -105,5 +127,8 @@ template <> struct is_executor<system_executor> : true_type {};
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/impl/system_executor.hpp"
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/system_executor.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_SYSTEM_EXECUTOR_HPP

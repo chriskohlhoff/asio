@@ -206,6 +206,7 @@ nobase_include_HEADERS = \
 	asio/detail/task_io_service_operation.hpp \
 	asio/detail/task_io_service_thread_info.hpp \
 	asio/detail/thread.hpp \
+	asio/detail/thread_group.hpp \
 	asio/detail/thread_info_base.hpp \
 	asio/detail/throw_error.hpp \
 	asio/detail/throw_exception.hpp \
@@ -304,6 +305,9 @@ nobase_include_HEADERS = \
 	asio/impl/src.cpp \
 	asio/impl/src.hpp \
 	asio/impl/system_executor.hpp \
+	asio/impl/system_executor.ipp \
+	asio/impl/thread_pool.hpp \
+	asio/impl/thread_pool.ipp \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
@@ -411,6 +415,7 @@ nobase_include_HEADERS = \
 	asio/system_executor.hpp \
 	asio/system_timer.hpp \
 	asio/thread.hpp \
+	asio/thread_pool.hpp \
 	asio/time_traits.hpp \
 	asio/unyield.hpp \
 	asio/unspecified_executor.hpp \
