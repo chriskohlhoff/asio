@@ -21,14 +21,20 @@
 #include "asio/detail/arg_pack.hpp"
 #include "asio/detail/type_list.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/get_executor.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/is_executor.hpp"
-#include "asio/make_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
+
+template <typename T>
+inline typename get_executor_type<T>::type get_executor_helper(const T& t)
+{
+  return get_executor(t);
+}
 
 template <typename Signature, typename CompletionTokens>
 class passive_chain;
@@ -102,8 +108,8 @@ public:
   typedef passive_chain<Signature, CompletionTokens> passive;
   typedef typename passive::handler handler;
   typedef typename passive::terminal_handler terminal_handler;
-  typedef typename passive::executor executor;
-  typedef typename passive::initial_executor initial_executor;
+  typedef typename passive::handler_executor handler_executor;
+  typedef typename passive::executor_type executor_type;
 
   active_chain(const active_chain& other)
     : passive_(other.passive_),
@@ -114,15 +120,15 @@ public:
 #if defined(ASIO_HAS_MOVE)
   active_chain(active_chain&& other)
     : passive_(ASIO_MOVE_CAST(passive)(other.passive_)),
-      work_(ASIO_MOVE_CAST(typename executor::work)(other.work_))
+      work_(ASIO_MOVE_CAST(typename handler_executor::work)(other.work_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
 
   active_chain(ASIO_MOVE_ARG(passive) p,
-      ASIO_MOVE_ARG(typename executor::work) w)
+      ASIO_MOVE_ARG(typename handler_executor::work) w)
     : passive_(ASIO_MOVE_CAST(passive)(p)),
-      work_(ASIO_MOVE_CAST(typename executor::work)(w))
+      work_(ASIO_MOVE_CAST(typename handler_executor::work)(w))
   {
   }
 
@@ -131,7 +137,7 @@ public:
   template <typename... Tn>
   explicit active_chain(ASIO_MOVE_ARG(Tn)... tn)
     : passive_(ASIO_MOVE_CAST(Tn)(tn)...),
-      work_(passive_.make_current_executor())
+      work_(passive_.get_handler_executor())
   {
   }
 
@@ -141,7 +147,7 @@ public:
   template <ASIO_VARIADIC_TPARAMS(n)> \
   explicit active_chain(ASIO_VARIADIC_MOVE_PARAMS(n)) \
     : passive_(ASIO_VARIADIC_MOVE_ARGS(n)), \
-      work_(passive_.make_current_executor()) \
+      work_(passive_.get_handler_executor()) \
   { \
   } \
   /**/
@@ -155,14 +161,14 @@ public:
     return passive_.get_terminal_handler();
   }
 
-  executor make_current_executor() const
+  handler_executor get_handler_executor() const
   {
-    return passive_.make_current_executor();
+    return passive_.get_handler_executor();
   }
 
-  initial_executor make_initial_executor() const
+  executor_type get_executor() const
   {
-    return passive_.make_initial_executor();
+    return passive_.get_executor();
   }
 
   template <typename T>
@@ -173,7 +179,7 @@ public:
     return active_chain<Signature,
       typename type_list_cat<CompletionTokens, void(T)>::type>(
         passive_.chain(ASIO_MOVE_CAST(T)(t)),
-        ASIO_MOVE_CAST(typename executor::work)(work_));
+        ASIO_MOVE_CAST(typename handler_executor::work)(work_));
   }
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -181,7 +187,7 @@ public:
   template <typename... Tn>
   void operator()(ASIO_MOVE_ARG(Tn)... tn)
   {
-    executor ex(passive_.make_current_executor());
+    handler_executor ex(passive_.get_handler_executor());
     ex.dispatch(
         chain_invoker<Signature, CompletionTokens>(
           ASIO_MOVE_CAST(passive)(passive_),
@@ -192,7 +198,7 @@ public:
 
   void operator()()
   {
-    executor ex(passive_.make_current_executor());
+    handler_executor ex(passive_.get_handler_executor());
     ex.dispatch(chain_invoker<Signature, CompletionTokens>(
           ASIO_MOVE_CAST(passive)(passive_)));
   }
@@ -201,7 +207,7 @@ public:
   template <ASIO_VARIADIC_TPARAMS(n)> \
   void operator()(ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    executor ex(passive_.make_current_executor()); \
+    handler_executor ex(passive_.get_handler_executor()); \
     ex.dispatch( \
         chain_invoker<Signature, CompletionTokens>( \
           ASIO_MOVE_CAST(passive)(passive_), \
@@ -215,7 +221,7 @@ public:
 
 private:
   passive passive_;
-  typename executor::work work_;
+  typename handler_executor::work work_;
 };
 
 template <typename Signature, typename CompletionToken>
@@ -224,8 +230,8 @@ class passive_chain<Signature, void(CompletionToken)>
 public:
   typedef typename handler_type<CompletionToken, Signature>::type handler;
   typedef handler terminal_handler;
-  typedef typename make_executor_result<handler>::type executor;
-  typedef executor initial_executor;
+  typedef typename get_executor_type<handler>::type handler_executor;
+  typedef handler_executor executor_type;
 
   passive_chain(const passive_chain& other)
     : handler_(other.handler_)
@@ -250,14 +256,14 @@ public:
     return handler_;
   }
 
-  executor make_current_executor() const
+  handler_executor get_handler_executor() const
   {
-    return make_executor(handler_);
+    return get_executor_helper(handler_);
   }
 
-  initial_executor make_initial_executor() const
+  executor_type get_executor() const
   {
-    return make_executor(handler_);
+    return get_executor_helper(handler_);
   }
 
   template <typename T>
@@ -309,9 +315,10 @@ public:
   typedef typename type_list<CompletionTokens>::tail tail_tokens;
   typedef active_chain<tail_signature, tail_tokens> tail;
   typedef typename tail::terminal_handler terminal_handler;
-  typedef typename make_executor_result<handler>::type executor;
-  typedef typename conditional<is_same<executor, unspecified_executor>::value,
-    typename tail::initial_executor, executor>::type initial_executor;
+  typedef typename get_executor_type<handler>::type handler_executor;
+  typedef typename conditional<
+    is_same<handler_executor, unspecified_executor>::value,
+    typename tail::executor_type, handler_executor>::type executor_type;
 
   passive_chain(const passive_chain& other)
     : handler_(other.handler_),
@@ -358,24 +365,24 @@ public:
     return tail_.get_terminal_handler();
   }
 
-  executor make_current_executor() const
+  handler_executor get_handler_executor() const
   {
-    return make_executor(handler_);
+    return get_executor_helper(handler_);
   }
 
-  initial_executor make_initial_executor() const
+  executor_type get_executor() const
   {
-    return make_initial_executor(is_same<executor, unspecified_executor>());
+    return this->get_executor(is_same<handler_executor, unspecified_executor>());
   }
 
-  typename tail::initial_executor make_initial_executor(true_type) const
+  typename tail::executor_type get_executor(true_type) const
   {
-    return tail_.make_initial_executor();
+    return tail_.get_executor();
   }
 
-  executor make_initial_executor(false_type) const
+  handler_executor get_executor(false_type) const
   {
-    return make_executor(handler_);
+    return get_executor_helper(handler_);
   }
 
   template <typename T>
@@ -521,36 +528,6 @@ struct continuation_of<detail::active_chain<Signature, CompletionTokens> >
   {
     return c.chain(ASIO_MOVE_CAST(T)(t));
   }
-};
-
-template <typename Signature, typename CompletionTokens>
-inline typename detail::passive_chain<
-  Signature, CompletionTokens>::initial_executor
-make_executor(const detail::passive_chain<Signature, CompletionTokens>& chain)
-{
-  return chain.make_initial_executor();
-}
-
-template <typename Signature, typename CompletionTokens>
-struct make_executor_result<detail::passive_chain<Signature, CompletionTokens> >
-{
-  typedef typename detail::passive_chain<
-    Signature, CompletionTokens>::initial_executor type;
-};
-
-template <typename Signature, typename CompletionTokens>
-inline typename detail::active_chain<
-  Signature, CompletionTokens>::initial_executor
-make_executor(const detail::active_chain<Signature, CompletionTokens>& chain)
-{
-  return chain.make_initial_executor();
-}
-
-template <typename Signature, typename CompletionTokens>
-struct make_executor_result<detail::active_chain<Signature, CompletionTokens> >
-{
-  typedef typename detail::active_chain<
-    Signature, CompletionTokens>::initial_executor type;
 };
 
 } // namespace asio

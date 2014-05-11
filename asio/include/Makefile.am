@@ -274,6 +274,7 @@ nobase_include_HEADERS = \
 	asio/generic/raw_protocol.hpp \
 	asio/generic/seq_packet_protocol.hpp \
 	asio/generic/stream_protocol.hpp \
+	asio/get_executor.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
 	asio/handler_invoke_hook.hpp \
@@ -344,7 +345,6 @@ nobase_include_HEADERS = \
 	asio/local/detail/endpoint.hpp \
 	asio/local/detail/impl/endpoint.ipp \
 	asio/local/stream_protocol.hpp \
-	asio/make_executor.hpp \
 	asio/placeholders.hpp \
 	asio/posix/basic_descriptor.hpp \
 	asio/posix/basic_stream_descriptor.hpp \

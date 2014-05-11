@@ -19,7 +19,6 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/chain.hpp"
 #include "asio/detail/variadic_templates.hpp"
-#include "asio/make_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -39,7 +38,7 @@ post(ASIO_MOVE_ARG(CompletionTokens)... tokens)
   chain_type chain(ASIO_MOVE_CAST(CompletionTokens)(tokens)...);
   async_result<chain_type> result(chain);
 
-  typename chain_type::initial_executor ex(chain.make_initial_executor());
+  typename chain_type::executor_type ex(chain.get_executor());
   ex.post(ASIO_MOVE_CAST(chain_type)(chain));
 
   return result.get();
@@ -79,7 +78,7 @@ post(ASIO_MOVE_ARG(Executor) executor,
     chain_type chain(ASIO_VARIADIC_MOVE_ARGS(n)); \
     async_result<chain_type> result(chain); \
     \
-    typename chain_type::initial_executor ex(chain.make_initial_executor()); \
+    typename chain_type::executor_type ex(chain.get_executor()); \
     ex.post(ASIO_MOVE_CAST(chain_type)(chain)); \
     \
     return result.get(); \
