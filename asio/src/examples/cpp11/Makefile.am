@@ -20,6 +20,9 @@ noinst_PROGRAMS = \
 	echo/blocking_tcp_echo_server \
 	echo/blocking_udp_echo_client \
 	echo/blocking_udp_echo_server \
+	executors/bank_account_1 \
+	executors/bank_account_2 \
+	executors/bank_account_3 \
 	futures/daytime_client \
 	http/server/http_server
 
@@ -43,6 +46,9 @@ echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
 echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
 echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
 echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
+executors_bank_account_1_SOURCES = executors/bank_account_1.cpp
+executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
+executors_bank_account_3_SOURCES = executors/bank_account_3.cpp
 futures_daytime_client_SOURCES = futures/daytime_client.cpp
 http_server_http_server_SOURCES = \
 	http/server/connection.cpp \
