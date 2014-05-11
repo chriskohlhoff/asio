@@ -151,6 +151,7 @@ private:
  * unfinished work remaining.
  *
  * The work class is copy-constructible so that it may be used as a data member
+ * in a handler class. It is not assignable.
  */
 class thread_pool::executor_type::work
 {
