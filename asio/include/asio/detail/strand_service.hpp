@@ -104,7 +104,7 @@ private:
   ASIO_DECL void do_post(implementation_type& impl,
       operation* op, bool is_continuation);
 
-  ASIO_DECL static void do_complete(io_service_impl* owner,
+  ASIO_DECL static void do_complete(void* owner,
       operation* base, const asio::error_code& ec,
       std::size_t bytes_transferred);
 

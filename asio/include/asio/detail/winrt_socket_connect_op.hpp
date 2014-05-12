@@ -46,7 +46,7 @@ public:
   {
   }
 
-  static void do_complete(io_service_impl* owner, operation* base,
+  static void do_complete(void* owner, operation* base,
       const asio::error_code&, std::size_t)
   {
     // Take ownership of the operation object.

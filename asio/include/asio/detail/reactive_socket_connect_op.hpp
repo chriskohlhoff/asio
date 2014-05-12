@@ -62,7 +62,7 @@ public:
   {
   }
 
-  static void do_complete(io_service_impl* owner, operation* base,
+  static void do_complete(void* owner, operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
   {

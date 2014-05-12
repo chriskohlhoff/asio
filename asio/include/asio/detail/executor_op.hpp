@@ -38,7 +38,7 @@ public:
   {
   }
 
-  static void do_complete(task_io_service* owner,
+  static void do_complete(void* owner,
       task_io_service_operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)

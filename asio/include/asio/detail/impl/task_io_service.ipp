@@ -369,7 +369,7 @@ std::size_t task_io_service::do_run_one(mutex::scoped_lock& lock,
         (void)on_exit;
 
         // Complete the operation. May throw an exception. Deletes the object.
-        o->complete(*this, ec, task_result);
+        o->complete(this, ec, task_result);
 
         return 1;
       }
@@ -433,7 +433,7 @@ std::size_t task_io_service::do_poll_one(mutex::scoped_lock& lock,
   (void)on_exit;
 
   // Complete the operation. May throw an exception. Deletes the object.
-  o->complete(*this, ec, task_result);
+  o->complete(this, ec, task_result);
 
   return 1;
 }

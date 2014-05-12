@@ -64,7 +64,7 @@ public:
     void set_ready_events(uint32_t events) { task_result_ = events; }
     ASIO_DECL operation* perform_io(uint32_t events);
     ASIO_DECL static void do_complete(
-        io_service_impl* owner, operation* base,
+        void* owner, operation* base,
         const asio::error_code& ec, std::size_t bytes_transferred);
   };
 

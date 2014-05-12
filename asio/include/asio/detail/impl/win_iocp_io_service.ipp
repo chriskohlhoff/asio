@@ -400,7 +400,7 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
         work_finished_on_block_exit on_exit = { this };
         (void)on_exit;
 
-        op->complete(*this, result_ec, bytes_transferred);
+        op->complete(this, result_ec, bytes_transferred);
         ec = asio::error_code();
         return 1;
       }

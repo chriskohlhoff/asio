@@ -38,14 +38,12 @@ class win_iocp_operation
     ASIO_ALSO_INHERIT_TRACKED_HANDLER
 {
 public:
-  typedef win_iocp_io_service owner_type;
   typedef win_iocp_operation operation_type;
 
-  void complete(win_iocp_io_service& owner,
-      const asio::error_code& ec,
+  void complete(void* owner, const asio::error_code& ec,
       std::size_t bytes_transferred)
   {
-    func_(&owner, this, ec, bytes_transferred);
+    func_(owner, this, ec, bytes_transferred);
   }
 
   void destroy()
@@ -55,7 +53,7 @@ public:
 
 protected:
   typedef void (*func_type)(
-      win_iocp_io_service*, win_iocp_operation*,
+      void*, win_iocp_operation*,
       const asio::error_code&, std::size_t);
 
   win_iocp_operation(func_type func)

@@ -71,7 +71,7 @@ public:
     return sizeof(sockaddr_storage_type) + 16;
   }
 
-  static void do_complete(io_service_impl* owner, operation* base,
+  static void do_complete(void* owner, operation* base,
       const asio::error_code& result_ec,
       std::size_t /*bytes_transferred*/)
   {

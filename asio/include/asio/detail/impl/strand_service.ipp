@@ -144,7 +144,7 @@ void strand_service::do_post(implementation_type& impl,
   }
 }
 
-void strand_service::do_complete(io_service_impl* owner, operation* base,
+void strand_service::do_complete(void* owner, operation* base,
     const asio::error_code& ec, std::size_t /*bytes_transferred*/)
 {
   if (owner)
@@ -155,15 +155,16 @@ void strand_service::do_complete(io_service_impl* owner, operation* base,
     call_stack<strand_impl>::context ctx(impl);
 
     // Ensure the next handler, if any, is scheduled on block exit.
-    on_do_complete_exit on_exit = { owner, impl };
-    (void)on_exit;
+    on_do_complete_exit on_exit;
+    on_exit.owner_ = static_cast<io_service_impl*>(owner);
+    on_exit.impl_ = impl;
 
     // Run all ready handlers. No lock is required since the ready queue is
     // accessed only within the strand.
     while (operation* o = impl->ready_queue_.front())
     {
       impl->ready_queue_.pop();
-      o->complete(*owner, ec, 0);
+      o->complete(owner, ec, 0);
     }
   }
 }
