@@ -24,7 +24,7 @@ namespace asio {
 
 struct thread_pool::thread_function
 {
-  detail::task_io_service* scheduler_;
+  detail::scheduler* scheduler_;
 
   void operator()()
   {
@@ -34,7 +34,7 @@ struct thread_pool::thread_function
 };
 
 thread_pool::thread_pool()
-  : scheduler_(use_service<detail::task_io_service>(*this))
+  : scheduler_(use_service<detail::scheduler>(*this))
 {
   scheduler_.work_started();
 
@@ -44,7 +44,7 @@ thread_pool::thread_pool()
 }
 
 thread_pool::thread_pool(std::size_t num_threads)
-  : scheduler_(use_service<detail::task_io_service>(*this))
+  : scheduler_(use_service<detail::scheduler>(*this))
 {
   scheduler_.work_started();
 

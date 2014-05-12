@@ -1,6 +1,6 @@
 //
-// detail/task_io_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/scheduler.hpp
+// ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_TASK_IO_SERVICE_HPP
-#define ASIO_DETAIL_TASK_IO_SERVICE_HPP
+#ifndef ASIO_DETAIL_SCHEDULER_HPP
+#define ASIO_DETAIL_SCHEDULER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -27,24 +27,24 @@
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
-#include "asio/detail/task_io_service_operation.hpp"
+#include "asio/detail/scheduler_operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-struct task_io_service_thread_info;
+struct scheduler_thread_info;
 
-class task_io_service
-  : public asio::detail::execution_context_service_base<task_io_service>
+class scheduler
+  : public asio::detail::execution_context_service_base<scheduler>
 {
 public:
-  typedef task_io_service_operation operation;
+  typedef scheduler_operation operation;
 
   // Constructor. Specifies the number of concurrent threads that are likely to
   // run the io_service. If set to 1 certain optimisation are performed.
-  ASIO_DECL task_io_service(asio::execution_context& context,
+  ASIO_DECL scheduler(asio::execution_context& context,
       std::size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
@@ -120,7 +120,7 @@ public:
 
 private:
   // Structure containing thread-specific data.
-  typedef task_io_service_thread_info thread_info;
+  typedef scheduler_thread_info thread_info;
 
   // Enqueue the given operation following a failed attempt to dispatch the
   // operation for immediate invocation.
@@ -183,7 +183,7 @@ private:
   bool shutdown_;
 
   // Per-thread call stack to track the state of each thread in the io_service.
-  typedef call_stack<task_io_service, thread_info> thread_call_stack;
+  typedef call_stack<scheduler, thread_info> thread_call_stack;
 };
 
 } // namespace detail
@@ -191,11 +191,11 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/task_io_service.hpp"
+#include "asio/detail/impl/scheduler.hpp"
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/task_io_service.ipp"
+# include "asio/detail/impl/scheduler.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // !defined(ASIO_HAS_IOCP)
 
-#endif // ASIO_DETAIL_TASK_IO_SERVICE_HPP
+#endif // ASIO_DETAIL_SCHEDULER_HPP

@@ -46,7 +46,7 @@ inline detail::io_service_impl& use_service<detail::io_service_impl>(
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_io_service.hpp"
 #else
-# include "asio/detail/task_io_service.hpp"
+# include "asio/detail/scheduler.hpp"
 #endif
 
 #include "asio/detail/push_options.hpp"

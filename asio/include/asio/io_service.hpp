@@ -41,7 +41,7 @@ namespace detail {
   typedef class win_iocp_io_service io_service_impl;
   class win_iocp_overlapped_ptr;
 #else
-  typedef class task_io_service io_service_impl;
+  typedef class scheduler io_service_impl;
 #endif
 } // namespace detail
 

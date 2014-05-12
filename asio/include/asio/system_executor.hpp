@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/task_io_service.hpp"
+#include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
@@ -111,7 +111,7 @@ private:
     ASIO_DECL ~context_impl();
 
     // The underlying scheduler.
-    detail::task_io_service& scheduler_;
+    detail::scheduler& scheduler_;
 
     // The threads in the system thread pool.
     detail::thread_group threads_;

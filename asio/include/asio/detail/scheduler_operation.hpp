@@ -1,6 +1,6 @@
 //
-// detail/task_io_service_operation.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/scheduler_operation.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_TASK_IO_SERVICE_OPERATION_HPP
-#define ASIO_DETAIL_TASK_IO_SERVICE_OPERATION_HPP
+#ifndef ASIO_DETAIL_SCHEDULER_OPERATION_HPP
+#define ASIO_DETAIL_SCHEDULER_OPERATION_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -24,14 +24,14 @@
 namespace asio {
 namespace detail {
 
-class task_io_service;
+class scheduler;
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
-class task_io_service_operation ASIO_INHERIT_TRACKED_HANDLER
+class scheduler_operation ASIO_INHERIT_TRACKED_HANDLER
 {
 public:
-  typedef task_io_service_operation operation_type;
+  typedef scheduler_operation operation_type;
 
   void complete(void* owner, const asio::error_code& ec,
       std::size_t bytes_transferred)
@@ -46,10 +46,10 @@ public:
 
 protected:
   typedef void (*func_type)(void*,
-      task_io_service_operation*,
+      scheduler_operation*,
       const asio::error_code&, std::size_t);
 
-  task_io_service_operation(func_type func)
+  scheduler_operation(func_type func)
     : next_(0),
       func_(func),
       task_result_(0)
@@ -57,16 +57,16 @@ protected:
   }
 
   // Prevents deletion through this type.
-  ~task_io_service_operation()
+  ~scheduler_operation()
   {
   }
 
 private:
   friend class op_queue_access;
-  task_io_service_operation* next_;
+  scheduler_operation* next_;
   func_type func_;
 protected:
-  friend class task_io_service;
+  friend class scheduler;
   unsigned int task_result_; // Passed into bytes transferred.
 };
 
@@ -75,4 +75,4 @@ protected:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_TASK_IO_SERVICE_OPERATION_HPP
+#endif // ASIO_DETAIL_SCHEDULER_OPERATION_HPP

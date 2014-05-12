@@ -1,6 +1,6 @@
 //
-// detail/impl/task_io_service.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/scheduler.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_IMPL_TASK_IO_SERVICE_HPP
-#define ASIO_DETAIL_IMPL_TASK_IO_SERVICE_HPP
+#ifndef ASIO_DETAIL_IMPL_SCHEDULER_HPP
+#define ASIO_DETAIL_IMPL_SCHEDULER_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -28,7 +28,7 @@ namespace asio {
 namespace detail {
 
 template <typename Handler>
-void task_io_service::dispatch(Handler& handler)
+void scheduler::dispatch(Handler& handler)
 {
   if (thread_call_stack::contains(this))
   {
@@ -52,7 +52,7 @@ void task_io_service::dispatch(Handler& handler)
 }
 
 template <typename Handler>
-void task_io_service::post(Handler& handler)
+void scheduler::post(Handler& handler)
 {
   bool is_continuation =
     asio_handler_cont_helpers::is_continuation(handler);
@@ -75,4 +75,4 @@ void task_io_service::post(Handler& handler)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_IMPL_TASK_IO_SERVICE_HPP
+#endif // ASIO_DETAIL_IMPL_SCHEDULER_HPP

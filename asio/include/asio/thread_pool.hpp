@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/task_io_service.hpp"
+#include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
@@ -72,7 +72,7 @@ private:
   struct thread_function;
 
   // The underlying scheduler.
-  detail::task_io_service& scheduler_;
+  detail::scheduler& scheduler_;
 
   // The threads in the pool.
   detail::thread_group threads_;
@@ -194,7 +194,7 @@ private:
   void operator=(const work& other);
 
   // The underlying scheduler.
-  detail::task_io_service& scheduler_;
+  detail::scheduler& scheduler_;
 };
 
 #if !defined(GENERATING_DOCUMENTATION)

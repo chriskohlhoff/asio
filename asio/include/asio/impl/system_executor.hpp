@@ -17,7 +17,7 @@
 
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/global.hpp"
-#include "asio/detail/task_io_service_allocator.hpp"
+#include "asio/detail/scheduler_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution_context.hpp"
 
@@ -45,7 +45,7 @@ void system_executor::post(ASIO_MOVE_ARG(Function) f)
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::task_io_service_allocator<void> allocator_type;
+  typedef detail::scheduler_allocator<void> allocator_type;
   typedef detail::executor_op<function_type, allocator_type> op;
   typename op::ptr p = { allocator_type(), 0, 0 };
   p.v = p.a.allocate(1);
@@ -66,7 +66,7 @@ void system_executor::defer(ASIO_MOVE_ARG(Function) f)
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::task_io_service_allocator<void> allocator_type;
+  typedef detail::scheduler_allocator<void> allocator_type;
   typedef detail::executor_op<function_type, allocator_type> op;
   typename op::ptr p = { allocator_type(), 0, 0 };
   p.v = p.a.allocate(1);

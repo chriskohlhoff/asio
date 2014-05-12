@@ -24,7 +24,7 @@ namespace asio {
 
 struct system_executor::thread_function
 {
-  detail::task_io_service* scheduler_;
+  detail::scheduler* scheduler_;
 
   void operator()()
   {
@@ -34,7 +34,7 @@ struct system_executor::thread_function
 };
 
 system_executor::context_impl::context_impl()
-  : scheduler_(use_service<detail::task_io_service>(*this))
+  : scheduler_(use_service<detail::scheduler>(*this))
 {
   scheduler_.work_started();
 

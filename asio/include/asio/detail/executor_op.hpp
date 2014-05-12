@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/task_io_service_operation.hpp"
+#include "asio/detail/scheduler_operation.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -26,20 +26,20 @@ namespace asio {
 namespace detail {
 
 template <typename Handler, typename Alloc>
-class executor_op : public task_io_service_operation
+class executor_op : public scheduler_operation
 {
 public:
   ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(executor_op, Alloc);
 
   executor_op(Handler& h, const Alloc& allocator)
-    : task_io_service_operation(&executor_op::do_complete),
+    : scheduler_operation(&executor_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(h)),
       allocator_(allocator)
   {
   }
 
   static void do_complete(void* owner,
-      task_io_service_operation* base,
+      scheduler_operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
   {

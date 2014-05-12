@@ -94,6 +94,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/reactive_serial_port_service.ipp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/resolver_service_base.ipp \
+	asio/detail/impl/scheduler.hpp \
+	asio/detail/impl/scheduler.ipp \
 	asio/detail/impl/select_reactor.hpp \
 	asio/detail/impl/select_reactor.ipp \
 	asio/detail/impl/service_registry.hpp \
@@ -103,8 +105,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/socket_select_interrupter.ipp \
 	asio/detail/impl/strand_service.hpp \
 	asio/detail/impl/strand_service.ipp \
-	asio/detail/impl/task_io_service.hpp \
-	asio/detail/impl/task_io_service.ipp \
 	asio/detail/impl/throw_error.ipp \
 	asio/detail/impl/timer_queue_ptime.ipp \
 	asio/detail/impl/timer_queue_set.ipp \
@@ -178,6 +178,9 @@ nobase_include_HEADERS = \
 	asio/detail/resolve_op.hpp \
 	asio/detail/resolver_service_base.hpp \
 	asio/detail/resolver_service.hpp \
+	asio/detail/scheduler.hpp \
+	asio/detail/scheduler_operation.hpp \
+	asio/detail/scheduler_thread_info.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/scoped_ptr.hpp \
 	asio/detail/select_interrupter.hpp \
@@ -202,9 +205,6 @@ nobase_include_HEADERS = \
 	asio/detail/std_static_mutex.hpp \
 	asio/detail/std_thread.hpp \
 	asio/detail/strand_service.hpp \
-	asio/detail/task_io_service.hpp \
-	asio/detail/task_io_service_operation.hpp \
-	asio/detail/task_io_service_thread_info.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/thread_group.hpp \
 	asio/detail/thread_info_base.hpp \
