@@ -103,6 +103,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/signal_set_service.ipp \
 	asio/detail/impl/socket_ops.ipp \
 	asio/detail/impl/socket_select_interrupter.ipp \
+	asio/detail/impl/strand_executor_service.hpp \
+	asio/detail/impl/strand_executor_service.ipp \
 	asio/detail/impl/strand_service.hpp \
 	asio/detail/impl/strand_service.ipp \
 	asio/detail/impl/throw_error.ipp \
@@ -204,6 +206,7 @@ nobase_include_HEADERS = \
 	asio/detail/std_mutex.hpp \
 	asio/detail/std_static_mutex.hpp \
 	asio/detail/std_thread.hpp \
+	asio/detail/strand_executor_service.hpp \
 	asio/detail/strand_service.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/thread_group.hpp \
@@ -409,6 +412,7 @@ nobase_include_HEADERS = \
 	asio/ssl/verify_mode.hpp \
 	asio/steady_timer.hpp \
 	asio/strand.hpp \
+	asio/strand_executor.hpp \
 	asio/streambuf.hpp \
 	asio/stream_socket_service.hpp \
 	asio/system_error.hpp \

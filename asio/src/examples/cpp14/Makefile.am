@@ -12,13 +12,15 @@ endif
 noinst_PROGRAMS = \
 	executors/bank_account_1 \
 	executors/bank_account_2 \
-	executors/bank_account_3
+	executors/bank_account_3 \
+	executors/bank_account_4
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
 executors_bank_account_1_SOURCES = executors/bank_account_1.cpp
 executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
 executors_bank_account_3_SOURCES = executors/bank_account_3.cpp
+executors_bank_account_4_SOURCES = executors/bank_account_4.cpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

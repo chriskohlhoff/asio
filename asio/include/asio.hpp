@@ -105,6 +105,7 @@
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/strand.hpp"
+#include "asio/strand_executor.hpp"
 #include "asio/stream_socket_service.hpp"
 #include "asio/streambuf.hpp"
 #include "asio/system_error.hpp"
