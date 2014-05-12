@@ -32,8 +32,7 @@ namespace asio {
  * to run on one of a fixed number of threads.
  */
 class thread_pool
-  : public execution_context,
-    noncopyable
+  : public execution_context
 {
 public:
   class executor_type;
