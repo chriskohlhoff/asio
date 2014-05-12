@@ -456,10 +456,13 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
 
 DWORD win_iocp_io_service::get_gqcs_timeout()
 {
-  OSVERSIONINFO version_info;
-  version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-  if (::GetVersionEx(&version_info))
-    if (version_info.dwMajorVersion >= 6)
+  OSVERSIONINFOEX version_info;
+  memset(&version_info, 0, sizeof(version_info));
+  version_info.dwOSVersionInfoSize = sizeof(version_info);
+  version_info.dwMajorVersion = 6ul;
+  DWORDLONG condition_mask = ::VerSetConditionMask(0ull,
+      VER_MAJORVERSION, VER_GREATER_EQUAL);
+  if (::VerifyVersionInfo(&version_info, VER_MAJORVERSION, condition_mask))
       return INFINITE;
   return default_gqcs_timeout;
 }
