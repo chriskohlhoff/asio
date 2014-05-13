@@ -32,6 +32,7 @@
 # include <boost/type_traits/remove_pointer.hpp>
 # include <boost/type_traits/remove_reference.hpp>
 # include <boost/utility/enable_if.hpp>
+# include <boost/utility/result_of.hpp>
 #endif // defined(ASIO_HAS_TYPE_TRAITS)
 
 namespace asio {
@@ -50,6 +51,7 @@ using std::is_function;
 using std::is_same;
 using std::remove_pointer;
 using std::remove_reference;
+using std::result_of;
 using std::true_type;
 #else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 using boost::add_const;
@@ -66,6 +68,7 @@ using boost::is_function;
 using boost::is_same;
 using boost::remove_pointer;
 using boost::remove_reference;
+using boost::result_of;
 using boost::true_type;
 #endif // defined(ASIO_HAS_STD_TYPE_TRAITS)
 

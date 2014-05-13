@@ -132,9 +132,15 @@ struct default_continuation_of_implementation
   typedef typename continuation_signature<
     typename result_type<Function>::type>::signature signature;
 
+  template <typename C>
+  struct chain_type
+  {
+    typedef continuation_chain<typename result_type<Function>::type,
+      Function, typename decay<C>::type> type;
+  };
+
   template <typename F, typename C>
-  static continuation_chain<typename result_type<Function>::type,
-    Function, typename decay<C>::type> chain(
+  static typename chain_type<C>::type chain(
       ASIO_MOVE_ARG(F) f, ASIO_MOVE_ARG(C) c)
   {
     return continuation_chain<typename result_type<Function>::type,
@@ -196,6 +202,13 @@ struct continuation_of
    */
   typedef see_below signature;
 
+  /// Defines the type produced by the @c chain() function for a type @c C.
+  template <typename C>
+  struct chain_type
+  {
+    typedef unspecified type;
+  };
+
   /// Creates a new function object to attach a continuation.
   /**
    * If <tt>Function</tt> and <tt>decay<Function>::type</tt> are different
@@ -205,7 +218,7 @@ struct continuation_of
    * <tt>f</tt>, and then passes the result to a copy of <tt>c</tt>.
    */
   template <typename F, typename C>
-  static unspecified chain(F&& f, C&& c);
+  static typename chain_type<C>::type chain(F&& f, C&& c);
 #endif // defined(GENERATING_DOCUMENTATION)
 };
 

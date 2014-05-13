@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/strand_executor_service.hpp"
+#include "asio/executor_wrapper.hpp"
 #include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -196,6 +197,14 @@ public:
         executor_, ASIO_MOVE_CAST(Function)(f));
   }
 
+  /// Associate this executor with the specified object.
+  template <typename T>
+  typename wrap_with_executor_type<T, strand_executor>::type wrap(
+      ASIO_MOVE_ARG(T) t) const
+  {
+    return (wrap_with_executor)(ASIO_MOVE_CAST(T)(t), *this);
+  }
+
   /// Determine whether the strand is running in the current thread.
   /**
    * @return @c true if the current thread is executing a function that was
@@ -208,6 +217,7 @@ public:
   }
 
 private:
+  friend class work;
   Executor executor_;
   typedef detail::strand_executor_service::implementation_type implementation_type;
   implementation_type impl_;
@@ -226,8 +236,8 @@ class strand_executor<Executor>::work
 {
 public:
   /// Constructor notifies the strand that work is starting.
-  explicit work(strand_executor<Executor>& e)
-    : impl_(e)
+  explicit work(const strand_executor<Executor>& e)
+    : impl_(e.executor_)
   {
   }
 

@@ -50,6 +50,7 @@
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
+#include "asio/executor_wrapper.hpp"
 #include "asio/generic/basic_endpoint.hpp"
 #include "asio/generic/datagram_protocol.hpp"
 #include "asio/generic/raw_protocol.hpp"

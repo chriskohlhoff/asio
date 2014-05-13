@@ -271,6 +271,7 @@ nobase_include_HEADERS = \
 	asio/error_code.hpp \
 	asio/error.hpp \
 	asio/execution_context.hpp \
+	asio/executor_wrapper.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \

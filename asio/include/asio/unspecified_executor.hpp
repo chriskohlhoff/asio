@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/execution_context.hpp"
+#include "asio/executor_wrapper.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/system_executor.hpp"
 
@@ -105,6 +106,14 @@ public:
   void defer(ASIO_MOVE_ARG(Function) f)
   {
     system_executor().defer(ASIO_MOVE_CAST(Function)(f));
+  }
+
+  /// Associate this executor with the specified object.
+  template <typename T>
+  typename wrap_with_executor_type<T, unspecified_executor>::type wrap(
+      ASIO_MOVE_ARG(T) t) const
+  {
+    return (wrap_with_executor)(ASIO_MOVE_CAST(T)(t), *this);
   }
 };
 

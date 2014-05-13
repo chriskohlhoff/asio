@@ -20,6 +20,7 @@
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
+#include "asio/executor_wrapper.hpp"
 #include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -132,6 +133,14 @@ public:
   template <typename Function>
   void defer(ASIO_MOVE_ARG(Function) f);
 
+  /// Associate this executor with the specified object.
+  template <typename T>
+  typename wrap_with_executor_type<T, executor_type>::type wrap(
+      ASIO_MOVE_ARG(T) t) const
+  {
+    return (wrap_with_executor)(ASIO_MOVE_CAST(T)(t), *this);
+  }
+
 private:
   friend class thread_pool;
 
@@ -161,7 +170,7 @@ public:
    * begun. This ensures that the thread pool's join() function will not return
    * while the work is underway.
    */
-  explicit work(thread_pool::executor_type& e);
+  explicit work(const thread_pool::executor_type& e);
 
   /// Copy constructor notifies the thread pool that work is continuing.
   /**

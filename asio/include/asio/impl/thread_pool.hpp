@@ -103,7 +103,7 @@ void thread_pool::executor_type::defer(ASIO_MOVE_ARG(Function) f)
   p.v = p.p = 0;
 }
 
-inline thread_pool::executor_type::work::work(thread_pool::executor_type& e)
+inline thread_pool::executor_type::work::work(const thread_pool::executor_type& e)
   : scheduler_(e.pool_.scheduler_)
 {
   scheduler_.work_started();
