@@ -59,7 +59,7 @@ protected:
   {
   }
 
-  Executor get_executor_base() const
+  Executor get_executor_base() const ASIO_NOEXCEPT
   {
     return wrapped_.get_executor();
   }
@@ -79,7 +79,7 @@ protected:
   {
   }
 
-  Executor get_executor_base() const
+  Executor get_executor_base() const ASIO_NOEXCEPT
   {
     return static_cast<const Executor&>(*this);
   }
@@ -245,19 +245,19 @@ public:
   }
 
   /// Obtain a reference to the wrapped object.
-  wrapped_type& get_wrapped()
+  wrapped_type& get_wrapped() ASIO_NOEXCEPT
   {
     return this->wrapped_;
   }
 
   /// Obtain a reference to the wrapped object.
-  const wrapped_type& get_wrapped() const
+  const wrapped_type& get_wrapped() const ASIO_NOEXCEPT
   {
     return this->wrapped_;
   }
 
   /// Obtain the associated executor.
-  executor_type get_executor() const
+  executor_type get_executor() const ASIO_NOEXCEPT
   {
     return this->get_executor_base();
   }

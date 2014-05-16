@@ -42,7 +42,7 @@ public:
     /**
      * For the unspecified executor, this is a no-op.
      */
-    explicit work(unspecified_executor)
+    explicit work(unspecified_executor) ASIO_NOEXCEPT
     {
     }
 
@@ -56,7 +56,7 @@ public:
   };
 
   /// Obtain the underlying execution context.
-  execution_context& context()
+  execution_context& context() ASIO_NOEXCEPT
   {
     return system_executor().context();
   }

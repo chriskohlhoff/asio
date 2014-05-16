@@ -40,7 +40,7 @@ struct get_unspecified_executor_impl<T,
 {
   typedef unspecified_executor type;
 
-  static type get(const T&)
+  static type get(const T&) ASIO_NOEXCEPT
   {
     return type();
   }
@@ -56,7 +56,7 @@ struct get_executor_impl<T,
 {
   typedef typename T::executor_type type;
 
-  static type get(const T& t)
+  static type get(const T& t) ASIO_NOEXCEPT
   {
     return t.get_executor();
   }
@@ -103,10 +103,11 @@ struct get_executor_impl<T,
  */
 #if defined(GENERATING_DOCUMENTATION)
 template <typename T>
-see_below get_executor(const T&);
+see_below get_executor(const T&) noexcept;
 #else // defined(GENERATING_DOCUMENTATION)
 template <typename T>
-inline typename detail::get_executor_impl<T>::type get_executor(const T& t)
+inline typename detail::get_executor_impl<T>::type
+get_executor(const T& t) ASIO_NOEXCEPT
 {
   return detail::get_executor_impl<T>::get(t);
 }

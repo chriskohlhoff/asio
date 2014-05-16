@@ -45,7 +45,7 @@ public:
   ASIO_DECL thread_pool(std::size_t num_threads);
 
   /// Obtains the executor associated with the pool.
-  executor_type get_executor() const;
+  executor_type get_executor() const ASIO_NOEXCEPT;
 
   /// Destructor.
   /**
@@ -87,7 +87,7 @@ public:
   class work;
 
   /// Obtain the underlying execution context.
-  execution_context& context();
+  execution_context& context() ASIO_NOEXCEPT;
 
   /// Request the thread pool to invoke the given function object.
   /**
@@ -170,7 +170,7 @@ public:
    * begun. This ensures that the thread pool's join() function will not return
    * while the work is underway.
    */
-  explicit work(const thread_pool::executor_type& e);
+  explicit work(const thread_pool::executor_type& e) ASIO_NOEXCEPT;
 
   /// Copy constructor notifies the thread pool that work is continuing.
   /**
@@ -178,7 +178,7 @@ public:
    * continuing. This ensures that the thread pool's join() function will not
    * return while the work is underway.
    */
-  work(const work& other);
+  work(const work& other) ASIO_NOEXCEPT;
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Copy constructor notifies the thread pool that work is continuing.
@@ -187,7 +187,7 @@ public:
    * continuing. This ensures that the thread pool's join() function will not
    * return while the work is underway.
    */
-  work(work&& other);
+  work(work&& other) ASIO_NOEXCEPT;
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor notifies the thread pool that the work is complete.

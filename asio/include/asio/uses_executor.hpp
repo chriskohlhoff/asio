@@ -34,7 +34,7 @@ namespace asio {
 struct executor_arg_t
 {
   /// Constructor.
-  ASIO_CONSTEXPR executor_arg_t()
+  ASIO_CONSTEXPR executor_arg_t() ASIO_NOEXCEPT
   {
   }
 };

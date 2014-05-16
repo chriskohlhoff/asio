@@ -44,7 +44,7 @@ public:
     /**
      * For the unspecified executor, this is a no-op.
      */
-    explicit work(system_executor)
+    explicit work(system_executor) ASIO_NOEXCEPT
     {
     }
 
@@ -58,7 +58,7 @@ public:
   };
 
   /// Obtain the underlying execution context.
-  execution_context& context();
+  execution_context& context() ASIO_NOEXCEPT;
 
   /// Request the system executor to invoke the given function object.
   /**

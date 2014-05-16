@@ -52,7 +52,7 @@ public:
   }
 
   /// Copy constructor.
-  strand_executor(const strand_executor& other)
+  strand_executor(const strand_executor& other) ASIO_NOEXCEPT
     : executor_(other.executor_),
       impl_(other.impl_)
   {
@@ -64,14 +64,15 @@ public:
    * to @c Executor.
    */
   template <class OtherExecutor>
-  strand_executor(const strand_executor<OtherExecutor>& other)
+  strand_executor(
+      const strand_executor<OtherExecutor>& other) ASIO_NOEXCEPT
     : executor_(other.executor_),
       impl_(other.impl_)
   {
   }
 
   /// Assignment operator.
-  strand_executor& operator=(const strand_executor& other)
+  strand_executor& operator=(const strand_executor& other) ASIO_NOEXCEPT
   {
     executor_ = other.executor_;
     impl_ = other.impl_;
@@ -84,7 +85,8 @@ public:
    * convertible to @c Executor.
    */
   template <class OtherExecutor>
-  strand_executor& operator=(const strand_executor<OtherExecutor>& other)
+  strand_executor& operator=(
+      const strand_executor<OtherExecutor>& other) ASIO_NOEXCEPT
   {
     executor_ = other.executor_;
     impl_ = other.impl_;
@@ -93,7 +95,7 @@ public:
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
-  strand_executor(strand_executor&& other)
+  strand_executor(strand_executor&& other) ASIO_NOEXCEPT
     : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
       impl_(ASIO_MOVE_CAST(implementation_type)(other.impl_))
   {
@@ -105,14 +107,14 @@ public:
    * to @c Executor.
    */
   template <class OtherExecutor>
-  strand_executor(strand_executor<OtherExecutor>&& other)
+  strand_executor(strand_executor<OtherExecutor>&& other) ASIO_NOEXCEPT
     : executor_(ASIO_MOVE_CAST(OtherExecutor)(other)),
       impl_(ASIO_MOVE_CAST(implementation_type)(other.impl_))
   {
   }
 
   /// Move assignment operator.
-  strand_executor& operator=(strand_executor&& other)
+  strand_executor& operator=(strand_executor&& other) ASIO_NOEXCEPT
   {
     executor_ = ASIO_MOVE_CAST(Executor)(other);
     impl_ = ASIO_MOVE_CAST(implementation_type)(other.impl_);
@@ -125,7 +127,8 @@ public:
    * convertible to @c Executor.
    */
   template <class OtherExecutor>
-  strand_executor& operator=(const strand_executor<OtherExecutor>&& other)
+  strand_executor& operator=(
+      const strand_executor<OtherExecutor>&& other) ASIO_NOEXCEPT
   {
     executor_ = ASIO_MOVE_CAST(OtherExecutor)(other);
     impl_ = ASIO_MOVE_CAST(implementation_type)(other.impl_);
@@ -139,7 +142,7 @@ public:
   }
 
   /// Obtain the underlying execution context.
-  execution_context& context()
+  execution_context& context() ASIO_NOEXCEPT
   {
     return executor_.context();
   }
@@ -211,7 +214,7 @@ public:
    * submitted to the strand using post(), dispatch() or defer(). Otherwise
    * returns @c false.
    */
-  bool running_in_this_thread() const
+  bool running_in_this_thread() const ASIO_NOEXCEPT
   {
     return detail::strand_executor_service::running_in_this_thread(impl_);
   }
@@ -236,20 +239,20 @@ class strand_executor<Executor>::work
 {
 public:
   /// Constructor notifies the strand that work is starting.
-  explicit work(const strand_executor<Executor>& e)
+  explicit work(const strand_executor<Executor>& e) ASIO_NOEXCEPT
     : impl_(e.executor_)
   {
   }
 
   /// Copy constructor notifies the strand that work is continuing.
-  work(const work& other)
+  work(const work& other) ASIO_NOEXCEPT
     : impl_(other.impl_)
   {
   }
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Copy constructor notifies the strand that work is continuing.
-  work(work&& other)
+  work(work&& other) ASIO_NOEXCEPT
     : impl_(ASIO_MOVE_CAST(typename Executor::work)(other.impl_))
   {
   }

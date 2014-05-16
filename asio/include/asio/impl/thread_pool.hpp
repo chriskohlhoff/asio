@@ -25,12 +25,14 @@
 
 namespace asio {
 
-inline thread_pool::executor_type thread_pool::get_executor() const
+inline thread_pool::executor_type
+thread_pool::get_executor() const ASIO_NOEXCEPT
 {
   return executor_type(const_cast<thread_pool&>(*this));
 }
 
-inline execution_context& thread_pool::executor_type::context()
+inline execution_context&
+thread_pool::executor_type::context() ASIO_NOEXCEPT
 {
   return pool_;
 }
@@ -103,20 +105,22 @@ void thread_pool::executor_type::defer(ASIO_MOVE_ARG(Function) f)
   p.v = p.p = 0;
 }
 
-inline thread_pool::executor_type::work::work(const thread_pool::executor_type& e)
+inline thread_pool::executor_type::work::work(
+    const thread_pool::executor_type& e) ASIO_NOEXCEPT
   : scheduler_(e.pool_.scheduler_)
 {
   scheduler_.work_started();
 }
 
-inline thread_pool::executor_type::work::work(const work& other)
+inline thread_pool::executor_type::work::work(
+    const work& other) ASIO_NOEXCEPT
   : scheduler_(other.scheduler_)
 {
   scheduler_.work_started();
 }
 
 #if defined(ASIO_HAS_MOVE)
-inline thread_pool::executor_type::work::work(work&& other)
+inline thread_pool::executor_type::work::work(work&& other) ASIO_NOEXCEPT
   : scheduler_(other.scheduler_)
 {
   scheduler_.work_started();

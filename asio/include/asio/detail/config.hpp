@@ -183,6 +183,28 @@
 # endif // defined(ASIO_HAS_CONSTEXPR)
 #endif // !defined(ASIO_CONSTEXPR)
 
+// Support noexcept on compilers known to allow it.
+#if !defined(ASIO_NOEXCEPT)
+# if !defined(ASIO_DISABLE_NOEXCEPT)
+#  if (BOOST_VERSION >= 105300)
+#   define ASIO_NOEXCEPT BOOST_NOEXCEPT
+#  elif defined(__clang__)
+#   if __has_feature(__cxx_noexcept__)
+#    define ASIO_NOEXCEPT noexcept(true)
+#   endif // __has_feature(__cxx_noexcept__)
+#  elif defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#      define ASIO_NOEXCEPT noexcept(true)
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_NOEXCEPT)
+# if !defined(ASIO_NOEXCEPT)
+#  define ASIO_NOEXCEPT
+# endif // !defined(ASIO_NOEXCEPT)
+#endif // !defined(ASIO_NOEXCEPT)
+
 // Support automatic type deduction on compilers known to support it.
 #if !defined(ASIO_HAS_DECLTYPE)
 # if !defined(ASIO_DISABLE_DECLTYPE)

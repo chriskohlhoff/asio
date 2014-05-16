@@ -25,7 +25,7 @@
 
 namespace asio {
 
-inline execution_context& system_executor::context()
+inline execution_context& system_executor::context() ASIO_NOEXCEPT
 {
   return detail::global<context_impl>();
 }
