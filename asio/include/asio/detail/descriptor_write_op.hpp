@@ -19,11 +19,11 @@
 
 #if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
 #include "asio/detail/fenced_block.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/reactor_op.hpp"
 
 #include "asio/detail/push_options.hpp"

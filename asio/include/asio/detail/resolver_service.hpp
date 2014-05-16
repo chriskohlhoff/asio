@@ -21,7 +21,7 @@
 
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/detail/addressof.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/resolve_endpoint_op.hpp"
 #include "asio/detail/resolve_op.hpp"
 #include "asio/detail/resolver_service_base.hpp"

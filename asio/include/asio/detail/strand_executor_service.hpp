@@ -18,11 +18,11 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/executor_op.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/scheduler_operation.hpp"
 #include "asio/detail/scoped_ptr.hpp"
-#include "asio/detail/shared_ptr.hpp"
 #include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"

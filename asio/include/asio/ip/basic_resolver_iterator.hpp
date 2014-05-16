@@ -21,7 +21,7 @@
 #include <iterator>
 #include <string>
 #include <vector>
-#include "asio/detail/shared_ptr.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/ip/basic_resolver_entry.hpp"

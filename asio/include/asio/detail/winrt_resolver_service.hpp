@@ -21,8 +21,8 @@
 
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/winrt_async_manager.hpp"
 #include "asio/detail/winrt_resolve_op.hpp"

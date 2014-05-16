@@ -19,11 +19,11 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/completion_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/memory.hpp"
 
 #include "asio/detail/push_options.hpp"
 

@@ -22,10 +22,10 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
 #include "asio/detail/win_iocp_handle_read_op.hpp"

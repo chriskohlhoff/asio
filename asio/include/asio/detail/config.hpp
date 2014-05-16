@@ -311,6 +311,27 @@
 # endif // !defined(ASIO_DISABLE_STD_SHARED_PTR)
 #endif // !defined(ASIO_HAS_STD_SHARED_PTR)
 
+// Standard library support for allocator_arg_t.
+#if !defined(ASIO_HAS_STD_ALLOCATOR_ARG)
+# if !defined(ASIO_DISABLE_STD_ALLOCATOR_ARG)
+#  if defined(ASIO_HAS_CLANG_LIBCXX)
+#   define ASIO_HAS_STD_ALLOCATOR_ARG 1
+#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_ALLOCATOR_ARG 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1600)
+#    define ASIO_HAS_STD_ALLOCATOR_ARG 1
+#   endif // (_MSC_VER >= 1600)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_ALLOCATOR_ARG)
+#endif // !defined(ASIO_HAS_STD_ALLOCATOR_ARG)
+
 // Standard library support for atomic operations.
 #if !defined(ASIO_HAS_STD_ATOMIC)
 # if !defined(ASIO_DISABLE_STD_ATOMIC)
@@ -436,6 +457,28 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
 #endif // !defined(ASIO_HAS_STD_TYPE_TRAITS)
+
+// Standard library support for the nullptr_t type.
+#if !defined(ASIO_HAS_NULLPTR)
+# if !defined(ASIO_DISABLE_NULLPTR)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_nullptr__)
+#    define ASIO_HAS_NULLPTR 1
+#   endif // __has_feature(__cxx_rvalue_references__)
+#  elif defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_NULLPTR 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_NULLPTR 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_NULLPTR)
+#endif // !defined(ASIO_HAS_NULLPTR)
 
 // Standard library support for the cstdint header.
 #if !defined(ASIO_HAS_CSTDINT)

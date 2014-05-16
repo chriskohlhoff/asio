@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/coroutine/all.hpp>
-#include "asio/detail/weak_ptr.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/io_service.hpp"
 #include "asio/strand.hpp"

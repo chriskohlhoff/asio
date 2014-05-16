@@ -33,7 +33,6 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
 	asio/defer.hpp \
-	asio/detail/addressof.hpp \
 	asio/detail/arg_pack.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
@@ -50,6 +49,7 @@ nobase_include_HEADERS = \
 	asio/detail/completion_handler.hpp \
 	asio/detail/config.hpp \
 	asio/detail/consuming_buffers.hpp \
+	asio/detail/cstddef.hpp \
 	asio/detail/cstdint.hpp \
 	asio/detail/date_time_fwd.hpp \
 	asio/detail/deadline_timer_service.hpp \
@@ -64,7 +64,7 @@ nobase_include_HEADERS = \
 	asio/detail/executor_op.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
-	asio/detail/function.hpp \
+	asio/detail/functional.hpp \
 	asio/detail/gcc_arm_fenced_block.hpp \
 	asio/detail/gcc_hppa_fenced_block.hpp \
 	asio/detail/gcc_sync_fenced_block.hpp \
@@ -188,7 +188,6 @@ nobase_include_HEADERS = \
 	asio/detail/select_interrupter.hpp \
 	asio/detail/select_reactor.hpp \
 	asio/detail/service_registry.hpp \
-	asio/detail/shared_ptr.hpp \
 	asio/detail/signal_blocker.hpp \
 	asio/detail/signal_handler.hpp \
 	asio/detail/signal_init.hpp \
@@ -225,7 +224,6 @@ nobase_include_HEADERS = \
 	asio/detail/variadic_templates.hpp \
 	asio/detail/wait_handler.hpp \
 	asio/detail/wait_op.hpp \
-	asio/detail/weak_ptr.hpp \
 	asio/detail/wince_thread.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_fd_set_adapter.hpp \

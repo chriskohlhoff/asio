@@ -20,8 +20,8 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/io_service.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/win_iocp_overlapped_op.hpp"
 #include "asio/detail/win_iocp_io_service.hpp"

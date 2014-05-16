@@ -21,7 +21,7 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/detail/addressof.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/winrt_socket_connect_op.hpp"
 #include "asio/detail/winrt_ssocket_service_base.hpp"
 #include "asio/detail/winrt_utils.hpp"

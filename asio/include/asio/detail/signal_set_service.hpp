@@ -21,8 +21,8 @@
 #include <signal.h>
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/signal_handler.hpp"
 #include "asio/detail/signal_op.hpp"

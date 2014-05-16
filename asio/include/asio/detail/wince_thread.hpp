@@ -19,7 +19,7 @@
 
 #if defined(ASIO_WINDOWS) && defined(UNDER_CE)
 
-#include <memory>
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/throw_error.hpp"

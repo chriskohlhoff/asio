@@ -1,6 +1,6 @@
 //
-// detail/function.hpp
-// ~~~~~~~~~~~~~~~~~~~
+// detail/functional.hpp
+// ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_FUNCTION_HPP
-#define ASIO_DETAIL_FUNCTION_HPP
+#ifndef ASIO_DETAIL_FUNCTIONAL_HPP
+#define ASIO_DETAIL_FUNCTIONAL_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,11 +17,11 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_STD_FUNCTION)
-# include <functional>
-#else // defined(ASIO_HAS_STD_FUNCTION)
+#include <functional>
+
+#if !defined(ASIO_HAS_STD_FUNCTION)
 # include <boost/function.hpp>
-#endif // defined(ASIO_HAS_STD_FUNCTION)
+#endif // !defined(ASIO_HAS_STD_FUNCTION)
 
 namespace asio {
 namespace detail {
@@ -35,4 +35,4 @@ using boost::function;
 } // namespace detail
 } // namespace asio
 
-#endif // ASIO_DETAIL_FUNCTION_HPP
+#endif // ASIO_DETAIL_FUNCTIONAL_HPP

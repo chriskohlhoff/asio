@@ -23,13 +23,12 @@
 #include <cstdlib>
 #include <future>
 #include <locale>
-#include <memory>
 #include <robuffer.h>
 #include <windows.storage.streams.h>
 #include <wrl/implements.h>
 #include "asio/buffer.hpp"
 #include "asio/error_code.hpp"
-#include "asio/detail/addressof.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/socket_ops.hpp"
 
 #include "asio/detail/push_options.hpp"

@@ -20,8 +20,8 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/shared_ptr.hpp"
 #include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
