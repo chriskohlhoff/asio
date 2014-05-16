@@ -87,6 +87,19 @@ protected:
   T wrapped_;
 };
 
+template <typename T, typename = void>
+struct executor_wrapper_result_of0
+{
+  typedef void type;
+};
+
+template <typename T>
+struct executor_wrapper_result_of0<T,
+  typename executor_wrapper_check<typename result_of<T()>::type>::type>
+{
+  typedef typename result_of<T()>::type type;
+};
+
 } // namespace detail
 
 /// A call wrapper type to associate an object of type @c T with an executor of
@@ -100,6 +113,9 @@ class executor_wrapper
 #endif // !defined(GENERATING_DOCUMENTATION)
 {
 public:
+  /// The type of the wrapped object.
+  typedef T wrapped_type;
+
   /// The type of the associated executor.
   typedef Executor executor_type;
 
@@ -228,6 +244,18 @@ public:
   {
   }
 
+  /// Obtain a reference to the wrapped object.
+  wrapped_type& get_wrapped()
+  {
+    return this->wrapped_;
+  }
+
+  /// Obtain a reference to the wrapped object.
+  const wrapped_type& get_wrapped() const
+  {
+    return this->wrapped_;
+  }
+
   /// Obtain the associated executor.
   executor_type get_executor() const
   {
@@ -256,12 +284,12 @@ public:
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
       //   || defined(GENERATING_DOCUMENTATION)
 
-  typename result_of<T()>::type operator()()
+  typename detail::executor_wrapper_result_of0<T>::type operator()()
   {
     return this->wrapped_();
   }
 
-  typename result_of<T()>::type operator()() const
+  typename detail::executor_wrapper_result_of0<T>::type operator()() const
   {
     return this->wrapped_();
   }
@@ -291,8 +319,6 @@ private:
   typedef detail::executor_wrapper_base<T, Executor,
     uses_executor<T, Executor>::value> base_type;
   template <typename, typename> friend class executor_wrapper;
-  friend class async_result<executor_wrapper>;
-  friend class continuation_of<executor_wrapper>;
 };
 
 /// Determine the type to use when associating an executor of type @c Executor
@@ -348,7 +374,7 @@ public:
   typedef typename async_result<T>::type type;
 
   explicit async_result(executor_wrapper<T, Executor>& w)
-    : wrapped_(w.wrapped_)
+    : wrapped_(w.get_wrapped())
   {
   }
 
@@ -361,16 +387,18 @@ private:
   async_result<T> wrapped_;
 };
 
-template <typename T, typename Executor>
-struct continuation_of<executor_wrapper<T, Executor> >
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename T, typename Executor, typename... Args>
+struct continuation_of<executor_wrapper<T, Executor>(Args...)>
 {
-  typedef typename continuation_of<T>::signature signature;
+  typedef typename continuation_of<T(Args...)>::signature signature;
 
   template <typename C>
   struct chain_type
   {
     typedef executor_wrapper<
-      typename continuation_of<T>::template chain_type<C>::type,
+      typename continuation_of<T(Args...)>::template chain_type<C>::type,
       Executor> type;
   };
 
@@ -378,10 +406,71 @@ struct continuation_of<executor_wrapper<T, Executor> >
   static typename chain_type<C>::type chain(
       executor_wrapper<T, Executor> w, ASIO_MOVE_ARG(C) c)
   {
-    return typename chain_type<C>::type(executor_arg_t(), w.get_executor(),
-        continuation_of<T>::chain(w.wrapped_, ASIO_MOVE_CAST(C)(c)));
+    return typename chain_type<C>::type(
+        executor_arg_t(), w.get_executor(),
+        continuation_of<T(Args...)>::chain(
+          w.get_wrapped(), ASIO_MOVE_CAST(C)(c)));
   }
 };
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename T, typename Executor>
+struct continuation_of<executor_wrapper<T, Executor>()>
+{
+  typedef typename continuation_of<T()>::signature signature;
+
+  template <typename C>
+  struct chain_type
+  {
+    typedef executor_wrapper<
+      typename continuation_of<T()>::template chain_type<C>::type,
+      Executor> type;
+  };
+
+  template <typename C>
+  static typename chain_type<C>::type chain(
+      executor_wrapper<T, Executor> w, ASIO_MOVE_ARG(C) c)
+  {
+    return typename chain_type<C>::type(
+        executor_arg_t(), w.get_executor(),
+        continuation_of<T()>::chain(
+          w.get_wrapped(), ASIO_MOVE_CAST(C)(c)));
+  }
+};
+
+# define ASIO_PRIVATE_CONTINUATION_OF_DEF(n) \
+  template <typename T, typename Executor, ASIO_VARIADIC_TPARAMS(n)> \
+  struct continuation_of< \
+    executor_wrapper<T, Executor>(ASIO_VARIADIC_TARGS(n))> \
+  { \
+    typedef typename continuation_of< \
+      T(ASIO_VARIADIC_TARGS(n))>::signature signature; \
+  \
+    template <typename C> \
+    struct chain_type \
+    { \
+      typedef executor_wrapper< \
+        typename continuation_of< \
+          T(ASIO_VARIADIC_TARGS(n))>::template chain_type<C>::type, \
+        Executor> type; \
+    }; \
+  \
+    template <typename C> \
+    static typename chain_type<C>::type chain( \
+        executor_wrapper<T, Executor> w, ASIO_MOVE_ARG(C) c) \
+    { \
+      return typename chain_type<C>::type( \
+          executor_arg_t(), w.get_executor(), \
+          continuation_of<T(ASIO_VARIADIC_TARGS(n))>::chain( \
+            w.get_wrapped(), ASIO_MOVE_CAST(C)(c))); \
+    } \
+  }; \
+/**/
+ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_CONTINUATION_OF_DEF)
+#undef ASIO_PRIVATE_CONTINUATION_OF_DEF
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 

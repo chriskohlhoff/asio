@@ -123,6 +123,44 @@ ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_TYPE_LIST_CAT_DEF)
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+template <typename R, typename Types>
+struct type_list_sig;
+
+template <typename R1, typename R2>
+struct type_list_sig<R1, R2()>
+{
+  typedef R1 type();
+};
+
+template <typename R1, typename R2, typename T0>
+struct type_list_sig<R1, R2(T0)>
+{
+  typedef R1 type(T0);
+};
+
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename R1, typename R2, typename T0, typename... Tn>
+struct type_list_sig<R1, R2(T0, Tn...)>
+{
+  typedef R1 type(T0, Tn...);
+};
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+#define ASIO_PRIVATE_TYPE_LIST_SIG_DEF(n) \
+template <typename R1, typename R2, \
+  typename T0, ASIO_VARIADIC_TPARAMS(n)> \
+struct type_list_sig<R1, R2(T0, ASIO_VARIADIC_TARGS(n))> \
+{ \
+  typedef R1 type(T0, ASIO_VARIADIC_TARGS(n)); \
+}; \
+/**/
+ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_TYPE_LIST_SIG_DEF)
+#undef ASIO_PRIVATE_TYPE_LIST_SIG_DEF
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
 } // namespace detail
 } // namespace asio
 

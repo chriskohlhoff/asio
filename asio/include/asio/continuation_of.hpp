@@ -126,16 +126,16 @@ private:
   Continuation continuation_;
 };
 
-template <typename Function>
-struct default_continuation_of_implementation
+template <typename Function, typename ResultOfArgs>
+struct default_continuation_of
 {
   typedef typename continuation_signature<
-    typename result_type<Function>::type>::signature signature;
+    typename result_of<ResultOfArgs>::type>::signature signature;
 
   template <typename C>
   struct chain_type
   {
-    typedef continuation_chain<typename result_type<Function>::type,
+    typedef continuation_chain<typename result_of<ResultOfArgs>::type,
       Function, typename decay<C>::type> type;
   };
 
@@ -143,21 +143,26 @@ struct default_continuation_of_implementation
   static typename chain_type<C>::type chain(
       ASIO_MOVE_ARG(F) f, ASIO_MOVE_ARG(C) c)
   {
-    return continuation_chain<typename result_type<Function>::type,
-      Function, typename decay<C>::type>(
+    return typename chain_type<C>::type(
         ASIO_MOVE_CAST(F)(f), ASIO_MOVE_CAST(C)(c));
   }
 };
 
 } // namespace detail
 
+/// Not defined.
+template <typename>
+struct continuation_of;
+
+#if defined(GENERATING_DOCUMENTATION)
+
 /// Type trait used to attach a continuation to a function.
 /**
  * The <tt>continuation_of</tt> template enables customisation of function
  * invocation and passing of the result to a continuation.
  *
- * A program may specialise this template if the <tt>Function</tt> template
- * parameter in the specialisation is a user-defined type.
+ * A program may specialise this template for a user-defined <tt>Function</tt>
+ * type.
  *
  * Specialisations of continuation_of shall provide:
  *
@@ -172,33 +177,22 @@ struct default_continuation_of_implementation
  * <tt>chain</tt> member function returns a MoveConstructible function object
  * that accepts the same arguments as <tt>f</tt>.
  */
-template <typename Function, typename = void>
-struct continuation_of
-#if !defined(GENERATING_DOCUMENTATION)
-  : conditional<
-      is_same<Function, typename decay<Function>::type>::value,
-      asio::detail::default_continuation_of_implementation<Function>,
-      continuation_of<typename decay<Function>::type> >::type
-#endif // !defined(GENERATING_DOCUMENTATION)
+template <typename Function, typename... Args>
+struct continuation_of<Function(Args...)>
 {
-#if defined(GENERATING_DOCUMENTATION)
   /// The signature of a continuation.
   /**
-   * Type: <tt>void(R)</tt>, where <tt>R</tt> is determined as follows:
+   * Type:
    *
-   * @li if <tt>Function</tt> and <tt>decay<Function>::type</tt> are different
+   * @li If <tt>Function</tt> and <tt>decay<Function>::type</tt> are different
    * types, <tt>continuation_of<typename decay<Function>::type>::type</tt>;
    *
-   * @li if <tt>Function</tt> is a function pointer type, the return type;
+   * @li Let <tt>R</tt> be the type produced by <tt>typename
+   * result_of<Function(Args...)>::type</tt>. If <tt>R</tt> is <tt>void</tt>,
+   * <tt>void()</tt>. If <tt>R</tt> is non-void, <tt>void(R)</tt>.
    *
-   * @li if <tt>Function</tt> is a function object type with a single,
-   * non-template overload of <tt>operator()</tt>, the return type of
-   * <tt>operator()</tt> (N.B. requires C++11 <tt>decltype</tt>);
-   *
-   * @li if <tt>Function</tt> is a function object type with a nested type
-   * <tt>result_type</tt>, <tt>result_type</tt>;
-   *
-   * @li otherwise, the program is ill-formed.
+   * @li Otherwise, if <tt>result_of<Function(Args...)></tt> does not contain a
+   * nested type named <tt>type/tt>, the program is ill-formed.
    */
   typedef see_below signature;
 
@@ -219,8 +213,39 @@ struct continuation_of
    */
   template <typename F, typename C>
   static typename chain_type<C>::type chain(F&& f, C&& c);
-#endif // defined(GENERATING_DOCUMENTATION)
 };
+
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename Function, typename... Args>
+struct continuation_of<Function(Args...)>
+  : conditional<
+      is_same<Function, typename decay<Function>::type>::value,
+      asio::detail::default_continuation_of<Function, Function(Args...)>,
+      continuation_of<typename decay<Function>::type> >::type {};
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename Function>
+struct continuation_of<Function()>
+  : conditional<
+      is_same<Function, typename decay<Function>::type>::value,
+      asio::detail::default_continuation_of<Function, Function()>,
+      continuation_of<typename decay<Function>::type> >::type {};
+
+# define ASIO_PRIVATE_CONTINUATION_OF_DEF(n) \
+  template <typename Function, ASIO_VARIADIC_TPARAMS(n)> \
+  struct continuation_of<Function(ASIO_VARIADIC_TARGS(n))> \
+    : conditional< \
+        is_same<Function, typename decay<Function>::type>::value, \
+        asio::detail::default_continuation_of< \
+          Function, Function(ASIO_VARIADIC_TARGS(n))>, \
+        continuation_of<typename decay<Function>::type> >::type {}; \
+  /**/
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_CONTINUATION_OF_DEF)
+#undef ASIO_PRIVATE_CONTINUATION_OF_DEF
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 } // namespace asio
 

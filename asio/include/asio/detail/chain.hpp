@@ -107,6 +107,7 @@ class active_chain
 public:
   typedef passive_chain<Signature, CompletionTokens> passive;
   typedef typename passive::handler handler;
+  typedef typename passive::tail_signature tail_signature;
   typedef typename passive::terminal_handler terminal_handler;
   typedef typename passive::handler_executor handler_executor;
   typedef typename passive::executor_type executor_type;
@@ -229,6 +230,8 @@ class passive_chain<Signature, void(CompletionToken)>
 {
 public:
   typedef typename handler_type<CompletionToken, Signature>::type handler;
+  typedef typename type_list_sig<handler, Signature>::type result_of_arg;
+  typedef typename continuation_of<result_of_arg>::signature tail_signature;
   typedef handler terminal_handler;
   typedef typename get_executor_type<handler>::type handler_executor;
   typedef handler_executor executor_type;
@@ -311,7 +314,8 @@ class passive_chain
 public:
   typedef typename type_list<CompletionTokens>::head head_token;
   typedef typename handler_type<head_token, Signature>::type handler;
-  typedef typename continuation_of<handler>::signature tail_signature;
+  typedef typename type_list_sig<handler, Signature>::type result_of_arg;
+  typedef typename continuation_of<result_of_arg>::signature tail_signature;
   typedef typename type_list<CompletionTokens>::tail tail_tokens;
   typedef active_chain<tail_signature, tail_tokens> tail;
   typedef typename tail::terminal_handler terminal_handler;
@@ -401,7 +405,7 @@ public:
   template <typename... Tn>
   void operator()(ASIO_MOVE_ARG(Tn)... tn)
   {
-    continuation_of<handler>::chain(
+    continuation_of<result_of_arg>::chain(
         ASIO_MOVE_CAST(handler)(handler_),
         ASIO_MOVE_CAST(tail)(tail_))(
           ASIO_MOVE_CAST(Tn)(tn)...);
@@ -411,7 +415,7 @@ public:
 
   void operator()()
   {
-    continuation_of<handler>::chain(
+    continuation_of<result_of_arg>::chain(
         ASIO_MOVE_CAST(handler)(handler_),
         ASIO_MOVE_CAST(tail)(tail_))();
   }
@@ -420,7 +424,7 @@ public:
   template <ASIO_VARIADIC_TPARAMS(n)> \
   void operator()(ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    continuation_of<handler>::chain( \
+    continuation_of<result_of_arg>::chain( \
         ASIO_MOVE_CAST(handler)(handler_), \
         ASIO_MOVE_CAST(tail)(tail_))( \
           ASIO_VARIADIC_MOVE_ARGS(n)); \
@@ -498,37 +502,160 @@ public:
   }
 };
 
-template <typename Signature, typename CompletionTokens>
-struct continuation_of<detail::passive_chain<Signature, CompletionTokens> >
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename Signature, typename CompletionTokens, typename... Args>
+struct continuation_of<
+  detail::passive_chain<Signature, CompletionTokens>(Args...)>
 {
-  typedef typename continuation_of<
-    typename detail::passive_chain<
-      Signature, CompletionTokens>::terminal_handler>::signature signature;
+  typedef typename detail::passive_chain<
+    Signature, CompletionTokens>::tail_signature signature;
 
   template <typename T>
-  static detail::passive_chain<Signature,
+  struct chain_type
+  {
+    typedef detail::passive_chain<Signature,
+      typename detail::type_list_cat<CompletionTokens, void(T)>::type> type;
+  };
+
+  template <typename T>
+  static typename chain_type<T>::type
+  chain(detail::passive_chain<Signature, CompletionTokens> c,
+      ASIO_MOVE_ARG(T) t)
+  {
+    return c.chain(t);
+  }
+};
+
+template <typename Signature, typename CompletionTokens, typename... Args>
+struct continuation_of<
+  detail::active_chain<Signature, CompletionTokens>(Args...)>
+{
+  typedef typename detail::active_chain<
+    Signature, CompletionTokens>::tail_signature signature;
+
+  template <typename T>
+  struct chain_type
+  {
+    typedef detail::active_chain<Signature,
+      typename detail::type_list_cat<CompletionTokens, void(T)>::type> type;
+  };
+
+  template <typename T>
+  static detail::active_chain<Signature,
     typename detail::type_list_cat<CompletionTokens, void(T)>::type>
-  chain(detail::passive_chain<Signature, CompletionTokens> c, ASIO_MOVE_ARG(T) t)
+  chain(detail::active_chain<Signature, CompletionTokens> c,
+      ASIO_MOVE_ARG(T) t)
+  {
+    return c.chain(ASIO_MOVE_CAST(T)(t));
+  }
+};
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename Signature, typename CompletionTokens>
+struct continuation_of<
+  detail::passive_chain<Signature, CompletionTokens>()>
+{
+  typedef typename detail::passive_chain<
+    Signature, CompletionTokens>::tail_signature signature;
+
+  template <typename T>
+  struct chain_type
+  {
+    typedef detail::passive_chain<Signature,
+      typename detail::type_list_cat<CompletionTokens, void(T)>::type> type;
+  };
+
+  template <typename T>
+  static typename chain_type<T>::type
+  chain(detail::passive_chain<Signature, CompletionTokens> c,
+      ASIO_MOVE_ARG(T) t)
   {
     return c.chain(t);
   }
 };
 
 template <typename Signature, typename CompletionTokens>
-struct continuation_of<detail::active_chain<Signature, CompletionTokens> >
+struct continuation_of<
+  detail::active_chain<Signature, CompletionTokens>()>
 {
-  typedef typename continuation_of<
-    typename detail::active_chain<
-      Signature, CompletionTokens>::terminal_handler>::signature signature;
+  typedef typename detail::active_chain<
+    Signature, CompletionTokens>::tail_signature signature;
+
+  template <typename T>
+  struct chain_type
+  {
+    typedef detail::active_chain<Signature,
+      typename detail::type_list_cat<CompletionTokens, void(T)>::type> type;
+  };
 
   template <typename T>
   static detail::active_chain<Signature,
     typename detail::type_list_cat<CompletionTokens, void(T)>::type>
-  chain(detail::active_chain<Signature, CompletionTokens> c, ASIO_MOVE_ARG(T) t)
+  chain(detail::active_chain<Signature, CompletionTokens> c,
+      ASIO_MOVE_ARG(T) t)
   {
     return c.chain(ASIO_MOVE_CAST(T)(t));
   }
 };
+
+# define ASIO_PRIVATE_CONTINUATION_OF_DEF(n) \
+  template <typename Signature, typename CompletionTokens, \
+    ASIO_VARIADIC_TPARAMS(n)> \
+  struct continuation_of< \
+    detail::passive_chain<Signature, CompletionTokens>( \
+        ASIO_VARIADIC_TARGS(n))> \
+  { \
+    typedef typename detail::passive_chain< \
+      Signature, CompletionTokens>::tail_signature signature; \
+  \
+    template <typename T> \
+    struct chain_type \
+    { \
+      typedef detail::passive_chain<Signature, \
+        typename detail::type_list_cat<CompletionTokens, void(T)>::type> type; \
+    }; \
+  \
+    template <typename T> \
+    static typename chain_type<T>::type \
+    chain(detail::passive_chain<Signature, CompletionTokens> c, \
+        ASIO_MOVE_ARG(T) t) \
+    { \
+      return c.chain(t); \
+    } \
+  }; \
+  \
+  template <typename Signature, typename CompletionTokens, \
+    ASIO_VARIADIC_TPARAMS(n)> \
+  struct continuation_of< \
+    detail::active_chain<Signature, CompletionTokens>( \
+        ASIO_VARIADIC_TARGS(n))> \
+  { \
+    typedef typename detail::active_chain< \
+      Signature, CompletionTokens>::tail_signature signature; \
+  \
+    template <typename T> \
+    struct chain_type \
+    { \
+      typedef detail::active_chain<Signature, \
+        typename detail::type_list_cat<CompletionTokens, void(T)>::type> type; \
+    }; \
+  \
+    template <typename T> \
+    static detail::active_chain<Signature, \
+      typename detail::type_list_cat<CompletionTokens, void(T)>::type> \
+    chain(detail::active_chain<Signature, CompletionTokens> c, \
+        ASIO_MOVE_ARG(T) t) \
+    { \
+      return c.chain(ASIO_MOVE_CAST(T)(t)); \
+    } \
+  }; \
+/**/
+ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_CONTINUATION_OF_DEF)
+#undef ASIO_PRIVATE_CONTINUATION_OF_DEF
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 } // namespace asio
 
