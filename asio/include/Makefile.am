@@ -194,6 +194,7 @@ nobase_include_HEADERS = \
 	asio/detail/signal_init.hpp \
 	asio/detail/signal_op.hpp \
 	asio/detail/signal_set_service.hpp \
+	asio/detail/signature.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_option.hpp \
@@ -220,7 +221,6 @@ nobase_include_HEADERS = \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
 	asio/detail/tss_ptr.hpp \
-	asio/detail/type_list.hpp \
 	asio/detail/type_traits.hpp \
 	asio/detail/variadic_templates.hpp \
 	asio/detail/wait_handler.hpp \

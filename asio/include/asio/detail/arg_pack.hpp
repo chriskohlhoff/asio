@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/type_list.hpp"
+#include "asio/detail/signature.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
 
@@ -100,9 +100,9 @@ public:
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 private:
-  typedef typename decay<typename type_list<Signature>::head>::type value_type;
+  typedef typename decay<typename signature<Signature>::head>::type value_type;
   value_type value_;
-  typedef arg_pack<typename type_list<Signature>::tail> next_type;
+  typedef arg_pack<typename signature<Signature>::tail> next_type;
   next_type next_;
 };
 
