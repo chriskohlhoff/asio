@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/result_type.hpp"
+#include "asio/detail/signature.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
 
@@ -24,18 +25,6 @@
 
 namespace asio {
 namespace detail {
-
-template <typename Argument>
-struct continuation_signature
-{
-  typedef void signature(Argument);
-};
-
-template <>
-struct continuation_signature<void>
-{
-  typedef void signature();
-};
 
 template <typename Result, typename Function, typename Continuation>
 class continuation_chain
@@ -126,17 +115,23 @@ private:
   Continuation continuation_;
 };
 
-template <typename Function, typename ResultOfArgs>
-struct default_continuation_of
+template <typename Signature>
+class default_continuation_of
 {
-  typedef typename continuation_signature<
-    typename result_of<ResultOfArgs>::type>::signature signature;
+  // If you get a compile error on the next line it is because your function
+  // object is not callable with the specified signature.
+  typedef typename result_of<Signature>::type function_result_type;
+  typedef typename signature<Signature>::result function_object_type;
+
+public:
+  typedef typename signature_append<
+    void(), function_result_type>::type signature;
 
   template <typename C>
   struct chain_type
   {
-    typedef continuation_chain<typename result_of<ResultOfArgs>::type,
-      Function, typename decay<C>::type> type;
+    typedef continuation_chain<function_result_type,
+      function_object_type, typename decay<C>::type> type;
   };
 
   template <typename F, typename C>
@@ -221,7 +216,7 @@ template <typename Function, typename... Args>
 struct continuation_of<Function(Args...)>
   : conditional<
       is_same<Function, typename decay<Function>::type>::value,
-      asio::detail::default_continuation_of<Function, Function(Args...)>,
+      asio::detail::default_continuation_of<Function(Args...)>,
       continuation_of<typename decay<Function>::type> >::type {};
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -230,7 +225,7 @@ template <typename Function>
 struct continuation_of<Function()>
   : conditional<
       is_same<Function, typename decay<Function>::type>::value,
-      asio::detail::default_continuation_of<Function, Function()>,
+      asio::detail::default_continuation_of<Function()>,
       continuation_of<typename decay<Function>::type> >::type {};
 
 # define ASIO_PRIVATE_CONTINUATION_OF_DEF(n) \
@@ -239,7 +234,7 @@ struct continuation_of<Function()>
     : conditional< \
         is_same<Function, typename decay<Function>::type>::value, \
         asio::detail::default_continuation_of< \
-          Function, Function(ASIO_VARIADIC_TARGS(n))>, \
+          Function(ASIO_VARIADIC_TARGS(n))>, \
         continuation_of<typename decay<Function>::type> >::type {}; \
   /**/
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_CONTINUATION_OF_DEF)

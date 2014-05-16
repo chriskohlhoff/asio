@@ -120,6 +120,14 @@ ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_SIGNATURE_CAT_DEF)
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+template <typename Signature, typename T>
+struct signature_append
+  : signature_cat<Signature, void(T)> {};
+
+template <typename R>
+struct signature_append<R(), void>
+  : signature<R()> {};
+
 } // namespace detail
 } // namespace asio
 
