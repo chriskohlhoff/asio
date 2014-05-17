@@ -21,6 +21,7 @@
 #include "asio/detail/arg_pack.hpp"
 #include "asio/detail/signature.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/executor_work.hpp"
 #include "asio/get_executor.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/is_executor.hpp"
@@ -121,15 +122,15 @@ public:
 #if defined(ASIO_HAS_MOVE)
   active_chain(active_chain&& other)
     : passive_(ASIO_MOVE_CAST(passive)(other.passive_)),
-      work_(ASIO_MOVE_CAST(typename handler_executor::work)(other.work_))
+      work_(ASIO_MOVE_CAST(executor_work<handler_executor>)(other.work_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
 
   active_chain(ASIO_MOVE_ARG(passive) p,
-      ASIO_MOVE_ARG(typename handler_executor::work) w)
+      ASIO_MOVE_ARG(executor_work<handler_executor>) w)
     : passive_(ASIO_MOVE_CAST(passive)(p)),
-      work_(ASIO_MOVE_CAST(typename handler_executor::work)(w))
+      work_(ASIO_MOVE_CAST(executor_work<handler_executor>)(w))
   {
   }
 
@@ -180,7 +181,7 @@ public:
     return active_chain<Signature,
       typename signature_cat<CompletionTokens, void(T)>::type>(
         passive_.chain(ASIO_MOVE_CAST(T)(t)),
-        ASIO_MOVE_CAST(typename handler_executor::work)(work_));
+        ASIO_MOVE_CAST(executor_work<handler_executor>)(work_));
   }
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -222,7 +223,7 @@ public:
 
 private:
   passive passive_;
-  typename handler_executor::work work_;
+  executor_work<handler_executor> work_;
 };
 
 template <typename Signature, typename CompletionToken>

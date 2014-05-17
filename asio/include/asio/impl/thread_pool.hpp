@@ -37,6 +37,16 @@ thread_pool::executor_type::context() ASIO_NOEXCEPT
   return pool_;
 }
 
+inline void thread_pool::executor_type::work_started() ASIO_NOEXCEPT
+{
+  pool_.scheduler_.work_started();
+}
+
+inline void thread_pool::executor_type::work_finished() ASIO_NOEXCEPT
+{
+  pool_.scheduler_.work_finished();
+}
+
 template <typename Function>
 void thread_pool::executor_type::dispatch(ASIO_MOVE_ARG(Function) f)
 {
@@ -103,33 +113,6 @@ void thread_pool::executor_type::defer(ASIO_MOVE_ARG(Function) f)
 
   pool_.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
-}
-
-inline thread_pool::executor_type::work::work(
-    const thread_pool::executor_type& e) ASIO_NOEXCEPT
-  : scheduler_(e.pool_.scheduler_)
-{
-  scheduler_.work_started();
-}
-
-inline thread_pool::executor_type::work::work(
-    const work& other) ASIO_NOEXCEPT
-  : scheduler_(other.scheduler_)
-{
-  scheduler_.work_started();
-}
-
-#if defined(ASIO_HAS_MOVE)
-inline thread_pool::executor_type::work::work(work&& other) ASIO_NOEXCEPT
-  : scheduler_(other.scheduler_)
-{
-  scheduler_.work_started();
-}
-#endif // defined(ASIO_HAS_MOVE)
-
-inline thread_pool::executor_type::work::~work()
-{
-  scheduler_.work_finished();
 }
 
 } // namespace asio

@@ -29,8 +29,6 @@ template <typename Executor>
 class strand_executor
 {
 public:
-  class work;
-
   /// Default constructor.
   /**
    * This constructor is only valid if the underlying executor type is default
@@ -147,6 +145,24 @@ public:
     return executor_.context();
   }
 
+  /// Inform the strand that it has some outstanding work to do.
+  /**
+   * The strand delegates this call to its underlying executor.
+   */
+  void work_started() ASIO_NOEXCEPT
+  {
+    executor_.work_started();
+  }
+
+  /// Inform the strand that some work is no longer outstanding.
+  /**
+   * The strand delegates this call to its underlying executor.
+   */
+  void work_finished() ASIO_NOEXCEPT
+  {
+    executor_.work_finished();
+  }
+
   /// Request the strand to invoke the given function object.
   /**
    * This function is used to ask the strand to execute the given function
@@ -220,55 +236,9 @@ public:
   }
 
 private:
-  friend class work;
   Executor executor_;
   typedef detail::strand_executor_service::implementation_type implementation_type;
   implementation_type impl_;
-};
-
-/// Class to inform the strand when it has work to do.
-/**
- * The work class is used to inform the strand when work starts and finishes.
- * The strand passes this information to its underlying executor.
- *
- * The work class is copy-constructible so that it may be used as a data member
- * in a handler class. It is not assignable.
- */
-template <typename Executor>
-class strand_executor<Executor>::work
-{
-public:
-  /// Constructor notifies the strand that work is starting.
-  explicit work(const strand_executor<Executor>& e) ASIO_NOEXCEPT
-    : impl_(e.executor_)
-  {
-  }
-
-  /// Copy constructor notifies the strand that work is continuing.
-  work(const work& other) ASIO_NOEXCEPT
-    : impl_(other.impl_)
-  {
-  }
-
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Copy constructor notifies the strand that work is continuing.
-  work(work&& other) ASIO_NOEXCEPT
-    : impl_(ASIO_MOVE_CAST(typename Executor::work)(other.impl_))
-  {
-  }
-#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-
-  /// Destructor notifies the strand that the work is complete.
-  ~work()
-  {
-  }
-
-private:
-  // Prevent assignment.
-  void operator=(const work& other);
-
-  // The underlying executor's work.
-  typename Executor::work impl_;
 };
 
 #if !defined(GENERATING_DOCUMENTATION)

@@ -17,7 +17,7 @@
 
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/fenced_block.hpp"
-#include "asio/detail/scheduler_allocator.hpp"
+#include "asio/executor_work.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -30,14 +30,12 @@ class strand_executor_service::invoker
 public:
   invoker(const implementation_type& impl, Executor& ex)
     : impl_(impl),
-      executor_(ex),
       work_(ex)
   {
   }
 
   invoker(const invoker& other)
     : impl_(other.impl_),
-      executor_(other.executor_),
       work_(other.work_)
   {
   }
@@ -45,8 +43,7 @@ public:
 #if defined(ASIO_HAS_MOVE)
   invoker(invoker&& other)
     : impl_(ASIO_MOVE_CAST(implementation_type)(other.impl_)),
-      executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
-      work_(ASIO_MOVE_CAST(typename Executor::work)(other.work_))
+      work_(ASIO_MOVE_CAST(executor_work<Executor>)(other.work_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
@@ -65,7 +62,7 @@ public:
 
       if (more_handlers)
       {
-        Executor ex(this_->executor_);
+        Executor ex(this_->work_.get_executor());
         ex.post(ASIO_MOVE_CAST(invoker)(*this_));
       }
     }
@@ -92,8 +89,7 @@ public:
 
 private:
   implementation_type impl_;
-  Executor executor_;
-  typename Executor::work work_;
+  executor_work<Executor> work_;
 };
 
 template <typename Executor, typename Function>

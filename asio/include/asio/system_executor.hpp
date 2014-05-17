@@ -36,29 +36,24 @@ namespace asio {
 class system_executor
 {
 public:
-  /// Tracks outstanding work associated with the executor.
-  class work
-  {
-  public:
-    /// Constructor.
-    /**
-     * For the unspecified executor, this is a no-op.
-     */
-    explicit work(system_executor) ASIO_NOEXCEPT
-    {
-    }
-
-    /// Destructor.
-    /**
-     * For the unspecified executor, this is a no-op.
-     */
-    ~work()
-    {
-    }
-  };
-
   /// Obtain the underlying execution context.
   execution_context& context() ASIO_NOEXCEPT;
+
+  /// Inform the executor that it has some outstanding work to do.
+  /**
+   * For the system executor, this is a no-op.
+   */
+  void work_started() ASIO_NOEXCEPT
+  {
+  }
+
+  /// Inform the executor that some work is no longer outstanding.
+  /**
+   * For the system executor, this is a no-op.
+   */
+  void work_finished() ASIO_NOEXCEPT
+  {
+  }
 
   /// Request the system executor to invoke the given function object.
   /**

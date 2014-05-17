@@ -83,11 +83,24 @@ private:
 class thread_pool::executor_type
 {
 public:
-  /// Tracks outstanding work associated with the executor.
-  class work;
-
   /// Obtain the underlying execution context.
   execution_context& context() ASIO_NOEXCEPT;
+
+  /// Inform the thread pool that it has some outstanding work to do.
+  /**
+   * This function is used to inform the thread pool that some work has begun.
+   * This ensures that the thread pool's join() function will not return while
+   * the work is underway.
+   */
+  void work_started() ASIO_NOEXCEPT;
+
+  /// Inform the thread pool that some work is no longer outstanding.
+  /**
+   * This function is used to inform the thread pool that some work has
+   * finished. Once the count of unfinished work reaches zero, the thread
+   * pool's join() function is permitted to exit.
+   */
+  void work_finished() ASIO_NOEXCEPT;
 
   /// Request the thread pool to invoke the given function object.
   /**
@@ -149,61 +162,6 @@ private:
 
   // The underlying thread pool.
   thread_pool& pool_;
-};
-
-/// Class to inform the thread pool when it has work to do.
-/**
- * The work class is used to inform the thread pool when work starts and
- * finishes. This ensures that the thread pool's @c join() function will not
- * return while work is underway, and that it does return when there is no
- * unfinished work remaining.
- *
- * The work class is copy-constructible so that it may be used as a data member
- * in a handler class. It is not assignable.
- */
-class thread_pool::executor_type::work
-{
-public:
-  /// Constructor notifies the thread pool that work is starting.
-  /**
-   * The constructor is used to inform the thread pool that some work has
-   * begun. This ensures that the thread pool's join() function will not return
-   * while the work is underway.
-   */
-  explicit work(const thread_pool::executor_type& e) ASIO_NOEXCEPT;
-
-  /// Copy constructor notifies the thread pool that work is continuing.
-  /**
-   * The copy constructor is used to inform the thread pool that some work is
-   * continuing. This ensures that the thread pool's join() function will not
-   * return while the work is underway.
-   */
-  work(const work& other) ASIO_NOEXCEPT;
-
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Copy constructor notifies the thread pool that work is continuing.
-  /**
-   * The move constructor is used to inform the thread pool that some work is
-   * continuing. This ensures that the thread pool's join() function will not
-   * return while the work is underway.
-   */
-  work(work&& other) ASIO_NOEXCEPT;
-#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-
-  /// Destructor notifies the thread pool that the work is complete.
-  /**
-   * The destructor is used to inform the thread pool that some work has
-   * finished. Once the count of unfinished work reaches zero, the thread
-   * pool's join() function is permitted to exit.
-   */
-  ~work();
-
-private:
-  // Prevent assignment.
-  void operator=(const work& other);
-
-  // The underlying scheduler.
-  detail::scheduler& scheduler_;
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
