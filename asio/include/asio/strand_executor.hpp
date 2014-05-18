@@ -174,12 +174,15 @@ public:
    * @param f The function object to be called. The executor will make
    * a copy of the handler object as required. The function signature of the
    * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
    */
-  template <typename Function>
-  void dispatch(ASIO_MOVE_ARG(Function) f)
+  template <typename Function, typename Allocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a)
   {
     detail::strand_executor_service::dispatch(impl_,
-        executor_, ASIO_MOVE_CAST(Function)(f));
+        executor_, ASIO_MOVE_CAST(Function)(f), a);
   }
 
   /// Request the system executor to invoke the given function object.
@@ -191,12 +194,15 @@ public:
    * @param f The function object to be called. The executor will make
    * a copy of the handler object as required. The function signature of the
    * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
    */
-  template <typename Function>
-  void post(ASIO_MOVE_ARG(Function) f)
+  template <typename Function, typename Allocator>
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a)
   {
     detail::strand_executor_service::post(impl_,
-        executor_, ASIO_MOVE_CAST(Function)(f));
+        executor_, ASIO_MOVE_CAST(Function)(f), a);
   }
 
   /// Request the system executor to invoke the given function object.
@@ -208,12 +214,15 @@ public:
    * @param f The function object to be called. The executor will make
    * a copy of the handler object as required. The function signature of the
    * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
    */
-  template <typename Function>
-  void defer(ASIO_MOVE_ARG(Function) f)
+  template <typename Function, typename Allocator>
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a)
   {
     detail::strand_executor_service::defer(impl_,
-        executor_, ASIO_MOVE_CAST(Function)(f));
+        executor_, ASIO_MOVE_CAST(Function)(f), a);
   }
 
   /// Associate this executor with the specified object.

@@ -22,6 +22,7 @@
 #include "asio/detail/signature.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/executor_work.hpp"
+#include "asio/get_allocator.hpp"
 #include "asio/get_executor.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/is_executor.hpp"
@@ -30,6 +31,20 @@
 
 namespace asio {
 namespace detail {
+
+template <typename T>
+struct is_unspecified_allocator
+  : false_type {};
+
+template <typename T>
+struct is_unspecified_allocator<unspecified_allocator<T> >
+  : true_type {};
+
+template <typename T>
+inline typename get_allocator_type<T>::type get_allocator_helper(const T& t)
+{
+  return get_allocator(t);
+}
 
 template <typename T>
 inline typename get_executor_type<T>::type get_executor_helper(const T& t)
@@ -112,6 +127,7 @@ public:
   typedef typename passive::terminal_handler terminal_handler;
   typedef typename passive::handler_executor handler_executor;
   typedef typename passive::executor_type executor_type;
+  typedef typename passive::allocator_type allocator_type;
 
   active_chain(const active_chain& other)
     : passive_(other.passive_),
@@ -173,6 +189,11 @@ public:
     return passive_.get_executor();
   }
 
+  allocator_type get_allocator() const
+  {
+    return passive_.get_allocator();
+  }
+
   template <typename T>
   active_chain<Signature,
     typename signature_cat<CompletionTokens, void(T)>::type>
@@ -189,31 +210,34 @@ public:
   template <typename... Tn>
   void operator()(ASIO_MOVE_ARG(Tn)... tn)
   {
+    allocator_type a(passive_.get_allocator());
     handler_executor ex(passive_.get_handler_executor());
     ex.dispatch(
         chain_invoker<Signature, CompletionTokens>(
           ASIO_MOVE_CAST(passive)(passive_),
-          ASIO_MOVE_CAST(Tn)(tn)...));
+          ASIO_MOVE_CAST(Tn)(tn)...), a);
   }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   void operator()()
   {
+    allocator_type a(passive_.get_allocator());
     handler_executor ex(passive_.get_handler_executor());
     ex.dispatch(chain_invoker<Signature, CompletionTokens>(
-          ASIO_MOVE_CAST(passive)(passive_)));
+          ASIO_MOVE_CAST(passive)(passive_)), a);
   }
 
 #define ASIO_PRIVATE_ACTIVE_CHAIN_CALL_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
   void operator()(ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
+    allocator_type a(passive_.get_allocator()); \
     handler_executor ex(passive_.get_handler_executor()); \
     ex.dispatch( \
         chain_invoker<Signature, CompletionTokens>( \
           ASIO_MOVE_CAST(passive)(passive_), \
-          ASIO_VARIADIC_MOVE_ARGS(n))); \
+          ASIO_VARIADIC_MOVE_ARGS(n)), a); \
   } \
   /**/
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_ACTIVE_CHAIN_CALL_DEF)
@@ -236,6 +260,8 @@ public:
   typedef handler terminal_handler;
   typedef typename get_executor_type<handler>::type handler_executor;
   typedef handler_executor executor_type;
+  typedef typename get_allocator_type<handler>::type handler_allocator;
+  typedef handler_allocator allocator_type;
 
   passive_chain(const passive_chain& other)
     : handler_(other.handler_)
@@ -268,6 +294,11 @@ public:
   executor_type get_executor() const
   {
     return get_executor_helper(handler_);
+  }
+
+  allocator_type get_allocator() const
+  {
+    return get_allocator_helper(handler_);
   }
 
   template <typename T>
@@ -324,6 +355,10 @@ public:
   typedef typename conditional<
     is_same<handler_executor, unspecified_executor>::value,
     typename tail::executor_type, handler_executor>::type executor_type;
+  typedef typename get_allocator_type<handler>::type handler_allocator;
+  typedef typename conditional<
+    is_unspecified_allocator<handler_allocator>::value,
+    typename tail::allocator_type, handler_allocator>::type allocator_type;
 
   passive_chain(const passive_chain& other)
     : handler_(other.handler_),
@@ -388,6 +423,22 @@ public:
   handler_executor get_executor(false_type) const
   {
     return get_executor_helper(handler_);
+  }
+
+  allocator_type get_allocator() const
+  {
+    return this->get_allocator(
+        is_unspecified_allocator<handler_allocator>());
+  }
+
+  typename tail::allocator_type get_allocator(true_type) const
+  {
+    return tail_.get_allocator();
+  }
+
+  handler_allocator get_allocator(false_type) const
+  {
+    return get_allocator_helper(handler_);
   }
 
   template <typename T>

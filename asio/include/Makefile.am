@@ -278,6 +278,7 @@ nobase_include_HEADERS = \
 	asio/generic/raw_protocol.hpp \
 	asio/generic/seq_packet_protocol.hpp \
 	asio/generic/stream_protocol.hpp \
+	asio/get_allocator.hpp \
 	asio/get_executor.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
@@ -422,6 +423,7 @@ nobase_include_HEADERS = \
 	asio/thread_pool.hpp \
 	asio/time_traits.hpp \
 	asio/unyield.hpp \
+	asio/unspecified_allocator.hpp \
 	asio/unspecified_executor.hpp \
 	asio/use_future.hpp \
 	asio/uses_executor.hpp \

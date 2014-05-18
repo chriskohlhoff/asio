@@ -30,26 +30,30 @@ inline execution_context& system_executor::context() ASIO_NOEXCEPT
   return detail::global<context_impl>();
 }
 
-template <typename Function>
-void system_executor::dispatch(ASIO_MOVE_ARG(Function) f)
+template <typename Function, typename Allocator>
+void system_executor::dispatch(ASIO_MOVE_ARG(Function) f, const Allocator&)
 {
   typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
   tmp();
 }
 
-template <typename Function>
-void system_executor::post(ASIO_MOVE_ARG(Function) f)
+template <typename Function, typename Allocator>
+void system_executor::post(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
   // Allocate and construct an operation to wrap the function.
-  typedef detail::scheduler_allocator<void> allocator_type;
-  typedef detail::executor_op<function_type, allocator_type> op;
-  typename op::ptr p = { allocator_type(), 0, 0 };
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
-  p.p = new (p.v) op(tmp, allocator_type());
+  p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((p.p, "system_executor", this, "post"));
 
@@ -58,19 +62,23 @@ void system_executor::post(ASIO_MOVE_ARG(Function) f)
   p.v = p.p = 0;
 }
 
-template <typename Function>
-void system_executor::defer(ASIO_MOVE_ARG(Function) f)
+template <typename Function, typename Allocator>
+void system_executor::defer(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
   // Allocate and construct an operation to wrap the function.
-  typedef detail::scheduler_allocator<void> allocator_type;
-  typedef detail::executor_op<function_type, allocator_type> op;
-  typename op::ptr p = { allocator_type(), 0, 0 };
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
-  p.p = new (p.v) op(tmp, allocator_type());
+  p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((p.p, "system_executor", this, "defer"));
 

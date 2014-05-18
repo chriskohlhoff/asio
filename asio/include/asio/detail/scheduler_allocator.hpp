@@ -15,7 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/config.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/scheduler_thread_info.hpp"
+#include "asio/unspecified_allocator.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -29,7 +32,7 @@ public:
   template <typename U>
   struct rebind
   {
-    typedef scheduler_allocator<U> type;
+    typedef scheduler_allocator<U> other;
   };
 
   scheduler_allocator()
@@ -64,7 +67,7 @@ public:
   template <typename U>
   struct rebind
   {
-    typedef scheduler_allocator<U> type;
+    typedef scheduler_allocator<U> other;
   };
 
   scheduler_allocator()
@@ -75,6 +78,27 @@ public:
   scheduler_allocator(const scheduler_allocator<U>&)
   {
   }
+};
+
+template <typename Allocator>
+struct get_scheduler_allocator
+{
+  typedef Allocator type;
+  static type get(const Allocator& a) { return a; }
+};
+
+template <typename T>
+struct get_scheduler_allocator<std::allocator<T> >
+{
+  typedef scheduler_allocator<T> type;
+  static type get(const std::allocator<T>&) { return type(); }
+};
+
+template <typename T>
+struct get_scheduler_allocator<unspecified_allocator<T> >
+{
+  typedef scheduler_allocator<T> type;
+  static type get(const unspecified_allocator<T>&) { return type(); }
 };
 
 } // namespace detail

@@ -39,7 +39,8 @@ defer(ASIO_MOVE_ARG(CompletionTokens)... tokens)
   async_result<chain_type> result(chain);
 
   typename chain_type::executor_type ex(chain.get_executor());
-  ex.defer(ASIO_MOVE_CAST(chain_type)(chain));
+  typename chain_type::allocator_type allocator(chain.get_allocator());
+  ex.defer(ASIO_MOVE_CAST(chain_type)(chain), allocator);
 
   return result.get();
 }
@@ -59,7 +60,8 @@ defer(ASIO_MOVE_ARG(Executor) executor,
   async_result<chain_type> result(chain);
 
   Executor ex(ASIO_MOVE_CAST(Executor)(executor));
-  ex.defer(ASIO_MOVE_CAST(chain_type)(chain));
+  typename chain_type::allocator_type allocator(chain.get_allocator());
+  ex.defer(ASIO_MOVE_CAST(chain_type)(chain), allocator);
 
   return result.get();
 }
@@ -79,7 +81,8 @@ defer(ASIO_MOVE_ARG(Executor) executor,
     async_result<chain_type> result(chain); \
     \
     typename chain_type::executor_type ex(chain.get_executor()); \
-    ex.defer(ASIO_MOVE_CAST(chain_type)(chain)); \
+    typename chain_type::allocator_type allocator(chain.get_allocator()); \
+    ex.defer(ASIO_MOVE_CAST(chain_type)(chain), allocator); \
     \
     return result.get(); \
   } \
@@ -97,7 +100,8 @@ defer(ASIO_MOVE_ARG(Executor) executor,
     async_result<chain_type> result(chain); \
     \
     Executor ex(ASIO_MOVE_CAST(Executor)(executor)); \
-    ex.defer(ASIO_MOVE_CAST(chain_type)(chain)); \
+    typename chain_type::allocator_type allocator(chain.get_allocator()); \
+    ex.defer(ASIO_MOVE_CAST(chain_type)(chain), allocator); \
     \
     return result.get(); \
   } \

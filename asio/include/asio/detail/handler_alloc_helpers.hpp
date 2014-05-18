@@ -80,7 +80,7 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
 #define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op, alloc) \
   struct ptr \
   { \
-    typename alloc::template rebind<op>::type a; \
+    typename alloc::template rebind<op>::other a; \
     void* v; \
     op* p; \
     ~ptr() \

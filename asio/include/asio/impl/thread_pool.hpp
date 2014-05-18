@@ -47,8 +47,9 @@ inline void thread_pool::executor_type::work_finished() ASIO_NOEXCEPT
   pool_.scheduler_.work_finished();
 }
 
-template <typename Function>
-void thread_pool::executor_type::dispatch(ASIO_MOVE_ARG(Function) f)
+template <typename Function, typename Allocator>
+void thread_pool::executor_type::dispatch(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
@@ -62,12 +63,15 @@ void thread_pool::executor_type::dispatch(ASIO_MOVE_ARG(Function) f)
     return;
   }
 
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
   // Allocate and construct an operation to wrap the function.
-  typedef detail::scheduler_allocator<void> allocator_type;
-  typedef detail::executor_op<function_type, allocator_type> op;
-  typename op::ptr p = { allocator_type(), 0, 0 };
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
-  p.p = new (p.v) op(tmp, allocator_type());
+  p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "post"));
 
@@ -75,19 +79,23 @@ void thread_pool::executor_type::dispatch(ASIO_MOVE_ARG(Function) f)
   p.v = p.p = 0;
 }
 
-template <typename Function>
-void thread_pool::executor_type::post(ASIO_MOVE_ARG(Function) f)
+template <typename Function, typename Allocator>
+void thread_pool::executor_type::post(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
   // Allocate and construct an operation to wrap the function.
-  typedef detail::scheduler_allocator<void> allocator_type;
-  typedef detail::executor_op<function_type, allocator_type> op;
-  typename op::ptr p = { allocator_type(), 0, 0 };
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
-  p.p = new (p.v) op(tmp, allocator_type());
+  p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "post"));
 
@@ -95,19 +103,23 @@ void thread_pool::executor_type::post(ASIO_MOVE_ARG(Function) f)
   p.v = p.p = 0;
 }
 
-template <typename Function>
-void thread_pool::executor_type::defer(ASIO_MOVE_ARG(Function) f)
+template <typename Function, typename Allocator>
+void thread_pool::executor_type::defer(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
   // Allocate and construct an operation to wrap the function.
-  typedef detail::scheduler_allocator<void> allocator_type;
-  typedef detail::executor_op<function_type, allocator_type> op;
-  typename op::ptr p = { allocator_type(), 0, 0 };
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
-  p.p = new (p.v) op(tmp, allocator_type());
+  p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "defer"));
 

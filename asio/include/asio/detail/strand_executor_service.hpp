@@ -82,19 +82,19 @@ public:
   ASIO_DECL implementation_type create_implementation();
 
   // Request invocation of the given function.
-  template <typename Executor, typename Function>
-  static void dispatch(const implementation_type& impl,
-      Executor& ex, ASIO_MOVE_ARG(Function) function);
+  template <typename Executor, typename Function, typename Allocator>
+  static void dispatch(const implementation_type& impl, Executor& ex,
+      ASIO_MOVE_ARG(Function) function, const Allocator& a);
 
   // Request invocation of the given function and return immediately.
-  template <typename Executor, typename Function>
-  static void post(const implementation_type& impl,
-      Executor& ex, ASIO_MOVE_ARG(Function) function);
+  template <typename Executor, typename Function, typename Allocator>
+  static void post(const implementation_type& impl, Executor& ex,
+      ASIO_MOVE_ARG(Function) function, const Allocator& a);
 
   // Request invocation of the given function and return immediately.
-  template <typename Executor, typename Function>
-  static void defer(const implementation_type& impl,
-      Executor& ex, ASIO_MOVE_ARG(Function) function);
+  template <typename Executor, typename Function, typename Allocator>
+  static void defer(const implementation_type& impl, Executor& ex,
+      ASIO_MOVE_ARG(Function) function, const Allocator& a);
 
   // Determine whether the strand is running in the current thread.
   ASIO_DECL static bool running_in_this_thread(
