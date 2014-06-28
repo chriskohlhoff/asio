@@ -242,7 +242,7 @@ asio::error_code signal_set_service::add(
     int signal_number, asio::error_code& ec)
 {
   // Check that the signal number is valid.
-  if (signal_number < 0 || signal_number > max_signal_number)
+  if (signal_number < 0 || signal_number >= max_signal_number)
   {
     ec = asio::error::invalid_argument;
     return ec;
@@ -316,7 +316,7 @@ asio::error_code signal_set_service::remove(
     int signal_number, asio::error_code& ec)
 {
   // Check that the signal number is valid.
-  if (signal_number < 0 || signal_number > max_signal_number)
+  if (signal_number < 0 || signal_number >= max_signal_number)
   {
     ec = asio::error::invalid_argument;
     return ec;
