@@ -25,7 +25,7 @@ namespace asio {
 namespace detail {
 
 // The default maximum number of bytes to transfer in a single operation.
-enum { default_max_transfer_size = 65536 };
+enum default_max_transfer_size_t { default_max_transfer_size = 65536 };
 
 // Adapt result of old-style completion conditions (which had a bool result
 // where true indicated that the operation was complete).
