@@ -458,7 +458,7 @@
 #if !defined(ASIO_WINDOWS_RUNTIME)
 # if defined(__cplusplus_winrt)
 #  include <winapifamily.h>
-#  if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
+#  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 #   define ASIO_WINDOWS_RUNTIME 1
 #  endif // WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY, WINAPI_PARTITION_APP)
 # endif // defined(__cplusplus_winrt)
