@@ -63,11 +63,11 @@ private:
   static void lbarrier()
   {
 #if defined(__SSE2__)
-# if (__GNUC__ >= 4)
+# if (__GNUC__ >= 4) && !defined(__INTEL_COMPILER) && !defined(__ICL)
     __builtin_ia32_lfence();
-# else // (__GNUC__ >= 4)
+# else // (__GNUC__ >= 4) && !defined(__INTEL_COMPILER) && !defined(__ICL)
     __asm__ __volatile__ ("lfence" ::: "memory");
-# endif // (__GNUC__ >= 4)
+# endif // (__GNUC__ >= 4) && !defined(__INTEL_COMPILER) && !defined(__ICL)
 #else // defined(__SSE2__)
     barrier();
 #endif // defined(__SSE2__)
@@ -76,11 +76,11 @@ private:
   static void sbarrier()
   {
 #if defined(__SSE2__)
-# if (__GNUC__ >= 4)
+# if (__GNUC__ >= 4) && !defined(__INTEL_COMPILER) && !defined(__ICL)
     __builtin_ia32_sfence();
-# else // (__GNUC__ >= 4)
+# else // (__GNUC__ >= 4) && !defined(__INTEL_COMPILER) && !defined(__ICL)
     __asm__ __volatile__ ("sfence" ::: "memory");
-# endif // (__GNUC__ >= 4)
+# endif // (__GNUC__ >= 4) && !defined(__INTEL_COMPILER) && !defined(__ICL)
 #else // defined(__SSE2__)
     barrier();
 #endif // defined(__SSE2__)
