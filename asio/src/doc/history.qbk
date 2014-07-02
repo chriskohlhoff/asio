@@ -7,6 +7,29 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.3]
+
+* Worked around a [^gcc] problem to do with anonymous enums.
+
+* Reverted the Windows `HANDLE` backend change to ignore `ERROR_MORE_DATA`.
+  Instead, the error will be propagated as with any other (i.e. in an
+  `error_code` or thrown as a `system_error`), and the number of bytes
+  transferred will be returned. For code that needs to handle partial messages,
+  the `error_code` overload should be used.
+
+* Fixed an off-by-one error in the `signal_set` implementation's signal
+  number check.
+
+* Changed the Windows IOCP backend to not assume that
+  `SO_UPDATE_CONNECT_CONTEXT` is defined.
+
+* Fixed a Windows-specific issue, introduced in Asio 1.10.2, by using
+  `VerifyVersionInfo` rather than `GetVersionEx`, as `GetVersionEx` has been
+  deprecated.
+
+* Changed to use SSE2 intrinsics rather than inline assembly, to allow the
+  Cray compiler to work.
+
 [heading Asio 1.10.2]
 
 * Fixed `asio::spawn()` to work correctly with new Boost.Coroutine interface.
