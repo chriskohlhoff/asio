@@ -420,7 +420,7 @@ void win_object_handle_service::wait_callback(PVOID param, BOOLEAN)
         asio::error_code ec(last_error,
             asio::error::get_system_category());
 
-        while (wait_op* op = impl->op_queue_.front())
+        while ((op = impl->op_queue_.front()) != 0)
         {
           op->ec_ = ec;
           impl->op_queue_.pop();
