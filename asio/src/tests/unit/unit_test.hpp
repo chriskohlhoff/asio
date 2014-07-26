@@ -112,4 +112,13 @@ inline void compile_test()
 {
 }
 
+#if defined(__GNUC__) && defined(_AIX)
+
+// AIX needs this symbol defined in asio, even if it doesn't do anything.
+int test_main(int, char**)
+{
+}
+
+#endif // defined(__GNUC__) && defined(_AIX)
+
 #endif // UNIT_TEST_HPP
