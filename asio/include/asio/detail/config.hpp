@@ -700,6 +700,19 @@
 # endif // !defined(ASIO_DISABLE_SIGNAL)
 #endif // !defined(ASIO_HAS_SIGNAL)
 
+// Can use getaddrinfo() and getnameinfo().
+#if !defined(ASIO_HAS_GETADDRINFO)
+# if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0501)
+#   define ASIO_HAS_GETADDRINFO 1
+#  elif defined(UNDER_CE)
+#   define ASIO_HAS_GETADDRINFO 1
+#  endif // defined(UNDER_CE)
+# elif !(defined(__MACH__) && defined(__APPLE__))
+#  define ASIO_HAS_GETADDRINFO 1
+# endif // !(defined(__MACH__) && defined(__APPLE__))
+#endif // !defined(ASIO_HAS_GETADDRINFO)
+
 // Whether standard iostreams are disabled.
 #if !defined(ASIO_NO_IOSTREAM)
 # if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_NO_IOSTREAM)
