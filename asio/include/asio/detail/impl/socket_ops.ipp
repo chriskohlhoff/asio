@@ -1960,7 +1960,7 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
   }
 
   DWORD string_length = static_cast<DWORD>(length);
-#if defined(BOOST_NO_ANSI_APIS)
+#if defined(BOOST_NO_ANSI_APIS) || (defined(_MSC_VER) && (_MSC_VER >= 1800))
   LPWSTR string_buffer = (LPWSTR)_alloca(length * sizeof(WCHAR));
   int result = error_wrapper(::WSAAddressToStringW(&address.base,
         address_length, 0, string_buffer, &string_length), ec);
@@ -2167,7 +2167,7 @@ int inet_pton(int af, const char* src, void* dest,
     sockaddr_in6_type v6;
   } address;
   int address_length = sizeof(sockaddr_storage_type);
-#if defined(BOOST_NO_ANSI_APIS)
+#if defined(BOOST_NO_ANSI_APIS) || (defined(_MSC_VER) && (_MSC_VER >= 1800))
   int num_wide_chars = strlen(src) + 1;
   LPWSTR wide_buffer = (LPWSTR)_alloca(num_wide_chars * sizeof(WCHAR));
   ::MultiByteToWideChar(CP_ACP, 0, src, -1, wide_buffer, num_wide_chars);
@@ -2279,8 +2279,8 @@ int gethostname(char* name, int namelen, asio::error_code& ec)
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) \
-  || defined(__MACH__) && defined(__APPLE__)
+#if defined(ASIO_WINDOWS) && (!defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0501)) \
+  || defined(__CYGWIN__) || defined(__MACH__) && defined(__APPLE__)
 
 // The following functions are only needed for emulation of getaddrinfo and
 // getnameinfo.
@@ -3121,8 +3121,8 @@ inline asio::error_code getnameinfo_emulation(
   return ec;
 }
 
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-       //   || defined(__MACH__) && defined(__APPLE__)
+#endif // defined(ASIO_WINDOWS) && (!defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0501)) \
+       //   || defined(__CYGWIN__) || defined(__MACH__) && defined(__APPLE__)
 
 inline asio::error_code translate_addrinfo_error(int error)
 {
