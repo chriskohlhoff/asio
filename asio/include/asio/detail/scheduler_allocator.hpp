@@ -16,9 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/scheduler_thread_info.hpp"
-#include "asio/unspecified_allocator.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -92,13 +92,6 @@ struct get_scheduler_allocator<std::allocator<T> >
 {
   typedef scheduler_allocator<T> type;
   static type get(const std::allocator<T>&) { return type(); }
-};
-
-template <typename T>
-struct get_scheduler_allocator<unspecified_allocator<T> >
-{
-  typedef scheduler_allocator<T> type;
-  static type get(const unspecified_allocator<T>&) { return type(); }
 };
 
 } // namespace detail

@@ -1,6 +1,6 @@
 //
-// executor_wrapper.hpp
-// ~~~~~~~~~~~~~~~~~~~~
+// wrap.hpp
+// ~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_EXECUTOR_WRAPPER_HPP
-#define ASIO_EXECUTOR_WRAPPER_HPP
+#ifndef ASIO_WRAP_HPP
+#define ASIO_WRAP_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,10 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
-#include "asio/detail/result_type.hpp"
 #include "asio/detail/variadic_templates.hpp"
 #include "asio/async_result.hpp"
-#include "asio/continuation_of.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/uses_executor.hpp"
 
@@ -35,33 +33,124 @@ struct executor_wrapper_check
   typedef void type;
 };
 
+// Helper to automatically define nested typedef result_type.
+
 template <typename T, typename = void>
 struct executor_wrapper_result_type {};
 
 template <typename T>
 struct executor_wrapper_result_type<T,
-  typename executor_wrapper_check<typename result_type<T>::type>::type>
+  typename executor_wrapper_check<typename T::result_type>::type>
 {
-  typedef typename result_type<T>::type result_type;
+  typedef typename T::result_type result_type;
 };
+
+template <typename R>
+struct executor_wrapper_result_type<R(*)()>
+{
+  typedef R result_type;
+};
+
+template <typename R>
+struct executor_wrapper_result_type<R(&)()>
+{
+  typedef R result_type;
+};
+
+template <typename R, typename A1>
+struct executor_wrapper_result_type<R(*)(A1)>
+{
+  typedef R result_type;
+};
+
+template <typename R, typename A1>
+struct executor_wrapper_result_type<R(&)(A1)>
+{
+  typedef R result_type;
+};
+
+template <typename R, typename A1, typename A2>
+struct executor_wrapper_result_type<R(*)(A1, A2)>
+{
+  typedef R result_type;
+};
+
+template <typename R, typename A1, typename A2>
+struct executor_wrapper_result_type<R(&)(A1, A2)>
+{
+  typedef R result_type;
+};
+
+// Helper to automatically define nested typedef argument_type.
+
+template <typename T, typename = void>
+struct executor_wrapper_argument_type {};
+
+template <typename T>
+struct executor_wrapper_argument_type<T,
+  typename executor_wrapper_check<typename T::argument_type>::type>
+{
+  typedef typename T::argument_type argument_type;
+};
+
+template <typename R, typename A1>
+struct executor_wrapper_argument_type<R(*)(A1)>
+{
+  typedef A1 argument_type;
+};
+
+template <typename R, typename A1>
+struct executor_wrapper_argument_type<R(&)(A1)>
+{
+  typedef A1 argument_type;
+};
+
+// Helper to automatically define nested typedefs first_argument_type and
+// second_argument_type.
+
+template <typename T, typename = void>
+struct executor_wrapper_argument_types {};
+
+template <typename T>
+struct executor_wrapper_argument_types<T,
+  typename executor_wrapper_check<typename T::first_argument_type>::type>
+{
+  typedef typename T::first_argument_type first_argument_type;
+  typedef typename T::second_argument_type second_argument_type;
+};
+
+template <typename R, typename A1, typename A2>
+struct executor_wrapper_argument_type<R(*)(A1, A2)>
+{
+  typedef A1 first_argument_type;
+  typedef A2 second_argument_type;
+};
+
+template <typename R, typename A1, typename A2>
+struct executor_wrapper_argument_type<R(&)(A1, A2)>
+{
+  typedef A1 first_argument_type;
+  typedef A2 second_argument_type;
+};
+
+// Helper to:
+// - Apply the empty base optimisation to the executor.
+// - Perform uses_executor construction of the wrapped type, if required.
 
 template <typename T, typename Executor, bool UsesExecutor>
 class executor_wrapper_base;
 
 template <typename T, typename Executor>
 class executor_wrapper_base<T, Executor, true>
+  : protected Executor
 {
 protected:
   template <typename E, typename U>
   executor_wrapper_base(ASIO_MOVE_ARG(E) e, ASIO_MOVE_ARG(U) u)
-    : wrapped_(executor_arg_t(),
-        ASIO_MOVE_CAST(E)(e), ASIO_MOVE_CAST(U)(u))
+    : Executor(ASIO_MOVE_CAST(E)(e)),
+      wrapped_(executor_arg_t(), static_cast<const Executor&>(*this),
+          ASIO_MOVE_CAST(U)(u))
   {
-  }
-
-  Executor get_executor_base() const ASIO_NOEXCEPT
-  {
-    return wrapped_.get_executor();
   }
 
   T wrapped_;
@@ -69,7 +158,7 @@ protected:
 
 template <typename T, typename Executor>
 class executor_wrapper_base<T, Executor, false>
-  : private Executor
+  : protected Executor
 {
 protected:
   template <typename E, typename U>
@@ -79,13 +168,10 @@ protected:
   {
   }
 
-  Executor get_executor_base() const ASIO_NOEXCEPT
-  {
-    return static_cast<const Executor&>(*this);
-  }
-
   T wrapped_;
 };
+
+// Helper to enable SFINAE on zero-argument operator() below.
 
 template <typename T, typename = void>
 struct executor_wrapper_result_of0
@@ -108,6 +194,8 @@ template <typename T, typename Executor>
 class executor_wrapper
 #if !defined(GENERATING_DOCUMENTATION)
   : public detail::executor_wrapper_result_type<T>,
+    public detail::executor_wrapper_argument_type<T>,
+    public detail::executor_wrapper_argument_types<T>,
     private detail::executor_wrapper_base<
       T, Executor, uses_executor<T, Executor>::value>
 #endif // !defined(GENERATING_DOCUMENTATION)
@@ -128,31 +216,58 @@ public:
    * @li if @c T is a pointer to function type, @c result_type is a synonym for
    * the return type of @c T;
    *
-   * @li if @c T is a pointer to member function, @c result_type is a synonym
-   * for the return type of @c T;
-   *
-   * @li if @c T is a class type and has a single, non-template overload of
-   * <tt>operator()</tt>, @c result_type is a synonym for the return type of
-   * <tt>T::operator()</tt>.
-   *
    * @li if @c T is a class type with a member type @c result_type, then @c
    * result_type is a synonym for @c T::result_type;
    *
    * @li otherwise @c result_type is not defined.
    */
   typedef see_below result_type;
-#endif // defined(GENERATING_DOCUMENTATION)
 
-  /// Construct an executor wrapper for the specified object.
+  /// The type of the function's argument.
   /**
-   * This constructor is only valid if the @c Executor type is default
-   * constructible, and the type @c T is constructible from type @c U.
+   * The type of @c argument_type is based on the type @c T of the wrapper's
+   * target object:
+   *
+   * @li if @c T is a pointer to a function type accepting a single argument,
+   * @c argument_type is a synonym for the return type of @c T;
+   *
+   * @li if @c T is a class type with a member type @c argument_type, then @c
+   * argument_type is a synonym for @c T::argument_type;
+   *
+   * @li otherwise @c argument_type is not defined.
    */
-  template <typename U>
-  explicit executor_wrapper(ASIO_MOVE_ARG(U) u)
-    : base_type(Executor(), ASIO_MOVE_CAST(U)(u))
-  {
-  }
+  typedef see_below argument_type;
+
+  /// The type of the function's first argument.
+  /**
+   * The type of @c first_argument_type is based on the type @c T of the
+   * wrapper's target object:
+   *
+   * @li if @c T is a pointer to a function type accepting two arguments, @c
+   * first_argument_type is a synonym for the return type of @c T;
+   *
+   * @li if @c T is a class type with a member type @c first_argument_type,
+   * then @c first_argument_type is a synonym for @c T::first_argument_type;
+   *
+   * @li otherwise @c first_argument_type is not defined.
+   */
+  typedef see_below first_argument_type;
+
+  /// The type of the function's second argument.
+  /**
+   * The type of @c second_argument_type is based on the type @c T of the
+   * wrapper's target object:
+   *
+   * @li if @c T is a pointer to a function type accepting two arguments, @c
+   * second_argument_type is a synonym for the return type of @c T;
+   *
+   * @li if @c T is a class type with a member type @c first_argument_type,
+   * then @c second_argument_type is a synonym for @c T::second_argument_type;
+   *
+   * @li otherwise @c second_argument_type is not defined.
+   */
+  typedef see_below second_argument_type;
+#endif // defined(GENERATING_DOCUMENTATION)
 
   /// Construct an executor wrapper for the specified object.
   /**
@@ -168,14 +283,14 @@ public:
 
   /// Copy constructor.
   executor_wrapper(const executor_wrapper& other)
-    : base_type(other.executor_, other.wrapped_)
+    : base_type(other.get_executor(), other.unwrap())
   {
   }
 
   /// Construct a copy, but specify a different executor.
   executor_wrapper(executor_arg_t, const executor_type& e,
       const executor_wrapper& other)
-    : base_type(e, other.wrapped_)
+    : base_type(e, other.unwrap())
   {
   }
 
@@ -187,7 +302,7 @@ public:
    */
   template <typename U, typename OtherExecutor>
   executor_wrapper(const executor_wrapper<U, OtherExecutor>& other)
-    : base_type(other.executor_, other.wrapped_)
+    : base_type(other.get_executor(), other.unwrap())
   {
   }
 
@@ -200,7 +315,7 @@ public:
   template <typename U, typename OtherExecutor>
   executor_wrapper(executor_arg_t, const executor_type& e,
       const executor_wrapper<U, OtherExecutor>& other)
-    : base_type(e, other.wrapped_)
+    : base_type(e, other.unwrap())
   {
   }
 
@@ -209,22 +324,22 @@ public:
   /// Move constructor.
   executor_wrapper(executor_wrapper&& other)
     : base_type(ASIO_MOVE_CAST(executor_type)(other.get_executor()),
-        ASIO_MOVE_CAST(T)(other.wrapped_))
+        ASIO_MOVE_CAST(T)(other.unwrap()))
   {
   }
 
   /// Move construct the wrapped object, but specify a different executor.
   executor_wrapper(executor_arg_t, const executor_type& e,
       executor_wrapper&& other)
-    : base_type(e, ASIO_MOVE_CAST(T)(other.wrapped_))
+    : base_type(e, ASIO_MOVE_CAST(T)(other.unwrap()))
   {
   }
 
   /// Move construct from a different executor wrapper type.
   template <typename U, typename OtherExecutor>
   executor_wrapper(executor_wrapper<U, OtherExecutor>&& other)
-    : base_type(ASIO_MOVE_CAST(OtherExecutor)(other.executor_),
-        ASIO_MOVE_CAST(U)(other.wrapped_))
+    : base_type(ASIO_MOVE_CAST(OtherExecutor)(other.get_executor()),
+        ASIO_MOVE_CAST(U)(other.unwrap()))
   {
   }
 
@@ -233,7 +348,7 @@ public:
   template <typename U, typename OtherExecutor>
   executor_wrapper(executor_arg_t, const executor_type& e,
       executor_wrapper<U, OtherExecutor>&& other)
-    : base_type(e, ASIO_MOVE_CAST(U)(other.wrapped_))
+    : base_type(e, ASIO_MOVE_CAST(U)(other.unwrap()))
   {
   }
 
@@ -245,13 +360,13 @@ public:
   }
 
   /// Obtain a reference to the wrapped object.
-  wrapped_type& get_wrapped() ASIO_NOEXCEPT
+  wrapped_type& unwrap() ASIO_NOEXCEPT
   {
     return this->wrapped_;
   }
 
   /// Obtain a reference to the wrapped object.
-  const wrapped_type& get_wrapped() const ASIO_NOEXCEPT
+  const wrapped_type& unwrap() const ASIO_NOEXCEPT
   {
     return this->wrapped_;
   }
@@ -259,7 +374,7 @@ public:
   /// Obtain the associated executor.
   executor_type get_executor() const ASIO_NOEXCEPT
   {
-    return this->get_executor_base();
+    return static_cast<const Executor&>(*this);
   }
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES) \
@@ -294,7 +409,7 @@ public:
     return this->wrapped_();
   }
 
-#define ASIO_PRIVATE_EXECUTOR_WRAPPER_CALL_DEF(n) \
+#define ASIO_PRIVATE_WRAP_CALL_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
   typename result_of<T(ASIO_VARIADIC_TARGS(n))>::type operator()( \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
@@ -309,8 +424,8 @@ public:
     return this->wrapped_(ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   /**/
-  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_EXECUTOR_WRAPPER_CALL_DEF)
-#undef ASIO_PRIVATE_EXECUTOR_WRAPPER_CALL_DEF
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_WRAP_CALL_DEF)
+#undef ASIO_PRIVATE_WRAP_CALL_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
        //   || defined(GENERATING_DOCUMENTATION)
@@ -318,40 +433,29 @@ public:
 private:
   typedef detail::executor_wrapper_base<T, Executor,
     uses_executor<T, Executor>::value> base_type;
-  template <typename, typename> friend class executor_wrapper;
-};
-
-/// Determine the type to use when associating an executor of type @c Executor
-/// with an object of type @c T.
-template <typename T, typename Executor>
-struct wrap_with_executor_type
-{
-  /// The wrapper type.
-  /**
-   * Let @c DecayT be the type <tt>typename decay<T>::type</tt>. If
-   * <tt>uses_executor<DecayT, Executor>::value</tt> is false, @c type is a
-   * synonym for <tt>executor_wrapper<DecayT, Executor></tt>. Otherwise, @c
-   * type is a synonym for @c DecayT.
-   */
-  typedef typename conditional<
-    uses_executor<typename decay<T>::type, Executor>::value,
-    typename decay<T>::type,
-    executor_wrapper<typename decay<T>::type, Executor> >::type type;
 };
 
 /// Associate an object of type @c T with an executor of type @c Executor.
-/**
- * Let @c DecayT be the type <tt>typename decay<T>::type</tt>. If
- * <tt>uses_executor<DecayT, Executor>::value</tt> is false, returns an object
- * of type <tt>executor_wrapper<DecayT, Executor></tt>. Otherwise, returns a
- * copy of @c t constructed as <tt>DecayT(executor_arg, e, t)</tt>.
- */
-template <typename T, typename Executor>
-inline typename wrap_with_executor_type<T, Executor>::type
-wrap_with_executor(ASIO_MOVE_ARG(T) t, const Executor& e)
+template <typename Executor, typename T>
+inline executor_wrapper<typename decay<T>::type, Executor>
+wrap(const Executor& ex, ASIO_MOVE_ARG(T) t,
+    typename enable_if<is_executor<Executor>::value>::type* = 0)
 {
-  return typename wrap_with_executor_type<T, Executor>::type(
-      executor_arg_t(), e, ASIO_MOVE_CAST(T)(t));
+  return executor_wrapper<typename decay<T>::type, Executor>(
+      executor_arg_t(), ex, ASIO_MOVE_CAST(T)(t));
+}
+
+/// Associate an object of type @c T with an execution context's executor.
+template <typename ExecutionContext, typename T>
+inline executor_wrapper<typename decay<T>::type,
+  typename ExecutionContext::executor_type>
+wrap(ExecutionContext& ctx, ASIO_MOVE_ARG(T) t,
+    typename enable_if<is_convertible<
+      ExecutionContext&, execution_context&>::value>::type* = 0)
+{
+  return executor_wrapper<typename decay<T>::type,
+    typename ExecutionContext::executor_type>(
+      executor_arg_t(), ctx.get_executor(), ASIO_MOVE_CAST(T)(t));
 }
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -374,7 +478,7 @@ public:
   typedef typename async_result<T>::type type;
 
   explicit async_result(executor_wrapper<T, Executor>& w)
-    : wrapped_(w.get_wrapped())
+    : wrapped_(w.unwrap())
   {
   }
 
@@ -387,95 +491,10 @@ private:
   async_result<T> wrapped_;
 };
 
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-template <typename T, typename Executor, typename... Args>
-struct continuation_of<executor_wrapper<T, Executor>(Args...)>
-{
-  typedef typename continuation_of<T(Args...)>::signature signature;
-
-  template <typename C>
-  struct chain_type
-  {
-    typedef executor_wrapper<
-      typename continuation_of<T(Args...)>::template chain_type<C>::type,
-      Executor> type;
-  };
-
-  template <typename C>
-  static typename chain_type<C>::type chain(
-      executor_wrapper<T, Executor> w, ASIO_MOVE_ARG(C) c)
-  {
-    return typename chain_type<C>::type(
-        executor_arg_t(), w.get_executor(),
-        continuation_of<T(Args...)>::chain(
-          w.get_wrapped(), ASIO_MOVE_CAST(C)(c)));
-  }
-};
-
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-template <typename T, typename Executor>
-struct continuation_of<executor_wrapper<T, Executor>()>
-{
-  typedef typename continuation_of<T()>::signature signature;
-
-  template <typename C>
-  struct chain_type
-  {
-    typedef executor_wrapper<
-      typename continuation_of<T()>::template chain_type<C>::type,
-      Executor> type;
-  };
-
-  template <typename C>
-  static typename chain_type<C>::type chain(
-      executor_wrapper<T, Executor> w, ASIO_MOVE_ARG(C) c)
-  {
-    return typename chain_type<C>::type(
-        executor_arg_t(), w.get_executor(),
-        continuation_of<T()>::chain(
-          w.get_wrapped(), ASIO_MOVE_CAST(C)(c)));
-  }
-};
-
-# define ASIO_PRIVATE_CONTINUATION_OF_DEF(n) \
-  template <typename T, typename Executor, ASIO_VARIADIC_TPARAMS(n)> \
-  struct continuation_of< \
-    executor_wrapper<T, Executor>(ASIO_VARIADIC_TARGS(n))> \
-  { \
-    typedef typename continuation_of< \
-      T(ASIO_VARIADIC_TARGS(n))>::signature signature; \
-  \
-    template <typename C> \
-    struct chain_type \
-    { \
-      typedef executor_wrapper< \
-        typename continuation_of< \
-          T(ASIO_VARIADIC_TARGS(n))>::template chain_type<C>::type, \
-        Executor> type; \
-    }; \
-  \
-    template <typename C> \
-    static typename chain_type<C>::type chain( \
-        executor_wrapper<T, Executor> w, ASIO_MOVE_ARG(C) c) \
-    { \
-      return typename chain_type<C>::type( \
-          executor_arg_t(), w.get_executor(), \
-          continuation_of<T(ASIO_VARIADIC_TARGS(n))>::chain( \
-            w.get_wrapped(), ASIO_MOVE_CAST(C)(c))); \
-    } \
-  }; \
-/**/
-ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_CONTINUATION_OF_DEF)
-#undef ASIO_PRIVATE_CONTINUATION_OF_DEF
-
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_EXECUTOR_WRAPPER_HPP
+#endif // ASIO_WRAP_HPP

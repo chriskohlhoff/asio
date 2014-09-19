@@ -42,7 +42,8 @@ struct executor_arg_t
 /// A special value, similar to std::nothrow, used to disambiguate constructors
 /// that accept executor arguments.
 /**
- * See asio::executor_arg_t and asio::uses_executor for more information.
+ * See asio::executor_arg_t and asio::uses_executor
+ * for more information.
  */
 #if defined(ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr executor_arg_t executor_arg;

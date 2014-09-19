@@ -31,7 +31,8 @@ inline execution_context& system_executor::context() ASIO_NOEXCEPT
 }
 
 template <typename Function, typename Allocator>
-void system_executor::dispatch(ASIO_MOVE_ARG(Function) f, const Allocator&)
+void system_executor::dispatch(
+    ASIO_MOVE_ARG(Function) f, const Allocator&)
 {
   typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
   tmp();

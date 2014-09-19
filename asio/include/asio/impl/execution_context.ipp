@@ -45,7 +45,8 @@ void execution_context::destroy_context()
   service_registry_->destroy_services();
 }
 
-void execution_context::notify_fork(asio::execution_context::fork_event event)
+void execution_context::notify_fork(
+    asio::execution_context::fork_event event)
 {
   service_registry_->notify_fork(event);
 }

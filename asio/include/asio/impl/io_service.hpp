@@ -15,7 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/executor_op.hpp"
+#include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/scheduler_allocator.hpp"
 #include "asio/detail/service_registry.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -52,6 +55,12 @@ inline detail::io_service_impl& use_service<detail::io_service_impl>(
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+
+inline io_service::executor_type
+io_service::get_executor() ASIO_NOEXCEPT
+{
+  return executor_type(*this);
+}
 
 template <typename CompletionHandler>
 inline ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
@@ -92,6 +101,108 @@ inline detail::wrapped_handler<io_service&, Handler>
 io_service::wrap(Handler handler)
 {
   return detail::wrapped_handler<io_service&, Handler>(*this, handler);
+}
+
+inline io_service&
+io_service::executor_type::context() ASIO_NOEXCEPT
+{
+  return io_service_;
+}
+
+inline void io_service::executor_type::work_started() ASIO_NOEXCEPT
+{
+  io_service_.impl_.work_started();
+}
+
+inline void io_service::executor_type::work_finished() ASIO_NOEXCEPT
+{
+  io_service_.impl_.work_finished();
+}
+
+template <typename Function, typename Allocator>
+void io_service::executor_type::dispatch(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+{
+  // Make a local, non-const copy of the function.
+  typedef typename decay<Function>::type function_type;
+  function_type tmp(ASIO_MOVE_CAST(Function)(f));
+
+  // Invoke immediately if we are already inside the thread pool.
+  if (io_service_.impl_.can_dispatch())
+  {
+    detail::fenced_block b(detail::fenced_block::full);
+    tmp();
+    return;
+  }
+
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
+  // Allocate and construct an operation to wrap the function.
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
+  p.v = p.a.allocate(1);
+  p.p = new (p.v) op(tmp, allocator);
+
+  ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "post"));
+
+  io_service_.impl_.post_immediate_completion(p.p, false);
+  p.v = p.p = 0;
+}
+
+template <typename Function, typename Allocator>
+void io_service::executor_type::post(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+{
+  // Make a local, non-const copy of the function.
+  typedef typename decay<Function>::type function_type;
+  function_type tmp(ASIO_MOVE_CAST(Function)(f));
+
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
+  // Allocate and construct an operation to wrap the function.
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
+  p.v = p.a.allocate(1);
+  p.p = new (p.v) op(tmp, allocator);
+
+  ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "post"));
+
+  io_service_.impl_.post_immediate_completion(p.p, false);
+  p.v = p.p = 0;
+}
+
+template <typename Function, typename Allocator>
+void io_service::executor_type::defer(
+    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+{
+  // Make a local, non-const copy of the function.
+  typedef typename decay<Function>::type function_type;
+  function_type tmp(ASIO_MOVE_CAST(Function)(f));
+
+  // Construct an allocator to be used for the operation.
+  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+
+  // Allocate and construct an operation to wrap the function.
+  typedef detail::executor_op<function_type, alloc_type> op;
+  typename op::ptr p = { allocator, 0, 0 };
+  p.v = p.a.allocate(1);
+  p.p = new (p.v) op(tmp, allocator);
+
+  ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "defer"));
+
+  io_service_.impl_.post_immediate_completion(p.p, true);
+  p.v = p.p = 0;
+}
+
+inline bool
+io_service::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
+{
+  return io_service_.impl_.can_dispatch();
 }
 
 inline io_service::work::work(asio::io_service& io_service)

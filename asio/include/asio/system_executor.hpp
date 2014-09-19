@@ -19,7 +19,6 @@
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
-#include "asio/executor_wrapper.hpp"
 #include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -101,14 +100,6 @@ public:
    */
   template <typename Function, typename Allocator>
   void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a);
-
-  /// Associate this executor with the specified object.
-  template <typename T>
-  typename wrap_with_executor_type<T, system_executor>::type wrap(
-      ASIO_MOVE_ARG(T) t) const
-  {
-    return (wrap_with_executor)(ASIO_MOVE_CAST(T)(t), *this);
-  }
 
 private:
   struct thread_function;

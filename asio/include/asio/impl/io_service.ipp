@@ -44,7 +44,8 @@ io_service::io_service(std::size_t concurrency_hint)
 
 io_service::impl_type& io_service::create_impl(std::size_t concurrency_hint)
 {
-  asio::detail::scoped_ptr<impl_type> impl(new impl_type(*this, concurrency_hint));
+  asio::detail::scoped_ptr<impl_type> impl(
+      new impl_type(*this, concurrency_hint));
   asio::add_service<impl_type>(*this, impl.get());
   return *impl.release();
 }

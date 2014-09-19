@@ -162,8 +162,8 @@ public:
    *
    * @param event A fork-related event.
    *
-   * @throws asio::system_error Thrown on failure. If the notification fails
-   * the execution_context object should no longer be used and should be
+   * @throws asio::system_error Thrown on failure. If the notification
+   * fails the execution_context object should no longer be used and should be
    * destroyed.
    *
    * @par Example
@@ -231,8 +231,8 @@ public:
    * is destroyed, it will destroy the service object by performing: @code
    * delete static_cast<execution_context::service*>(svc) @endcode
    *
-   * @throws asio::service_already_exists Thrown if a service of the given type
-   * is already present in the execution_context.
+   * @throws asio::service_already_exists Thrown if a service of the
+   * given type is already present in the execution_context.
    *
    * @throws asio::invalid_service_owner Thrown if the service's owning
    * execution_context is not the execution_context object specified by the
@@ -248,7 +248,8 @@ public:
    *
    * @param e The execution_context object that owns the service.
    *
-   * @return A boolean indicating whether the execution_context contains the service.
+   * @return A boolean indicating whether the execution_context contains the
+   * service.
    */
   template <typename Service>
   friend bool has_service(execution_context& e);

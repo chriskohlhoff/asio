@@ -16,13 +16,15 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/associated_executor.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-/// An object of type @c executor_work controls ownership of executor work within
-/// a scope.
+/// An object of type @c executor_work controls ownership of executor work
+/// within a scope.
 template <typename Executor>
 class executor_work
 {
@@ -62,8 +64,8 @@ public:
 
   /// Destructor.
   /**
-   * Unless the object is in a moved-from state, calls <tt>work_finished()</tt>
-   * on the stored executor.
+   * Unless the object has already been reset, or is in a moved-from state,
+   * calls <tt>work_finished()</tt> on the stored executor.
    */
   ~executor_work()
   {
@@ -77,6 +79,26 @@ public:
     return executor_;
   }
 
+  /// Whether the executor_work object owns some outstanding work.
+  bool owns_work() const ASIO_NOEXCEPT
+  {
+    return owns_;
+  }
+
+  /// Indicate that the work is no longer outstanding.
+  /*
+   * Unless the object has already been reset, or is in a moved-from state,
+   * calls <tt>work_finished()</tt> on the stored executor.
+   */
+  void reset() ASIO_NOEXCEPT
+  {
+    if (owns_)
+    {
+      executor_.work_finished();
+      owns_ = false;
+    }
+  }
+
 private:
   // Disallow assignment.
   executor_work& operator=(const executor_work&);
@@ -84,6 +106,58 @@ private:
   executor_type executor_;
   bool owns_;
 };
+
+/// Create an @ref executor_work object.
+template <typename Executor>
+inline executor_work<Executor> make_work(const Executor& ex,
+    typename enable_if<is_executor<Executor>::value>::type* = 0)
+{
+  return executor_work<Executor>(ex);
+}
+
+/// Create an @ref executor_work object.
+template <typename ExecutionContext>
+inline executor_work<typename ExecutionContext::executor_type>
+make_work(ExecutionContext& ctx,
+    typename enable_if<
+      is_convertible<ExecutionContext&, execution_context&>::value>::type* = 0)
+{
+  return executor_work<typename ExecutionContext::executor_type>(
+      ctx.get_executor());
+}
+
+/// Create an @ref executor_work object.
+template <typename T>
+inline executor_work<typename associated_executor<T>::type>
+make_work(const T& t,
+    typename enable_if<!is_executor<T>::value &&
+      !is_convertible<T&, execution_context&>::value>::type* = 0)
+{
+  return executor_work<typename associated_executor<T>::type>(
+      associated_executor<T>::get(t));
+}
+
+/// Create an @ref executor_work object.
+template <typename T, typename Executor>
+inline executor_work<typename associated_executor<T, Executor>::type>
+make_work(const T& t, const Executor& ex,
+    typename enable_if<is_executor<Executor>::value>::type* = 0)
+{
+  return executor_work<typename associated_executor<T, Executor>::type>(
+      associated_executor<T, Executor>::get(t, ex));
+}
+
+/// Create an @ref executor_work object.
+template <typename T, typename ExecutionContext>
+inline executor_work<typename associated_executor<T,
+  typename ExecutionContext::executor_type>::type>
+make_work(const T& t, ExecutionContext& ctx)
+{
+  return executor_work<typename associated_executor<T,
+    typename ExecutionContext::executor_type>::type>(
+      associated_executor<T, typename ExecutionContext::executor_type>::get(
+        t, ctx.get_executor()));
+}
 
 } // namespace asio
 

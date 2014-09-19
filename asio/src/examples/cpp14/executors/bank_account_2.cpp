@@ -1,12 +1,11 @@
+#include <asio/package.hpp>
 #include <asio/post.hpp>
 #include <asio/thread_pool.hpp>
-#include <asio/use_future.hpp>
 #include <iostream>
 
-using asio::get_executor;
+using asio::package;
 using asio::post;
 using asio::thread_pool;
-using asio::use_future;
 
 // Traditional active object pattern.
 // Member functions block until operation is finished.
@@ -14,36 +13,35 @@ using asio::use_future;
 class bank_account
 {
   int balance_ = 0;
-  thread_pool pool_{1};
-  mutable thread_pool::executor_type ex_ = get_executor(pool_);
+  mutable thread_pool pool_{1};
 
 public:
   void deposit(int amount)
   {
-    post(ex_, [=]
-      {
-        balance_ += amount;
-      },
-      use_future).get();
+    post(pool_,
+      package([=]
+        {
+          balance_ += amount;
+        })).get();
   }
 
   void withdraw(int amount)
   {
-    post(ex_, [=]
-      {
-        if (balance_ >= amount)
-          balance_ -= amount;
-      },
-      use_future).get();
+    post(pool_,
+      package([=]
+        {
+          if (balance_ >= amount)
+            balance_ -= amount;
+        })).get();
   }
 
   int balance() const
   {
-    return post(ex_, [=]
-      {
-        return balance_;
-      },
-      use_future).get();
+    return post(pool_,
+      package([=]
+        {
+          return balance_;
+        })).get();
   }
 };
 

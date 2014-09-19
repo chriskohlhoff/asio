@@ -58,7 +58,7 @@ public:
       this_->impl_->ready_queue_.push(this_->impl_->waiting_queue_);
       bool more_handlers = this_->impl_->locked_ =
         !this_->impl_->ready_queue_.empty();
-      this_->impl_->mutex_->unlock(); 
+      this_->impl_->mutex_->unlock();
 
       if (more_handlers)
       {

@@ -2,7 +2,6 @@
 #include <asio/thread_pool.hpp>
 #include <iostream>
 
-using asio::get_executor;
 using asio::post;
 using asio::thread_pool;
 
@@ -12,13 +11,12 @@ using asio::thread_pool;
 class bank_account
 {
   int balance_ = 0;
-  thread_pool pool_{1};
-  mutable thread_pool::executor_type ex_ = get_executor(pool_);
+  mutable thread_pool pool_{1};
 
 public:
   void deposit(int amount)
   {
-    post(ex_, [=]
+    post(pool_, [=]
       {
         balance_ += amount;
       });
@@ -26,7 +24,7 @@ public:
 
   void withdraw(int amount)
   {
-    post(ex_, [=]
+    post(pool_, [=]
       {
         if (balance_ >= amount)
           balance_ -= amount;
@@ -35,7 +33,7 @@ public:
 
   void print_balance() const
   {
-    post(ex_, [=]
+    post(pool_, [=]
       {
         std::cout << "balance = " << balance_ << "\n";
       });

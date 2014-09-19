@@ -24,6 +24,7 @@
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
+#include "asio/is_executor.hpp"
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/winsock_init.hpp"
@@ -149,6 +150,9 @@ private:
 #endif
 
 public:
+  class executor_type;
+  friend class executor_type;
+
   class work;
   friend class work;
 
@@ -201,6 +205,9 @@ public:
    * references to all connection objects to be destroyed.
    */
   ASIO_DECL ~io_service();
+
+  /// Obtains the executor associated with the io_service.
+  executor_type get_executor() ASIO_NOEXCEPT;
 
   /// Run the io_service object's event processing loop.
   /**
@@ -472,6 +479,104 @@ private:
   // The implementation.
   impl_type& impl_;
 };
+
+/// Executor used to submit functions to an io_service.
+class io_service::executor_type
+{
+public:
+  /// Obtain the underlying execution context.
+  io_service& context() ASIO_NOEXCEPT;
+
+  /// Inform the io_service that it has some outstanding work to do.
+  /**
+   * This function is used to inform the io_service that some work has begun.
+   * This ensures that the io_service's run() and run_one() functions do not
+   * exit while the work is underway.
+   */
+  void work_started() ASIO_NOEXCEPT;
+
+  /// Inform the io_service that some work is no longer outstanding.
+  /**
+   * This function is used to inform the io_service that some work has
+   * finished. Once the count of unfinished work reaches zero, the io_service
+   * is stopped and the run() and run_one() functions may exit.
+   */
+  void work_finished() ASIO_NOEXCEPT;
+
+  /// Request the io_service to invoke the given function object.
+  /**
+   * This function is used to ask the io_service to execute the given function
+   * object. If the current thread is running the io_service, @c dispatch()
+   * executes the function before returning. Otherwise, the function will be
+   * scheduled to run on the io_service.
+   *
+   * @param f The function object to be called. The executor will make a copy
+   * of the handler object as required. The function signature of the function
+   * object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+
+  /// Request the io_service to invoke the given function object.
+  /**
+   * This function is used to ask the io_service to execute the given function
+   * object. The function object will never be executed inside @c post().
+   * Instead, it will be scheduled to run on the io_service.
+   *
+   * @param f The function object to be called. The executor will make a copy
+   * of the handler object as required. The function signature of the function
+   * object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+
+  /// Request the io_service to invoke the given function object.
+  /**
+   * This function is used to ask the io_service to execute the given function
+   * object. The function object will never be executed inside @c defer().
+   * Instead, it will be scheduled to run on the io_service.
+   *
+   * If the current thread belongs to the io_service, @c defer() will delay
+   * scheduling the function object until the current thread returns control to
+   * the pool.
+   *
+   * @param f The function object to be called. The executor will make a copy
+   * of the handler object as required. The function signature of the function
+   * object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+
+  /// Determine whether the io_service is running in the current thread.
+  /**
+   * @return @c true if the current thread is running the io_service. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
+
+private:
+  friend class io_service;
+
+  // Constructor.
+  explicit executor_type(io_service& i) : io_service_(i) {}
+
+  // The underlying io_service.
+  io_service& io_service_;
+};
+
+#if !defined(GENERATING_DOCUMENTATION)
+template <> struct is_executor<io_service::executor_type> : true_type {};
+#endif // !defined(GENERATING_DOCUMENTATION)
+
 
 /// Class to inform the io_service when it has work to do.
 /**

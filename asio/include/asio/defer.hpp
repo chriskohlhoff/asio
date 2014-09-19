@@ -16,76 +16,87 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/async_result.hpp"
+#include "asio/detail/type_traits.hpp"
+#include "asio/execution_context.hpp"
+#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-/// Submits a chain of function objects for execution using an executor's
-/// @c defer() member function.
+/// Submits a completion token or function object for execution.
 /**
- * The @c defer function is a variadic template function that submits a
- * chain of function objects for execution.
+ * This function submits an object for execution using the object's associated
+ * executor. The function object is queued for execution, and is never called
+ * from the current thread prior to returning from <tt>defer()</tt>.
  *
- * When we perform:
+ * This function has the following effects:
  *
- * @code asio::defer(t0, t1, ..., tN) @endcode
+ * @li Constructs a function object handler of type @c Handler, initialized
+ * with <tt>handler(forward<CompletionToken>(token))</tt>.
  *
- * the library turns the completion tokens @c t0 to @c tN into the
- * corresponding function objects @c f0 to @c fN by applying the @c
- * handler_type type trait. The first function object is deferred to its
- * associated executor, and the remaining function objects are dispatched in
- * sequence. The return value of any given function is passed as an argument
- * to the next one. For example:
+ * @li Constructs an object @c result of type <tt>async_result<Handler></tt>,
+ * initializing the object as <tt>result(handler)</tt>.
  *
- * @code std::future<std::string> fut = asio::defer(
- *   []{ return 42; },
- *   [](int i){ return i * 2; },
- *   [](int i){ return std::to_string(i); },
- *   [](std::string s){ return "value is " + s; },
- *   asio::use_future);
- * std::cout << fut.get() << std::endl; @endcode
+ * @li Obtains the handler's associated executor object @c ex by performing
+ * <tt>get_associated_executor(handler)</tt>.
  *
- * will output the string <tt>value is 84</tt>.
+ * @li Obtains the handler's associated allocator object @c alloc by performing
+ * <tt>get_associated_allocator(handler)</tt>.
+ *
+ * @li Performs <tt>ex.defer(std::move(handler), alloc)</tt>.
+ *
+ * @li Returns <tt>result.get()</tt>.
  */
-#if defined(GENERATING_DOCUMENTATION)
-template <typename... CompletionTokens>
-void_or_deduced defer(ASIO_MOVE_ARG(CompletionTokens)... tokens);
-#endif // defined(GENERATING_DOCUMENTATION)
+template <typename CompletionToken>
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+    ASIO_MOVE_ARG(CompletionToken) token);
 
-/// Submits a chain of function objects for execution using an executor's
-/// @c defer() member function.
+/// Submits a completion token or function object for execution.
 /**
- * The @c defer function is a variadic template function that submits a
- * chain of function objects for execution.
+ * This function submits an object for execution using the specified executor.
+ * The function object is queued for execution, and is never called from the
+ * current thread prior to returning from <tt>defer()</tt>.
  *
- * When we perform:
+ * This function has the following effects:
  *
- * @code asio::defer(ex, t0, t1, ..., tN) @endcode
+ * @li Constructs a function object handler of type @c Handler, initialized
+ * with <tt>handler(forward<CompletionToken>(token))</tt>.
  *
- * the library turns the completion tokens @c t0 to @c tN into the
- * corresponding function objects @c f0 to @c fN by applying the @c
- * handler_type type trait. The first function object is deferred on the
- * specified executor @c ex, and the remaining function objects are dispatched
- * in sequence. The return value of any given function is passed as an argument
- * to the next one. For example:
+ * @li Constructs an object @c result of type <tt>async_result<Handler></tt>,
+ * initializing the object as <tt>result(handler)</tt>.
  *
- * @code system_executor ex;
- * std::future<std::string> fut = asio::defer(ex,
- *   []{ return 42; },
- *   [](int i){ return i * 2; },
- *   [](int i){ return std::to_string(i); },
- *   [](std::string s){ return "value is " + s; },
- *   asio::use_future);
- * std::cout << fut.get() << std::endl; @endcode
+ * @li Obtains the handler's associated executor object @c ex1 by performing
+ * <tt>get_associated_executor(handler)</tt>.
  *
- * will output the string <tt>value is 84</tt>.
+ * @li Creates a work object @c w by performing <tt>make_work(ex1)</tt>.
+ *
+ * @li Obtains the handler's associated allocator object @c alloc by performing
+ * <tt>get_associated_allocator(handler)</tt>.
+ *
+ * @li Constructs a function object @c f with a function call operator that
+ * performs <tt>ex1.dispatch(std::move(handler), alloc)</tt> followed by
+ * <tt>w.reset()</tt>.
+ *
+ * @li Performs <tt>Executor(ex).defer(std::move(f), alloc)</tt>.
+ *
+ * @li Returns <tt>result.get()</tt>.
  */
-#if defined(GENERATING_DOCUMENTATION)
-template <typename Executor, typename... CompletionTokens>
-void_or_deduced defer(ASIO_MOVE_ARG(Executor) executor,
-    ASIO_MOVE_ARG(CompletionTokens)... tokens);
-#endif // defined(GENERATING_DOCUMENTATION)
+template <typename Executor, typename CompletionToken>
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+    const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
+    typename enable_if<is_executor<Executor>::value>::type* = 0);
+
+/// Submits a completion token or function object for execution.
+/**
+ * @returns <tt>defer(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
+ */
+template <typename ExecutionContext, typename CompletionToken>
+ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
+    ExecutionContext& ctx, ASIO_MOVE_ARG(CompletionToken) token,
+    typename enable_if<is_convertible<
+      ExecutionContext&, execution_context&>::value>::type* = 0);
 
 } // namespace asio
 

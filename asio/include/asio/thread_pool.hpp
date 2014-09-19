@@ -20,7 +20,6 @@
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
-#include "asio/executor_wrapper.hpp"
 #include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -44,14 +43,14 @@ public:
   /// Constructs a pool with a specified number of threads.
   ASIO_DECL thread_pool(std::size_t num_threads);
 
-  /// Obtains the executor associated with the pool.
-  executor_type get_executor() const ASIO_NOEXCEPT;
-
   /// Destructor.
   /**
    * Automatically stops and joins the pool, if not explicitly done beforehand.
    */
   ASIO_DECL ~thread_pool();
+
+  /// Obtains the executor associated with the pool.
+  executor_type get_executor() ASIO_NOEXCEPT;
 
   /// Stops the threads.
   /**
@@ -84,7 +83,7 @@ class thread_pool::executor_type
 {
 public:
   /// Obtain the underlying execution context.
-  execution_context& context() ASIO_NOEXCEPT;
+  thread_pool& context() ASIO_NOEXCEPT;
 
   /// Inform the thread pool that it has some outstanding work to do.
   /**
@@ -155,13 +154,12 @@ public:
   template <typename Function, typename Allocator>
   void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a);
 
-  /// Associate this executor with the specified object.
-  template <typename T>
-  typename wrap_with_executor_type<T, executor_type>::type wrap(
-      ASIO_MOVE_ARG(T) t) const
-  {
-    return (wrap_with_executor)(ASIO_MOVE_CAST(T)(t), *this);
-  }
+  /// Determine whether the thread pool is running in the current thread.
+  /**
+   * @return @c true if the current thread belongs to the pool. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
 
 private:
   friend class thread_pool;

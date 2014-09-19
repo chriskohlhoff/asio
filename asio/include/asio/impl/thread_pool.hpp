@@ -26,12 +26,12 @@
 namespace asio {
 
 inline thread_pool::executor_type
-thread_pool::get_executor() const ASIO_NOEXCEPT
+thread_pool::get_executor() ASIO_NOEXCEPT
 {
-  return executor_type(const_cast<thread_pool&>(*this));
+  return executor_type(*this);
 }
 
-inline execution_context&
+inline thread_pool&
 thread_pool::executor_type::context() ASIO_NOEXCEPT
 {
   return pool_;
@@ -125,6 +125,12 @@ void thread_pool::executor_type::defer(
 
   pool_.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
+}
+
+inline bool
+thread_pool::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
+{
+  return pool_.scheduler_.can_dispatch();
 }
 
 } // namespace asio
