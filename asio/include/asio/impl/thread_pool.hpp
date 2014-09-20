@@ -17,7 +17,7 @@
 
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
-#include "asio/detail/scheduler_allocator.hpp"
+#include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution_context.hpp"
 
@@ -64,8 +64,8 @@ void thread_pool::executor_type::dispatch(
   }
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, alloc_type> op;
@@ -88,8 +88,8 @@ void thread_pool::executor_type::post(
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, alloc_type> op;
@@ -112,8 +112,8 @@ void thread_pool::executor_type::defer(
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, alloc_type> op;

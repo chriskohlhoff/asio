@@ -22,12 +22,12 @@
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/detail/atomic_count.hpp"
-#include "asio/detail/call_stack.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
 #include "asio/detail/scheduler_operation.hpp"
+#include "asio/detail/thread_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -37,7 +37,8 @@ namespace detail {
 struct scheduler_thread_info;
 
 class scheduler
-  : public asio::detail::execution_context_service_base<scheduler>
+  : public asio::detail::execution_context_service_base<scheduler>,
+    public thread_context
 {
 public:
   typedef scheduler_operation operation;
@@ -181,9 +182,6 @@ private:
 
   // Flag to indicate that the dispatcher has been shut down.
   bool shutdown_;
-
-  // Per-thread call stack to track the state of each thread in the io_service.
-  typedef call_stack<scheduler, thread_info> thread_call_stack;
 };
 
 } // namespace detail

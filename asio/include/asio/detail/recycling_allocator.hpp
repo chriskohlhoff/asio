@@ -1,5 +1,5 @@
 //
-// detail/scheduler_allocator.hpp
+// detail/recycling_allocator.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,89 +8,87 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_SCHEDULER_ALLOCATOR_HPP
-#define ASIO_DETAIL_SCHEDULER_ALLOCATOR_HPP
+#ifndef ASIO_DETAIL_RECYCLING_ALLOCATOR_HPP
+#define ASIO_DETAIL_RECYCLING_ALLOCATOR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/call_stack.hpp"
 #include "asio/detail/memory.hpp"
-#include "asio/detail/scheduler_thread_info.hpp"
+#include "asio/detail/thread_context.hpp"
+#include "asio/detail/thread_info_base.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename T = void>
-class scheduler_allocator
+template <typename T>
+class recycling_allocator
 {
 public:
   template <typename U>
   struct rebind
   {
-    typedef scheduler_allocator<U> other;
+    typedef recycling_allocator<T> other;
   };
 
-  scheduler_allocator()
+  recycling_allocator()
   {
   }
 
   template <typename U>
-  scheduler_allocator(const scheduler_allocator<U>&)
+  recycling_allocator(const recycling_allocator<U>&)
   {
   }
 
   T* allocate(std::size_t n)
   {
-    typedef scheduler_thread_info thread_info;
-    typedef call_stack<scheduler, thread_info> call_stack;
-    void* p = thread_info::allocate(call_stack::top(), sizeof(T) * n);
+    typedef thread_context::thread_call_stack call_stack;
+    void* p = thread_info_base::allocate(call_stack::top(), sizeof(T) * n);
     return static_cast<T*>(p);
   }
 
   void deallocate(T* p, std::size_t n)
   {
-    typedef scheduler_thread_info thread_info;
-    typedef call_stack<scheduler, thread_info> call_stack;
-    thread_info::deallocate(call_stack::top(), p, sizeof(T) * n);
+    typedef thread_context::thread_call_stack call_stack;
+    thread_info_base::deallocate(call_stack::top(), p, sizeof(T) * n);
   }
 };
 
 template <>
-class scheduler_allocator<void>
+class recycling_allocator<void>
 {
 public:
   template <typename U>
   struct rebind
   {
-    typedef scheduler_allocator<U> other;
+    typedef recycling_allocator<U> other;
   };
 
-  scheduler_allocator()
+  recycling_allocator()
   {
   }
 
   template <typename U>
-  scheduler_allocator(const scheduler_allocator<U>&)
+  recycling_allocator(const recycling_allocator<U>&)
   {
   }
 };
 
 template <typename Allocator>
-struct get_scheduler_allocator
+struct get_recycling_allocator
 {
   typedef Allocator type;
   static type get(const Allocator& a) { return a; }
 };
 
 template <typename T>
-struct get_scheduler_allocator<std::allocator<T> >
+struct get_recycling_allocator<std::allocator<T> >
 {
-  typedef scheduler_allocator<T> type;
+  typedef recycling_allocator<T> type;
   static type get(const std::allocator<T>&) { return type(); }
 };
 
@@ -99,4 +97,4 @@ struct get_scheduler_allocator<std::allocator<T> >
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_SCHEDULER_ALLOCATOR_HPP
+#endif // ASIO_DETAIL_RECYCLING_ALLOCATOR_HPP

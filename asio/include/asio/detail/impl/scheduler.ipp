@@ -190,8 +190,8 @@ std::size_t scheduler::poll(asio::error_code& ec)
   // that are already on a thread-private queue need to be put on to the main
   // queue now.
   if (one_thread_)
-    if (thread_info* outer_thread_info = ctx.next_by_key())
-      op_queue_.push(outer_thread_info->private_op_queue);
+    if (thread_info* outer_info = static_cast<thread_info*>(ctx.next_by_key()))
+      op_queue_.push(outer_info->private_op_queue);
 #endif // defined(ASIO_HAS_THREADS)
 
   std::size_t n = 0;
@@ -221,8 +221,8 @@ std::size_t scheduler::poll_one(asio::error_code& ec)
   // that are already on a thread-private queue need to be put on to the main
   // queue now.
   if (one_thread_)
-    if (thread_info* outer_thread_info = ctx.next_by_key())
-      op_queue_.push(outer_thread_info->private_op_queue);
+    if (thread_info* outer_info = static_cast<thread_info*>(ctx.next_by_key()))
+      op_queue_.push(outer_info->private_op_queue);
 #endif // defined(ASIO_HAS_THREADS)
 
   return do_poll_one(lock, this_thread, ec);
@@ -252,10 +252,10 @@ void scheduler::post_immediate_completion(
 #if defined(ASIO_HAS_THREADS)
   if (one_thread_ || is_continuation)
   {
-    if (thread_info* this_thread = thread_call_stack::contains(this))
+    if (thread_info_base* this_thread = thread_call_stack::contains(this))
     {
-      ++this_thread->private_outstanding_work;
-      this_thread->private_op_queue.push(op);
+      ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
+      static_cast<thread_info*>(this_thread)->private_op_queue.push(op);
       return;
     }
   }
@@ -274,9 +274,9 @@ void scheduler::post_deferred_completion(scheduler::operation* op)
 #if defined(ASIO_HAS_THREADS)
   if (one_thread_)
   {
-    if (thread_info* this_thread = thread_call_stack::contains(this))
+    if (thread_info_base* this_thread = thread_call_stack::contains(this))
     {
-      this_thread->private_op_queue.push(op);
+      static_cast<thread_info*>(this_thread)->private_op_queue.push(op);
       return;
     }
   }
@@ -295,9 +295,9 @@ void scheduler::post_deferred_completions(
 #if defined(ASIO_HAS_THREADS)
     if (one_thread_)
     {
-      if (thread_info* this_thread = thread_call_stack::contains(this))
+      if (thread_info_base* this_thread = thread_call_stack::contains(this))
       {
-        this_thread->private_op_queue.push(ops);
+        static_cast<thread_info*>(this_thread)->private_op_queue.push(ops);
         return;
       }
     }

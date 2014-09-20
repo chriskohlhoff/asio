@@ -20,13 +20,13 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/io_service.hpp"
-#include "asio/detail/call_stack.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/thread.hpp"
+#include "asio/detail/thread_context.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
@@ -41,10 +41,10 @@ namespace detail {
 class wait_op;
 
 class win_iocp_io_service
-  : public asio::detail::service_base<win_iocp_io_service>
+  : public asio::detail::service_base<win_iocp_io_service>,
+    public thread_context
 {
 public:
-
   // Constructor. Specifies a concurrency hint that is passed through to the
   // underlying I/O completion port.
   ASIO_DECL win_iocp_io_service(asio::io_service& io_service,
@@ -294,10 +294,6 @@ private:
 
   // The operations that are ready to dispatch.
   op_queue<win_iocp_operation> completed_ops_;
-
-  // Per-thread call stack to track the state of each thread in the io_service.
-  typedef call_stack<win_iocp_io_service,
-      win_iocp_thread_info> thread_call_stack;
 };
 
 } // namespace detail

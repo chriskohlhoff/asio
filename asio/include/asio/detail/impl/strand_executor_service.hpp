@@ -17,6 +17,7 @@
 
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/fenced_block.hpp"
+#include "asio/detail/recycling_allocator.hpp"
 #include "asio/executor_work.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -63,7 +64,7 @@ public:
       if (more_handlers)
       {
         Executor ex(this_->work_.get_executor());
-        scheduler_allocator<void> allocator;
+        recycling_allocator<void> allocator;
         ex.post(ASIO_MOVE_CAST(invoker)(*this_), allocator);
       }
     }
@@ -110,8 +111,8 @@ void strand_executor_service::dispatch(const implementation_type& impl,
   }
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef executor_op<function_type, alloc_type> op;
@@ -138,8 +139,8 @@ void strand_executor_service::post(const implementation_type& impl,
   function_type tmp(ASIO_MOVE_CAST(Function)(function));
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef executor_op<function_type, alloc_type> op;
@@ -166,8 +167,8 @@ void strand_executor_service::defer(const implementation_type& impl,
   function_type tmp(ASIO_MOVE_CAST(Function)(function));
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef executor_op<function_type, alloc_type> op;

@@ -18,7 +18,7 @@
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
-#include "asio/detail/scheduler_allocator.hpp"
+#include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/service_registry.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -136,8 +136,8 @@ void io_service::executor_type::dispatch(
   }
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, alloc_type> op;
@@ -145,7 +145,7 @@ void io_service::executor_type::dispatch(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "post"));
+  ASIO_HANDLER_CREATION((p.p, "io_service", this, "post"));
 
   io_service_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -160,8 +160,8 @@ void io_service::executor_type::post(
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, alloc_type> op;
@@ -169,7 +169,7 @@ void io_service::executor_type::post(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "post"));
+  ASIO_HANDLER_CREATION((p.p, "io_service", this, "post"));
 
   io_service_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -184,8 +184,8 @@ void io_service::executor_type::defer(
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Construct an allocator to be used for the operation.
-  typedef typename detail::get_scheduler_allocator<Allocator>::type alloc_type;
-  alloc_type allocator(detail::get_scheduler_allocator<Allocator>::get(a));
+  typedef typename detail::get_recycling_allocator<Allocator>::type alloc_type;
+  alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, alloc_type> op;
@@ -193,7 +193,7 @@ void io_service::executor_type::defer(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((p.p, "thread_pool", this, "defer"));
+  ASIO_HANDLER_CREATION((p.p, "io_service", this, "defer"));
 
   io_service_.impl_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;

@@ -174,12 +174,12 @@ nobase_include_HEADERS = \
 	asio/detail/reactor.hpp \
 	asio/detail/reactor_op.hpp \
 	asio/detail/reactor_op_queue.hpp \
+	asio/detail/recycling_allocator.hpp \
 	asio/detail/regex_fwd.hpp \
 	asio/detail/resolve_endpoint_op.hpp \
 	asio/detail/resolve_op.hpp \
 	asio/detail/resolver_service_base.hpp \
 	asio/detail/resolver_service.hpp \
-	asio/detail/scheduler_allocator.hpp \
 	asio/detail/scheduler.hpp \
 	asio/detail/scheduler_operation.hpp \
 	asio/detail/scheduler_thread_info.hpp \
@@ -207,6 +207,7 @@ nobase_include_HEADERS = \
 	asio/detail/std_thread.hpp \
 	asio/detail/strand_executor_service.hpp \
 	asio/detail/strand_service.hpp \
+	asio/detail/thread_context.hpp \
 	asio/detail/thread_group.hpp \
 	asio/detail/thread.hpp \
 	asio/detail/thread_info_base.hpp \
