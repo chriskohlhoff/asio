@@ -195,8 +195,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_write_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.descriptor_, buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "descriptor", &impl, "async_write_some"));
@@ -218,8 +217,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((p.p, "descriptor",
@@ -263,8 +261,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef descriptor_read_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.descriptor_, buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "descriptor", &impl, "async_read_some"));
@@ -286,8 +283,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((p.p, "descriptor",

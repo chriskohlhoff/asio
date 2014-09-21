@@ -126,8 +126,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef winrt_resolve_op<Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(query, handler);
 
     ASIO_HANDLER_CREATION((p.p, "resolver", &impl, "async_resolve"));

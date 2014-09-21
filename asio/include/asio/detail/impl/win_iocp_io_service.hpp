@@ -43,8 +43,7 @@ void win_iocp_io_service::dispatch(Handler& handler)
     // Allocate and construct an operation to wrap the handler.
     typedef completion_handler<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((p.p, "io_service", this, "dispatch"));
@@ -60,8 +59,7 @@ void win_iocp_io_service::post(Handler& handler)
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
   typename op::ptr p = { asio::detail::addressof(handler),
-    asio_handler_alloc_helpers::allocate(
-      sizeof(op), handler), 0 };
+    op::ptr::allocate(handler), 0 };
   p.p = new (p.v) op(handler);
 
   ASIO_HANDLER_CREATION((p.p, "io_service", this, "post"));

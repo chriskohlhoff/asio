@@ -313,8 +313,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send_to"));
@@ -336,8 +335,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket",
@@ -395,8 +393,7 @@ public:
     typedef win_iocp_socket_recvfrom_op<
       MutableBufferSequence, endpoint_type, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(sender_endp, impl.cancel_token_, buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive_from"));
@@ -418,8 +415,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl,
@@ -470,8 +466,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_accept_op<Socket, protocol_type, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     bool enable_connection_aborted =
       (impl.state_ & socket_ops::enable_connection_aborted) != 0;
     p.p = new (p.v) op(*this, impl.socket_, peer, impl.protocol_,
@@ -503,8 +498,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_connect_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
