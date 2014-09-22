@@ -178,8 +178,8 @@ void test()
   ASIO_CHECK(addr3.network() == address_v4::from_string("192.168.1.16"));
   // netmask
   ASIO_CHECK(addr1.netmask() == address_v4::from_string("255.255.255.0"));
-  ASIO_CHECK(addr2.netmask() == address_v4::from_string("255.255.255.0"));
-  ASIO_CHECK(addr3.netmask() == address_v4::from_string("255.255.255.0"));
+  ASIO_CHECK(addr2.netmask() == address_v4::from_string("255.255.255.240"));
+  ASIO_CHECK(addr3.netmask() == address_v4::from_string("255.255.255.240"));
   // broadcast
   ASIO_CHECK(addr1.broadcast() == address_v4::from_string("192.168.0.255"));
   ASIO_CHECK(addr2.broadcast() == address_v4::from_string("192.168.1.15"));
@@ -189,14 +189,14 @@ void test()
   ASIO_CHECK(*addr1.begin() == address_v4::from_string("192.168.0.1"));
   ASIO_CHECK(addr1.end() != addr1.find(address_v4::from_string("192.168.0.10")));
   ASIO_CHECK(addr1.end() == addr1.find(address_v4::from_string("192.168.1.10")));
-  ASIO_CHECK(std::distance(addr2.begin(),addr2.end()) == 15);
+  ASIO_CHECK(std::distance(addr2.begin(),addr2.end()) == 14);
   ASIO_CHECK(*addr2.begin() == address_v4::from_string("192.168.1.1"));
-  ASIO_CHECK(addr2.end() != addr2.find(address_v4::from_string("192.168.1.15")));
-  ASIO_CHECK(addr2.end() == addr2.find(address_v4::from_string("192.168.1.14")));
+  ASIO_CHECK(addr2.end() != addr2.find(address_v4::from_string("192.168.1.14")));
+  ASIO_CHECK(addr2.end() == addr2.find(address_v4::from_string("192.168.1.15")));
   ASIO_CHECK(std::distance(addr3.begin(),addr3.end()) == 14);
   ASIO_CHECK(*addr3.begin() == address_v4::from_string("192.168.1.17"));
-  ASIO_CHECK(addr3.end() != addr3.find(address_v4::from_string("192.168.1.31")));
-  ASIO_CHECK(addr3.end() == addr3.find(address_v4::from_string("192.168.1.30")));
+  ASIO_CHECK(addr3.end() != addr3.find(address_v4::from_string("192.168.1.30")));
+  ASIO_CHECK(addr3.end() == addr3.find(address_v4::from_string("192.168.1.31")));
 }
 
 } // namespace ip_cidr_address_v4_runtime
