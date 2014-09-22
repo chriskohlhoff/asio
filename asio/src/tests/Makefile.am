@@ -47,6 +47,7 @@ check_PROGRAMS = \
 	unit/ip/basic_resolver_entry \
 	unit/ip/basic_resolver_iterator \
 	unit/ip/basic_resolver_query \
+	unit/ip/cidr_address_v4 \
 	unit/ip/host_name \
 	unit/ip/icmp \
 	unit/ip/multicast \
@@ -157,6 +158,7 @@ TESTS = \
 	unit/ip/basic_resolver_entry \
 	unit/ip/basic_resolver_iterator \
 	unit/ip/basic_resolver_query \
+	unit/ip/cidr_address_v4 \
 	unit/ip/host_name \
 	unit/ip/icmp \
 	unit/ip/multicast \
@@ -280,6 +282,7 @@ unit_ip_basic_resolver_SOURCES = unit/ip/basic_resolver.cpp unit/unit_test.cpp
 unit_ip_basic_resolver_entry_SOURCES = unit/ip/basic_resolver_entry.cpp unit/unit_test.cpp
 unit_ip_basic_resolver_iterator_SOURCES = unit/ip/basic_resolver_iterator.cpp unit/unit_test.cpp
 unit_ip_basic_resolver_query_SOURCES = unit/ip/basic_resolver_query.cpp unit/unit_test.cpp
+unit_ip_cidr_address_v4_SOURCES = unit/ip/cidr_address_v4.cpp unit/unit_test.cpp
 unit_ip_host_name_SOURCES = unit/ip/host_name.cpp unit/unit_test.cpp
 unit_ip_icmp_SOURCES = unit/ip/icmp.cpp unit/unit_test.cpp
 unit_ip_multicast_SOURCES = unit/ip/multicast.cpp unit/unit_test.cpp
