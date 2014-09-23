@@ -578,6 +578,24 @@ namespace detail
 } // namespace detail
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
+    typename CompletionCondition, typename WriteHandler, typename Allocator>
+struct associated_allocator<
+    detail::write_op<AsyncWriteStream, ConstBufferSequence,
+      CompletionCondition, WriteHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
+
+  static type get(
+      const detail::write_op<AsyncWriteStream, ConstBufferSequence,
+        CompletionCondition, WriteHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename AsyncWriteStream, typename ConstBufferSequence,
   typename CompletionCondition, typename WriteHandler>
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
@@ -705,6 +723,21 @@ namespace detail
         function, this_handler->handler_);
   }
 } // namespace detail
+
+template <typename Allocator, typename WriteHandler, typename Allocator1>
+struct associated_allocator<
+    detail::write_streambuf_handler<Allocator, WriteHandler>,
+    Allocator1>
+{
+  typedef typename associated_allocator<WriteHandler, Allocator1>::type type;
+
+  static type get(
+      const detail::write_streambuf_handler<Allocator, WriteHandler>& h,
+      const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<WriteHandler, Allocator1>::get(h.handler_, a);
+  }
+};
 
 template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>

@@ -222,6 +222,18 @@ private:
   asio::error_code ec_;
 };
 
+template <typename Handler, typename T, typename Allocator>
+struct associated_allocator<detail::coro_handler<Handler, T>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::coro_handler<Handler, T>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
 namespace detail {
 
   template <typename Handler, typename Function>

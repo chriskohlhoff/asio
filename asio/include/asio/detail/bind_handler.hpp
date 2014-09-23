@@ -482,6 +482,74 @@ inline binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5> bind_handler(
 }
 
 } // namespace detail
+
+template <typename Handler, typename Arg1, typename Allocator>
+struct associated_allocator<detail::binder1<Handler, Arg1>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::binder1<Handler, Arg1>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Allocator>
+struct associated_allocator<detail::binder2<Handler, Arg1, Arg2>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::binder2<Handler, Arg1, Arg2>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Allocator>
+struct associated_allocator<detail::binder3<Handler, Arg1, Arg2, Arg3>,
+    Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::binder3<Handler, Arg1, Arg2, Arg3>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Allocator>
+struct associated_allocator<detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4>,
+    Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Arg5, typename Allocator>
+struct associated_allocator<
+    detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(
+      const detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

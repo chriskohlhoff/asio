@@ -319,6 +319,27 @@ namespace detail
 } // namespace detail
 
 template <typename Protocol, typename SocketService,
+    typename Iterator, typename ConnectCondition,
+    typename ComposedConnectHandler, typename Allocator>
+struct associated_allocator<
+    detail::connect_op<Protocol, SocketService, Iterator,
+      ConnectCondition, ComposedConnectHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<
+      ComposedConnectHandler, Allocator>::type type;
+
+  static type get(
+      const detail::connect_op<Protocol, SocketService,
+        Iterator, ConnectCondition, ComposedConnectHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ComposedConnectHandler,
+        Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>
 inline ASIO_INITFN_RESULT_TYPE(ComposedConnectHandler,
     void (asio::error_code, Iterator))

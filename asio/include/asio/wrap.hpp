@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
+#include "asio/associated_allocator.hpp"
 #include "asio/async_result.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/uses_executor.hpp"
@@ -489,6 +490,30 @@ public:
 
 private:
   async_result<T> wrapped_;
+};
+
+template <typename T, typename Executor, typename Allocator>
+struct associated_allocator<executor_wrapper<T, Executor>, Allocator>
+{
+  typedef typename associated_allocator<T, Allocator>::type type;
+
+  static type get(const executor_wrapper<T, Executor>& w,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<T, Allocator>::get(w.unwrap(), a);
+  }
+};
+
+template <typename T, typename Executor, typename Executor1>
+struct associated_executor<executor_wrapper<T, Executor>, Executor1>
+{
+  typedef Executor type;
+
+  static type get(const executor_wrapper<T, Executor>& w,
+      const Executor1& = Executor1()) ASIO_NOEXCEPT
+  {
+    return w.get_executor();
+  }
 };
 
 #endif // !defined(GENERATING_DOCUMENTATION)

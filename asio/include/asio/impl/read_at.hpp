@@ -564,6 +564,24 @@ namespace detail
 } // namespace detail
 
 template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
+    typename CompletionCondition, typename ReadHandler, typename Allocator>
+struct associated_allocator<
+    detail::read_at_op<AsyncRandomAccessReadDevice,
+      MutableBufferSequence, CompletionCondition, ReadHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<ReadHandler, Allocator>::type type;
+
+  static type get(
+      const detail::read_at_op<AsyncRandomAccessReadDevice,
+        MutableBufferSequence, CompletionCondition, ReadHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ReadHandler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
 inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
@@ -747,6 +765,24 @@ namespace detail
         function, this_handler->handler_);
   }
 } // namespace detail
+
+template <typename AsyncRandomAccessReadDevice, typename Allocator,
+    typename CompletionCondition, typename ReadHandler, typename Allocator1>
+struct associated_allocator<
+    detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
+      Allocator, CompletionCondition, ReadHandler>,
+    Allocator1>
+{
+  typedef typename associated_allocator<ReadHandler, Allocator1>::type type;
+
+  static type get(
+      const detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
+        Allocator, CompletionCondition, ReadHandler>& h,
+      const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ReadHandler, Allocator1>::get(h.handler_, a);
+  }
+};
 
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>

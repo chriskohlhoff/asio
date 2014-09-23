@@ -121,7 +121,20 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
-}
+} // namespace detail
+
+template <typename WriteHandler, typename Allocator>
+struct associated_allocator<
+    detail::buffered_flush_handler<WriteHandler>, Allocator>
+{
+  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
+
+  static type get(const detail::buffered_flush_handler<WriteHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
+  }
+};
 
 template <typename Stream>
 template <typename WriteHandler>
@@ -279,6 +292,23 @@ namespace detail
         function, this_handler->handler_);
   }
 } // namespace detail
+
+template <typename ConstBufferSequence,
+    typename WriteHandler, typename Allocator>
+struct associated_allocator<
+    detail::buffered_write_some_handler<ConstBufferSequence, WriteHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
+
+  static type get(
+      const detail::buffered_write_some_handler<
+        ConstBufferSequence, WriteHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
+  }
+};
 
 template <typename Stream>
 template <typename ConstBufferSequence, typename WriteHandler>

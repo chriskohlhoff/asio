@@ -137,6 +137,19 @@ namespace detail
   }
 } // namespace detail
 
+template <typename ReadHandler, typename Allocator>
+struct associated_allocator<
+    detail::buffered_fill_handler<ReadHandler>, Allocator>
+{
+  typedef typename associated_allocator<ReadHandler, Allocator>::type type;
+
+  static type get(const detail::buffered_fill_handler<ReadHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ReadHandler, Allocator>::get(h.handler_, a);
+  }
+};
+
 template <typename Stream>
 template <typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
@@ -293,6 +306,23 @@ namespace detail
         function, this_handler->handler_);
   }
 } // namespace detail
+
+template <typename MutableBufferSequence,
+    typename ReadHandler, typename Allocator>
+struct associated_allocator<
+    detail::buffered_read_some_handler<MutableBufferSequence, ReadHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<ReadHandler, Allocator>::type type;
+
+  static type get(
+      const detail::buffered_read_some_handler<
+        MutableBufferSequence, ReadHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ReadHandler, Allocator>::get(h.handler_, a);
+  }
+};
 
 template <typename Stream>
 template <typename MutableBufferSequence, typename ReadHandler>
