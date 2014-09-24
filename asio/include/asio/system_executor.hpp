@@ -42,7 +42,7 @@ public:
   /**
    * For the system executor, this is a no-op.
    */
-  void work_started() ASIO_NOEXCEPT
+  void on_work_started() ASIO_NOEXCEPT
   {
   }
 
@@ -50,7 +50,7 @@ public:
   /**
    * For the system executor, this is a no-op.
    */
-  void work_finished() ASIO_NOEXCEPT
+  void on_work_finished() ASIO_NOEXCEPT
   {
   }
 

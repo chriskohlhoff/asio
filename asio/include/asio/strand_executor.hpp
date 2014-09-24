@@ -148,18 +148,18 @@ public:
   /**
    * The strand delegates this call to its underlying executor.
    */
-  void work_started() ASIO_NOEXCEPT
+  void on_work_started() ASIO_NOEXCEPT
   {
-    executor_.work_started();
+    executor_.on_work_started();
   }
 
   /// Inform the strand that some work is no longer outstanding.
   /**
    * The strand delegates this call to its underlying executor.
    */
-  void work_finished() ASIO_NOEXCEPT
+  void on_work_finished() ASIO_NOEXCEPT
   {
-    executor_.work_finished();
+    executor_.on_work_finished();
   }
 
   /// Request the strand to invoke the given function object.

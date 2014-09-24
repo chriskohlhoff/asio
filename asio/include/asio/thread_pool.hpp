@@ -91,7 +91,7 @@ public:
    * This ensures that the thread pool's join() function will not return while
    * the work is underway.
    */
-  void work_started() ASIO_NOEXCEPT;
+  void on_work_started() ASIO_NOEXCEPT;
 
   /// Inform the thread pool that some work is no longer outstanding.
   /**
@@ -99,7 +99,7 @@ public:
    * finished. Once the count of unfinished work reaches zero, the thread
    * pool's join() function is permitted to exit.
    */
-  void work_finished() ASIO_NOEXCEPT;
+  void on_work_finished() ASIO_NOEXCEPT;
 
   /// Request the thread pool to invoke the given function object.
   /**

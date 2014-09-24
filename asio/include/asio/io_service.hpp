@@ -493,7 +493,7 @@ public:
    * This ensures that the io_service's run() and run_one() functions do not
    * exit while the work is underway.
    */
-  void work_started() ASIO_NOEXCEPT;
+  void on_work_started() ASIO_NOEXCEPT;
 
   /// Inform the io_service that some work is no longer outstanding.
   /**
@@ -501,7 +501,7 @@ public:
    * finished. Once the count of unfinished work reaches zero, the io_service
    * is stopped and the run() and run_one() functions may exit.
    */
-  void work_finished() ASIO_NOEXCEPT;
+  void on_work_finished() ASIO_NOEXCEPT;
 
   /// Request the io_service to invoke the given function object.
   /**

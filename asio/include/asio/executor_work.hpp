@@ -34,13 +34,13 @@ public:
 
   /// Constructs a @c executor_work object for the specified executor.
   /**
-   * Stores a copy of @c e and calls <tt>work_started()</tt> on it.
+   * Stores a copy of @c e and calls <tt>on_work_started()</tt> on it.
    */
   explicit executor_work(const executor_type& e) ASIO_NOEXCEPT
     : executor_(e),
       owns_(true)
   {
-    executor_.work_started();
+    executor_.on_work_started();
   }
 
   /// Copy constructor.
@@ -49,7 +49,7 @@ public:
       owns_(other.owns_)
   {
     if (owns_)
-      executor_.work_started();
+      executor_.on_work_started();
   }
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -65,12 +65,12 @@ public:
   /// Destructor.
   /**
    * Unless the object has already been reset, or is in a moved-from state,
-   * calls <tt>work_finished()</tt> on the stored executor.
+   * calls <tt>on_work_finished()</tt> on the stored executor.
    */
   ~executor_work()
   {
     if (owns_)
-      executor_.work_finished();
+      executor_.on_work_finished();
   }
 
   /// Obtain the associated executor.
@@ -88,13 +88,13 @@ public:
   /// Indicate that the work is no longer outstanding.
   /*
    * Unless the object has already been reset, or is in a moved-from state,
-   * calls <tt>work_finished()</tt> on the stored executor.
+   * calls <tt>on_work_finished()</tt> on the stored executor.
    */
   void reset() ASIO_NOEXCEPT
   {
     if (owns_)
     {
-      executor_.work_finished();
+      executor_.on_work_finished();
       owns_ = false;
     }
   }

@@ -109,12 +109,12 @@ io_service::executor_type::context() ASIO_NOEXCEPT
   return io_service_;
 }
 
-inline void io_service::executor_type::work_started() ASIO_NOEXCEPT
+inline void io_service::executor_type::on_work_started() ASIO_NOEXCEPT
 {
   io_service_.impl_.work_started();
 }
 
-inline void io_service::executor_type::work_finished() ASIO_NOEXCEPT
+inline void io_service::executor_type::on_work_finished() ASIO_NOEXCEPT
 {
   io_service_.impl_.work_finished();
 }

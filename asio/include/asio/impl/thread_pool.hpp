@@ -37,12 +37,12 @@ thread_pool::executor_type::context() ASIO_NOEXCEPT
   return pool_;
 }
 
-inline void thread_pool::executor_type::work_started() ASIO_NOEXCEPT
+inline void thread_pool::executor_type::on_work_started() ASIO_NOEXCEPT
 {
   pool_.scheduler_.work_started();
 }
 
-inline void thread_pool::executor_type::work_finished() ASIO_NOEXCEPT
+inline void thread_pool::executor_type::on_work_finished() ASIO_NOEXCEPT
 {
   pool_.scheduler_.work_finished();
 }
