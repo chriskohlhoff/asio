@@ -38,6 +38,7 @@ public:
     : wait_op(&wait_handler::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(h))
   {
+    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -47,6 +48,7 @@ public:
     // Take ownership of the handler object.
     wait_handler* h(static_cast<wait_handler*>(base));
     ptr p = { asio::detail::addressof(h->handler_), h, h };
+    handler_work<Handler> w(h->handler_);
 
     ASIO_HANDLER_COMPLETION((h));
 
@@ -66,7 +68,7 @@ public:
     {
       fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
-      asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      w.complete(handler, handler.handler_);
       ASIO_HANDLER_INVOCATION_END;
     }
   }

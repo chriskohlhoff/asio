@@ -15,6 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/detail/array_fwd.hpp"
@@ -644,6 +646,24 @@ struct associated_allocator<
 };
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
+    typename CompletionCondition, typename WriteHandler, typename Executor>
+struct associated_executor<
+    detail::write_at_op<AsyncRandomAccessWriteDevice,
+      ConstBufferSequence, CompletionCondition, WriteHandler>,
+    Executor>
+{
+  typedef typename associated_executor<WriteHandler, Executor>::type type;
+
+  static type get(
+      const detail::write_at_op<AsyncRandomAccessWriteDevice,
+        ConstBufferSequence, CompletionCondition, WriteHandler>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler>
 inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
@@ -795,6 +815,21 @@ struct associated_allocator<
       const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
   {
     return associated_allocator<WriteHandler, Allocator1>::get(h.handler_, a);
+  }
+};
+
+template <typename Executor, typename WriteHandler, typename Executor1>
+struct associated_executor<
+    detail::write_at_streambuf_op<Executor, WriteHandler>,
+    Executor1>
+{
+  typedef typename associated_executor<WriteHandler, Executor1>::type type;
+
+  static type get(
+      const detail::write_at_streambuf_op<Executor, WriteHandler>& h,
+      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+  {
+    return associated_executor<WriteHandler, Executor1>::get(h.handler_, ex);
   }
 };
 

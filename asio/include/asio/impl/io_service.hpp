@@ -15,11 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/completion_handler.hpp"
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/service_registry.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -63,7 +65,7 @@ io_service::get_executor() ASIO_NOEXCEPT
 }
 
 template <typename CompletionHandler>
-inline ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
 io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
@@ -72,13 +74,31 @@ io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 
   async_completion<CompletionHandler, void ()> init(handler);
 
-  impl_.dispatch(init.handler);
+  if (impl_.can_dispatch())
+  {
+    detail::fenced_block b(detail::fenced_block::full);
+    asio_handler_invoke_helpers::invoke(init.handler, init.handler);
+  }
+  else
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef detail::completion_handler<
+      typename handler_type<CompletionHandler, void ()>::type> op;
+    typename op::ptr p = { detail::addressof(init.handler),
+      op::ptr::allocate(init.handler), 0 };
+    p.p = new (p.v) op(init.handler);
+
+    ASIO_HANDLER_CREATION((p.p, "io_service", this, "dispatch"));
+
+    impl_.do_dispatch(p.p);
+    p.v = p.p = 0;
+  }
 
   return init.result.get();
 }
 
 template <typename CompletionHandler>
-inline ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
+ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
 io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
@@ -87,7 +107,20 @@ io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 
   async_completion<CompletionHandler, void ()> init(handler);
 
-  impl_.post(init.handler);
+  bool is_continuation =
+    asio_handler_cont_helpers::is_continuation(init.handler);
+
+  // Allocate and construct an operation to wrap the handler.
+  typedef detail::completion_handler<
+    typename handler_type<CompletionHandler, void ()>::type> op;
+  typename op::ptr p = { detail::addressof(init.handler),
+      op::ptr::allocate(init.handler), 0 };
+  p.p = new (p.v) op(init.handler);
+
+  ASIO_HANDLER_CREATION((p.p, "io_service", this, "post"));
+
+  impl_.post_immediate_completion(p.p, is_continuation);
+  p.v = p.p = 0;
 
   return init.result.get();
 }

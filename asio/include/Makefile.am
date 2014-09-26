@@ -73,6 +73,7 @@ nobase_include_HEADERS = \
 	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/handler_tracking.hpp \
 	asio/detail/handler_type_requirements.hpp \
+	asio/detail/handler_work.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/buffer_sequence_adapter.ipp \
 	asio/detail/impl/descriptor_ops.ipp \
@@ -93,7 +94,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/reactive_serial_port_service.ipp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/resolver_service_base.ipp \
-	asio/detail/impl/scheduler.hpp \
 	asio/detail/impl/scheduler.ipp \
 	asio/detail/impl/select_reactor.hpp \
 	asio/detail/impl/select_reactor.ipp \

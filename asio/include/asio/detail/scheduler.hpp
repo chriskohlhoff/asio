@@ -94,14 +94,6 @@ public:
     return thread_call_stack::contains(this) != 0;
   }
 
-  // Request invocation of the given handler.
-  template <typename Handler>
-  void dispatch(Handler& handler);
-
-  // Request invocation of the given handler and return immediately.
-  template <typename Handler>
-  void post(Handler& handler);
-
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
   ASIO_DECL void post_immediate_completion(
@@ -115,6 +107,10 @@ public:
   // that work_started() was previously called for each operation.
   ASIO_DECL void post_deferred_completions(op_queue<operation>& ops);
 
+  // Enqueue the given operation following a failed attempt to dispatch the
+  // operation for immediate invocation.
+  ASIO_DECL void do_dispatch(operation* op);
+
   // Process unfinished operations as part of a shutdown_service operation.
   // Assumes that work_started() was previously called for the operations.
   ASIO_DECL void abandon_operations(op_queue<operation>& ops);
@@ -122,10 +118,6 @@ public:
 private:
   // Structure containing thread-specific data.
   typedef scheduler_thread_info thread_info;
-
-  // Enqueue the given operation following a failed attempt to dispatch the
-  // operation for immediate invocation.
-  ASIO_DECL void do_dispatch(operation* op);
 
   // Run at most one operation. May block.
   ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
@@ -189,7 +181,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/detail/impl/scheduler.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/scheduler.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

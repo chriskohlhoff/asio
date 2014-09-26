@@ -51,6 +51,7 @@ public:
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
       addrinfo_(0)
   {
+    handler_work<Handler>::start(handler_);
   }
 
   ~resolve_op()
@@ -66,6 +67,7 @@ public:
     // Take ownership of the operation object.
     resolve_op* o(static_cast<resolve_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
+    handler_work<Handler> w(o->handler_);
 
     if (owner && owner != &o->io_service_impl_)
     {
@@ -108,7 +110,7 @@ public:
       {
         fenced_block b(fenced_block::half);
         ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, "..."));
-        asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+        w.complete(handler, handler.handler_);
         ASIO_HANDLER_INVOCATION_END;
       }
     }

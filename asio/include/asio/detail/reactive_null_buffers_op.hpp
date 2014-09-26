@@ -38,6 +38,7 @@ public:
         &reactive_null_buffers_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
+    handler_work<Handler>::start(handler_);
   }
 
   static bool do_perform(reactor_op*)
@@ -52,6 +53,7 @@ public:
     // Take ownership of the handler object.
     reactive_null_buffers_op* o(static_cast<reactive_null_buffers_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
+    handler_work<Handler> w(o->handler_);
 
     ASIO_HANDLER_COMPLETION((o));
 
@@ -71,7 +73,7 @@ public:
     {
       fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
-      asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      w.complete(handler, handler.handler_);
       ASIO_HANDLER_INVOCATION_END;
     }
   }

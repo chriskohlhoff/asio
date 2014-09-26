@@ -15,6 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -336,6 +338,27 @@ struct associated_allocator<
   {
     return associated_allocator<ComposedConnectHandler,
         Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Protocol, typename SocketService,
+    typename Iterator, typename ConnectCondition,
+    typename ComposedConnectHandler, typename Executor>
+struct associated_executor<
+    detail::connect_op<Protocol, SocketService, Iterator,
+      ConnectCondition, ComposedConnectHandler>,
+    Executor>
+{
+  typedef typename associated_executor<
+      ComposedConnectHandler, Executor>::type type;
+
+  static type get(
+      const detail::connect_op<Protocol, SocketService,
+        Iterator, ConnectCondition, ComposedConnectHandler>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ComposedConnectHandler,
+        Executor>::get(h.handler_, ex);
   }
 };
 

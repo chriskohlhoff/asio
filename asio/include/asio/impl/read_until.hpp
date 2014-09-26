@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/buffer.hpp"
 #include "asio/buffers_iterator.hpp"
 #include "asio/detail/bind_handler.hpp"
@@ -508,6 +510,23 @@ struct associated_allocator<
   }
 };
 
+template <typename AsyncReadStream, typename Executor,
+    typename ReadHandler, typename Executor1>
+struct associated_executor<
+    detail::read_until_delim_op<AsyncReadStream, Executor, ReadHandler>,
+    Executor1>
+{
+  typedef typename associated_executor<ReadHandler, Executor1>::type type;
+
+  static type get(
+      const detail::read_until_delim_op<
+        AsyncReadStream, Executor, ReadHandler>& h,
+      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
+  }
+};
+
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
@@ -725,6 +744,24 @@ struct associated_allocator<
       const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
   {
     return associated_allocator<ReadHandler, Allocator1>::get(h.handler_, a);
+  }
+};
+
+template <typename AsyncReadStream, typename Executor,
+    typename ReadHandler, typename Executor1>
+struct associated_executor<
+    detail::read_until_delim_string_op<
+      AsyncReadStream, Executor, ReadHandler>,
+    Executor1>
+{
+  typedef typename associated_executor<ReadHandler, Executor1>::type type;
+
+  static type get(
+      const detail::read_until_delim_string_op<
+        AsyncReadStream, Executor, ReadHandler>& h,
+      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
 
@@ -956,6 +993,23 @@ struct associated_allocator<
   }
 };
 
+template <typename AsyncReadStream, typename Executor,
+    typename RegEx, typename ReadHandler, typename Executor1>
+struct associated_executor<
+    detail::read_until_expr_op<AsyncReadStream, Executor, RegEx, ReadHandler>,
+    Executor1>
+{
+  typedef typename associated_executor<ReadHandler, Executor1>::type type;
+
+  static type get(
+      const detail::read_until_expr_op<AsyncReadStream,
+        Executor, RegEx, ReadHandler>& h,
+      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
+  }
+};
+
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
@@ -1178,6 +1232,24 @@ struct associated_allocator<
       const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
   {
     return associated_allocator<ReadHandler, Allocator1>::get(h.handler_, a);
+  }
+};
+
+template <typename AsyncReadStream, typename Executor,
+    typename MatchCondition, typename ReadHandler, typename Executor1>
+struct associated_executor<
+    detail::read_until_match_op<AsyncReadStream,
+      Executor, MatchCondition, ReadHandler>,
+    Executor1>
+{
+  typedef typename associated_executor<ReadHandler, Executor1>::type type;
+
+  static type get(
+      const detail::read_until_match_op<AsyncReadStream,
+        Executor, MatchCondition, ReadHandler>& h,
+      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
 

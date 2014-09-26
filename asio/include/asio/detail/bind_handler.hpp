@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -547,6 +549,73 @@ struct associated_allocator<
       const Allocator& a = Allocator()) ASIO_NOEXCEPT
   {
     return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Executor>
+struct associated_executor<detail::binder1<Handler, Arg1>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::binder1<Handler, Arg1>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Executor>
+struct associated_executor<detail::binder2<Handler, Arg1, Arg2>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::binder2<Handler, Arg1, Arg2>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Executor>
+struct associated_executor<detail::binder3<Handler, Arg1, Arg2, Arg3>,
+    Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::binder3<Handler, Arg1, Arg2, Arg3>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Executor>
+struct associated_executor<detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4>,
+    Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Arg5, typename Executor>
+struct associated_executor<
+    detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(
+      const detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
   }
 };
 

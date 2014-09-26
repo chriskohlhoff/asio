@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/handler_work.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/operation.hpp"
 
@@ -37,6 +37,7 @@ public:
     : operation(&completion_handler::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(h))
   {
+    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -46,6 +47,7 @@ public:
     // Take ownership of the handler object.
     completion_handler* h(static_cast<completion_handler*>(base));
     ptr p = { asio::detail::addressof(h->handler_), h, h };
+    handler_work<Handler> w(h->handler_);
 
     ASIO_HANDLER_COMPLETION((h));
 
@@ -64,7 +66,7 @@ public:
     {
       fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN(());
-      asio_handler_invoke_helpers::invoke(handler, handler);
+      w.complete(handler, handler);
       ASIO_HANDLER_INVOCATION_END;
     }
   }
