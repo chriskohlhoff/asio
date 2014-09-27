@@ -113,7 +113,7 @@ bool strand_executor_service::enqueue(const implementation_type& impl,
 bool strand_executor_service::running_in_this_thread(
     const implementation_type& impl)
 {
-  return call_stack<strand_impl>::contains(impl.get());
+  return !!call_stack<strand_impl>::contains(impl.get());
 }
 
 } // namespace detail

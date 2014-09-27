@@ -17,8 +17,6 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_HAS_IOCP)
-
 #include "asio/detail/event.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/reactor.hpp"
@@ -86,8 +84,8 @@ struct scheduler::work_cleanup
 };
 
 scheduler::scheduler(
-    asio::execution_context& context, std::size_t concurrency_hint)
-  : asio::detail::execution_context_service_base<scheduler>(context),
+    asio::execution_context& ctx, std::size_t concurrency_hint)
+  : asio::detail::execution_context_service_base<scheduler>(ctx),
     one_thread_(concurrency_hint == 1),
     mutex_(),
     task_(0),
@@ -123,8 +121,7 @@ void scheduler::init_task()
   mutex::scoped_lock lock(mutex_);
   if (!shutdown_ && !task_)
   {
-    task_ = &use_service<reactor>(
-        static_cast<asio::io_service&>(this->context()));
+    task_ = &use_service<reactor>(this->context());
     op_queue_.push(&task_operation_);
     wake_one_thread_and_unlock(lock);
   }
@@ -469,7 +466,5 @@ void scheduler::wake_one_thread_and_unlock(
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#endif // !defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_IMPL_SCHEDULER_IPP

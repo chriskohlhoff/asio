@@ -20,7 +20,6 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/limits.hpp"
@@ -62,8 +61,8 @@ struct win_iocp_io_service::timer_thread_function
 };
 
 win_iocp_io_service::win_iocp_io_service(
-    asio::io_service& io_service, size_t concurrency_hint)
-  : asio::detail::service_base<win_iocp_io_service>(io_service),
+    asio::execution_context& ctx, size_t concurrency_hint)
+  : execution_context_service_base<win_iocp_io_service>(ctx),
     iocp_(),
     outstanding_work_(0),
     stopped_(0),

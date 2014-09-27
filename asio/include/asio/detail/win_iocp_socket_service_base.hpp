@@ -30,8 +30,8 @@
 #include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
-#include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
+#include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -68,7 +68,7 @@ public:
     socket_ops::shared_cancel_token_type cancel_token_;
 
     // Per-descriptor data used by the reactor.
-    reactor::per_descriptor_data reactor_data_;
+    select_reactor::per_descriptor_data reactor_data_;
 
 #if defined(ASIO_ENABLE_CANCELIO)
     // The ID of the thread from which it is safe to cancel asynchronous
@@ -248,7 +248,7 @@ public:
     ASIO_HANDLER_CREATION((p.p, "socket",
           &impl, "async_send(null_buffers)"));
 
-    start_reactor_op(impl, reactor::write_op, p.p);
+    start_reactor_op(impl, select_reactor::write_op, p.p);
     p.v = p.p = 0;
   }
 
@@ -459,7 +459,7 @@ protected:
   // Helper function to get the reactor. If no reactor has been created yet, a
   // new one is obtained from the io_service and a pointer to it is cached in
   // this service.
-  ASIO_DECL reactor& get_reactor();
+  ASIO_DECL select_reactor& get_reactor();
 
   // The type of a ConnectEx function pointer, as old SDKs may not provide it.
   typedef BOOL (PASCAL *connect_ex_fn)(SOCKET,
@@ -492,7 +492,7 @@ protected:
 
   // The reactor used for performing connect operations. This object is created
   // only if needed.
-  reactor* reactor_;
+  select_reactor* reactor_;
 
   // Pointer to ConnectEx implementation.
   void* connect_ex_;

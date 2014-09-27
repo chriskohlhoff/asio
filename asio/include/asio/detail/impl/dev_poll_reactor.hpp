@@ -45,12 +45,12 @@ void dev_poll_reactor::schedule_timer(timer_queue<Time_Traits>& queue,
 
   if (shutdown_)
   {
-    io_service_.post_immediate_completion(op, false);
+    scheduler_.post_immediate_completion(op, false);
     return;
   }
 
   bool earliest = queue.enqueue_timer(time, timer, op);
-  io_service_.work_started();
+  scheduler_.work_started();
   if (earliest)
     interrupter_.interrupt();
 }
@@ -64,7 +64,7 @@ std::size_t dev_poll_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
   op_queue<operation> ops;
   std::size_t n = queue.cancel_timer(timer, ops, max_cancelled);
   lock.unlock();
-  io_service_.post_deferred_completions(ops);
+  scheduler_.post_deferred_completions(ops);
   return n;
 }
 

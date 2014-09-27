@@ -31,8 +31,8 @@
 #include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
-#include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
+#include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -341,7 +341,7 @@ public:
     ASIO_HANDLER_CREATION((p.p, "socket",
           &impl, "async_send_to(null_buffers)"));
 
-    start_reactor_op(impl, reactor::write_op, p.p);
+    start_reactor_op(impl, select_reactor::write_op, p.p);
     p.v = p.p = 0;
   }
 

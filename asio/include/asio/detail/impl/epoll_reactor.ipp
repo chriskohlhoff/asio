@@ -34,9 +34,9 @@
 namespace asio {
 namespace detail {
 
-epoll_reactor::epoll_reactor(asio::io_service& io_service)
-  : asio::detail::service_base<epoll_reactor>(io_service),
-    io_service_(use_service<io_service_impl>(io_service)),
+epoll_reactor::epoll_reactor(asio::execution_context& ctx)
+  : execution_context_service_base<epoll_reactor>(ctx),
+    scheduler_(use_service<scheduler>(ctx)),
     mutex_(),
     interrupter_(),
     epoll_fd_(do_epoll_create()),
@@ -85,12 +85,13 @@ void epoll_reactor::shutdown_service()
 
   timer_queues_.get_all_timers(ops);
 
-  io_service_.abandon_operations(ops);
+  scheduler_.abandon_operations(ops);
 }
 
-void epoll_reactor::fork_service(asio::io_service::fork_event fork_ev)
+void epoll_reactor::fork_service(
+    asio::execution_context::fork_event fork_ev)
 {
-  if (fork_ev == asio::io_service::fork_child)
+  if (fork_ev == asio::execution_context::fork_child)
   {
     if (epoll_fd_ != -1)
       ::close(epoll_fd_);
@@ -141,7 +142,7 @@ void epoll_reactor::fork_service(asio::io_service::fork_event fork_ev)
 
 void epoll_reactor::init_task()
 {
-  io_service_.init_task();
+  scheduler_.init_task();
 }
 
 int epoll_reactor::register_descriptor(socket_type descriptor,
@@ -230,7 +231,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
       if (op->perform())
       {
         descriptor_lock.unlock();
-        io_service_.post_immediate_completion(op, is_continuation);
+        scheduler_.post_immediate_completion(op, is_continuation);
         return;
       }
 
@@ -249,7 +250,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
           {
             op->ec_ = asio::error_code(errno,
                 asio::error::get_system_category());
-            io_service_.post_immediate_completion(op, is_continuation);
+            scheduler_.post_immediate_completion(op, is_continuation);
             return;
           }
         }
@@ -270,7 +271,7 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
   }
 
   descriptor_data->op_queue_[op_type].push(op);
-  io_service_.work_started();
+  scheduler_.work_started();
 }
 
 void epoll_reactor::cancel_ops(socket_type,
@@ -294,7 +295,7 @@ void epoll_reactor::cancel_ops(socket_type,
 
   descriptor_lock.unlock();
 
-  io_service_.post_deferred_completions(ops);
+  scheduler_.post_deferred_completions(ops);
 }
 
 void epoll_reactor::deregister_descriptor(socket_type descriptor,
@@ -337,7 +338,7 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
 
-    io_service_.post_deferred_completions(ops);
+    scheduler_.post_deferred_completions(ops);
   }
 }
 
@@ -423,7 +424,7 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
     else
     {
       // The descriptor operation doesn't count as work in and of itself, so we
-      // don't call work_started() here. This still allows the io_service to
+      // don't call work_started() here. This still allows the scheduler to
       // stop if the only remaining operations are descriptor operations.
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
       descriptor_data->set_ready_events(events[i].events);
@@ -578,7 +579,7 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
     {
       // Post the remaining completed operations for invocation.
       if (!ops_.empty())
-        reactor_->io_service_.post_deferred_completions(ops_);
+        reactor_->scheduler_.post_deferred_completions(ops_);
 
       // A user-initiated operation has completed, but there's no need to
       // explicitly call work_finished() here. Instead, we'll take advantage of
@@ -589,7 +590,7 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
       // No user-initiated operations have completed, so we need to compensate
       // for the work_finished() call that the scheduler will make once this
       // operation returns.
-      reactor_->io_service_.work_started();
+      reactor_->scheduler_.work_started();
     }
   }
 

@@ -35,7 +35,7 @@
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/execution_context.hpp"
 
 // Older versions of Mac OS X may not define EV_OOBAND.
 #if !defined(EV_OOBAND)
@@ -47,8 +47,10 @@
 namespace asio {
 namespace detail {
 
+class scheduler;
+
 class kqueue_reactor
-  : public asio::detail::service_base<kqueue_reactor>
+  : public execution_context_service_base<kqueue_reactor>
 {
 public:
   enum op_types { read_op = 0, write_op = 1,
@@ -73,7 +75,7 @@ public:
   typedef descriptor_state* per_descriptor_data;
 
   // Constructor.
-  ASIO_DECL kqueue_reactor(asio::io_service& io_service);
+  ASIO_DECL kqueue_reactor(asio::execution_context& ctx);
 
   // Destructor.
   ASIO_DECL ~kqueue_reactor();
@@ -83,7 +85,7 @@ public:
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev);
 
   // Initialise the task.
   ASIO_DECL void init_task();
@@ -107,7 +109,7 @@ public:
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
-    io_service_.post_immediate_completion(op, is_continuation);
+    scheduler_.post_immediate_completion(op, is_continuation);
   }
 
   // Start a new operation. The reactor operation will be performed when the
@@ -179,8 +181,8 @@ private:
   // Get the timeout value for the kevent call.
   ASIO_DECL timespec* get_timeout(timespec& ts);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The scheduler used to post completions.
+  scheduler& scheduler_;
 
   // Mutex to protect access to internal data.
   mutex mutex_;

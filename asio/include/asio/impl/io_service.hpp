@@ -31,8 +31,8 @@ template <typename Service>
 inline Service& use_service(io_service& ios)
 {
   // Check that Service meets the necessary type requirements.
-  (void)static_cast<io_service::service*>(static_cast<Service*>(0));
-  (void)static_cast<const io_service::id*>(&Service::id);
+  (void)static_cast<execution_context::service*>(static_cast<Service*>(0));
+  (void)static_cast<const execution_context::id*>(&Service::id);
 
   return ios.service_registry_->template use_service<Service>(ios);
 }

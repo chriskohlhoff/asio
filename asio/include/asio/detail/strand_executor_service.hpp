@@ -72,7 +72,7 @@ public:
 
   typedef shared_ptr<strand_impl> implementation_type;
 
-  // Construct a new strand service for the specified io_service.
+  // Construct a new strand service for the specified context.
   ASIO_DECL explicit strand_executor_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.

@@ -17,8 +17,6 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_HAS_IOCP)
-
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/detail/atomic_count.hpp"
@@ -37,15 +35,15 @@ namespace detail {
 struct scheduler_thread_info;
 
 class scheduler
-  : public asio::detail::execution_context_service_base<scheduler>,
+  : public execution_context_service_base<scheduler>,
     public thread_context
 {
 public:
   typedef scheduler_operation operation;
 
   // Constructor. Specifies the number of concurrent threads that are likely to
-  // run the io_service. If set to 1 certain optimisation are performed.
-  ASIO_DECL scheduler(asio::execution_context& context,
+  // run the scheduler. If set to 1 certain optimisation are performed.
+  ASIO_DECL scheduler(asio::execution_context& ctx,
       std::size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
@@ -69,7 +67,7 @@ public:
   // Interrupt the event processing loop.
   ASIO_DECL void stop();
 
-  // Determine whether the io_service is stopped.
+  // Determine whether the scheduler is stopped.
   ASIO_DECL bool stopped() const;
 
   // Restart in preparation for a subsequent run invocation.
@@ -184,7 +182,5 @@ private:
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/scheduler.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
-
-#endif // !defined(ASIO_HAS_IOCP)
 
 #endif // ASIO_DETAIL_SCHEDULER_HPP

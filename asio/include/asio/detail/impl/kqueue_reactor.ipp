@@ -21,6 +21,7 @@
 #if defined(ASIO_HAS_KQUEUE)
 
 #include "asio/detail/kqueue_reactor.hpp"
+#include "asio/detail/scheduler.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
@@ -38,9 +39,9 @@
 namespace asio {
 namespace detail {
 
-kqueue_reactor::kqueue_reactor(asio::io_service& io_service)
-  : asio::detail::service_base<kqueue_reactor>(io_service),
-    io_service_(use_service<io_service_impl>(io_service)),
+kqueue_reactor::kqueue_reactor(asio::execution_context& ctx)
+  : execution_context_service_base<kqueue_reactor>(ctx),
+    scheduler_(use_service<scheduler>(ctx)),
     mutex_(),
     kqueue_fd_(do_kqueue_create()),
     interrupter_(),
@@ -80,12 +81,13 @@ void kqueue_reactor::shutdown_service()
 
   timer_queues_.get_all_timers(ops);
 
-  io_service_.abandon_operations(ops);
+  scheduler_.abandon_operations(ops);
 }
 
-void kqueue_reactor::fork_service(asio::io_service::fork_event fork_ev)
+void kqueue_reactor::fork_service(
+    asio::execution_context::fork_event fork_ev)
 {
-  if (fork_ev == asio::io_service::fork_child)
+  if (fork_ev == asio::execution_context::fork_child)
   {
     // The kqueue descriptor is automatically closed in the child.
     kqueue_fd_ = -1;
@@ -125,7 +127,7 @@ void kqueue_reactor::fork_service(asio::io_service::fork_event fork_ev)
 
 void kqueue_reactor::init_task()
 {
-  io_service_.init_task();
+  scheduler_.init_task();
 }
 
 int kqueue_reactor::register_descriptor(socket_type descriptor,
@@ -209,7 +211,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
       if (op->perform())
       {
         descriptor_lock.unlock();
-        io_service_.post_immediate_completion(op, is_continuation);
+        scheduler_.post_immediate_completion(op, is_continuation);
         return;
       }
     }
@@ -225,7 +227,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
   }
 
   descriptor_data->op_queue_[op_type].push(op);
-  io_service_.work_started();
+  scheduler_.work_started();
 }
 
 void kqueue_reactor::cancel_ops(socket_type,
@@ -249,7 +251,7 @@ void kqueue_reactor::cancel_ops(socket_type,
 
   descriptor_lock.unlock();
 
-  io_service_.post_deferred_completions(ops);
+  scheduler_.post_deferred_completions(ops);
 }
 
 void kqueue_reactor::deregister_descriptor(socket_type descriptor,
@@ -296,7 +298,7 @@ void kqueue_reactor::deregister_descriptor(socket_type descriptor,
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
 
-    io_service_.post_deferred_completions(ops);
+    scheduler_.post_deferred_completions(ops);
   }
 }
 

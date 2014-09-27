@@ -19,7 +19,6 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/io_service.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
@@ -32,6 +31,7 @@
 #include "asio/detail/wait_op.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 #include "asio/detail/win_iocp_thread_info.hpp"
+#include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -41,13 +41,13 @@ namespace detail {
 class wait_op;
 
 class win_iocp_io_service
-  : public asio::detail::service_base<win_iocp_io_service>,
+  : public execution_context_service_base<win_iocp_io_service>,
     public thread_context
 {
 public:
   // Constructor. Specifies a concurrency hint that is passed through to the
   // underlying I/O completion port.
-  ASIO_DECL win_iocp_io_service(asio::io_service& io_service,
+  ASIO_DECL win_iocp_io_service(asio::execution_context& ctx,
       size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
