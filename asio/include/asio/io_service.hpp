@@ -65,8 +65,8 @@ namespace detail {
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
- * @e Shared @e objects: Safe, with the specific exceptions of the reset() and
- * notify_fork() functions. Calling reset() while there are unfinished run(),
+ * @e Shared @e objects: Safe, with the specific exceptions of the restart() and
+ * notify_fork() functions. Calling restart() while there are unfinished run(),
  * run_one(), poll() or poll_one() calls results in undefined behaviour. The
  * notify_fork() function should not be called while any io_service function,
  * or any function on an I/O object that is associated with the io_service, is
@@ -96,7 +96,7 @@ namespace detail {
  *
  * After the exception has been caught, the run(), run_one(), poll() or
  * poll_one() call may be restarted @em without the need for an intervening
- * call to reset(). This allows the thread to rejoin the io_service object's
+ * call to restart(). This allows the thread to rejoin the io_service object's
  * thread pool without impacting any other threads in the pool.
  *
  * For example:
@@ -259,7 +259,7 @@ public:
    * A normal exit from the run() function implies that the io_service object
    * is stopped (the stopped() function returns @c true). Subsequent calls to
    * run(), run_one(), poll() or poll_one() will return immediately unless there
-   * is a prior call to reset().
+   * is a prior call to restart().
    *
    * @return The number of handlers that were executed.
    *
@@ -287,7 +287,7 @@ public:
    * A normal exit from the run() function implies that the io_service object
    * is stopped (the stopped() function returns @c true). Subsequent calls to
    * run(), run_one(), poll() or poll_one() will return immediately unless there
-   * is a prior call to reset().
+   * is a prior call to restart().
    *
    * @param ec Set to indicate what error occurred, if any.
    *
@@ -312,7 +312,7 @@ public:
    * implies that the io_service object is stopped (the stopped() function
    * returns @c true). Subsequent calls to run(), run_one(), poll() or
    * poll_one() will return immediately unless there is a prior call to
-   * reset().
+   * restart().
    *
    * @throws asio::system_error Thrown on failure.
    */
@@ -328,7 +328,7 @@ public:
    * implies that the io_service object is stopped (the stopped() function
    * returns @c true). Subsequent calls to run(), run_one(), poll() or
    * poll_one() will return immediately unless there is a prior call to
-   * reset().
+   * restart().
    *
    * @return The number of handlers that were executed.
    */
@@ -387,7 +387,7 @@ public:
    * This function does not block, but instead simply signals the io_service to
    * stop. All invocations of its run() or run_one() member functions should
    * return as soon as possible. Subsequent calls to run(), run_one(), poll()
-   * or poll_one() will return immediately until reset() is called.
+   * or poll_one() will return immediately until restart() is called.
    */
   ASIO_DECL void stop();
 
@@ -403,18 +403,34 @@ public:
    */
   ASIO_DECL bool stopped() const;
 
-  /// Reset the io_service in preparation for a subsequent run() invocation.
+  /// Restart the io_service in preparation for a subsequent run() invocation.
   /**
    * This function must be called prior to any second or later set of
    * invocations of the run(), run_one(), poll() or poll_one() functions when a
    * previous invocation of these functions returned due to the io_service
-   * being stopped or running out of work. After a call to reset(), the
+   * being stopped or running out of work. After a call to restart(), the
    * io_service object's stopped() function will return @c false.
    *
    * This function must not be called while there are any unfinished calls to
    * the run(), run_one(), poll() or poll_one() functions.
    */
-  ASIO_DECL void reset();
+  ASIO_DECL void restart();
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use restart().) Reset the io_service in preparation for a
+  /// subsequent run() invocation.
+  /**
+   * This function must be called prior to any second or later set of
+   * invocations of the run(), run_one(), poll() or poll_one() functions when a
+   * previous invocation of these functions returned due to the io_service
+   * being stopped or running out of work. After a call to restart(), the
+   * io_service object's stopped() function will return @c false.
+   *
+   * This function must not be called while there are any unfinished calls to
+   * the run(), run_one(), poll() or poll_one() functions.
+   */
+  void reset();
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Request the io_service to invoke the given handler.
   /**

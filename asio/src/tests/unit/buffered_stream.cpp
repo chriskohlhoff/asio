@@ -286,7 +286,7 @@ void test_async_operations()
   stream_type server_socket(io_service);
   acceptor.async_accept(server_socket.lowest_layer(), &handle_accept);
   io_service.run();
-  io_service.reset();
+  io_service.restart();
 
   const char write_data[]
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -299,11 +299,11 @@ void test_async_operations()
         asio::buffer(write_buf + bytes_written),
         bindns::bind(handle_write, _1, _2, &bytes_written));
     io_service.run();
-    io_service.reset();
+    io_service.restart();
     client_socket.async_flush(
         bindns::bind(handle_flush, _1));
     io_service.run();
-    io_service.reset();
+    io_service.restart();
   }
 
   char read_data[sizeof(write_data)];
@@ -316,7 +316,7 @@ void test_async_operations()
         asio::buffer(read_buf + bytes_read),
         bindns::bind(handle_read, _1, _2, &bytes_read));
     io_service.run();
-    io_service.reset();
+    io_service.restart();
   }
 
   ASIO_CHECK(bytes_written == sizeof(write_data));
@@ -330,11 +330,11 @@ void test_async_operations()
         asio::buffer(write_buf + bytes_written),
         bindns::bind(handle_write, _1, _2, &bytes_written));
     io_service.run();
-    io_service.reset();
+    io_service.restart();
     server_socket.async_flush(
         bindns::bind(handle_flush, _1));
     io_service.run();
-    io_service.reset();
+    io_service.restart();
   }
 
   bytes_read = 0;
@@ -344,7 +344,7 @@ void test_async_operations()
         asio::buffer(read_buf + bytes_read),
         bindns::bind(handle_read, _1, _2, &bytes_read));
     io_service.run();
-    io_service.reset();
+    io_service.restart();
   }
 
   ASIO_CHECK(bytes_written == sizeof(write_data));

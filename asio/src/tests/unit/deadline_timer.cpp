@@ -146,7 +146,7 @@ void deadline_timer_test()
   // No completions can be delivered until run() is called.
   ASIO_CHECK(count == 3);
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // The run() call will not return until all operations have finished, and
@@ -168,7 +168,7 @@ void deadline_timer_test()
   // No completions can be delivered until run() is called.
   ASIO_CHECK(count == 0);
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // The timer should have been cancelled, so count should not have changed.
@@ -184,7 +184,7 @@ void deadline_timer_test()
   t5.async_wait(boost::bind(increment_if_not_cancelled, &count,
         asio::placeholders::error));
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // The timer should not have been cancelled, so count should have changed.
@@ -208,7 +208,7 @@ void deadline_timer_test()
   asio::deadline_timer t8(ios, seconds(1));
   t8.async_wait(boost::bind(cancel_one_timer, &t7));
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // One of the waits should not have been cancelled, so count should have

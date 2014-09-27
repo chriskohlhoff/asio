@@ -114,9 +114,9 @@ bool io_service::stopped() const
   return impl_.stopped();
 }
 
-void io_service::reset()
+void io_service::restart()
 {
-  impl_.reset();
+  impl_.restart();
 }
 
 void io_service::notify_fork(asio::io_service::fork_event event)

@@ -130,7 +130,7 @@ void strand_test()
   ASIO_CHECK(count == 1);
 
   count = 0;
-  ios.reset();
+  ios.restart();
   s.post(bindns::bind(increment_with_lock, &s, &count));
 
   // No handlers can be called until run() is called.
@@ -142,7 +142,7 @@ void strand_test()
   ASIO_CHECK(count == 1);
 
   count = 0;
-  ios.reset();
+  ios.restart();
   ios.post(bindns::bind(start_sleep_increments, &ios, &s, &count));
   thread thread1(bindns::bind(io_service_run, &ios));
   thread thread2(bindns::bind(io_service_run, &ios));
@@ -166,7 +166,7 @@ void strand_test()
 
   count = 0;
   int exception_count = 0;
-  ios.reset();
+  ios.restart();
   s.post(throw_exception);
   s.post(bindns::bind(increment, &count));
   s.post(bindns::bind(increment, &count));
@@ -195,7 +195,7 @@ void strand_test()
   ASIO_CHECK(exception_count == 2);
 
   count = 0;
-  ios.reset();
+  ios.restart();
 
   // Check for clean shutdown when handlers posted through an orphaned strand
   // are abandoned.

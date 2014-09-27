@@ -71,8 +71,8 @@ public:
   // Determine whether the io_service is stopped.
   ASIO_DECL bool stopped() const;
 
-  // Reset in preparation for a subsequent run invocation.
-  ASIO_DECL void reset();
+  // Restart in preparation for a subsequent run invocation.
+  ASIO_DECL void restart();
 
   // Notify that some work has started.
   void work_started()

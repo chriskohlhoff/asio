@@ -73,6 +73,13 @@ inline bool has_service(io_service& ios)
 
 namespace asio {
 
+#if !defined(ASIO_NO_DEPRECATED)
+inline void io_service::reset()
+{
+  restart();
+}
+#endif // !defined(ASIO_NO_DEPRECATED)
+
 template <typename CompletionHandler>
 inline ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
 io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)

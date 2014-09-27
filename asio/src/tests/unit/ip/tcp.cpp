@@ -553,7 +553,7 @@ void test()
       bindns::bind(handle_write_noop,
         _1, _2, &write_noop_completed));
 
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(write_noop_completed);
 
@@ -572,7 +572,7 @@ void test()
       bindns::bind(handle_write,
         _1, _2, &write_completed));
 
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(read_completed);
   ASIO_CHECK(write_completed);
@@ -586,13 +586,13 @@ void test()
       bindns::bind(handle_read_cancel,
         _1, _2, &read_cancel_completed));
 
-  ios.reset();
+  ios.restart();
   ios.poll();
   ASIO_CHECK(!read_cancel_completed);
 
   server_side_socket.cancel();
 
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(read_cancel_completed);
 
@@ -606,7 +606,7 @@ void test()
 
   server_side_socket.close();
 
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(read_eof_completed);
 }
@@ -821,7 +821,7 @@ void test()
   acceptor.async_accept(server_side_socket, client_endpoint, &handle_accept);
   client_side_socket.async_connect(server_endpoint, &handle_connect);
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   client_side_local_endpoint = client_side_socket.local_endpoint();

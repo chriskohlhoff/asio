@@ -163,7 +163,7 @@ void system_timer_test()
   // No completions can be delivered until run() is called.
   ASIO_CHECK(count == 3);
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // The run() call will not return until all operations have finished, and
@@ -184,7 +184,7 @@ void system_timer_test()
   // No completions can be delivered until run() is called.
   ASIO_CHECK(count == 0);
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // The timer should have been cancelled, so count should not have changed.
@@ -199,7 +199,7 @@ void system_timer_test()
   // wait should run to completion and increment the counter.
   t5.async_wait(bindns::bind(increment_if_not_cancelled, &count, _1));
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // The timer should not have been cancelled, so count should have changed.
@@ -221,7 +221,7 @@ void system_timer_test()
   asio::system_timer t8(ios, seconds(1));
   t8.async_wait(bindns::bind(cancel_one_timer, &t7));
 
-  ios.reset();
+  ios.restart();
   ios.run();
 
   // One of the waits should not have been cancelled, so count should have

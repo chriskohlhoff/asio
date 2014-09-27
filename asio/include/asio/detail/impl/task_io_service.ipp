@@ -239,7 +239,7 @@ bool task_io_service::stopped() const
   return stopped_;
 }
 
-void task_io_service::reset()
+void task_io_service::restart()
 {
   mutex::scoped_lock lock(mutex_);
   stopped_ = false;

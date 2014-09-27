@@ -421,7 +421,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb1, 'Z',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -436,7 +436,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb1, 'Z',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -451,7 +451,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb1, 'Z',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -465,7 +465,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb2, 'Z',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -480,7 +480,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb2, 'Z',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -495,7 +495,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb2, 'Z',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -509,7 +509,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb2, 'Y',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -524,7 +524,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb2, 'Y',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -539,7 +539,7 @@ void test_char_async_read_until()
   asio::async_read_until(s, sb2, 'Y',
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -550,7 +550,7 @@ void test_char_async_read_until()
   int i = asio::async_read_until(s, sb2, 'Y',
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
-  ios.reset();
+  ios.restart();
   ios.run();
 }
 
@@ -580,7 +580,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb1, "XYZ",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -595,7 +595,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb1, "XYZ",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -610,7 +610,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb1, "XYZ",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -624,7 +624,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb2, "XYZ",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -639,7 +639,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb2, "XYZ",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -654,7 +654,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb2, "XYZ",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -668,7 +668,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb2, "WXY",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -683,7 +683,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb2, "WXY",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -698,7 +698,7 @@ void test_string_async_read_until()
   asio::async_read_until(s, sb2, "WXY",
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -709,7 +709,7 @@ void test_string_async_read_until()
   int i = asio::async_read_until(s, sb2, "WXY",
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
-  ios.reset();
+  ios.restart();
   ios.run();
 }
 
@@ -739,7 +739,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb1, match_char('Z'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -754,7 +754,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb1, match_char('Z'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -769,7 +769,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb1, match_char('Z'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -783,7 +783,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb2, match_char('Z'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -798,7 +798,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb2, match_char('Z'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -813,7 +813,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb2, match_char('Z'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(ec == asio::error::not_found);
@@ -827,7 +827,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb2, match_char('Y'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -842,7 +842,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb2, match_char('Y'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -857,7 +857,7 @@ void test_match_condition_async_read_until()
   asio::async_read_until(s, sb2, match_char('Y'),
       bindns::bind(async_read_handler, _1, &ec,
         _2, &length, &called));
-  ios.reset();
+  ios.restart();
   ios.run();
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
@@ -868,7 +868,7 @@ void test_match_condition_async_read_until()
   int i = asio::async_read_until(s, sb2, match_char('Y'),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
-  ios.reset();
+  ios.restart();
   ios.run();
 }
 
