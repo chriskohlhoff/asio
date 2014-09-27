@@ -130,7 +130,7 @@ void io_service_test()
   ASIO_CHECK(count == 1);
 
   count = 0;
-  ios.reset();
+  ios.restart();
   ios.post(bindns::bind(increment, &count));
   ios.post(bindns::bind(increment, &count));
   ios.post(bindns::bind(increment, &count));
@@ -148,7 +148,7 @@ void io_service_test()
   ASIO_CHECK(count == 5);
 
   count = 0;
-  ios.reset();
+  ios.restart();
   io_service::work* w = new io_service::work(ios);
   ios.post(bindns::bind(&io_service::stop, &ios));
   ASIO_CHECK(!ios.stopped());
@@ -158,7 +158,7 @@ void io_service_test()
   ASIO_CHECK(ios.stopped());
   ASIO_CHECK(count == 0);
 
-  ios.reset();
+  ios.restart();
   ios.post(bindns::bind(increment, &count));
   delete w;
 
@@ -173,7 +173,7 @@ void io_service_test()
   ASIO_CHECK(count == 1);
 
   count = 10;
-  ios.reset();
+  ios.restart();
   ios.post(bindns::bind(decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
@@ -187,7 +187,7 @@ void io_service_test()
   ASIO_CHECK(count == 0);
 
   count = 10;
-  ios.reset();
+  ios.restart();
   ios.post(bindns::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called.
@@ -201,7 +201,7 @@ void io_service_test()
   ASIO_CHECK(count == 0);
 
   count = 10;
-  ios.reset();
+  ios.restart();
   ios.dispatch(bindns::bind(nested_decrement_to_zero, &ios, &count));
 
   // No handlers can be called until run() is called, even though nested
@@ -217,7 +217,7 @@ void io_service_test()
 
   count = 0;
   int count2 = 0;
-  ios.reset();
+  ios.restart();
   ASIO_CHECK(!ios.stopped());
   ios.post(bindns::bind(start_sleep_increments, &ios, &count));
   ios.post(bindns::bind(start_sleep_increments, &ios, &count2));
@@ -234,7 +234,7 @@ void io_service_test()
   count = 10;
   io_service ios2;
   ios.dispatch(ios2.wrap(bindns::bind(decrement_to_zero, &ios2, &count)));
-  ios.reset();
+  ios.restart();
   ASIO_CHECK(!ios.stopped());
   ios.run();
 
@@ -250,7 +250,7 @@ void io_service_test()
 
   count = 0;
   int exception_count = 0;
-  ios.reset();
+  ios.restart();
   ios.post(&throw_exception);
   ios.post(bindns::bind(increment, &count));
   ios.post(bindns::bind(increment, &count));

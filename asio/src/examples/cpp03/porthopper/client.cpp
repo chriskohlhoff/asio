@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
 
         // Run the operations in parallel. This will block until all operations
         // have finished, or until the io_service is interrupted. (No threads!)
-        io_service.reset();
+        io_service.restart();
         io_service.run();
 
         // If the io_service.run() was interrupted then we have received a frame

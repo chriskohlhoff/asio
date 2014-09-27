@@ -83,8 +83,8 @@ public:
     return ::InterlockedExchangeAdd(&stopped_, 0) != 0;
   }
 
-  // Reset in preparation for a subsequent run invocation.
-  void reset()
+  // Restart in preparation for a subsequent run invocation.
+  void restart()
   {
     ::InterlockedExchange(&stopped_, 0);
   }

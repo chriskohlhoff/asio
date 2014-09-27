@@ -240,7 +240,7 @@ bool scheduler::stopped() const
   return stopped_;
 }
 
-void scheduler::reset()
+void scheduler::restart()
 {
   mutex::scoped_lock lock(mutex_);
   stopped_ = false;

@@ -116,9 +116,9 @@ bool io_service::stopped() const
   return impl_.stopped();
 }
 
-void io_service::reset()
+void io_service::restart()
 {
-  impl_.reset();
+  impl_.restart();
 }
 
 io_service::service::service(asio::io_service& owner)

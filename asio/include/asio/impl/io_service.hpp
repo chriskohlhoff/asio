@@ -64,6 +64,11 @@ io_service::get_executor() ASIO_NOEXCEPT
   return executor_type(*this);
 }
 
+inline void io_service::reset()
+{
+  restart();
+}
+
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
 io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
