@@ -60,7 +60,7 @@ void test()
     posix::stream_descriptor descriptor2(ios, native_descriptor1);
 
 #if defined(ASIO_HAS_MOVE)
-    posix::stream_descriptor descriptor3(std::move(descriptor3));
+    posix::stream_descriptor descriptor3(std::move(descriptor2));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_descriptor operators.
