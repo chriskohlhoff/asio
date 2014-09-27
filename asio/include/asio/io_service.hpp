@@ -675,4 +675,10 @@ asio::detail::service_id<Type> service_base<Type>::id;
 # include "asio/impl/io_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
+// If both io_service.hpp and strand.hpp have been included, automatically
+// include the header file needed for the io_service::strand class.
+#if defined(ASIO_STRAND_HPP)
+# include "asio/io_service_strand.hpp"
+#endif // defined(ASIO_STRAND_HPP)
+
 #endif // ASIO_IO_SERVICE_HPP

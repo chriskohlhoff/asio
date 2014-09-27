@@ -312,6 +312,7 @@ nobase_include_HEADERS = \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
+	asio/io_service_strand.hpp \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
 	asio/ip/address_v4.hpp \
@@ -410,7 +411,6 @@ nobase_include_HEADERS = \
 	asio/ssl/verify_context.hpp \
 	asio/ssl/verify_mode.hpp \
 	asio/steady_timer.hpp \
-	asio/strand_executor.hpp \
 	asio/strand.hpp \
 	asio/streambuf.hpp \
 	asio/stream_socket_service.hpp \
