@@ -159,8 +159,9 @@ struct handler_type<packaged_token<Function, Allocator>, R()>
   { \
     typedef packaged_handler< \
       typename result_of< \
-        Function(ASIO_VARIADIC_TARGS(n))>::type(ASIO_VARIADIC_TARGS(n)), \
-          Allocator> type; \
+        Function(ASIO_VARIADIC_TARGS(n))>::type( \
+          ASIO_VARIADIC_TARGS(n)), \
+            Allocator> type; \
   }; \
   /**/
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_HANDLER_TYPE_DEF)
