@@ -18,20 +18,16 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include <cstring>
-# include "asio/detail/throw_error.hpp"
-# include "asio/error.hpp"
-# include "asio/ssl/context.hpp"
-# include "asio/ssl/error.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include <cstring>
+#include "asio/detail/throw_error.hpp"
+#include "asio/error.hpp"
+#include "asio/ssl/context.hpp"
+#include "asio/ssl/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 struct context::bio_cleanup
 {
@@ -165,14 +161,6 @@ context::context(context::method m)
   set_options(no_compression);
 }
 
-context::context(asio::io_service&, context::method m)
-  : handle_(0)
-{
-  context tmp(m);
-  handle_ = tmp.handle_;
-  tmp.handle_ = 0;
-}
-
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 context::context(context&& other)
 {
@@ -216,11 +204,6 @@ context::~context()
 }
 
 context::native_handle_type context::native_handle()
-{
-  return handle_;
-}
-
-context::impl_type context::impl()
 {
   return handle_;
 }
@@ -939,8 +922,6 @@ BIO* context::make_buffer_bio(const const_buffer& b)
       const_cast<void*>(buffer_cast<const void*>(b)),
       static_cast<int>(buffer_size(b)));
 }
-
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

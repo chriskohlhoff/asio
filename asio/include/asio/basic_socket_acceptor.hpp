@@ -56,10 +56,6 @@ class basic_socket_acceptor
     public socket_base
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of an
-  /// acceptor.
-  typedef typename SocketAcceptorService::native_handle_type native_type;
-
   /// The native representation of an acceptor.
   typedef typename SocketAcceptorService::native_handle_type native_handle_type;
 
@@ -491,17 +487,6 @@ public:
   asio::error_code close(asio::error_code& ec)
   {
     return this->get_service().close(this->get_implementation(), ec);
-  }
-
-  /// (Deprecated: Use native_handle().) Get the native acceptor representation.
-  /**
-   * This function may be used to obtain the underlying representation of the
-   * acceptor. This is intended to allow access to native acceptor functionality
-   * that is not otherwise provided.
-   */
-  native_type native()
-  {
-    return this->get_service().native_handle(this->get_implementation());
   }
 
   /// Get the native acceptor representation.

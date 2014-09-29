@@ -17,17 +17,13 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/ssl/detail/engine.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include "asio/ssl/detail/engine.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
 namespace detail {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 class shutdown_op
 {
@@ -48,8 +44,6 @@ public:
     handler(ec);
   }
 };
-
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace detail
 } // namespace ssl

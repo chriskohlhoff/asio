@@ -49,10 +49,6 @@ class basic_stream_handle
   : public basic_handle<StreamHandleService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// handle.
-  typedef typename StreamHandleService::native_handle_type native_type;
-
   /// The native representation of a handle.
   typedef typename StreamHandleService::native_handle_type native_handle_type;
 

@@ -45,8 +45,7 @@ int main(int argc, char* argv[])
 
   if (spin)
   {
-    udp::socket::non_blocking_io nbio(true);
-    socket.io_control(nbio);
+    socket.non_blocking(true);
   }
 
   udp::endpoint target(asio::ip::address::from_string(ip), first_port);

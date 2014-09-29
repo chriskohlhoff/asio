@@ -128,12 +128,9 @@ void test()
     socket1.close();
     socket1.close(ec);
 
-    ip::udp::socket::native_type native_socket4 = socket1.native();
-    (void)native_socket4;
-
-    ip::udp::socket::native_handle_type native_socket5
+    ip::udp::socket::native_handle_type native_socket4
       = socket1.native_handle();
-    (void)native_socket5;
+    (void)native_socket4;
 
     socket1.cancel();
     socket1.cancel(ec);

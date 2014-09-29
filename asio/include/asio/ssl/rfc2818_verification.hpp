@@ -17,18 +17,14 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include <string>
-# include "asio/ssl/detail/openssl_types.hpp"
-# include "asio/ssl/verify_context.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include <string>
+#include "asio/ssl/detail/openssl_types.hpp"
+#include "asio/ssl/verify_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 /// Verifies a certificate against a hostname according to the rules described
 /// in RFC 2818.
@@ -85,8 +81,6 @@ private:
   // The host name to be checked.
   std::string host_;
 };
-
-#endif // defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

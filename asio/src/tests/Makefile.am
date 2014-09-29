@@ -115,13 +115,10 @@ endif
 
 if HAVE_OPENSSL
 check_PROGRAMS += \
-	unit/ssl/basic_context \
 	unit/ssl/context_base \
-	unit/ssl/context_service \
 	unit/ssl/context \
 	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
-	unit/ssl/stream_service \
 	unit/ssl/stream
 endif
 
@@ -215,13 +212,10 @@ TESTS = \
 
 if HAVE_OPENSSL
 TESTS += \
-	unit/ssl/basic_context \
 	unit/ssl/context_base \
-	unit/ssl/context_service \
 	unit/ssl/context \
 	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
-	unit/ssl/stream_service \
 	unit/ssl/stream
 endif
 
@@ -337,13 +331,10 @@ unit_write_SOURCES = unit/write.cpp unit/unit_test.cpp
 unit_write_at_SOURCES = unit/write_at.cpp unit/unit_test.cpp
 
 if HAVE_OPENSSL
-unit_ssl_basic_context_SOURCES = unit/ssl/basic_context.cpp unit/unit_test.cpp
 unit_ssl_context_base_SOURCES = unit/ssl/context_base.cpp unit/unit_test.cpp
-unit_ssl_context_service_SOURCES = unit/ssl/context_service.cpp unit/unit_test.cpp
 unit_ssl_context_SOURCES = unit/ssl/context.cpp unit/unit_test.cpp
 unit_ssl_stream_base_SOURCES = unit/ssl/stream_base.cpp unit/unit_test.cpp
 unit_ssl_rfc2818_verification_SOURCES = unit/ssl/rfc2818_verification.cpp unit/unit_test.cpp
-unit_ssl_stream_service_SOURCES = unit/ssl/stream_service.cpp unit/unit_test.cpp
 unit_ssl_stream_SOURCES = unit/ssl/stream.cpp unit/unit_test.cpp
 endif
 

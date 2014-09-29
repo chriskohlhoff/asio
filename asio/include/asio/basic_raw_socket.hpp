@@ -43,10 +43,6 @@ class basic_raw_socket
   : public basic_socket<Protocol, RawSocketService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// socket.
-  typedef typename RawSocketService::native_handle_type native_type;
-
   /// The native representation of a socket.
   typedef typename RawSocketService::native_handle_type native_handle_type;
 

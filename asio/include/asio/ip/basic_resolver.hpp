@@ -76,7 +76,7 @@ public:
    */
   void cancel()
   {
-    return this->service.cancel(this->implementation);
+    return this->get_service().cancel(this->get_implementation());
   }
 
   /// Perform forward resolution of a query to a list of entries.
@@ -98,7 +98,7 @@ public:
   iterator resolve(const query& q)
   {
     asio::error_code ec;
-    iterator i = this->service.resolve(this->implementation, q, ec);
+    iterator i = this->get_service().resolve(this->get_implementation(), q, ec);
     asio::detail::throw_error(ec, "resolve");
     return i;
   }
@@ -122,7 +122,7 @@ public:
    */
   iterator resolve(const query& q, asio::error_code& ec)
   {
-    return this->service.resolve(this->implementation, q, ec);
+    return this->get_service().resolve(this->get_implementation(), q, ec);
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -162,7 +162,7 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, iterator) type_check;
 
-    return this->service.async_resolve(this->implementation, q,
+    return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 
@@ -187,7 +187,7 @@ public:
   iterator resolve(const endpoint_type& e)
   {
     asio::error_code ec;
-    iterator i = this->service.resolve(this->implementation, e, ec);
+    iterator i = this->get_service().resolve(this->get_implementation(), e, ec);
     asio::detail::throw_error(ec, "resolve");
     return i;
   }
@@ -213,7 +213,7 @@ public:
    */
   iterator resolve(const endpoint_type& e, asio::error_code& ec)
   {
-    return this->service.resolve(this->implementation, e, ec);
+    return this->get_service().resolve(this->get_implementation(), e, ec);
   }
 
   /// Asynchronously perform reverse resolution of an endpoint to a list of
@@ -255,7 +255,7 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, iterator) type_check;
 
-    return this->service.async_resolve(this->implementation, e,
+    return this->get_service().async_resolve(this->get_implementation(), e,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
 };

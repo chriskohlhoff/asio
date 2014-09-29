@@ -34,28 +34,6 @@ namespace posix {
 class descriptor_base
 {
 public:
-  /// (Deprecated: Use non_blocking().) IO control command to set the blocking
-  /// mode of the descriptor.
-  /**
-   * Implements the FIONBIO IO control command.
-   *
-   * @par Example
-   * @code
-   * asio::posix::stream_descriptor descriptor(io_service); 
-   * ...
-   * asio::descriptor_base::non_blocking_io command(true);
-   * descriptor.io_control(command);
-   * @endcode
-   *
-   * @par Concepts:
-   * IoControlCommand.
-   */
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined non_blocking_io;
-#else
-  typedef asio::detail::io_control::non_blocking_io non_blocking_io;
-#endif
-
   /// IO control command to get the amount of data that can be read without
   /// blocking.
   /**

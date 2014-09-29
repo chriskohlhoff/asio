@@ -64,8 +64,7 @@ int main(int argc, char* argv[])
 
     if (spin)
     {
-      tcp::socket::non_blocking_io nbio(true);
-      s->io_control(nbio);
+      s->non_blocking(true);
     }
 
     sockets.push_back(s);

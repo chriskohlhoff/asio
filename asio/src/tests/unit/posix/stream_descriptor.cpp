@@ -95,17 +95,13 @@ void test()
     descriptor1.close();
     descriptor1.close(ec);
 
-    posix::stream_descriptor::native_type native_descriptor3
-      = descriptor1.native();
+    posix::stream_descriptor::native_handle_type native_descriptor3
+      = descriptor1.native_handle();
     (void)native_descriptor3;
 
     posix::stream_descriptor::native_handle_type native_descriptor4
-      = descriptor1.native_handle();
-    (void)native_descriptor4;
-
-    posix::stream_descriptor::native_handle_type native_descriptor5
       = descriptor1.release();
-    (void)native_descriptor5;
+    (void)native_descriptor4;
 
     descriptor1.cancel();
     descriptor1.cancel(ec);

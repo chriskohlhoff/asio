@@ -18,16 +18,12 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/detail/throw_error.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 template <typename VerifyCallback>
 void context::set_verify_callback(VerifyCallback callback)
@@ -60,8 +56,6 @@ asio::error_code context::set_password_callback(
   return do_set_password_callback(
       new detail::password_callback<PasswordCallback>(callback), ec);
 }
-
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

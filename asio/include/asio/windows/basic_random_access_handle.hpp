@@ -46,10 +46,6 @@ class basic_random_access_handle
   : public basic_handle<RandomAccessHandleService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// handle.
-  typedef typename RandomAccessHandleService::native_handle_type native_type;
-
   /// The native representation of a handle.
   typedef typename RandomAccessHandleService::native_handle_type
     native_handle_type;

@@ -17,35 +17,25 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/ssl/old/stream.hpp"
-#else // defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/async_result.hpp"
-# include "asio/detail/buffer_sequence_adapter.hpp"
-# include "asio/detail/handler_type_requirements.hpp"
-# include "asio/detail/noncopyable.hpp"
-# include "asio/detail/type_traits.hpp"
-# include "asio/ssl/context.hpp"
-# include "asio/ssl/detail/buffered_handshake_op.hpp"
-# include "asio/ssl/detail/handshake_op.hpp"
-# include "asio/ssl/detail/io.hpp"
-# include "asio/ssl/detail/read_op.hpp"
-# include "asio/ssl/detail/shutdown_op.hpp"
-# include "asio/ssl/detail/stream_core.hpp"
-# include "asio/ssl/detail/write_op.hpp"
-# include "asio/ssl/stream_base.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SSL)
+#include "asio/async_result.hpp"
+#include "asio/detail/buffer_sequence_adapter.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/noncopyable.hpp"
+#include "asio/detail/type_traits.hpp"
+#include "asio/ssl/context.hpp"
+#include "asio/ssl/detail/buffered_handshake_op.hpp"
+#include "asio/ssl/detail/handshake_op.hpp"
+#include "asio/ssl/detail/io.hpp"
+#include "asio/ssl/detail/read_op.hpp"
+#include "asio/ssl/detail/shutdown_op.hpp"
+#include "asio/ssl/detail/stream_core.hpp"
+#include "asio/ssl/detail/write_op.hpp"
+#include "asio/ssl/stream_base.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if defined(ASIO_ENABLE_OLD_SSL)
-
-using asio::ssl::old::stream;
-
-#else // defined(ASIO_ENABLE_OLD_SSL)
 
 /// Provides stream-oriented functionality using SSL.
 /**
@@ -84,9 +74,6 @@ public:
     SSL* ssl;
   };
 
-  /// (Deprecated: Use native_handle_type.) The underlying implementation type.
-  typedef impl_struct* impl_type;
-
   /// The type of the next layer.
   typedef typename remove_reference<Stream>::type next_layer_type;
 
@@ -107,7 +94,6 @@ public:
     : next_layer_(arg),
       core_(ctx.native_handle(), next_layer_.lowest_layer().get_io_service())
   {
-    backwards_compatible_impl_.ssl = core_.engine_.native_handle();
   }
 
   /// Destructor.
@@ -155,18 +141,6 @@ public:
   native_handle_type native_handle()
   {
     return core_.engine_.native_handle();
-  }
-
-  /// (Deprecated: Use native_handle().) Get the underlying implementation in
-  /// the native type.
-  /**
-   * This function may be used to obtain the underlying implementation of the
-   * context. This is intended to allow access to stream functionality that is
-   * not otherwise provided.
-   */
-  impl_type impl()
-  {
-    return &backwards_compatible_impl_;
   }
 
   /// Get a reference to the next layer.
@@ -743,10 +717,7 @@ public:
 private:
   Stream next_layer_;
   detail::stream_core core_;
-  impl_struct backwards_compatible_impl_;
 };
-
-#endif // defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

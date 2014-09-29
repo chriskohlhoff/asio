@@ -453,28 +453,6 @@ public:
     enable_connection_aborted;
 #endif
 
-  /// (Deprecated: Use non_blocking().) IO control command to
-  /// set the blocking mode of the socket.
-  /**
-   * Implements the FIONBIO IO control command.
-   *
-   * @par Example
-   * @code
-   * asio::ip::tcp::socket socket(io_service); 
-   * ...
-   * asio::socket_base::non_blocking_io command(true);
-   * socket.io_control(command);
-   * @endcode
-   *
-   * @par Concepts:
-   * IO_Control_Command, Boolean_IO_Control_Command.
-   */
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined non_blocking_io;
-#else
-  typedef asio::detail::io_control::non_blocking_io non_blocking_io;
-#endif
-
   /// IO control command to get the amount of data that can be read without
   /// blocking.
   /**

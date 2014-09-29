@@ -76,7 +76,7 @@ public:
    */
   asio::io_service& get_io_service()
   {
-    return service.get_io_service();
+    return service_.get_io_service();
   }
 
 protected:
@@ -86,9 +86,9 @@ protected:
    * @code get_service().construct(get_implementation()); @endcode
    */
   explicit basic_io_object(asio::io_service& io_service)
-    : service(asio::use_service<IoObjectService>(io_service))
+    : service_(asio::use_service<IoObjectService>(io_service))
   {
-    service.construct(implementation);
+    service_.construct(implementation_);
   }
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -120,47 +120,42 @@ protected:
    */
   ~basic_io_object()
   {
-    service.destroy(implementation);
+    service_.destroy(implementation_);
   }
 
   /// Get the service associated with the I/O object.
   service_type& get_service()
   {
-    return service;
+    return service_;
   }
 
   /// Get the service associated with the I/O object.
   const service_type& get_service() const
   {
-    return service;
+    return service_;
   }
-
-  /// (Deprecated: Use get_service().) The service associated with the I/O
-  /// object.
-  /**
-   * @note Available only for services that do not support movability.
-   */
-  service_type& service;
 
   /// Get the underlying implementation of the I/O object.
   implementation_type& get_implementation()
   {
-    return implementation;
+    return implementation_;
   }
 
   /// Get the underlying implementation of the I/O object.
   const implementation_type& get_implementation() const
   {
-    return implementation;
+    return implementation_;
   }
-
-  /// (Deprecated: Use get_implementation().) The underlying implementation of
-  /// the I/O object.
-  implementation_type implementation;
 
 private:
   basic_io_object(const basic_io_object&);
   basic_io_object& operator=(const basic_io_object&);
+
+  // The service associated with the I/O object.
+  service_type& service_;
+
+  /// The underlying implementation of the I/O object.
+  implementation_type implementation_;
 };
 
 #if defined(ASIO_HAS_MOVE)
@@ -181,24 +176,24 @@ protected:
   explicit basic_io_object(asio::io_service& io_service)
     : service_(&asio::use_service<IoObjectService>(io_service))
   {
-    service_->construct(implementation);
+    service_->construct(implementation_);
   }
 
   basic_io_object(basic_io_object&& other)
     : service_(&other.get_service())
   {
-    service_->move_construct(implementation, other.implementation);
+    service_->move_construct(implementation_, other.implementation_);
   }
 
   ~basic_io_object()
   {
-    service_->destroy(implementation);
+    service_->destroy(implementation_);
   }
 
   basic_io_object& operator=(basic_io_object&& other)
   {
-    service_->move_assign(implementation,
-        *other.service_, other.implementation);
+    service_->move_assign(implementation_,
+        *other.service_, other.implementation_);
     service_ = other.service_;
     return *this;
   }
@@ -215,21 +210,20 @@ protected:
 
   implementation_type& get_implementation()
   {
-    return implementation;
+    return implementation_;
   }
 
   const implementation_type& get_implementation() const
   {
-    return implementation;
+    return implementation_;
   }
-
-  implementation_type implementation;
 
 private:
   basic_io_object(const basic_io_object&);
   void operator=(const basic_io_object&);
 
   IoObjectService* service_;
+  implementation_type implementation_;
 };
 #endif // defined(ASIO_HAS_MOVE)
 

@@ -123,7 +123,7 @@ public:
     : basic_io_object<SignalSetService>(io_service)
   {
     asio::error_code ec;
-    this->service.add(this->implementation, signal_number_1, ec);
+    this->get_service().add(this->get_implementation(), signal_number_1, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -148,9 +148,9 @@ public:
     : basic_io_object<SignalSetService>(io_service)
   {
     asio::error_code ec;
-    this->service.add(this->implementation, signal_number_1, ec);
+    this->get_service().add(this->get_implementation(), signal_number_1, ec);
     asio::detail::throw_error(ec, "add");
-    this->service.add(this->implementation, signal_number_2, ec);
+    this->get_service().add(this->get_implementation(), signal_number_2, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -178,11 +178,11 @@ public:
     : basic_io_object<SignalSetService>(io_service)
   {
     asio::error_code ec;
-    this->service.add(this->implementation, signal_number_1, ec);
+    this->get_service().add(this->get_implementation(), signal_number_1, ec);
     asio::detail::throw_error(ec, "add");
-    this->service.add(this->implementation, signal_number_2, ec);
+    this->get_service().add(this->get_implementation(), signal_number_2, ec);
     asio::detail::throw_error(ec, "add");
-    this->service.add(this->implementation, signal_number_3, ec);
+    this->get_service().add(this->get_implementation(), signal_number_3, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -198,7 +198,7 @@ public:
   void add(int signal_number)
   {
     asio::error_code ec;
-    this->service.add(this->implementation, signal_number, ec);
+    this->get_service().add(this->get_implementation(), signal_number, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -214,7 +214,8 @@ public:
   asio::error_code add(int signal_number,
       asio::error_code& ec)
   {
-    return this->service.add(this->implementation, signal_number, ec);
+    return this->get_service().add(
+        this->get_implementation(), signal_number, ec);
   }
 
   /// Remove a signal from a signal_set.
@@ -232,7 +233,7 @@ public:
   void remove(int signal_number)
   {
     asio::error_code ec;
-    this->service.remove(this->implementation, signal_number, ec);
+    this->get_service().remove(this->get_implementation(), signal_number, ec);
     asio::detail::throw_error(ec, "remove");
   }
 
@@ -251,7 +252,8 @@ public:
   asio::error_code remove(int signal_number,
       asio::error_code& ec)
   {
-    return this->service.remove(this->implementation, signal_number, ec);
+    return this->get_service().remove(
+        this->get_implementation(), signal_number, ec);
   }
 
   /// Remove all signals from a signal_set.
@@ -266,7 +268,7 @@ public:
   void clear()
   {
     asio::error_code ec;
-    this->service.clear(this->implementation, ec);
+    this->get_service().clear(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "clear");
   }
 
@@ -281,7 +283,7 @@ public:
    */
   asio::error_code clear(asio::error_code& ec)
   {
-    return this->service.clear(this->implementation, ec);
+    return this->get_service().clear(this->get_implementation(), ec);
   }
 
   /// Cancel all operations associated with the signal set.
@@ -308,7 +310,7 @@ public:
   void cancel()
   {
     asio::error_code ec;
-    this->service.cancel(this->implementation, ec);
+    this->get_service().cancel(this->get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
   }
 
@@ -335,7 +337,7 @@ public:
    */
   asio::error_code cancel(asio::error_code& ec)
   {
-    return this->service.cancel(this->implementation, ec);
+    return this->get_service().cancel(this->get_implementation(), ec);
   }
 
   /// Start an asynchronous operation to wait for a signal to be delivered.
@@ -372,7 +374,7 @@ public:
     // not meet the documented type requirements for a SignalHandler.
     ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
 
-    return this->service.async_wait(this->implementation,
+    return this->get_service().async_wait(this->get_implementation(),
         ASIO_MOVE_CAST(SignalHandler)(handler));
   }
 };

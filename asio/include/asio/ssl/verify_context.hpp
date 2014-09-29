@@ -17,17 +17,13 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/detail/noncopyable.hpp"
-# include "asio/ssl/detail/openssl_types.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include "asio/detail/noncopyable.hpp"
+#include "asio/ssl/detail/openssl_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 /// A simple wrapper around the X509_STORE_CTX type, used during verification of
 /// a peer certificate.
@@ -62,8 +58,6 @@ private:
   // The underlying native implementation.
   native_handle_type handle_;
 };
-
-#endif // defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

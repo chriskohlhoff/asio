@@ -341,10 +341,8 @@ nobase_include_HEADERS = \
 	asio/socket_acceptor_service.hpp \
 	asio/socket_base.hpp \
 	asio/spawn.hpp \
-	asio/ssl/basic_context.hpp \
 	asio/ssl/context_base.hpp \
 	asio/ssl/context.hpp \
-	asio/ssl/context_service.hpp \
 	asio/ssl/detail/buffered_handshake_op.hpp \
 	asio/ssl/detail/engine.hpp \
 	asio/ssl/detail/handshake_op.hpp \
@@ -366,17 +364,9 @@ nobase_include_HEADERS = \
 	asio/ssl/impl/error.ipp \
 	asio/ssl/impl/rfc2818_verification.ipp \
 	asio/ssl/impl/src.hpp \
-	asio/ssl/old/basic_context.hpp \
-	asio/ssl/old/context_service.hpp \
-	asio/ssl/old/detail/openssl_context_service.hpp \
-	asio/ssl/old/detail/openssl_operation.hpp \
-	asio/ssl/old/detail/openssl_stream_service.hpp \
-	asio/ssl/old/stream.hpp \
-	asio/ssl/old/stream_service.hpp \
 	asio/ssl/rfc2818_verification.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
-	asio/ssl/stream_service.hpp \
 	asio/ssl/verify_context.hpp \
 	asio/ssl/verify_mode.hpp \
 	asio/steady_timer.hpp \

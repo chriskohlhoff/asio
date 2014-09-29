@@ -17,23 +17,19 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# if defined(ASIO_HAS_BOOST_DATE_TIME)
-#  include "asio/deadline_timer.hpp"
-# else // defined(ASIO_HAS_BOOST_DATE_TIME)
-#  include "asio/steady_timer.hpp"
-# endif // defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/ssl/detail/engine.hpp"
-# include "asio/buffer.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/deadline_timer.hpp"
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+# include "asio/steady_timer.hpp"
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+#include "asio/ssl/detail/engine.hpp"
+#include "asio/buffer.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
 namespace detail {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 struct stream_core
 {
@@ -114,8 +110,6 @@ struct stream_core
   // The buffer pointing to the engine's unconsumed input.
   asio::const_buffer input_;
 };
-
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace detail
 } // namespace ssl

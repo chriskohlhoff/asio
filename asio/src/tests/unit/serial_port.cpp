@@ -98,11 +98,8 @@ void test()
     port1.close();
     port1.close(ec);
 
-    serial_port::native_type native_port4 = port1.native();
+    serial_port::native_handle_type native_port4 = port1.native_handle();
     (void)native_port4;
-
-    serial_port::native_handle_type native_port5 = port1.native_handle();
-    (void)native_port5;
 
     port1.cancel();
     port1.cancel(ec);

@@ -246,12 +246,9 @@ void test()
     socket1.close();
     socket1.close(ec);
 
-    ip::tcp::socket::native_type native_socket4 = socket1.native();
-    (void)native_socket4;
-
-    ip::tcp::socket::native_handle_type native_socket5
+    ip::tcp::socket::native_handle_type native_socket4
       = socket1.native_handle();
-    (void)native_socket5;
+    (void)native_socket4;
 
     socket1.cancel();
     socket1.cancel(ec);
@@ -697,12 +694,9 @@ void test()
     acceptor1.close();
     acceptor1.close(ec);
 
-    ip::tcp::acceptor::native_type native_acceptor4 = acceptor1.native();
-    (void)native_acceptor4;
-
-    ip::tcp::acceptor::native_handle_type native_acceptor5
+    ip::tcp::acceptor::native_handle_type native_acceptor4
       = acceptor1.native_handle();
-    (void)native_acceptor5;
+    (void)native_acceptor4;
 
     acceptor1.cancel();
     acceptor1.cancel(ec);
@@ -803,9 +797,6 @@ void test()
   client_side_socket.connect(server_endpoint);
   ip::tcp::endpoint client_endpoint;
   acceptor.accept(server_side_socket, client_endpoint);
-
-  ip::tcp::acceptor::non_blocking_io command(false);
-  acceptor.io_control(command);
 
   ip::tcp::endpoint client_side_local_endpoint
     = client_side_socket.local_endpoint();
