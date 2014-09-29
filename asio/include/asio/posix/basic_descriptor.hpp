@@ -45,10 +45,6 @@ class basic_descriptor
     public descriptor_base
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// descriptor.
-  typedef typename DescriptorService::native_handle_type native_type;
-
   /// The native representation of a descriptor.
   typedef typename DescriptorService::native_handle_type native_handle_type;
 
@@ -188,7 +184,7 @@ public:
   /// Determine whether the descriptor is open.
   bool is_open() const
   {
-    return this->get_service().is_open(this->implementation);
+    return this->get_service().is_open(this->get_implementation());
   }
 
   /// Close the descriptor.
@@ -221,18 +217,6 @@ public:
     return this->get_service().close(this->get_implementation(), ec);
   }
 
-  /// (Deprecated: Use native_handle().) Get the native descriptor
-  /// representation.
-  /**
-   * This function may be used to obtain the underlying representation of the
-   * descriptor. This is intended to allow access to native descriptor
-   * functionality that is not otherwise provided.
-   */
-  native_type native()
-  {
-    return this->get_service().native_handle(this->implementation);
-  }
-
   /// Get the native descriptor representation.
   /**
    * This function may be used to obtain the underlying representation of the
@@ -241,7 +225,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->get_service().native_handle(this->implementation);
+    return this->get_service().native_handle(this->get_implementation());
   }
 
   /// Release ownership of the native descriptor implementation.
@@ -256,7 +240,7 @@ public:
    */
   native_handle_type release()
   {
-    return this->get_service().release(this->implementation);
+    return this->get_service().release(this->get_implementation());
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.
@@ -365,7 +349,7 @@ public:
    */
   bool non_blocking() const
   {
-    return this->get_service().non_blocking(this->implementation);
+    return this->get_service().non_blocking(this->get_implementation());
   }
 
   /// Sets the non-blocking mode of the descriptor.
@@ -424,7 +408,8 @@ public:
    */
   bool native_non_blocking() const
   {
-    return this->get_service().native_non_blocking(this->implementation);
+    return this->get_service().native_non_blocking(
+        this->get_implementation());
   }
 
   /// Sets the non-blocking mode of the native descriptor implementation.

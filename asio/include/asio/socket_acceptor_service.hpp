@@ -72,13 +72,6 @@ public:
   typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// (Deprecated: Use native_handle_type.) The native acceptor type.
-#if defined(GENERATING_DOCUMENTATION)
-  typedef implementation_defined native_type;
-#else
-  typedef typename service_impl_type::native_handle_type native_type;
-#endif
-
   /// The native acceptor type.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
@@ -184,12 +177,6 @@ public:
       asio::error_code& ec)
   {
     return service_impl_.close(impl, ec);
-  }
-
-  /// (Deprecated: Use native_handle().) Get the native acceptor implementation.
-  native_type native(implementation_type& impl)
-  {
-    return service_impl_.native_handle(impl);
   }
 
   /// Get the native acceptor implementation.

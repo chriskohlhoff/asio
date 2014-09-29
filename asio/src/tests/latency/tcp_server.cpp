@@ -27,7 +27,7 @@ class tcp_server : coroutine
 public:
   tcp_server(tcp::acceptor& acceptor, std::size_t buf_size) :
     acceptor_(acceptor),
-    socket_(acceptor_.get_io_service()),
+    socket_(acceptor_.get_executor().context()),
     buffer_(buf_size)
   {
   }

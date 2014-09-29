@@ -49,10 +49,6 @@ class basic_stream_descriptor
   : public basic_descriptor<StreamDescriptorService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// descriptor.
-  typedef typename StreamDescriptorService::native_handle_type native_type;
-
   /// The native representation of a descriptor.
   typedef typename StreamDescriptorService::native_handle_type
     native_handle_type;

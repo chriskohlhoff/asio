@@ -17,32 +17,20 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/ssl/basic_context.hpp"
-# include "asio/ssl/context_service.hpp"
-#else // defined(ASIO_ENABLE_OLD_SSL)
-# include <string>
-# include "asio/buffer.hpp"
-# include "asio/io_service.hpp"
-# include "asio/ssl/context_base.hpp"
-# include "asio/ssl/detail/openssl_types.hpp"
-# include "asio/ssl/detail/openssl_init.hpp"
-# include "asio/ssl/detail/password_callback.hpp"
-# include "asio/ssl/detail/verify_callback.hpp"
-# include "asio/ssl/verify_mode.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SSL)
+#include <string>
+#include "asio/buffer.hpp"
+#include "asio/io_service.hpp"
+#include "asio/ssl/context_base.hpp"
+#include "asio/ssl/detail/openssl_types.hpp"
+#include "asio/ssl/detail/openssl_init.hpp"
+#include "asio/ssl/detail/password_callback.hpp"
+#include "asio/ssl/detail/verify_callback.hpp"
+#include "asio/ssl/verify_mode.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if defined(ASIO_ENABLE_OLD_SSL)
-
-/// Typedef for the typical usage of context.
-typedef basic_context<context_service> context;
-
-#else // defined(ASIO_ENABLE_OLD_SSL)
 
 class context
   : public context_base,
@@ -52,14 +40,8 @@ public:
   /// The native handle type of the SSL context.
   typedef SSL_CTX* native_handle_type;
 
-  /// (Deprecated: Use native_handle_type.) The native type of the SSL context.
-  typedef SSL_CTX* impl_type;
-
   /// Constructor.
   ASIO_DECL explicit context(method m);
-
-  /// Deprecated constructor taking a reference to an io_service object.
-  ASIO_DECL context(asio::io_service&, method m);
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a context from another.
@@ -99,15 +81,6 @@ public:
    * not otherwise provided.
    */
   ASIO_DECL native_handle_type native_handle();
-
-  /// (Deprecated: Use native_handle().) Get the underlying implementation in
-  /// the native type.
-  /**
-   * This function may be used to obtain the underlying implementation of the
-   * context. This is intended to allow access to context functionality that is
-   * not otherwise provided.
-   */
-  ASIO_DECL impl_type impl();
 
   /// Clear options on the context.
   /**
@@ -771,8 +744,6 @@ private:
   // Ensure openssl is initialised.
   asio::ssl::detail::openssl_init<> init_;
 };
-
-#endif // defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

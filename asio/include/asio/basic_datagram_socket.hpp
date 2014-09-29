@@ -43,10 +43,6 @@ class basic_datagram_socket
   : public basic_socket<Protocol, DatagramSocketService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// socket.
-  typedef typename DatagramSocketService::native_handle_type native_type;
-
   /// The native representation of a socket.
   typedef typename DatagramSocketService::native_handle_type native_handle_type;
 

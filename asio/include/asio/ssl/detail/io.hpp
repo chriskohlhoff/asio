@@ -17,19 +17,15 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include "asio/ssl/detail/engine.hpp"
-# include "asio/ssl/detail/stream_core.hpp"
-# include "asio/write.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include "asio/ssl/detail/engine.hpp"
+#include "asio/ssl/detail/stream_core.hpp"
+#include "asio/write.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
 namespace detail {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 template <typename Stream, typename Operation>
 std::size_t io(Stream& next_layer, stream_core& core,
@@ -336,12 +332,8 @@ inline void async_io(Stream& next_layer, stream_core& core,
       asio::error_code(), 0, 1);
 }
 
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
-
 } // namespace detail
 } // namespace ssl
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 template <typename Stream, typename Operation,
     typename Handler, typename Allocator>
@@ -370,8 +362,6 @@ struct associated_executor<
     return associated_executor<Handler, Executor>::get(h.handler_, ex);
   }
 };
-
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace asio
 

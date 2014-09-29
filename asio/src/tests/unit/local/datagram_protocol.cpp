@@ -91,7 +91,7 @@ void test()
     socket1.close();
     socket1.close(ec);
 
-    dp::socket::native_type native_socket4 = socket1.native();
+    dp::socket::native_handle_type native_socket4 = socket1.native_handle();
     (void)native_socket4;
 
     socket1.cancel();

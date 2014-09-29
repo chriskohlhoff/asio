@@ -166,11 +166,6 @@ void test()
     (void)static_cast<bool>(!enable_connection_aborted1);
     (void)static_cast<bool>(enable_connection_aborted1.value());
 
-    // non_blocking_io class.
-
-    socket_base::non_blocking_io non_blocking_io(true);
-    sock.io_control(non_blocking_io);
-
     // bytes_readable class.
 
     socket_base::bytes_readable bytes_readable;
@@ -624,16 +619,6 @@ void test()
   ASIO_CHECK(!enable_connection_aborted4.value());
   ASIO_CHECK(!static_cast<bool>(enable_connection_aborted4));
   ASIO_CHECK(!enable_connection_aborted4);
-
-  // non_blocking_io class.
-
-  socket_base::non_blocking_io non_blocking_io1(true);
-  tcp_sock.io_control(non_blocking_io1, ec);
-  ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-
-  socket_base::non_blocking_io non_blocking_io2(false);
-  tcp_sock.io_control(non_blocking_io2, ec);
-  ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
 
   // bytes_readable class.
 

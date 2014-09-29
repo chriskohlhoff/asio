@@ -95,12 +95,9 @@ void test()
     handle1.close();
     handle1.close(ec);
 
-    win::random_access_handle::native_type native_handle3 = handle1.native();
-    (void)native_handle3;
-
-    win::random_access_handle::native_handle_type native_handle4
+    win::random_access_handle::native_handle_type native_handle3
       = handle1.native_handle();
-    (void)native_handle4;
+    (void)native_handle3;
 
     handle1.cancel();
     handle1.cancel(ec);

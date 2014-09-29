@@ -113,7 +113,7 @@ void test()
     socket1.close();
     socket1.close(ec);
 
-    spp::socket::native_type native_socket4 = socket1.native();
+    spp::socket::native_handle_type native_socket4 = socket1.native_handle();
     (void)native_socket4;
 
     socket1.cancel();

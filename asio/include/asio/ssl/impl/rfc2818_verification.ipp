@@ -17,20 +17,16 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SSL)
-# include <cctype>
-# include <cstring>
-# include "asio/ip/address.hpp"
-# include "asio/ssl/rfc2818_verification.hpp"
-# include "asio/ssl/detail/openssl_types.hpp"
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
+#include <cctype>
+#include <cstring>
+#include "asio/ip/address.hpp"
+#include "asio/ssl/rfc2818_verification.hpp"
+#include "asio/ssl/detail/openssl_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
-
-#if !defined(ASIO_ENABLE_OLD_SSL)
 
 bool rfc2818_verification::operator()(
     bool preverified, verify_context& ctx) const
@@ -155,8 +151,6 @@ bool rfc2818_verification::match_pattern(const char* pattern,
 
   return p == p_end && !*h;
 }
-
-#endif // !defined(ASIO_ENABLE_OLD_SSL)
 
 } // namespace ssl
 } // namespace asio

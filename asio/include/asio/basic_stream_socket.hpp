@@ -46,10 +46,6 @@ class basic_stream_socket
   : public basic_socket<Protocol, StreamSocketService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// socket.
-  typedef typename StreamSocketService::native_handle_type native_type;
-
   /// The native representation of a socket.
   typedef typename StreamSocketService::native_handle_type native_handle_type;
 

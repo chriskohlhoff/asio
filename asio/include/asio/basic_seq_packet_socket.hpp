@@ -42,10 +42,6 @@ class basic_seq_packet_socket
   : public basic_socket<Protocol, SeqPacketSocketService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// socket.
-  typedef typename SeqPacketSocketService::native_handle_type native_type;
-
   /// The native representation of a socket.
   typedef typename SeqPacketSocketService::native_handle_type
     native_handle_type;

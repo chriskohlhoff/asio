@@ -45,10 +45,6 @@ class basic_handle
   : public basic_io_object<HandleService>
 {
 public:
-  /// (Deprecated: Use native_handle_type.) The native representation of a
-  /// handle.
-  typedef typename HandleService::native_handle_type native_type;
-
   /// The native representation of a handle.
   typedef typename HandleService::native_handle_type native_handle_type;
 
@@ -209,17 +205,6 @@ public:
   asio::error_code close(asio::error_code& ec)
   {
     return this->get_service().close(this->get_implementation(), ec);
-  }
-
-  /// (Deprecated: Use native_handle().) Get the native handle representation.
-  /**
-   * This function may be used to obtain the underlying representation of the
-   * handle. This is intended to allow access to native handle functionality
-   * that is not otherwise provided.
-   */
-  native_type native()
-  {
-    return this->get_service().native_handle(this->get_implementation());
   }
 
   /// Get the native handle representation.
