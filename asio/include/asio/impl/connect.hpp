@@ -25,6 +25,7 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
+#include "asio/post.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -233,7 +234,8 @@ namespace detail
           if (start)
           {
             ec = asio::error::not_found;
-            socket_.get_io_service().post(detail::bind_handler(*this, ec));
+            asio::post(socket_.get_executor(),
+                detail::bind_handler(*this, ec));
             return;
           }
 

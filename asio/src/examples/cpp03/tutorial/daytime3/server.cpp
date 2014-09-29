@@ -79,7 +79,7 @@ private:
   void start_accept()
   {
     tcp_connection::pointer new_connection =
-      tcp_connection::create(acceptor_.get_io_service());
+      tcp_connection::create(acceptor_.get_executor().context());
 
     acceptor_.async_accept(new_connection->socket(),
         boost::bind(&tcp_server::handle_accept, this, new_connection,

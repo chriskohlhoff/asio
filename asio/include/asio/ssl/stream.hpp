@@ -105,7 +105,8 @@ public:
   template <typename Arg>
   stream(Arg& arg, context& ctx)
     : next_layer_(arg),
-      core_(ctx.native_handle(), next_layer_.lowest_layer().get_io_service())
+      core_(ctx.native_handle(),
+          next_layer_.lowest_layer().get_executor().context())
   {
     backwards_compatible_impl_.ssl = core_.engine_.native_handle();
   }

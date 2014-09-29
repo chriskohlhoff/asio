@@ -36,7 +36,8 @@ public:
       next_frame_number_(1)
   {
     // Start waiting for a new control connection.
-    tcp_socket_ptr new_socket(new tcp::socket(acceptor_.get_io_service()));
+    tcp_socket_ptr new_socket(
+        new tcp::socket(acceptor_.get_executor().context()));
     acceptor_.async_accept(*new_socket,
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error, new_socket));
@@ -59,7 +60,8 @@ public:
     }
 
     // Start waiting for a new control connection.
-    tcp_socket_ptr new_socket(new tcp::socket(acceptor_.get_io_service()));
+    tcp_socket_ptr new_socket(
+        new tcp::socket(acceptor_.get_executor().context()));
     acceptor_.async_accept(*new_socket,
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error, new_socket));
@@ -73,7 +75,7 @@ public:
     {
       // Delay handling of the control request to simulate network latency.
       timer_ptr delay_timer(
-          new asio::deadline_timer(acceptor_.get_io_service()));
+          new asio::deadline_timer(acceptor_.get_executor().context()));
       delay_timer->expires_from_now(boost::posix_time::seconds(2));
       delay_timer->async_wait(
           boost::bind(&server::handle_control_request_timer, this,
