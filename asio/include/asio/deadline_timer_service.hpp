@@ -105,7 +105,7 @@ public:
   /// Get the expiry time for the timer as an absolute time.
   time_type expires_at(const implementation_type& impl) const
   {
-    return service_impl_.expires_at(impl);
+    return service_impl_.expiry(impl);
   }
 
   /// Set the expiry time for the timer as an absolute time.
@@ -118,14 +118,14 @@ public:
   /// Get the expiry time for the timer relative to now.
   duration_type expires_from_now(const implementation_type& impl) const
   {
-    return service_impl_.expires_from_now(impl);
+    return TimeTraits::subtract(service_impl_.expiry(impl), TimeTraits::now());
   }
 
   /// Set the expiry time for the timer relative to now.
   std::size_t expires_from_now(implementation_type& impl,
       const duration_type& expiry_time, asio::error_code& ec)
   {
-    return service_impl_.expires_from_now(impl, expiry_time, ec);
+    return service_impl_.expires_after(impl, expiry_time, ec);
   }
 
   // Perform a blocking wait on the timer.

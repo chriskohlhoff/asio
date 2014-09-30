@@ -89,6 +89,23 @@ public:
     service_impl_.destroy(impl);
   }
 
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a new timer implementation.
+  void move_construct(implementation_type& impl,
+      implementation_type& other_impl)
+  {
+    service_impl_.move_construct(impl, other_impl);
+  }
+
+  /// Move-assign from another timer implementation.
+  void move_assign(implementation_type& impl,
+      waitable_timer_service& other_service,
+      implementation_type& other_impl)
+  {
+    service_impl_.move_assign(impl, other_service.service_impl_, other_impl);
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
   /// Cancel any asynchronous wait operations associated with the timer.
   std::size_t cancel(implementation_type& impl, asio::error_code& ec)
   {
@@ -102,10 +119,19 @@ public:
     return service_impl_.cancel_one(impl, ec);
   }
 
-  /// Get the expiry time for the timer as an absolute time.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use expiry().) Get the expiry time for the timer as an
+  /// absolute time.
   time_point expires_at(const implementation_type& impl) const
   {
-    return service_impl_.expires_at(impl);
+    return service_impl_.expiry(impl);
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Get the expiry time for the timer as an absolute time.
+  time_point expiry(const implementation_type& impl) const
+  {
+    return service_impl_.expiry(impl);
   }
 
   /// Set the expiry time for the timer as an absolute time.
@@ -115,18 +141,30 @@ public:
     return service_impl_.expires_at(impl, expiry_time, ec);
   }
 
-  /// Get the expiry time for the timer relative to now.
-  duration expires_from_now(const implementation_type& impl) const
+  /// Set the expiry time for the timer relative to now.
+  std::size_t expires_after(implementation_type& impl,
+      const duration& expiry_time, asio::error_code& ec)
   {
-    return service_impl_.expires_from_now(impl);
+    return service_impl_.expires_after(impl, expiry_time, ec);
   }
 
-  /// Set the expiry time for the timer relative to now.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use expiry().) Get the expiry time for the timer relative to
+  /// now.
+  duration expires_from_now(const implementation_type& impl) const
+  {
+    typedef detail::chrono_time_traits<Clock, WaitTraits> traits;
+    return traits::subtract(service_impl_.expiry(impl), traits::now());
+  }
+
+  /// (Deprecated: Use expires_after().) Set the expiry time for the timer
+  /// relative to now.
   std::size_t expires_from_now(implementation_type& impl,
       const duration& expiry_time, asio::error_code& ec)
   {
-    return service_impl_.expires_from_now(impl, expiry_time, ec);
+    return service_impl_.expires_after(impl, expiry_time, ec);
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   // Perform a blocking wait on the timer.
   void wait(implementation_type& impl, asio::error_code& ec)

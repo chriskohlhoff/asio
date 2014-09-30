@@ -148,7 +148,7 @@ public:
           // cannot allow more than one read operation at a time on the
           // underlying transport. The pending_read_ timer's expiry is set to
           // pos_infin if a read is in progress, and neg_infin otherwise.
-          if (core_.pending_read_.expires_at() == core_.neg_infin())
+          if (core_.expiry(core_.pending_read_) == core_.neg_infin())
           {
             // Prevent other read operations from being started.
             core_.pending_read_.expires_at(core_.pos_infin());
@@ -175,7 +175,7 @@ public:
           // cannot allow more than one write operation at a time on the
           // underlying transport. The pending_write_ timer's expiry is set to
           // pos_infin if a write is in progress, and neg_infin otherwise.
-          if (core_.pending_write_.expires_at() == core_.neg_infin())
+          if (core_.expiry(core_.pending_write_) == core_.neg_infin())
           {
             // Prevent other write operations from being started.
             core_.pending_write_.expires_at(core_.pos_infin());
