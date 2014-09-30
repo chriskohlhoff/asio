@@ -64,10 +64,12 @@ io_service::get_executor() ASIO_NOEXCEPT
   return executor_type(*this);
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 inline void io_service::reset()
 {
   restart();
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())

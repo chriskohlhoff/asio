@@ -174,7 +174,7 @@ public:
         endpoint, handler);
 
     ec_ = asio::error::would_block;
-    this->get_service().get_io_service().reset();
+    this->get_service().get_io_service().restart();
     do this->get_service().get_io_service().run_one();
     while (ec_ == asio::error::would_block);
 
@@ -314,7 +314,7 @@ protected:
           0, handler);
 
       ec_ = asio::error::would_block;
-      this->get_service().get_io_service().reset();
+      this->get_service().get_io_service().restart();
       do this->get_service().get_io_service().run_one();
       while (ec_ == asio::error::would_block);
       if (ec_)
@@ -354,7 +354,7 @@ protected:
             asio::buffer(&ch, sizeof(char_type)), 0, handler);
 
         ec_ = asio::error::would_block;
-        this->get_service().get_io_service().reset();
+        this->get_service().get_io_service().restart();
         do this->get_service().get_io_service().run_one();
         while (ec_ == asio::error::would_block);
         if (ec_)
@@ -381,7 +381,7 @@ protected:
             asio::buffer(buffer), 0, handler);
 
         ec_ = asio::error::would_block;
-        this->get_service().get_io_service().reset();
+        this->get_service().get_io_service().restart();
         do this->get_service().get_io_service().run_one();
         while (ec_ == asio::error::would_block);
         if (ec_)
@@ -467,7 +467,7 @@ private:
             *i, handler);
 
         ec_ = asio::error::would_block;
-        this->get_service().get_io_service().reset();
+        this->get_service().get_io_service().restart();
         do this->get_service().get_io_service().run_one();
         while (ec_ == asio::error::would_block);
 

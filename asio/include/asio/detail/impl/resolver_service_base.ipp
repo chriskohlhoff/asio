@@ -76,7 +76,7 @@ void resolver_service_base::fork_service(
     }
     else
     {
-      work_io_service_->reset();
+      work_io_service_->restart();
       work_thread_.reset(new asio::detail::thread(
             work_io_service_runner(*work_io_service_)));
     }

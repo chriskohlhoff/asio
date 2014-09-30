@@ -379,6 +379,7 @@ public:
    */
   ASIO_DECL void restart();
 
+#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use restart().) Reset the io_service in preparation for a
   /// subsequent run() invocation.
   /**
@@ -392,6 +393,7 @@ public:
    * the run(), run_one(), poll() or poll_one() functions.
    */
   void reset();
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Request the io_service to invoke the given handler.
   /**
