@@ -93,6 +93,38 @@ public:
     cancel(impl, ec);
   }
 
+  // Move-construct a new serial port implementation.
+  void move_construct(implementation_type& impl,
+      implementation_type& other_impl)
+  {
+    scheduler_.move_timer(timer_queue_, impl.timer_data, other_impl.timer_data);
+
+    impl.expiry = other_impl.expiry;
+    other_impl.expiry = time_type();
+
+    impl.might_have_pending_waits = other_impl.might_have_pending_waits;
+    other_impl.might_have_pending_waits = false;
+  }
+
+  // Move-assign from another serial port implementation.
+  void move_assign(implementation_type& impl,
+      deadline_timer_service& other_service,
+      implementation_type& other_impl)
+  {
+    if (this != &other_service)
+      if (impl.might_have_pending_waits)
+        scheduler_.cancel_timer(timer_queue_, impl.timer_data);
+
+    other_service.scheduler_.move_timer(other_service.timer_queue_,
+        impl.timer_data, other_impl.timer_data);
+
+    impl.expiry = other_impl.expiry;
+    other_impl.expiry = time_type();
+
+    impl.might_have_pending_waits = other_impl.might_have_pending_waits;
+    other_impl.might_have_pending_waits = false;
+  }
+
   // Cancel any asynchronous wait operations associated with the timer.
   std::size_t cancel(implementation_type& impl, asio::error_code& ec)
   {
@@ -131,7 +163,7 @@ public:
   }
 
   // Get the expiry time for the timer as an absolute time.
-  time_type expires_at(const implementation_type& impl) const
+  time_type expiry(const implementation_type& impl) const
   {
     return impl.expiry;
   }
@@ -146,14 +178,8 @@ public:
     return count;
   }
 
-  // Get the expiry time for the timer relative to now.
-  duration_type expires_from_now(const implementation_type& impl) const
-  {
-    return Time_Traits::subtract(expires_at(impl), Time_Traits::now());
-  }
-
   // Set the expiry time for the timer relative to now.
-  std::size_t expires_from_now(implementation_type& impl,
+  std::size_t expires_after(implementation_type& impl,
       const duration_type& expiry_time, asio::error_code& ec)
   {
     return expires_at(impl,

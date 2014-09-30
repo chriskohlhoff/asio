@@ -55,7 +55,7 @@ void decrement_to_zero(asio::system_timer* t, int* count)
 
     int before_value = *count;
 
-    t->expires_at(t->expires_at() + chronons::seconds(1));
+    t->expires_at(t->expiry() + chronons::seconds(1));
     t->async_wait(bindns::bind(decrement_to_zero, t, count));
 
     // Completion cannot nest, so count value should remain unchanged.
@@ -119,7 +119,7 @@ void system_timer_test()
   expected_end = start + seconds(1) + microseconds(500000);
   ASIO_CHECK(expected_end < end || expected_end == end);
 
-  t2.expires_at(t2.expires_at() + seconds(1));
+  t2.expires_at(t2.expiry() + seconds(1));
   t2.wait();
 
   // The timer must block until after its expiry time.
@@ -129,7 +129,7 @@ void system_timer_test()
 
   start = now();
 
-  t2.expires_from_now(seconds(1) + microseconds(200000));
+  t2.expires_after(seconds(1) + microseconds(200000));
   t2.wait();
 
   // The timer must block until after its expiry time.
@@ -327,19 +327,52 @@ void system_timer_thread_test()
 
   asio::thread th(bindns::bind(io_service_run, &ios));
 
-  t2.expires_from_now(chronons::seconds(2));
+  t2.expires_after(chronons::seconds(2));
   t2.wait();
 
-  t1.expires_from_now(chronons::seconds(2));
+  t1.expires_after(chronons::seconds(2));
   t1.async_wait(bindns::bind(increment, &count));
 
-  t2.expires_from_now(chronons::seconds(4));
+  t2.expires_after(chronons::seconds(4));
   t2.wait();
 
   ios.stop();
   th.join();
 
   ASIO_CHECK(count == 1);
+}
+
+#if defined(ASIO_HAS_MOVE)
+asio::system_timer make_timer(asio::io_service& ios, int* count)
+{
+  asio::system_timer t(ios);
+  t.expires_after(std::chrono::seconds(1));
+  t.async_wait(bindns::bind(increment, count));
+  return t;
+}
+#endif
+
+void system_timer_move_test()
+{
+#if defined(ASIO_HAS_MOVE)
+  asio::io_service io_service1;
+  asio::io_service io_service2;
+  int count = 0;
+
+  asio::system_timer t1 = make_timer(io_service1, &count);
+  asio::system_timer t2 = make_timer(io_service2, &count);
+  asio::system_timer t3 = std::move(t1);
+
+  t2 = std::move(t1);
+
+  io_service2.run();
+
+  ASIO_CHECK(count == 1);
+
+  io_service1.run();
+
+  ASIO_CHECK(count == 2);
+#endif // defined(ASIO_HAS_MOVE)
 }
 
 ASIO_TEST_SUITE
@@ -349,6 +382,7 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(system_timer_cancel_test)
   ASIO_TEST_CASE(system_timer_custom_allocation_test)
   ASIO_TEST_CASE(system_timer_thread_test)
+  ASIO_TEST_CASE(system_timer_move_test)
 )
 #else // defined(ASIO_HAS_STD_CHRONO)
 ASIO_TEST_SUITE

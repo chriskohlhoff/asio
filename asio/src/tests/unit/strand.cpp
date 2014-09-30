@@ -151,10 +151,18 @@ void strand_test()
   timer timer1(ios, chronons::seconds(3));
   timer1.wait();
   ASIO_CHECK(count == 0);
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.expires_at(timer1.expires_at() + chronons::seconds(2));
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+  timer1.expires_at(timer1.expiry() + chronons::seconds(2));
+#endif defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.wait();
   ASIO_CHECK(count == 1);
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.expires_at(timer1.expires_at() + chronons::seconds(2));
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+  timer1.expires_at(timer1.expiry() + chronons::seconds(2));
+#endif defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.wait();
   ASIO_CHECK(count == 2);
 

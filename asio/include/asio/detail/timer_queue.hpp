@@ -46,7 +46,11 @@ public:
   class per_timer_data
   {
   public:
-    per_timer_data() : next_(0), prev_(0) {}
+    per_timer_data() :
+      heap_index_((std::numeric_limits<std::size_t>::max)()),
+      next_(0), prev_(0)
+    {
+    }
 
   private:
     friend class timer_queue;
@@ -186,6 +190,29 @@ public:
         remove_timer(timer);
     }
     return num_cancelled;
+  }
+
+  // Move operations from one timer to another, empty timer.
+  void move_timer(per_timer_data& to, per_timer_data& from)
+  {
+    to.op_queue_.push(from.op_queue_);
+
+    to.heap_index_ = from.heap_index_;
+    from.heap_index_ = (std::numeric_limits<std::size_t>::max)();
+
+    if (to.heap_index_ < heap_.size())
+      heap_[to.heap_index_].timer_ = &to;
+
+    if (timers_ == &from)
+      timers_ = &to;
+    if (from.prev_)
+      from.prev_->next_ = &to;
+    if (from.next_)
+      from.next_->prev_= &to;
+    to.next_ = from.next_;
+    to.prev_ = from.prev_;
+    from.next_ = 0;
+    from.prev_ = 0;
   }
 
 private:

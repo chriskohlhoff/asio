@@ -75,6 +75,13 @@ struct stream_core
   {
     return boost::posix_time::pos_infin;
   }
+
+  // Helper function to get a timer's expiry time.
+  static asio::deadline_timer::time_type expiry(
+      const asio::deadline_timer& timer)
+  {
+    return timer.expires_at();
+  }
 #else // defined(ASIO_HAS_BOOST_DATE_TIME)
   // Timer used for storing queued read operations.
   asio::steady_timer pending_read_;
@@ -92,6 +99,13 @@ struct stream_core
   static asio::steady_timer::time_point pos_infin()
   {
     return (asio::steady_timer::time_point::max)();
+  }
+
+  // Helper function to get a timer's expiry time.
+  static asio::steady_timer::time_point expiry(
+      const asio::steady_timer& timer)
+  {
+    return timer.expiry();
   }
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 

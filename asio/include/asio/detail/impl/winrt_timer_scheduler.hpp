@@ -69,6 +69,19 @@ std::size_t winrt_timer_scheduler::cancel_timer(timer_queue<Time_Traits>& queue,
   return n;
 }
 
+template <typename Time_Traits>
+void winrt_timer_scheduler::move_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& to,
+    typename timer_queue<Time_Traits>::per_timer_data& from)
+{
+  asio::detail::mutex::scoped_lock lock(mutex_);
+  op_queue<operation> ops;
+  queue.cancel_timer(to, ops);
+  queue.move_timer(to, from);
+  lock.unlock();
+  scheduler_.post_deferred_completions(ops);
+}
+
 } // namespace detail
 } // namespace asio
 

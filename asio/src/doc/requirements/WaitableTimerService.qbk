@@ -42,7 +42,7 @@ value meeting [link asio.reference.WaitHandler `WaitHandler`] requirements.
     ]
   ]
   [
-    [`a.expires_at(b);`]
+    [`a.expiry(b);`]
     [`Clock::time_point`]
     []
   ]
@@ -58,15 +58,8 @@ value meeting [link asio.reference.WaitHandler `WaitHandler`] requirements.
     ]
   ]
   [
-    [`a.expires_from_now(b);`]
-    [`Clock::duration`]
-    [
-      Returns a value equivalent to `a.expires_at(b) - Clock::now()`.
-    ]
-  ]
-  [
     [``
-      a.expires_from_now(b, d, e);
+      a.expires_after(b, d, e);
     ``]
     [`size_t`]
     [
