@@ -232,7 +232,7 @@ namespace detail
         const MutableBufferSequence& buffers, ReadHandler& handler)
       : storage_(storage),
         buffers_(buffers),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
 

@@ -35,6 +35,12 @@ struct concrete_handler
   void operator()(Arg1, Arg2)
   {
   }
+
+#if defined(ASIO_HAS_MOVE)
+  concrete_handler(concrete_handler&&) {}
+private:
+  concrete_handler(const concrete_handler&);
+#endif // defined(ASIO_HAS_MOVE)
 };
 
 } // namespace archetypes
