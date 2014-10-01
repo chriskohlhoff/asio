@@ -30,13 +30,27 @@
 
 namespace serial_port_compile {
 
-void write_some_handler(const asio::error_code&, std::size_t)
+struct write_some_handler
 {
-}
+  write_some_handler() {}
+  void operator()(const asio::error_code&, std::size_t) {}
+#if defined(ASIO_HAS_MOVE)
+  write_some_handler(write_some_handler&&) {}
+private:
+  write_some_handler(const write_some_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
-void read_some_handler(const asio::error_code&, std::size_t)
+struct read_some_handler
 {
-}
+  read_some_handler() {}
+  void operator()(const asio::error_code&, std::size_t) {}
+#if defined(ASIO_HAS_MOVE)
+  read_some_handler(read_some_handler&&) {}
+private:
+  read_some_handler(const read_some_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
 void test()
 {
@@ -118,8 +132,8 @@ void test()
     port1.write_some(buffer(mutable_char_buffer), ec);
     port1.write_some(buffer(const_char_buffer), ec);
 
-    port1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
-    port1.async_write_some(buffer(const_char_buffer), &write_some_handler);
+    port1.async_write_some(buffer(mutable_char_buffer), write_some_handler());
+    port1.async_write_some(buffer(const_char_buffer), write_some_handler());
     int i1 = port1.async_write_some(buffer(mutable_char_buffer), lazy);
     (void)i1;
     int i2 = port1.async_write_some(buffer(const_char_buffer), lazy);
@@ -128,7 +142,7 @@ void test()
     port1.read_some(buffer(mutable_char_buffer));
     port1.read_some(buffer(mutable_char_buffer), ec);
 
-    port1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
+    port1.async_read_some(buffer(mutable_char_buffer), read_some_handler());
     int i3 = port1.async_read_some(buffer(mutable_char_buffer), lazy);
     (void)i3;
   }

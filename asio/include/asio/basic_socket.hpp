@@ -22,6 +22,7 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
+#include "asio/post.hpp"
 #include "asio/socket_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -747,7 +748,7 @@ public:
         async_completion<ConnectHandler,
           void (asio::error_code)> init(handler);
 
-        this->get_service().get_io_service().post(
+        asio::post(this->get_executor(),
             asio::detail::bind_handler(
               ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
                 ConnectHandler, void (asio::error_code)))(

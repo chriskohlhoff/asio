@@ -35,6 +35,21 @@ public:
   {
   }
 
+#if defined(ASIO_HAS_MOVE)
+  work_dispatcher(const work_dispatcher& other)
+    : work_(other.work_),
+      handler_(other.handler_)
+  {
+  }
+
+  work_dispatcher(work_dispatcher&& other)
+    : work_(ASIO_MOVE_CAST(executor_work<
+        typename associated_executor<Handler>::type>)(other.work_)),
+      handler_(ASIO_MOVE_CAST(Handler)(other.handler_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
   void operator()()
   {
     typename associated_executor<Handler>::type ex(work_.get_executor());

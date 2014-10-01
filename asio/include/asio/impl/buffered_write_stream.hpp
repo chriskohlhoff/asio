@@ -54,7 +54,7 @@ namespace detail
     buffered_flush_handler(detail::buffered_stream_storage& storage,
         WriteHandler& handler)
       : storage_(storage),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 
@@ -213,7 +213,7 @@ namespace detail
         const ConstBufferSequence& buffers, WriteHandler& handler)
       : storage_(storage),
         buffers_(buffers),
-        handler_(handler)
+        handler_(ASIO_MOVE_CAST(WriteHandler)(handler))
     {
     }
 

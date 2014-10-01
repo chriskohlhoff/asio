@@ -20,6 +20,7 @@
 #include <vector>
 #include "archetypes/async_result.hpp"
 #include "asio/io_service.hpp"
+#include "asio/post.hpp"
 #include "asio/streambuf.hpp"
 #include "unit_test.hpp"
 
@@ -42,7 +43,7 @@ using namespace std; // For memcmp, memcpy and memset.
 class test_stream
 {
 public:
-  typedef asio::io_service io_service_type;
+  typedef asio::io_service::executor_type executor_type;
 
   test_stream(asio::io_service& io_service)
     : io_service_(io_service),
@@ -53,9 +54,9 @@ public:
     memset(data_, 0, max_length);
   }
 
-  io_service_type& get_io_service()
+  executor_type get_executor() ASIO_NOEXCEPT
   {
-    return io_service_;
+    return io_service_.get_executor();
   }
 
   void reset(size_t length = max_length)
@@ -117,12 +118,14 @@ public:
   void async_write_some(const Const_Buffers& buffers, Handler handler)
   {
     size_t bytes_transferred = write_some(buffers);
-    io_service_.post(asio::detail::bind_handler(
-          handler, asio::error_code(), bytes_transferred));
+    asio::post(get_executor(),
+        asio::detail::bind_handler(
+          ASIO_MOVE_CAST(Handler)(handler),
+          asio::error_code(), bytes_transferred));
   }
 
 private:
-  io_service_type& io_service_;
+  asio::io_service& io_service_;
   enum { max_length = 8192 };
   char data_[max_length];
   size_t length_;

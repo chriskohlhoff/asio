@@ -233,9 +233,16 @@ void system_timer_test()
   ASIO_CHECK(expected_end < end || expected_end == end);
 }
 
-void timer_handler(const asio::error_code&)
+struct timer_handler
 {
-}
+  timer_handler() {}
+  void operator()(const asio::error_code&) {}
+#if defined(ASIO_HAS_MOVE)
+  timer_handler(timer_handler&&) {}
+private:
+  timer_handler(const timer_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
 void system_timer_cancel_test()
 {
@@ -249,10 +256,10 @@ void system_timer_cancel_test()
     }
   } timers[50];
 
-  timers[2].t.async_wait(&timer_handler);
-  timers[41].t.async_wait(&timer_handler);
+  timers[2].t.async_wait(timer_handler());
+  timers[41].t.async_wait(timer_handler());
   for (int i = 10; i < 20; ++i)
-    timers[i].t.async_wait(&timer_handler);
+    timers[i].t.async_wait(timer_handler());
 
   ASIO_CHECK(timers[2].t.cancel() == 1);
   ASIO_CHECK(timers[41].t.cancel() == 1);

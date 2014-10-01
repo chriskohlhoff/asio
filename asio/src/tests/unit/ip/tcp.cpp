@@ -137,25 +137,60 @@ void test()
 
 namespace ip_tcp_socket_compile {
 
-void connect_handler(const asio::error_code&)
+struct connect_handler
 {
-}
+  connect_handler() {}
+  void operator()(const asio::error_code&) {}
+#if defined(ASIO_HAS_MOVE)
+  connect_handler(connect_handler&&) {}
+private:
+  connect_handler(const connect_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
-void send_handler(const asio::error_code&, std::size_t)
+struct send_handler
 {
-}
+  send_handler() {}
+  void operator()(const asio::error_code&, std::size_t) {}
+#if defined(ASIO_HAS_MOVE)
+  send_handler(send_handler&&) {}
+private:
+  send_handler(const send_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
-void receive_handler(const asio::error_code&, std::size_t)
+struct receive_handler
 {
-}
+  receive_handler() {}
+  void operator()(const asio::error_code&, std::size_t) {}
+#if defined(ASIO_HAS_MOVE)
+  receive_handler(receive_handler&&) {}
+private:
+  receive_handler(const receive_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
-void write_some_handler(const asio::error_code&, std::size_t)
+struct write_some_handler
 {
-}
+  write_some_handler() {}
+  void operator()(const asio::error_code&, std::size_t) {}
+#if defined(ASIO_HAS_MOVE)
+  write_some_handler(write_some_handler&&) {}
+private:
+  write_some_handler(const write_some_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
-void read_some_handler(const asio::error_code&, std::size_t)
+struct read_some_handler
 {
-}
+  read_some_handler() {}
+  void operator()(const asio::error_code&, std::size_t) {}
+#if defined(ASIO_HAS_MOVE)
+  read_some_handler(read_some_handler&&) {}
+private:
+  read_some_handler(const read_some_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
 void test()
 {
@@ -277,9 +312,9 @@ void test()
     socket1.connect(ip::tcp::endpoint(ip::tcp::v6(), 0), ec);
 
     socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0),
-        &connect_handler);
+        connect_handler());
     socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0),
-        &connect_handler);
+        connect_handler());
     int i1 = socket1.async_connect(ip::tcp::endpoint(ip::tcp::v4(), 0), lazy);
     (void)i1;
     int i2 = socket1.async_connect(ip::tcp::endpoint(ip::tcp::v6(), 0), lazy);
@@ -339,16 +374,16 @@ void test()
     socket1.send(const_buffers, in_flags, ec);
     socket1.send(null_buffers(), in_flags, ec);
 
-    socket1.async_send(buffer(mutable_char_buffer), &send_handler);
-    socket1.async_send(buffer(const_char_buffer), &send_handler);
-    socket1.async_send(mutable_buffers, &send_handler);
-    socket1.async_send(const_buffers, &send_handler);
-    socket1.async_send(null_buffers(), &send_handler);
-    socket1.async_send(buffer(mutable_char_buffer), in_flags, &send_handler);
-    socket1.async_send(buffer(const_char_buffer), in_flags, &send_handler);
-    socket1.async_send(mutable_buffers, in_flags, &send_handler);
-    socket1.async_send(const_buffers, in_flags, &send_handler);
-    socket1.async_send(null_buffers(), in_flags, &send_handler);
+    socket1.async_send(buffer(mutable_char_buffer), send_handler());
+    socket1.async_send(buffer(const_char_buffer), send_handler());
+    socket1.async_send(mutable_buffers, send_handler());
+    socket1.async_send(const_buffers, send_handler());
+    socket1.async_send(null_buffers(), send_handler());
+    socket1.async_send(buffer(mutable_char_buffer), in_flags, send_handler());
+    socket1.async_send(buffer(const_char_buffer), in_flags, send_handler());
+    socket1.async_send(mutable_buffers, in_flags, send_handler());
+    socket1.async_send(const_buffers, in_flags, send_handler());
+    socket1.async_send(null_buffers(), in_flags, send_handler());
     int i3 = socket1.async_send(buffer(mutable_char_buffer), lazy);
     (void)i3;
     int i4 = socket1.async_send(buffer(const_char_buffer), lazy);
@@ -380,13 +415,13 @@ void test()
     socket1.receive(mutable_buffers, in_flags, ec);
     socket1.receive(null_buffers(), in_flags, ec);
 
-    socket1.async_receive(buffer(mutable_char_buffer), &receive_handler);
-    socket1.async_receive(mutable_buffers, &receive_handler);
-    socket1.async_receive(null_buffers(), &receive_handler);
+    socket1.async_receive(buffer(mutable_char_buffer), receive_handler());
+    socket1.async_receive(mutable_buffers, receive_handler());
+    socket1.async_receive(null_buffers(), receive_handler());
     socket1.async_receive(buffer(mutable_char_buffer), in_flags,
-        &receive_handler);
-    socket1.async_receive(mutable_buffers, in_flags, &receive_handler);
-    socket1.async_receive(null_buffers(), in_flags, &receive_handler);
+        receive_handler());
+    socket1.async_receive(mutable_buffers, in_flags, receive_handler());
+    socket1.async_receive(null_buffers(), in_flags, receive_handler());
     int i13 = socket1.async_receive(buffer(mutable_char_buffer), lazy);
     (void)i13;
     int i14 = socket1.async_receive(mutable_buffers, lazy);
@@ -412,11 +447,11 @@ void test()
     socket1.write_some(const_buffers, ec);
     socket1.write_some(null_buffers(), ec);
 
-    socket1.async_write_some(buffer(mutable_char_buffer), &write_some_handler);
-    socket1.async_write_some(buffer(const_char_buffer), &write_some_handler);
-    socket1.async_write_some(mutable_buffers, &write_some_handler);
-    socket1.async_write_some(const_buffers, &write_some_handler);
-    socket1.async_write_some(null_buffers(), &write_some_handler);
+    socket1.async_write_some(buffer(mutable_char_buffer), write_some_handler());
+    socket1.async_write_some(buffer(const_char_buffer), write_some_handler());
+    socket1.async_write_some(mutable_buffers, write_some_handler());
+    socket1.async_write_some(const_buffers, write_some_handler());
+    socket1.async_write_some(null_buffers(), write_some_handler());
     int i19 = socket1.async_write_some(buffer(mutable_char_buffer), lazy);
     (void)i19;
     int i20 = socket1.async_write_some(buffer(const_char_buffer), lazy);
@@ -435,9 +470,9 @@ void test()
     socket1.read_some(mutable_buffers, ec);
     socket1.read_some(null_buffers(), ec);
 
-    socket1.async_read_some(buffer(mutable_char_buffer), &read_some_handler);
-    socket1.async_read_some(mutable_buffers, &read_some_handler);
-    socket1.async_read_some(null_buffers(), &read_some_handler);
+    socket1.async_read_some(buffer(mutable_char_buffer), read_some_handler());
+    socket1.async_read_some(mutable_buffers, read_some_handler());
+    socket1.async_read_some(null_buffers(), read_some_handler());
     int i24 = socket1.async_read_some(buffer(mutable_char_buffer), lazy);
     (void)i24;
     int i25 = socket1.async_read_some(mutable_buffers, lazy);
@@ -625,9 +660,16 @@ void test()
 
 namespace ip_tcp_acceptor_compile {
 
-void accept_handler(const asio::error_code&)
+struct accept_handler
 {
-}
+  accept_handler() {}
+  void operator()(const asio::error_code&) {}
+#if defined(ASIO_HAS_MOVE)
+  accept_handler(accept_handler&&) {}
+private:
+  accept_handler(const accept_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
 void test()
 {
@@ -744,8 +786,8 @@ void test()
     acceptor1.accept(peer_socket, peer_endpoint);
     acceptor1.accept(peer_socket, peer_endpoint, ec);
 
-    acceptor1.async_accept(peer_socket, &accept_handler);
-    acceptor1.async_accept(peer_socket, peer_endpoint, &accept_handler);
+    acceptor1.async_accept(peer_socket, accept_handler());
+    acceptor1.async_accept(peer_socket, peer_endpoint, accept_handler());
     int i1 = acceptor1.async_accept(peer_socket, lazy);
     (void)i1;
     int i2 = acceptor1.async_accept(peer_socket, peer_endpoint, lazy);
@@ -846,10 +888,17 @@ void test()
 
 namespace ip_tcp_resolver_compile {
 
-void resolve_handler(const asio::error_code&,
-    asio::ip::tcp::resolver::iterator)
+struct resolve_handler
 {
-}
+  resolve_handler() {}
+  void operator()(const asio::error_code&,
+      asio::ip::tcp::resolver::iterator) {}
+#if defined(ASIO_HAS_MOVE)
+  resolve_handler(resolve_handler&&) {}
+private:
+  resolve_handler(const resolve_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
 void test()
 {
@@ -889,11 +938,11 @@ void test()
     ip::tcp::resolver::iterator iter4 = resolver.resolve(e, ec);
     (void)iter4;
 
-    resolver.async_resolve(q, &resolve_handler);
+    resolver.async_resolve(q, resolve_handler());
     int i1 = resolver.async_resolve(q, lazy);
     (void)i1;
 
-    resolver.async_resolve(e, &resolve_handler);
+    resolver.async_resolve(e, resolve_handler());
     int i2 = resolver.async_resolve(e, lazy);
     (void)i2;
   }
