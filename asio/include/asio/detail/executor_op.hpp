@@ -25,21 +25,21 @@
 namespace asio {
 namespace detail {
 
-template <typename Handler, typename Alloc>
-class executor_op : public scheduler_operation
+template <typename Handler, typename Alloc,
+    typename Operation = scheduler_operation>
+class executor_op : public Operation
 {
 public:
   ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(executor_op, Alloc);
 
   executor_op(Handler& h, const Alloc& allocator)
-    : scheduler_operation(&executor_op::do_complete),
+    : Operation(&executor_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(h)),
       allocator_(allocator)
   {
   }
 
-  static void do_complete(void* owner,
-      scheduler_operation* base,
+  static void do_complete(void* owner, Operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
   {

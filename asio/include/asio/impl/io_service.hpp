@@ -180,7 +180,7 @@ void io_service::executor_type::dispatch(
   alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, alloc_type> op;
+  typedef detail::executor_op<function_type, alloc_type, detail::operation> op;
   typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
@@ -204,7 +204,7 @@ void io_service::executor_type::post(
   alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, alloc_type> op;
+  typedef detail::executor_op<function_type, alloc_type, detail::operation> op;
   typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
@@ -228,7 +228,7 @@ void io_service::executor_type::defer(
   alloc_type allocator(detail::get_recycling_allocator<Allocator>::get(a));
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, alloc_type> op;
+  typedef detail::executor_op<function_type, alloc_type, detail::operation> op;
   typename op::ptr p = { allocator, 0, 0 };
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
