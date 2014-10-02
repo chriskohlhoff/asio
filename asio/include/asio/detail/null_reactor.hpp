@@ -17,9 +17,10 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS_RUNTIME)
+#if defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/io_service.hpp"
+#include "asio/detail/scheduler_operation.hpp"
+#include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -27,12 +28,12 @@ namespace asio {
 namespace detail {
 
 class null_reactor
-  : public asio::detail::service_base<null_reactor>
+  : public execution_context_service_base<null_reactor>
 {
 public:
   // Constructor.
-  null_reactor(asio::io_service& io_service)
-    : asio::detail::service_base<null_reactor>(io_service)
+  null_reactor(asio::execution_context& ctx)
+    : execution_context_service_base<null_reactor>(ctx)
   {
   }
 
@@ -47,7 +48,7 @@ public:
   }
 
   // No-op because should never be called.
-  void run(bool /*block*/, op_queue<operation>& /*ops*/)
+  void run(bool /*block*/, op_queue<scheduler_operation>& /*ops*/)
   {
   }
 
@@ -62,6 +63,6 @@ public:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(ASIO_WINDOWS_RUNTIME)
+#endif // defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_NULL_REACTOR_HPP

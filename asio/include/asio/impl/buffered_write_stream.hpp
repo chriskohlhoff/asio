@@ -15,6 +15,8 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -121,7 +123,33 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
-}
+} // namespace detail
+
+template <typename WriteHandler, typename Allocator>
+struct associated_allocator<
+    detail::buffered_flush_handler<WriteHandler>, Allocator>
+{
+  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
+
+  static type get(const detail::buffered_flush_handler<WriteHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename WriteHandler, typename Executor>
+struct associated_executor<
+    detail::buffered_flush_handler<WriteHandler>, Executor>
+{
+  typedef typename associated_executor<WriteHandler, Executor>::type type;
+
+  static type get(const detail::buffered_flush_handler<WriteHandler>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+  }
+};
 
 template <typename Stream>
 template <typename WriteHandler>
@@ -134,9 +162,8 @@ buffered_write_stream<Stream>::async_flush(
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   async_write(next_layer_, buffer(storage_.data(), storage_.size()),
       detail::buffered_flush_handler<ASIO_HANDLER_TYPE(
@@ -281,6 +308,40 @@ namespace detail
   }
 } // namespace detail
 
+template <typename ConstBufferSequence,
+    typename WriteHandler, typename Allocator>
+struct associated_allocator<
+    detail::buffered_write_some_handler<ConstBufferSequence, WriteHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
+
+  static type get(
+      const detail::buffered_write_some_handler<
+        ConstBufferSequence, WriteHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename ConstBufferSequence,
+    typename WriteHandler, typename Executor>
+struct associated_executor<
+    detail::buffered_write_some_handler<ConstBufferSequence, WriteHandler>,
+    Executor>
+{
+  typedef typename associated_executor<WriteHandler, Executor>::type type;
+
+  static type get(
+      const detail::buffered_write_some_handler<
+        ConstBufferSequence, WriteHandler>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+  }
+};
+
 template <typename Stream>
 template <typename ConstBufferSequence, typename WriteHandler>
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
@@ -293,9 +354,8 @@ buffered_write_stream<Stream>::async_write_some(
   // not meet the documented type requirements for a WriteHandler.
   ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-  detail::async_result_init<
-    WriteHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(WriteHandler)(handler));
+  async_completion<WriteHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   if (asio::buffer_size(buffers) == 0
       || storage_.size() < storage_.capacity())

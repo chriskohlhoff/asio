@@ -213,9 +213,8 @@ public:
       const endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    detail::async_result_init<
-      ConnectHandler, void (asio::error_code)> init(
-        ASIO_MOVE_CAST(ConnectHandler)(handler));
+    async_completion<ConnectHandler,
+      void (asio::error_code)> init(handler);
 
     service_impl_.async_connect(impl, peer_endpoint, init.handler);
 
@@ -311,9 +310,8 @@ public:
       socket_base::message_flags flags,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    detail::async_result_init<
-      WriteHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(WriteHandler)(handler));
+    async_completion<WriteHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     service_impl_.async_send(impl, buffers, flags, init.handler);
 
@@ -339,9 +337,8 @@ public:
       socket_base::message_flags& out_flags,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    detail::async_result_init<
-      ReadHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(ReadHandler)(handler));
+    async_completion<ReadHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     service_impl_.async_receive_with_flags(impl,
         buffers, in_flags, out_flags, init.handler);

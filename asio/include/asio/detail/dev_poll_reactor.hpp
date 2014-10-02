@@ -33,7 +33,7 @@
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
-#include "asio/io_service.hpp"
+#include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -41,7 +41,7 @@ namespace asio {
 namespace detail {
 
 class dev_poll_reactor
-  : public asio::detail::service_base<dev_poll_reactor>
+  : public execution_context_service_base<dev_poll_reactor>
 {
 public:
   enum op_types { read_op = 0, write_op = 1,
@@ -53,7 +53,7 @@ public:
   };
 
   // Constructor.
-  ASIO_DECL dev_poll_reactor(asio::io_service& io_service);
+  ASIO_DECL dev_poll_reactor(asio::execution_context& ctx);
 
   // Destructor.
   ASIO_DECL ~dev_poll_reactor();
@@ -63,7 +63,7 @@ public:
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev);
 
   // Initialise the task.
   ASIO_DECL void init_task();
@@ -86,7 +86,7 @@ public:
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
-    io_service_.post_immediate_completion(op, is_continuation);
+    scheduler_.post_immediate_completion(op, is_continuation);
   }
 
   // Start a new operation. The reactor operation will be performed when the
@@ -167,8 +167,8 @@ private:
   // Add a pending event entry for the given descriptor.
   ASIO_DECL ::pollfd& add_pending_event_change(int descriptor);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The scheduler implementation used to post completions.
+  scheduler& scheduler_;
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;

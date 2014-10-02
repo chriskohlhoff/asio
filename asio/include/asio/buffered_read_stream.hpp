@@ -139,9 +139,8 @@ public:
   async_write_some(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    detail::async_result_init<
-      WriteHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(WriteHandler)(handler));
+    async_completion<WriteHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     next_layer_.async_write_some(buffers,
         ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(WriteHandler,

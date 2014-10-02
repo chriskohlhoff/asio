@@ -171,7 +171,7 @@ asio::error_code win_iocp_socket_service_base::close(
     // Check if the reactor was created, in which case we need to close the
     // socket on the reactor as well to cancel any operations that might be
     // running there.
-    reactor* r = static_cast<reactor*>(
+    select_reactor* r = static_cast<select_reactor*>(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
@@ -271,7 +271,7 @@ asio::error_code win_iocp_socket_service_base::cancel(
   // Cancel any operations started via the reactor.
   if (!ec)
   {
-    reactor* r = static_cast<reactor*>(
+    select_reactor* r = static_cast<select_reactor*>(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
@@ -437,7 +437,7 @@ void win_iocp_socket_service_base::start_null_buffers_receive_op(
   {
     start_reactor_op(impl,
         (flags & socket_base::message_out_of_band)
-          ? reactor::except_op : reactor::read_op,
+          ? select_reactor::except_op : select_reactor::read_op,
         op);
   }
 }
@@ -529,7 +529,7 @@ void win_iocp_socket_service_base::start_reactor_op(
     win_iocp_socket_service_base::base_implementation_type& impl,
     int op_type, reactor_op* op)
 {
-  reactor& r = get_reactor();
+  select_reactor& r = get_reactor();
   update_cancellation_thread_id(impl);
 
   if (is_open(impl))
@@ -590,7 +590,7 @@ void win_iocp_socket_service_base::start_connect_op(
   }
 
   // Otherwise, fall back to a reactor-based implementation.
-  reactor& r = get_reactor();
+  select_reactor& r = get_reactor();
   update_cancellation_thread_id(impl);
 
   if ((impl.state_ & socket_ops::non_blocking) != 0
@@ -603,7 +603,7 @@ void win_iocp_socket_service_base::start_connect_op(
           || op->ec_ == asio::error::would_block)
       {
         op->ec_ = asio::error_code();
-        r.start_op(reactor::connect_op, impl.socket_,
+        r.start_op(select_reactor::connect_op, impl.socket_,
             impl.reactor_data_, op, false, false);
         return;
       }
@@ -623,7 +623,7 @@ void win_iocp_socket_service_base::close_for_destruction(
     // Check if the reactor was created, in which case we need to close the
     // socket on the reactor as well to cancel any operations that might be
     // running there.
-    reactor* r = static_cast<reactor*>(
+    select_reactor* r = static_cast<select_reactor*>(
           interlocked_compare_exchange_pointer(
             reinterpret_cast<void**>(&reactor_), 0, 0));
     if (r)
@@ -653,14 +653,14 @@ void win_iocp_socket_service_base::update_cancellation_thread_id(
 #endif // defined(ASIO_ENABLE_CANCELIO)
 }
 
-reactor& win_iocp_socket_service_base::get_reactor()
+select_reactor& win_iocp_socket_service_base::get_reactor()
 {
-  reactor* r = static_cast<reactor*>(
+  select_reactor* r = static_cast<select_reactor*>(
         interlocked_compare_exchange_pointer(
           reinterpret_cast<void**>(&reactor_), 0, 0));
   if (!r)
   {
-    r = &(use_service<reactor>(io_service_));
+    r = &(use_service<select_reactor>(io_service_));
     interlocked_exchange_pointer(reinterpret_cast<void**>(&reactor_), r);
   }
   return *r;

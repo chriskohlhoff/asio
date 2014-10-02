@@ -19,19 +19,19 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/io_service.hpp"
-#include "asio/detail/call_stack.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/thread.hpp"
+#include "asio/detail/thread_context.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
 #include "asio/detail/win_iocp_operation.hpp"
 #include "asio/detail/win_iocp_thread_info.hpp"
+#include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -41,13 +41,13 @@ namespace detail {
 class wait_op;
 
 class win_iocp_io_service
-  : public asio::detail::service_base<win_iocp_io_service>
+  : public execution_context_service_base<win_iocp_io_service>,
+    public thread_context
 {
 public:
-
   // Constructor. Specifies a concurrency hint that is passed through to the
   // underlying I/O completion port.
-  ASIO_DECL win_iocp_io_service(asio::io_service& io_service,
+  ASIO_DECL win_iocp_io_service(asio::execution_context& ctx,
       size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
@@ -108,14 +108,6 @@ public:
     return thread_call_stack::contains(this) != 0;
   }
 
-  // Request invocation of the given handler.
-  template <typename Handler>
-  void dispatch(Handler& handler);
-
-  // Request invocation of the given handler and return immediately.
-  template <typename Handler>
-  void post(Handler& handler);
-
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() has not yet been called for the operation.
   void post_immediate_completion(win_iocp_operation* op, bool)
@@ -147,6 +139,13 @@ public:
   void post_private_deferred_completion(win_iocp_operation* op)
   {
     post_deferred_completion(op);
+  }
+
+  // Enqueue the given operation following a failed attempt to dispatch the
+  // operation for immediate invocation.
+  void do_dispatch(operation* op)
+  {
+    post_immediate_completion(op, false);
   }
 
   // Process unfinished operations as part of a shutdown_service operation.
@@ -294,10 +293,6 @@ private:
 
   // The operations that are ready to dispatch.
   op_queue<win_iocp_operation> completed_ops_;
-
-  // Per-thread call stack to track the state of each thread in the io_service.
-  typedef call_stack<win_iocp_io_service,
-      win_iocp_thread_info> thread_call_stack;
 };
 
 } // namespace detail

@@ -19,7 +19,6 @@
 
 #if defined(ASIO_HAS_EPOLL)
 
-#include "asio/io_service.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/mutex.hpp"
@@ -31,6 +30,7 @@
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
+#include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -38,7 +38,7 @@ namespace asio {
 namespace detail {
 
 class epoll_reactor
-  : public asio::detail::service_base<epoll_reactor>
+  : public execution_context_service_base<epoll_reactor>
 {
 public:
   enum op_types { read_op = 0, write_op = 1,
@@ -64,7 +64,7 @@ public:
     void set_ready_events(uint32_t events) { task_result_ = events; }
     ASIO_DECL operation* perform_io(uint32_t events);
     ASIO_DECL static void do_complete(
-        io_service_impl* owner, operation* base,
+        void* owner, operation* base,
         const asio::error_code& ec, std::size_t bytes_transferred);
   };
 
@@ -72,7 +72,7 @@ public:
   typedef descriptor_state* per_descriptor_data;
 
   // Constructor.
-  ASIO_DECL epoll_reactor(asio::io_service& io_service);
+  ASIO_DECL epoll_reactor(asio::execution_context& ctx);
 
   // Destructor.
   ASIO_DECL ~epoll_reactor();
@@ -82,7 +82,7 @@ public:
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev);
 
   // Initialise the task.
   ASIO_DECL void init_task();
@@ -106,7 +106,7 @@ public:
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
-    io_service_.post_immediate_completion(op, is_continuation);
+    scheduler_.post_immediate_completion(op, is_continuation);
   }
 
   // Start a new operation. The reactor operation will be performed when the
@@ -195,8 +195,8 @@ private:
   ASIO_DECL int get_timeout(itimerspec& ts);
 #endif // defined(ASIO_HAS_TIMERFD)
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The scheduler implementation used to post completions.
+  scheduler& scheduler_;
 
   // Mutex to protect access to internal data.
   mutex mutex_;

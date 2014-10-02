@@ -188,7 +188,7 @@ public:
   template <typename Protocol1, typename SocketService1>
   basic_socket(basic_socket<Protocol1, SocketService1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_io_object<SocketService>(other.get_io_service())
+    : basic_io_object<SocketService>(other.get_service().get_io_service())
   {
     this->get_service().template converting_move_construct<Protocol1>(
         this->get_implementation(), other.get_implementation());
@@ -744,11 +744,10 @@ public:
       const protocol_type protocol = peer_endpoint.protocol();
       if (this->get_service().open(this->get_implementation(), protocol, ec))
       {
-        detail::async_result_init<
-          ConnectHandler, void (asio::error_code)> init(
-            ASIO_MOVE_CAST(ConnectHandler)(handler));
+        async_completion<ConnectHandler,
+          void (asio::error_code)> init(handler);
 
-        this->get_io_service().post(
+        this->get_service().get_io_service().post(
             asio::detail::bind_handler(
               ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
                 ConnectHandler, void (asio::error_code)))(

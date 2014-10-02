@@ -100,6 +100,9 @@ void test()
     io_service& ios_ref = socket1.get_io_service();
     (void)ios_ref;
 
+    ip::udp::socket::executor_type ex = socket1.get_executor();
+    (void)ex;
+
     // basic_socket functions.
 
     ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();

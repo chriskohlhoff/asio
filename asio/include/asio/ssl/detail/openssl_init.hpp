@@ -17,8 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include <cstring>
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/shared_ptr.hpp"
 #include "asio/ssl/detail/openssl_types.hpp"
 
 #include "asio/detail/push_options.hpp"

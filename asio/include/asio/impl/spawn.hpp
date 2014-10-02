@@ -16,12 +16,14 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/async_result.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/shared_ptr.hpp"
 #include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -220,6 +222,30 @@ private:
   typename basic_yield_context<Handler>::caller_type& ca_;
   asio::error_code* out_ec_;
   asio::error_code ec_;
+};
+
+template <typename Handler, typename T, typename Allocator>
+struct associated_allocator<detail::coro_handler<Handler, T>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::coro_handler<Handler, T>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename T, typename Executor>
+struct associated_executor<detail::coro_handler<Handler, T>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::coro_handler<Handler, T>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
 };
 
 namespace detail {

@@ -174,9 +174,8 @@ public:
   async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    detail::async_result_init<
-      ReadHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(ReadHandler)(handler));
+    async_completion<ReadHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     next_layer_.async_read_some(buffers,
         ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(ReadHandler,

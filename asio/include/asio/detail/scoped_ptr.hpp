@@ -63,6 +63,14 @@ public:
     p_ = p;
   }
 
+  // Release ownership of the pointer.
+  T* release()
+  {
+    T* tmp = p_;
+    p_ = 0;
+    return tmp;
+  }
+
 private:
   // Disallow copying and assignment.
   scoped_ptr(const scoped_ptr&);

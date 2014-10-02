@@ -380,6 +380,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 {examples\cpp03\windows}.cpp{examples\cpp03\windows}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
+{examples\cpp11\executors}.cpp{examples\cpp11\executors}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
 examples\cpp03\http\server\http_server.exe: \
 		examples\cpp03\http\server\connection.cpp \
 		examples\cpp03\http\server\connection_manager.cpp \

@@ -23,8 +23,8 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/reactive_null_buffers_op.hpp"
 #include "asio/detail/reactive_socket_accept_op.hpp"
@@ -235,8 +235,7 @@ public:
     typedef reactive_socket_sendto_op<ConstBufferSequence,
         endpoint_type, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.socket_, buffers, destination, flags, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send_to"));
@@ -256,8 +255,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket",
@@ -318,8 +316,7 @@ public:
     typedef reactive_socket_recvfrom_op<MutableBufferSequence,
         endpoint_type, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     int protocol = impl.protocol_.type();
     p.p = new (p.v) op(impl.socket_, protocol,
         buffers, sender_endpoint, flags, handler);
@@ -346,8 +343,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket",
@@ -404,8 +400,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_accept_op<Socket, Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.socket_, impl.state_, peer,
         impl.protocol_, peer_endpoint, handler);
 
@@ -435,8 +430,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef reactive_socket_connect_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));

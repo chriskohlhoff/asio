@@ -23,7 +23,7 @@
 # if defined(ASIO_HAS_IOCP)
 #  include "asio/detail/win_iocp_thread_info.hpp"
 # else // defined(ASIO_HAS_IOCP)
-#  include "asio/detail/task_io_service_thread_info.hpp"
+#  include "asio/detail/scheduler_thread_info.hpp"
 # endif // defined(ASIO_HAS_IOCP)
 #endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
 
@@ -42,8 +42,8 @@ void* asio_handler_allocate(std::size_t size, ...)
   typedef detail::win_iocp_io_service io_service_impl;
   typedef detail::win_iocp_thread_info thread_info;
 # else // defined(ASIO_HAS_IOCP)
-  typedef detail::task_io_service io_service_impl;
-  typedef detail::task_io_service_thread_info thread_info;
+  typedef detail::scheduler io_service_impl;
+  typedef detail::scheduler_thread_info thread_info;
 # endif // defined(ASIO_HAS_IOCP)
   typedef detail::call_stack<io_service_impl, thread_info> call_stack;
   return thread_info::allocate(call_stack::top(), size);
@@ -59,8 +59,8 @@ void asio_handler_deallocate(void* pointer, std::size_t size, ...)
   typedef detail::win_iocp_io_service io_service_impl;
   typedef detail::win_iocp_thread_info thread_info;
 # else // defined(ASIO_HAS_IOCP)
-  typedef detail::task_io_service io_service_impl;
-  typedef detail::task_io_service_thread_info thread_info;
+  typedef detail::scheduler io_service_impl;
+  typedef detail::scheduler_thread_info thread_info;
 # endif // defined(ASIO_HAS_IOCP)
   typedef detail::call_stack<io_service_impl, thread_info> call_stack;
   thread_info::deallocate(call_stack::top(), pointer, size);

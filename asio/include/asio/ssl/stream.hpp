@@ -92,7 +92,8 @@ public:
   template <typename Arg>
   stream(Arg& arg, context& ctx)
     : next_layer_(arg),
-      core_(ctx.native_handle(), next_layer_.lowest_layer().get_io_service())
+      core_(ctx.native_handle(),
+          next_layer_.lowest_layer().get_executor().context())
   {
   }
 
@@ -421,9 +422,8 @@ public:
     // not meet the documented type requirements for a HandshakeHandler.
     ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
 
-    asio::detail::async_result_init<
-      HandshakeHandler, void (asio::error_code)> init(
-        ASIO_MOVE_CAST(HandshakeHandler)(handler));
+    asio::async_completion<HandshakeHandler,
+      void (asio::error_code)> init(handler);
 
     detail::async_io(next_layer_, core_,
         detail::handshake_op(type), init.handler);
@@ -463,9 +463,8 @@ public:
     ASIO_BUFFERED_HANDSHAKE_HANDLER_CHECK(
         BufferedHandshakeHandler, handler) type_check;
 
-    asio::detail::async_result_init<BufferedHandshakeHandler,
-      void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(BufferedHandshakeHandler)(handler));
+    asio::async_completion<BufferedHandshakeHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     detail::async_io(next_layer_, core_,
         detail::buffered_handshake_op<ConstBufferSequence>(type, buffers),
@@ -522,9 +521,8 @@ public:
     // not meet the documented type requirements for a ShutdownHandler.
     ASIO_SHUTDOWN_HANDLER_CHECK(ShutdownHandler, handler) type_check;
 
-    asio::detail::async_result_init<
-      ShutdownHandler, void (asio::error_code)> init(
-        ASIO_MOVE_CAST(ShutdownHandler)(handler));
+    asio::async_completion<ShutdownHandler,
+      void (asio::error_code)> init(handler);
 
     detail::async_io(next_layer_, core_, detail::shutdown_op(), init.handler);
 
@@ -612,9 +610,8 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-    asio::detail::async_result_init<
-      WriteHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(WriteHandler)(handler));
+    asio::async_completion<WriteHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     detail::async_io(next_layer_, core_,
         detail::write_op<ConstBufferSequence>(buffers), init.handler);
@@ -704,9 +701,8 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-    asio::detail::async_result_init<
-      ReadHandler, void (asio::error_code, std::size_t)> init(
-        ASIO_MOVE_CAST(ReadHandler)(handler));
+    asio::async_completion<ReadHandler,
+      void (asio::error_code, std::size_t)> init(handler);
 
     detail::async_io(next_layer_, core_,
         detail::read_op<MutableBufferSequence>(buffers), init.handler);

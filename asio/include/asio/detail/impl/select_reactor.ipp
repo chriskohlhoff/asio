@@ -23,7 +23,6 @@
       && !defined(ASIO_HAS_KQUEUE) \
       && !defined(ASIO_WINDOWS_RUNTIME))
 
-#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fd_set_adapter.hpp"
 #include "asio/detail/select_reactor.hpp"
 #include "asio/detail/signal_blocker.hpp"
@@ -34,9 +33,28 @@
 namespace asio {
 namespace detail {
 
-select_reactor::select_reactor(asio::io_service& io_service)
-  : asio::detail::service_base<select_reactor>(io_service),
-    io_service_(use_service<io_service_impl>(io_service)),
+#if defined(ASIO_HAS_IOCP)
+class select_reactor::thread_function
+{
+public:
+  explicit thread_function(select_reactor* r)
+    : this_(r)
+  {
+  }
+
+  void operator()()
+  {
+    this_->run_thread();
+  }
+
+private:
+  select_reactor* this_;
+};
+#endif // defined(ASIO_HAS_IOCP)
+
+select_reactor::select_reactor(asio::execution_context& ctx)
+  : execution_context_service_base<select_reactor>(ctx),
+    scheduler_(use_service<scheduler_type>(ctx)),
     mutex_(),
     interrupter_(),
 #if defined(ASIO_HAS_IOCP)
@@ -47,8 +65,7 @@ select_reactor::select_reactor(asio::io_service& io_service)
 {
 #if defined(ASIO_HAS_IOCP)
   asio::detail::signal_blocker sb;
-  thread_ = new asio::detail::thread(
-      bind_handler(&select_reactor::call_run_thread, this));
+  thread_ = new asio::detail::thread(thread_function(this));
 #endif // defined(ASIO_HAS_IOCP)
 }
 
@@ -83,18 +100,19 @@ void select_reactor::shutdown_service()
 
   timer_queues_.get_all_timers(ops);
 
-  io_service_.abandon_operations(ops);
+  scheduler_.abandon_operations(ops);
 }
 
-void select_reactor::fork_service(asio::io_service::fork_event fork_ev)
+void select_reactor::fork_service(
+    asio::execution_context::fork_event fork_ev)
 {
-  if (fork_ev == asio::io_service::fork_child)
+  if (fork_ev == asio::execution_context::fork_child)
     interrupter_.recreate();
 }
 
 void select_reactor::init_task()
 {
-  io_service_.init_task();
+  scheduler_.init_task();
 }
 
 int select_reactor::register_descriptor(socket_type,
@@ -134,7 +152,7 @@ void select_reactor::start_op(int op_type, socket_type descriptor,
   }
 
   bool first = op_queue_[op_type].enqueue_operation(descriptor, op);
-  io_service_.work_started();
+  scheduler_.work_started();
   if (first)
     interrupter_.interrupt();
 }
@@ -253,14 +271,9 @@ void select_reactor::run_thread()
     lock.unlock();
     op_queue<operation> ops;
     run(true, ops);
-    io_service_.post_deferred_completions(ops);
+    scheduler_.post_deferred_completions(ops);
     lock.lock();
   }
-}
-
-void select_reactor::call_run_thread(select_reactor* reactor)
-{
-  reactor->run_thread();
 }
 #endif // defined(ASIO_HAS_IOCP)
 
@@ -294,7 +307,7 @@ void select_reactor::cancel_ops_unlocked(socket_type descriptor,
   for (int i = 0; i < max_ops; ++i)
     need_interrupt = op_queue_[i].cancel_operations(
         descriptor, ops, ec) || need_interrupt;
-  io_service_.post_deferred_completions(ops);
+  scheduler_.post_deferred_completions(ops);
   if (need_interrupt)
     interrupter_.interrupt();
 }

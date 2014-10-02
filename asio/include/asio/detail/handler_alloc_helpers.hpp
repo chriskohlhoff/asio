@@ -16,8 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/addressof.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/associated_allocator.hpp"
 #include "asio/handler_alloc_hook.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -51,10 +52,116 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
 
 } // namespace asio_handler_alloc_helpers
 
+namespace asio {
+namespace detail {
+
+template <typename Handler, typename T>
+class hook_allocator
+{
+public:
+  template <typename U>
+  struct rebind
+  {
+    typedef hook_allocator<Handler, U> other;
+  };
+
+  explicit hook_allocator(Handler& h)
+    : handler_(h)
+  {
+  }
+
+  template <typename U>
+  hook_allocator(const hook_allocator<Handler, U>& a)
+    : handler_(a.handler_)
+  {
+  }
+
+  T* allocate(std::size_t n)
+  {
+    return static_cast<T*>(
+        asio_handler_alloc_helpers::allocate(sizeof(T) * n, handler_));
+  }
+
+  void deallocate(T* p, std::size_t n)
+  {
+    asio_handler_alloc_helpers::deallocate(p, sizeof(T) * n, handler_);
+  }
+
+//private:
+  Handler& handler_;
+};
+
+template <typename Handler>
+class hook_allocator<Handler, void>
+{
+public:
+  template <typename U>
+  struct rebind
+  {
+    typedef hook_allocator<Handler, U> other;
+  };
+
+  explicit hook_allocator(Handler& h)
+    : handler_(h)
+  {
+  }
+
+  template <typename U>
+  hook_allocator(const hook_allocator<Handler, U>& a)
+    : handler_(a.handler_)
+  {
+  }
+
+//private:
+  Handler& handler_;
+};
+
+} // namespace detail
+} // namespace asio
+
 #define ASIO_DEFINE_HANDLER_PTR(op) \
   struct ptr \
   { \
+    typedef typename ::asio::associated_allocator<Handler, \
+      ::asio::detail::hook_allocator<Handler, \
+        void> >::type::template rebind<op>::other allocator_type; \
     Handler* h; \
+    op* v; \
+    op* p; \
+    ~ptr() \
+    { \
+      reset(); \
+    } \
+    static op* allocate(Handler& handler) \
+    { \
+      allocator_type a(::asio::associated_allocator<Handler, \
+        ::asio::detail::hook_allocator<Handler, void> >::get(handler, \
+          ::asio::detail::hook_allocator<Handler, void>(handler))); \
+      return a.allocate(1); \
+    } \
+    void reset() \
+    { \
+      allocator_type a(::asio::associated_allocator<Handler, \
+        ::asio::detail::hook_allocator<Handler, void> >::get(*h, \
+          ::asio::detail::hook_allocator<Handler, void>(*h))); \
+      if (p) \
+      { \
+        p->~op(); \
+        p = 0; \
+      } \
+      if (v) \
+      { \
+        a.deallocate(static_cast<op*>(v), 1); \
+        v = 0; \
+      } \
+    } \
+  } \
+  /**/
+
+#define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op, alloc) \
+  struct ptr \
+  { \
+    typename alloc::template rebind<op>::other a; \
     void* v; \
     op* p; \
     ~ptr() \
@@ -70,7 +177,7 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
       } \
       if (v) \
       { \
-        asio_handler_alloc_helpers::deallocate(v, sizeof(op), *h); \
+        a.deallocate(static_cast<op*>(v), 1); \
         v = 0; \
       } \
     } \

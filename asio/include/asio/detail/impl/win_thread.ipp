@@ -53,6 +53,13 @@ void win_thread::join()
   }
 }
 
+std::size_t win_thread::hardware_concurrency()
+{
+  SYSTEM_INFO system_info;
+  ::GetSystemInfo(&system_info);
+  return system_info.dwNumberOfProcessors;
+}
+
 void win_thread::start_thread(func_base* arg, unsigned int stack_size)
 {
   ::HANDLE entry_event = 0;

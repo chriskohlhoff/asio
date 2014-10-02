@@ -35,7 +35,7 @@
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
-#include "asio/io_service.hpp"
+#include "asio/execution_context.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/thread.hpp"
@@ -47,7 +47,7 @@ namespace asio {
 namespace detail {
 
 class select_reactor
-  : public asio::detail::service_base<select_reactor>
+  : public execution_context_service_base<select_reactor>
 {
 public:
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -64,7 +64,7 @@ public:
   };
 
   // Constructor.
-  ASIO_DECL select_reactor(asio::io_service& io_service);
+  ASIO_DECL select_reactor(asio::execution_context& ctx);
 
   // Destructor.
   ASIO_DECL ~select_reactor();
@@ -74,7 +74,7 @@ public:
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev);
 
   // Initialise the task, but only if the reactor is not in its own thread.
   ASIO_DECL void init_task();
@@ -92,7 +92,7 @@ public:
   // Post a reactor operation for immediate completion.
   void post_immediate_completion(reactor_op* op, bool is_continuation)
   {
-    io_service_.post_immediate_completion(op, is_continuation);
+    scheduler_.post_immediate_completion(op, is_continuation);
   }
 
   // Start a new operation. The reactor operation will be performed when the
@@ -151,9 +151,6 @@ private:
 #if defined(ASIO_HAS_IOCP)
   // Run the select loop in the thread.
   ASIO_DECL void run_thread();
-
-  // Entry point for the select loop thread.
-  ASIO_DECL static void call_run_thread(select_reactor* reactor);
 #endif // defined(ASIO_HAS_IOCP)
 
   // Helper function to add a new timer queue.
@@ -170,8 +167,13 @@ private:
   ASIO_DECL void cancel_ops_unlocked(socket_type descriptor,
       const asio::error_code& ec);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The scheduler implementation used to post completions.
+# if defined(ASIO_HAS_IOCP)
+  typedef class win_iocp_io_service scheduler_type;
+# else // defined(ASIO_HAS_IOCP)
+  typedef class scheduler scheduler_type;
+# endif // defined(ASIO_HAS_IOCP)
+  scheduler_type& scheduler_;
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
@@ -189,6 +191,10 @@ private:
   timer_queue_set timer_queues_;
 
 #if defined(ASIO_HAS_IOCP)
+  // Helper class to run the reactor loop in a thread.
+  class thread_function;
+  friend class thread_function;
+
   // Does the reactor loop thread need to stop.
   bool stop_thread_;
 

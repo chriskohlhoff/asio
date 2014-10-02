@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <algorithm>
+#include "asio/associated_allocator.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/detail/array_fwd.hpp"
@@ -515,6 +517,42 @@ namespace detail
 } // namespace detail
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
+    typename CompletionCondition, typename ReadHandler, typename Allocator>
+struct associated_allocator<
+    detail::read_op<AsyncReadStream, MutableBufferSequence,
+      CompletionCondition, ReadHandler>,
+    Allocator>
+{
+  typedef typename associated_allocator<ReadHandler, Allocator>::type type;
+
+  static type get(
+      const detail::read_op<AsyncReadStream, MutableBufferSequence,
+        CompletionCondition, ReadHandler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ReadHandler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename AsyncReadStream, typename MutableBufferSequence,
+    typename CompletionCondition, typename ReadHandler, typename Executor>
+struct associated_executor<
+    detail::read_op<AsyncReadStream, MutableBufferSequence,
+      CompletionCondition, ReadHandler>,
+    Executor>
+{
+  typedef typename associated_executor<ReadHandler, Executor>::type type;
+
+  static type get(
+      const detail::read_op<AsyncReadStream, MutableBufferSequence,
+        CompletionCondition, ReadHandler>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ReadHandler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
 inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
@@ -526,9 +564,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(
@@ -550,9 +587,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(
@@ -695,6 +731,42 @@ namespace detail
 } // namespace detail
 
 template <typename AsyncReadStream, typename Allocator,
+    typename CompletionCondition, typename ReadHandler, typename Allocator1>
+struct associated_allocator<
+    detail::read_streambuf_op<AsyncReadStream,
+      Allocator, CompletionCondition, ReadHandler>,
+    Allocator1>
+{
+  typedef typename associated_allocator<ReadHandler, Allocator1>::type type;
+
+  static type get(
+      const detail::read_streambuf_op<AsyncReadStream, Allocator,
+        CompletionCondition, ReadHandler>& h,
+      const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<ReadHandler, Allocator1>::get(h.handler_, a);
+  }
+};
+
+template <typename AsyncReadStream, typename Executor,
+    typename CompletionCondition, typename ReadHandler, typename Executor1>
+struct associated_executor<
+    detail::read_streambuf_op<AsyncReadStream,
+      Executor, CompletionCondition, ReadHandler>,
+    Executor1>
+{
+  typedef typename associated_executor<ReadHandler, Executor1>::type type;
+
+  static type get(
+      const detail::read_streambuf_op<AsyncReadStream, Executor,
+        CompletionCondition, ReadHandler>& h,
+      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+  {
+    return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
+  }
+};
+
+template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
 inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
@@ -707,9 +779,8 @@ async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_streambuf_op<AsyncReadStream, Allocator,
     CompletionCondition, ASIO_HANDLER_TYPE(
@@ -731,9 +802,8 @@ async_read(AsyncReadStream& s,
   // not meet the documented type requirements for a ReadHandler.
   ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-  detail::async_result_init<
-    ReadHandler, void (asio::error_code, std::size_t)> init(
-      ASIO_MOVE_CAST(ReadHandler)(handler));
+  async_completion<ReadHandler,
+    void (asio::error_code, std::size_t)> init(handler);
 
   detail::read_streambuf_op<AsyncReadStream, Allocator,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(

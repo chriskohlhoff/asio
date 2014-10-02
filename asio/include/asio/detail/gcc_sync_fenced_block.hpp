@@ -22,6 +22,8 @@
   && !defined(__INTEL_COMPILER) && !defined(__ICL) \
   && !defined(__ICC) && !defined(__ECC) && !defined(__PATHSCALE__)
 
+#include "asio/detail/noncopyable.hpp"
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {

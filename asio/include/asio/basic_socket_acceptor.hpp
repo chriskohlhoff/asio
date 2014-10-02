@@ -227,7 +227,8 @@ public:
   basic_socket_acceptor(
       basic_socket_acceptor<Protocol1, SocketAcceptorService1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_io_object<SocketAcceptorService>(other.get_io_service())
+    : basic_io_object<SocketAcceptorService>(
+        other.get_service().get_io_service())
   {
     this->get_service().template converting_move_construct<Protocol1>(
         this->get_implementation(), other.get_implementation());

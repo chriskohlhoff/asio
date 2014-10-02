@@ -66,7 +66,9 @@ public:
   /// The underlying implementation type of I/O object.
   typedef typename service_type::implementation_type implementation_type;
 
-  /// Get the io_service associated with the object.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_service associated with the
+  /// object.
   /**
    * This function may be used to obtain the io_service object that the I/O
    * object uses to dispatch handlers for asynchronous operations.
@@ -77,6 +79,16 @@ public:
   asio::io_service& get_io_service()
   {
     return service_.get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// The type of the executor associated with the object.
+  typedef asio::io_service::executor_type executor_type;
+
+  /// Get the executor associated with the object.
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return service_.get_io_service().get_executor();
   }
 
 protected:
@@ -167,9 +179,18 @@ public:
   typedef IoObjectService service_type;
   typedef typename service_type::implementation_type implementation_type;
 
+#if !defined(ASIO_NO_DEPRECATED)
   asio::io_service& get_io_service()
   {
     return service_->get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  typedef asio::io_service::executor_type executor_type;
+
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return service_->get_io_service().get_executor();
   }
 
 protected:

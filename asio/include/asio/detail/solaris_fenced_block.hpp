@@ -20,6 +20,7 @@
 #if defined(__sun)
 
 #include <atomic.h>
+#include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"
 

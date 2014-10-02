@@ -20,6 +20,7 @@
 #if defined(__MACH__) && defined(__APPLE__)
 
 #include <libkern/OSAtomic.h>
+#include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"
 

@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/completion_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/memory.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -65,8 +65,7 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
   typename op::ptr p = { asio::detail::addressof(handler),
-    asio_handler_alloc_helpers::allocate(
-      sizeof(op), handler), 0 };
+    op::ptr::allocate(handler), 0 };
   p.p = new (p.v) op(handler);
 
   ASIO_HANDLER_CREATION((p.p, "strand", impl, "dispatch"));
@@ -100,8 +99,7 @@ void strand_service::post(strand_service::implementation_type& impl,
   // Allocate and construct an operation to wrap the handler.
   typedef completion_handler<Handler> op;
   typename op::ptr p = { asio::detail::addressof(handler),
-    asio_handler_alloc_helpers::allocate(
-      sizeof(op), handler), 0 };
+    op::ptr::allocate(handler), 0 };
   p.p = new (p.v) op(handler);
 
   ASIO_HANDLER_CREATION((p.p, "strand", impl, "post"));

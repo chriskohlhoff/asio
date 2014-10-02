@@ -56,13 +56,14 @@
 # define ASIO_PRIVATE_CONNECT_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
   basic_socket_streambuf<Protocol, StreamSocketService, \
-    Time, TimeTraits, TimerService>* connect(ASIO_VARIADIC_PARAMS(n)) \
+    Time, TimeTraits, TimerService>* connect( \
+      ASIO_VARIADIC_BYVAL_PARAMS(n)) \
   { \
     init_buffers(); \
     this->basic_socket<Protocol, StreamSocketService>::close(ec_); \
     typedef typename Protocol::resolver resolver_type; \
     typedef typename resolver_type::query resolver_query; \
-    resolver_query query(ASIO_VARIADIC_ARGS(n)); \
+    resolver_query query(ASIO_VARIADIC_BYVAL_ARGS(n)); \
     resolve_and_connect(query); \
     return !ec_ ? this : 0; \
   } \

@@ -22,16 +22,16 @@
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
 #include "asio/socket_base.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
-#include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
+#include "asio/detail/select_reactor.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -68,7 +68,7 @@ public:
     socket_ops::shared_cancel_token_type cancel_token_;
 
     // Per-descriptor data used by the reactor.
-    reactor::per_descriptor_data reactor_data_;
+    select_reactor::per_descriptor_data reactor_data_;
 
 #if defined(ASIO_ENABLE_CANCELIO)
     // The ID of the thread from which it is safe to cancel asynchronous
@@ -220,8 +220,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send"));
@@ -243,14 +242,13 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket",
           &impl, "async_send(null_buffers)"));
 
-    start_reactor_op(impl, reactor::write_op, p.p);
+    start_reactor_op(impl, select_reactor::write_op, p.p);
     p.v = p.p = 0;
   }
 
@@ -287,8 +285,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recv_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.state_, impl.cancel_token_, buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive"));
@@ -310,8 +307,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket",
@@ -361,8 +357,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recvmsg_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, buffers, out_flags, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket",
@@ -384,8 +379,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_null_buffers_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.cancel_token_, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl,
@@ -465,7 +459,7 @@ protected:
   // Helper function to get the reactor. If no reactor has been created yet, a
   // new one is obtained from the io_service and a pointer to it is cached in
   // this service.
-  ASIO_DECL reactor& get_reactor();
+  ASIO_DECL select_reactor& get_reactor();
 
   // The type of a ConnectEx function pointer, as old SDKs may not provide it.
   typedef BOOL (PASCAL *connect_ex_fn)(SOCKET,
@@ -498,7 +492,7 @@ protected:
 
   // The reactor used for performing connect operations. This object is created
   // only if needed.
-  reactor* reactor_;
+  select_reactor* reactor_;
 
   // Pointer to ConnectEx implementation.
   void* connect_ex_;

@@ -56,7 +56,7 @@ public:
   }
 
 private:
-  asio::strand strand_;
+  asio::io_service::strand strand_;
   asio::deadline_timer timer1_;
   asio::deadline_timer timer2_;
   int count_;

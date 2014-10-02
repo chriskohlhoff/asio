@@ -1,6 +1,6 @@
 //
-// detail/task_io_service_thread_info.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/scheduler_thread_info.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_TASK_IO_SERVICE_THREAD_INFO_HPP
-#define ASIO_DETAIL_TASK_IO_SERVICE_THREAD_INFO_HPP
+#ifndef ASIO_DETAIL_SCHEDULER_THREAD_INFO_HPP
+#define ASIO_DETAIL_SCHEDULER_THREAD_INFO_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,12 +23,12 @@
 namespace asio {
 namespace detail {
 
-class task_io_service;
-class task_io_service_operation;
+class scheduler;
+class scheduler_operation;
 
-struct task_io_service_thread_info : public thread_info_base
+struct scheduler_thread_info : public thread_info_base
 {
-  op_queue<task_io_service_operation> private_op_queue;
+  op_queue<scheduler_operation> private_op_queue;
   long private_outstanding_work;
 };
 
@@ -37,4 +37,4 @@ struct task_io_service_thread_info : public thread_info_base
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_TASK_IO_SERVICE_THREAD_INFO_HPP
+#endif // ASIO_DETAIL_SCHEDULER_THREAD_INFO_HPP

@@ -21,8 +21,8 @@
 
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/winrt_async_manager.hpp"
 #include "asio/detail/winrt_resolve_op.hpp"
@@ -126,8 +126,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef winrt_resolve_op<Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(query, handler);
 
     ASIO_HANDLER_CREATION((p.p, "resolver", &impl, "async_resolve"));

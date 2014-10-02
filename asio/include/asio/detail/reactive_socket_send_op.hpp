@@ -16,10 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/fenced_block.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_ops.hpp"
 
@@ -75,15 +75,17 @@ public:
         buffers, flags, &reactive_socket_send_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
+    handler_work<Handler>::start(handler_);
   }
 
-  static void do_complete(io_service_impl* owner, operation* base,
+  static void do_complete(void* owner, operation* base,
       const asio::error_code& /*ec*/,
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
     reactive_socket_send_op* o(static_cast<reactive_socket_send_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
+    handler_work<Handler> w(o->handler_);
 
     ASIO_HANDLER_COMPLETION((o));
 
@@ -103,7 +105,7 @@ public:
     {
       fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
-      asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      w.complete(handler, handler.handler_);
       ASIO_HANDLER_INVOCATION_END;
     }
   }

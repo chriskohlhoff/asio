@@ -19,6 +19,7 @@
 
 #if defined(ASIO_WINDOWS) && !defined(UNDER_CE)
 
+#include <cstddef>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
 
@@ -75,6 +76,9 @@ public:
 
   // Wait for the thread to exit.
   ASIO_DECL void join();
+
+  // Get number of CPUs.
+  ASIO_DECL static std::size_t hardware_concurrency();
 
 private:
   friend ASIO_DECL unsigned int __stdcall win_thread_function(void* arg);

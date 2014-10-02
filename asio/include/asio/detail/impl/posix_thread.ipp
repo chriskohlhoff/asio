@@ -43,6 +43,16 @@ void posix_thread::join()
   }
 }
 
+std::size_t posix_thread::hardware_concurrency()
+{
+#if defined(_SC_NPROCESSORS_ONLN)
+  long result = sysconf(_SC_NPROCESSORS_ONLN);
+  if (result > 0)
+    return result;
+#endif // defined(_SC_NPROCESSORS_ONLN)
+  return 0;
+}
+
 void posix_thread::start_thread(func_base* arg)
 {
   int error = ::pthread_create(&thread_, 0,

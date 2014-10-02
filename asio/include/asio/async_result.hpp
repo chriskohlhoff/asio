@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -49,22 +50,52 @@ public:
   }
 };
 
-namespace detail {
-
-// Helper template to deduce the true type of a handler, capture a local copy
-// of the handler, and then create an async_result for the handler.
+/// Helper template to deduce the real type of a handler, capture a local copy
+/// of the handler, and then create an async_result for the handler.
 template <typename Handler, typename Signature>
-struct async_result_init
+struct async_completion
 {
-  explicit async_result_init(ASIO_MOVE_ARG(Handler) orig_handler)
-    : handler(ASIO_MOVE_CAST(Handler)(orig_handler)),
+  /// The real handler type to be used for the asynchronous operation.
+  typedef typename asio::handler_type<
+    Handler, Signature>::type handler_type;
+
+  /// Constructor.
+  /**
+   * The constructor creates the concrete handler and makes the link between
+   * the handler and the asynchronous result.
+   */
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  explicit async_completion(
+      typename remove_reference<Handler>::type& orig_handler)
+    : handler(static_cast<typename conditional<
+        is_same<Handler, handler_type>::value,
+        handler_type&, Handler&&>::type>(orig_handler)),
       result(handler)
   {
   }
+#else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  explicit async_completion(const Handler& orig_handler)
+    : handler(orig_handler),
+      result(handler)
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
-  typename handler_type<Handler, Signature>::type handler;
-  async_result<typename handler_type<Handler, Signature>::type> result;
+  /// A copy of, or reference to, a real handler object.
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  typename conditional<
+    is_same<Handler, handler_type>::value,
+    handler_type&, handler_type>::type handler;
+#else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  typename asio::handler_type<Handler, Signature>::type handler;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// The result of the asynchronous operation's initiating function.
+  async_result<typename asio::handler_type<
+    Handler, Signature>::type> result;
 };
+
+namespace detail {
 
 template <typename Handler, typename Signature>
 struct async_result_type_helper

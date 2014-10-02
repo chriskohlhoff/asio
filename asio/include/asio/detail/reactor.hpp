@@ -23,7 +23,7 @@
 # include "asio/detail/kqueue_reactor.hpp"
 #elif defined(ASIO_HAS_DEV_POLL)
 # include "asio/detail/dev_poll_reactor.hpp"
-#elif defined(ASIO_WINDOWS_RUNTIME)
+#elif defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
 # include "asio/detail/null_reactor.hpp"
 #else
 # include "asio/detail/select_reactor.hpp"

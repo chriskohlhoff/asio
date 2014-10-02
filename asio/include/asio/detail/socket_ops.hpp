@@ -18,9 +18,8 @@
 #include "asio/detail/config.hpp"
 
 #include "asio/error_code.hpp"
-#include "asio/detail/shared_ptr.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/socket_types.hpp"
-#include "asio/detail/weak_ptr.hpp"
 
 #include "asio/detail/push_options.hpp"
 

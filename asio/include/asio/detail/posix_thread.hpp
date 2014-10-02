@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_PTHREADS)
 
+#include <cstddef>
 #include <pthread.h>
 #include "asio/detail/noncopyable.hpp"
 
@@ -49,6 +50,9 @@ public:
 
   // Wait for the thread to exit.
   ASIO_DECL void join();
+
+  // Get number of CPUs.
+  ASIO_DECL static std::size_t hardware_concurrency();
 
 private:
   friend void* asio_detail_posix_thread_function(void* arg);

@@ -22,10 +22,10 @@
 
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/detail/addressof.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/operation.hpp"
 #include "asio/detail/win_iocp_handle_read_op.hpp"
@@ -148,8 +148,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_write_some"));
@@ -169,8 +168,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_write_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_write_some_at"));
@@ -210,8 +208,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_read_some"));
@@ -232,8 +229,7 @@ public:
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_handle_read_op<MutableBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
-      asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
+      op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
     ASIO_HANDLER_CREATION((p.p, "handle", &impl, "async_read_some_at"));

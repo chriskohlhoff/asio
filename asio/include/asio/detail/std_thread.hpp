@@ -51,6 +51,12 @@ public:
       thread_.join();
   }
 
+  // Get number of CPUs.
+  static std::size_t hardware_concurrency()
+  {
+    return std::thread::hardware_concurrency();
+  }
+
 private:
   std::thread thread_;
 };

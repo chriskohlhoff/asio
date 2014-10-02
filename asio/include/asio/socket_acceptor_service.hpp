@@ -262,9 +262,8 @@ public:
       ASIO_MOVE_ARG(AcceptHandler) handler,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
   {
-    detail::async_result_init<
-      AcceptHandler, void (asio::error_code)> init(
-        ASIO_MOVE_CAST(AcceptHandler)(handler));
+    async_completion<AcceptHandler,
+      void (asio::error_code)> init(handler);
 
     service_impl_.async_accept(impl, peer, peer_endpoint, init.handler);
 

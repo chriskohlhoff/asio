@@ -281,7 +281,7 @@ public:
   Handler handler_;
 };
 
-template <typename Stream, typename Operation,  typename Handler>
+template <typename Stream, typename Operation, typename Handler>
 inline void* asio_handler_allocate(std::size_t size,
     io_op<Stream, Operation, Handler>* this_handler)
 {
@@ -334,6 +334,35 @@ inline void async_io(Stream& next_layer, stream_core& core,
 
 } // namespace detail
 } // namespace ssl
+
+template <typename Stream, typename Operation,
+    typename Handler, typename Allocator>
+struct associated_allocator<
+    ssl::detail::io_op<Stream, Operation, Handler>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const ssl::detail::io_op<Stream, Operation, Handler>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Stream, typename Operation,
+    typename Handler, typename Executor>
+struct associated_executor<
+    ssl::detail::io_op<Stream, Operation, Handler>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const ssl::detail::io_op<Stream, Operation, Handler>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

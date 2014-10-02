@@ -39,7 +39,7 @@
 #endif // defined(__GNUC__)
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-# include "asio/detail/function.hpp"
+# include "asio/detail/functional.hpp"
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
 #if defined(ASIO_HAS_BOOST_WORKAROUND)
