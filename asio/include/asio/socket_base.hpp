@@ -75,6 +75,22 @@ public:
       message_end_of_record = ASIO_OS_DEF(MSG_EOR));
 #endif
 
+  /// Wait types.
+  /**
+   * For use with basic_socket::wait() and basic_socket::async_wait().
+   */
+  enum wait_type
+  {
+    /// Wait for a socket to become ready to read.
+    wait_read,
+
+    /// Wait for a socket to become ready to write.
+    wait_write,
+
+    /// Wait for a socket to have error conditions pending.
+    wait_error
+  };
+
   /// Socket option to permit sending of broadcast messages.
   /**
    * Implements the SOL_SOCKET/SO_BROADCAST socket option.

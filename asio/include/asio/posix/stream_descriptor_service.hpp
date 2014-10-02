@@ -174,6 +174,30 @@ public:
     return service_impl_.native_non_blocking(impl, mode, ec);
   }
 
+  /// Wait for the descriptor to become ready to read, ready to write, or to
+  /// have pending error conditions.
+  asio::error_code wait(implementation_type& impl,
+      descriptor_base::wait_type w, asio::error_code& ec)
+  {
+    return service_impl_.wait(impl, w, ec);
+  }
+
+  /// Asynchronously wait for the descriptor to become ready to read, ready to
+  /// write, or to have pending error conditions.
+  template <typename WaitHandler>
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(implementation_type& impl, descriptor_base::wait_type w,
+      ASIO_MOVE_ARG(WaitHandler) handler)
+  {
+    async_completion<WaitHandler,
+      void (asio::error_code)> init(handler);
+
+    service_impl_.async_wait(impl, w, init.handler);
+
+    return init.result.get();
+  }
+
   /// Write the given data to the stream.
   template <typename ConstBufferSequence>
   std::size_t write_some(implementation_type& impl,

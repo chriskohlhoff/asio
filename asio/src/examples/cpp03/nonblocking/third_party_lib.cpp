@@ -116,8 +116,7 @@ private:
     if (session_impl_.want_read() && !read_in_progress_)
     {
       read_in_progress_ = true;
-      socket_.async_read_some(
-          asio::null_buffers(),
+      socket_.async_wait(tcp::socket::wait_read,
           boost::bind(&connection::handle_read,
             shared_from_this(),
             asio::placeholders::error));
@@ -127,8 +126,7 @@ private:
     if (session_impl_.want_write() && !write_in_progress_)
     {
       write_in_progress_ = true;
-      socket_.async_write_some(
-          asio::null_buffers(),
+      socket_.async_wait(tcp::socket::wait_write,
           boost::bind(&connection::handle_write,
             shared_from_this(),
             asio::placeholders::error));

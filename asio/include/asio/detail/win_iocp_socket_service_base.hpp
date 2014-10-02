@@ -41,6 +41,7 @@
 #include "asio/detail/win_iocp_socket_send_op.hpp"
 #include "asio/detail/win_iocp_socket_recv_op.hpp"
 #include "asio/detail/win_iocp_socket_recvmsg_op.hpp"
+#include "asio/detail/win_iocp_wait_op.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -185,6 +186,67 @@ public:
   {
     socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
+  }
+
+  // Wait for the socket to become ready to read, ready to write, or to have
+  // pending error conditions.
+  asio::error_code wait(base_implementation_type& impl,
+      socket_base::wait_type w, asio::error_code& ec)
+  {
+    switch (w)
+    {
+    case socket_base::wait_read:
+      socket_ops::poll_read(impl.socket_, impl.state_, ec);
+      break;
+    case socket_base::wait_write:
+      socket_ops::poll_write(impl.socket_, impl.state_, ec);
+      break;
+    case socket_base::wait_error:
+      socket_ops::poll_error(impl.socket_, impl.state_, ec);
+      break;
+    default:
+      ec = asio::error::invalid_argument;
+      break;
+    }
+
+    return ec;
+  }
+
+  // Asynchronously wait for the socket to become ready to read, ready to
+  // write, or to have pending error conditions.
+  template <typename Handler>
+  void async_wait(base_implementation_type& impl,
+      socket_base::wait_type w, Handler& handler)
+  {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_wait_op<Handler> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_wait"));
+
+    switch (w)
+    {
+      case socket_base::wait_read:
+        start_null_buffers_receive_op(impl, 0, p.p);
+        break;
+      case socket_base::wait_write:
+        start_reactor_op(impl, select_reactor::write_op, p.p);
+        break;
+      case socket_base::wait_error:
+        start_reactor_op(impl, select_reactor::except_op, p.p);
+        break;
+      default:
+        p.p->ec_ = asio::error::invalid_argument;
+        iocp_service_.post_immediate_completion(p.p, is_continuation);
+        break;
+    }
+
+    p.v = p.p = 0;
   }
 
   // Send the given data to the peer. Returns the number of bytes sent.

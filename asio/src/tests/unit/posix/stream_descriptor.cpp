@@ -30,6 +30,10 @@
 
 namespace posix_stream_descriptor_compile {
 
+void wait_handler(const asio::error_code&)
+{
+}
+
 void write_some_handler(const asio::error_code&, std::size_t)
 {
 }
@@ -119,6 +123,13 @@ void test()
     descriptor1.native_non_blocking(true);
     descriptor1.native_non_blocking(false, ec);
 
+    descriptor1.wait(posix::descriptor_base::wait_read);
+    descriptor1.wait(posix::descriptor_base::wait_write, ec);
+
+    descriptor1.async_wait(posix::descriptor_base::wait_read, &wait_handler);
+    int i1 = descriptor1.async_wait(posix::descriptor_base::wait_write, lazy);
+    (void)i1;
+
     // basic_stream_descriptor functions.
 
     descriptor1.write_some(buffer(mutable_char_buffer));
@@ -134,12 +145,12 @@ void test()
         write_some_handler);
     descriptor1.async_write_some(null_buffers(),
         write_some_handler);
-    int i1 = descriptor1.async_write_some(buffer(mutable_char_buffer), lazy);
-    (void)i1;
-    int i2 = descriptor1.async_write_some(buffer(const_char_buffer), lazy);
+    int i2 = descriptor1.async_write_some(buffer(mutable_char_buffer), lazy);
     (void)i2;
-    int i3 = descriptor1.async_write_some(null_buffers(), lazy);
+    int i3 = descriptor1.async_write_some(buffer(const_char_buffer), lazy);
     (void)i3;
+    int i4 = descriptor1.async_write_some(null_buffers(), lazy);
+    (void)i4;
 
     descriptor1.read_some(buffer(mutable_char_buffer));
     descriptor1.read_some(buffer(mutable_char_buffer), ec);
@@ -147,10 +158,10 @@ void test()
 
     descriptor1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
     descriptor1.async_read_some(null_buffers(), read_some_handler);
-    int i4 = descriptor1.async_read_some(buffer(mutable_char_buffer), lazy);
-    (void)i4;
-    int i5 = descriptor1.async_read_some(null_buffers(), lazy);
+    int i5 = descriptor1.async_read_some(buffer(mutable_char_buffer), lazy);
     (void)i5;
+    int i6 = descriptor1.async_read_some(null_buffers(), lazy);
+    (void)i6;
   }
   catch (std::exception&)
   {

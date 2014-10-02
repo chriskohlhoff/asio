@@ -268,6 +268,9 @@ ASIO_DECL int poll_read(socket_type s,
 ASIO_DECL int poll_write(socket_type s,
     state_type state, asio::error_code& ec);
 
+ASIO_DECL int poll_error(socket_type s,
+    state_type state, asio::error_code& ec);
+
 ASIO_DECL int poll_connect(socket_type s, asio::error_code& ec);
 
 #endif // !defined(ASIO_WINDOWS_RUNTIME)

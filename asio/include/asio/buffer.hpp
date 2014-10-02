@@ -319,8 +319,9 @@ public:
   }
 };
 
-/// An implementation of both the ConstBufferSequence and MutableBufferSequence
-/// concepts to represent a null buffer sequence.
+/// (Deprecated: Use the socket/descriptor wait() and async_wait() member
+/// functions.) An implementation of both the ConstBufferSequence and
+/// MutableBufferSequence concepts to represent a null buffer sequence.
 class null_buffers
 {
 public:

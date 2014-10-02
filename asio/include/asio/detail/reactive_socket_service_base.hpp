@@ -30,6 +30,7 @@
 #include "asio/detail/reactive_socket_recv_op.hpp"
 #include "asio/detail/reactive_socket_recvmsg_op.hpp"
 #include "asio/detail/reactive_socket_send_op.hpp"
+#include "asio/detail/reactive_wait_op.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_holder.hpp"
@@ -168,6 +169,70 @@ public:
   {
     socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
+  }
+
+  // Wait for the socket to become ready to read, ready to write, or to have
+  // pending error conditions.
+  asio::error_code wait(base_implementation_type& impl,
+      socket_base::wait_type w, asio::error_code& ec)
+  {
+    switch (w)
+    {
+    case socket_base::wait_read:
+      socket_ops::poll_read(impl.socket_, impl.state_, ec);
+      break;
+    case socket_base::wait_write:
+      socket_ops::poll_write(impl.socket_, impl.state_, ec);
+      break;
+    case socket_base::wait_error:
+      socket_ops::poll_error(impl.socket_, impl.state_, ec);
+      break;
+    default:
+      ec = asio::error::invalid_argument;
+      break;
+    }
+
+    return ec;
+  }
+
+  // Asynchronously wait for the socket to become ready to read, ready to
+  // write, or to have pending error conditions.
+  template <typename Handler>
+  void async_wait(base_implementation_type& impl,
+      socket_base::wait_type w, Handler& handler)
+  {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef reactive_wait_op<Handler> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_wait"));
+
+    int op_type;
+    switch (w)
+    {
+      case socket_base::wait_read:
+        op_type = reactor::read_op;
+        break;
+      case socket_base::wait_write:
+        op_type = reactor::write_op;
+        break;
+      case socket_base::wait_error:
+        op_type = reactor::except_op;
+        break;
+      default:
+        p.p->ec_ = asio::error::invalid_argument;
+        reactor_.post_immediate_completion(p.p, is_continuation);
+        p.v = p.p = 0;
+        return;
+    }
+
+    start_op(impl, op_type, p.p, is_continuation, false, false);
+    p.v = p.p = 0;
   }
 
   // Send the given data to the peer.

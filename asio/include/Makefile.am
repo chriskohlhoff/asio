@@ -170,6 +170,7 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_sendto_op.hpp \
 	asio/detail/reactive_socket_service_base.hpp \
 	asio/detail/reactive_socket_service.hpp \
+	asio/detail/reactive_wait_op.hpp \
 	asio/detail/reactor_fwd.hpp \
 	asio/detail/reactor.hpp \
 	asio/detail/reactor_op.hpp \
@@ -247,6 +248,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_socket_service_base.hpp \
 	asio/detail/win_iocp_socket_service.hpp \
 	asio/detail/win_iocp_thread_info.hpp \
+	asio/detail/win_iocp_wait_op.hpp \
 	asio/detail/win_mutex.hpp \
 	asio/detail/win_object_handle_service.hpp \
 	asio/detail/winrt_async_manager.hpp \

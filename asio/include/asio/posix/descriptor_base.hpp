@@ -34,6 +34,22 @@ namespace posix {
 class descriptor_base
 {
 public:
+  /// Wait types.
+  /**
+   * For use with basic_descriptor::wait() and basic_descriptor::async_wait().
+   */
+  enum wait_type
+  {
+    /// Wait for a descriptor to become ready to read.
+    wait_read,
+
+    /// Wait for a descriptor to become ready to write.
+    wait_write,
+
+    /// Wait for a descriptor to have error conditions pending.
+    wait_error
+  };
+
   /// IO control command to get the amount of data that can be read without
   /// blocking.
   /**

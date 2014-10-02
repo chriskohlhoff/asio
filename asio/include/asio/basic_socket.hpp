@@ -1120,7 +1120,7 @@ public:
    *             || ec == asio::error::try_again)
    *         {
    *           // We have to wait for the socket to become ready again.
-   *           sock_.async_write_some(asio::null_buffers(), *this);
+   *           sock_.async_wait(tcp::socket::wait_write, *this);
    *           return;
    *         }
    *
@@ -1144,7 +1144,7 @@ public:
    * void async_sendfile(tcp::socket& sock, int fd, Handler h)
    * {
    *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
-   *   sock.async_write_some(asio::null_buffers(), op);
+   *   sock.async_wait(tcp::socket::wait_write, op);
    * } @endcode
    */
   bool native_non_blocking() const
@@ -1210,7 +1210,7 @@ public:
    *             || ec == asio::error::try_again)
    *         {
    *           // We have to wait for the socket to become ready again.
-   *           sock_.async_write_some(asio::null_buffers(), *this);
+   *           sock_.async_wait(tcp::socket::wait_write, *this);
    *           return;
    *         }
    *
@@ -1234,7 +1234,7 @@ public:
    * void async_sendfile(tcp::socket& sock, int fd, Handler h)
    * {
    *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
-   *   sock.async_write_some(asio::null_buffers(), op);
+   *   sock.async_wait(tcp::socket::wait_write, op);
    * } @endcode
    */
   void native_non_blocking(bool mode)
@@ -1303,7 +1303,7 @@ public:
    *             || ec == asio::error::try_again)
    *         {
    *           // We have to wait for the socket to become ready again.
-   *           sock_.async_write_some(asio::null_buffers(), *this);
+   *           sock_.async_wait(tcp::socket::wait_write, *this);
    *           return;
    *         }
    *
@@ -1327,7 +1327,7 @@ public:
    * void async_sendfile(tcp::socket& sock, int fd, Handler h)
    * {
    *   sendfile_op<Handler> op = { sock, fd, h, 0, 0 };
-   *   sock.async_write_some(asio::null_buffers(), op);
+   *   sock.async_wait(tcp::socket::wait_write, op);
    * } @endcode
    */
   asio::error_code native_non_blocking(
@@ -1487,6 +1487,102 @@ public:
       asio::error_code& ec)
   {
     return this->get_service().shutdown(this->get_implementation(), what, ec);
+  }
+
+  /// Wait for the socket to become ready to read, ready to write, or to have
+  /// pending error conditions.
+  /**
+   * This function is used to perform a blocking wait for a socket to enter
+   * a ready to read, write or error condition state.
+   *
+   * @param w Specifies the desired socket state.
+   *
+   * @par Example
+   * Waiting for a socket to become readable.
+   * @code
+   * asio::ip::tcp::socket socket(io_service);
+   * ...
+   * socket.wait(asio::ip::tcp::socket::wait_read);
+   * @endcode
+   */
+  void wait(wait_type w)
+  {
+    asio::error_code ec;
+    this->get_service().wait(this->get_implementation(), w, ec);
+    asio::detail::throw_error(ec, "wait");
+  }
+
+  /// Wait for the socket to become ready to read, ready to write, or to have
+  /// pending error conditions.
+  /**
+   * This function is used to perform a blocking wait for a socket to enter
+   * a ready to read, write or error condition state.
+   *
+   * @param w Specifies the desired socket state.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @par Example
+   * Waiting for a socket to become readable.
+   * @code
+   * asio::ip::tcp::socket socket(io_service);
+   * ...
+   * asio::error_code ec;
+   * socket.wait(asio::ip::tcp::socket::wait_read, ec);
+   * @endcode
+   */
+  asio::error_code wait(wait_type w, asio::error_code& ec)
+  {
+    return this->get_service().wait(this->get_implementation(), w, ec);
+  }
+
+  /// Asynchronously wait for the socket to become ready to read, ready to
+  /// write, or to have pending error conditions.
+  /**
+   * This function is used to perform an asynchronous wait for a socket to enter
+   * a ready to read, write or error condition state.
+   *
+   * @param w Specifies the desired socket state.
+   *
+   * @param handler The handler to be called when the wait operation completes.
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
+   * @code void handler(
+   *   const asio::error_code& error // Result of operation
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @par Example
+   * @code
+   * void wait_handler(const asio::error_code& error)
+   * {
+   *   if (!error)
+   *   {
+   *     // Wait succeeded.
+   *   }
+   * }
+   *
+   * ...
+   *
+   * asio::ip::tcp::socket socket(io_service);
+   * ...
+   * socket.async_wait(asio::ip::tcp::socket::wait_read, wait_handler);
+   * @endcode
+   */
+  template <typename WaitHandler>
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
+  {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WaitHandler.
+    ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+    return this->get_service().async_wait(this->get_implementation(),
+        w, ASIO_MOVE_CAST(WaitHandler)(handler));
   }
 
 protected:

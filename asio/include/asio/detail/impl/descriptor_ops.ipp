@@ -438,6 +438,29 @@ int poll_write(int d, state_type state, asio::error_code& ec)
   return result;
 }
 
+int poll_error(int d, state_type state, asio::error_code& ec)
+{
+  if (d == -1)
+  {
+    ec = asio::error::bad_descriptor;
+    return -1;
+  }
+
+  pollfd fds;
+  fds.fd = d;
+  fds.events = POLLPRI | POLLERR | POLLHUP;
+  fds.revents = 0;
+  int timeout = (state & user_set_non_blocking) ? 0 : -1;
+  errno = 0;
+  int result = error_wrapper(::poll(&fds, 1, timeout), ec);
+  if (result == 0)
+    ec = (state & user_set_non_blocking)
+      ? asio::error::would_block : asio::error_code();
+  else if (result > 0)
+    ec = asio::error_code();
+  return result;
+}
+
 } // namespace descriptor_ops
 } // namespace detail
 } // namespace asio

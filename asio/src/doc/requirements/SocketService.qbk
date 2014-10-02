@@ -20,10 +20,12 @@ denotes a value of type `Protocol::endpoint`, `ec` denotes a value of type
 asio.reference.SettableSocketOption `SettableSocketOption`] requirements, `g`
 denotes a value meeting [link asio.reference.GettableSocketOption
 `GettableSocketOption`] requirements, `i` denotes a value meeting [link
-asio.reference.IoControlCommand `IoControlCommand`] requirements, `h`
-denotes a value of type `socket_base::shutdown_type`, `ch` denotes a value
-meeting [link asio.reference.ConnectHandler `ConnectHandler`]
-requirements, and `u` and `v` denote identifiers.
+asio.reference.IoControlCommand `IoControlCommand`] requirements, `h` denotes a
+value of type `socket_base::shutdown_type`, `ch` denotes a value meeting [link
+asio.reference.ConnectHandler `ConnectHandler`] requirements, `w` denotes a
+value of type `socket_base::wait_type`, `wh` denotes a value meeting [link
+asio.reference.WaitHandler `WaitHandler`] requirements, and `u` and `v` denote
+identifiers.
 
 [table SocketService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -302,6 +304,28 @@ requirements, and `u` and `v` denote identifiers.
     [
       pre: `a.is_open(b)`.\n
       Initiates an asynchronous connect operation that is performed via the
+      `io_service` object `a.get_io_service()` and behaves according to [link
+      asio.reference.asynchronous_operations asynchronous operation]
+      requirements.
+    ]
+  ]
+  [
+    [``
+      a.wait(b, w, ec);
+    ``]
+    [`error_code`]
+    [
+      pre: `a.is_open(b)`.
+    ]
+  ]
+  [
+    [``
+      a.async_wait(b, w, wh);
+    ``]
+    []
+    [
+      pre: `a.is_open(b)`.\n
+      Initiates an asynchronous wait operation that is performed via the
       `io_service` object `a.get_io_service()` and behaves according to [link
       asio.reference.asynchronous_operations asynchronous operation]
       requirements.
