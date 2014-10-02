@@ -28,6 +28,9 @@ template <typename Executor>
 class strand
 {
 public:
+  /// The type of the underlying executor.
+  typedef Executor inner_executor_type;
+
   /// Default constructor.
   /**
    * This constructor is only valid if the underlying executor type is default
@@ -136,6 +139,12 @@ public:
   /// Destructor.
   ~strand()
   {
+  }
+
+  /// Obtain the underlying executor.
+  inner_executor_type get_inner_executor() const ASIO_NOEXCEPT
+  {
+    return executor_;
   }
 
   /// Obtain the underlying execution context.
