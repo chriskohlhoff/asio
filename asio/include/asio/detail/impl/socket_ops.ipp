@@ -1964,7 +1964,8 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
   LPWSTR string_buffer = (LPWSTR)_alloca(length * sizeof(WCHAR));
   int result = error_wrapper(::WSAAddressToStringW(&address.base,
         address_length, 0, string_buffer, &string_length), ec);
-  ::WideCharToMultiByte(CP_ACP, 0, string_buffer, -1, dest, length, 0, 0);
+  ::WideCharToMultiByte(CP_ACP, 0, string_buffer, -1,
+      dest, static_cast<int>(length), 0, 0);
 #else
   int result = error_wrapper(::WSAAddressToStringA(
         &address.base, address_length, 0, dest, &string_length), ec);
@@ -2168,7 +2169,7 @@ int inet_pton(int af, const char* src, void* dest,
   } address;
   int address_length = sizeof(sockaddr_storage_type);
 #if defined(BOOST_NO_ANSI_APIS) || (defined(_MSC_VER) && (_MSC_VER >= 1800))
-  int num_wide_chars = strlen(src) + 1;
+  int num_wide_chars = static_cast<int>(strlen(src)) + 1;
   LPWSTR wide_buffer = (LPWSTR)_alloca(num_wide_chars * sizeof(WCHAR));
   ::MultiByteToWideChar(CP_ACP, 0, src, -1, wide_buffer, num_wide_chars);
   int result = error_wrapper(::WSAStringToAddressW(
