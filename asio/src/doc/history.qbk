@@ -7,6 +7,18 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.4]
+
+* Stopped using certain Winsock functions that are marked as deprecated in the
+  latest Visual C++ and Windows SDK.
+
+* Fixed a shadow variable warning on Windows.
+
+* Fixed a regression in the [^kqueue] backend that was introduced in Asio
+  1.10.2.
+
+* Added a workaround for building the unit tests with [^gcc] on AIX.
+
 [heading Asio 1.10.3]
 
 * Worked around a [^gcc] problem to do with anonymous enums.
