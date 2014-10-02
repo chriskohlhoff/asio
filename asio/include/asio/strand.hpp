@@ -235,6 +235,26 @@ public:
     return detail::strand_executor_service::running_in_this_thread(impl_);
   }
 
+  /// Compare two strands for equality.
+  /**
+   * Two strands are equal if they refer to the same ordered, non-concurrent
+   * state.
+   */
+  friend bool operator==(const strand& a, const strand& b) ASIO_NOEXCEPT
+  {
+    return a.impl_ == b.impl_;
+  }
+
+  /// Compare two strands for inequality.
+  /**
+   * Two strands are equal if they refer to the same ordered, non-concurrent
+   * state.
+   */
+  friend bool operator!=(const strand& a, const strand& b) ASIO_NOEXCEPT
+  {
+    return a.impl_ != b.impl_;
+  }
+
 private:
   Executor executor_;
   typedef detail::strand_executor_service::implementation_type

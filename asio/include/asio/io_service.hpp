@@ -579,6 +579,26 @@ public:
    */
   bool running_in_this_thread() const ASIO_NOEXCEPT;
 
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_service.
+   */
+  friend bool operator==(const executor_type& a,
+      const executor_type& b) ASIO_NOEXCEPT
+  {
+    return &a.io_service_ == &b.io_service_;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_service.
+   */
+  friend bool operator!=(const executor_type& a,
+      const executor_type& b) ASIO_NOEXCEPT
+  {
+    return &a.io_service_ != &b.io_service_;
+  }
+
 private:
   friend class io_service;
 

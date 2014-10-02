@@ -101,6 +101,26 @@ public:
   template <typename Function, typename Allocator>
   void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a);
 
+  /// Compare two executors for equality.
+  /**
+   * System executors always compare equal.
+   */
+  friend bool operator==(const system_executor&,
+      const system_executor&) ASIO_NOEXCEPT
+  {
+    return true;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * System executors always compare equal.
+   */
+  friend bool operator!=(const system_executor&,
+      const system_executor&) ASIO_NOEXCEPT
+  {
+    return false;
+  }
+
 private:
   struct thread_function;
 
