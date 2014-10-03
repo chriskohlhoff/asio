@@ -15,7 +15,10 @@ In the table below, `X` denotes a descriptor service class, `a` and `ao` denote
 values of type `X`, `b` and `c` denote values of type `X::implementation_type`,
 `n` denotes a value of type `X::native_handle_type`, `ec` denotes a value of type
 `error_code`, `i` denotes a value meeting [link asio.reference.IoControlCommand
-`IoControlCommand`] requirements, and `u` and `v` denote identifiers.
+`IoControlCommand`] requirements, `w` denotes a value of type
+`descriptor_base::wait_type`, `wh` denotes a value meeting [link
+asio.reference.WaitHandler `WaitHandler`] requirements, and `u` and `v` denote
+identifiers.
 
 [table DescriptorService requirements
   [[expression] [return type] [assertion/note\npre/post-condition]]
@@ -135,6 +138,28 @@ values of type `X`, `b` and `c` denote values of type `X::implementation_type`,
     [`error_code`]
     [
       pre: `a.is_open(b)`.
+    ]
+  ]
+  [
+    [``
+      a.wait(b, w, ec);
+    ``]
+    [`error_code`]
+    [
+      pre: `a.is_open(b)`.
+    ]
+  ]
+  [
+    [``
+      a.async_wait(b, w, wh);
+    ``]
+    []
+    [
+      pre: `a.is_open(b)`.\n
+      Initiates an asynchronous wait operation that is performed via the
+      `io_service` object `a.get_io_service()` and behaves according to [link
+      asio.reference.asynchronous_operations asynchronous operation]
+      requirements.
     ]
   ]
 ]
