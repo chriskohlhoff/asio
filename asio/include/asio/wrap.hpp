@@ -378,8 +378,12 @@ public:
     return static_cast<const Executor&>(*this);
   }
 
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES) \
-  || defined(GENERATING_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
+
+  template <typename... Args> auto operator()(Args&& ...);
+  template <typename... Args> auto operator()(Args&& ...) const;
+
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   /// Forwarding function call operator.
   template <typename... Args>
@@ -398,7 +402,6 @@ public:
   }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-      //   || defined(GENERATING_DOCUMENTATION)
 
   typename detail::executor_wrapper_result_of0<T>::type operator()()
   {
@@ -429,7 +432,6 @@ public:
 #undef ASIO_PRIVATE_WRAP_CALL_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-       //   || defined(GENERATING_DOCUMENTATION)
 
 private:
   typedef detail::executor_wrapper_base<T, Executor,

@@ -224,6 +224,8 @@ private:
   asio::error_code ec_;
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Handler, typename T, typename Allocator>
 struct associated_allocator<detail::coro_handler<Handler, T>, Allocator>
 {
@@ -247,6 +249,8 @@ struct associated_executor<detail::coro_handler<Handler, T>, Executor>
     return associated_executor<Handler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 namespace detail {
 

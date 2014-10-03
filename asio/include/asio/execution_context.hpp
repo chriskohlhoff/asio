@@ -209,7 +209,7 @@ public:
    * given service type. If there is no existing implementation of the service,
    * then the io_service will create a new instance of the service.
    *
-   * @param e The io_service object that owns the service.
+   * @param i The io_service object that owns the service.
    *
    * @return The service interface implementing the specified service type.
    * Ownership of the service interface is not transferred to the caller.

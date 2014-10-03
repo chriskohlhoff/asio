@@ -139,6 +139,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename ReadHandler, typename Allocator>
 struct associated_allocator<
     detail::buffered_fill_handler<ReadHandler>, Allocator>
@@ -164,6 +166,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
 template <typename ReadHandler>
@@ -322,6 +326,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename MutableBufferSequence,
     typename ReadHandler, typename Allocator>
 struct associated_allocator<
@@ -355,6 +361,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
 template <typename MutableBufferSequence, typename ReadHandler>

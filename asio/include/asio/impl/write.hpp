@@ -579,6 +579,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler, typename Allocator>
 struct associated_allocator<
@@ -614,6 +616,8 @@ struct associated_executor<
     return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
   typename CompletionCondition, typename WriteHandler>
@@ -744,6 +748,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Allocator, typename WriteHandler, typename Allocator1>
 struct associated_allocator<
     detail::write_streambuf_handler<Allocator, WriteHandler>,
@@ -773,6 +779,8 @@ struct associated_executor<
     return associated_executor<WriteHandler, Executor1>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>

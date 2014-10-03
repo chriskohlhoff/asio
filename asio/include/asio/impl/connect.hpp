@@ -322,6 +322,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ConnectCondition,
     typename ComposedConnectHandler, typename Allocator>
@@ -363,6 +365,8 @@ struct associated_executor<
         Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ComposedConnectHandler>

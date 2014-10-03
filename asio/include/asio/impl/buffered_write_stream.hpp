@@ -125,6 +125,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename WriteHandler, typename Allocator>
 struct associated_allocator<
     detail::buffered_flush_handler<WriteHandler>, Allocator>
@@ -150,6 +152,8 @@ struct associated_executor<
     return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
 template <typename WriteHandler>
@@ -308,6 +312,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename ConstBufferSequence,
     typename WriteHandler, typename Allocator>
 struct associated_allocator<
@@ -341,6 +347,8 @@ struct associated_executor<
     return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
 template <typename ConstBufferSequence, typename WriteHandler>

@@ -493,6 +493,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncReadStream, typename Allocator,
     typename ReadHandler, typename Allocator1>
 struct associated_allocator<
@@ -526,6 +528,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
@@ -729,6 +733,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncReadStream, typename Allocator,
     typename ReadHandler, typename Allocator1>
 struct associated_allocator<
@@ -764,6 +770,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
@@ -976,6 +984,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncReadStream, typename Allocator,
     typename RegEx, typename ReadHandler, typename Allocator1>
 struct associated_allocator<
@@ -1009,6 +1019,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
@@ -1217,6 +1229,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncReadStream, typename Allocator,
     typename MatchCondition, typename ReadHandler, typename Allocator1>
 struct associated_allocator<
@@ -1252,6 +1266,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream, typename Allocator,
     typename MatchCondition, typename ReadHandler>

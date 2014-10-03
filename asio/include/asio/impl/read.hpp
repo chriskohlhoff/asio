@@ -516,6 +516,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler, typename Allocator>
 struct associated_allocator<
@@ -551,6 +553,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
@@ -730,6 +734,8 @@ namespace detail
   }
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler, typename Allocator1>
 struct associated_allocator<
@@ -765,6 +771,8 @@ struct associated_executor<
     return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>

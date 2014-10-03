@@ -1425,6 +1425,9 @@
         <xsl:when test="declname = 'Arg'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Args'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'BufferSequence'">
           <xsl:value-of select="declname"/>
         </xsl:when>

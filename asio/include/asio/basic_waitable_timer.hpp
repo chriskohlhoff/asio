@@ -127,9 +127,6 @@ class basic_waitable_timer
   : public basic_io_object<WaitableTimerService>
 {
 public:
-  /// The executor type.
-  typedef asio::io_service::executor_type executor_type;
-
   /// The clock type.
   typedef Clock clock_type;
 
