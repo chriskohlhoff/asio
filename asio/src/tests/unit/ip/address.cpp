@@ -105,6 +105,13 @@ void test()
     addr1 = ip::make_address(string_value);
     addr1 = ip::make_address(string_value, ec);
 
+    // address casts.
+
+    addr_v4_value = ip::address_cast<ip::address_v4>(addr1);
+    addr1 = ip::address_cast<ip::address>(addr_v4_value);
+    addr_v6_value = ip::address_cast<ip::address_v6>(addr1);
+    addr1 = ip::address_cast<ip::address>(addr_v6_value);
+
     // address I/O.
 
     std::ostringstream os;

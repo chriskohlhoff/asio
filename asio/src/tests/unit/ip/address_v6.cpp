@@ -135,6 +135,10 @@ void test()
     addr1 = ip::make_address_v6(string_value);
     addr1 = ip::make_address_v6(string_value, ec);
 
+    // address_v6 IPv4-mapped conversion.
+    addr1 = ip::make_address_v6(ip::v4_mapped, addr3);
+    addr3 = ip::make_address_v4(ip::v4_mapped, addr1);
+
     // address_v6 I/O.
 
     std::ostringstream os;

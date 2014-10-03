@@ -21,6 +21,7 @@
 #include "asio/detail/throw_exception.hpp"
 #include "asio/error.hpp"
 #include "asio/ip/address.hpp"
+#include "asio/ip/bad_address_cast.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -133,11 +134,12 @@ address make_address(const std::string& str,
   return make_address(str.c_str(), ec);
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 asio::ip::address_v4 address::to_v4() const
 {
   if (type_ != ipv4)
   {
-    std::bad_cast ex;
+    bad_address_cast ex;
     asio::detail::throw_exception(ex);
   }
   return ipv4_address_;
@@ -147,11 +149,12 @@ asio::ip::address_v6 address::to_v6() const
 {
   if (type_ != ipv6)
   {
-    std::bad_cast ex;
+    bad_address_cast ex;
     asio::detail::throw_exception(ex);
   }
   return ipv6_address_;
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 std::string address::to_string() const
 {

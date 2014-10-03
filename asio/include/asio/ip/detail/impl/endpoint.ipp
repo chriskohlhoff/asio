@@ -81,7 +81,7 @@ endpoint::endpoint(const asio::ip::address& addr,
     data_.v4.sin_addr.s_addr =
       asio::detail::socket_ops::host_to_network_long(
           static_cast<asio::detail::u_long_type>(
-            addr.to_v4().to_ulong()));
+            address_cast<address_v4>(addr).to_ulong()));
   }
   else
   {
@@ -89,7 +89,7 @@ endpoint::endpoint(const asio::ip::address& addr,
     data_.v6.sin6_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
     data_.v6.sin6_flowinfo = 0;
-    asio::ip::address_v6 v6_addr = addr.to_v6();
+    asio::ip::address_v6 v6_addr = address_cast<address_v6>(addr);
     asio::ip::address_v6::bytes_type bytes = v6_addr.to_bytes();
     memcpy(data_.v6.sin6_addr.s6_addr, bytes.data(), 16);
     data_.v6.sin6_scope_id =

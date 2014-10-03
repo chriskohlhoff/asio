@@ -158,6 +158,25 @@
 # endif // !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+// Support deleted functions on compilers known to allow it.
+#if !defined(ASIO_DELETED)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ASIO_DELETED = delete
+#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+# endif // defined(__GNUC__)
+# if defined(__clang__)
+#  if __has_feature(__cxx_deleted_functions__)
+#   define ASIO_DELETED = delete
+#  endif // __has_feature(__cxx_deleted_functions__)
+# endif // defined(__clang__)
+# if !defined(ASIO_DELETED)
+#  define ASIO_DELETED
+# endif // !defined(ASIO_DELETED)
+#endif // !defined(ASIO_DELETED)
+
 // Support constexpr on compilers known to allow it.
 #if !defined(ASIO_HAS_CONSTEXPR)
 # if !defined(ASIO_DISABLE_CONSTEXPR)
@@ -188,14 +207,17 @@
 # if !defined(ASIO_DISABLE_NOEXCEPT)
 #  if (BOOST_VERSION >= 105300)
 #   define ASIO_NOEXCEPT BOOST_NOEXCEPT
+#   define ASIO_NOEXCEPT_OR_NOTHROW BOOST_NOEXCEPT_OR_NOTHROW
 #  elif defined(__clang__)
 #   if __has_feature(__cxx_noexcept__)
 #    define ASIO_NOEXCEPT noexcept(true)
+#    define ASIO_NOEXCEPT_OR_NOTHROW noexcept(true)
 #   endif // __has_feature(__cxx_noexcept__)
 #  elif defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #      define ASIO_NOEXCEPT noexcept(true)
+#      define ASIO_NOEXCEPT_OR_NOTHROW noexcept(true)
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
@@ -203,6 +225,9 @@
 # if !defined(ASIO_NOEXCEPT)
 #  define ASIO_NOEXCEPT
 # endif // !defined(ASIO_NOEXCEPT)
+# if !defined(ASIO_NOEXCEPT_OR_NOTHROW)
+#  define ASIO_NOEXCEPT_OR_NOTHROW throw()
+# endif // !defined(ASIO_NOEXCEPT_OR_NOTHROW)
 #endif // !defined(ASIO_NOEXCEPT)
 
 // Support automatic type deduction on compilers known to support it.

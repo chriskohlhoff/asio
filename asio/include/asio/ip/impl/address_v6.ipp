@@ -24,6 +24,7 @@
 #include "asio/detail/throw_exception.hpp"
 #include "asio/error.hpp"
 #include "asio/ip/address_v6.hpp"
+#include "asio/ip/bad_address_cast.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -117,11 +118,12 @@ std::string address_v6::to_string(asio::error_code& ec) const
   return addr;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 address_v4 address_v6::to_v4() const
 {
   if (!is_v4_mapped() && !is_v4_compatible())
   {
-    std::bad_cast ex;
+    bad_address_cast ex;
     asio::detail::throw_exception(ex);
   }
 
@@ -129,6 +131,7 @@ address_v4 address_v6::to_v4() const
     addr_.s6_addr[13], addr_.s6_addr[14], addr_.s6_addr[15] } };
   return address_v4(v4_bytes);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 bool address_v6::is_loopback() const
 {
@@ -174,6 +177,7 @@ bool address_v6::is_v4_mapped() const
       && (addr_.s6_addr[10] == 0xff) && (addr_.s6_addr[11] == 0xff));
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 bool address_v6::is_v4_compatible() const
 {
   return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
@@ -187,6 +191,7 @@ bool address_v6::is_v4_compatible() const
         && (addr_.s6_addr[14] == 0)
         && ((addr_.s6_addr[15] == 0) || (addr_.s6_addr[15] == 1))));
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 bool address_v6::is_multicast() const
 {
@@ -245,6 +250,7 @@ address_v6 address_v6::loopback()
   return tmp;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 address_v6 address_v6::v4_mapped(const address_v4& addr)
 {
   address_v4::bytes_type v4_bytes = addr.to_bytes();
@@ -260,6 +266,7 @@ address_v6 address_v6::v4_compatible(const address_v4& addr)
     v4_bytes[0], v4_bytes[1], v4_bytes[2], v4_bytes[3] } };
   return address_v6(v6_bytes);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 address_v6 make_address_v6(const char* str)
 {
@@ -289,6 +296,30 @@ address_v6 make_address_v6(
     const std::string& str, asio::error_code& ec)
 {
   return make_address_v6(str.c_str(), ec);
+}
+
+address_v4 make_address_v4(
+    v4_mapped_t, const address_v6& v6_addr)
+{
+  if (!v6_addr.is_v4_mapped())
+  {
+    bad_address_cast ex;
+    asio::detail::throw_exception(ex);
+  }
+
+  address_v6::bytes_type v6_bytes = v6_addr.to_bytes();
+  address_v4::bytes_type v4_bytes = { { v6_bytes[12],
+    v6_bytes[13], v6_bytes[14], v6_bytes[15] } };
+  return address_v4(v4_bytes);
+}
+
+address_v6 make_address_v6(
+    v4_mapped_t, const address_v4& v4_addr)
+{
+  address_v4::bytes_type v4_bytes = v4_addr.to_bytes();
+  address_v6::bytes_type v6_bytes = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0xFF, 0xFF, v4_bytes[0], v4_bytes[1], v4_bytes[2], v4_bytes[3] } };
+  return address_v6(v6_bytes);
 }
 
 } // namespace ip

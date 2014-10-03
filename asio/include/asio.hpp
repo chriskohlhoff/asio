@@ -65,6 +65,7 @@
 #include "asio/ip/address.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v6.hpp"
+#include "asio/ip/bad_address_cast.hpp"
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver.hpp"
 #include "asio/ip/basic_resolver_entry.hpp"

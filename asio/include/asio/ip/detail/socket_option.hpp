@@ -391,15 +391,15 @@ public:
   }
 
   // Construct with multicast address only.
-  explicit multicast_request(const asio::ip::address& multicast_address)
+  explicit multicast_request(const address& multicast_address)
     : ipv4_value_(), // Zero-initialisation gives the "any" address.
       ipv6_value_() // Zero-initialisation gives the "any" address.
   {
     if (multicast_address.is_v6())
     {
       using namespace std; // For memcpy.
-      asio::ip::address_v6 ipv6_address = multicast_address.to_v6();
-      asio::ip::address_v6::bytes_type bytes = ipv6_address.to_bytes();
+      address_v6 ipv6_address = address_cast<address_v6>(multicast_address);
+      address_v6::bytes_type bytes = ipv6_address.to_bytes();
       memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
       ipv6_value_.ipv6mr_interface = ipv6_address.scope_id();
     }
@@ -407,18 +407,16 @@ public:
     {
       ipv4_value_.imr_multiaddr.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            multicast_address.to_v4().to_ulong());
+            address_cast<address_v4>(multicast_address).to_ulong());
       ipv4_value_.imr_interface.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            asio::ip::address_v4::any().to_ulong());
+            address_v4::any().to_ulong());
     }
   }
 
   // Construct with multicast address and IPv4 address specifying an interface.
-  explicit multicast_request(
-      const asio::ip::address_v4& multicast_address,
-      const asio::ip::address_v4& network_interface
-        = asio::ip::address_v4::any())
+  explicit multicast_request(const address_v4& multicast_address,
+      const address_v4& network_interface = address_v4::any())
     : ipv6_value_() // Zero-initialisation gives the "any" address.
   {
     ipv4_value_.imr_multiaddr.s_addr =
@@ -431,13 +429,12 @@ public:
 
   // Construct with multicast address and IPv6 network interface index.
   explicit multicast_request(
-      const asio::ip::address_v6& multicast_address,
+      const address_v6& multicast_address,
       unsigned long network_interface = 0)
     : ipv4_value_() // Zero-initialisation gives the "any" address.
   {
     using namespace std; // For memcpy.
-    asio::ip::address_v6::bytes_type bytes =
-      multicast_address.to_bytes();
+    address_v6::bytes_type bytes = multicast_address.to_bytes();
     memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
     if (network_interface)
       ipv6_value_.ipv6mr_interface = network_interface;
@@ -496,12 +493,12 @@ public:
   {
     ipv4_value_.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          asio::ip::address_v4::any().to_ulong());
+          address_v4::any().to_ulong());
     ipv6_value_ = 0;
   }
 
   // Construct with IPv4 interface.
-  explicit network_interface(const asio::ip::address_v4& ipv4_interface)
+  explicit network_interface(const address_v4& ipv4_interface)
   {
     ipv4_value_.s_addr =
       asio::detail::socket_ops::host_to_network_long(
@@ -514,7 +511,7 @@ public:
   {
     ipv4_value_.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          asio::ip::address_v4::any().to_ulong());
+          address_v4::any().to_ulong());
     ipv6_value_ = ipv6_interface;
   }
 

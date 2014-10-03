@@ -123,10 +123,11 @@ public:
   /// address string.
   static address_v6 from_string(
       const std::string& str, asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
-  /// Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address.
+  /// (Deprecated: Use make_address_v4().) Converts an IPv4-mapped or
+  /// IPv4-compatible address to an IPv4 address.
   ASIO_DECL address_v4 to_v4() const;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
   ASIO_DECL bool is_loopback() const;
@@ -143,8 +144,11 @@ public:
   /// Determine whether the address is a mapped IPv4 address.
   ASIO_DECL bool is_v4_mapped() const;
 
-  /// Determine whether the address is an IPv4-compatible address.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: No replacement.) Determine whether the address is an
+  /// IPv4-compatible address.
   ASIO_DECL bool is_v4_compatible() const;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a multicast address.
   ASIO_DECL bool is_multicast() const;
@@ -205,11 +209,13 @@ public:
   /// Obtain an address object that represents the loopback address.
   ASIO_DECL static address_v6 loopback();
 
-  /// Create an IPv4-mapped IPv6 address.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address.
   ASIO_DECL static address_v6 v4_mapped(const address_v4& addr);
 
-  /// Create an IPv4-compatible IPv6 address.
+  /// (Deprecated: No replacement.) Create an IPv4-compatible IPv6 address.
   ASIO_DECL static address_v6 v4_compatible(const address_v4& addr);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   // The underlying IPv6 address.
@@ -254,6 +260,18 @@ ASIO_DECL address_v6 make_address_v6(const std::string& str);
  */
 ASIO_DECL address_v6 make_address_v6(
     const std::string& str, asio::error_code& ec);
+
+/// Tag type used for distinguishing overloads that deal in IPv4-mapped IPv6
+/// addresses.
+enum v4_mapped_t { v4_mapped };
+
+/// Create an IPv4 address from a IPv4-mapped IPv6 address.
+ASIO_DECL address_v4 make_address_v4(
+    v4_mapped_t, const address_v6& v6_addr);
+
+/// Create an IPv4-mapped IPv6 address from an IPv4 address.
+ASIO_DECL address_v6 make_address_v6(
+    v4_mapped_t, const address_v4& v4_addr);
 
 #if !defined(ASIO_NO_IOSTREAM)
 

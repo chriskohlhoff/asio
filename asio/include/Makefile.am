@@ -319,6 +319,7 @@ nobase_include_HEADERS = \
 	asio/ip/address.hpp \
 	asio/ip/address_v4.hpp \
 	asio/ip/address_v6.hpp \
+	asio/ip/bad_address_cast.hpp \
 	asio/ip/basic_endpoint.hpp \
 	asio/ip/basic_resolver_entry.hpp \
 	asio/ip/basic_resolver.hpp \
