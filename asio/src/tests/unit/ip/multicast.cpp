@@ -137,11 +137,9 @@ void test()
   // Windows CE seems to have problems with some multicast group addresses.
   // The following address works on CE, but as it is not a private multicast
   // address it will not be used on other platforms.
-  const ip::address multicast_address_v4 =
-    ip::address::from_string("239.0.0.4", ec);
+  const ip::address multicast_address_v4 = ip::make_address("239.0.0.4", ec);
 #else // defined(ASIO_WINDOWS) && defined(UNDER_CE)
-  const ip::address multicast_address_v4 =
-    ip::address::from_string("239.255.0.1", ec);
+  const ip::address multicast_address_v4 = ip::make_address("239.255.0.1", ec);
 #endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
   ASIO_CHECK(!have_v4 || !ec);
 
@@ -149,14 +147,12 @@ void test()
   || defined(__FreeBSD__) \
   || defined(__NetBSD__) \
   || defined(__OpenBSD__)
-  const ip::address multicast_address_v6 =
-    ip::address::from_string("ff02::1%lo0", ec);
+  const ip::address multicast_address_v6 = ip::make_address("ff02::1%lo0", ec);
 #else // (defined(__MACH__) && defined(__APPLE__))
       //   || defined(__FreeBSD__)
       //   || defined(__NetBSD__)
       //   || defined(__OpenBSD__)
-  const ip::address multicast_address_v6 =
-    ip::address::from_string("ff01::1", ec);
+  const ip::address multicast_address_v6 = ip::make_address("ff01::1", ec);
 #endif // (defined(__MACH__) && defined(__APPLE__))
        //   || defined(__FreeBSD__)
        //   || defined(__NetBSD__)

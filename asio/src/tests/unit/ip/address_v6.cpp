@@ -127,6 +127,14 @@ void test()
     b = (addr1 >= addr2);
     (void)b;
 
+    // address_v6 creation functions.
+
+    addr1 = ip::make_address_v6(const_bytes_value, scope_id);
+    addr1 = ip::make_address_v6("0::0");
+    addr1 = ip::make_address_v6("0::0", ec);
+    addr1 = ip::make_address_v6(string_value);
+    addr1 = ip::make_address_v6(string_value, ec);
+
     // address_v6 I/O.
 
     std::ostringstream os;

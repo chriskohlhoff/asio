@@ -99,23 +99,28 @@ public:
   /// Get the address as a string in dotted decimal format.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;
 
-  /// Create an address from an IPv4 address string in dotted decimal form,
-  /// or from an IPv6 address in hexadecimal notation.
-  ASIO_DECL static address from_string(const char* str);
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
+  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
+  /// notation.
+  static address from_string(const char* str);
 
-  /// Create an address from an IPv4 address string in dotted decimal form,
-  /// or from an IPv6 address in hexadecimal notation.
-  ASIO_DECL static address from_string(
-      const char* str, asio::error_code& ec);
+  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
+  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
+  /// notation.
+  static address from_string(const char* str, asio::error_code& ec);
 
-  /// Create an address from an IPv4 address string in dotted decimal form,
-  /// or from an IPv6 address in hexadecimal notation.
-  ASIO_DECL static address from_string(const std::string& str);
+  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
+  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
+  /// notation.
+  static address from_string(const std::string& str);
 
-  /// Create an address from an IPv4 address string in dotted decimal form,
-  /// or from an IPv6 address in hexadecimal notation.
-  ASIO_DECL static address from_string(
+  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
+  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
+  /// notation.
+  static address from_string(
       const std::string& str, asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
   ASIO_DECL bool is_loopback() const;
@@ -166,6 +171,36 @@ private:
   // The underlying IPv6 address.
   asio::ip::address_v6 ipv6_address_;
 };
+
+/// Create an address from an IPv4 address string in dotted decimal form,
+/// or from an IPv6 address in hexadecimal notation.
+/**
+ * @relates address
+ */
+ASIO_DECL address make_address(const char* str);
+
+/// Create an address from an IPv4 address string in dotted decimal form,
+/// or from an IPv6 address in hexadecimal notation.
+/**
+ * @relates address
+ */
+ASIO_DECL address make_address(
+    const char* str, asio::error_code& ec);
+
+/// Create an address from an IPv4 address string in dotted decimal form,
+/// or from an IPv6 address in hexadecimal notation.
+/**
+ * @relates address
+ */
+ASIO_DECL address make_address(const std::string& str);
+
+/// Create an address from an IPv4 address string in dotted decimal form,
+/// or from an IPv6 address in hexadecimal notation.
+/**
+ * @relates address
+ */
+ASIO_DECL address make_address(
+    const std::string& str, asio::error_code& ec);
 
 #if !defined(ASIO_NO_IOSTREAM)
 

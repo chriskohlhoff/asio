@@ -24,6 +24,32 @@
 namespace asio {
 namespace ip {
 
+#if !defined(ASIO_NO_DEPRECATED)
+
+inline address address::from_string(const char* str)
+{
+  return asio::ip::make_address(str);
+}
+
+inline address address::from_string(
+    const char* str, asio::error_code& ec)
+{
+  return asio::ip::make_address(str, ec);
+}
+
+inline address address::from_string(const std::string& str)
+{
+  return asio::ip::make_address(str);
+}
+
+inline address address::from_string(
+    const std::string& str, asio::error_code& ec)
+{
+  return asio::ip::make_address(str, ec);
+}
+
+#endif // !defined(ASIO_NO_DEPRECATED)
+
 template <typename Elem, typename Traits>
 std::basic_ostream<Elem, Traits>& operator<<(
     std::basic_ostream<Elem, Traits>& os, const address& addr)

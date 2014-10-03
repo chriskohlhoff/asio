@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   {
     boost::shared_ptr<tcp::socket> s(new tcp::socket(io_service));
 
-    tcp::endpoint target(asio::ip::address::from_string(ip), port);
+    tcp::endpoint target(asio::ip::make_address(ip), port);
     s->connect(target);
 
     s->set_option(tcp::no_delay(true));

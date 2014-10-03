@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
     }
 
     udp::endpoint listen_endpoint(
-        asio::ip::address::from_string(argv[1]),
+        asio::ip::make_address(argv[1]),
         std::atoi(argv[2]));
 
     client c(listen_endpoint);

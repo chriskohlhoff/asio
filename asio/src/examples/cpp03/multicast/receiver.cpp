@@ -80,8 +80,8 @@ int main(int argc, char* argv[])
 
     asio::io_service io_service;
     receiver r(io_service,
-        asio::ip::address::from_string(argv[1]),
-        asio::ip::address::from_string(argv[2]));
+        asio::ip::make_address(argv[1]),
+        asio::ip::make_address(argv[2]));
     io_service.run();
   }
   catch (std::exception& e)

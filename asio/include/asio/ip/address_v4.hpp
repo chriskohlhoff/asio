@@ -63,7 +63,7 @@ public:
   /// Construct an address from raw bytes.
   ASIO_DECL explicit address_v4(const bytes_type& bytes);
 
-  /// Construct an address from a unsigned long in host byte order.
+  /// Construct an address from an unsigned long in host byte order.
   ASIO_DECL explicit address_v4(unsigned long addr);
 
   /// Copy constructor.
@@ -108,19 +108,25 @@ public:
   /// Get the address as a string in dotted decimal format.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;
 
-  /// Create an address from an IP address string in dotted decimal form.
-  ASIO_DECL static address_v4 from_string(const char* str);
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
+  /// string in dotted decimal form.
+  static address_v4 from_string(const char* str);
 
-  /// Create an address from an IP address string in dotted decimal form.
-  ASIO_DECL static address_v4 from_string(
+  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
+  /// string in dotted decimal form.
+  static address_v4 from_string(
       const char* str, asio::error_code& ec);
 
-  /// Create an address from an IP address string in dotted decimal form.
-  ASIO_DECL static address_v4 from_string(const std::string& str);
+  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
+  /// string in dotted decimal form.
+  static address_v4 from_string(const std::string& str);
 
-  /// Create an address from an IP address string in dotted decimal form.
-  ASIO_DECL static address_v4 from_string(
+  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
+  /// string in dotted decimal form.
+  static address_v4 from_string(
       const std::string& str, asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
   ASIO_DECL bool is_loopback() const;
@@ -207,6 +213,50 @@ private:
   // The underlying IPv4 address.
   asio::detail::in4_addr_type addr_;
 };
+
+/// Create an IPv4 address from raw bytes in network order.
+/**
+ * @relates address_v4
+ */
+inline address_v4 make_address_v4(const address_v4::bytes_type& bytes)
+{
+  return address_v4(bytes);
+}
+
+/// Create an IPv4 address from an unsigned long in host byte order.
+/**
+ * @relates address_v4
+ */
+inline address_v4 make_address_v4(unsigned long addr)
+{
+  return address_v4(addr);
+}
+
+/// Create an IPv4 address from an IP address string in dotted decimal form.
+/**
+ * @relates address_v4
+ */
+ASIO_DECL address_v4 make_address_v4(const char* str);
+
+/// Create an IPv4 address from an IP address string in dotted decimal form.
+/**
+ * @relates address_v4
+ */
+ASIO_DECL address_v4 make_address_v4(
+    const char* str, asio::error_code& ec);
+
+/// Create an IPv4 address from an IP address string in dotted decimal form.
+/**
+ * @relates address_v4
+ */
+ASIO_DECL address_v4 make_address_v4(const std::string& str);
+
+/// Create an IPv4 address from an IP address string in dotted decimal form.
+/**
+ * @relates address_v4
+ */
+ASIO_DECL address_v4 make_address_v4(
+    const std::string& str, asio::error_code& ec);
 
 #if !defined(ASIO_NO_IOSTREAM)
 

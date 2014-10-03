@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     socket.non_blocking(true);
   }
 
-  udp::endpoint target(asio::ip::address::from_string(ip), first_port);
+  udp::endpoint target(asio::ip::make_address(ip), first_port);
   unsigned short last_port = first_port + num_ports - 1;
   std::vector<unsigned char> write_buf(buf_size);
   std::vector<unsigned char> read_buf(buf_size);

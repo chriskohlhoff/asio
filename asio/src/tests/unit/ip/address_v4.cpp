@@ -111,6 +111,15 @@ void test()
     b = (addr1 >= addr2);
     (void)b;
 
+    // address_v4 creation functions.
+
+    addr1 = ip::make_address_v4(const_bytes_value);
+    addr1 = ip::make_address_v4(const_ulong_value);
+    addr1 = ip::make_address_v4("127.0.0.1");
+    addr1 = ip::make_address_v4("127.0.0.1", ec);
+    addr1 = ip::make_address_v4(string_value);
+    addr1 = ip::make_address_v4(string_value, ec);
+
     // address_v4 I/O.
 
     std::ostringstream os;

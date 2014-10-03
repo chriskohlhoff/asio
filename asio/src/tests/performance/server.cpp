@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
     }
 
     using namespace std; // For atoi.
-    asio::ip::address address = asio::ip::address::from_string(argv[1]);
+    asio::ip::address address = asio::ip::make_address(argv[1]);
     short port = atoi(argv[2]);
     int thread_count = atoi(argv[3]);
     size_t block_size = atoi(argv[4]);

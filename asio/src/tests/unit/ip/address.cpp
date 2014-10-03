@@ -98,6 +98,13 @@ void test()
     b = (addr1 >= addr2);
     (void)b;
 
+    // address creation functions.
+
+    addr1 = ip::make_address("127.0.0.1");
+    addr1 = ip::make_address("127.0.0.1", ec);
+    addr1 = ip::make_address(string_value);
+    addr1 = ip::make_address(string_value, ec);
+
     // address I/O.
 
     std::ostringstream os;

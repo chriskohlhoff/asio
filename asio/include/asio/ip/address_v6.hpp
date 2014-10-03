@@ -105,19 +105,25 @@ public:
   /// Get the address as a string.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;
 
-  /// Create an address from an IP address string.
-  ASIO_DECL static address_v6 from_string(const char* str);
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
+  /// address string.
+  static address_v6 from_string(const char* str);
 
-  /// Create an address from an IP address string.
-  ASIO_DECL static address_v6 from_string(
+  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
+  /// address string.
+  static address_v6 from_string(
       const char* str, asio::error_code& ec);
 
-  /// Create an address from an IP address string.
-  ASIO_DECL static address_v6 from_string(const std::string& str);
+  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
+  /// address string.
+  static address_v6 from_string(const std::string& str);
 
-  /// Create an address from an IP address string.
-  ASIO_DECL static address_v6 from_string(
+  /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
+  /// address string.
+  static address_v6 from_string(
       const std::string& str, asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address.
   ASIO_DECL address_v4 to_v4() const;
@@ -212,6 +218,42 @@ private:
   // The scope ID associated with the address.
   unsigned long scope_id_;
 };
+
+/// Create an IPv6 address from raw bytes and scope ID.
+/**
+ * @relates address_v6
+ */
+inline address_v6 make_address_v6(const address_v6::bytes_type& bytes,
+    unsigned long scope_id = 0)
+{
+  return address_v6(bytes, scope_id);
+}
+
+/// Create an IPv6 address from an IP address string.
+/**
+ * @relates address_v6
+ */
+ASIO_DECL address_v6 make_address_v6(const char* str);
+
+/// Create an IPv6 address from an IP address string.
+/**
+ * @relates address_v6
+ */
+ASIO_DECL address_v6 make_address_v6(
+    const char* str, asio::error_code& ec);
+
+/// Createan IPv6 address from an IP address string.
+/**
+ * @relates address_v6
+ */
+ASIO_DECL address_v6 make_address_v6(const std::string& str);
+
+/// Create an IPv6 address from an IP address string.
+/**
+ * @relates address_v6
+ */
+ASIO_DECL address_v6 make_address_v6(
+    const std::string& str, asio::error_code& ec);
 
 #if !defined(ASIO_NO_IOSTREAM)
 

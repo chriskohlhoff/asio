@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     }
 
     asio::io_service io_service;
-    sender s(io_service, asio::ip::address::from_string(argv[1]));
+    sender s(io_service, asio::ip::make_address(argv[1]));
     io_service.run();
   }
   catch (std::exception& e)

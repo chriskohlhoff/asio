@@ -412,7 +412,7 @@ int main(int argc, char* argv[])
     tcp::endpoint listen_endpoint(tcp::v4(), atoi(argv[1]));
 
     udp::endpoint broadcast_endpoint(
-        asio::ip::address::from_string(argv[2]), atoi(argv[3]));
+        asio::ip::make_address(argv[2]), atoi(argv[3]));
 
     server s(io_service, listen_endpoint, broadcast_endpoint);
 

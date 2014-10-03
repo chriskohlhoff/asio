@@ -117,35 +117,6 @@ std::string address_v6::to_string(asio::error_code& ec) const
   return addr;
 }
 
-address_v6 address_v6::from_string(const char* str)
-{
-  asio::error_code ec;
-  address_v6 addr = from_string(str, ec);
-  asio::detail::throw_error(ec);
-  return addr;
-}
-
-address_v6 address_v6::from_string(
-    const char* str, asio::error_code& ec)
-{
-  address_v6 tmp;
-  if (asio::detail::socket_ops::inet_pton(
-        ASIO_OS_DEF(AF_INET6), str, &tmp.addr_, &tmp.scope_id_, ec) <= 0)
-    return address_v6();
-  return tmp;
-}
-
-address_v6 address_v6::from_string(const std::string& str)
-{
-  return from_string(str.c_str());
-}
-
-address_v6 address_v6::from_string(
-    const std::string& str, asio::error_code& ec)
-{
-  return from_string(str.c_str(), ec);
-}
-
 address_v4 address_v6::to_v4() const
 {
   if (!is_v4_mapped() && !is_v4_compatible())
@@ -288,6 +259,36 @@ address_v6 address_v6::v4_compatible(const address_v4& addr)
   bytes_type v6_bytes = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     v4_bytes[0], v4_bytes[1], v4_bytes[2], v4_bytes[3] } };
   return address_v6(v6_bytes);
+}
+
+address_v6 make_address_v6(const char* str)
+{
+  asio::error_code ec;
+  address_v6 addr = make_address_v6(str, ec);
+  asio::detail::throw_error(ec);
+  return addr;
+}
+
+address_v6 make_address_v6(
+    const char* str, asio::error_code& ec)
+{
+  address_v6::bytes_type bytes;
+  unsigned long scope_id = 0;
+  if (asio::detail::socket_ops::inet_pton(
+        ASIO_OS_DEF(AF_INET6), str, &bytes[0], &scope_id, ec) <= 0)
+    return address_v6();
+  return address_v6(bytes, scope_id);
+}
+
+address_v6 make_address_v6(const std::string& str)
+{
+  return make_address_v6(str.c_str());
+}
+
+address_v6 make_address_v6(
+    const std::string& str, asio::error_code& ec)
+{
+  return make_address_v6(str.c_str(), ec);
 }
 
 } // namespace ip
