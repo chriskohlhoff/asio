@@ -32,7 +32,7 @@ public:
   template <typename U>
   struct rebind
   {
-    typedef recycling_allocator<T> other;
+    typedef recycling_allocator<U> other;
   };
 
   recycling_allocator()

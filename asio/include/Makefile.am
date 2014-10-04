@@ -274,6 +274,7 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/execution_context.hpp \
 	asio/executor_work.hpp \
+	asio/executor.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
@@ -296,6 +297,8 @@ nobase_include_HEADERS = \
 	asio/impl/error.ipp \
 	asio/impl/execution_context.hpp \
 	asio/impl/execution_context.ipp \
+	asio/impl/executor.hpp \
+	asio/impl/executor.ipp \
 	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_service.hpp \
 	asio/impl/io_service.ipp \

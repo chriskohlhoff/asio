@@ -20,6 +20,7 @@ noinst_PROGRAMS = \
 	echo/blocking_tcp_echo_server \
 	echo/blocking_udp_echo_client \
 	echo/blocking_udp_echo_server \
+	executors/actor \
 	executors/bank_account_1 \
 	executors/bank_account_2 \
 	executors/fork_join \
@@ -48,6 +49,7 @@ echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
 echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
 echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
 echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
+executors_actor_SOURCES = executors/actor.cpp
 executors_bank_account_1_SOURCES = executors/bank_account_1.cpp
 executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
 executors_fork_join_SOURCES = executors/fork_join.cpp

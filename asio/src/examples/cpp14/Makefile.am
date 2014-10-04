@@ -10,6 +10,7 @@ LDADD = libasio.a
 endif
 
 noinst_PROGRAMS = \
+	executors/actor \
 	executors/async_1 \
 	executors/async_2 \
 	executors/bank_account_1 \
@@ -20,6 +21,7 @@ noinst_PROGRAMS = \
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
+executors_actor_SOURCES = executors/actor.cpp
 executors_async_1_SOURCES = executors/async_1.cpp
 executors_async_2_SOURCES = executors/async_2.cpp
 executors_bank_account_1_SOURCES = executors/bank_account_1.cpp

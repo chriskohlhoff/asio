@@ -22,6 +22,7 @@
 #include "asio/impl/error.ipp"
 #include "asio/impl/error_code.ipp"
 #include "asio/impl/execution_context.ipp"
+#include "asio/impl/executor.ipp"
 #include "asio/impl/handler_alloc_hook.ipp"
 #include "asio/impl/io_service.ipp"
 #include "asio/impl/serial_port_base.ipp"
