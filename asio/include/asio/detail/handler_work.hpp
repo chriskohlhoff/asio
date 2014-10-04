@@ -24,45 +24,22 @@
 namespace asio {
 namespace detail {
 
-// A special type meeting the Executor requirements that is used to indicate
-// that a handler should be executed using the old invocation hook. The type is
-// not used at runtime, but only at compile time to distinguish whether a
-// handler provides its own associated executor type or not.
-class hook_executor
-{
-public:
-  execution_context& context() ASIO_NOEXCEPT
-  {
-    return system_executor().context();
-  }
-
-  void on_work_started() ASIO_NOEXCEPT {}
-  void on_work_finished() ASIO_NOEXCEPT {}
-
-  template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function), const Allocator&) {}
-  template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function), const Allocator&) {}
-  template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function), const Allocator&) {}
-};
-
 // A helper class template to allow completion handlers to be dispatched
 // through either the new executors framework or the old invocaton hook. The
 // primary template uses the new executors framework.
 template <typename Handler, typename Executor
-    = typename associated_executor<Handler, hook_executor>::type>
+    = typename associated_executor<Handler>::type>
 class handler_work
 {
 public:
   explicit handler_work(Handler& handler) ASIO_NOEXCEPT
-    : executor_(associated_executor<Handler, hook_executor>::get(handler))
+    : executor_(associated_executor<Handler>::get(handler))
   {
   }
 
   static void start(Handler& handler) ASIO_NOEXCEPT
   {
-    Executor ex(associated_executor<Handler, hook_executor>::get(handler));
+    Executor ex(associated_executor<Handler>::get(handler));
     ex.on_work_started();
   }
 
@@ -83,12 +60,15 @@ private:
   handler_work(const handler_work&);
   handler_work& operator=(const handler_work&);
 
-  typename associated_executor<Handler, hook_executor>::type executor_;
+  typename associated_executor<Handler>::type executor_;
 };
 
 // This specialisation dispatches a handler through the old invocation hook.
+// The specialisation is not strictly required for correctness, as the
+// system_executor will dispatch through the hook anyway. However, by doing
+// this we avoid an extra copy of the handler.
 template <typename Handler>
-class handler_work<Handler, hook_executor>
+class handler_work<Handler, system_executor>
 {
 public:
   explicit handler_work(Handler&) ASIO_NOEXCEPT {}

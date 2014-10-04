@@ -65,11 +65,11 @@ io_service::get_executor() ASIO_NOEXCEPT
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
+
 inline void io_service::reset()
 {
   restart();
 }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
@@ -143,6 +143,8 @@ io_service::wrap(Handler handler)
   return detail::wrapped_handler<io_service&, Handler>(*this, handler);
 }
 
+#endif // !defined(ASIO_NO_DEPRECATED)
+
 inline io_service&
 io_service::executor_type::context() ASIO_NOEXCEPT
 {
@@ -171,7 +173,7 @@ void io_service::executor_type::dispatch(
   if (io_service_.impl_.can_dispatch())
   {
     detail::fenced_block b(detail::fenced_block::full);
-    tmp();
+    asio_handler_invoke_helpers::invoke(tmp, tmp);
     return;
   }
 

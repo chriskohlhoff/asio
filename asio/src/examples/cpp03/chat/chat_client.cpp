@@ -34,12 +34,14 @@ public:
 
   void write(const chat_message& msg)
   {
-    io_service_.post(boost::bind(&chat_client::do_write, this, msg));
+    asio::post(io_service_,
+        boost::bind(&chat_client::do_write, this, msg));
   }
 
   void close()
   {
-    io_service_.post(boost::bind(&chat_client::do_close, this));
+    asio::post(io_service_,
+        boost::bind(&chat_client::do_close, this));
   }
 
 private:

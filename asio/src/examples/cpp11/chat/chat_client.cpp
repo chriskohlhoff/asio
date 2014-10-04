@@ -32,7 +32,7 @@ public:
 
   void write(const chat_message& msg)
   {
-    io_service_.post(
+    asio::post(io_service_,
         [this, msg]()
         {
           bool write_in_progress = !write_msgs_.empty();
@@ -46,7 +46,7 @@ public:
 
   void close()
   {
-    io_service_.post([this]() { socket_.close(); });
+    asio::post(io_service_, [this]() { socket_.close(); });
   }
 
 private:

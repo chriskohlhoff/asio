@@ -91,7 +91,7 @@ public:
   void use_file(impl_type& /*impl*/, const std::string& file)
   {
     // Pass the work of opening the file to the background thread.
-    work_io_service_.post(boost::bind(
+    asio::post(work_io_service_, boost::bind(
           &logger_service::use_file_impl, this, file));
   }
 
@@ -103,7 +103,7 @@ public:
     os << impl->identifier << ": " << message;
 
     // Pass the work of opening the file to the background thread.
-    work_io_service_.post(boost::bind(
+    asio::post(work_io_service_, boost::bind(
           &logger_service::log_impl, this, os.str()));
   }
 

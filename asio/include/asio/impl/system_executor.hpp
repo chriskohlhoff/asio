@@ -35,7 +35,7 @@ void system_executor::dispatch(
     ASIO_MOVE_ARG(Function) f, const Allocator&)
 {
   typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
-  tmp();
+  asio_handler_invoke_helpers::invoke(tmp, tmp);
 }
 
 template <typename Function, typename Allocator>

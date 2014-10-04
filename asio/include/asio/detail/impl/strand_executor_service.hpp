@@ -17,6 +17,7 @@
 
 #include "asio/detail/call_stack.hpp"
 #include "asio/detail/fenced_block.hpp"
+#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/executor_work.hpp"
 
@@ -106,7 +107,7 @@ void strand_executor_service::dispatch(const implementation_type& impl,
   if (call_stack<strand_impl>::contains(impl.get()))
   {
     fenced_block b(fenced_block::full);
-    tmp();
+    asio_handler_invoke_helpers::invoke(tmp, tmp);
     return;
   }
 

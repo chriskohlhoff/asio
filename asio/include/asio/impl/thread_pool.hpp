@@ -59,7 +59,7 @@ void thread_pool::executor_type::dispatch(
   if (pool_.scheduler_.can_dispatch())
   {
     detail::fenced_block b(detail::fenced_block::full);
-    tmp();
+    asio_handler_invoke_helpers::invoke(tmp, tmp);
     return;
   }
 

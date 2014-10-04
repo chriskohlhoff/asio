@@ -393,9 +393,9 @@ public:
    * the run(), run_one(), poll() or poll_one() functions.
    */
   void reset();
-#endif // !defined(ASIO_NO_DEPRECATED)
 
-  /// Request the io_service to invoke the given handler.
+  /// (Deprecated: Use asio::dispatch().) Request the io_service to
+  /// invoke the given handler.
   /**
    * This function is used to ask the io_service to execute the given handler.
    *
@@ -420,7 +420,8 @@ public:
   ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
   dispatch(ASIO_MOVE_ARG(CompletionHandler) handler);
 
-  /// Request the io_service to invoke the given handler and return immediately.
+  /// (Deprecated: Use asio::post().) Request the io_service to invoke
+  /// the given handler and return immediately.
   /**
    * This function is used to ask the io_service to execute the given handler,
    * but without allowing the io_service to call the handler from inside this
@@ -446,8 +447,8 @@ public:
   ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
   post(ASIO_MOVE_ARG(CompletionHandler) handler);
 
-  /// Create a new handler that automatically dispatches the wrapped handler
-  /// on the io_service.
+  /// (Deprecated: Use asio::wrap().) Create a new handler that
+  /// automatically dispatches the wrapped handler on the io_service.
   /**
    * This function is used to create a new handler function object that, when
    * invoked, will automatically pass the wrapped handler to the io_service
@@ -475,6 +476,7 @@ public:
   detail::wrapped_handler<io_service&, Handler>
 #endif
   wrap(Handler handler);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   // Helper function to create the implementation.

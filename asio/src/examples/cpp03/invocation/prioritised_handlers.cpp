@@ -132,7 +132,7 @@ int main()
   handler_priority_queue pri_queue;
 
   // Post a completion handler to be run immediately.
-  io_service.post(pri_queue.wrap(0, low_priority_handler));
+  asio::post(io_service, pri_queue.wrap(0, low_priority_handler));
 
   // Start an asynchronous accept that will complete immediately.
   tcp::endpoint endpoint(asio::ip::address_v4::loopback(), 0);

@@ -59,7 +59,7 @@ public:
     }
     else
     {
-      io_service_.post(boost::bind(&session::destroy, this));
+      asio::post(io_service_, boost::bind(&session::destroy, this));
     }
   }
 
@@ -90,7 +90,7 @@ public:
     }
 
     if (op_count_ == 0)
-      io_service_.post(boost::bind(&session::destroy, this));
+      asio::post(io_service_, boost::bind(&session::destroy, this));
   }
 
   void handle_write(const asio::error_code& err)
@@ -119,7 +119,7 @@ public:
     }
 
     if (op_count_ == 0)
-      io_service_.post(boost::bind(&session::destroy, this));
+      asio::post(io_service_, boost::bind(&session::destroy, this));
   }
 
   static void destroy(session* s)
