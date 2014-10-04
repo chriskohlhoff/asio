@@ -35,7 +35,8 @@ public:
   ASIO_DECL bad_executor() ASIO_NOEXCEPT;
 
   /// Obtain message associated with exception.
-  ASIO_DECL virtual const char* what() const ASIO_NOEXCEPT_OR_NOTHROW;
+  ASIO_DECL virtual const char* what() const
+    ASIO_NOEXCEPT_OR_NOTHROW;
 };
 
 /// Polymorphic wrapper for executors.

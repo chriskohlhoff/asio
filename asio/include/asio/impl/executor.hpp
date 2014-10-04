@@ -254,7 +254,8 @@ class executor::impl<system_executor, Allocator>
   : public executor::impl_base
 {
 public:
-  static impl_base* create(const system_executor&, const Allocator& = Allocator())
+  static impl_base* create(const system_executor&,
+      const Allocator& = Allocator())
   {
     return &detail::global<impl<system_executor, std::allocator<void> > >();
   }
