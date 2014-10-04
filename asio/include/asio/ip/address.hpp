@@ -273,7 +273,7 @@ inline T address_cast(const address_v4& addr,
 
 /// Cast from IPv4 to IPV6 address is not permitted.
 template <typename T>
-bad_address_cast address_cast(const address_v4& addr,
+bad_address_cast address_cast(const address_v4&,
     typename enable_if<is_same<T, address_v6>::value>::type* = 0)
   ASIO_DELETED;
 
@@ -295,7 +295,7 @@ inline T address_cast(const address_v6& addr,
 
 /// Cast from IPv6 to IPv4 address is not permitted.
 template <typename T>
-bad_address_cast address_cast(const address_v6& addr,
+bad_address_cast address_cast(const address_v6&,
     typename enable_if<is_same<T, address_v4>::value>::type* = 0)
   ASIO_DELETED;
 
