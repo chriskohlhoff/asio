@@ -34,7 +34,7 @@ public:
   virtual ~bad_address_cast() ASIO_NOEXCEPT_OR_NOTHROW {}
 
   /// Get the message associated with the exception.
-  virtual const char* what() ASIO_NOEXCEPT_OR_NOTHROW
+  virtual const char* what() const ASIO_NOEXCEPT_OR_NOTHROW
   {
     return "bad address cast";
   }
