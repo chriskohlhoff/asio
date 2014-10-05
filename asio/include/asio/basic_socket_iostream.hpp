@@ -125,14 +125,24 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
 #if defined(GENERATING_DOCUMENTATION)
-  /// The time type.
+  /// (Deprecated: Use time_point.) The time type.
   typedef typename TimeTraits::time_type time_type;
 
-  /// The duration type.
+  /// The time type.
+  typedef typename TimeTraits::time_point time_point;
+
+  /// (Deprecated: Use duration.) The duration type.
   typedef typename TimeTraits::duration_type duration_type;
+
+  /// The duration type.
+  typedef typename TimeTraits::duration duration;
 #else
+# if !defined(ASIO_NO_DEPRECATED)
   typedef typename traits_helper::time_type time_type;
   typedef typename traits_helper::duration_type duration_type;
+# endif // !defined(ASIO_NO_DEPRECATED)
+  typedef typename traits_helper::time_type time_point;
+  typedef typename traits_helper::duration_type duration;
 #endif
 
   /// Construct a basic_socket_iostream without establishing a connection.
@@ -225,13 +235,25 @@ public:
     return rdbuf()->puberror();
   }
 
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use expiry().) Get the stream's expiry time as an absolute
+  /// time.
+  /**
+   * @return An absolute time value representing the stream's expiry time.
+   */
+  time_point expires_at() const
+  {
+    return rdbuf()->expires_at();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
   /// Get the stream's expiry time as an absolute time.
   /**
    * @return An absolute time value representing the stream's expiry time.
    */
-  time_type expires_at() const
+  time_point expiry() const
   {
-    return rdbuf()->expires_at();
+    return rdbuf()->expiry();
   }
 
   /// Set the stream's expiry time as an absolute time.
@@ -243,18 +265,9 @@ public:
    *
    * @param expiry_time The expiry time to be used for the stream.
    */
-  void expires_at(const time_type& expiry_time)
+  void expires_at(const time_point& expiry_time)
   {
     rdbuf()->expires_at(expiry_time);
-  }
-
-  /// Get the timer's expiry time relative to now.
-  /**
-   * @return A relative time value representing the stream's expiry time.
-   */
-  duration_type expires_from_now() const
-  {
-    return rdbuf()->expires_from_now();
   }
 
   /// Set the stream's expiry time relative to now.
@@ -266,10 +279,36 @@ public:
    *
    * @param expiry_time The expiry time to be used for the timer.
    */
-  void expires_from_now(const duration_type& expiry_time)
+  void expires_after(const duration& expiry_time)
+  {
+    rdbuf()->expires_after(expiry_time);
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use expiry().) Get the stream's expiry time relative to now.
+  /**
+   * @return A relative time value representing the stream's expiry time.
+   */
+  duration expires_from_now() const
+  {
+    return rdbuf()->expires_from_now();
+  }
+
+  /// (Deprecated: Use expires_after().) Set the stream's expiry time relative
+  /// to now.
+  /**
+   * This function sets the expiry time associated with the stream. Stream
+   * operations performed after this time (where the operations cannot be
+   * completed using the internal buffers) will fail with the error
+   * asio::error::operation_aborted.
+   *
+   * @param expiry_time The expiry time to be used for the timer.
+   */
+  void expires_from_now(const duration& expiry_time)
   {
     rdbuf()->expires_from_now(expiry_time);
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 };
 
 } // namespace asio

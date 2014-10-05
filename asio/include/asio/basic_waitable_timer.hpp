@@ -346,7 +346,7 @@ public:
     return this->get_service().cancel_one(this->get_implementation(), ec);
   }
 
-#if defined(ASIO_NO_DEPRECATED)
+#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use expiry().) Get the timer's expiry time as an absolute
   /// time.
   /**

@@ -27,7 +27,8 @@ noinst_PROGRAMS = \
 	executors/pipeline \
 	executors/priority_scheduler \
 	futures/daytime_client \
-	http/server/http_server
+	http/server/http_server \
+	iostreams/http_client
 
 if HAVE_BOOST_COROUTINE
 noinst_PROGRAMS += \
@@ -66,6 +67,7 @@ http_server_http_server_SOURCES = \
 	http/server/request_handler.cpp \
 	http/server/request_parser.cpp \
 	http/server/server.cpp
+iostreams_http_client_SOURCES = iostreams/http_client.cpp
 
 if HAVE_BOOST_COROUTINE
 spawn_echo_server_SOURCES = spawn/echo_server.cpp
