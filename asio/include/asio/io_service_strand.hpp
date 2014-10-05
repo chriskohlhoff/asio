@@ -110,7 +110,9 @@ public:
   {
   }
 
-  /// Get the io_service associated with the strand.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use context().) Get the io_service associated with the
+  /// strand.
   /**
    * This function may be used to obtain the io_service object that the strand
    * uses to dispatch handlers for asynchronous operations.
@@ -122,8 +124,58 @@ public:
   {
     return service_.get_io_service();
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
-  /// Request the strand to invoke the given handler.
+  /// Obtain the underlying execution context.
+  asio::io_service& context() ASIO_NOEXCEPT
+  {
+    return service_.get_io_service();
+  }
+
+  /// Inform the strand that it has some outstanding work to do.
+  /**
+   * The strand delegates this call to its underlying io_service.
+   */
+  void on_work_started() ASIO_NOEXCEPT
+  {
+    context().get_executor().on_work_started();
+  }
+
+  /// Inform the strand that some work is no longer outstanding.
+  /**
+   * The strand delegates this call to its underlying io_service.
+   */
+  void on_work_finished() ASIO_NOEXCEPT
+  {
+    context().get_executor().on_work_finished();
+  }
+
+  /// Request the strand to invoke the given function object.
+  /**
+   * This function is used to ask the strand to execute the given function
+   * object on its underlying io_service. The function object will be executed
+   * inside this function if the strand is not otherwise busy and if the
+   * underlying io_service's executor's @c dispatch() function is also able to
+   * execute the function before returning.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+  {
+    typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
+    service_.dispatch(impl_, tmp);
+    (void)a;
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use asio::dispatch().) Request the strand to invoke
+  /// the given handler.
   /**
    * This function is used to ask the strand to execute the given handler.
    *
@@ -156,9 +208,32 @@ public:
 
     return init.result.get();
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
-  /// Request the strand to invoke the given handler and return
-  /// immediately.
+  /// Request the strand to invoke the given function object.
+  /**
+   * This function is used to ask the executor to execute the given function
+   * object. The function object will never be executed inside this function.
+   * Instead, it will be scheduled to run by the underlying io_service.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+  {
+    typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
+    service_.post(impl_, tmp);
+    (void)a;
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use asio::post().) Request the strand to invoke the
+  /// given handler and return immediately.
   /**
    * This function is used to ask the strand to execute the given handler, but
    * without allowing the strand to call the handler from inside this function.
@@ -187,9 +262,32 @@ public:
 
     return init.result.get();
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
-  /// Create a new handler that automatically dispatches the wrapped handler
-  /// on the strand.
+  /// Request the strand to invoke the given function object.
+  /**
+   * This function is used to ask the executor to execute the given function
+   * object. The function object will never be executed inside this function.
+   * Instead, it will be scheduled to run by the underlying io_service.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   *
+   * @param a An allocator that may be used by the executor to allocate the
+   * internal storage needed for function invocation.
+   */
+  template <typename Function, typename Allocator>
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+  {
+    typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
+    service_.post(impl_, tmp);
+    (void)a;
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use asio::wrap().) Create a new handler that
+  /// automatically dispatches the wrapped handler on the strand.
   /**
    * This function is used to create a new handler function object that, when
    * invoked, will automatically pass the wrapped handler to the strand's
@@ -220,6 +318,7 @@ public:
     return detail::wrapped_handler<io_service::strand, Handler,
         detail::is_continuation_if_running>(*this, handler);
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the strand is running in the current thread.
   /**
@@ -227,15 +326,40 @@ public:
    * submitted to the strand using post(), dispatch() or wrap(). Otherwise
    * returns @c false.
    */
-  bool running_in_this_thread() const
+  bool running_in_this_thread() const ASIO_NOEXCEPT
   {
     return service_.running_in_this_thread(impl_);
+  }
+
+  /// Compare two strands for equality.
+  /**
+   * Two strands are equal if they refer to the same ordered, non-concurrent
+   * state.
+   */
+  friend bool operator==(const strand& a, const strand& b) ASIO_NOEXCEPT
+  {
+    return a.impl_ == b.impl_;
+  }
+
+  /// Compare two strands for inequality.
+  /**
+   * Two strands are equal if they refer to the same ordered, non-concurrent
+   * state.
+   */
+  friend bool operator!=(const strand& a, const strand& b) ASIO_NOEXCEPT
+  {
+    return a.impl_ != b.impl_;
   }
 
 private:
   asio::detail::strand_service& service_;
   asio::detail::strand_service::implementation_type impl_;
 };
+
+#if !defined(GENERATING_DOCUMENTATION)
+template <>
+struct is_executor<io_service::strand> : true_type {};
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

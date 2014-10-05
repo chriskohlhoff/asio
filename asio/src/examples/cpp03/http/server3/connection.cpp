@@ -32,7 +32,7 @@ asio::ip::tcp::socket& connection::socket()
 void connection::start()
 {
   socket_.async_read_some(asio::buffer(buffer_),
-      strand_.wrap(
+      asio::wrap(strand_,
         boost::bind(&connection::handle_read, shared_from_this(),
           asio::placeholders::error,
           asio::placeholders::bytes_transferred)));
@@ -51,7 +51,7 @@ void connection::handle_read(const asio::error_code& e,
     {
       request_handler_.handle_request(request_, reply_);
       asio::async_write(socket_, reply_.to_buffers(),
-          strand_.wrap(
+          asio::wrap(strand_,
             boost::bind(&connection::handle_write, shared_from_this(),
               asio::placeholders::error)));
     }
@@ -59,14 +59,14 @@ void connection::handle_read(const asio::error_code& e,
     {
       reply_ = reply::stock_reply(reply::bad_request);
       asio::async_write(socket_, reply_.to_buffers(),
-          strand_.wrap(
+          asio::wrap(strand_,
             boost::bind(&connection::handle_write, shared_from_this(),
               asio::placeholders::error)));
     }
     else
     {
       socket_.async_read_some(asio::buffer(buffer_),
-          strand_.wrap(
+          asio::wrap(strand_,
             boost::bind(&connection::handle_read, shared_from_this(),
               asio::placeholders::error,
               asio::placeholders::bytes_transferred)));

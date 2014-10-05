@@ -22,8 +22,11 @@ public:
       timer2_(io, boost::posix_time::seconds(1)),
       count_(0)
   {
-    timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
-    timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+    timer1_.async_wait(asio::wrap(strand_,
+          boost::bind(&printer::print1, this)));
+
+    timer2_.async_wait(asio::wrap(strand_,
+          boost::bind(&printer::print2, this)));
   }
 
   ~printer()
@@ -39,7 +42,9 @@ public:
       ++count_;
 
       timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
-      timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
+
+      timer1_.async_wait(asio::wrap(strand_,
+            boost::bind(&printer::print1, this)));
     }
   }
 
@@ -51,7 +56,9 @@ public:
       ++count_;
 
       timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
-      timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+
+      timer2_.async_wait(asio::wrap(strand_,
+            boost::bind(&printer::print2, this)));
     }
   }
 

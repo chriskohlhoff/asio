@@ -18,6 +18,7 @@
 
 #include <sstream>
 #include "asio/io_service.hpp"
+#include "asio/post.hpp"
 #include "asio/thread.hpp"
 #include "unit_test.hpp"
 
@@ -119,7 +120,7 @@ void strand_test()
   io_service::strand s(ios);
   int count = 0;
 
-  ios.post(bindns::bind(increment_without_lock, &s, &count));
+  post(ios, bindns::bind(increment_without_lock, &s, &count));
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(count == 0);
@@ -131,7 +132,7 @@ void strand_test()
 
   count = 0;
   ios.restart();
-  s.post(bindns::bind(increment_with_lock, &s, &count));
+  post(s, bindns::bind(increment_with_lock, &s, &count));
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(count == 0);
@@ -143,7 +144,7 @@ void strand_test()
 
   count = 0;
   ios.restart();
-  ios.post(bindns::bind(start_sleep_increments, &ios, &s, &count));
+  post(ios, bindns::bind(start_sleep_increments, &ios, &s, &count));
   thread thread1(bindns::bind(io_service_run, &ios));
   thread thread2(bindns::bind(io_service_run, &ios));
 
@@ -155,14 +156,14 @@ void strand_test()
   timer1.expires_at(timer1.expires_at() + chronons::seconds(2));
 #else // defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.expires_at(timer1.expiry() + chronons::seconds(2));
-#endif defined(ASIO_HAS_BOOST_DATE_TIME)
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.wait();
   ASIO_CHECK(count == 1);
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.expires_at(timer1.expires_at() + chronons::seconds(2));
 #else // defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.expires_at(timer1.expiry() + chronons::seconds(2));
-#endif defined(ASIO_HAS_BOOST_DATE_TIME)
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
   timer1.wait();
   ASIO_CHECK(count == 2);
 
@@ -175,11 +176,11 @@ void strand_test()
   count = 0;
   int exception_count = 0;
   ios.restart();
-  s.post(throw_exception);
-  s.post(bindns::bind(increment, &count));
-  s.post(bindns::bind(increment, &count));
-  s.post(throw_exception);
-  s.post(bindns::bind(increment, &count));
+  post(s, throw_exception);
+  post(s, bindns::bind(increment, &count));
+  post(s, bindns::bind(increment, &count));
+  post(s, throw_exception);
+  post(s, bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(count == 0);
@@ -209,9 +210,9 @@ void strand_test()
   // are abandoned.
   {
     io_service::strand s2(ios);
-    s2.post(bindns::bind(increment, &count));
-    s2.post(bindns::bind(increment, &count));
-    s2.post(bindns::bind(increment, &count));
+    post(s2, bindns::bind(increment, &count));
+    post(s2, bindns::bind(increment, &count));
+    post(s2, bindns::bind(increment, &count));
   }
 
   // No handlers can be called until run() is called.

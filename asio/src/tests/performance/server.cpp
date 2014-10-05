@@ -51,7 +51,7 @@ public:
     {
       ++op_count_;
       socket_.async_read_some(asio::buffer(read_data_, block_size_),
-          strand_.wrap(
+          asio::wrap(strand_,
             make_custom_alloc_handler(read_allocator_,
               boost::bind(&session::handle_read, this,
                 asio::placeholders::error,
@@ -76,12 +76,12 @@ public:
         op_count_ += 2;
         std::swap(read_data_, write_data_);
         async_write(socket_, asio::buffer(write_data_, read_data_length_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(write_allocator_,
                 boost::bind(&session::handle_write, this,
                   asio::placeholders::error))));
         socket_.async_read_some(asio::buffer(read_data_, block_size_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(read_allocator_,
                 boost::bind(&session::handle_read, this,
                   asio::placeholders::error,
@@ -105,12 +105,12 @@ public:
         op_count_ += 2;
         std::swap(read_data_, write_data_);
         async_write(socket_, asio::buffer(write_data_, read_data_length_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(write_allocator_,
                 boost::bind(&session::handle_write, this,
                   asio::placeholders::error))));
         socket_.async_read_some(asio::buffer(read_data_, block_size_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(read_allocator_,
                 boost::bind(&session::handle_read, this,
                   asio::placeholders::error,

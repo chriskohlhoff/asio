@@ -77,13 +77,13 @@ public:
   void start(asio::ip::tcp::resolver::iterator endpoint_iterator)
   {
     asio::async_connect(socket_, endpoint_iterator,
-        strand_.wrap(boost::bind(&session::handle_connect, this,
+        asio::wrap(strand_,boost::bind(&session::handle_connect, this,
             asio::placeholders::error)));
   }
 
   void stop()
   {
-    strand_.post(boost::bind(&session::close_socket, this));
+    asio::post(strand_, boost::bind(&session::close_socket, this));
   }
 
 private:
@@ -98,13 +98,13 @@ private:
       {
         ++unwritten_count_;
         async_write(socket_, asio::buffer(write_data_, block_size_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(write_allocator_,
                 boost::bind(&session::handle_write, this,
                   asio::placeholders::error,
                   asio::placeholders::bytes_transferred))));
         socket_.async_read_some(asio::buffer(read_data_, block_size_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(read_allocator_,
                 boost::bind(&session::handle_read, this,
                   asio::placeholders::error,
@@ -125,13 +125,13 @@ private:
       {
         std::swap(read_data_, write_data_);
         async_write(socket_, asio::buffer(write_data_, read_data_length_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(write_allocator_,
                 boost::bind(&session::handle_write, this,
                   asio::placeholders::error,
                   asio::placeholders::bytes_transferred))));
         socket_.async_read_some(asio::buffer(read_data_, block_size_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(read_allocator_,
                 boost::bind(&session::handle_read, this,
                   asio::placeholders::error,
@@ -151,13 +151,13 @@ private:
       {
         std::swap(read_data_, write_data_);
         async_write(socket_, asio::buffer(write_data_, read_data_length_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(write_allocator_,
                 boost::bind(&session::handle_write, this,
                   asio::placeholders::error,
                   asio::placeholders::bytes_transferred))));
         socket_.async_read_some(asio::buffer(read_data_, block_size_),
-            strand_.wrap(
+            asio::wrap(strand_,
               make_custom_alloc_handler(read_allocator_,
                 boost::bind(&session::handle_read, this,
                   asio::placeholders::error,
