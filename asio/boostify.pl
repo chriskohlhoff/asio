@@ -514,9 +514,12 @@ sub copy_examples
       "src/examples/cpp11/buffers",
       "src/examples/cpp11/chat",
       "src/examples/cpp11/echo",
+      "src/examples/cpp11/executors",
       "src/examples/cpp11/futures",
       "src/examples/cpp11/http/server",
-      "src/examples/cpp11/spawn");
+      "src/examples/cpp11/iostreams",
+      "src/examples/cpp11/spawn",
+      "src/examples/cpp14/executors");
 
   our $boost_dir;
   foreach my $dir (@dirs)
