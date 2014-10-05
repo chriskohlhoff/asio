@@ -16,37 +16,19 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/call_stack.hpp"
+#include "asio/detail/thread_context.hpp"
+#include "asio/detail/thread_info_base.hpp"
 #include "asio/handler_alloc_hook.hpp"
-
-#if !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
-# if defined(ASIO_HAS_IOCP)
-#  include "asio/detail/win_iocp_thread_info.hpp"
-# else // defined(ASIO_HAS_IOCP)
-#  include "asio/detail/scheduler_thread_info.hpp"
-# endif // defined(ASIO_HAS_IOCP)
-#endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-#if defined(ASIO_HAS_IOCP)
-namespace detail { class win_iocp_io_service; }
-#endif // defined(ASIO_HAS_IOCP)
-
 void* asio_handler_allocate(std::size_t size, ...)
 {
 #if !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
-# if defined(ASIO_HAS_IOCP)
-  typedef detail::win_iocp_io_service io_service_impl;
-  typedef detail::win_iocp_thread_info thread_info;
-# else // defined(ASIO_HAS_IOCP)
-  typedef detail::scheduler io_service_impl;
-  typedef detail::scheduler_thread_info thread_info;
-# endif // defined(ASIO_HAS_IOCP)
-  typedef detail::call_stack<io_service_impl, thread_info> call_stack;
-  return thread_info::allocate(call_stack::top(), size);
+  return detail::thread_info_base::allocate(
+      detail::thread_context::thread_call_stack::top(), size);
 #else // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   return ::operator new(size);
 #endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
@@ -55,15 +37,8 @@ void* asio_handler_allocate(std::size_t size, ...)
 void asio_handler_deallocate(void* pointer, std::size_t size, ...)
 {
 #if !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
-# if defined(ASIO_HAS_IOCP)
-  typedef detail::win_iocp_io_service io_service_impl;
-  typedef detail::win_iocp_thread_info thread_info;
-# else // defined(ASIO_HAS_IOCP)
-  typedef detail::scheduler io_service_impl;
-  typedef detail::scheduler_thread_info thread_info;
-# endif // defined(ASIO_HAS_IOCP)
-  typedef detail::call_stack<io_service_impl, thread_info> call_stack;
-  thread_info::deallocate(call_stack::top(), pointer, size);
+  detail::thread_info_base::deallocate(
+      detail::thread_context::thread_call_stack::top(), pointer, size);
 #else // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   (void)size;
   ::operator delete(pointer);
