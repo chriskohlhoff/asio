@@ -135,12 +135,12 @@ public:
   static impl_base* create(const Executor& e, Allocator a = Allocator())
   {
     raw_mem mem(a);
-    impl* p = new (mem.ptr_) impl(e, mem.allocator_);
+    impl* p = new (mem.ptr_) impl(e, a);
     mem.ptr_ = 0;
     return p;
   }
 
-  impl(const Executor& e, const allocator_type& a) ASIO_NOEXCEPT
+  impl(const Executor& e, const Allocator& a) ASIO_NOEXCEPT
     : impl_base(false),
       ref_count_(1),
       executor_(e),
@@ -222,7 +222,7 @@ public:
 private:
   mutable detail::atomic_count ref_count_;
   Executor executor_;
-  allocator_type allocator_;
+  Allocator allocator_;
 
   struct raw_mem
   {
