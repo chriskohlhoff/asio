@@ -1,5 +1,6 @@
 .deps
 .dirstamp
+parallel_grep
 *.o
 *.obj
 *.exe

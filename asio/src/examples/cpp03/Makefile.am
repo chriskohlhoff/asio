@@ -80,7 +80,8 @@ endif
 
 if HAVE_BOOST_COROUTINE
 noinst_PROGRAMS += \
-  spawn/echo_server
+  spawn/echo_server \
+  spawn/parallel_grep
 endif
 
 noinst_HEADERS = \
@@ -191,6 +192,8 @@ endif
 if HAVE_BOOST_COROUTINE
 spawn_echo_server_SOURCES = spawn/echo_server.cpp
 spawn_echo_server_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_system
+spawn_parallel_grep_SOURCES = spawn/parallel_grep.cpp
+spawn_parallel_grep_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_system
 endif
 
 EXTRA_DIST = \
