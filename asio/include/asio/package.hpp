@@ -84,10 +84,10 @@ public:
       packaged_token<Function, Allocator>&& token)
 #if defined(_MSC_VER)
     : std::packaged_task<Signature>(std::move(token.func_)),
-#elif defined(__APPLE__) && defined(__clang__)
+#elif defined(ASIO_HAS_CLANG_LIBCXX)
     : std::packaged_task<Signature>(std::allocator_arg,
-        typename allocator_traits<
-          _Alloc>::template rebind_alloc<char>(token.allocator_),
+        typename std::allocator_traits<
+          Allocator>::template rebind_alloc<char>(token.allocator_),
         std::move(token.func_)),
 #else
     : std::packaged_task<Signature>(std::allocator_arg,
