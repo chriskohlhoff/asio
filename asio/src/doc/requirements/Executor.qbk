@@ -1,4 +1,11 @@
-[section:executor Executor requirements]
+[/
+ / Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:Executor Executor requirements]
 
 The library describes a standard set of requirements for ['executors]. A type
 meeting Executor requirements shall embody a set of rules for determining how
@@ -44,8 +51,8 @@ denotes an object of type `T`, and `u` denotes an identifier.
      \n
      Returns `true` only if `x1` and `x2` can be interchanged with identical
      effects in any of the expressions defined in these type requirements.
-     [inline_note `false` does not necessarily imply that the effects are not
-     identical.]\n
+     Note: `false` does not necessarily imply that the effects are not
+     identical.\n
      \n
      `operator==` shall be reflexive, symmetric, and transitive, and shall not
      exit via an exception.]

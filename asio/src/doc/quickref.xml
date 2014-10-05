@@ -26,35 +26,26 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.const_buffer">const_buffer</link></member>
-            <member><link linkend="asio.reference.const_buffers_1">const_buffers_1</link></member>
             <member><link linkend="asio.reference.coroutine">coroutine</link></member>
             <member><link linkend="asio.reference.error_code">error_code</link></member>
+            <member><link linkend="asio.reference.execution_context">execution_context</link></member>
+            <member><link linkend="asio.reference.execution_context__id">execution_context::id</link></member>
+            <member><link linkend="asio.reference.execution_context__service">execution_context::service</link></member>
+            <member><link linkend="asio.reference.executor_arg_t">executor_arg_t</link></member>
             <member><link linkend="asio.reference.invalid_service_owner">invalid_service_owner</link></member>
             <member><link linkend="asio.reference.io_service">io_service</link></member>
-            <member><link linkend="asio.reference.io_service__id">io_service::id</link></member>
+            <member><link linkend="asio.reference.io_service__executor_type">io_service::executor_type</link></member>
             <member><link linkend="asio.reference.io_service__service">io_service::service</link></member>
             <member><link linkend="asio.reference.io_service__strand">io_service::strand</link></member>
             <member><link linkend="asio.reference.io_service__work">io_service::work</link></member>
-            <member><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></member>
-            <member><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1</link></member>
-            <member><link linkend="asio.reference.null_buffers">null_buffers</link></member>
             <member><link linkend="asio.reference.service_already_exists">service_already_exists</link></member>
-            <member><link linkend="asio.reference.streambuf">streambuf</link></member>
             <member><link linkend="asio.reference.system_error">system_error</link></member>
+            <member><link linkend="asio.reference.system_executor">system_executor</link></member>
             <member><link linkend="asio.reference.thread">thread</link></member>
+            <member><link linkend="asio.reference.thread_pool">thread_pool</link></member>
+            <member><link linkend="asio.reference.thread_pool__executor_type">thread_pool::executor_type</link></member>
             <member><link linkend="asio.reference.use_future_t">use_future_t</link></member>
             <member><link linkend="asio.reference.yield_context">yield_context</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Class Templates</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.basic_io_object">basic_io_object</link></member>
-            <member><link linkend="asio.reference.basic_streambuf">basic_streambuf</link></member>
-            <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
-            <member><link linkend="asio.reference.buffered_read_stream">buffered_read_stream</link></member>
-            <member><link linkend="asio.reference.buffered_stream">buffered_stream</link></member>
-            <member><link linkend="asio.reference.buffered_write_stream">buffered_write_stream</link></member>
-            <member><link linkend="asio.reference.buffers_iterator">buffers_iterator</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -65,6 +56,110 @@
             <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></member>
             <member><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link></member>
             <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
+            <member><link linkend="asio.reference.dispatch">dispatch</link></member>
+            <member><link linkend="asio.reference.defer">defer</link></member>
+            <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
+            <member><link linkend="asio.reference.get_associated_executor">get_associated_executor</link></member>
+            <member><link linkend="asio.reference.has_service">has_service</link></member>
+            <member><link linkend="asio.reference.make_work">make_work</link></member>
+            <member><link linkend="asio.reference.package">package</link></member>
+            <member><link linkend="asio.reference.post">post</link></member>
+            <member><link linkend="asio.reference.spawn">spawn</link></member>
+            <member><link linkend="asio.reference.use_service">use_service</link></member>
+            <member><link linkend="asio.reference.wrap">wrap</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Class Templates</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.async_completion">async_completion</link></member>
+            <member><link linkend="asio.reference.basic_io_object">basic_io_object</link></member>
+            <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
+            <member><link linkend="asio.reference.executor_work">executor_work</link></member>
+            <member><link linkend="asio.reference.executor_wrapper">executor_wrapper</link></member>
+            <member><link linkend="asio.reference.packaged_handler">packaged_handler</link></member>
+            <member><link linkend="asio.reference.packaged_token">packaged_token</link></member>
+            <member><link linkend="asio.reference.strand">strand</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Special Values</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
+            <member><link linkend="asio.reference.use_future">use_future</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Boost.Bind Placeholders</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></member>
+            <member><link linkend="asio.reference.placeholders__error">placeholders::error</link></member>
+            <member><link linkend="asio.reference.placeholders__iterator">placeholders::iterator</link></member>
+            <member><link linkend="asio.reference.placeholders__signal_number">placeholders::signal_number</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Error Codes</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.error__basic_errors">error::basic_errors</link></member>
+            <member><link linkend="asio.reference.error__netdb_errors">error::netdb_errors</link></member>
+            <member><link linkend="asio.reference.error__addrinfo_errors">error::addrinfo_errors</link></member>
+            <member><link linkend="asio.reference.error__misc_errors">error::misc_errors</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Type Traits</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.associated_allocator">associated_allocator</link></member>
+            <member><link linkend="asio.reference.associated_executor">associated_executor</link></member>
+            <member><link linkend="asio.reference.async_result">async_result</link></member>
+            <member><link linkend="asio.reference.handler_type">handler_type</link></member>
+            <member><link linkend="asio.reference.is_executor">is_executor</link></member>
+            <member><link linkend="asio.reference.uses_executor">uses_executor</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Type Requirements</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.asynchronous_operations">Asynchronous operations</link></member>
+            <member><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></member>
+            <member><link linkend="asio.reference.Executor">Executor</link></member>
+            <member><link linkend="asio.reference.Handler">Handler</link></member>
+            <member><link linkend="asio.reference.IoObjectService">IoObjectService</link></member>
+            <member><link linkend="asio.reference.Service">Service</link></member>
+          </simplelist>
+        </entry>
+      </row>
+    </tbody>
+  </tgroup>
+  <tgroup cols="4">
+    <colspec colname="a"/>
+    <colspec colname="b"/>
+    <colspec colname="c"/>
+    <colspec colname="d"/>
+    <thead>
+      <row>
+        <entry valign="center" namest="a" nameend="d">
+          <bridgehead renderas="sect2">Buffers and Buffer-Oriented Operations</bridgehead>
+        </entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Classes</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.const_buffer">const_buffer</link></member>
+            <member><link linkend="asio.reference.const_buffers_1">const_buffers_1</link></member>
+            <member><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></member>
+            <member><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1</link></member>
+            <member><link linkend="asio.reference.null_buffers">null_buffers</link> (deprecated)</member>
+            <member><link linkend="asio.reference.streambuf">streambuf</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Class Templates</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.basic_streambuf">basic_streambuf</link></member>
+            <member><link linkend="asio.reference.buffered_read_stream">buffered_read_stream</link></member>
+            <member><link linkend="asio.reference.buffered_stream">buffered_stream</link></member>
+            <member><link linkend="asio.reference.buffered_write_stream">buffered_write_stream</link></member>
+            <member><link linkend="asio.reference.buffers_iterator">buffers_iterator</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Free Functions</bridgehead>
+          <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.async_read">async_read</link></member>
             <member><link linkend="asio.reference.async_read_at">async_read_at</link></member>
             <member><link linkend="asio.reference.async_read_until">async_read_until</link></member>
@@ -76,43 +171,22 @@
             <member><link linkend="asio.reference.buffer_size">buffer_size</link></member>
             <member><link linkend="asio.reference.buffers_begin">buffers_begin</link></member>
             <member><link linkend="asio.reference.buffers_end">buffers_end</link></member>
-            <member><link linkend="asio.reference.has_service">has_service</link></member>
             <member><link linkend="asio.reference.read">read</link></member>
             <member><link linkend="asio.reference.read_at">read_at</link></member>
             <member><link linkend="asio.reference.read_until">read_until</link></member>
-            <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.transfer_all">transfer_all</link></member>
             <member><link linkend="asio.reference.transfer_at_least">transfer_at_least</link></member>
             <member><link linkend="asio.reference.transfer_exactly">transfer_exactly</link></member>
-            <member><link linkend="asio.reference.use_service">use_service</link></member>
             <member><link linkend="asio.reference.write">write</link></member>
             <member><link linkend="asio.reference.write_at">write_at</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
-          <bridgehead renderas="sect3">Special Values</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.use_future">use_future</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Boost.Bind Placeholders</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></member>
-            <member><link linkend="asio.reference.placeholders__error">placeholders::error</link></member>
-            <member><link linkend="asio.reference.placeholders__iterator">placeholders::iterator</link></member>
-            <member><link linkend="asio.reference.placeholders__signal_number">placeholders::signal_number</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Error Codes</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.error__basic_errors">error::basic_errors</link></member>
-            <member><link linkend="asio.reference.error__netdb_errors">error::netdb_errors</link></member>
-            <member><link linkend="asio.reference.error__addrinfo_errors">error::addrinfo_errors</link></member>
-            <member><link linkend="asio.reference.error__misc_errors">error::misc_errors</link></member>
-          </simplelist>
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.async_result">async_result</link></member>
-            <member><link linkend="asio.reference.handler_type">handler_type</link></member>
+            <member><link linkend="asio.reference.is_const_buffer_sequence">is_const_buffer_sequence</link></member>
             <member><link linkend="asio.reference.is_match_condition">is_match_condition</link></member>
+            <member><link linkend="asio.reference.is_mutable_buffer_sequence">is_mutable_buffer_sequence</link></member>
             <member><link linkend="asio.reference.is_read_buffered">is_read_buffered</link></member>
             <member><link linkend="asio.reference.is_write_buffered">is_write_buffered</link></member>
           </simplelist>
@@ -120,20 +194,15 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.asynchronous_operations">Asynchronous operations</link></member>
             <member><link linkend="asio.reference.AsyncRandomAccessReadDevice">AsyncRandomAccessReadDevice</link></member>
             <member><link linkend="asio.reference.AsyncRandomAccessWriteDevice">AsyncRandomAccessWriteDevice</link></member>
             <member><link linkend="asio.reference.AsyncReadStream">AsyncReadStream</link></member>
             <member><link linkend="asio.reference.AsyncWriteStream">AsyncWriteStream</link></member>
-            <member><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></member>
             <member><link linkend="asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
             <member><link linkend="asio.reference.ConvertibleToConstBuffer">ConvertibleToConstBuffer</link></member>
             <member><link linkend="asio.reference.ConvertibleToMutableBuffer">ConvertibleToMutableBuffer</link></member>
-            <member><link linkend="asio.reference.Handler">Handler</link></member>
-            <member><link linkend="asio.reference.IoObjectService">IoObjectService</link></member>
             <member><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
             <member><link linkend="asio.reference.ReadHandler">ReadHandler</link></member>
-            <member><link linkend="asio.reference.Service">Service</link></member>
             <member><link linkend="asio.reference.SyncRandomAccessReadDevice">SyncRandomAccessReadDevice</link></member>
             <member><link linkend="asio.reference.SyncRandomAccessWriteDevice">SyncRandomAccessWriteDevice</link></member>
             <member><link linkend="asio.reference.SyncReadStream">SyncReadStream</link></member>
@@ -258,7 +327,6 @@
           <bridgehead renderas="sect3">I/O Control Commands</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.socket_base.bytes_readable">socket_base::bytes_readable</link></member>
-            <member><link linkend="asio.reference.socket_base.non_blocking_io">socket_base::non_blocking_io</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">

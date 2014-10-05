@@ -245,6 +245,7 @@ public:
   }
 
 private:
+#if !defined(GENERATING_DOCUMENTATION)
   class function;
   template <typename, typename> class impl;
 
@@ -294,6 +295,7 @@ private:
   }
 
   impl_base* impl_;
+#endif // !defined(ASIO_NO_DEPRECATED)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)

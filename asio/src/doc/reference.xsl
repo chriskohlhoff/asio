@@ -106,7 +106,7 @@
             contains(compoundname, 'asio::') and
             not(contains(compoundname, '::detail')) and
             not(contains(compoundname, '::service::key')) and
-            not(contains(compoundname, '_handler'))">
+            (contains(compoundname, 'packaged_handler') or not(contains(compoundname, '_handler')))">
           <xsl:call-template name="class"/>
         </xsl:if>
       </xsl:when>
@@ -981,7 +981,7 @@
 ]
 </xsl:if>
 
-<xsl:if test="$class-name = 'io_service::service'">
+<xsl:if test="$class-name = 'execution_context::service'">
 <xsl:if test="count(sectiondef[@kind='private-func']) > 0">
 [heading Private Member Functions]
 [table
@@ -1170,7 +1170,7 @@
   <xsl:with-param name="class-id" select="$class-id"/>
   <xsl:with-param name="class-file" select="$class-file"/>
 </xsl:apply-templates>
-<xsl:if test="$class-name = 'io_service::service'">
+<xsl:if test="$class-name = 'execution_context::service'">
   <xsl:apply-templates select="sectiondef[@kind='private-func']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
     <xsl:sort select="name"/>
     <xsl:with-param name="class-name" select="$class-name"/>
@@ -1450,6 +1450,9 @@
         <xsl:when test="declname = 'CompletionCondition'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'CompletionToken'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'ConnectCondition'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1484,6 +1487,12 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'OtherAllocator'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'OtherExecutor'">
+          <xsl:value-of select="concat('``[link asio.reference.Executor ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'OtherHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'PasswordCallback'">
@@ -1535,6 +1544,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Traits'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'U'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'VerifyCallback'">

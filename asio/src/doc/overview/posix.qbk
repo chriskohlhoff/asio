@@ -138,7 +138,7 @@ as required.
 
 [link asio.reference.io_service.notify_fork io_service::notify_fork()],
 [link asio.reference.io_service.fork_event io_service::fork_event],
-[link asio.reference.io_service__service.fork_service io_service::service::fork_service()],
+[link asio.reference.execution_context__service.fork_service io_service::service::fork_service()],
 [link asio.examples.cpp03_examples.fork Fork examples].
 
 [endsect]

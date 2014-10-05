@@ -238,8 +238,8 @@ void spawn(basic_yield_context<Handler> ctx,
 /**
  * This function is used to launch a new coroutine.
  *
- * @param io_service Identifies the executor that will run the coroutine. The
- * new coroutine is implicitly given its own strand within this executor.
+ * @param ex Identifies the executor that will run the coroutine. The new
+ * coroutine is implicitly given its own strand within this executor.
  *
  * @param function The coroutine function. The function must have the signature:
  * @code void function(yield_context yield); @endcode
@@ -257,7 +257,7 @@ void spawn(const Executor& ex,
 /**
  * This function is used to launch a new coroutine.
  *
- * @param io_service Identifies the strand that will run the coroutine.
+ * @param ex Identifies the strand that will run the coroutine.
  *
  * @param function The coroutine function. The function must have the signature:
  * @code void function(yield_context yield); @endcode

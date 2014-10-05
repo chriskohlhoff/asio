@@ -28,10 +28,12 @@ namespace asio {
 class execution_context;
 class io_service;
 
-template <typename Service> Service& use_service(execution_context& e);
-template <typename Service> Service& use_service(io_service& i);
-template <typename Service> void add_service(execution_context& e, Service* s);
-template <typename Service> bool has_service(execution_context& e);
+#if !defined(GENERATING_DOCUMENTATION)
+template <typename Service> Service& use_service(execution_context&);
+template <typename Service> Service& use_service(io_service&);
+template <typename Service> void add_service(execution_context&, Service*);
+template <typename Service> bool has_service(execution_context&);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 namespace detail { class service_registry; }
 

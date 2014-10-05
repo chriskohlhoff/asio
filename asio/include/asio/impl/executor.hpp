@@ -28,6 +28,8 @@
 
 namespace asio {
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 #if defined(ASIO_HAS_MOVE)
 
 // Lightweight, move-only function object wrapper.
@@ -376,6 +378,8 @@ const Executor* executor::target() const ASIO_NOEXCEPT
   return impl_ && impl_->target_type() == typeid(Executor)
     ? static_cast<Executor*>(impl_->target()) : 0;
 }
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 } // namespace asio
 
