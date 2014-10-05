@@ -52,6 +52,7 @@
 [include requirements/DatagramSocketService.qbk]
 [include requirements/DescriptorService.qbk]
 [include requirements/Endpoint.qbk]
+[include requirements/Executor.qbk]
 [include requirements/GettableSerialPortOption.qbk]
 [include requirements/GettableSocketOption.qbk]
 [include requirements/Handler.qbk]
@@ -1465,6 +1466,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'ErrorEnum'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'ExecutionContext'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Function'">

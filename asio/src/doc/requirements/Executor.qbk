@@ -1,0 +1,124 @@
+[section:executor Executor requirements]
+
+The library describes a standard set of requirements for ['executors]. A type
+meeting Executor requirements shall embody a set of rules for determining how
+submitted function objects are to be executed.
+
+An executor type `X` shall satisfy the requirements of `CopyConstructible` (C++
+Std, [copyconstructible]) types. No constructor, comparison operator, copy
+operation, move operation, swap operation, or member functions `context`,
+`on_work_started` and `on_work_finished` on these types shall exit via an
+exception.
+
+The executor copy constructor, comparison operators, and member functions
+defined in these requirements shall not introduce data races as a result of
+concurrent calls to those functions from different threads.
+
+In the table below, `X` denotes an executor class, `x` denotes a value of type
+`X&`, `x1` and `x2` denote values of type `const X&`, `x3` denotes a value of
+type `X&&`, `f` denotes a `MoveConstructible` (C++ Std, [moveconstructible])
+function object callable with zero arguments, `a` denotes a value of type `A`
+meeting `Allocator` requirements (C++ Std, [allocator.requirements]), `t`
+denotes an object of type `T`, and `u` denotes an identifier.
+
+[table Executor requirements
+  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [
+    [`X u(x1);`]
+    []
+    [Shall not exit via an exception.\n
+     \n
+     post: `u == x1`]
+  ]
+  [
+    [`X u(x3);`]
+    []
+    [Shall not exit via an exception.\n
+     \n
+     post: `u` equals the prior value of `x3`.]
+  ]
+  [
+    [`x1 == x2`]
+    [`bool`]
+    [Shall not exit via an exception.\n
+     \n
+     Returns `true` only if `x1` and `x2` can be interchanged with identical
+     effects in any of the expressions defined in these type requirements.
+     [inline_note `false` does not necessarily imply that the effects are not
+     identical.]\n
+     \n
+     `operator==` shall be reflexive, symmetric, and transitive, and shall not
+     exit via an exception.]
+  ]
+  [
+    [`x1 != x2`]
+    [`bool`]
+    [Shall not exit via an exception.\n
+     \n
+     Same as `!(x1 == x2)`.]
+  ]
+  [
+    [`x.context()`]
+    [`execution_context&`, or a type that is convertible to `execution_context&`.]
+    [Shall not exit via an exception.]
+  ]
+  [
+    [`x.on_work_started()`]
+    []
+    [Shall not exit via an exception.]
+  ]
+  [
+    [`x.on_work_finished()`]
+    []
+    [Shall not exit via an exception.\n
+     \n
+     Requires: A preceding call `x1.on_work_started()` where `x == x1`.]
+  ]
+  [
+    [`x.dispatch(std::move(f),a)`]
+    []
+    [Effects: Calls [^['DECAY_COPY]]`(forward<Func>(f))()` at most once. The
+     executor may invoke `f` in the current thread, prior to returning from
+     `dispatch`. The call to `DECAY_COPY()` is evaluated in the thread that
+     called `dispatch`.\n
+     \n
+     Executor implementations are encouraged to use the supplied allocator to
+     allocate any memory required to store the function object. The executor
+     shall deallocate all memory prior to invoking the function object.\n
+     \n
+     Synchronization: The invocation of `dispatch` synchronizes with (C++ Std,
+     \[intro.multithread\]) the invocation of `f`.]
+  ]
+  [
+    [`x.post(std::move(f),a)`]
+    []
+    [Effects: Calls [^['DECAY_COPY]]`(forward<Func>(f))()` at most once. The
+     executor may not invoke `f` in the current thread, prior to returning from
+     `post`. The call to `DECAY_COPY()` is evaluated in the thread that called
+     `post`.\n
+     \n
+     Executor implementations are encouraged to use the supplied allocator to
+     allocate any memory required to store the function object. The executor
+     shall deallocate all memory prior to invoking the function object.\n
+     \n
+     Synchronization: The invocation of `post` synchronizes with (C++ Std,
+     \[intro.multithread\]) the invocation of `f`.]
+  ]
+  [
+    [`x.defer(std::move(f),a)`]
+    []
+    [Effects: Calls [^['DECAY_COPY]]`(forward<Func>(f))()` at most once. The
+     executor may not invoke `f` in the current thread, prior to returning from
+     `defer`. The call to `DECAY_COPY()` is evaluated in the thread that called
+     `defer`.\n
+     \n
+     Executor implementations are encouraged to use the supplied allocator to
+     allocate any memory required to store the function object. The executor
+     shall deallocate all memory prior to invoking the function object.\n
+     \n
+     Synchronization: The invocation of `defer` synchronizes with (C++ Std,
+     \[intro.multithread\]) the invocation of `f`.]
+  ]
+]
+
+[endsect]
