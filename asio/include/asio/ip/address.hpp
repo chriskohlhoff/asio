@@ -241,7 +241,9 @@ template <typename T>
 inline T address_cast(const address& addr,
     typename enable_if<is_same<T, address_v4>::value>::type* = 0)
 {
-  return !addr.is_v4() ? throw bad_address_cast() : get_v4_helper(addr);
+  if (!addr.is_v4())
+    throw bad_address_cast();
+  return get_v4_helper(addr);
 }
 
 /// Cast a version-independent address to an IPv6 address.
@@ -252,7 +254,9 @@ template <typename T>
 inline T address_cast(const address& addr,
     typename enable_if<is_same<T, address_v6>::value>::type* = 0)
 {
-  return !addr.is_v6() ? throw bad_address_cast() : get_v6_helper(addr);
+  if (!addr.is_v6())
+    throw bad_address_cast();
+  return get_v6_helper(addr);
 }
 
 /// Cast an IPv4 address to a version-independent address.
