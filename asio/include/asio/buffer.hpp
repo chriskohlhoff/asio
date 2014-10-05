@@ -1226,6 +1226,55 @@ inline const_buffers_1 buffer(
         ));
 }
 
+/// Create a new modifiable buffer that represents the given string.
+/**
+ * @returns <tt>mutable_buffers_1(data.size() ? &data[0] : 0,
+ * data.size() * sizeof(Elem))</tt>.
+ *
+ * @note The buffer is invalidated by any non-const operation called on the
+ * given string object.
+ */
+template <typename Elem, typename Traits, typename Allocator>
+inline mutable_buffers_1 buffer(
+    std::basic_string<Elem, Traits, Allocator>& data)
+{
+  return mutable_buffers_1(mutable_buffer(data.size() ? &data[0] : 0,
+        data.size() * sizeof(Elem)
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<
+            typename std::basic_string<Elem, Traits, Allocator>::iterator
+          >(data.begin())
+#endif // ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
+}
+
+/// Create a new non-modifiable buffer that represents the given string.
+/**
+ * @returns A mutable_buffers_1 value equivalent to:
+ * @code mutable_buffers_1(
+ *     data.size() ? &data[0] : 0,
+ *     min(data.size() * sizeof(Elem), max_size_in_bytes)); @endcode
+ *
+ * @note The buffer is invalidated by any non-const operation called on the
+ * given string object.
+ */
+template <typename Elem, typename Traits, typename Allocator>
+inline mutable_buffers_1 buffer(
+    std::basic_string<Elem, Traits, Allocator>& data,
+    std::size_t max_size_in_bytes)
+{
+  return mutable_buffers_1(
+      mutable_buffer(data.size() ? &data[0] : 0,
+        data.size() * sizeof(Elem) < max_size_in_bytes
+        ? data.size() * sizeof(Elem) : max_size_in_bytes
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+        , detail::buffer_debug_check<
+            typename std::basic_string<Elem, Traits, Allocator>::iterator
+          >(data.begin())
+#endif // ASIO_ENABLE_BUFFER_DEBUGGING
+        ));
+}
+
 /// Create a new non-modifiable buffer that represents the given string.
 /**
  * @returns <tt>const_buffers_1(data.data(), data.size() * sizeof(Elem))</tt>.

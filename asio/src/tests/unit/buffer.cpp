@@ -57,7 +57,8 @@ void test()
 #endif // defined(ASIO_HAS_STD_ARRAY)
     std::vector<char> vector_data(1024);
     const std::vector<char>& const_vector_data = vector_data;
-    const std::string string_data(1024, ' ');
+    std::string string_data(1024, ' ');
+    const std::string const_string_data(1024, ' ');
     std::vector<mutable_buffer> mutable_buffer_sequence;
     std::vector<const_buffer> const_buffer_sequence;
 
@@ -162,8 +163,10 @@ void test()
     mb1 = buffer(vector_data, 1024);
     cb1 = buffer(const_vector_data);
     cb1 = buffer(const_vector_data, 1024);
-    cb1 = buffer(string_data);
-    cb1 = buffer(string_data, 1024);
+    mb1 = buffer(string_data);
+    mb1 = buffer(string_data, 1024);
+    cb1 = buffer(const_string_data);
+    cb1 = buffer(const_string_data, 1024);
 
     // buffer_copy function overloads.
 
