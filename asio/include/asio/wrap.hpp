@@ -37,49 +37,67 @@ struct executor_wrapper_check
 // Helper to automatically define nested typedef result_type.
 
 template <typename T, typename = void>
-struct executor_wrapper_result_type {};
+struct executor_wrapper_result_type
+{
+protected:
+  typedef void result_type_or_void;
+};
 
 template <typename T>
 struct executor_wrapper_result_type<T,
   typename executor_wrapper_check<typename T::result_type>::type>
 {
   typedef typename T::result_type result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 template <typename R>
 struct executor_wrapper_result_type<R(*)()>
 {
   typedef R result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 template <typename R>
 struct executor_wrapper_result_type<R(&)()>
 {
   typedef R result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 template <typename R, typename A1>
 struct executor_wrapper_result_type<R(*)(A1)>
 {
   typedef R result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 template <typename R, typename A1>
 struct executor_wrapper_result_type<R(&)(A1)>
 {
   typedef R result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 template <typename R, typename A1, typename A2>
 struct executor_wrapper_result_type<R(*)(A1, A2)>
 {
   typedef R result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 template <typename R, typename A1, typename A2>
 struct executor_wrapper_result_type<R(&)(A1, A2)>
 {
   typedef R result_type;
+protected:
+  typedef result_type result_type_or_void;
 };
 
 // Helper to automatically define nested typedef argument_type.
@@ -401,7 +419,7 @@ public:
     return this->wrapped_(ASIO_MOVE_CAST(Args)(args)...);
   }
 
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+#elif defined(ASIO_HAS_STD_TYPE_TRAITS)
 
   typename detail::executor_wrapper_result_of0<T>::type operator()()
   {
@@ -431,7 +449,40 @@ public:
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_WRAP_CALL_DEF)
 #undef ASIO_PRIVATE_WRAP_CALL_DEF
 
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+#else // defined(ASIO_HAS_STD_TYPE_TRAITS)
+
+  typedef typename detail::executor_wrapper_result_type<T>::result_type_or_void
+    result_type_or_void;
+
+  result_type_or_void operator()()
+  {
+    return this->wrapped_();
+  }
+
+  result_type_or_void operator()() const
+  {
+    return this->wrapped_();
+  }
+
+#define ASIO_PRIVATE_WRAP_CALL_DEF(n) \
+  template <ASIO_VARIADIC_TPARAMS(n)> \
+  result_type_or_void operator()( \
+      ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    return this->wrapped_(ASIO_VARIADIC_MOVE_ARGS(n)); \
+  } \
+  \
+  template <ASIO_VARIADIC_TPARAMS(n)> \
+  result_type_or_void operator()( \
+      ASIO_VARIADIC_MOVE_PARAMS(n)) const \
+  { \
+    return this->wrapped_(ASIO_VARIADIC_MOVE_ARGS(n)); \
+  } \
+  /**/
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_WRAP_CALL_DEF)
+#undef ASIO_PRIVATE_WRAP_CALL_DEF
+
+#endif // defined(ASIO_HAS_STD_TYPE_TRAITS)
 
 private:
   typedef detail::executor_wrapper_base<T, Executor,
