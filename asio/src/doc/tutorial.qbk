@@ -611,7 +611,8 @@ Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 
 [section:tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
 
-This tutorial demonstrates the use of the asio::strand class to synchronise callback handlers in a multithreaded program.
+This tutorial demonstrates the use of the 
+[link asio.reference.io_service__strand io_service::strand] class to synchronise callback handlers in a multithreaded program.
 
 The previous four tutorials avoided the issue of handler synchronisation by calling the [link asio.reference.io_service.run io_service::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_service.run io_service::run()]. Consequently, calling [link asio.reference.io_service.run io_service::run()] from only one thread ensures that callback handlers cannot run concurrently.
 
@@ -649,9 +650,13 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 
 
-In addition to initialising a pair of asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type asio::strand.
+In addition to initialising a pair of asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type 
+[link asio.reference.io_service__strand io_service::strand].
 
-An asio::strand guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_service.run io_service::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an asio::strand, or were dispatched through a different asio::strand object.
+An 
+[link asio.reference.io_service__strand io_service::strand] guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_service.run io_service::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
+[link asio.reference.io_service__strand io_service::strand], or were dispatched through a different 
+[link asio.reference.io_service__strand io_service::strand] object.
 
 
   ``''''''``  printer(asio::io_service& io)
@@ -663,11 +668,17 @@ An asio::strand guarantees that, for those handlers that are dispatched through 
 
 
 
-When initiating the asynchronous operations, each callback handler is "wrapped" using the asio::strand object. The [link asio.reference.io_service__strand.wrap strand::wrap()] function returns a new handler that automatically dispatches its contained handler through the asio::strand object. By wrapping the handlers using the same asio::strand, we are ensuring that they cannot execute concurrently.
+When initiating the asynchronous operations, each callback handler is "wrapped" using the 
+[link asio.reference.io_service__strand io_service::strand] object. The [link asio.reference.io_service__strand.wrap io_service::strand::wrap()] function returns a new handler that automatically dispatches its contained handler through the 
+[link asio.reference.io_service__strand io_service::strand] object. By wrapping the handlers using the same 
+[link asio.reference.io_service__strand io_service::strand], we are ensuring that they cannot execute concurrently.
 
 
-  ``''''''``    timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
-  ``''''''``    timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+  ``''''''``    timer1_.async_wait(asio::wrap(strand_,
+  ``''''''``          boost::bind(&printer::print1, this)));
+
+  ``''''''``    timer2_.async_wait(asio::wrap(strand_,
+  ``''''''``          boost::bind(&printer::print2, this)));
   ``''''''``  }
 
   ``''''''``  ~printer()
@@ -689,7 +700,9 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``      ++count_;
 
   ``''''''``      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
-  ``''''''``      timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
+
+  ``''''''``      timer1_.async_wait(asio::wrap(strand_,
+  ``''''''``            boost::bind(&printer::print1, this)));
   ``''''''``    }
   ``''''''``  }
 
@@ -701,12 +714,14 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``      ++count_;
 
   ``''''''``      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
-  ``''''''``      timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+
+  ``''''''``      timer2_.async_wait(asio::wrap(strand_,
+  ``''''''``            boost::bind(&printer::print2, this)));
   ``''''''``    }
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::strand strand_;
+  ``''''''``  asio::io_service::strand strand_;
   ``''''''``  asio::deadline_timer timer1_;
   ``''''''``  asio::deadline_timer timer2_;
   ``''''''``  int count_;
@@ -771,8 +786,11 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``      timer2_(io, boost::posix_time::seconds(1)),
   ``''''''``      count_(0)
   ``''''''``  {
-  ``''''''``    timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
-  ``''''''``    timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+  ``''''''``    timer1_.async_wait(asio::wrap(strand_,
+  ``''''''``          boost::bind(&printer::print1, this)));
+
+  ``''''''``    timer2_.async_wait(asio::wrap(strand_,
+  ``''''''``          boost::bind(&printer::print2, this)));
   ``''''''``  }
 
   ``''''''``  ~printer()
@@ -788,7 +806,9 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``      ++count_;
 
   ``''''''``      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
-  ``''''''``      timer1_.async_wait(strand_.wrap(boost::bind(&printer::print1, this)));
+
+  ``''''''``      timer1_.async_wait(asio::wrap(strand_,
+  ``''''''``            boost::bind(&printer::print1, this)));
   ``''''''``    }
   ``''''''``  }
 
@@ -800,12 +820,14 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``      ++count_;
 
   ``''''''``      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
-  ``''''''``      timer2_.async_wait(strand_.wrap(boost::bind(&printer::print2, this)));
+
+  ``''''''``      timer2_.async_wait(asio::wrap(strand_,
+  ``''''''``            boost::bind(&printer::print2, this)));
   ``''''''``    }
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::strand strand_;
+  ``''''''``  asio::io_service::strand strand_;
   ``''''''``  asio::deadline_timer timer1_;
   ``''''''``  asio::deadline_timer timer2_;
   ``''''''``  int count_;
@@ -1235,7 +1257,7 @@ The function `start_accept()` creates a socket and initiates an asynchronous acc
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -1446,7 +1468,7 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -2145,7 +2167,7 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -2307,7 +2329,7 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_io_service());
+  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
