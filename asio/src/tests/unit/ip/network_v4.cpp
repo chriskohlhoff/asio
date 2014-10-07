@@ -183,27 +183,27 @@ void test()
   ASIO_CHECK(msg == std::string("prefix length too large"));
 
   // construct address range from address and prefix length
-  ASIO_CHECK(network_v4(address_v4::from_string("192.168.77.100"), 32).network() == address_v4::from_string("192.168.77.100"));
-  ASIO_CHECK(network_v4(address_v4::from_string("192.168.77.100"), 24).network() == address_v4::from_string("192.168.77.0"));
-  ASIO_CHECK(network_v4(address_v4::from_string("192.168.77.128"), 25).network() == address_v4::from_string("192.168.77.128"));
+  ASIO_CHECK(network_v4(make_address_v4("192.168.77.100"), 32).network() == make_address_v4("192.168.77.100"));
+  ASIO_CHECK(network_v4(make_address_v4("192.168.77.100"), 24).network() == make_address_v4("192.168.77.0"));
+  ASIO_CHECK(network_v4(make_address_v4("192.168.77.128"), 25).network() == make_address_v4("192.168.77.128"));
 
   // construct address range from string in CIDR notation
-  ASIO_CHECK(make_network_v4("192.168.77.100/32").network() == address_v4::from_string("192.168.77.100"));
-  ASIO_CHECK(make_network_v4("192.168.77.100/24").network() == address_v4::from_string("192.168.77.0"));
-  ASIO_CHECK(make_network_v4("192.168.77.128/25").network() == address_v4::from_string("192.168.77.128"));
+  ASIO_CHECK(make_network_v4("192.168.77.100/32").network() == make_address_v4("192.168.77.100"));
+  ASIO_CHECK(make_network_v4("192.168.77.100/24").network() == make_address_v4("192.168.77.0"));
+  ASIO_CHECK(make_network_v4("192.168.77.128/25").network() == make_address_v4("192.168.77.128"));
 
   // prefix length
   ASIO_CHECK(make_network_v4("193.99.144.80/24").prefix_length() == 24);
-  ASIO_CHECK(network_v4(address_v4::from_string("193.99.144.80"), 24).prefix_length() == 24);
-  ASIO_CHECK(network_v4(address_v4::from_string("192.168.77.0"), address_v4::from_string("255.255.255.0")).prefix_length() == 24);
+  ASIO_CHECK(network_v4(make_address_v4("193.99.144.80"), 24).prefix_length() == 24);
+  ASIO_CHECK(network_v4(make_address_v4("192.168.77.0"), make_address_v4("255.255.255.0")).prefix_length() == 24);
 
   // to string
   std::string a("192.168.77.0/32");
   ASIO_CHECK(make_network_v4(a.c_str()).to_string() == a);
-  ASIO_CHECK(network_v4(address_v4::from_string("192.168.77.10"), 24).to_string() == std::string("192.168.77.10/24"));
+  ASIO_CHECK(network_v4(make_address_v4("192.168.77.10"), 24).to_string() == std::string("192.168.77.10/24"));
 
   // return host part
-  ASIO_CHECK(make_network_v4("192.168.77.11/24").address() == address_v4::from_string("192.168.77.11"));
+  ASIO_CHECK(make_network_v4("192.168.77.11/24").address() == make_address_v4("192.168.77.11"));
 
   // return host in CIDR notation
   ASIO_CHECK(make_network_v4("192.168.78.30/20").address().to_string() == "192.168.78.30");
@@ -235,30 +235,30 @@ void test()
   network_v4 net13(make_network_v4("192.168.1.1/28"));
   network_v4 net14(make_network_v4("192.168.1.21/28"));
   // network
-  ASIO_CHECK(net12.network() == address_v4::from_string("192.168.0.0"));
-  ASIO_CHECK(net13.network() == address_v4::from_string("192.168.1.0"));
-  ASIO_CHECK(net14.network() == address_v4::from_string("192.168.1.16"));
+  ASIO_CHECK(net12.network() == make_address_v4("192.168.0.0"));
+  ASIO_CHECK(net13.network() == make_address_v4("192.168.1.0"));
+  ASIO_CHECK(net14.network() == make_address_v4("192.168.1.16"));
   // netmask
-  ASIO_CHECK(net12.netmask() == address_v4::from_string("255.255.255.0"));
-  ASIO_CHECK(net13.netmask() == address_v4::from_string("255.255.255.240"));
-  ASIO_CHECK(net14.netmask() == address_v4::from_string("255.255.255.240"));
+  ASIO_CHECK(net12.netmask() == make_address_v4("255.255.255.0"));
+  ASIO_CHECK(net13.netmask() == make_address_v4("255.255.255.240"));
+  ASIO_CHECK(net14.netmask() == make_address_v4("255.255.255.240"));
   // broadcast
-  ASIO_CHECK(net12.broadcast() == address_v4::from_string("192.168.0.255"));
-  ASIO_CHECK(net13.broadcast() == address_v4::from_string("192.168.1.15"));
-  ASIO_CHECK(net14.broadcast() == address_v4::from_string("192.168.1.31"));
+  ASIO_CHECK(net12.broadcast() == make_address_v4("192.168.0.255"));
+  ASIO_CHECK(net13.broadcast() == make_address_v4("192.168.1.15"));
+  ASIO_CHECK(net14.broadcast() == make_address_v4("192.168.1.31"));
   // iterator
   ASIO_CHECK(std::distance(net12.hosts().begin(),net12.hosts().end()) == 254);
-  ASIO_CHECK(*net12.hosts().begin() == address_v4::from_string("192.168.0.1"));
-  ASIO_CHECK(net12.hosts().end() != net12.hosts().find(address_v4::from_string("192.168.0.10")));
-  ASIO_CHECK(net12.hosts().end() == net12.hosts().find(address_v4::from_string("192.168.1.10")));
+  ASIO_CHECK(*net12.hosts().begin() == make_address_v4("192.168.0.1"));
+  ASIO_CHECK(net12.hosts().end() != net12.hosts().find(make_address_v4("192.168.0.10")));
+  ASIO_CHECK(net12.hosts().end() == net12.hosts().find(make_address_v4("192.168.1.10")));
   ASIO_CHECK(std::distance(net13.hosts().begin(),net13.hosts().end()) == 14);
-  ASIO_CHECK(*net13.hosts().begin() == address_v4::from_string("192.168.1.1"));
-  ASIO_CHECK(net13.hosts().end() != net13.hosts().find(address_v4::from_string("192.168.1.14")));
-  ASIO_CHECK(net13.hosts().end() == net13.hosts().find(address_v4::from_string("192.168.1.15")));
+  ASIO_CHECK(*net13.hosts().begin() == make_address_v4("192.168.1.1"));
+  ASIO_CHECK(net13.hosts().end() != net13.hosts().find(make_address_v4("192.168.1.14")));
+  ASIO_CHECK(net13.hosts().end() == net13.hosts().find(make_address_v4("192.168.1.15")));
   ASIO_CHECK(std::distance(net14.hosts().begin(),net14.hosts().end()) == 14);
-  ASIO_CHECK(*net14.hosts().begin() == address_v4::from_string("192.168.1.17"));
-  ASIO_CHECK(net14.hosts().end() != net14.hosts().find(address_v4::from_string("192.168.1.30")));
-  ASIO_CHECK(net14.hosts().end() == net14.hosts().find(address_v4::from_string("192.168.1.31")));
+  ASIO_CHECK(*net14.hosts().begin() == make_address_v4("192.168.1.17"));
+  ASIO_CHECK(net14.hosts().end() != net14.hosts().find(make_address_v4("192.168.1.30")));
+  ASIO_CHECK(net14.hosts().end() == net14.hosts().find(make_address_v4("192.168.1.31")));
 }
 
 } // namespace ip_network_v4_runtime
