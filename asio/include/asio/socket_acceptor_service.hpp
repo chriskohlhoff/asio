@@ -242,6 +242,30 @@ public:
     return service_impl_.local_endpoint(impl, ec);
   }
 
+  /// Wait for the acceptor to become ready to read, ready to write, or to have
+  /// pending error conditions.
+  asio::error_code wait(implementation_type& impl,
+      socket_base::wait_type w, asio::error_code& ec)
+  {
+    return service_impl_.wait(impl, w, ec);
+  }
+
+  /// Asynchronously wait for the acceptor to become ready to read, ready to
+  /// write, or to have pending error conditions.
+  template <typename WaitHandler>
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(implementation_type& impl, socket_base::wait_type w,
+      ASIO_MOVE_ARG(WaitHandler) handler)
+  {
+    async_completion<WaitHandler,
+      void (asio::error_code)> init(handler);
+
+    service_impl_.async_wait(impl, w, init.handler);
+
+    return init.result.get();
+  }
+
   /// Accept a new connection.
   template <typename Protocol1, typename SocketService>
   asio::error_code accept(implementation_type& impl,

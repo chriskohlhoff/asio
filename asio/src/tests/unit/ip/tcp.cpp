@@ -678,6 +678,17 @@ void test()
 
 namespace ip_tcp_acceptor_compile {
 
+struct wait_handler
+{
+  wait_handler() {}
+  void operator()(const asio::error_code&) {}
+#if defined(ASIO_HAS_MOVE)
+  wait_handler(wait_handler&&) {}
+private:
+  wait_handler(const wait_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
+
 struct accept_handler
 {
   accept_handler() {}
@@ -799,6 +810,13 @@ void test()
     ip::tcp::endpoint endpoint1 = acceptor1.local_endpoint();
     ip::tcp::endpoint endpoint2 = acceptor1.local_endpoint(ec);
 
+    acceptor1.wait(socket_base::wait_read);
+    acceptor1.wait(socket_base::wait_write, ec);
+
+    acceptor1.async_wait(socket_base::wait_read, wait_handler());
+    int i1 = acceptor1.async_wait(socket_base::wait_write, lazy);
+    (void)i1;
+
     acceptor1.accept(peer_socket);
     acceptor1.accept(peer_socket, ec);
     acceptor1.accept(peer_socket, peer_endpoint);
@@ -806,10 +824,10 @@ void test()
 
     acceptor1.async_accept(peer_socket, accept_handler());
     acceptor1.async_accept(peer_socket, peer_endpoint, accept_handler());
-    int i1 = acceptor1.async_accept(peer_socket, lazy);
-    (void)i1;
-    int i2 = acceptor1.async_accept(peer_socket, peer_endpoint, lazy);
+    int i2 = acceptor1.async_accept(peer_socket, lazy);
     (void)i2;
+    int i3 = acceptor1.async_accept(peer_socket, peer_endpoint, lazy);
+    (void)i3;
   }
   catch (std::exception&)
   {

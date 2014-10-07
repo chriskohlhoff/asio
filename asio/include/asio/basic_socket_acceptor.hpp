@@ -889,6 +889,104 @@ public:
     return this->get_service().local_endpoint(this->get_implementation(), ec);
   }
 
+  /// Wait for the acceptor to become ready to read, ready to write, or to have
+  /// pending error conditions.
+  /**
+   * This function is used to perform a blocking wait for an acceptor to enter
+   * a ready to read, write or error condition state.
+   *
+   * @param w Specifies the desired acceptor state.
+   *
+   * @par Example
+   * Waiting for an acceptor to become readable.
+   * @code
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * ...
+   * acceptor.wait(asio::ip::tcp::acceptor::wait_read);
+   * @endcode
+   */
+  void wait(wait_type w)
+  {
+    asio::error_code ec;
+    this->get_service().wait(this->get_implementation(), w, ec);
+    asio::detail::throw_error(ec, "wait");
+  }
+
+  /// Wait for the acceptor to become ready to read, ready to write, or to have
+  /// pending error conditions.
+  /**
+   * This function is used to perform a blocking wait for an acceptor to enter
+   * a ready to read, write or error condition state.
+   *
+   * @param w Specifies the desired acceptor state.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @par Example
+   * Waiting for an acceptor to become readable.
+   * @code
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * ...
+   * asio::error_code ec;
+   * acceptor.wait(asio::ip::tcp::acceptor::wait_read, ec);
+   * @endcode
+   */
+  asio::error_code wait(wait_type w, asio::error_code& ec)
+  {
+    return this->get_service().wait(this->get_implementation(), w, ec);
+  }
+
+  /// Asynchronously wait for the acceptor to become ready to read, ready to
+  /// write, or to have pending error conditions.
+  /**
+   * This function is used to perform an asynchronous wait for an acceptor to
+   * enter a ready to read, write or error condition state.
+   *
+   * @param w Specifies the desired acceptor state.
+   *
+   * @param handler The handler to be called when the wait operation completes.
+   * Copies will be made of the handler as required. The function signature of
+   * the handler must be:
+   * @code void handler(
+   *   const asio::error_code& error // Result of operation
+   * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the handler will not be invoked from within this function. Invocation
+   * of the handler will be performed in a manner equivalent to using
+   * asio::io_service::post().
+   *
+   * @par Example
+   * @code
+   * void wait_handler(const asio::error_code& error)
+   * {
+   *   if (!error)
+   *   {
+   *     // Wait succeeded.
+   *   }
+   * }
+   *
+   * ...
+   *
+   * asio::ip::tcp::acceptor acceptor(io_service);
+   * ...
+   * acceptor.async_wait(
+   *     asio::ip::tcp::acceptor::wait_read,
+   *     wait_handler);
+   * @endcode
+   */
+  template <typename WaitHandler>
+  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+      void (asio::error_code))
+  async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
+  {
+    // If you get an error on the following line it means that your handler does
+    // not meet the documented type requirements for a WaitHandler.
+    ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+    return this->get_service().async_wait(this->get_implementation(),
+        w, ASIO_MOVE_CAST(WaitHandler)(handler));
+  }
+
   /// Accept a new connection.
   /**
    * This function is used to accept a new connection from a peer into the
