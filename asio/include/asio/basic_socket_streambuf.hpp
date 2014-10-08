@@ -577,8 +577,13 @@ private:
     {
       time_point now = traits_helper::now();
 
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
       time_point expiry_time = this_->timer_service_->expires_at(
             this_->timer_implementation_);
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+      time_point expiry_time = this_->timer_service_->expiry(
+            this_->timer_implementation_);
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
       if (traits_helper::less_than(now, expiry_time))
       {
