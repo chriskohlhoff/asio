@@ -1,8 +1,5 @@
-#include <asio/defer.hpp>
-#include <asio/executor.hpp>
-#include <asio/post.hpp>
-#include <asio/strand.hpp>
-#include <asio/system_executor.hpp>
+#include <asio/ts/executor.hpp>
+#include <asio/ts/strand.hpp>
 #include <condition_variable>
 #include <deque>
 #include <memory>
@@ -212,7 +209,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-#include <asio/thread_pool.hpp>
+#include <asio/ts/thread_pool.hpp>
 #include <iostream>
 
 using asio::thread_pool;

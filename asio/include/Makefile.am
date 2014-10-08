@@ -417,6 +417,17 @@ nobase_include_HEADERS = \
 	asio/thread.hpp \
 	asio/thread_pool.hpp \
 	asio/time_traits.hpp \
+	asio/ts/buffer.hpp \
+	asio/ts/executor.hpp \
+	asio/ts/future.hpp \
+	asio/ts/internet.hpp \
+	asio/ts/io_service.hpp \
+	asio/ts/memory.hpp \
+	asio/ts/socket.hpp \
+	asio/ts/strand.hpp \
+	asio/ts/thread_pool.hpp \
+	asio/ts/timer.hpp \
+	asio/ts/type_traits.hpp \
 	asio/unyield.hpp \
 	asio/use_future.hpp \
 	asio/uses_executor.hpp \

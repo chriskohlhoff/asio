@@ -1,9 +1,6 @@
-#include <asio/associated_executor.hpp>
-#include <asio/dispatch.hpp>
-#include <asio/executor_work.hpp>
-#include <asio/post.hpp>
-#include <asio/thread_pool.hpp>
-#include <asio/wrap.hpp>
+#include <asio/ts/executor.hpp>
+#include <asio/ts/thread_pool.hpp>
+#include <asio/ts/type_traits.hpp>
 #include <iostream>
 #include <string>
 

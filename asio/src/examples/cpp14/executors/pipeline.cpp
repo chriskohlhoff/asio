@@ -1,9 +1,5 @@
-#include <asio/associated_executor.hpp>
-#include <asio/execution_context.hpp>
-#include <asio/package.hpp>
-#include <asio/post.hpp>
-#include <asio/system_executor.hpp>
-#include <asio/wrap.hpp>
+#include <asio/ts/executor.hpp>
+#include <asio/ts/future.hpp>
 #include <condition_variable>
 #include <future>
 #include <memory>
@@ -251,7 +247,7 @@ std::future<void> pipeline(F f, Tail... t)
 
 //------------------------------------------------------------------------------
 
-#include <asio/thread_pool.hpp>
+#include <asio/ts/thread_pool.hpp>
 #include <iostream>
 #include <string>
 
