@@ -10,6 +10,12 @@ LDADD = libasio.a
 endif
 
 noinst_PROGRAMS = \
+	echo/async_tcp_echo_server \
+	echo/async_udp_echo_server \
+	echo/blocking_tcp_echo_client \
+	echo/blocking_tcp_echo_server \
+	echo/blocking_udp_echo_client \
+	echo/blocking_udp_echo_server \
 	executors/actor \
 	executors/async_1 \
 	executors/async_2 \
@@ -22,6 +28,12 @@ noinst_PROGRAMS = \
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
+echo_async_tcp_echo_server_SOURCES = echo/async_tcp_echo_server.cpp
+echo_async_udp_echo_server_SOURCES = echo/async_udp_echo_server.cpp
+echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
+echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
+echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
+echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
 executors_actor_SOURCES = executors/actor.cpp
 executors_async_1_SOURCES = executors/async_1.cpp
 executors_async_2_SOURCES = executors/async_2.cpp

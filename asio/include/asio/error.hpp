@@ -314,6 +314,22 @@ inline asio::error_code make_error_code(misc_errors e)
 }
 
 } // namespace error
+namespace stream_errc {
+  // Simulates the proposed stream_errc scoped enum.
+  using error::eof;
+  using error::not_found;
+} // namespace stream_errc
+namespace socket_errc {
+  // Simulates the proposed socket_errc scoped enum.
+  using error::already_open;
+  using error::not_found;
+} // namespace socket_errc
+namespace resolver_errc {
+  // Simulates the proposed resolver_errc scoped enum.
+  using error::host_not_found;
+  using error::host_not_found_try_again;
+  using error::service_not_found;
+} // namespace resolver_errc
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
