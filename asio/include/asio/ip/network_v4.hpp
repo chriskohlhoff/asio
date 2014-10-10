@@ -131,7 +131,8 @@ public:
   }
 
   /// Test if a network is a real subnet of another network.
-  ASIO_DECL bool is_subnet_of(const network_v4& other) const;
+  ASIO_DECL bool is_subnet_of(
+      const network_v4& other) const ASIO_NOEXCEPT;
   
   /// Get the network as an address in dotted decimal format.
   ASIO_DECL std::string to_string() const;
