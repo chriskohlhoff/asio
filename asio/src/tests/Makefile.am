@@ -41,7 +41,9 @@ check_PROGRAMS = \
 	unit/io_service \
 	unit/ip/address \
 	unit/ip/address_iterator_v4 \
+	unit/ip/address_iterator_v6 \
 	unit/ip/address_range_v4 \
+	unit/ip/address_range_v6 \
 	unit/ip/address_v4 \
 	unit/ip/address_v6 \
 	unit/ip/basic_endpoint \
@@ -53,6 +55,7 @@ check_PROGRAMS = \
 	unit/ip/icmp \
 	unit/ip/multicast \
 	unit/ip/network_v4 \
+	unit/ip/network_v6 \
 	unit/ip/resolver_query_base \
 	unit/ip/resolver_service \
 	unit/ip/tcp \
@@ -151,7 +154,9 @@ TESTS = \
 	unit/io_service \
 	unit/ip/address \
 	unit/ip/address_iterator_v4 \
+	unit/ip/address_iterator_v6 \
 	unit/ip/address_range_v4 \
+	unit/ip/address_range_v6 \
 	unit/ip/address_v4 \
 	unit/ip/address_v6 \
 	unit/ip/basic_endpoint \
@@ -163,6 +168,7 @@ TESTS = \
 	unit/ip/icmp \
 	unit/ip/multicast \
 	unit/ip/network_v4 \
+	unit/ip/network_v6 \
 	unit/ip/resolver_query_base \
 	unit/ip/resolver_service \
 	unit/ip/tcp \
@@ -274,7 +280,9 @@ unit_high_resolution_timer_SOURCES = unit/high_resolution_timer.cpp unit/unit_te
 unit_io_service_SOURCES = unit/io_service.cpp unit/unit_test.cpp
 unit_ip_address_SOURCES = unit/ip/address.cpp unit/unit_test.cpp
 unit_ip_address_iterator_v4_SOURCES = unit/ip/address_iterator_v4.cpp unit/unit_test.cpp
+unit_ip_address_iterator_v6_SOURCES = unit/ip/address_iterator_v6.cpp unit/unit_test.cpp
 unit_ip_address_range_v4_SOURCES = unit/ip/address_range_v4.cpp unit/unit_test.cpp
+unit_ip_address_range_v6_SOURCES = unit/ip/address_range_v6.cpp unit/unit_test.cpp
 unit_ip_address_v4_SOURCES = unit/ip/address_v4.cpp unit/unit_test.cpp
 unit_ip_address_v6_SOURCES = unit/ip/address_v6.cpp unit/unit_test.cpp
 unit_ip_basic_endpoint_SOURCES = unit/ip/basic_endpoint.cpp unit/unit_test.cpp
@@ -286,6 +294,7 @@ unit_ip_host_name_SOURCES = unit/ip/host_name.cpp unit/unit_test.cpp
 unit_ip_icmp_SOURCES = unit/ip/icmp.cpp unit/unit_test.cpp
 unit_ip_multicast_SOURCES = unit/ip/multicast.cpp unit/unit_test.cpp
 unit_ip_network_v4_SOURCES = unit/ip/network_v4.cpp unit/unit_test.cpp
+unit_ip_network_v6_SOURCES = unit/ip/network_v6.cpp unit/unit_test.cpp
 unit_ip_resolver_query_base_SOURCES = unit/ip/resolver_query_base.cpp unit/unit_test.cpp
 unit_ip_resolver_service_SOURCES = unit/ip/resolver_service.cpp unit/unit_test.cpp
 unit_ip_tcp_SOURCES = unit/ip/tcp.cpp unit/unit_test.cpp
