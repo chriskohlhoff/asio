@@ -125,7 +125,7 @@ public:
   /// Test if network is a valid host address.
   bool is_host() const ASIO_NOEXCEPT
   {
-    return prefix_length_ == 64;
+    return prefix_length_ == 128;
   }
 
   /// Test if a network is a real subnet of another network.
