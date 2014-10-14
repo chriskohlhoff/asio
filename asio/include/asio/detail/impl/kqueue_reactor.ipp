@@ -384,6 +384,20 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
       mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
+      if (events[i].filter == EVFILT_WRITE
+          && descriptor_data->op_queue_[write_op].empty())
+      {
+        // Some descriptor types, like serial ports, don't seem to support
+        // EV_CLEAR with EVFILT_WRITE. Since we have no pending write
+        // operations we'll remove the EVFILT_WRITE registration here so that
+        // we don't end up in a tight spin.
+        struct kevent delete_events[1];
+        ASIO_KQUEUE_EV_SET(&delete_events[0],
+            descriptor_data->descriptor_, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
+        ::kevent(kqueue_fd_, delete_events, 1, 0, 0, 0);
+        descriptor_data->num_kevents_ = 1;
+      }
+
       // Exception operations must be processed first to ensure that any
       // out-of-band data is read before normal data.
 #if defined(__NetBSD__)
