@@ -3444,8 +3444,8 @@ u_short_type network_to_host_short(u_short_type value)
 {
 #if defined(ASIO_WINDOWS_RUNTIME)
   unsigned char* value_p = reinterpret_cast<unsigned char*>(&value);
-  u_short_type result = (static_cast<u_long_type>(value_p[0]) << 8)
-    | static_cast<u_long_type>(value_p[1]);
+  u_short_type result = (static_cast<u_short_type>(value_p[0]) << 8)
+    | static_cast<u_short_type>(value_p[1]);
   return result;
 #else // defined(ASIO_WINDOWS_RUNTIME)
   return ntohs(value);
@@ -3455,7 +3455,7 @@ u_short_type network_to_host_short(u_short_type value)
 u_short_type host_to_network_short(u_short_type value)
 {
 #if defined(ASIO_WINDOWS_RUNTIME)
-  u_long_type result;
+  u_short_type result;
   unsigned char* result_p = reinterpret_cast<unsigned char*>(&result);
   result_p[0] = static_cast<unsigned char>((value >> 8) & 0xFF);
   result_p[1] = static_cast<unsigned char>(value & 0xFF);
