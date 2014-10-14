@@ -47,10 +47,10 @@ kqueue_reactor::kqueue_reactor(asio::execution_context& ctx)
     interrupter_(),
     shutdown_(false)
 {
-  struct kevent event;
-  ASIO_KQUEUE_EV_SET(&event, interrupter_.read_descriptor(),
+  struct kevent events[1];
+  ASIO_KQUEUE_EV_SET(&events[0], interrupter_.read_descriptor(),
       EVFILT_READ, EV_ADD, 0, 0, &interrupter_);
-  if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+  if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
   {
     asio::error_code error(errno,
         asio::error::get_system_category());
@@ -95,10 +95,10 @@ void kqueue_reactor::fork_service(
 
     interrupter_.recreate();
 
-    struct kevent event;
-    ASIO_KQUEUE_EV_SET(&event, interrupter_.read_descriptor(),
+    struct kevent events[2];
+    ASIO_KQUEUE_EV_SET(&events[0], interrupter_.read_descriptor(),
         EVFILT_READ, EV_ADD, 0, 0, &interrupter_);
-    if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
+    if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
     {
       asio::error_code ec(errno,
           asio::error::get_system_category());
@@ -110,7 +110,6 @@ void kqueue_reactor::fork_service(
     for (descriptor_state* state = registered_descriptors_.first();
         state != 0; state = state->next_)
     {
-      struct kevent events[2];
       ASIO_KQUEUE_EV_SET(&events[0], state->descriptor_,
           EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, state);
       ASIO_KQUEUE_EV_SET(&events[1], state->descriptor_,
