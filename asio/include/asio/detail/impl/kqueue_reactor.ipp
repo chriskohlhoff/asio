@@ -100,9 +100,9 @@ void kqueue_reactor::fork_service(
         EVFILT_READ, EV_ADD, 0, 0, &interrupter_);
     if (::kevent(kqueue_fd_, &event, 1, 0, 0, 0) == -1)
     {
-      asio::error_code error(errno,
+      asio::error_code ec(errno,
           asio::error::get_system_category());
-      asio::detail::throw_error(error);
+      asio::detail::throw_error(ec, "kqueue interrupter registration");
     }
 
     // Re-register all descriptors with kqueue.
@@ -115,11 +115,11 @@ void kqueue_reactor::fork_service(
           EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, state);
       ASIO_KQUEUE_EV_SET(&events[1], state->descriptor_,
           EVFILT_WRITE, EV_ADD | EV_CLEAR, 0, 0, state);
-      if (::kevent(kqueue_fd_, events, 2, 0, 0, 0) == -1)
+      if (::kevent(kqueue_fd_, events, state->num_kevents_, 0, 0, 0) == -1)
       {
-        asio::error_code error(errno,
+        asio::error_code ec(errno,
             asio::error::get_system_category());
-        asio::detail::throw_error(error);
+        asio::detail::throw_error(ec, "kqueue re-registration");
       }
     }
   }
@@ -138,14 +138,13 @@ int kqueue_reactor::register_descriptor(socket_type descriptor,
   mutex::scoped_lock lock(descriptor_data->mutex_);
 
   descriptor_data->descriptor_ = descriptor;
+  descriptor_data->num_kevents_ = 1;
   descriptor_data->shutdown_ = false;
 
-  struct kevent events[2];
+  struct kevent events[1];
   ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
       EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-  ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
-      EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-  if (::kevent(kqueue_fd_, events, 2, 0, 0, 0) == -1)
+  if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
     return errno;
 
   return 0;
@@ -160,15 +159,14 @@ int kqueue_reactor::register_internal_descriptor(
   mutex::scoped_lock lock(descriptor_data->mutex_);
 
   descriptor_data->descriptor_ = descriptor;
+  descriptor_data->num_kevents_ = 1;
   descriptor_data->shutdown_ = false;
   descriptor_data->op_queue_[op_type].push(op);
 
-  struct kevent events[2];
+  struct kevent events[1];
   ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
       EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-  ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
-      EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-  if (::kevent(kqueue_fd_, events, 2, 0, 0, 0) == -1)
+  if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
     return errno;
 
   return 0;
@@ -201,8 +199,7 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
     return;
   }
 
-  bool first = descriptor_data->op_queue_[op_type].empty();
-  if (first)
+  if (descriptor_data->op_queue_[op_type].empty())
   {
     if (allow_speculative
         && (op_type != read_op
@@ -214,15 +211,43 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
         scheduler_.post_immediate_completion(op, is_continuation);
         return;
       }
+
+      if (op_type == write_op)
+      {
+        if (descriptor_data->num_kevents_ == 1)
+        {
+          struct kevent events[2];
+          ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
+              EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
+          ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
+              EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
+          if (::kevent(kqueue_fd_, events, 2, 0, 0, 0) != -1)
+          {
+            descriptor_data->num_kevents_ = 2;
+          }
+          else
+          {
+            op->ec_ = asio::error_code(errno,
+                asio::error::get_system_category());
+            io_service_.post_immediate_completion(op, is_continuation);
+            return;
+          }
+        }
+      }
     }
     else
     {
+      if (op_type == write_op)
+      {
+        descriptor_data->num_kevents_ = 2;
+      }
+
       struct kevent events[2];
       ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
           EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
       ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
           EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-      ::kevent(kqueue_fd_, events, 2, 0, 0, 0);
+      ::kevent(kqueue_fd_, events, descriptor_data->num_kevents_, 0, 0, 0);
     }
   }
 
@@ -276,7 +301,7 @@ void kqueue_reactor::deregister_descriptor(socket_type descriptor,
           EVFILT_READ, EV_DELETE, 0, 0, 0);
       ASIO_KQUEUE_EV_SET(&events[1], descriptor,
           EVFILT_WRITE, EV_DELETE, 0, 0, 0);
-      ::kevent(kqueue_fd_, events, 2, 0, 0, 0);
+      ::kevent(kqueue_fd_, events, descriptor_data->num_kevents_, 0, 0, 0);
     }
 
     op_queue<operation> ops;
@@ -317,7 +342,7 @@ void kqueue_reactor::deregister_internal_descriptor(socket_type descriptor,
         EVFILT_READ, EV_DELETE, 0, 0, 0);
     ASIO_KQUEUE_EV_SET(&events[1], descriptor,
         EVFILT_WRITE, EV_DELETE, 0, 0, 0);
-    ::kevent(kqueue_fd_, events, 2, 0, 0, 0);
+    ::kevent(kqueue_fd_, events, descriptor_data->num_kevents_, 0, 0, 0);
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)
