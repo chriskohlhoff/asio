@@ -116,8 +116,22 @@ address_range_v6 network_v6::hosts() const ASIO_NOEXCEPT
   if ( is_host() ) {
     return address_range_v6(address_, address_.successor_());
   } else {
-    address_v6 netw = network();
-    return address_range_v6(network().successor_(), netw);
+    address_v6 netw( network() );
+    address_v6::bytes_type bytes( netw.to_bytes() );
+    detail::in6_addr_type addr;
+    memcpy(addr.s6_addr, bytes.data(), 16);
+
+    const int bc = (prefix_length_ / 32);
+    const int rest = (prefix_length_ % 32);
+
+    for ( int i = bc; i < 4; i++)
+        addr.s6_addr32[i] = 0xffffffff;
+
+    if ( rest)
+        addr.s6_addr32[bc] = ntohl( ( ( uint32_t)0xffffffff) >> ( rest) );
+
+    memcpy(bytes.data(), addr.s6_addr, 16);
+    return address_range_v6(netw, address_v6( bytes).successor_());
   }
 }
 
