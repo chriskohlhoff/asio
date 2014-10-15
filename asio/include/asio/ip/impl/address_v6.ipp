@@ -322,6 +322,62 @@ address_v6 make_address_v6(
   return address_v6(v6_bytes);
 }
 
+address_v6 address_v6::successor_() const
+{
+    using namespace std; // For memcpy.
+    detail::in6_addr_type addr;
+    memcpy(&addr, &addr_, sizeof( addr_));
+    bool valid = false;
+    for ( int i = 15; 0 <= i; --i)
+    {
+        if ( 0xff == addr.s6_addr[i])
+            addr.s6_addr[i] = 0;
+        else
+        {
+            ++addr.s6_addr[i];
+            valid = true;
+            break;
+        }
+    }
+    if ( valid)
+    {
+        bytes_type bytes;
+        memcpy(bytes.data(), addr.s6_addr, 16);
+        // FIXME: take care about the scope
+        return address_v6( bytes, scope_id_);
+    }
+    else
+        return address_v6();
+}
+
+address_v6 address_v6::predeccessor_() const
+{
+    using namespace std; // For memcpy.
+    detail::in6_addr_type addr;
+    memcpy(&addr, &addr_, sizeof( addr_));
+    bool valid = false;
+    for ( int i = 15; 0 <= i; --i)
+    {
+        if ( 0 == addr.s6_addr[i])
+            addr.s6_addr[i] = 0xff;
+        else
+        {
+            --addr.s6_addr[i];
+            valid = true;
+            break;
+        }
+    }
+    if ( valid)
+    {
+        bytes_type bytes;
+        memcpy(bytes.data(), addr.s6_addr, 16);
+        // FIXME: take care about the scope
+        return address_v6( bytes, scope_id_);
+    }
+    else
+        return address_v6();
+}
+
 } // namespace ip
 } // namespace asio
 

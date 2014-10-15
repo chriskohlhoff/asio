@@ -32,6 +32,9 @@
 namespace asio {
 namespace ip {
 
+class network_v6;
+class address_iterator_v6;
+
 /// Implements IP version 6 style addresses.
 /**
  * The asio::ip::address_v6 class provides the ability to use and
@@ -44,6 +47,9 @@ namespace ip {
 class address_v6
 {
 public:
+    friend class network_v6;
+    friend class address_iterator_v6;
+
   /// The type used to represent an address as an array of bytes.
   /**
    * @note This type is defined in terms of the C++0x template @c std::array
@@ -223,6 +229,9 @@ private:
 
   // The scope ID associated with the address.
   unsigned long scope_id_;
+
+  ASIO_DECL address_v6 successor_() const;
+  ASIO_DECL address_v6 predeccessor_() const;
 };
 
 /// Create an IPv6 address from raw bytes and scope ID.
