@@ -110,15 +110,18 @@ void kqueue_reactor::fork_service(
     for (descriptor_state* state = registered_descriptors_.first();
         state != 0; state = state->next_)
     {
-      ASIO_KQUEUE_EV_SET(&events[0], state->descriptor_,
-          EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, state);
-      ASIO_KQUEUE_EV_SET(&events[1], state->descriptor_,
-          EVFILT_WRITE, EV_ADD | EV_CLEAR, 0, 0, state);
-      if (::kevent(kqueue_fd_, events, state->num_kevents_, 0, 0, 0) == -1)
+      if (state->num_kevents_ > 0)
       {
-        asio::error_code ec(errno,
-            asio::error::get_system_category());
-        asio::detail::throw_error(ec, "kqueue re-registration");
+        ASIO_KQUEUE_EV_SET(&events[0], state->descriptor_,
+            EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, state);
+        ASIO_KQUEUE_EV_SET(&events[1], state->descriptor_,
+            EVFILT_WRITE, EV_ADD | EV_CLEAR, 0, 0, state);
+        if (::kevent(kqueue_fd_, events, state->num_kevents_, 0, 0, 0) == -1)
+        {
+          asio::error_code ec(errno,
+              asio::error::get_system_category());
+          asio::detail::throw_error(ec, "kqueue re-registration");
+        }
       }
     }
   }
@@ -137,14 +140,8 @@ int kqueue_reactor::register_descriptor(socket_type descriptor,
   mutex::scoped_lock lock(descriptor_data->mutex_);
 
   descriptor_data->descriptor_ = descriptor;
-  descriptor_data->num_kevents_ = 1;
+  descriptor_data->num_kevents_ = 0;
   descriptor_data->shutdown_ = false;
-
-  struct kevent events[1];
-  ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
-      EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-  if (::kevent(kqueue_fd_, events, 1, 0, 0, 0) == -1)
-    return errno;
 
   return 0;
 }
@@ -200,6 +197,8 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
 
   if (descriptor_data->op_queue_[op_type].empty())
   {
+    static const int num_kevents[max_ops] = { 1, 2, 1 };
+
     if (allow_speculative
         && (op_type != read_op
           || descriptor_data->op_queue_[except_op].empty()))
@@ -211,35 +210,30 @@ void kqueue_reactor::start_op(int op_type, socket_type descriptor,
         return;
       }
 
-      if (op_type == write_op)
+      if (descriptor_data->num_kevents_ < num_kevents[op_type])
       {
-        if (descriptor_data->num_kevents_ == 1)
+        struct kevent events[2];
+        ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
+            EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
+        ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
+            EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
+        if (::kevent(kqueue_fd_, events, num_kevents[op_type], 0, 0, 0) != -1)
         {
-          struct kevent events[2];
-          ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
-              EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-          ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
-              EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-          if (::kevent(kqueue_fd_, events, 2, 0, 0, 0) != -1)
-          {
-            descriptor_data->num_kevents_ = 2;
-          }
-          else
-          {
-            op->ec_ = asio::error_code(errno,
-                asio::error::get_system_category());
-            io_service_.post_immediate_completion(op, is_continuation);
-            return;
-          }
+          descriptor_data->num_kevents_ = num_kevents[op_type];
+        }
+        else
+        {
+          op->ec_ = asio::error_code(errno,
+              asio::error::get_system_category());
+          scheduler_.post_immediate_completion(op, is_continuation);
+          return;
         }
       }
     }
     else
     {
-      if (op_type == write_op)
-      {
-        descriptor_data->num_kevents_ = 2;
-      }
+      if (descriptor_data->num_kevents_ < num_kevents[op_type])
+        descriptor_data->num_kevents_ = num_kevents[op_type];
 
       struct kevent events[2];
       ASIO_KQUEUE_EV_SET(&events[0], descriptor, EVFILT_READ,
@@ -385,6 +379,7 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
       mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
       if (events[i].filter == EVFILT_WRITE
+          && descriptor_data->num_kevents_ == 2
           && descriptor_data->op_queue_[write_op].empty())
       {
         // Some descriptor types, like serial ports, don't seem to support
