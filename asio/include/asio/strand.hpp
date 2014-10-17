@@ -241,7 +241,8 @@ private:
   asio::detail::strand_service::implementation_type impl_;
 };
 
-/// Typedef for backwards compatibility.
+/// (Deprecated: Use asio::io_service::strand.) Typedef for backwards
+/// compatibility.
 typedef asio::io_service::strand strand;
 
 } // namespace asio
