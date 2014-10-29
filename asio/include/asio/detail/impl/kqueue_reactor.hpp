@@ -72,13 +72,13 @@ std::size_t kqueue_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
 
 template <typename Time_Traits>
 void kqueue_reactor::move_timer(timer_queue<Time_Traits>& queue,
-    typename timer_queue<Time_Traits>::per_timer_data& to,
-    typename timer_queue<Time_Traits>::per_timer_data& from)
+    typename timer_queue<Time_Traits>::per_timer_data& target,
+    typename timer_queue<Time_Traits>::per_timer_data& source)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   op_queue<operation> ops;
-  queue.cancel_timer(to, ops);
-  queue.move_timer(to, from);
+  queue.cancel_timer(target, ops);
+  queue.move_timer(target, source);
   lock.unlock();
   scheduler_.post_deferred_completions(ops);
 }

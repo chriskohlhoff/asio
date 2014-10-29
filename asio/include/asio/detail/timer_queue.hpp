@@ -193,26 +193,26 @@ public:
   }
 
   // Move operations from one timer to another, empty timer.
-  void move_timer(per_timer_data& to, per_timer_data& from)
+  void move_timer(per_timer_data& target, per_timer_data& source)
   {
-    to.op_queue_.push(from.op_queue_);
+    target.op_queue_.push(source.op_queue_);
 
-    to.heap_index_ = from.heap_index_;
-    from.heap_index_ = (std::numeric_limits<std::size_t>::max)();
+    target.heap_index_ = source.heap_index_;
+    source.heap_index_ = (std::numeric_limits<std::size_t>::max)();
 
-    if (to.heap_index_ < heap_.size())
-      heap_[to.heap_index_].timer_ = &to;
+    if (target.heap_index_ < heap_.size())
+      heap_[target.heap_index_].timer_ = &target;
 
-    if (timers_ == &from)
-      timers_ = &to;
-    if (from.prev_)
-      from.prev_->next_ = &to;
-    if (from.next_)
-      from.next_->prev_= &to;
-    to.next_ = from.next_;
-    to.prev_ = from.prev_;
-    from.next_ = 0;
-    from.prev_ = 0;
+    if (timers_ == &source)
+      timers_ = &target;
+    if (source.prev_)
+      source.prev_->next_ = &target;
+    if (source.next_)
+      source.next_->prev_= &target;
+    target.next_ = source.next_;
+    target.prev_ = source.prev_;
+    source.next_ = 0;
+    source.prev_ = 0;
   }
 
 private:

@@ -135,8 +135,8 @@ public:
   // Move the timer operations associated with the given timer.
   template <typename Time_Traits>
   void move_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& to,
-      typename timer_queue<Time_Traits>::per_timer_data& from);
+      typename timer_queue<Time_Traits>::per_timer_data& target,
+      typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run /dev/poll once until interrupted or events are ready to be dispatched.
   ASIO_DECL void run(bool block, op_queue<operation>& ops);
