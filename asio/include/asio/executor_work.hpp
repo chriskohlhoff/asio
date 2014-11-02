@@ -151,7 +151,9 @@ make_work(const T& t, const Executor& ex,
 template <typename T, typename ExecutionContext>
 inline executor_work<typename associated_executor<T,
   typename ExecutionContext::executor_type>::type>
-make_work(const T& t, ExecutionContext& ctx)
+make_work(const T& t, ExecutionContext& ctx,
+    typename enable_if<!is_executor<T>::value &&
+      !is_convertible<T&, execution_context&>::value>::type* = 0)
 {
   return executor_work<typename associated_executor<T,
     typename ExecutionContext::executor_type>::type>(
