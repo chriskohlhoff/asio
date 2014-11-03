@@ -195,6 +195,21 @@ typedef basic_yield_context<
 /**
  * This function is used to launch a new coroutine.
  *
+ * @param function The coroutine function. The function must have the signature:
+ * @code void function(basic_yield_context<Handler> yield); @endcode
+ *
+ * @param attributes Boost.Coroutine attributes used to customise the coroutine.
+ */
+template <typename Function>
+void spawn(ASIO_MOVE_ARG(Function) function,
+    const boost::coroutines::attributes& attributes
+      = boost::coroutines::attributes());
+
+/// Start a new stackful coroutine, calling the specified handler when it
+/// completes.
+/**
+ * This function is used to launch a new coroutine.
+ *
  * @param handler A handler to be called when the coroutine exits. More
  * importantly, the handler provides an execution context (via the the handler
  * invocation hook) for the coroutine. The handler must have the signature:

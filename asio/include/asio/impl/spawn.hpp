@@ -325,6 +325,18 @@ namespace detail {
 
 } // namespace detail
 
+template <typename Function>
+inline void spawn(ASIO_MOVE_ARG(Function) function,
+    const boost::coroutines::attributes& attributes)
+{
+  typedef typename decay<Function>::type function_type;
+
+  typename associated_executor<function_type>::type ex(
+      (get_associated_executor)(function));
+
+  asio::spawn(ex, ASIO_MOVE_CAST(Function)(function), attributes);
+}
+
 template <typename Handler, typename Function>
 void spawn(ASIO_MOVE_ARG(Handler) handler,
     ASIO_MOVE_ARG(Function) function,
