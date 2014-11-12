@@ -1,5 +1,4 @@
 #include <asio/ts/executor.hpp>
-#include <asio/ts/strand.hpp>
 #include <condition_variable>
 #include <deque>
 #include <memory>

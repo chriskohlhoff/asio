@@ -1,6 +1,5 @@
 #include <asio/ts/executor.hpp>
 #include <asio/ts/thread_pool.hpp>
-#include <asio/ts/type_traits.hpp>
 #include <iostream>
 #include <string>
 

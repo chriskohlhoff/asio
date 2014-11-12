@@ -1,6 +1,6 @@
 //
-// ts/future.hpp
-// ~~~~~~~~~~~~~
+// ts/networking.hpp
+// ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,16 +8,18 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_TS_FUTURE_HPP
-#define ASIO_TS_FUTURE_HPP
+#ifndef ASIO_TS_NETWORKING_HPP
+#define ASIO_TS_NETWORKING_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include <future>
+#include "asio/ts/executor.hpp"
+#include "asio/ts/io_service.hpp"
+#include "asio/ts/timer.hpp"
+#include "asio/ts/buffer.hpp"
+#include "asio/ts/socket.hpp"
+#include "asio/ts/internet.hpp"
 
-#include "asio/package.hpp"
-#include "asio/use_future.hpp"
-
-#endif // ASIO_TS_FUTURE_HPP
+#endif // ASIO_TS_NETWORKING_HPP

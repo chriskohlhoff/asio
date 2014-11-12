@@ -1,5 +1,4 @@
 #include <asio/ts/executor.hpp>
-#include <asio/ts/future.hpp>
 #include <condition_variable>
 #include <future>
 #include <memory>
