@@ -19,7 +19,7 @@ int main()
   asio::deadline_timer t(io, boost::posix_time::seconds(5));
   t.wait();
 
-  std::cout << "Hello, world!\n";
+  std::cout << "Hello, world!" << std::endl;
 
   return 0;
 }
