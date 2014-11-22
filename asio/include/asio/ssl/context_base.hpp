@@ -105,6 +105,12 @@ public:
   /// Disable TLS v1.
   static const long no_tlsv1 = implementation_defined;
 
+  /// Disable TLS v1.1.
+  static const long no_tlsv1_1 = implementation_defined;
+
+  /// Disable TLS v1.2.
+  static const long no_tlsv1_2 = implementation_defined;
+
   /// Disable compression. Compression is disabled by default.
   static const long no_compression = implementation_defined;
 #else
@@ -113,6 +119,16 @@ public:
   ASIO_STATIC_CONSTANT(long, no_sslv2 = SSL_OP_NO_SSLv2);
   ASIO_STATIC_CONSTANT(long, no_sslv3 = SSL_OP_NO_SSLv3);
   ASIO_STATIC_CONSTANT(long, no_tlsv1 = SSL_OP_NO_TLSv1);
+# if defined(SSL_OP_NO_TLSv1_1)
+  ASIO_STATIC_CONSTANT(long, no_tlsv1_1 = SSL_OP_NO_TLSv1_1);
+# else // defined(SSL_OP_NO_TLSv1_1)
+  ASIO_STATIC_CONSTANT(long, no_tlsv1_1 = 0x10000000L);
+# endif // defined(SSL_OP_NO_TLSv1_1)
+# if defined(SSL_OP_NO_TLSv1_2)
+  ASIO_STATIC_CONSTANT(long, no_tlsv1_2 = SSL_OP_NO_TLSv1_2);
+# else // defined(SSL_OP_NO_TLSv1_2)
+  ASIO_STATIC_CONSTANT(long, no_tlsv1_2 = 0x08000000L);
+# endif // defined(SSL_OP_NO_TLSv1_2)
 # if defined(SSL_OP_NO_COMPRESSION)
   ASIO_STATIC_CONSTANT(long, no_compression = SSL_OP_NO_COMPRESSION);
 # else // defined(SSL_OP_NO_COMPRESSION)
