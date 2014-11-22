@@ -31,14 +31,14 @@ public:
 
   ~printer()
   {
-    std::cout << "Final count is " << count_ << "\n";
+    std::cout << "Final count is " << count_ << std::endl;
   }
 
   void print1()
   {
     if (count_ < 10)
     {
-      std::cout << "Timer 1: " << count_ << "\n";
+      std::cout << "Timer 1: " << count_ << std::endl;
       ++count_;
 
       timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
@@ -52,7 +52,7 @@ public:
   {
     if (count_ < 10)
     {
-      std::cout << "Timer 2: " << count_ << "\n";
+      std::cout << "Timer 2: " << count_ << std::endl;
       ++count_;
 
       timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));

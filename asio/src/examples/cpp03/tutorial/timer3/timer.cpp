@@ -18,7 +18,7 @@ void print(const asio::error_code& /*e*/,
 {
   if (*count < 5)
   {
-    std::cout << *count << "\n";
+    std::cout << *count << std::endl;
     ++(*count);
 
     t->expires_at(t->expires_at() + boost::posix_time::seconds(1));
@@ -38,7 +38,7 @@ int main()
 
   io.run();
 
-  std::cout << "Final count is " << count << "\n";
+  std::cout << "Final count is " << count << std::endl;
 
   return 0;
 }

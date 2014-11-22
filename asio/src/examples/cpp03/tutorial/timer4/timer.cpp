@@ -25,14 +25,14 @@ public:
 
   ~printer()
   {
-    std::cout << "Final count is " << count_ << "\n";
+    std::cout << "Final count is " << count_ << std::endl;
   }
 
   void print()
   {
     if (count_ < 5)
     {
-      std::cout << count_ << "\n";
+      std::cout << count_ << std::endl;
       ++count_;
 
       timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));

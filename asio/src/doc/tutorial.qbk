@@ -120,7 +120,7 @@ Finally we print the obligatory `"Hello, world!"` message to show when the timer
 
 
 
-  ``''''''``  std::cout << "Hello, world!\n";
+  ``''''''``  std::cout << "Hello, world!" << std::endl;
 
   ``''''''``  return 0;
   ``''''''``}
@@ -159,7 +159,7 @@ Next: [link asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
   ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(5));
   ``''''''``  t.wait();
 
-  ``''''''``  std::cout << "Hello, world!\n";
+  ``''''''``  std::cout << "Hello, world!" << std::endl;
 
   ``''''''``  return 0;
   ``''''''``}
@@ -191,7 +191,7 @@ Using asio's asynchronous functionality means having a callback function that wi
 
   ``''''''``void print(const asio::error_code& /*e*/)
   ``''''''``{
-  ``''''''``  std::cout << "Hello, world!\n";
+  ``''''''``  std::cout << "Hello, world!" << std::endl;
   ``''''''``}
 
   ``''''''``int main()
@@ -254,7 +254,7 @@ Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
 
   ``''''''``void print(const asio::error_code& /*e*/)
   ``''''''``{
-  ``''''''``  std::cout << "Hello, world!\n";
+  ``''''''``  std::cout << "Hello, world!" << std::endl;
   ``''''''``}
 
   ``''''''``int main()
@@ -312,7 +312,7 @@ As mentioned above, this tutorial program uses a counter to stop running when th
 
   ``''''''``  if (*count < 5)
   ``''''''``  {
-  ``''''''``    std::cout << *count << "\n";
+  ``''''''``    std::cout << *count << std::endl;
   ``''''''``    ++(*count);
 
 
@@ -366,7 +366,7 @@ Finally, just to prove that the `count` variable was being used in the `print` h
 
 
 
-  ``''''''``  std::cout << "Final count is " << count << "\n";
+  ``''''''``  std::cout << "Final count is " << count << std::endl;
 
   ``''''''``  return 0;
   ``''''''``}
@@ -406,7 +406,7 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handl
   ``''''''``{
   ``''''''``  if (*count < 5)
   ``''''''``  {
-  ``''''''``    std::cout << *count << "\n";
+  ``''''''``    std::cout << *count << std::endl;
   ``''''''``    ++(*count);
 
   ``''''''``    t->expires_at(t->expires_at() + boost::posix_time::seconds(1));
@@ -426,7 +426,7 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handl
 
   ``''''''``  io.run();
 
-  ``''''''``  std::cout << "Final count is " << count << "\n";
+  ``''''''``  std::cout << "Final count is " << count << std::endl;
 
   ``''''''``  return 0;
   ``''''''``}
@@ -489,7 +489,7 @@ In the class destructor we will print out the final value of the counter.
 
   ``''''''``  ~printer()
   ``''''''``  {
-  ``''''''``    std::cout << "Final count is " << count_ << "\n";
+  ``''''''``    std::cout << "Final count is " << count_ << std::endl;
   ``''''''``  }
 
 
@@ -502,7 +502,7 @@ The `print` member function is very similar to the `print` function from tutoria
   ``''''''``  {
   ``''''''``    if (count_ < 5)
   ``''''''``    {
-  ``''''''``      std::cout << count_ << "\n";
+  ``''''''``      std::cout << count_ << std::endl;
   ``''''''``      ++count_;
 
   ``''''''``      timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
@@ -574,14 +574,14 @@ Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithr
 
   ``''''''``  ~printer()
   ``''''''``  {
-  ``''''''``    std::cout << "Final count is " << count_ << "\n";
+  ``''''''``    std::cout << "Final count is " << count_ << std::endl;
   ``''''''``  }
 
   ``''''''``  void print()
   ``''''''``  {
   ``''''''``    if (count_ < 5)
   ``''''''``    {
-  ``''''''``      std::cout << count_ << "\n";
+  ``''''''``      std::cout << count_ << std::endl;
   ``''''''``      ++count_;
 
   ``''''''``      timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
@@ -683,7 +683,7 @@ When initiating the asynchronous operations, each callback handler is "wrapped" 
 
   ``''''''``  ~printer()
   ``''''''``  {
-  ``''''''``    std::cout << "Final count is " << count_ << "\n";
+  ``''''''``    std::cout << "Final count is " << count_ << std::endl;
   ``''''''``  }
 
 
@@ -696,7 +696,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``  {
   ``''''''``    if (count_ < 10)
   ``''''''``    {
-  ``''''''``      std::cout << "Timer 1: " << count_ << "\n";
+  ``''''''``      std::cout << "Timer 1: " << count_ << std::endl;
   ``''''''``      ++count_;
 
   ``''''''``      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
@@ -710,7 +710,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``  {
   ``''''''``    if (count_ < 10)
   ``''''''``    {
-  ``''''''``      std::cout << "Timer 2: " << count_ << "\n";
+  ``''''''``      std::cout << "Timer 2: " << count_ << std::endl;
   ``''''''``      ++count_;
 
   ``''''''``      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
@@ -795,14 +795,14 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 
   ``''''''``  ~printer()
   ``''''''``  {
-  ``''''''``    std::cout << "Final count is " << count_ << "\n";
+  ``''''''``    std::cout << "Final count is " << count_ << std::endl;
   ``''''''``  }
 
   ``''''''``  void print1()
   ``''''''``  {
   ``''''''``    if (count_ < 10)
   ``''''''``    {
-  ``''''''``      std::cout << "Timer 1: " << count_ << "\n";
+  ``''''''``      std::cout << "Timer 1: " << count_ << std::endl;
   ``''''''``      ++count_;
 
   ``''''''``      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
@@ -816,7 +816,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``  {
   ``''''''``    if (count_ < 10)
   ``''''''``    {
-  ``''''''``      std::cout << "Timer 2: " << count_ << "\n";
+  ``''''''``      std::cout << "Timer 2: " << count_ << std::endl;
   ``''''''``      ++count_;
 
   ``''''''``      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
