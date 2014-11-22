@@ -610,7 +610,9 @@ asio::error_code context::use_private_key(
       evp_private_key.p = ::d2i_PrivateKey_bio(bio.p, 0);
       break;
     case context_base::pem:
-      evp_private_key.p = ::PEM_read_bio_PrivateKey(bio.p, 0, 0, 0);
+      evp_private_key.p = ::PEM_read_bio_PrivateKey(
+          bio.p, 0, handle_->default_passwd_callback,
+          handle_->default_passwd_callback_userdata);
       break;
     default:
       {
@@ -667,7 +669,9 @@ asio::error_code context::use_rsa_private_key(
       rsa_private_key.p = ::d2i_RSAPrivateKey_bio(bio.p, 0);
       break;
     case context_base::pem:
-      rsa_private_key.p = ::PEM_read_bio_RSAPrivateKey(bio.p, 0, 0, 0);
+      rsa_private_key.p = ::PEM_read_bio_RSAPrivateKey(
+          bio.p, 0, handle_->default_passwd_callback,
+          handle_->default_passwd_callback_userdata);
       break;
     default:
       {
