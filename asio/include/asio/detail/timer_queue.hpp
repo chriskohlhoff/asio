@@ -219,7 +219,7 @@ private:
   // Move the item at the given index up the heap to its correct position.
   void up_heap(std::size_t index)
   {
-    std::size_t parent = (index - 1) / 2;
+    std::size_t parent = index ? (index - 1) / 2 : 0;
     while (index > 0
         && Time_Traits::less_than(heap_[index].time_, heap_[parent].time_))
     {
