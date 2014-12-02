@@ -231,6 +231,7 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
     std::size_t* bytes_transferred)
 {
   std::size_t pending_output_before = ::BIO_ctrl_pending(ext_bio_);
+  ::ERR_clear_error();
   int result = (this->*op)(data, length);
   int ssl_error = ::SSL_get_error(ssl_, result);
   int sys_error = static_cast<int>(::ERR_get_error());

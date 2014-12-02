@@ -62,6 +62,8 @@ struct context::dh_cleanup
 context::context(context::method m)
   : handle_(0)
 {
+  ::ERR_clear_error();
+
   switch (m)
   {
 #if defined(OPENSSL_NO_SSL2)
@@ -311,6 +313,8 @@ void context::load_verify_file(const std::string& filename)
 asio::error_code context::load_verify_file(
     const std::string& filename, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   if (::SSL_CTX_load_verify_locations(handle_, filename.c_str(), 0) != 1)
   {
     ec = asio::error_code(
@@ -368,6 +372,8 @@ void context::set_default_verify_paths()
 asio::error_code context::set_default_verify_paths(
     asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   if (::SSL_CTX_set_default_verify_paths(handle_) != 1)
   {
     ec = asio::error_code(
@@ -390,6 +396,8 @@ void context::add_verify_path(const std::string& path)
 asio::error_code context::add_verify_path(
     const std::string& path, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   if (::SSL_CTX_load_verify_locations(handle_, 0, path.c_str()) != 1)
   {
     ec = asio::error_code(
@@ -481,6 +489,8 @@ asio::error_code context::use_certificate_file(
       return ec;
     }
   }
+
+  ::ERR_clear_error();
 
   if (::SSL_CTX_use_certificate_file(handle_, filename.c_str(), file_type) != 1)
   {
@@ -574,6 +584,8 @@ void context::use_certificate_chain_file(const std::string& filename)
 asio::error_code context::use_certificate_chain_file(
     const std::string& filename, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   if (::SSL_CTX_use_certificate_chain_file(handle_, filename.c_str()) != 1)
   {
     ec = asio::error_code(
@@ -716,6 +728,8 @@ asio::error_code context::use_private_key_file(
     }
   }
 
+  ::ERR_clear_error();
+
   if (::SSL_CTX_use_PrivateKey_file(handle_, filename.c_str(), file_type) != 1)
   {
     ec = asio::error_code(
@@ -756,6 +770,8 @@ asio::error_code context::use_rsa_private_key_file(
     }
   }
 
+  ::ERR_clear_error();
+
   if (::SSL_CTX_use_RSAPrivateKey_file(
         handle_, filename.c_str(), file_type) != 1)
   {
@@ -779,6 +795,8 @@ void context::use_tmp_dh(const const_buffer& dh)
 asio::error_code context::use_tmp_dh(
     const const_buffer& dh, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   bio_cleanup bio = { make_buffer_bio(dh) };
   if (bio.p)
   {
@@ -801,6 +819,8 @@ void context::use_tmp_dh_file(const std::string& filename)
 asio::error_code context::use_tmp_dh_file(
     const std::string& filename, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   bio_cleanup bio = { ::BIO_new_file(filename.c_str(), "r") };
   if (bio.p)
   {
