@@ -779,6 +779,8 @@ void context::use_tmp_dh(const const_buffer& dh)
 asio::error_code context::use_tmp_dh(
     const const_buffer& dh, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   bio_cleanup bio = { make_buffer_bio(dh) };
   if (bio.p)
   {
@@ -801,6 +803,8 @@ void context::use_tmp_dh_file(const std::string& filename)
 asio::error_code context::use_tmp_dh_file(
     const std::string& filename, asio::error_code& ec)
 {
+  ::ERR_clear_error();
+
   bio_cleanup bio = { ::BIO_new_file(filename.c_str(), "r") };
   if (bio.p)
   {
@@ -816,8 +820,6 @@ asio::error_code context::use_tmp_dh_file(
 asio::error_code context::do_use_tmp_dh(
     BIO* bio, asio::error_code& ec)
 {
-  ::ERR_clear_error();
-
   dh_cleanup dh = { ::PEM_read_bio_DHparams(bio, 0, 0, 0) };
   if (dh.p)
   {
