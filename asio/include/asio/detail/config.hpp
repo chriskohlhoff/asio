@@ -185,9 +185,15 @@
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_SYSTEM_ERROR 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_SYSTEM_ERROR 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<system_error>)
+#     define ASIO_HAS_STD_SYSTEM_ERROR 1
+#    endif // __has_include(<system_error>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -231,9 +237,15 @@
 // Standard library support for arrays.
 #if !defined(ASIO_HAS_STD_ARRAY)
 # if !defined(ASIO_DISABLE_STD_ARRAY)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_ARRAY 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_ARRAY 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<array>)
+#     define ASIO_HAS_STD_ARRAY 1
+#    endif // __has_include(<array>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -252,9 +264,13 @@
 // Standard library support for shared_ptr and weak_ptr.
 #if !defined(ASIO_HAS_STD_SHARED_PTR)
 # if !defined(ASIO_DISABLE_STD_SHARED_PTR)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_SHARED_PTR 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_SHARED_PTR 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_STD_SHARED_PTR 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -273,9 +289,15 @@
 // Standard library support for atomic operations.
 #if !defined(ASIO_HAS_STD_ATOMIC)
 # if !defined(ASIO_DISABLE_STD_ATOMIC)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_ATOMIC 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_ATOMIC 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<atomic>)
+#     define ASIO_HAS_STD_ATOMIC 1
+#    endif // __has_include(<atomic>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -296,9 +318,15 @@
 // drafts, rather than the eventually standardised name of steady_clock.
 #if !defined(ASIO_HAS_STD_CHRONO)
 # if !defined(ASIO_DISABLE_STD_CHRONO)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_CHRONO 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_CHRONO 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<chrono>)
+#     define ASIO_HAS_STD_CHRONO 1
+#    endif // __has_include(<chrono>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -336,9 +364,13 @@
 // Standard library support for addressof.
 #if !defined(ASIO_HAS_STD_ADDRESSOF)
 # if !defined(ASIO_DISABLE_STD_ADDRESSOF)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_ADDRESSOF 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_ADDRESSOF 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_STD_ADDRESSOF 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -357,9 +389,13 @@
 // Standard library support for the function class.
 #if !defined(ASIO_HAS_STD_FUNCTION)
 # if !defined(ASIO_DISABLE_STD_FUNCTION)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_FUNCTION 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_FUNCTION 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_STD_FUNCTION 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -378,9 +414,15 @@
 // Standard library support for type traits.
 #if !defined(ASIO_HAS_STD_TYPE_TRAITS)
 # if !defined(ASIO_DISABLE_STD_TYPE_TRAITS)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_TYPE_TRAITS 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_TYPE_TRAITS 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<type_traits>)
+#     define ASIO_HAS_STD_TYPE_TRAITS 1
+#    endif // __has_include(<type_traits>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -399,9 +441,13 @@
 // Standard library support for the cstdint header.
 #if !defined(ASIO_HAS_CSTDINT)
 # if !defined(ASIO_DISABLE_CSTDINT)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_CSTDINT 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_CSTDINT 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_CSTDINT 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -420,9 +466,15 @@
 // Standard library support for the thread class.
 #if !defined(ASIO_HAS_STD_THREAD)
 # if !defined(ASIO_DISABLE_STD_THREAD)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_THREAD 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_THREAD 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<thread>)
+#     define ASIO_HAS_STD_THREAD 1
+#    endif // __has_include(<thread>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -441,9 +493,15 @@
 // Standard library support for the mutex and condition variable classes.
 #if !defined(ASIO_HAS_STD_MUTEX_AND_CONDVAR)
 # if !defined(ASIO_DISABLE_STD_MUTEX_AND_CONDVAR)
-#  if defined(ASIO_HAS_CLANG_LIBCXX)
-#   define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
-#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<mutex>)
+#     define ASIO_HAS_STD_MUTEX_AND_CONDVAR 1
+#    endif // __has_include(<mutex>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
 #  if defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #    if defined(__GXX_EXPERIMENTAL_CXX0X__)
