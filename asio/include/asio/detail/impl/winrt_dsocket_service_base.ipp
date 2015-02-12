@@ -465,18 +465,59 @@ asio::error_code winrt_dsocket_service_base::do_bind(
   }
 
   char addr_string[max_addr_v6_str_len];
+  bool addr_unspecified = false;
   unsigned short port;
   switch (reinterpret_cast<const socket_addr_type*>(addr)->sa_family)
   {
   case ASIO_OS_DEF(AF_INET):
-    socket_ops::inet_ntop(ASIO_OS_DEF(AF_INET),
+    if (reinterpret_cast<const sockaddr_in4_type*>(addr)->sin_addr.s_addr
+      == 0)
+      addr_unspecified = true;
+    else
+      socket_ops::inet_ntop(ASIO_OS_DEF(AF_INET),
         &reinterpret_cast<const sockaddr_in4_type*>(addr)->sin_addr,
         addr_string, sizeof(addr_string), 0, ec);
     port = socket_ops::network_to_host_short(
         reinterpret_cast<const sockaddr_in4_type*>(addr)->sin_port);
     break;
   case ASIO_OS_DEF(AF_INET6):
-    socket_ops::inet_ntop(ASIO_OS_DEF(AF_INET6),
+    if (
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[0] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[1] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[2] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[3] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[4] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[5] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[6] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[7] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[8] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[9] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[10] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[11] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[12] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[13] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[14] == 0 &&
+      reinterpret_cast<const
+      sockaddr_in6_type*>(addr)->sin6_addr.s6_addr[15] == 0
+    )
+      addr_unspecified = true;
+    else
+      socket_ops::inet_ntop(ASIO_OS_DEF(AF_INET6),
         &reinterpret_cast<const sockaddr_in6_type*>(addr)->sin6_addr,
         addr_string, sizeof(addr_string), 0, ec);
     port = socket_ops::network_to_host_short(
@@ -490,9 +531,9 @@ asio::error_code winrt_dsocket_service_base::do_bind(
   if (!ec) try
   {
     async_manager_.sync(impl.socket_->BindEndpointAsync(
-          ref new Windows::Networking::HostName(
-            winrt_utils::string(addr_string)),
-          winrt_utils::string(port)), ec);
+      addr_unspecified ? nullptr : ref new
+      Windows::Networking::HostName(winrt_utils::string(addr_string)),
+      port ? winrt_utils::string(port) : ""), ec);
   }
   catch (Platform::Exception^ e)
   {
