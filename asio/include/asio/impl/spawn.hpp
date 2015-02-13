@@ -49,14 +49,14 @@ namespace detail {
     void operator()(T value)
     {
       *ec_ = asio::error_code();
-      *value_ = value;
+      *value_ = move(value);
       (*coro_)();
     }
 
     void operator()(asio::error_code ec, T value)
     {
       *ec_ = ec;
-      *value_ = value;
+      *value_ = move(value);
       (*coro_)();
     }
 
@@ -187,7 +187,7 @@ public:
     handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
     ca_();
     if (!out_ec_ && ec_) throw asio::system_error(ec_);
-    return value_;
+    return move(value_);
   }
 
 private:
