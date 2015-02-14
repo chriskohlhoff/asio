@@ -23,20 +23,27 @@
 namespace asio {
 namespace detail {
 
-struct begin_end_memfns_base
+struct buffer_sequence_memfns_base
 {
   void begin();
   void end();
+  void size();
+  void max_size();
+  void capacity();
+  void data();
+  void prepare();
+  void commit();
+  void consume();
 };
 
 template <typename T>
-struct begin_end_memfns_derived
-  : T, begin_end_memfns_base
+struct buffer_sequence_memfns_derived
+  : T, buffer_sequence_memfns_base
 {
 };
 
 template <typename T, T>
-struct begin_end_memfns_check
+struct buffer_sequence_memfns_check
 {
 };
 
@@ -45,18 +52,81 @@ char (&begin_memfn_helper(...))[2];
 
 template <typename T>
 char begin_memfn_helper(
-    begin_end_memfns_check<
-      void (begin_end_memfns_base::*)(),
-      &begin_end_memfns_derived<T>::begin>*);
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::begin>*);
 
 template <typename>
 char (&end_memfn_helper(...))[2];
 
 template <typename T>
 char end_memfn_helper(
-    begin_end_memfns_check<
-      void (begin_end_memfns_base::*)(),
-      &begin_end_memfns_derived<T>::end>*);
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::end>*);
+
+template <typename>
+char (&size_memfn_helper(...))[2];
+
+template <typename T>
+char size_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::size>*);
+
+template <typename>
+char (&max_size_memfn_helper(...))[2];
+
+template <typename T>
+char max_size_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::max_size>*);
+
+template <typename>
+char (&capacity_memfn_helper(...))[2];
+
+template <typename T>
+char capacity_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::capacity>*);
+
+template <typename>
+char (&data_memfn_helper(...))[2];
+
+template <typename T>
+char data_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::data>*);
+
+template <typename>
+char (&prepare_memfn_helper(...))[2];
+
+template <typename T>
+char prepare_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::data>*);
+
+template <typename>
+char (&commit_memfn_helper(...))[2];
+
+template <typename T>
+char commit_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::commit>*);
+
+template <typename>
+char (&consume_memfn_helper(...))[2];
+
+template <typename T>
+char consume_memfn_helper(
+    buffer_sequence_memfns_check<
+      void (buffer_sequence_memfns_base::*)(),
+      &buffer_sequence_memfns_derived<T>::consume>*);
 
 template <typename, typename>
 char (&value_type_const_iterator_typedefs_helper(...))[2];
@@ -66,6 +136,20 @@ char value_type_const_iterator_typedefs_helper(
     typename T::const_iterator*,
     typename enable_if<is_convertible<
       typename T::value_type, Buffer>::value>::type*);
+
+template <typename>
+char (&const_buffers_type_typedef_helper(...))[2];
+
+template <typename T>
+char const_buffers_type_typedef_helper(
+    typename T::const_buffers_type*);
+
+template <typename>
+char (&mutable_buffers_type_typedef_helper(...))[2];
+
+template <typename T>
+char mutable_buffers_type_typedef_helper(
+    typename T::mutable_buffers_type*);
 
 template <typename T, typename Buffer>
 struct is_buffer_sequence_class
@@ -80,6 +164,29 @@ template <typename T, typename Buffer>
 struct is_buffer_sequence
   : conditional<is_class<T>::value,
       is_buffer_sequence_class<T, Buffer>,
+      false_type>::type
+{
+};
+
+template <typename T>
+struct is_dynamic_buffer_sequence_class
+  : integral_constant<bool,
+      sizeof(size_memfn_helper<T>(0)) != 1 &&
+      sizeof(max_size_memfn_helper<T>(0)) != 1 &&
+      sizeof(capacity_memfn_helper<T>(0)) != 1 &&
+      sizeof(data_memfn_helper<T>(0)) != 1 &&
+      sizeof(consume_memfn_helper<T>(0)) != 1 &&
+      sizeof(prepare_memfn_helper<T>(0)) != 1 &&
+      sizeof(commit_memfn_helper<T>(0)) != 1 &&
+      sizeof(const_buffers_type_typedef_helper<T>(0)) == 1 &&
+      sizeof(mutable_buffers_type_typedef_helper<T>(0)) == 1>
+{
+};
+
+template <typename T>
+struct is_dynamic_buffer_sequence
+  : conditional<is_class<T>::value,
+      is_dynamic_buffer_sequence_class<T>,
       false_type>::type
 {
 };

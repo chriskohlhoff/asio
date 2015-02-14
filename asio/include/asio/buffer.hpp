@@ -18,10 +18,13 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include <cstring>
+#include <limits>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include "asio/detail/array_fwd.hpp"
 #include "asio/detail/is_buffer_sequence.hpp"
+#include "asio/detail/throw_exception.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #if defined(ASIO_MSVC)
@@ -341,6 +344,18 @@ struct is_const_buffer_sequence
   : integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
   : asio::detail::is_buffer_sequence<T, const_buffer>
+#endif // defined(GENERATING_DOCUMENTATION)
+{
+};
+
+/// Trait to determine whether a type satisfies the DynamicBufferSequence
+/// requirements.
+template <typename T>
+struct is_dynamic_buffer_sequence
+#if defined(GENERATING_DOCUMENTATION)
+  : integral_constant<bool, automatically_determined>
+#else // defined(GENERATING_DOCUMENTATION)
+  : asio::detail::is_dynamic_buffer_sequence<T>
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
@@ -1324,6 +1339,356 @@ inline const_buffers_1 buffer(
 
 /*@}*/
 
+/// Adapt a basic_string to the DynamicBufferSequence requirements.
+/**
+ * Requires that <tt>sizeof(Elem) == 1</tt>.
+ */
+template <typename Elem, typename Traits, typename Allocator>
+class dynamic_string_buffer
+{
+public:
+  /// The type used to represent the input sequence as a list of buffers.
+  typedef const_buffers_1 const_buffers_type;
+
+  /// The type used to represent the output sequence as a list of buffers.
+  typedef mutable_buffers_1 mutable_buffers_type;
+
+  /// Construct a dynamic buffer from a string.
+  /**
+   * @param s The string to be used as backing storage for the dynamic buffer.
+   * Any existing data in the string is treated as the dynamic buffer's input
+   * sequence. The object stores a reference to the string and the user is
+   * responsible for ensuring that the string object remains valid until the
+   * dynamic_string_buffer object is destroyed.
+   */
+  explicit dynamic_string_buffer(std::basic_string<Elem, Traits, Allocator>& s,
+      std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)())
+    : string_(s),
+      size_(string_.size()),
+      max_size_(maximum_size)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move construct a dynamic buffer.
+  dynamic_string_buffer(dynamic_string_buffer&& other)
+    : string_(other.string_),
+      size_(other.size_),
+      max_size_(other.max_size_)
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Get the size of the input sequence.
+  std::size_t size() const ASIO_NOEXCEPT
+  {
+    return size_;
+  }
+
+  /// Get the maximum size of the dynamic buffer.
+  /**
+   * @returns The allowed maximum of the sum of the sizes of the input sequence
+   * and output sequence.
+   */
+  std::size_t max_size() const ASIO_NOEXCEPT
+  {
+    return max_size_;
+  }
+
+  /// Get the current capacity of the dynamic buffer.
+  /**
+   * @returns The current total capacity of the buffer, i.e. for both the input
+   * sequence and output sequence.
+   */
+  std::size_t capacity() const ASIO_NOEXCEPT
+  {
+    return string_.capacity();
+  }
+
+  /// Get a list of buffers that represents the input sequence.
+  /**
+   * @returns An object of type @c const_buffers_type that satisfies
+   * ConstBufferSequence requirements, representing the basic_string memory in
+   * input sequence.
+   *
+   * @note The returned object is invalidated by any @c dynamic_string_buffer
+   * or @c basic_string member function that modifies the input sequence or
+   * output sequence.
+   */
+  const_buffers_type data() const ASIO_NOEXCEPT
+  {
+    return asio::buffer(string_, size_);
+  }
+
+  /// Get a list of buffers that represents the output sequence, with the given
+  /// size.
+  /**
+   * Ensures that the output sequence can accommodate @c n bytes, resizing the
+   * basic_string object as necessary.
+   *
+   * @returns An object of type @c mutable_buffers_type that satisfies
+   * MutableBufferSequence requirements, representing basic_string memory
+   * at the start of the output sequence of size @c n.
+   *
+   * @throws std::length_error If <tt>size() + n > max_size()</tt>.
+   *
+   * @note The returned object is invalidated by any @c dynamic_string_buffer
+   * or @c basic_string member function that modifies the input sequence or
+   * output sequence.
+   */
+  mutable_buffers_type prepare(std::size_t n)
+  {
+    if (size () > max_size() || max_size() - size() < n)
+    {
+      std::length_error ex("dynamic_string_buffer too long");
+      asio::detail::throw_exception(ex);
+    }
+
+    string_.resize(size_ + n);
+
+    return asio::buffer(asio::buffer(string_) + size_, n);
+  }
+
+  /// Move bytes from the output sequence to the input sequence.
+  /**
+   * @param n The number of bytes to append from the start of the output
+   * sequence to the end of the input sequence. The remainder of the output
+   * sequence is discarded.
+   *
+   * Requires a preceding call <tt>prepare(x)</tt> where <tt>x >= n</tt>, and
+   * no intervening operations that modify the input or output sequence.
+   *
+   * @note If @c n is greater than the size of the output sequence, the entire
+   * output sequence is moved to the input sequence and no error is issued.
+   */
+  void commit(std::size_t n)
+  {
+    size_ += (std::min)(n, string_.size() - size_);
+    string_.resize(size_);
+  }
+
+  /// Remove characters from the input sequence.
+  /**
+   * Removes @c n characters from the beginning of the input sequence.
+   *
+   * @note If @c n is greater than the size of the input sequence, the entire
+   * input sequence is consumed and no error is issued.
+   */
+  void consume(std::size_t n)
+  {
+    std::size_t consume_length = (std::min)(n, size_);
+    string_.erase(consume_length);
+    size_ -= consume_length;
+  }
+
+private:
+  std::basic_string<Elem, Traits, Allocator>& string_;
+  std::size_t size_;
+  const std::size_t max_size_;
+};
+
+/// Adapt a vector to the DynamicBufferSequence requirements.
+/**
+ * Requires that <tt>sizeof(Elem) == 1</tt>.
+ */
+template <typename Elem, typename Allocator>
+class dynamic_vector_buffer
+{
+public:
+  /// The type used to represent the input sequence as a list of buffers.
+  typedef const_buffers_1 const_buffers_type;
+
+  /// The type used to represent the output sequence as a list of buffers.
+  typedef mutable_buffers_1 mutable_buffers_type;
+
+  /// Construct a dynamic buffer from a string.
+  /**
+   * @param s The string to be used as backing storage for the dynamic buffer.
+   * Any existing data in the string is treated as the dynamic buffer's input
+   * sequence. The object stores a reference to the string and the user is
+   * responsible for ensuring that the string object remains valid until the
+   * dynamic_vector_buffer object is destroyed.
+   */
+  explicit dynamic_vector_buffer(std::vector<Elem, Allocator>& v,
+      std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)())
+    : vector_(v),
+      size_(vector_.size()),
+      max_size_(maximum_size)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move construct a dynamic buffer.
+  dynamic_vector_buffer(dynamic_vector_buffer&& other)
+    : vector_(other.vector_),
+      size_(other.size_),
+      max_size_(other.max_size_)
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Get the size of the input sequence.
+  std::size_t size() const ASIO_NOEXCEPT
+  {
+    return size_;
+  }
+
+  /// Get the maximum size of the dynamic buffer.
+  /**
+   * @returns The allowed maximum of the sum of the sizes of the input sequence
+   * and output sequence.
+   */
+  std::size_t max_size() const ASIO_NOEXCEPT
+  {
+    return max_size_;
+  }
+
+  /// Get the current capacity of the dynamic buffer.
+  /**
+   * @returns The current total capacity of the buffer, i.e. for both the input
+   * sequence and output sequence.
+   */
+  std::size_t capacity() const ASIO_NOEXCEPT
+  {
+    return vector_.capacity();
+  }
+
+  /// Get a list of buffers that represents the input sequence.
+  /**
+   * @returns An object of type @c const_buffers_type that satisfies
+   * ConstBufferSequence requirements, representing the basic_string memory in
+   * input sequence.
+   *
+   * @note The returned object is invalidated by any @c dynamic_vector_buffer
+   * or @c basic_string member function that modifies the input sequence or
+   * output sequence.
+   */
+  const_buffers_type data() const ASIO_NOEXCEPT
+  {
+    return asio::buffer(vector_, size_);
+  }
+
+  /// Get a list of buffers that represents the output sequence, with the given
+  /// size.
+  /**
+   * Ensures that the output sequence can accommodate @c n bytes, resizing the
+   * basic_string object as necessary.
+   *
+   * @returns An object of type @c mutable_buffers_type that satisfies
+   * MutableBufferSequence requirements, representing basic_string memory
+   * at the start of the output sequence of size @c n.
+   *
+   * @throws std::length_error If <tt>size() + n > max_size()</tt>.
+   *
+   * @note The returned object is invalidated by any @c dynamic_vector_buffer
+   * or @c basic_string member function that modifies the input sequence or
+   * output sequence.
+   */
+  mutable_buffers_type prepare(std::size_t n)
+  {
+    if (size () > max_size() || max_size() - size() < n)
+    {
+      std::length_error ex("dynamic_vector_buffer too long");
+      asio::detail::throw_exception(ex);
+    }
+
+    vector_.resize(size_ + n);
+
+    return asio::buffer(asio::buffer(vector_) + size_, n);
+  }
+
+  /// Move bytes from the output sequence to the input sequence.
+  /**
+   * @param n The number of bytes to append from the start of the output
+   * sequence to the end of the input sequence. The remainder of the output
+   * sequence is discarded.
+   *
+   * Requires a preceding call <tt>prepare(x)</tt> where <tt>x >= n</tt>, and
+   * no intervening operations that modify the input or output sequence.
+   *
+   * @note If @c n is greater than the size of the output sequence, the entire
+   * output sequence is moved to the input sequence and no error is issued.
+   */
+  void commit(std::size_t n)
+  {
+    size_ += (std::min)(n, vector_.size() - size_);
+    vector_.resize(size_);
+  }
+
+  /// Remove characters from the input sequence.
+  /**
+   * Removes @c n characters from the beginning of the input sequence.
+   *
+   * @note If @c n is greater than the size of the input sequence, the entire
+   * input sequence is consumed and no error is issued.
+   */
+  void consume(std::size_t n)
+  {
+    std::size_t consume_length = (std::min)(n, size_);
+    vector_.erase(consume_length);
+    size_ -= consume_length;
+  }
+
+private:
+  std::vector<Elem, Allocator>& vector_;
+  std::size_t size_;
+  const std::size_t max_size_;
+};
+
+/** @defgroup dynamic_buffer asio::dynamic_buffer
+ *
+ * @brief The asio::dynamic_buffer function is used to create a
+ * dynamically resized buffer from a @c std::basic_string or @c std::vector.
+ */
+/*@{*/
+
+/// Create a new dynamic buffer that represents the given string.
+/**
+ * @returns <tt>dynamic_string_buffer<Elem, Traits, Allocator>(data)</tt>.
+ */
+template <typename Elem, typename Traits, typename Allocator>
+inline dynamic_string_buffer<Elem, Traits, Allocator> dynamic_buffer(
+    std::basic_string<Elem, Traits, Allocator>& data)
+{
+  return dynamic_string_buffer<Elem, Traits, Allocator>(data);
+}
+
+/// Create a new dynamic buffer that represents the given string.
+/**
+ * @returns <tt>dynamic_string_buffer<Elem, Traits, Allocator>(data,
+ * max_size)</tt>.
+ */
+template <typename Elem, typename Traits, typename Allocator>
+inline dynamic_string_buffer<Elem, Traits, Allocator> dynamic_buffer(
+    std::basic_string<Elem, Traits, Allocator>& data, std::size_t max_size)
+{
+  return dynamic_string_buffer<Elem, Traits, Allocator>(data, max_size);
+}
+
+/// Create a new dynamic buffer that represents the given vector.
+/**
+ * @returns <tt>dynamic_vector_buffer<Elem, Allocator>(data)</tt>.
+ */
+template <typename Elem, typename Allocator>
+inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
+    std::vector<Elem, Allocator>& data)
+{
+  return dynamic_vector_buffer<Elem, Allocator>(data);
+}
+
+/// Create a new dynamic buffer that represents the given vector.
+/**
+ * @returns <tt>dynamic_vector_buffer<Elem, Allocator>(data, max_size)</tt>.
+ */
+template <typename Elem, typename Allocator>
+inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
+    std::vector<Elem, Allocator>& data, std::size_t max_size)
+{
+  return dynamic_vector_buffer<Elem, Allocator>(data, max_size);
+}
+
+/*@}*/
+
 /** @defgroup buffer_copy asio::buffer_copy
  *
  * @brief The asio::buffer_copy function is used to copy bytes from a
@@ -1334,7 +1699,7 @@ inline const_buffers_1 buffer(
  * @li A 2-argument form: @c buffer_copy(target, source)
  *
  * @li A 3-argument form: @c buffer_copy(target, source, max_bytes_to_copy)
-
+ *
  * Both forms return the number of bytes actually copied. The number of bytes
  * copied is the lesser of:
  *

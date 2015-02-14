@@ -232,6 +232,21 @@ void test()
     std::size_t size36 = buffer_copy(
         mutable_buffer_sequence, const_buffer_sequence, 128);
     (void)size36;
+
+    // dynamic_buffer function overloads.
+
+    dynamic_string_buffer<char, std::string::traits_type,
+      std::string::allocator_type> db1 = dynamic_buffer(string_data);
+    (void)db1;
+    dynamic_string_buffer<char, std::string::traits_type,
+      std::string::allocator_type> db2 = dynamic_buffer(string_data, 1024);
+    (void)db2;
+    dynamic_vector_buffer<char, std::allocator<char> >
+      db3 = dynamic_buffer(vector_data);
+    (void)db3;
+    dynamic_vector_buffer<char, std::allocator<char> >
+      db4 = dynamic_buffer(vector_data, 1024);
+    (void)db4;
   }
   catch (std::exception&)
   {
