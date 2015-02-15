@@ -49,14 +49,14 @@ namespace detail {
     void operator()(T value)
     {
       *ec_ = asio::error_code();
-      *value_ = value;
+      *value_ = ASIO_MOVE_CAST(T)(value);
       (*coro_)();
     }
 
     void operator()(asio::error_code ec, T value)
     {
       *ec_ = ec;
-      *value_ = value;
+      *value_ = ASIO_MOVE_CAST(T)(value);
       (*coro_)();
     }
 
