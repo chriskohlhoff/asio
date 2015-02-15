@@ -1360,6 +1360,8 @@ public:
    * sequence. The object stores a reference to the string and the user is
    * responsible for ensuring that the string object remains valid until the
    * dynamic_string_buffer object is destroyed.
+   *
+   * @param maximum_size Specifies a maximum size for the buffer, in bytes.
    */
   explicit dynamic_string_buffer(std::basic_string<Elem, Traits, Allocator>& s,
       std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)())
@@ -1503,11 +1505,13 @@ public:
 
   /// Construct a dynamic buffer from a string.
   /**
-   * @param s The string to be used as backing storage for the dynamic buffer.
-   * Any existing data in the string is treated as the dynamic buffer's input
-   * sequence. The object stores a reference to the string and the user is
-   * responsible for ensuring that the string object remains valid until the
+   * @param v The vector to be used as backing storage for the dynamic buffer.
+   * Any existing data in the vector is treated as the dynamic buffer's input
+   * sequence. The object stores a reference to the vector and the user is
+   * responsible for ensuring that the vector object remains valid until the
    * dynamic_vector_buffer object is destroyed.
+   *
+   * @param maximum_size Specifies a maximum size for the buffer, in bytes.
    */
   explicit dynamic_vector_buffer(std::vector<Elem, Allocator>& v,
       std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)())

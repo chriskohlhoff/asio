@@ -268,10 +268,16 @@ ASIO_DECL address_v6 make_address_v6(
 enum v4_mapped_t { v4_mapped };
 
 /// Create an IPv4 address from a IPv4-mapped IPv6 address.
+/**
+ * @relates address_v4
+ */
 ASIO_DECL address_v4 make_address_v4(
     v4_mapped_t, const address_v6& v6_addr);
 
 /// Create an IPv4-mapped IPv6 address from an IPv4 address.
+/**
+ * @relates address_v6
+ */
 ASIO_DECL address_v6 make_address_v6(
     v4_mapped_t, const address_v4& v4_addr);
 
