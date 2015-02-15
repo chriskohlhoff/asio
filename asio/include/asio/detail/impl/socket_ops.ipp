@@ -524,6 +524,25 @@ void sync_connect(socket_type s, const socket_addr_type* addr,
 
 void complete_iocp_connect(socket_type s, asio::error_code& ec)
 {
+  // Map non-portable errors to their portable counterparts.
+  switch (ec.value())
+  {
+  case ERROR_CONNECTION_REFUSED:
+    ec = asio::error::connection_refused;
+    break;
+  case ERROR_NETWORK_UNREACHABLE:
+    ec = asio::error::network_unreachable;
+    break;
+  case ERROR_HOST_UNREACHABLE:
+    ec = asio::error::host_unreachable;
+    break;
+  case ERROR_SEM_TIMEOUT:
+    ec = asio::error::timed_out;
+    break;
+  default:
+    break;
+  }
+
   if (!ec)
   {
     // Need to set the SO_UPDATE_CONNECT_CONTEXT option so that getsockname
