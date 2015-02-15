@@ -4,7 +4,7 @@ else
 SUBDIRS = examples/cpp03 tests
 endif
 
-DIST_SUBDIRS = examples/cpp03 examples/cpp11 tests
+DIST_SUBDIRS = examples/cpp03 examples/cpp11 examples/cpp14 tests
 
 EXTRA_DIST = \
 	Makefile.mgw \
