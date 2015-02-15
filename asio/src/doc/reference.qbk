@@ -452,7 +452,7 @@ Traits type used to obtain the executor associated with an object.
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]`` = system_executor>
+      typename ``[link asio.reference.Executor1 Executor]`` = system_executor>
   struct associated_executor
 
 
@@ -58838,7 +58838,7 @@ Submits a completion token or function object for execution.
   ``  [''''&raquo;''' [link asio.reference.defer.overload1 more...]]``
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename CompletionToken>
   ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` ``[link asio.reference.defer.overload2 defer]``(
       const Executor & ex,
@@ -58910,7 +58910,7 @@ Submits a completion token or function object for execution.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename CompletionToken>
   ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` defer(
       const Executor & ex,
@@ -58994,7 +58994,7 @@ Submits a completion token or function object for execution.
   ``  [''''&raquo;''' [link asio.reference.dispatch.overload1 more...]]``
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename CompletionToken>
   ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` ``[link asio.reference.dispatch.overload2 dispatch]``(
       const Executor & ex,
@@ -59066,7 +59066,7 @@ Submits a completion token or function object for execution.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename CompletionToken>
   ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` dispatch(
       const Executor & ex,
@@ -62417,7 +62417,7 @@ Construct a polymorphic wrapper for the specified executor.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   ``[link asio.reference.executor.executor.overload5 executor]``(
       Executor e);
   ``  [''''&raquo;''' [link asio.reference.executor.executor.overload5 more...]]``
@@ -62427,7 +62427,7 @@ Allocator-aware constructor to create a polymorphic wrapper for the specified ex
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename Allocator>
   ``[link asio.reference.executor.executor.overload6 executor]``(
       allocator_arg_t ,
@@ -62502,7 +62502,7 @@ Construct a polymorphic wrapper for the specified executor.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor(
       Executor e);
 
@@ -62519,7 +62519,7 @@ Allocator-aware constructor to create a polymorphic wrapper for the specified ex
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename Allocator>
   executor(
       allocator_arg_t ,
@@ -62626,7 +62626,7 @@ Assignment operator to create a polymorphic wrapper for the specified executor.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor & ``[link asio.reference.executor.operator_eq_.overload4 operator=]``(
       Executor && e);
   ``  [''''&raquo;''' [link asio.reference.executor.operator_eq_.overload4 more...]]``
@@ -62682,7 +62682,7 @@ Assignment operator to create a polymorphic wrapper for the specified executor.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor & operator=(
       Executor && e);
 
@@ -62761,12 +62761,12 @@ Obtain a pointer to the target executor object.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   Executor * ``[link asio.reference.executor.target.overload1 target]``();
   ``  [''''&raquo;''' [link asio.reference.executor.target.overload1 more...]]``
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   const Executor * ``[link asio.reference.executor.target.overload2 target]``() const;
   ``  [''''&raquo;''' [link asio.reference.executor.target.overload2 more...]]``
 
@@ -62778,7 +62778,7 @@ Obtain a pointer to the target executor object.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   Executor * target();
 
 
@@ -62801,7 +62801,7 @@ Obtain a pointer to the target executor object.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   const Executor * target() const;
 
 
@@ -62978,7 +62978,7 @@ An object of type `executor_work` controls ownership of executor work within a s
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   class executor_work
 
 
@@ -63201,7 +63201,7 @@ A call wrapper type to associate an object of type `T` with an executor of type 
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   class executor_wrapper
 
 
@@ -63399,7 +63399,7 @@ Construct a copy of a different executor wrapper type.
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   ``[link asio.reference.executor_wrapper.executor_wrapper.overload4 executor_wrapper]``(
       const executor_wrapper< U, OtherExecutor > & other);
   ``  [''''&raquo;''' [link asio.reference.executor_wrapper.executor_wrapper.overload4 more...]]``
@@ -63410,7 +63410,7 @@ Construct a copy of a different executor wrapper type, but specify a different e
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   ``[link asio.reference.executor_wrapper.executor_wrapper.overload5 executor_wrapper]``(
       executor_arg_t ,
       const executor_type & e,
@@ -63441,7 +63441,7 @@ Move construct from a different executor wrapper type.
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   ``[link asio.reference.executor_wrapper.executor_wrapper.overload8 executor_wrapper]``(
       executor_wrapper< U, OtherExecutor > && other);
   ``  [''''&raquo;''' [link asio.reference.executor_wrapper.executor_wrapper.overload8 more...]]``
@@ -63452,7 +63452,7 @@ Move construct from a different executor wrapper type, but specify a different e
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   ``[link asio.reference.executor_wrapper.executor_wrapper.overload9 executor_wrapper]``(
       executor_arg_t ,
       const executor_type & e,
@@ -63521,7 +63521,7 @@ Construct a copy of a different executor wrapper type.
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   executor_wrapper(
       const executor_wrapper< U, OtherExecutor > & other);
 
@@ -63541,7 +63541,7 @@ Construct a copy of a different executor wrapper type, but specify a different e
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   executor_wrapper(
       executor_arg_t ,
       const executor_type & e,
@@ -63595,7 +63595,7 @@ Move construct from a different executor wrapper type.
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   executor_wrapper(
       executor_wrapper< U, OtherExecutor > && other);
 
@@ -63613,7 +63613,7 @@ Move construct from a different executor wrapper type, but specify a different e
 
   template<
       typename U,
-      typename ``[link asio.reference.Executor OtherExecutor]``>
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   executor_wrapper(
       executor_arg_t ,
       const executor_type & e,
@@ -67946,7 +67946,7 @@ Helper function to obtain an object's associated executor.
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   associated_executor< T, Executor >::type ``[link asio.reference.get_associated_executor.overload2 get_associated_executor]``(
       const T & t,
       const Executor & ex,
@@ -68001,7 +68001,7 @@ Helper function to obtain an object's associated executor.
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   associated_executor< T, Executor >::type get_associated_executor(
       const T & t,
       const Executor & ex,
@@ -88701,7 +88701,7 @@ Create an [link asio.reference.executor_work `executor_work`]  object.
 
     
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor_work< Executor > ``[link asio.reference.make_work.overload1 make_work]``(
       const Executor & ex,
       typename enable_if< is_executor< Executor >::value >::type *  = 0);
@@ -88723,7 +88723,7 @@ Create an [link asio.reference.executor_work `executor_work`]  object.
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor_work< typename associated_executor< T, Executor >::type > ``[link asio.reference.make_work.overload4 make_work]``(
       const T & t,
       const Executor & ex,
@@ -88753,7 +88753,7 @@ Create an [link asio.reference.executor_work `executor_work`]  object.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor_work< Executor > make_work(
       const Executor & ex,
       typename enable_if< is_executor< Executor >::value >::type *  = 0);
@@ -88808,7 +88808,7 @@ Create an [link asio.reference.executor_work `executor_work`]  object.
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   executor_work< typename associated_executor< T, Executor >::type > make_work(
       const T & t,
       const Executor & ex,
@@ -95050,7 +95050,7 @@ Submits a completion token or function object for execution.
   ``  [''''&raquo;''' [link asio.reference.post.overload1 more...]]``
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename CompletionToken>
   ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` ``[link asio.reference.post.overload2 post]``(
       const Executor & ex,
@@ -95122,7 +95122,7 @@ Submits a completion token or function object for execution.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename CompletionToken>
   ``[link asio.reference.asynchronous_operations.return_type_of_an_initiating_function ['void-or-deduced]]`` post(
       const Executor & ex,
@@ -104181,7 +104181,7 @@ Start a new stackful coroutine.
 
   template<
       typename Function,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   void ``[link asio.reference.spawn.overload4 spawn]``(
       const Executor & ex,
       Function && function,
@@ -104191,7 +104191,7 @@ Start a new stackful coroutine.
 
   template<
       typename Function,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   void ``[link asio.reference.spawn.overload5 spawn]``(
       const strand< Executor > & ex,
       Function && function,
@@ -104390,7 +104390,7 @@ Start a new stackful coroutine that executes on a given executor.
 
   template<
       typename Function,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   void spawn(
       const Executor & ex,
       Function && function,
@@ -104433,7 +104433,7 @@ Start a new stackful coroutine that executes on a given strand.
 
   template<
       typename Function,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   void spawn(
       const strand< Executor > & ex,
       Function && function,
@@ -110067,7 +110067,7 @@ Provides serialised function invocation for any executor type.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   class strand
 
 
@@ -110381,7 +110381,7 @@ Converting assignment operator.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   strand & ``[link asio.reference.strand.operator_eq_.overload2 operator=]``(
       const strand< OtherExecutor > & other);
   ``  [''''&raquo;''' [link asio.reference.strand.operator_eq_.overload2 more...]]``
@@ -110399,7 +110399,7 @@ Converting move assignment operator.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   strand & ``[link asio.reference.strand.operator_eq_.overload4 operator=]``(
       const strand< OtherExecutor > && other);
   ``  [''''&raquo;''' [link asio.reference.strand.operator_eq_.overload4 more...]]``
@@ -110427,7 +110427,7 @@ Converting assignment operator.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   strand & operator=(
       const strand< OtherExecutor > & other);
 
@@ -110461,7 +110461,7 @@ Converting move assignment operator.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   strand & operator=(
       const strand< OtherExecutor > && other);
 
@@ -110588,7 +110588,7 @@ Converting constructor.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   ``[link asio.reference.strand.strand.overload4 strand]``(
       const strand< OtherExecutor > & other);
   ``  [''''&raquo;''' [link asio.reference.strand.strand.overload4 more...]]``
@@ -110606,7 +110606,7 @@ Converting move constructor.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   ``[link asio.reference.strand.strand.overload6 strand]``(
       strand< OtherExecutor > && other);
   ``  [''''&raquo;''' [link asio.reference.strand.strand.overload6 more...]]``
@@ -110665,7 +110665,7 @@ Converting constructor.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   strand(
       const strand< OtherExecutor > & other);
 
@@ -110699,7 +110699,7 @@ Converting move constructor.
 
 
   template<
-      class ``[link asio.reference.Executor OtherExecutor]``>
+      class ``[link asio.reference.Executor1 OtherExecutor]``>
   strand(
       strand< OtherExecutor > && other);
 
@@ -115082,7 +115082,7 @@ The [link asio.reference.uses_executor `uses_executor`] trait detects whether a 
 
   template<
       typename T,
-      typename ``[link asio.reference.Executor Executor]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   struct uses_executor
 
 
@@ -123030,7 +123030,7 @@ Associate an object of type `T` with an executor of type `Executor`.
 
     
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename T>
   executor_wrapper< typename decay< T >::type, Executor > ``[link asio.reference.wrap.overload1 wrap]``(
       const Executor & ex,
@@ -123061,7 +123061,7 @@ Associate an object of type `T` with an executor of type `Executor`.
 
 
   template<
-      typename ``[link asio.reference.Executor Executor]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename T>
   executor_wrapper< typename decay< T >::type, Executor > wrap(
       const Executor & ex,

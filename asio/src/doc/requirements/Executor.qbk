@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:Executor Executor requirements]
+[section:Executor1 Executor requirements]
 
 The library describes a standard set of requirements for ['executors]. A type
 meeting Executor requirements shall embody a set of rules for determining how

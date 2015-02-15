@@ -1475,6 +1475,9 @@
         <xsl:when test="declname = 'ExecutionContext'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Executor'">
+          <xsl:value-of select="concat('``[link asio.reference.Executor1 ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1491,7 +1494,7 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'OtherExecutor'">
-          <xsl:value-of select="concat('``[link asio.reference.Executor ', declname, ']``')"/>
+          <xsl:value-of select="concat('``[link asio.reference.Executor1 ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'OtherHandler'">
           <xsl:value-of select="declname"/>

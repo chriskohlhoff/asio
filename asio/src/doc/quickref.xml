@@ -116,7 +116,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.asynchronous_operations">Asynchronous operations</link></member>
             <member><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></member>
-            <member><link linkend="asio.reference.Executor">Executor</link></member>
+            <member><link linkend="asio.reference.Executor1">Executor</link></member>
             <member><link linkend="asio.reference.Handler">Handler</link></member>
             <member><link linkend="asio.reference.IoObjectService">IoObjectService</link></member>
             <member><link linkend="asio.reference.Service">Service</link></member>
