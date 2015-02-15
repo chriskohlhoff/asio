@@ -31,6 +31,7 @@
             <member><link linkend="asio.reference.execution_context">execution_context</link></member>
             <member><link linkend="asio.reference.execution_context__id">execution_context::id</link></member>
             <member><link linkend="asio.reference.execution_context__service">execution_context::service</link></member>
+            <member><link linkend="asio.reference.executor">executor</link></member>
             <member><link linkend="asio.reference.executor_arg_t">executor_arg_t</link></member>
             <member><link linkend="asio.reference.invalid_service_owner">invalid_service_owner</link></member>
             <member><link linkend="asio.reference.io_service">io_service</link></member>
@@ -155,6 +156,8 @@
             <member><link linkend="asio.reference.buffered_stream">buffered_stream</link></member>
             <member><link linkend="asio.reference.buffered_write_stream">buffered_write_stream</link></member>
             <member><link linkend="asio.reference.buffers_iterator">buffers_iterator</link></member>
+            <member><link linkend="asio.reference.dynamic_string_buffer">dynamic_string_buffer</link></member>
+            <member><link linkend="asio.reference.dynamic_vector_buffer">dynamic_vector_buffer</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -171,6 +174,7 @@
             <member><link linkend="asio.reference.buffer_size">buffer_size</link></member>
             <member><link linkend="asio.reference.buffers_begin">buffers_begin</link></member>
             <member><link linkend="asio.reference.buffers_end">buffers_end</link></member>
+            <member><link linkend="asio.reference.dynamic_buffer">dynamic_buffer</link></member>
             <member><link linkend="asio.reference.read">read</link></member>
             <member><link linkend="asio.reference.read_at">read_at</link></member>
             <member><link linkend="asio.reference.read_until">read_until</link></member>
@@ -201,6 +205,7 @@
             <member><link linkend="asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
             <member><link linkend="asio.reference.ConvertibleToConstBuffer">ConvertibleToConstBuffer</link></member>
             <member><link linkend="asio.reference.ConvertibleToMutableBuffer">ConvertibleToMutableBuffer</link></member>
+            <member><link linkend="asio.reference.DynamicBufferSequence">DynamicBufferSequence</link></member>
             <member><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
             <member><link linkend="asio.reference.ReadHandler">ReadHandler</link></member>
             <member><link linkend="asio.reference.SyncRandomAccessReadDevice">SyncRandomAccessReadDevice</link></member>
@@ -244,12 +249,18 @@
             <member><link linkend="asio.reference.generic__stream_protocol.iostream">generic::stream_protocol::iostream</link></member>
             <member><link linkend="asio.reference.generic__stream_protocol.socket">generic::stream_protocol::socket</link></member>
             <member><link linkend="asio.reference.ip__address">ip::address</link></member>
+            <member><link linkend="asio.reference.ip__address_iterator_v4">ip::address_iterator_v4</link></member>
+            <member><link linkend="asio.reference.ip__address_iterator_v6">ip::address_iterator_v6</link></member>
+            <member><link linkend="asio.reference.ip__address_range_v4">ip::address_range_v4</link></member>
+            <member><link linkend="asio.reference.ip__address_range_v6">ip::address_range_v6</link></member>
             <member><link linkend="asio.reference.ip__address_v4">ip::address_v4</link></member>
             <member><link linkend="asio.reference.ip__address_v6">ip::address_v6</link></member>
             <member><link linkend="asio.reference.ip__icmp">ip::icmp</link></member>
             <member><link linkend="asio.reference.ip__icmp.endpoint">ip::icmp::endpoint</link></member>
             <member><link linkend="asio.reference.ip__icmp.resolver">ip::icmp::resolver</link></member>
             <member><link linkend="asio.reference.ip__icmp.socket">ip::icmp::socket</link></member>
+            <member><link linkend="asio.reference.ip__network_v4">ip::network_v4</link></member>
+            <member><link linkend="asio.reference.ip__network_v6">ip::network_v6</link></member>
             <member><link linkend="asio.reference.ip__resolver_query_base">ip::resolver_query_base</link></member>
             <member><link linkend="asio.reference.ip__tcp">ip::tcp</link></member>
             <member><link linkend="asio.reference.ip__tcp.acceptor">ip::tcp::acceptor</link></member>
@@ -270,6 +281,11 @@
             <member><link linkend="asio.reference.async_connect">async_connect</link></member>
             <member><link linkend="asio.reference.connect">connect</link></member>
             <member><link linkend="asio.reference.ip__host_name">ip::host_name</link></member>
+            <member><link linkend="asio.reference.ip__address.make_address">ip::make_address</link></member>
+            <member><link linkend="asio.reference.ip__address_v4.make_address_v4">ip::make_address_v4</link></member>
+            <member><link linkend="asio.reference.ip__address_v6.make_address_v6">ip::make_address_v6</link></member>
+            <member><link linkend="asio.reference.ip__network_v4.make_network_v4">ip::make_network_v4</link></member>
+            <member><link linkend="asio.reference.ip__network_v6.make_network_v6">ip::make_network_v6</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
