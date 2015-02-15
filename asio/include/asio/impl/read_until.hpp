@@ -230,10 +230,10 @@ std::size_t read_until(SyncReadStream& s,
     // Determine the range of the data to be searched.
     typedef typename DynamicBufferSequence::const_buffers_type buffers_type;
     typedef buffers_iterator<buffers_type> iterator;
-    buffers_type buffers = b.data();
-    iterator begin = iterator::begin(buffers);
+    buffers_type data_buffers = b.data();
+    iterator begin = iterator::begin(data_buffers);
     iterator start_pos = begin + search_position;
-    iterator end = iterator::end(buffers);
+    iterator end = iterator::end(data_buffers);
 
     // Look for a match.
     boost::match_results<iterator,
@@ -476,10 +476,10 @@ namespace detail
             typedef typename DynamicBufferSequence::const_buffers_type
               buffers_type;
             typedef buffers_iterator<buffers_type> iterator;
-            buffers_type buffers = buffers_.data();
-            iterator begin = iterator::begin(buffers);
+            buffers_type data_buffers = buffers_.data();
+            iterator begin = iterator::begin(data_buffers);
             iterator start_pos = begin + search_position_;
-            iterator end = iterator::end(buffers);
+            iterator end = iterator::end(data_buffers);
 
             // Look for a match.
             iterator iter = std::find(start_pos, end, delim_);
@@ -718,10 +718,10 @@ namespace detail
             typedef typename DynamicBufferSequence::const_buffers_type
               buffers_type;
             typedef buffers_iterator<buffers_type> iterator;
-            buffers_type buffers = buffers_.data();
-            iterator begin = iterator::begin(buffers);
+            buffers_type data_buffers = buffers_.data();
+            iterator begin = iterator::begin(data_buffers);
             iterator start_pos = begin + search_position_;
-            iterator end = iterator::end(buffers);
+            iterator end = iterator::end(data_buffers);
 
             // Look for a match.
             std::pair<iterator, bool> result = detail::partial_search(
@@ -973,10 +973,10 @@ namespace detail
             typedef typename DynamicBufferSequence::const_buffers_type
               buffers_type;
             typedef buffers_iterator<buffers_type> iterator;
-            buffers_type buffers = buffers_.data();
-            iterator begin = iterator::begin(buffers);
+            buffers_type data_buffers = buffers_.data();
+            iterator begin = iterator::begin(data_buffers);
             iterator start_pos = begin + search_position_;
-            iterator end = iterator::end(buffers);
+            iterator end = iterator::end(data_buffers);
 
             // Look for a match.
             boost::match_results<iterator,
@@ -1232,10 +1232,10 @@ namespace detail
             typedef typename DynamicBufferSequence::const_buffers_type
               buffers_type;
             typedef buffers_iterator<buffers_type> iterator;
-            buffers_type buffers = buffers_.data();
-            iterator begin = iterator::begin(buffers);
+            buffers_type data_buffers = buffers_.data();
+            iterator begin = iterator::begin(data_buffers);
             iterator start_pos = begin + search_position_;
-            iterator end = iterator::end(buffers);
+            iterator end = iterator::end(data_buffers);
 
             // Look for a match.
             std::pair<iterator, bool> result = match_condition_(start_pos, end);

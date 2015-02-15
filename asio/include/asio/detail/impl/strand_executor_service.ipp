@@ -23,8 +23,8 @@
 namespace asio {
 namespace detail {
 
-strand_executor_service::strand_executor_service(execution_context& context)
-  : execution_context_service_base<strand_executor_service>(context),
+strand_executor_service::strand_executor_service(execution_context& ctx)
+  : execution_context_service_base<strand_executor_service>(ctx),
     mutex_(),
     salt_(0),
     impl_list_(0)
