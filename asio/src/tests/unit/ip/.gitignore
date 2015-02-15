@@ -8,8 +8,8 @@
 *.pdb
 *.tds
 address
-address_v4
-address_v6
+address*_v4
+address*_v6
 basic_endpoint
 basic_resolver
 basic_resolver_entry
@@ -18,6 +18,8 @@ basic_resolver_query
 host_name
 icmp
 multicast
+network_v4
+network_v6
 resolver_query_base
 resolver_service
 tcp

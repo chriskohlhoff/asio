@@ -218,6 +218,8 @@ public:
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
+  friend class address_iterator_v6;
+
   // The underlying IPv6 address.
   asio::detail::in6_addr_type addr_;
 

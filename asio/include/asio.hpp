@@ -64,6 +64,8 @@
 #include "asio/io_service.hpp"
 #include "asio/io_service_strand.hpp"
 #include "asio/ip/address.hpp"
+#include "asio/ip/address_iterator_v4.hpp"
+#include "asio/ip/address_range_v4.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v6.hpp"
 #include "asio/ip/bad_address_cast.hpp"
