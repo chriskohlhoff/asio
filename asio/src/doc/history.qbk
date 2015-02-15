@@ -7,6 +7,171 @@
 
 [section:history Revision History]
 
+[heading Asio 1.11.0]
+
+* Implemented changes to substantially reflect the Networking Library Proposal
+  ([@www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4370.html N4370]).
+
+  * New `Executor` type requirements and classes to support an executor
+    framework, including the `execution_context` base class, the
+    `executor_work` class for tracking outstanding work, and the `executor`
+    polymorphic wrapper. Free functions `dispatch()`, `post()` and `defer()`
+    have been added and are used to submit function objects to executors.
+
+  * Completion handlers now have an associated executor and associated
+    allocator. The free function `wrap()` is used to associate an executor with
+    a handler or other object. The handler hooks for allocation, invocation and
+    continuation have been deprecated.
+
+  * A `system_executor` class has been added as a default executor.
+
+  * The `io_service` class is now derived from `execution_context` and
+    implements the executor type requirements in its nested `executor_type`
+    class. The member functions `dispatch()`, `post()`, `defer()` and `wrap()`
+    have been deprecated. The `io_service::work` class has been deprecated.
+
+  * The `io_service` member function `reset()` has been renamed to `restart()`.
+    The old name is retained for backward compatibility but has been
+    deprecated.
+
+  * The `make_service<>()` function is now used to add a new service to an
+    execution context such as an `io_service`. The `add_service()` function has
+    been deprecated.
+
+  * A new `strand<>` template has been added to allow strand functionality to
+    be used with generic executor types.
+
+  * I/O objects (such as sockets and timers) now provide access to their
+    associated `io_service` via a `context()` member function. The
+    `get_io_service()` member function is deprecated.
+
+  * All asynchronous operations and executor operations now support move-only
+    handlers. However, the deprecated `io_service::post()`,
+    `io_service::dispatch()`, `io_service::strand::post()` and
+    `io_service::strand::dispatch()` functions still require copyable handlers.
+
+  * Waitable timer objects are now movable.
+
+  * Waitable timers, socket iostreams and socket streambufs now provide an
+    `expiry()` member function for obtaining the expiry time. The accessors
+    `expires_at()` and `expires_after()` have been deprecated, though those
+    names are retained for the mutating members.
+
+  * The `std::packaged_task` class template is now supported as a completion
+    handler. The initiating operation automatically returns the future
+    associated with the task. The `package()` function has been added as a
+    convenient factory for packaged tasks.
+
+  * Sockets, socket acceptors and descriptors now provide `wait()` and
+    `async_wait()` operations that may be used to wait for readiness. The
+    `null_buffers` type has been deprecated.
+
+  * The proposed error code enum classes are simulated using namespaces.
+    Existing asio error codes now have a correspondence with the standard error
+    conditions.
+
+  * Conversion between IP address types, and conversion from string to address,
+    is now supported via the `address_cast<>()`, `make_address()`,
+    `make_address_v4()` and `make_address_v6()` free functions. The
+    `from_string()`, `to_v4()`, `to_v6()` and `v4_mapped()` member functions
+    have been deprecated.
+
+  * A default-constructed `ip::address` now represents an invalid address value
+    that is neither IPv4 nor IPv6.
+
+  * New `buffer()` overloads that generate mutable buffers for non-const
+    `string` objects.
+
+  * Support for dynamic buffer sequences that automatically grow and shrink to
+    accomodate data as it is read or written. This is a generic facility
+    similar to the existing `asio::streambuf` class. This support includes:
+
+    * New `dynamic_string_buffer` and `dynamic_vector_buffer` adapter classes
+      that meet the `DynamicBufferSequence` type requirements.
+
+    * New `dynamic_buffer()` factory functions for creating a dynamic buffer
+      adapter for a `vector` or `string`.
+
+    * New overloads for the `read()`, `async_read()`, `write()` and
+      `async_write()`, `read_until()` and `async_read_until()` free functions
+      that directly support dynamic buffer sequences.
+
+  * Support for networks and address ranges. Thanks go to Oliver Kowalke for
+    contributing to the design and providing the implementation on which this
+    facility is based. The following new classes have been added:
+
+    * `address_iterator_v4` for iterating across IPv4 addresses
+    * `address_iterator_v6` for iterating across IPv6 addresses
+    * `address_range_v4` to represent a range of IPv4 addresses
+    * `address_range_v6` to represent a range of IPv6 addresses
+    * `network_v4` for manipulating IPv4 CIDR addresses, e.g. 1.2.3.0/24
+    * `network_v6` for manipulating IPv6 CIDR addresses, e.g. ffe0:/120
+
+  * New convenience headers in [^<asio/ts/*.hpp>] that correspond to the headers
+    in the proposal.
+
+* Added a new, executor-aware `thread_pool` class.
+
+* Changed `spawn()` to be executor-aware.
+
+* Added a new `spawn()` overload that takes only a function object.
+
+* Changed `spawn()` and `yield_context` to permit nested calls to the
+  completion handler.
+
+* Removed previously deprecated functions.
+
+* Added options for disabling TLS v1.1 and v1.2.
+
+* Changed the SSL wrapper to call the password callback when loading an
+  in-memory key.
+
+* Changed the tutorial to use `std::endl` to ensure output is flushed.
+
+* Fixed false SSL error reports by ensuring that the SSL error queue is cleared
+  prior to each operation.
+
+* Fixed an `ssl::stream<>` bug that may result in spurious 'short read' errors.
+
+* Enabled perfect forwarding for the first `ssl::stream<>` constructor argument.
+
+* Added standalone Asio support for Clang when used with libstdc++ and C++11.
+
+* Fixed an unsigned integer overflow reported by Clang's integer sanitizer.
+
+* Added support for move-only return types when using a `yield_context` object
+  with asynchronous operations.
+
+* Ensured errors generated by Windows' `ConnectEx` function are mapped to their
+  portable equivalents.
+
+* Changed multicast test to treat certain `join_group` failures as non-fatal.
+
+[heading Asio 1.10.5]
+
+* Fixed the [^kqueue] reactor so that it works on FreeBSD.
+
+* Fixed an issue in the [^kqueue] reactor which resulted in spinning when using
+  serial ports on Mac OS.
+
+* Fixed [^kqueue] reactor support for read-only file descriptors.
+
+* Fixed a compile error when using the [^/dev/poll] reactor.
+
+* Changed the Windows backend to use `WSASocketW`, as `WSASocketA` has been
+  deprecated.
+
+* Fixed some warnings reported by Visual C++ 2013.
+
+* Fixed integer type used in the WinRT version of the byte-order conversion
+  functions.
+
+* Changed documentation to indicate that `use_future` and `spawn()` are not
+  made available when including the `asio.hpp` convenience header.
+
+* Explicitly marked `asio::strand` as deprecated. Use
+  `asio::io_service::strand` instead.
+
 [heading Asio 1.10.4]
 
 * Stopped using certain Winsock functions that are marked as deprecated in the
@@ -129,7 +294,7 @@
   * Microsoft Visual Studio 2012
 
   * Linux with g++ 4.7 or 4.8 (requires [^-std=c++11])
-    
+
   * Mac OS X with clang++ / Xcode 4.6 (requires [^-std=c++11 -stdlib=libc++])
 
 * Fixed a regression (introduced in 1.10.0) where, on some platforms, errors
@@ -252,7 +417,7 @@
   the following platforms and compilers:
 
   * Linux with g++ 4.7 (requires [^-std=c++11])
-    
+
   * Mac OS X with clang++ / Xcode 4.6 (requires [^-std=c++11 -stdlib=libc++])
 
 * Various SSL enhancements. Thanks go to Nick Jones, on whose work these changes
@@ -413,15 +578,15 @@
 * Implemented various performance improvements, including:
 
   * Using thread-local operation queues in single-threaded use cases (i.e. when
-    `concurrency_hint` is 1) to eliminate a lock/unlock pair. 
+    `concurrency_hint` is 1) to eliminate a lock/unlock pair.
 
   * Allowing some `epoll_reactor` speculative operations to be performed
-    without holding the lock. 
+    without holding the lock.
 
   * Improving locality of reference by performing an `epoll_reactor`'s I/O
     operation immediately before the corresponding handler is called. This also
     improves scalability across CPUs when multiple threads are running the
-    `io_service`. 
+    `io_service`.
 
   * Specialising asynchronous read and write operations for buffer sequences
     that are arrays (`boost::array` or `std::array`) of exactly two buffers.
@@ -593,7 +758,7 @@
   `std::system_error::what()` correctly.
 
 * Modified the `buffers_iterator<>` and `ip::basic_resolver_iterator` classes
-  so that the value_type typedefs are non-const byte types. 
+  so that the value_type typedefs are non-const byte types.
 
 [heading Asio 1.5.0]
 
@@ -776,7 +941,7 @@
 * Improved multiprocessor scalability on Windows by using a dedicated hidden
   thread to wait for timers.
 
-* Improved performance of `asio::streambuf` with `async_read()` and 
+* Improved performance of `asio::streambuf` with `async_read()` and
   `async_read_until()`. These read operations now use the existing capacity of
   the `streambuf` when reading, rather than limiting the read to 512 bytes.
 
@@ -803,7 +968,7 @@
   composed read or write operation.
 
 * Added missing operator+ overload in `buffers_iterator`.
-  
+
 * Implemented cancellation of `null_buffers` operations on Windows.
 
 [heading Asio 1.4.5]
