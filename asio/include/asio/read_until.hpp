@@ -1051,7 +1051,7 @@ std::size_t read_until(SyncReadStream& s,
  *   if (!e)
  *   {
  *     std::string line = data.substr(0, n);
- *     data.erase(0, n); @endcode
+ *     data.erase(0, n);
  *     ...
  *   }
  * }
