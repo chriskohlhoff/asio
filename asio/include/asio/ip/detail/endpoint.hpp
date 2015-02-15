@@ -111,6 +111,12 @@ public:
     return data_.base.sa_family == ASIO_OS_DEF(AF_INET);
   }
 
+  // Determine whether the endpoint is IPv6.
+  bool is_v6() const
+  {
+    return data_.base.sa_family == ASIO_OS_DEF(AF_INET6);
+  }
+
 #if !defined(ASIO_NO_IOSTREAM)
   // Convert to a string.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;

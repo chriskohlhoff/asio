@@ -30,7 +30,7 @@ namespace asio {
 namespace ip {
 
 address::address()
-  : type_(ipv4),
+  : type_(none),
     ipv4_address_(),
     ipv6_address_()
 {
@@ -158,46 +158,81 @@ asio::ip::address_v6 address::to_v6() const
 
 std::string address::to_string() const
 {
-  if (type_ == ipv6)
+  switch (type_)
+  {
+  case ipv4:
+    return ipv4_address_.to_string();
+  case ipv6:
     return ipv6_address_.to_string();
-  return ipv4_address_.to_string();
+  default:
+    bad_address_cast ex;
+    asio::detail::throw_exception(ex);
+    return std::string();
+  }
 }
 
 std::string address::to_string(asio::error_code& ec) const
 {
-  if (type_ == ipv6)
+  switch (type_)
+  {
+  case ipv4:
+    return ipv4_address_.to_string(ec);
+  case ipv6:
     return ipv6_address_.to_string(ec);
-  return ipv4_address_.to_string(ec);
+  default:
+    ec = asio::error::invalid_argument;
+    return std::string();
+  }
 }
 
 bool address::is_loopback() const
 {
-  return (type_ == ipv4)
-    ? ipv4_address_.is_loopback()
-    : ipv6_address_.is_loopback();
+  switch (type_)
+  {
+  case ipv4:
+    return ipv4_address_.is_loopback();
+  case ipv6:
+    return ipv6_address_.is_loopback();
+  default:
+    return false;
+  }
 }
 
 bool address::is_unspecified() const
 {
-  return (type_ == ipv4)
-    ? ipv4_address_.is_unspecified()
-    : ipv6_address_.is_unspecified();
+  switch (type_)
+  {
+  case ipv4:
+    return ipv4_address_.is_unspecified();
+  case ipv6:
+    return ipv6_address_.is_unspecified();
+  default:
+    return false;
+  }
 }
 
 bool address::is_multicast() const
 {
-  return (type_ == ipv4)
-    ? ipv4_address_.is_multicast()
-    : ipv6_address_.is_multicast();
+  switch (type_)
+  {
+  case ipv4:
+    return ipv4_address_.is_multicast();
+  case ipv6:
+    return ipv6_address_.is_multicast();
+  default:
+    return false;
+  }
 }
 
 bool operator==(const address& a1, const address& a2)
 {
   if (a1.type_ != a2.type_)
     return false;
+  if (a1.type_ == address::ipv4)
+    return a1.ipv4_address_ == a2.ipv4_address_;
   if (a1.type_ == address::ipv6)
     return a1.ipv6_address_ == a2.ipv6_address_;
-  return a1.ipv4_address_ == a2.ipv4_address_;
+  return true;
 }
 
 bool operator<(const address& a1, const address& a2)
@@ -206,9 +241,11 @@ bool operator<(const address& a1, const address& a2)
     return true;
   if (a1.type_ > a2.type_)
     return false;
+  if (a1.type_ == address::ipv4)
+    return a1.ipv4_address_ < a2.ipv4_address_;
   if (a1.type_ == address::ipv6)
     return a1.ipv6_address_ < a2.ipv6_address_;
-  return a1.ipv4_address_ < a2.ipv4_address_;
+  return false;
 }
 
 } // namespace ip

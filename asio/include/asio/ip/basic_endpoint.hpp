@@ -124,9 +124,9 @@ public:
   /// The protocol associated with the endpoint.
   protocol_type protocol() const
   {
-    if (impl_.is_v4())
-      return InternetProtocol::v4();
-    return InternetProtocol::v6();
+    if (impl_.is_v6())
+      return InternetProtocol::v6();
+    return InternetProtocol::v4();
   }
 
   /// Get the underlying endpoint in the native type.
