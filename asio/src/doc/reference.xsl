@@ -51,6 +51,7 @@
 [include requirements/ConvertibleToMutableBuffer.qbk]
 [include requirements/DatagramSocketService.qbk]
 [include requirements/DescriptorService.qbk]
+[include requirements/DynamicBufferSequence.qbk]
 [include requirements/Endpoint.qbk]
 [include requirements/Executor.qbk]
 [include requirements/GettableSerialPortOption.qbk]
