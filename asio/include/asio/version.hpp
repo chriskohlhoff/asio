@@ -18,6 +18,6 @@
 // ASIO_VERSION % 100 is the sub-minor version
 // ASIO_VERSION / 100 % 1000 is the minor version
 // ASIO_VERSION / 100000 is the major version
-#define ASIO_VERSION 101100 // 1.11.0
+#define ASIO_VERSION 101004 // 1.10.4
 
 #endif // ASIO_VERSION_HPP
