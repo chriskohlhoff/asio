@@ -146,6 +146,11 @@ enum basic_errors
   /// Protocol not available.
   no_protocol_option = ASIO_SOCKET_ERROR(ENOPROTOOPT),
 
+  /// No such device.
+  no_such_device = ASIO_WIN_OR_POSIX(
+      ASIO_NATIVE_ERROR(ERROR_BAD_UNIT),
+      ASIO_NATIVE_ERROR(ENODEV)),
+
   /// Transport endpoint is not connected.
   not_connected = ASIO_SOCKET_ERROR(ENOTCONN),
 
