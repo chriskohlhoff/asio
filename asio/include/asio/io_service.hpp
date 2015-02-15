@@ -616,7 +616,8 @@ template <> struct is_executor<io_service::executor_type> : true_type {};
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 
-/// Class to inform the io_service when it has work to do.
+/// (Deprecated: Use executor_work.) Class to inform the io_service when it has
+/// work to do.
 /**
  * The work class is used to inform the io_service when work starts and
  * finishes. This ensures that the io_service object's run() function will not
