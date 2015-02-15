@@ -220,7 +220,9 @@ public:
         }
 
         default:
-        if (bytes_transferred != ~std::size_t(0) && !ec_)
+        if (bytes_transferred == ~std::size_t(0))
+          bytes_transferred = 0; // Timer cancellation, no data transferred.
+        else if (!ec_)
           ec_ = ec;
 
         switch (want_)
