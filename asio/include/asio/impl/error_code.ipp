@@ -168,6 +168,8 @@ public:
       return std::errc::operation_not_permitted;
     case no_protocol_option:
       return std::errc::no_protocol_option;
+    case no_such_device:
+      return std::errc::no_such_device;
     case not_connected:
       return std::errc::not_connected;
     case not_socket:

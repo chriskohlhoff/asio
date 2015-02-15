@@ -165,30 +165,34 @@ void test()
   {
     ip::multicast::join_group join_group(multicast_address_v4);
     sock_v4.set_option(join_group, ec);
-    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    ASIO_CHECK_MESSAGE(!ec || ec == error::no_such_device,
+                       ec.value() << ", " << ec.message());
+
+    if (!ec)
+    {
+      // leave_group class.
+
+      ip::multicast::leave_group leave_group(multicast_address_v4);
+      sock_v4.set_option(leave_group, ec);
+      ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    }
   }
 
   if (have_v6)
   {
     ip::multicast::join_group join_group(multicast_address_v6);
     sock_v6.set_option(join_group, ec);
-    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-  }
+    ASIO_CHECK_MESSAGE(!ec || ec == error::no_such_device,
+                       ec.value() << ", " << ec.message());
 
-  // leave_group class.
+    if (!ec)
+    {
+      // leave_group class.
 
-  if (have_v4)
-  {
-    ip::multicast::leave_group leave_group(multicast_address_v4);
-    sock_v4.set_option(leave_group, ec);
-    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
-  }
-
-  if (have_v6)
-  {
-    ip::multicast::leave_group leave_group(multicast_address_v6);
-    sock_v6.set_option(leave_group, ec);
-    ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+      ip::multicast::leave_group leave_group(multicast_address_v6);
+      sock_v6.set_option(leave_group, ec);
+      ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
+    }
   }
 
   // outbound_interface class.
