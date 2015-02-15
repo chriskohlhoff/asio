@@ -769,7 +769,8 @@ namespace detail
       : stream_(other.stream_),
         buffers_(ASIO_MOVE_CAST(DynamicBufferSequence)(other.buffers_)),
         completion_condition_(
-          ASIO_MOVE_CAST(CompletionCondition)(other.completion_condition_)),
+          ASIO_MOVE_CAST(CompletionCondition)(
+            other.completion_condition_)),
         handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
     }
