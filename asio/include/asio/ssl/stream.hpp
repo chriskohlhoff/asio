@@ -80,6 +80,7 @@ public:
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Construct a stream.
   /**
    * This constructor creates a stream and initialises the underlying stream
@@ -90,12 +91,21 @@ public:
    * @param ctx The SSL context to be used for the stream.
    */
   template <typename Arg>
+  stream(Arg&& arg, context& ctx)
+    : next_layer_(ASIO_MOVE_CAST(Arg)(arg)),
+      core_(ctx.native_handle(),
+          next_layer_.lowest_layer().get_executor().context())
+  {
+  }
+#else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  template <typename Arg>
   stream(Arg& arg, context& ctx)
     : next_layer_(arg),
       core_(ctx.native_handle(),
           next_layer_.lowest_layer().get_executor().context())
   {
   }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
   ~stream()
