@@ -19,6 +19,7 @@
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/async_result.hpp"
+#include "asio/detail/atomic_count.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -41,6 +42,7 @@ namespace detail {
       : coro_(ctx.coro_.lock()),
         ca_(ctx.ca_),
         handler_(ctx.handler_),
+        ready_(0),
         ec_(ctx.ec_),
         value_(0)
     {
@@ -50,20 +52,23 @@ namespace detail {
     {
       *ec_ = asio::error_code();
       *value_ = ASIO_MOVE_CAST(T)(value);
-      (*coro_)();
+      if (--*ready_ == 0)
+        (*coro_)();
     }
 
     void operator()(asio::error_code ec, T value)
     {
       *ec_ = ec;
       *value_ = ASIO_MOVE_CAST(T)(value);
-      (*coro_)();
+      if (--*ready_ == 0)
+        (*coro_)();
     }
 
   //private:
     shared_ptr<typename basic_yield_context<Handler>::callee_type> coro_;
     typename basic_yield_context<Handler>::caller_type& ca_;
     Handler handler_;
+    atomic_count* ready_;
     asio::error_code* ec_;
     T* value_;
   };
@@ -76,6 +81,7 @@ namespace detail {
       : coro_(ctx.coro_.lock()),
         ca_(ctx.ca_),
         handler_(ctx.handler_),
+        ready_(0),
         ec_(ctx.ec_)
     {
     }
@@ -83,19 +89,22 @@ namespace detail {
     void operator()()
     {
       *ec_ = asio::error_code();
-      (*coro_)();
+      if (--*ready_ == 0)
+        (*coro_)();
     }
 
     void operator()(asio::error_code ec)
     {
       *ec_ = ec;
-      (*coro_)();
+      if (--*ready_ == 0)
+        (*coro_)();
     }
 
   //private:
     shared_ptr<typename basic_yield_context<Handler>::callee_type> coro_;
     typename basic_yield_context<Handler>::caller_type& ca_;
     Handler handler_;
+    atomic_count* ready_;
     asio::error_code* ec_;
   };
 
@@ -175,8 +184,10 @@ public:
 
   explicit async_result(detail::coro_handler<Handler, T>& h)
     : handler_(h),
-      ca_(h.ca_)
+      ca_(h.ca_),
+      ready_(2)
   {
+    h.ready_ = &ready_;
     out_ec_ = h.ec_;
     if (!out_ec_) h.ec_ = &ec_;
     h.value_ = &value_;
@@ -185,7 +196,8 @@ public:
   type get()
   {
     handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
-    ca_();
+    if (--ready_ != 0)
+      ca_();
     if (!out_ec_ && ec_) throw asio::system_error(ec_);
     return ASIO_MOVE_CAST(type)(value_);
   }
@@ -193,6 +205,7 @@ public:
 private:
   detail::coro_handler<Handler, T>& handler_;
   typename basic_yield_context<Handler>::caller_type& ca_;
+  detail::atomic_count ready_;
   asio::error_code* out_ec_;
   asio::error_code ec_;
   type value_;
@@ -206,8 +219,10 @@ public:
 
   explicit async_result(detail::coro_handler<Handler, void>& h)
     : handler_(h),
-      ca_(h.ca_)
+      ca_(h.ca_),
+      ready_(2)
   {
+    h.ready_ = &ready_;
     out_ec_ = h.ec_;
     if (!out_ec_) h.ec_ = &ec_;
   }
@@ -215,13 +230,15 @@ public:
   void get()
   {
     handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
-    ca_();
+    if (--ready_ != 0)
+      ca_();
     if (!out_ec_ && ec_) throw asio::system_error(ec_);
   }
 
 private:
   detail::coro_handler<Handler, void>& handler_;
   typename basic_yield_context<Handler>::caller_type& ca_;
+  detail::atomic_count ready_;
   asio::error_code* out_ec_;
   asio::error_code ec_;
 };
