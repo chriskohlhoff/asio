@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+#if defined(ASIO_CUSTOM_HANDLER_TRACKING)
+# include ASIO_CUSTOM_HANDLER_TRACKING
+#elif defined(ASIO_ENABLE_HANDLER_TRACKING)
 # include "asio/error_code.hpp"
 # include "asio/detail/cstdint.hpp"
 # include "asio/detail/static_mutex.hpp"
@@ -29,7 +31,19 @@
 namespace asio {
 namespace detail {
 
-#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+#if defined(ASIO_CUSTOM_HANDLER_TRACKING)
+
+// The user-specified header must define the following macros:
+// - ASIO_INHERIT_TRACKED_HANDLER
+// - ASIO_ALSO_INHERIT_TRACKED_HANDLER
+// - ASIO_HANDLER_TRACKING_INIT
+// - ASIO_HANDLER_CREATION(args)
+// - ASIO_HANDLER_COMPLETION(args)
+// - ASIO_HANDLER_INVOCATION_BEGIN(args)
+// - ASIO_HANDLER_INVOCATION_END
+// - ASIO_HANDLER_OPERATION(args)
+
+#elif defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 class handler_tracking
 {

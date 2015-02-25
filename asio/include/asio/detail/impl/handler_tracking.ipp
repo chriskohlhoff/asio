@@ -17,7 +17,11 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+#if defined(ASIO_CUSTOM_HANDLER_TRACKING)
+
+// The handler tracking implementation is provided by the user-specified header.
+
+#elif defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 #include <cstdarg>
 #include <cstdio>
