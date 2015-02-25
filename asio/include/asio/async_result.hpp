@@ -66,7 +66,7 @@ struct async_completion
    */
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   explicit async_completion(
-      typename remove_reference<Handler>::type& orig_handler)
+      Handler& orig_handler)
     : handler(static_cast<typename conditional<
         is_same<Handler, handler_type>::value,
         handler_type&, Handler&&>::type>(orig_handler)),
