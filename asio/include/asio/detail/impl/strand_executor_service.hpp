@@ -121,7 +121,7 @@ void strand_executor_service::dispatch(const implementation_type& impl,
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((p.p, "strand_executor", this, "dispatch"));
+  ASIO_HANDLER_CREATION((p.p, "strand_executor", impl.get(), "dispatch"));
 
   // Add the function to the strand and schedule the strand if required.
   bool first = enqueue(impl, p.p);
@@ -149,7 +149,7 @@ void strand_executor_service::post(const implementation_type& impl,
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((p.p, "strand_executor", this, "post"));
+  ASIO_HANDLER_CREATION((p.p, "strand_executor", impl.get(), "post"));
 
   // Add the function to the strand and schedule the strand if required.
   bool first = enqueue(impl, p.p);
@@ -177,7 +177,7 @@ void strand_executor_service::defer(const implementation_type& impl,
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((p.p, "strand_executor", this, "defer"));
+  ASIO_HANDLER_CREATION((p.p, "strand_executor", impl.get(), "defer"));
 
   // Add the function to the strand and schedule the strand if required.
   bool first = enqueue(impl, p.p);
