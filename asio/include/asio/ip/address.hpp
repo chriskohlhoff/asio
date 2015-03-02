@@ -179,7 +179,7 @@ private:
   }
 
   // The type of the address.
-  enum { none, ipv4, ipv6 } type_;
+  enum { ipv4, ipv6 } type_;
 
   // The underlying IPv4 address.
   asio::ip::address_v4 ipv4_address_;
