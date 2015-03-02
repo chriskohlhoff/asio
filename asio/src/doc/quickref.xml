@@ -346,6 +346,7 @@
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.AcceptableProtocol">AcceptableProtocol</link></member>
             <member><link linkend="asio.reference.AcceptHandler">AcceptHandler</link></member>
             <member><link linkend="asio.reference.ComposedConnectHandler">ComposedConnectHandler</link></member>
             <member><link linkend="asio.reference.ConnectHandler">ConnectHandler</link></member>

@@ -29,7 +29,8 @@ namespace detail {
 
 reactive_socket_service_base::reactive_socket_service_base(
     asio::io_service& io_service)
-  : reactor_(use_service<reactor>(io_service))
+  : io_service_(io_service),
+    reactor_(use_service<reactor>(io_service))
 {
   reactor_.init_task();
 }

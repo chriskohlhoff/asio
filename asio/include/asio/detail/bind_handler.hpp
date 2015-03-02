@@ -220,6 +220,132 @@ inline binder2<Handler, Arg1, Arg2> bind_handler(
       ASIO_MOVE_CAST(Handler)(handler), arg1, arg2);
 }
 
+#if defined(ASIO_HAS_MOVE)
+
+template <typename Handler, typename Arg1>
+class move_binder1
+{
+public:
+  move_binder1(int, ASIO_MOVE_ARG(Handler) handler,
+      ASIO_MOVE_ARG(Arg1) arg1)
+    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      arg1_(ASIO_MOVE_CAST(Arg1)(arg1))
+  {
+  }
+
+  move_binder1(move_binder1&& other)
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_))
+  {
+  }
+
+  void operator()()
+  {
+    handler_(ASIO_MOVE_CAST(Arg1)(arg1_));
+  }
+
+//private:
+  Handler handler_;
+  Arg1 arg1_;
+};
+
+template <typename Handler, typename Arg1>
+inline void* asio_handler_allocate(std::size_t size,
+    move_binder1<Handler, Arg1>* this_handler)
+{
+  return asio_handler_alloc_helpers::allocate(
+      size, this_handler->handler_);
+}
+
+template <typename Handler, typename Arg1>
+inline void asio_handler_deallocate(void* pointer, std::size_t size,
+    move_binder1<Handler, Arg1>* this_handler)
+{
+  asio_handler_alloc_helpers::deallocate(
+      pointer, size, this_handler->handler_);
+}
+
+template <typename Handler, typename Arg1>
+inline bool asio_handler_is_continuation(
+    move_binder1<Handler, Arg1>* this_handler)
+{
+  return asio_handler_cont_helpers::is_continuation(
+      this_handler->handler_);
+}
+
+template <typename Function, typename Handler, typename Arg1>
+inline void asio_handler_invoke(ASIO_MOVE_ARG(Function) function,
+    move_binder1<Handler, Arg1>* this_handler)
+{
+  asio_handler_invoke_helpers::invoke(
+      ASIO_MOVE_CAST(Function)(function), this_handler->handler_);
+}
+
+template <typename Handler, typename Arg1, typename Arg2>
+class move_binder2
+{
+public:
+  move_binder2(int, ASIO_MOVE_ARG(Handler) handler,
+      const Arg1& arg1, ASIO_MOVE_ARG(Arg2) arg2)
+    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      arg1_(arg1),
+      arg2_(ASIO_MOVE_CAST(Arg2)(arg2))
+  {
+  }
+
+  move_binder2(move_binder2&& other)
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      arg1_(ASIO_MOVE_CAST(Arg1)(other.arg1_)),
+      arg2_(ASIO_MOVE_CAST(Arg2)(other.arg2_))
+  {
+  }
+
+  void operator()()
+  {
+    handler_(static_cast<const Arg1&>(arg1_),
+        ASIO_MOVE_CAST(Arg2)(arg2_));
+  }
+
+//private:
+  Handler handler_;
+  Arg1 arg1_;
+  Arg2 arg2_;
+};
+
+template <typename Handler, typename Arg1, typename Arg2>
+inline void* asio_handler_allocate(std::size_t size,
+    move_binder2<Handler, Arg1, Arg2>* this_handler)
+{
+  return asio_handler_alloc_helpers::allocate(
+      size, this_handler->handler_);
+}
+
+template <typename Handler, typename Arg1, typename Arg2>
+inline void asio_handler_deallocate(void* pointer, std::size_t size,
+    move_binder2<Handler, Arg1, Arg2>* this_handler)
+{
+  asio_handler_alloc_helpers::deallocate(
+      pointer, size, this_handler->handler_);
+}
+
+template <typename Handler, typename Arg1, typename Arg2>
+inline bool asio_handler_is_continuation(
+    move_binder2<Handler, Arg1, Arg2>* this_handler)
+{
+  return asio_handler_cont_helpers::is_continuation(
+      this_handler->handler_);
+}
+
+template <typename Function, typename Handler, typename Arg1, typename Arg2>
+inline void asio_handler_invoke(ASIO_MOVE_ARG(Function) function,
+    move_binder2<Handler, Arg1, Arg2>* this_handler)
+{
+  asio_handler_invoke_helpers::invoke(
+      ASIO_MOVE_CAST(Function)(function), this_handler->handler_);
+}
+
+#endif // defined(ASIO_HAS_MOVE)
+
 } // namespace detail
 
 template <typename Handler, typename Arg1, typename Allocator>
@@ -269,6 +395,59 @@ struct associated_executor<detail::binder2<Handler, Arg1, Arg2>, Executor>
     return associated_executor<Handler, Executor>::get(h.handler_, ex);
   }
 };
+
+#if defined(ASIO_HAS_MOVE)
+
+template <typename Handler, typename Arg1, typename Allocator>
+struct associated_allocator<detail::move_binder1<Handler, Arg1>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::move_binder1<Handler, Arg1>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Allocator>
+struct associated_allocator<
+    detail::move_binder2<Handler, Arg1, Arg2>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const detail::move_binder2<Handler, Arg1, Arg2>& h,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Executor>
+struct associated_executor<detail::move_binder1<Handler, Arg1>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::move_binder1<Handler, Arg1>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
+template <typename Handler, typename Arg1, typename Arg2, typename Executor>
+struct associated_executor<detail::move_binder2<Handler, Arg1, Arg2>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const detail::move_binder2<Handler, Arg1, Arg2>& h,
+      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
+#endif // defined(ASIO_HAS_MOVE)
 
 } // namespace asio
 

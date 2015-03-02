@@ -130,6 +130,70 @@ private:
   Handler handler_;
 };
 
+#if defined(ASIO_HAS_MOVE)
+
+template <typename Protocol, typename Handler>
+class reactive_socket_move_accept_op :
+  private Protocol::socket,
+  public reactive_socket_accept_op_base<typename Protocol::socket, Protocol>
+{
+public:
+  ASIO_DEFINE_HANDLER_PTR(reactive_socket_move_accept_op);
+
+  reactive_socket_move_accept_op(io_service& ios, socket_type socket,
+      socket_ops::state_type state, const Protocol& protocol,
+      typename Protocol::endpoint* peer_endpoint, Handler& handler)
+    : Protocol::socket(ios),
+      reactive_socket_accept_op_base<typename Protocol::socket, Protocol>(
+        socket, state, *this, protocol, peer_endpoint,
+        &reactive_socket_move_accept_op::do_complete),
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
+  {
+    handler_work<Handler>::start(handler_);
+  }
+
+  static void do_complete(void* owner, operation* base,
+      const asio::error_code& /*ec*/,
+      std::size_t /*bytes_transferred*/)
+  {
+    // Take ownership of the handler object.
+    reactive_socket_move_accept_op* o(
+        static_cast<reactive_socket_move_accept_op*>(base));
+    ptr p = { asio::detail::addressof(o->handler_), o, o };
+    typename Protocol::socket peer(
+        ASIO_MOVE_CAST(typename Protocol::socket)(*o));
+    handler_work<Handler> w(o->handler_);
+
+    ASIO_HANDLER_COMPLETION((o));
+
+    // Make a copy of the handler so that the memory can be deallocated before
+    // the upcall is made. Even if we're not about to make an upcall, a
+    // sub-object of the handler may be the true owner of the memory associated
+    // with the handler. Consequently, a local copy of the handler is required
+    // to ensure that any owning sub-object remains valid until after we have
+    // deallocated the memory here.
+    detail::move_binder2<Handler, asio::error_code, typename Protocol::socket>
+      handler(0, ASIO_MOVE_CAST(Handler)(o->handler_), o->ec_,
+        ASIO_MOVE_CAST(typename Protocol::socket)(peer));
+    p.h = asio::detail::addressof(handler.handler_);
+    p.reset();
+
+    // Make the upcall if required.
+    if (owner)
+    {
+      fenced_block b(fenced_block::half);
+      ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
+      w.complete(handler, handler.handler_);
+      ASIO_HANDLER_INVOCATION_END;
+    }
+  }
+
+private:
+  Handler handler_;
+};
+
+#endif // defined(ASIO_HAS_MOVE)
+
 } // namespace detail
 } // namespace asio
 

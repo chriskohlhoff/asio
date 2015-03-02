@@ -490,6 +490,9 @@ protected:
       reactor_op* op, bool is_continuation,
       const socket_addr_type* addr, size_t addrlen);
 
+  // The io_service that owns this socket service.
+  io_service& io_service_;
+
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;
 };

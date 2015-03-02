@@ -37,6 +37,7 @@
 [xinclude quickref.xml]
 
 [include requirements/asynchronous_operations.qbk]
+[include requirements/AcceptableProtocol.qbk]
 [include requirements/AcceptHandler.qbk]
 [include requirements/AsyncRandomAccessReadDevice.qbk]
 [include requirements/AsyncRandomAccessWriteDevice.qbk]

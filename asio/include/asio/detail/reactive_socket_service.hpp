@@ -388,8 +388,33 @@ public:
     return ec;
   }
 
-  // Start an asynchronous accept. The peer and peer_endpoint objects
-  // must be valid until the accept's handler is invoked.
+  // Accept a new connection.
+  typename Protocol::socket accept(implementation_type& impl,
+      io_service* peer_io_service, endpoint_type* peer_endpoint,
+      asio::error_code& ec)
+  {
+    typename Protocol::socket peer(
+        peer_io_service ? *peer_io_service : io_service_);
+
+    std::size_t addr_len = peer_endpoint ? peer_endpoint->capacity() : 0;
+    socket_holder new_socket(socket_ops::sync_accept(impl.socket_,
+          impl.state_, peer_endpoint ? peer_endpoint->data() : 0,
+          peer_endpoint ? &addr_len : 0, ec));
+
+    // On success, assign new connection to peer socket object.
+    if (new_socket.get() != invalid_socket)
+    {
+      if (peer_endpoint)
+        peer_endpoint->resize(addr_len);
+      if (!peer.assign(impl.protocol_, new_socket.get(), ec))
+        new_socket.release();
+    }
+
+    return peer;
+  }
+
+  // Start an asynchronous accept. The peer and peer_endpoint objects must be
+  // valid until the accept's handler is invoked.
   template <typename Socket, typename Handler>
   void async_accept(implementation_type& impl, Socket& peer,
       endpoint_type* peer_endpoint, Handler& handler)
@@ -409,6 +434,30 @@ public:
     start_accept_op(impl, p.p, is_continuation, peer.is_open());
     p.v = p.p = 0;
   }
+
+#if defined(ASIO_HAS_MOVE)
+  // Start an asynchronous accept. The peer_endpoint object must be valid until
+  // the accept's handler is invoked.
+  template <typename Handler>
+  void async_accept(implementation_type& impl,
+      endpoint_type* peer_endpoint, Handler& handler)
+  {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef reactive_socket_move_accept_op<Protocol, Handler> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(io_service_, impl.socket_, impl.state_,
+        impl.protocol_, peer_endpoint, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
+
+    start_accept_op(impl, p.p, is_continuation, false);
+    p.v = p.p = 0;
+  }
+#endif // defined(ASIO_HAS_MOVE)
 
   // Connect the socket to the specified endpoint.
   asio::error_code connect(implementation_type& impl,
