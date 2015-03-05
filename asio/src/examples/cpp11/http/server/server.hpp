@@ -54,9 +54,6 @@ private:
   /// The connection manager which owns all live connections.
   connection_manager connection_manager_;
 
-  /// The next socket to be accepted.
-  asio::ip::tcp::socket socket_;
-
   /// The handler for all incoming requests.
   request_handler request_handler_;
 };

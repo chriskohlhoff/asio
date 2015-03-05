@@ -160,8 +160,6 @@ public:
     reactive_socket_move_accept_op* o(
         static_cast<reactive_socket_move_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    typename Protocol::socket peer(
-        ASIO_MOVE_CAST(typename Protocol::socket)(*o));
     handler_work<Handler> w(o->handler_);
 
     ASIO_HANDLER_COMPLETION((o));
@@ -172,9 +170,10 @@ public:
     // with the handler. Consequently, a local copy of the handler is required
     // to ensure that any owning sub-object remains valid until after we have
     // deallocated the memory here.
-    detail::move_binder2<Handler, asio::error_code, typename Protocol::socket>
-      handler(0, ASIO_MOVE_CAST(Handler)(o->handler_), o->ec_,
-        ASIO_MOVE_CAST(typename Protocol::socket)(peer));
+    detail::move_binder2<Handler,
+      asio::error_code, typename Protocol::socket>
+        handler(0, ASIO_MOVE_CAST(Handler)(o->handler_), o->ec_,
+          ASIO_MOVE_CAST(typename Protocol::socket)(*o));
     p.h = asio::detail::addressof(handler.handler_);
     p.reset();
 

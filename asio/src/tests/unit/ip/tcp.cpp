@@ -700,6 +700,17 @@ private:
 #endif // defined(ASIO_HAS_MOVE)
 };
 
+#if defined(ASIO_HAS_MOVE)
+struct move_accept_handler
+{
+  move_accept_handler() {}
+  void operator()(const asio::error_code&, asio::ip::tcp::socket) {}
+  move_accept_handler(move_accept_handler&&) {}
+private:
+  move_accept_handler(const move_accept_handler&) {}
+};
+#endif // defined(ASIO_HAS_MOVE)
+
 void test()
 {
   using namespace asio;
@@ -822,12 +833,27 @@ void test()
     acceptor1.accept(peer_socket, peer_endpoint);
     acceptor1.accept(peer_socket, peer_endpoint, ec);
 
+#if defined(ASIO_HAS_MOVE)
+    peer_socket = acceptor1.accept();
+    peer_socket = acceptor1.accept(ios);
+    peer_socket = acceptor1.accept(peer_endpoint);
+    peer_socket = acceptor1.accept(ios, peer_endpoint);
+    (void)peer_socket;
+#endif // defined(ASIO_HAS_MOVE)
+
     acceptor1.async_accept(peer_socket, accept_handler());
     acceptor1.async_accept(peer_socket, peer_endpoint, accept_handler());
     int i2 = acceptor1.async_accept(peer_socket, lazy);
     (void)i2;
     int i3 = acceptor1.async_accept(peer_socket, peer_endpoint, lazy);
     (void)i3;
+
+#if defined(ASIO_HAS_MOVE)
+    acceptor1.async_accept(move_accept_handler());
+    acceptor1.async_accept(ios, move_accept_handler());
+    acceptor1.async_accept(peer_endpoint, move_accept_handler());
+    acceptor1.async_accept(ios, peer_endpoint, move_accept_handler());
+#endif // defined(ASIO_HAS_MOVE)
   }
   catch (std::exception&)
   {

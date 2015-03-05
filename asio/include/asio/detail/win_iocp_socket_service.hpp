@@ -457,13 +457,14 @@ public:
     return ec;
   }
 
+#if defined(ASIO_HAS_MOVE)
   // Accept a new connection.
   typename Protocol::socket accept(implementation_type& impl,
       io_service* peer_io_service, endpoint_type* peer_endpoint,
       asio::error_code& ec)
   {
     typename Protocol::socket peer(
-        peer_io_service ? *peer_io_service : get_io_service());
+        peer_io_service ? *peer_io_service : io_service_);
 
     std::size_t addr_len = peer_endpoint ? peer_endpoint->capacity() : 0;
     socket_holder new_socket(socket_ops::sync_accept(impl.socket_,
@@ -479,8 +480,9 @@ public:
         new_socket.release();
     }
 
-    return ec;
+    return peer;
   }
+#endif // defined(ASIO_HAS_MOVE)
 
   // Start an asynchronous accept. The peer and peer_endpoint objects
   // must be valid until the accept's handler is invoked.
@@ -505,6 +507,34 @@ public:
         p.p->address_length(), p.p);
     p.v = p.p = 0;
   }
+
+#if defined(ASIO_HAS_MOVE)
+  // Start an asynchronous accept. The peer and peer_endpoint objects
+  // must be valid until the accept's handler is invoked.
+  template <typename Handler>
+  void async_accept(implementation_type& impl,
+      asio::io_service* peer_io_service,
+      endpoint_type* peer_endpoint, Handler& handler)
+  {
+    // Allocate and construct an operation to wrap the handler.
+    typedef win_iocp_socket_move_accept_op<protocol_type, Handler> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    bool enable_connection_aborted =
+      (impl.state_ & socket_ops::enable_connection_aborted) != 0;
+    p.p = new (p.v) op(*this, impl.socket_, impl.protocol_,
+        peer_io_service ? *peer_io_service : io_service_,
+        peer_endpoint, enable_connection_aborted, handler);
+
+    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
+
+    start_accept_op(impl, false, p.p->new_socket(),
+        impl.protocol_.family(), impl.protocol_.type(),
+        impl.protocol_.protocol(), p.p->output_buffer(),
+        p.p->address_length(), p.p);
+    p.v = p.p = 0;
+  }
+#endif // defined(ASIO_HAS_MOVE)
 
   // Connect the socket to the specified endpoint.
   asio::error_code connect(implementation_type& impl,

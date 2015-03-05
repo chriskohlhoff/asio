@@ -388,6 +388,7 @@ public:
     return ec;
   }
 
+#if defined(ASIO_HAS_MOVE)
   // Accept a new connection.
   typename Protocol::socket accept(implementation_type& impl,
       io_service* peer_io_service, endpoint_type* peer_endpoint,
@@ -412,6 +413,7 @@ public:
 
     return peer;
   }
+#endif // defined(ASIO_HAS_MOVE)
 
   // Start an asynchronous accept. The peer and peer_endpoint objects must be
   // valid until the accept's handler is invoked.
@@ -440,6 +442,7 @@ public:
   // the accept's handler is invoked.
   template <typename Handler>
   void async_accept(implementation_type& impl,
+      asio::io_service* peer_io_service,
       endpoint_type* peer_endpoint, Handler& handler)
   {
     bool is_continuation =
@@ -449,8 +452,8 @@ public:
     typedef reactive_socket_move_accept_op<Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(io_service_, impl.socket_, impl.state_,
-        impl.protocol_, peer_endpoint, handler);
+    p.p = new (p.v) op(peer_io_service ? *peer_io_service : io_service_,
+        impl.socket_, impl.state_, impl.protocol_, peer_endpoint, handler);
 
     ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
 

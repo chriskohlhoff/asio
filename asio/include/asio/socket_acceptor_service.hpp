@@ -310,13 +310,14 @@ public:
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(implementation_type& impl,
-      endpoint_type* peer_endpoint,
+      asio::io_service* peer_io_service, endpoint_type* peer_endpoint,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
     async_completion<MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket)> init(handler);
 
-    service_impl_.async_accept(impl, peer_endpoint, init.handler);
+    service_impl_.async_accept(impl,
+        peer_io_service, peer_endpoint, init.handler);
 
     return init.result.get();
   }

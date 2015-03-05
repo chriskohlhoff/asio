@@ -21,7 +21,6 @@ server::server(const std::string& address, const std::string& port,
     signals_(io_service_),
     acceptor_(io_service_),
     connection_manager_(),
-    socket_(io_service_),
     request_handler_(doc_root)
 {
   // Register to handle the signals that indicate when the server should exit.
@@ -57,8 +56,8 @@ void server::run()
 
 void server::do_accept()
 {
-  acceptor_.async_accept(socket_,
-      [this](std::error_code ec)
+  acceptor_.async_accept(
+      [this](std::error_code ec, asio::ip::tcp::socket socket)
       {
         // Check whether the server was stopped by a signal before this
         // completion handler had a chance to run.
@@ -70,7 +69,7 @@ void server::do_accept()
         if (!ec)
         {
           connection_manager_.start(std::make_shared<connection>(
-              std::move(socket_), connection_manager_, request_handler_));
+              std::move(socket), connection_manager_, request_handler_));
         }
 
         do_accept();
