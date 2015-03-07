@@ -55,7 +55,7 @@ ASIO_DECL address_v6 network_v6::network() const ASIO_NOEXCEPT
   return address_v6(bytes, address_.scope_id());
 }
 
-address_range_v6 network_v6::hosts() const ASIO_NOEXCEPT
+address_v6_range network_v6::hosts() const ASIO_NOEXCEPT
 {
   address_v6::bytes_type begin_bytes(address_.to_bytes());
   address_v6::bytes_type end_bytes(address_.to_bytes());
@@ -72,9 +72,9 @@ address_range_v6 network_v6::hosts() const ASIO_NOEXCEPT
       end_bytes[i] |= 0xFF >> (prefix_length_ % 8);
     }
   }
-  return address_range_v6(
-      address_iterator_v6(address_v6(begin_bytes, address_.scope_id())),
-      ++address_iterator_v6(address_v6(end_bytes, address_.scope_id())));
+  return address_v6_range(
+      address_v6_iterator(address_v6(begin_bytes, address_.scope_id())),
+      ++address_v6_iterator(address_v6(end_bytes, address_.scope_id())));
 }
 
 bool network_v6::is_subnet_of(const network_v6& other) const

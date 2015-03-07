@@ -53,7 +53,7 @@ void test()
     ip::address_v6 addr3 = net1.network();
     (void)addr3;
 
-    ip::address_range_v6 hosts = net1.hosts();
+    ip::address_v6_range hosts = net1.hosts();
     (void)hosts;
 
     ip::network_v6 net3 = net1.canonical();

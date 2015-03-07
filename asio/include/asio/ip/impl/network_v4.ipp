@@ -101,11 +101,11 @@ address_v4 network_v4::netmask() const ASIO_NOEXCEPT
   return address_v4(nmbits);
 }
 
-address_range_v4 network_v4::hosts() const ASIO_NOEXCEPT
+address_v4_range network_v4::hosts() const ASIO_NOEXCEPT
 {
   return is_host()
-    ? address_range_v4(address_, address_v4(address_.to_ulong() + 1))
-    : address_range_v4(address_v4(network().to_ulong() + 1), broadcast());
+    ? address_v4_range(address_, address_v4(address_.to_ulong() + 1))
+    : address_v4_range(address_v4(network().to_ulong() + 1), broadcast());
 }
 
 bool network_v4::is_subnet_of(const network_v4& other) const

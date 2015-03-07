@@ -19,7 +19,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/error_code.hpp"
-#include "asio/ip/address_range_v6.hpp"
+#include "asio/ip/address_v6_range.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -100,7 +100,7 @@ public:
   ASIO_DECL address_v6 network() const ASIO_NOEXCEPT;
 
   /// Obtain an address range corresponding to the hosts in the network.
-  ASIO_DECL address_range_v6 hosts() const ASIO_NOEXCEPT;
+  ASIO_DECL address_v6_range hosts() const ASIO_NOEXCEPT;
 
   /// Obtain the true network address, omitting any host bits.
   network_v6 canonical() const ASIO_NOEXCEPT

@@ -321,12 +321,12 @@ nobase_include_HEADERS = \
 	asio/io_service_strand.hpp \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
-	asio/ip/address_iterator_v4.hpp \
-	asio/ip/address_iterator_v6.hpp \
-	asio/ip/address_range_v4.hpp \
-	asio/ip/address_range_v6.hpp \
 	asio/ip/address_v4.hpp \
+	asio/ip/address_v4_iterator.hpp \
+	asio/ip/address_v4_range.hpp \
 	asio/ip/address_v6.hpp \
+	asio/ip/address_v6_iterator.hpp \
+	asio/ip/address_v6_range.hpp \
 	asio/ip/bad_address_cast.hpp \
 	asio/ip/basic_endpoint.hpp \
 	asio/ip/basic_resolver_entry.hpp \

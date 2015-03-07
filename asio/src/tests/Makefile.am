@@ -40,12 +40,12 @@ check_PROGRAMS = \
 	unit/high_resolution_timer \
 	unit/io_service \
 	unit/ip/address \
-	unit/ip/address_iterator_v4 \
-	unit/ip/address_iterator_v6 \
-	unit/ip/address_range_v4 \
-	unit/ip/address_range_v6 \
 	unit/ip/address_v4 \
+	unit/ip/address_v4_iterator \
+	unit/ip/address_v4_range \
 	unit/ip/address_v6 \
+	unit/ip/address_v6_iterator \
+	unit/ip/address_v6_range \
 	unit/ip/basic_endpoint \
 	unit/ip/basic_resolver \
 	unit/ip/basic_resolver_entry \
@@ -153,12 +153,12 @@ TESTS = \
 	unit/high_resolution_timer \
 	unit/io_service \
 	unit/ip/address \
-	unit/ip/address_iterator_v4 \
-	unit/ip/address_iterator_v6 \
-	unit/ip/address_range_v4 \
-	unit/ip/address_range_v6 \
 	unit/ip/address_v4 \
+	unit/ip/address_v4_iterator \
+	unit/ip/address_v4_range \
 	unit/ip/address_v6 \
+	unit/ip/address_v6_iterator \
+	unit/ip/address_v6_range \
 	unit/ip/basic_endpoint \
 	unit/ip/basic_resolver \
 	unit/ip/basic_resolver_entry \
@@ -279,12 +279,12 @@ unit_generic_stream_protocol_SOURCES = unit/generic/stream_protocol.cpp unit/uni
 unit_high_resolution_timer_SOURCES = unit/high_resolution_timer.cpp unit/unit_test.cpp
 unit_io_service_SOURCES = unit/io_service.cpp unit/unit_test.cpp
 unit_ip_address_SOURCES = unit/ip/address.cpp unit/unit_test.cpp
-unit_ip_address_iterator_v4_SOURCES = unit/ip/address_iterator_v4.cpp unit/unit_test.cpp
-unit_ip_address_iterator_v6_SOURCES = unit/ip/address_iterator_v6.cpp unit/unit_test.cpp
-unit_ip_address_range_v4_SOURCES = unit/ip/address_range_v4.cpp unit/unit_test.cpp
-unit_ip_address_range_v6_SOURCES = unit/ip/address_range_v6.cpp unit/unit_test.cpp
 unit_ip_address_v4_SOURCES = unit/ip/address_v4.cpp unit/unit_test.cpp
+unit_ip_address_v4_iterator_SOURCES = unit/ip/address_v4_iterator.cpp unit/unit_test.cpp
+unit_ip_address_v4_range_SOURCES = unit/ip/address_v4_range.cpp unit/unit_test.cpp
 unit_ip_address_v6_SOURCES = unit/ip/address_v6.cpp unit/unit_test.cpp
+unit_ip_address_v6_iterator_SOURCES = unit/ip/address_v6_iterator.cpp unit/unit_test.cpp
+unit_ip_address_v6_range_SOURCES = unit/ip/address_v6_range.cpp unit/unit_test.cpp
 unit_ip_basic_endpoint_SOURCES = unit/ip/basic_endpoint.cpp unit/unit_test.cpp
 unit_ip_basic_resolver_SOURCES = unit/ip/basic_resolver.cpp unit/unit_test.cpp
 unit_ip_basic_resolver_entry_SOURCES = unit/ip/basic_resolver_entry.cpp unit/unit_test.cpp

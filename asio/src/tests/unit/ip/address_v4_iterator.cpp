@@ -1,6 +1,6 @@
 //
-// address_range_v4.cpp
-// ~~~~~~~~~~~~~~~~~~~~
+// address_v4_iterator.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,7 +14,7 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/ip/address_range_v4.hpp"
+#include "asio/ip/address_v4_iterator.hpp"
 
 #include "../unit_test.hpp"
 
@@ -22,6 +22,6 @@
 
 ASIO_TEST_SUITE
 (
-  "ip/address_range_v4",
+  "ip/address_v4_iterator",
   ASIO_TEST_CASE(null_test)
 )

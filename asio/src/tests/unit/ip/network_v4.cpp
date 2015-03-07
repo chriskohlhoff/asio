@@ -60,7 +60,7 @@ void test()
     ip::address_v4 addr4 = net1.broadcast();
     (void)addr4;
 
-    ip::address_range_v4 hosts = net1.hosts();
+    ip::address_v4_range hosts = net1.hosts();
     (void)hosts;
 
     ip::network_v4 net3 = net1.canonical();

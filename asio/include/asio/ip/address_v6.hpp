@@ -32,6 +32,8 @@
 namespace asio {
 namespace ip {
 
+template <typename> class basic_address_iterator;
+
 /// Implements IP version 6 style addresses.
 /**
  * The asio::ip::address_v6 class provides the ability to use and
@@ -218,7 +220,7 @@ public:
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
-  friend class address_iterator_v6;
+  friend class basic_address_iterator<address_v6>;
 
   // The underlying IPv6 address.
   asio::detail::in6_addr_type addr_;
