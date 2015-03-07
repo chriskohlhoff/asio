@@ -249,12 +249,12 @@
             <member><link linkend="asio.reference.generic__stream_protocol.iostream">generic::stream_protocol::iostream</link></member>
             <member><link linkend="asio.reference.generic__stream_protocol.socket">generic::stream_protocol::socket</link></member>
             <member><link linkend="asio.reference.ip__address">ip::address</link></member>
-            <member><link linkend="asio.reference.ip__address_iterator_v4">ip::address_iterator_v4</link></member>
-            <member><link linkend="asio.reference.ip__address_iterator_v6">ip::address_iterator_v6</link></member>
-            <member><link linkend="asio.reference.ip__address_range_v4">ip::address_range_v4</link></member>
-            <member><link linkend="asio.reference.ip__address_range_v6">ip::address_range_v6</link></member>
             <member><link linkend="asio.reference.ip__address_v4">ip::address_v4</link></member>
+            <member><link linkend="asio.reference.ip__address_v4_iterator">ip::address_v4_iterator</link></member>
+            <member><link linkend="asio.reference.ip__address_v4_range">ip::address_v4_range</link></member>
             <member><link linkend="asio.reference.ip__address_v6">ip::address_v6</link></member>
+            <member><link linkend="asio.reference.ip__address_v6_iterator">ip::address_v6_iterator</link></member>
+            <member><link linkend="asio.reference.ip__address_v6_range">ip::address_v6_range</link></member>
             <member><link linkend="asio.reference.ip__icmp">ip::icmp</link></member>
             <member><link linkend="asio.reference.ip__icmp.endpoint">ip::icmp::endpoint</link></member>
             <member><link linkend="asio.reference.ip__icmp.resolver">ip::icmp::resolver</link></member>
