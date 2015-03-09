@@ -152,7 +152,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((p.p, "signal_set", &impl, "async_wait"));
+    ASIO_HANDLER_CREATION((io_service_.context(),
+          *p.p, "signal_set", &impl, "async_wait"));
 
     start_wait_op(impl, p.p);
     p.v = p.p = 0;

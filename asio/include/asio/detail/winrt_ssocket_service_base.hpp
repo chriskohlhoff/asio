@@ -202,7 +202,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send"));
+    ASIO_HANDLER_CREATION((io_service_.context(),
+          *p.p, "socket", &impl, "async_send"));
 
     start_send_op(impl,
         buffer_sequence_adapter<asio::const_buffer,
@@ -257,7 +258,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive"));
+    ASIO_HANDLER_CREATION((io_service_.context(),
+          *p.p, "socket", &impl, "async_receive"));
 
     start_receive_op(impl,
         buffer_sequence_adapter<asio::mutable_buffer,

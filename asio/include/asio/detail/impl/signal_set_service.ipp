@@ -437,7 +437,8 @@ asio::error_code signal_set_service::cancel(
     signal_set_service::implementation_type& impl,
     asio::error_code& ec)
 {
-  ASIO_HANDLER_OPERATION(("signal_set", &impl, "cancel"));
+  ASIO_HANDLER_OPERATION((io_service_.context(),
+        "signal_set", &impl, "cancel"));
 
   op_queue<operation> ops;
   {

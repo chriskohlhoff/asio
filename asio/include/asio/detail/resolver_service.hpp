@@ -79,7 +79,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl, query, io_service_impl_, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "resolver", &impl, "async_resolve"));
+    ASIO_HANDLER_CREATION((io_service_impl_.context(),
+          *p.p, "resolver", &impl, "async_resolve"));
 
     start_resolve_op(p.p);
     p.v = p.p = 0;
@@ -110,7 +111,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl, endpoint, io_service_impl_, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "resolver", &impl, "async_resolve"));
+    ASIO_HANDLER_CREATION((io_service_impl_.context(),
+          *p.p, "resolver", &impl, "async_resolve"));
 
     start_resolve_op(p.p);
     p.v = p.p = 0;

@@ -65,7 +65,7 @@ public:
     ptr p = { asio::detail::addressof(o->handler_), o, o };
     handler_work<Handler> w(o->handler_);
 
-    ASIO_HANDLER_COMPLETION((o));
+    ASIO_HANDLER_COMPLETION((*o));
 
     iterator_type iterator = iterator_type();
     if (!o->ec_)

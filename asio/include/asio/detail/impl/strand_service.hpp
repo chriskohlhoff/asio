@@ -68,7 +68,8 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
     op::ptr::allocate(handler), 0 };
   p.p = new (p.v) op(handler);
 
-  ASIO_HANDLER_CREATION((p.p, "strand", impl, "dispatch"));
+  ASIO_HANDLER_CREATION((this->context(),
+        *p.p, "strand", impl, "dispatch"));
 
   bool dispatch_immediately = do_dispatch(impl, p.p);
   operation* o = p.p;
@@ -102,7 +103,8 @@ void strand_service::post(strand_service::implementation_type& impl,
     op::ptr::allocate(handler), 0 };
   p.p = new (p.v) op(handler);
 
-  ASIO_HANDLER_CREATION((p.p, "strand", impl, "post"));
+  ASIO_HANDLER_CREATION((this->context(),
+        *p.p, "strand", impl, "post"));
 
   do_post(impl, p.p, is_continuation);
   p.v = p.p = 0;

@@ -99,13 +99,14 @@ void handler_tracking::init()
     state->current_completion_ = new tss_ptr<completion>;
 }
 
-void handler_tracking::creation(handler_tracking::tracked_handler* h,
+void handler_tracking::creation(execution_context&,
+    handler_tracking::tracked_handler& h,
     const char* object_type, void* object, const char* op_name)
 {
   static tracking_state* state = get_state();
 
   static_mutex::scoped_lock lock(state->mutex_);
-  h->id_ = state->next_id_++;
+  h.id_ = state->next_id_++;
   lock.unlock();
 
   handler_tracking_timestamp timestamp;
@@ -121,11 +122,12 @@ void handler_tracking::creation(handler_tracking::tracked_handler* h,
       "@asio|%llu.%06llu|%llu*%llu|%.20s@%p.%.50s\n",
 #endif // defined(ASIO_WINDOWS)
       timestamp.seconds, timestamp.microseconds,
-      current_id, h->id_, object_type, object, op_name);
+      current_id, h.id_, object_type, object, op_name);
 }
 
-handler_tracking::completion::completion(handler_tracking::tracked_handler* h)
-  : id_(h->id_),
+handler_tracking::completion::completion(
+    const handler_tracking::tracked_handler& h)
+  : id_(h.id_),
     invoked_(false),
     next_(*get_state()->current_completion_)
 {
@@ -253,8 +255,8 @@ void handler_tracking::completion::invocation_end()
   }
 }
 
-void handler_tracking::operation(const char* object_type,
-    void* object, const char* op_name)
+void handler_tracking::operation(execution_context&,
+    const char* object_type, void* object, const char* op_name)
 {
   static tracking_state* state = get_state();
 

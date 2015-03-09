@@ -56,7 +56,7 @@ public:
     ptr p = { asio::detail::addressof(o->handler_), o, o };
     handler_work<Handler> w(o->handler_);
 
-    ASIO_HANDLER_COMPLETION((o));
+    ASIO_HANDLER_COMPLETION((*o));
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
     if (owner)

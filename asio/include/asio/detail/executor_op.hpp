@@ -48,7 +48,7 @@ public:
     executor_op* o(static_cast<executor_op*>(base));
     ptr p = { o->allocator_, o, o };
 
-    ASIO_HANDLER_COMPLETION((o));
+    ASIO_HANDLER_COMPLETION((*o));
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a

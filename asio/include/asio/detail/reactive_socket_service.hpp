@@ -238,7 +238,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.socket_, buffers, destination, flags, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send_to"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_send_to"));
 
     start_op(impl, reactor::write_op, p.p, is_continuation, true, false);
     p.v = p.p = 0;
@@ -258,8 +259,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket",
-          &impl, "async_send_to(null_buffers)"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_send_to(null_buffers)"));
 
     start_op(impl, reactor::write_op, p.p, is_continuation, false, false);
     p.v = p.p = 0;
@@ -321,8 +322,8 @@ public:
     p.p = new (p.v) op(impl.socket_, protocol,
         buffers, sender_endpoint, flags, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket",
-          &impl, "async_receive_from"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_receive_from"));
 
     start_op(impl,
         (flags & socket_base::message_out_of_band)
@@ -346,8 +347,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket",
-          &impl, "async_receive_from(null_buffers)"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_receive_from(null_buffers)"));
 
     // Reset endpoint since it can be given no sensible value at this time.
     sender_endpoint = endpoint_type();
@@ -431,7 +432,8 @@ public:
     p.p = new (p.v) op(impl.socket_, impl.state_, peer,
         impl.protocol_, peer_endpoint, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_accept"));
 
     start_accept_op(impl, p.p, is_continuation, peer.is_open());
     p.v = p.p = 0;
@@ -455,7 +457,8 @@ public:
     p.p = new (p.v) op(peer_io_service ? *peer_io_service : io_service_,
         impl.socket_, impl.state_, impl.protocol_, peer_endpoint, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_accept"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_accept"));
 
     start_accept_op(impl, p.p, is_continuation, false);
     p.v = p.p = 0;
@@ -485,7 +488,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl.socket_, handler);
 
-    ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
+    ASIO_HANDLER_CREATION((reactor_.context(),
+          *p.p, "socket", &impl, "async_connect"));
 
     start_connect_op(impl, p.p, is_continuation,
         peer_endpoint.data(), peer_endpoint.size());

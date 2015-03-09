@@ -199,7 +199,8 @@ asio::error_code win_iocp_handle_service::close(
 {
   if (is_open(impl))
   {
-    ASIO_HANDLER_OPERATION(("handle", &impl, "close"));
+    ASIO_HANDLER_OPERATION((iocp_service_.context(),
+          "handle", &impl, "close"));
 
     if (!::CloseHandle(impl.handle_))
     {
@@ -233,7 +234,8 @@ asio::error_code win_iocp_handle_service::cancel(
     return ec;
   }
 
-  ASIO_HANDLER_OPERATION(("handle", &impl, "cancel"));
+  ASIO_HANDLER_OPERATION((iocp_service_.context(),
+        "handle", &impl, "cancel"));
 
   if (FARPROC cancel_io_ex_ptr = ::GetProcAddress(
         ::GetModuleHandleA("KERNEL32"), "CancelIoEx"))
@@ -507,7 +509,8 @@ void win_iocp_handle_service::close_for_destruction(implementation_type& impl)
 {
   if (is_open(impl))
   {
-    ASIO_HANDLER_OPERATION(("handle", &impl, "close"));
+    ASIO_HANDLER_OPERATION((iocp_service_.context(),
+          "handle", &impl, "close"));
 
     ::CloseHandle(impl.handle_);
     impl.handle_ = INVALID_HANDLE_VALUE;

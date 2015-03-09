@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+namespace asio { class execution_context; }
+
 #if defined(ASIO_CUSTOM_HANDLER_TRACKING)
 # include ASIO_CUSTOM_HANDLER_TRACKING
 #elif defined(ASIO_ENABLE_HANDLER_TRACKING)
@@ -71,14 +73,15 @@ public:
   ASIO_DECL static void init();
 
   // Record the creation of a tracked handler.
-  ASIO_DECL static void creation(tracked_handler* h,
+  ASIO_DECL static void creation(
+      execution_context& context, tracked_handler& h,
       const char* object_type, void* object, const char* op_name);
 
   class completion
   {
   public:
     // Constructor records that handler is to be invoked with no arguments.
-    ASIO_DECL explicit completion(tracked_handler* h);
+    ASIO_DECL explicit completion(const tracked_handler& h);
 
     // Destructor records only when an exception is thrown from the handler, or
     // if the memory is being freed without the handler having been invoked.
@@ -113,8 +116,8 @@ public:
   };
 
   // Record an operation that affects pending handlers.
-  ASIO_DECL static void operation(const char* object_type,
-      void* object, const char* op_name);
+  ASIO_DECL static void operation(execution_context& context,
+      const char* object_type, void* object, const char* op_name);
 
   // Write a line of output.
   ASIO_DECL static void write_line(const char* format, ...);

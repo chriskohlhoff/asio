@@ -66,7 +66,7 @@ public:
     ptr p = { asio::detail::addressof(o->handler_), o, o };
     handler_work<Handler> w(o->handler_);
 
-    ASIO_HANDLER_COMPLETION((o));
+    ASIO_HANDLER_COMPLETION((*o));
 
     // The reactor may have stored a result in the operation object.
     if (o->ec_)
