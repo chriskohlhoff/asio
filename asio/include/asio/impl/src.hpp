@@ -74,6 +74,7 @@
 #include "asio/ip/impl/address_v6.ipp"
 #include "asio/ip/impl/host_name.ipp"
 #include "asio/ip/impl/network_v4.ipp"
+#include "asio/ip/impl/network_v6.ipp"
 #include "asio/ip/detail/impl/endpoint.ipp"
 #include "asio/local/detail/impl/endpoint.ipp"
 
