@@ -61,6 +61,9 @@ public:
     if (result && !o->ec_)
       o->sender_endpoint_.resize(addr_len);
 
+    ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_recvfrom",
+          o->ec_, o->bytes_transferred_));
+
     return result;
   }
 

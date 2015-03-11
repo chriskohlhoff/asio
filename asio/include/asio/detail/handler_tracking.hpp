@@ -44,6 +44,7 @@ namespace detail {
 // - ASIO_HANDLER_INVOCATION_BEGIN(args)
 // - ASIO_HANDLER_INVOCATION_END
 // - ASIO_HANDLER_OPERATION(args)
+// - ASIO_HANDLER_REACTOR_OPERATION(args)
 
 #elif defined(ASIO_ENABLE_HANDLER_TRACKING)
 
@@ -116,10 +117,20 @@ public:
     completion* next_;
   };
 
-  // Record an operation that affects pending handlers.
+  // Record an operation that is not directly associated with a handler.
   ASIO_DECL static void operation(execution_context& context,
       const char* object_type, void* object,
       uintmax_t native_handle, const char* op_name);
+
+  // Record a reactor-based operation that is associated with a handler.
+  ASIO_DECL static void reactor_operation(
+      const tracked_handler& h, const char* op_name,
+      const asio::error_code& ec);
+
+  // Record a reactor-based operation that is associated with a handler.
+  ASIO_DECL static void reactor_operation(
+      const tracked_handler& h, const char* op_name,
+      const asio::error_code& ec, std::size_t bytes_transferred);
 
   // Write a line of output.
   ASIO_DECL static void write_line(const char* format, ...);
@@ -153,6 +164,9 @@ private:
 # define ASIO_HANDLER_OPERATION(args) \
   asio::detail::handler_tracking::operation args
 
+# define ASIO_HANDLER_REACTOR_OPERATION(args) \
+  asio::detail::handler_tracking::reactor_operation args
+
 #else // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 # define ASIO_INHERIT_TRACKED_HANDLER
@@ -163,6 +177,7 @@ private:
 # define ASIO_HANDLER_INVOCATION_BEGIN(args) (void)0
 # define ASIO_HANDLER_INVOCATION_END (void)0
 # define ASIO_HANDLER_OPERATION(args) (void)0
+# define ASIO_HANDLER_REACTOR_OPERATION(args) (void)0
 
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 

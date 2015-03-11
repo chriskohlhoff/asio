@@ -56,6 +56,8 @@ public:
           o->state_, o->peer_endpoint_ ? o->peer_endpoint_->data() : 0,
           o->peer_endpoint_ ? &addrlen : 0, o->ec_, new_socket);
 
+    ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_accept", o->ec_));
+
     // On success, assign new connection to peer socket object.
     if (new_socket != invalid_socket)
     {

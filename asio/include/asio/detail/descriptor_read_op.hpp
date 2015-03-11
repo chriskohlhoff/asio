@@ -51,8 +51,13 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(o->buffers_);
 
-    return descriptor_ops::non_blocking_read(o->descriptor_,
+    bool result = descriptor_ops::non_blocking_read(o->descriptor_,
         bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_);
+
+    ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_read",
+          o->ec_, o->bytes_transferred_));
+
+    return result;
   }
 
 private:

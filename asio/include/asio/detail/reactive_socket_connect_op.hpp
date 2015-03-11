@@ -42,7 +42,11 @@ public:
     reactive_socket_connect_op_base* o(
         static_cast<reactive_socket_connect_op_base*>(base));
 
-    return socket_ops::non_blocking_connect(o->socket_, o->ec_);
+    bool result = socket_ops::non_blocking_connect(o->socket_, o->ec_);
+
+    ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_connect", o->ec_));
+
+    return result;
   }
 
 private:

@@ -51,10 +51,15 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(o->buffers_);
 
-    return socket_ops::non_blocking_recv(o->socket_,
+    bool result = socket_ops::non_blocking_recv(o->socket_,
         bufs.buffers(), bufs.count(), o->flags_,
         (o->state_ & socket_ops::stream_oriented) != 0,
         o->ec_, o->bytes_transferred_);
+
+    ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_recv",
+          o->ec_, o->bytes_transferred_));
+
+    return result;
   }
 
 private:

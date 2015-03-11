@@ -51,10 +51,15 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(o->buffers_);
 
-    return socket_ops::non_blocking_sendto(o->socket_,
+    bool result = socket_ops::non_blocking_sendto(o->socket_,
           bufs.buffers(), bufs.count(), o->flags_,
           o->destination_.data(), o->destination_.size(),
           o->ec_, o->bytes_transferred_);
+
+    ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_sendto",
+          o->ec_, o->bytes_transferred_));
+
+    return result;
   }
 
 private:

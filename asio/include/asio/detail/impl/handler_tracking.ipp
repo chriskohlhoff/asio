@@ -278,6 +278,39 @@ void handler_tracking::operation(execution_context&,
       current_id, object_type, object, op_name);
 }
 
+void handler_tracking::reactor_operation(
+    const tracked_handler& h, const char* op_name,
+    const asio::error_code& ec)
+{
+  handler_tracking_timestamp timestamp;
+
+  write_line(
+#if defined(ASIO_WINDOWS)
+      "@asio|%I64u.%06I64u|.%I64u|%s,ec=%.20s:%d\n",
+#else // defined(ASIO_WINDOWS)
+      "@asio|%llu.%06llu|.%llu|%s,ec=%.20s:%d\n",
+#endif // defined(ASIO_WINDOWS)
+      timestamp.seconds, timestamp.microseconds,
+      h.id_, op_name, ec.category().name(), ec.value());
+}
+
+void handler_tracking::reactor_operation(
+    const tracked_handler& h, const char* op_name,
+    const asio::error_code& ec, std::size_t bytes_transferred)
+{
+  handler_tracking_timestamp timestamp;
+
+  write_line(
+#if defined(ASIO_WINDOWS)
+      "@asio|%I64u.%06I64u|.%I64u|%s,ec=%.20s:%d,bytes_transferred=%I64u\n",
+#else // defined(ASIO_WINDOWS)
+      "@asio|%llu.%06llu|.%llu|%s,ec=%.20s:%d,bytes_transferred=%llu\n",
+#endif // defined(ASIO_WINDOWS)
+      timestamp.seconds, timestamp.microseconds,
+      h.id_, op_name, ec.category().name(), ec.value(),
+      static_cast<uint64_t>(bytes_transferred));
+}
+
 void handler_tracking::write_line(const char* format, ...)
 {
   using namespace std; // For sprintf (or equivalent).
