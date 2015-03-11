@@ -167,7 +167,7 @@ asio::error_code win_iocp_socket_service_base::close(
   if (is_open(impl))
   {
     ASIO_HANDLER_OPERATION((iocp_service_.context(),
-          "socket", &impl, "close"));
+          "socket", &impl, impl.socket_, "close"));
 
     // Check if the reactor was created, in which case we need to close the
     // socket on the reactor as well to cancel any operations that might be
@@ -202,7 +202,7 @@ asio::error_code win_iocp_socket_service_base::cancel(
   }
 
   ASIO_HANDLER_OPERATION((iocp_service_.context(),
-        "socket", &impl, "cancel"));
+        "socket", &impl, impl.socket_, "cancel"));
 
   if (FARPROC cancel_io_ex_ptr = ::GetProcAddress(
         ::GetModuleHandleA("KERNEL32"), "CancelIoEx"))
@@ -621,7 +621,7 @@ void win_iocp_socket_service_base::close_for_destruction(
   if (is_open(impl))
   {
     ASIO_HANDLER_OPERATION((iocp_service_.context(),
-          "socket", &impl, "close"));
+          "socket", &impl, impl.socket_, "close"));
 
     // Check if the reactor was created, in which case we need to close the
     // socket on the reactor as well to cancel any operations that might be

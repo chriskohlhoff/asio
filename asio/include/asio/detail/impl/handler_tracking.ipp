@@ -101,7 +101,8 @@ void handler_tracking::init()
 
 void handler_tracking::creation(execution_context&,
     handler_tracking::tracked_handler& h,
-    const char* object_type, void* object, const char* op_name)
+    const char* object_type, void* object,
+    uintmax_t /*native_handle*/, const char* op_name)
 {
   static tracking_state* state = get_state();
 
@@ -256,7 +257,8 @@ void handler_tracking::completion::invocation_end()
 }
 
 void handler_tracking::operation(execution_context&,
-    const char* object_type, void* object, const char* op_name)
+    const char* object_type, void* object,
+    uintmax_t /*native_handle*/, const char* op_name)
 {
   static tracking_state* state = get_state();
 

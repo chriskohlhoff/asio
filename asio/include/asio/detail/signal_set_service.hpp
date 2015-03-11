@@ -153,7 +153,7 @@ public:
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((io_service_.context(),
-          *p.p, "signal_set", &impl, "async_wait"));
+          *p.p, "signal_set", &impl, 0, "async_wait"));
 
     start_wait_op(impl, p.p);
     p.v = p.p = 0;

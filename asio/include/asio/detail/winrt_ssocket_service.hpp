@@ -215,7 +215,7 @@ public:
     p.p = new (p.v) op(handler);
 
     ASIO_HANDLER_CREATION((io_service_.context(),
-          *p.p, "socket", &impl, "async_connect"));
+          *p.p, "socket", &impl, 0, "async_connect"));
 
     start_connect_op(impl, peer_endpoint.data(), p.p, is_continuation);
     p.v = p.p = 0;

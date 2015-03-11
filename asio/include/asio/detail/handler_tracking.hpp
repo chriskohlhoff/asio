@@ -75,7 +75,8 @@ public:
   // Record the creation of a tracked handler.
   ASIO_DECL static void creation(
       execution_context& context, tracked_handler& h,
-      const char* object_type, void* object, const char* op_name);
+      const char* object_type, void* object,
+      uintmax_t native_handle, const char* op_name);
 
   class completion
   {
@@ -117,7 +118,8 @@ public:
 
   // Record an operation that affects pending handlers.
   ASIO_DECL static void operation(execution_context& context,
-      const char* object_type, void* object, const char* op_name);
+      const char* object_type, void* object,
+      uintmax_t native_handle, const char* op_name);
 
   // Write a line of output.
   ASIO_DECL static void write_line(const char* format, ...);

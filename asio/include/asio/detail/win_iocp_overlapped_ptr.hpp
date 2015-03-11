@@ -81,8 +81,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((io_service,
-          *p.p, "io_service", &io_service.impl_, "overlapped"));
+    ASIO_HANDLER_CREATION((io_service, *p.p,
+          "io_service", &io_service.impl_, 0, "overlapped"));
 
     io_service.impl_.work_started();
     reset();

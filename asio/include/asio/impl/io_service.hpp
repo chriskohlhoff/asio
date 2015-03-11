@@ -95,7 +95,8 @@ io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
       op::ptr::allocate(init.handler), 0 };
     p.p = new (p.v) op(init.handler);
 
-    ASIO_HANDLER_CREATION((*this, *p.p, "io_service", this, "dispatch"));
+    ASIO_HANDLER_CREATION((*this, *p.p,
+          "io_service", this, 0, "dispatch"));
 
     impl_.do_dispatch(p.p);
     p.v = p.p = 0;
@@ -124,7 +125,8 @@ io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
       op::ptr::allocate(init.handler), 0 };
   p.p = new (p.v) op(init.handler);
 
-  ASIO_HANDLER_CREATION((*this, *p.p, "io_service", this, "post"));
+  ASIO_HANDLER_CREATION((*this, *p.p,
+        "io_service", this, 0, "post"));
 
   impl_.post_immediate_completion(p.p, is_continuation);
   p.v = p.p = 0;
@@ -188,7 +190,7 @@ void io_service::executor_type::dispatch(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_service", this, "post"));
+        *p.p, "io_service", this, 0, "post"));
 
   io_service_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -213,7 +215,7 @@ void io_service::executor_type::post(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_service", this, "post"));
+        *p.p, "io_service", this, 0, "post"));
 
   io_service_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -238,7 +240,7 @@ void io_service::executor_type::defer(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_service", this, "defer"));
+        *p.p, "io_service", this, 0, "defer"));
 
   io_service_.impl_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;

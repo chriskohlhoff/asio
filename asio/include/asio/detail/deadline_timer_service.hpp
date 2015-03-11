@@ -135,7 +135,7 @@ public:
     }
 
     ASIO_HANDLER_OPERATION((scheduler_.context(),
-          "deadline_timer", &impl, "cancel"));
+          "deadline_timer", &impl, 0, "cancel"));
 
     std::size_t count = scheduler_.cancel_timer(timer_queue_, impl.timer_data);
     impl.might_have_pending_waits = false;
@@ -154,7 +154,7 @@ public:
     }
 
     ASIO_HANDLER_OPERATION((scheduler_.context(),
-          "deadline_timer", &impl, "cancel_one"));
+          "deadline_timer", &impl, 0, "cancel_one"));
 
     std::size_t count = scheduler_.cancel_timer(
         timer_queue_, impl.timer_data, 1);
@@ -214,7 +214,7 @@ public:
     impl.might_have_pending_waits = true;
 
     ASIO_HANDLER_CREATION((scheduler_.context(),
-          *p.p, "deadline_timer", &impl, "async_wait"));
+          *p.p, "deadline_timer", &impl, 0, "async_wait"));
 
     scheduler_.schedule_timer(timer_queue_, impl.expiry, impl.timer_data, p.p);
     p.v = p.p = 0;

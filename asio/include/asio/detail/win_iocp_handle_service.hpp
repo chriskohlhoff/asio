@@ -151,8 +151,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((iocp_service_.context(),
-          *p.p, "handle", &impl, "async_write_some"));
+    ASIO_HANDLER_CREATION((iocp_service_.context(), *p.p, "handle", &impl,
+          reinterpret_cast<uintmax_t>(impl.handle_), "async_write_some"));
 
     start_write_op(impl, 0,
         buffer_sequence_adapter<asio::const_buffer,
@@ -172,8 +172,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((iocp_service_.context(),
-          *p.p, "handle", &impl, "async_write_some_at"));
+    ASIO_HANDLER_CREATION((iocp_service_.context(), *p.p, "handle", &impl,
+          reinterpret_cast<uintmax_t>(impl.handle_), "async_write_some_at"));
 
     start_write_op(impl, offset,
         buffer_sequence_adapter<asio::const_buffer,
@@ -213,8 +213,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((iocp_service_.context(),
-          *p.p, "handle", &impl, "async_read_some"));
+    ASIO_HANDLER_CREATION((iocp_service_.context(), *p.p, "handle", &impl,
+          reinterpret_cast<uintmax_t>(impl.handle_), "async_read_some"));
 
     start_read_op(impl, 0,
         buffer_sequence_adapter<asio::mutable_buffer,
@@ -235,8 +235,8 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((iocp_service_.context(),
-          *p.p, "handle", &impl, "async_read_some_at"));
+    ASIO_HANDLER_CREATION((iocp_service_.context(), *p.p, "handle", &impl,
+          reinterpret_cast<uintmax_t>(impl.handle_), "async_read_some_at"));
 
     start_read_op(impl, offset,
         buffer_sequence_adapter<asio::mutable_buffer,

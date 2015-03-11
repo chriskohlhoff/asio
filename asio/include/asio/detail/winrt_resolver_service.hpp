@@ -130,7 +130,7 @@ public:
     p.p = new (p.v) op(query, handler);
 
     ASIO_HANDLER_CREATION((io_service_.context(),
-          *p.p, "resolver", &impl, "async_resolve"));
+          *p.p, "resolver", &impl, 0, "async_resolve"));
 
     try
     {

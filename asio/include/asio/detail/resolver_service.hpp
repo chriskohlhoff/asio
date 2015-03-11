@@ -80,7 +80,7 @@ public:
     p.p = new (p.v) op(impl, query, io_service_impl_, handler);
 
     ASIO_HANDLER_CREATION((io_service_impl_.context(),
-          *p.p, "resolver", &impl, "async_resolve"));
+          *p.p, "resolver", &impl, 0, "async_resolve"));
 
     start_resolve_op(p.p);
     p.v = p.p = 0;
@@ -112,7 +112,7 @@ public:
     p.p = new (p.v) op(impl, endpoint, io_service_impl_, handler);
 
     ASIO_HANDLER_CREATION((io_service_impl_.context(),
-          *p.p, "resolver", &impl, "async_resolve"));
+          *p.p, "resolver", &impl, 0, "async_resolve"));
 
     start_resolve_op(p.p);
     p.v = p.p = 0;
