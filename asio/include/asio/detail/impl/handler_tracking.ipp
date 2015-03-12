@@ -39,7 +39,9 @@
 # include "asio/wait_traits.hpp"
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
-#if !defined(ASIO_WINDOWS)
+#if defined(ASIO_WINDOWS_RUNTIME)
+# include "asio/detail/socket_types.hpp"
+#elif !defined(ASIO_WINDOWS)
 # include <unistd.h>
 #endif // !defined(ASIO_WINDOWS)
 
@@ -327,7 +329,11 @@ void handler_tracking::write_line(const char* format, ...)
 
   va_end(args);
 
-#if defined(ASIO_WINDOWS)
+#if defined(ASIO_WINDOWS_RUNTIME)
+  wchar_t wline[256] = L"";
+  mbstowcs_s(0, wline, sizeof(wline) / sizeof(wchar_t), line, length);
+  ::OutputDebugStringW(wline);
+#elif defined(ASIO_WINDOWS)
   HANDLE stderr_handle = ::GetStdHandle(STD_ERROR_HANDLE);
   DWORD bytes_written = 0;
   ::WriteFile(stderr_handle, line, length, &bytes_written, 0);

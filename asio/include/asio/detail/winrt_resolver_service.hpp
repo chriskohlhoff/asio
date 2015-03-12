@@ -117,7 +117,7 @@ public:
 
   // Asynchronously resolve a query to a list of entries.
   template <typename Handler>
-  void async_resolve(implementation_type&,
+  void async_resolve(implementation_type& impl,
       const query_type& query, Handler& handler)
   {
     bool is_continuation =
@@ -131,6 +131,7 @@ public:
 
     ASIO_HANDLER_CREATION((io_service_.context(),
           *p.p, "resolver", &impl, 0, "async_resolve"));
+    (void)impl;
 
     try
     {
