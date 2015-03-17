@@ -70,6 +70,23 @@
   compile_test<&test>(); \
   std::cout << #test << " passed" << std::endl;
 
+#if defined(ASIO_NO_EXCEPTIONS)
+
+namespace asio {
+namespace detail {
+
+template <typename T>
+void throw_exception(const T& t)
+{
+  std::cout << "Exception: " << t.what() << std::endl;
+  std::abort();
+}
+
+} // namespace detail
+} // namespace asio
+
+#endif // defined(ASIO_NO_EXCEPTIONS)
+
 #else // defined(ASIO_STANDALONE)
 
 #include <boost/test/unit_test.hpp>

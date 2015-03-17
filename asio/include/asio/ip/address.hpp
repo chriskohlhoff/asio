@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <string>
+#include "asio/detail/throw_exception.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error_code.hpp"
 #include "asio/ip/address_v4.hpp"
@@ -242,7 +243,10 @@ inline T address_cast(const address& addr,
     typename enable_if<is_same<T, address_v4>::value>::type* = 0)
 {
   if (!addr.is_v4())
-    throw bad_address_cast();
+  {
+    bad_address_cast ex;
+    asio::detail::throw_exception(ex);
+  }
   return get_v4_helper(addr);
 }
 
@@ -255,7 +259,10 @@ inline T address_cast(const address& addr,
     typename enable_if<is_same<T, address_v6>::value>::type* = 0)
 {
   if (!addr.is_v6())
-    throw bad_address_cast();
+  {
+    bad_address_cast ex;
+    asio::detail::throw_exception(ex);
+  }
   return get_v6_helper(addr);
 }
 

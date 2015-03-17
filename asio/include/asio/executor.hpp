@@ -19,6 +19,7 @@
 #include <typeinfo>
 #include "asio/detail/cstddef.hpp"
 #include "asio/detail/memory.hpp"
+#include "asio/detail/throw_exception.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 
@@ -302,7 +303,12 @@ private:
   // Helper function to check and return the implementation pointer.
   impl_base* get_impl()
   {
-    return impl_ ? impl_ : throw bad_executor();
+    if (!impl_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
+    return impl_;
   }
 
   // Helper function to clone another implementation.
