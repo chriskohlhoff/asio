@@ -205,10 +205,17 @@ public:
    * @returns If @c *this has a target type of type @c T, <tt>typeid(T)</tt>;
    * otherwise, <tt>typeid(void)</tt>.
    */
+#if !defined(ASIO_NO_TYPEID) || defined(GENERATING_DOCUMENTATION)
   const std::type_info& target_type() const ASIO_NOEXCEPT
   {
     return impl_ ? impl_->target_type() : typeid(void);
   }
+#else // !defined(ASIO_NO_TYPEID) || defined(GENERATING_DOCUMENTATION)
+  const void* target_type() const ASIO_NOEXCEPT
+  {
+    return impl_ ? impl_->target_type() : 0;
+  }
+#endif // !defined(ASIO_NO_TYPEID) || defined(GENERATING_DOCUMENTATION)
 
   /// Obtain a pointer to the target executor object.
   /**
@@ -249,6 +256,23 @@ private:
   class function;
   template <typename, typename> class impl;
 
+#if !defined(ASIO_NO_TYPEID)
+  typedef const std::type_info& type_id_result_type;
+#else // !defined(ASIO_NO_TYPEID)
+  typedef const void* type_id_result_type;
+#endif // !defined(ASIO_NO_TYPEID)
+
+  template <typename T>
+  static type_id_result_type type_id()
+  {
+#if !defined(ASIO_NO_TYPEID)
+    return typeid(T);
+#else // !defined(ASIO_NO_TYPEID)
+    static int unique_id;
+    return &unique_id;
+#endif // !defined(ASIO_NO_TYPEID)
+  }
+
   // Base class for all polymorphic executor implementations.
   class impl_base
   {
@@ -261,7 +285,7 @@ private:
     virtual void dispatch(ASIO_MOVE_ARG(function)) = 0;
     virtual void post(ASIO_MOVE_ARG(function)) = 0;
     virtual void defer(ASIO_MOVE_ARG(function)) = 0;
-    virtual const std::type_info& target_type() const ASIO_NOEXCEPT = 0;
+    virtual type_id_result_type target_type() const ASIO_NOEXCEPT = 0;
     virtual void* target() ASIO_NOEXCEPT = 0;
     virtual const void* target() const ASIO_NOEXCEPT = 0;
     virtual bool equals(const impl_base* e) const ASIO_NOEXCEPT = 0;

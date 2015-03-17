@@ -197,9 +197,9 @@ public:
     executor_.defer(ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  const std::type_info& target_type() const ASIO_NOEXCEPT
+  type_id_result_type target_type() const ASIO_NOEXCEPT
   {
-    return typeid(Executor);
+    return type_id<Executor>();
   }
 
   void* target() ASIO_NOEXCEPT
@@ -306,9 +306,9 @@ public:
     executor_.defer(ASIO_MOVE_CAST(function)(f), allocator_);
   }
 
-  const std::type_info& target_type() const ASIO_NOEXCEPT
+  type_id_result_type target_type() const ASIO_NOEXCEPT
   {
-    return typeid(system_executor);
+    return type_id<system_executor>();
   }
 
   void* target() ASIO_NOEXCEPT
@@ -368,14 +368,14 @@ void executor::defer(ASIO_MOVE_ARG(Function) f, const Allocator& a)
 template <typename Executor>
 Executor* executor::target() ASIO_NOEXCEPT
 {
-  return impl_ && impl_->target_type() == typeid(Executor)
+  return impl_ && impl_->target_type() == type_id<Executor>()
     ? static_cast<Executor*>(impl_->target()) : 0;
 }
 
 template <typename Executor>
 const Executor* executor::target() const ASIO_NOEXCEPT
 {
-  return impl_ && impl_->target_type() == typeid(Executor)
+  return impl_ && impl_->target_type() == type_id<Executor>()
     ? static_cast<Executor*>(impl_->target()) : 0;
 }
 
