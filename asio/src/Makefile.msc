@@ -94,8 +94,6 @@ PERFORMANCE_TEST_EXES = \
 	tests\performance\client.exe \
 	tests\performance\server.exe
 
-UNIT_TEST_OBJ = tests\unit\unit_test.obj
-
 UNIT_TEST_EXES = \
 	tests\unit\basic_datagram_socket.exe \
 	tests\unit\basic_deadline_timer.exe \
@@ -265,10 +263,6 @@ ssl: \
 	$(SSL_UNIT_TEST_EXES) \
 	$(SSL_EXAMPLE_EXES)
 
-$(UNIT_TEST_EXES): $(UNIT_TEST_OBJ)
-
-$(SSL_UNIT_TEST_EXES): $(UNIT_TEST_OBJ)
-
 check: $(UNIT_TEST_EXES)
 	!@echo === Running $** === && $** && echo.
 
@@ -282,19 +276,19 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fotests\unit\unit_test.obj $(CXXFLAGS) $(DEFINES) -c tests\unit\unit_test.cpp
 
 {tests\unit}.cpp{tests\unit}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(UNIT_TEST_OBJ) $(LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\generic}.cpp{tests\unit\generic}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(UNIT_TEST_OBJ) $(LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ip}.cpp{tests\unit\ip}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(UNIT_TEST_OBJ) $(LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ssl}.cpp{tests\unit\ssl}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(UNIT_TEST_OBJ) $(SSL_LIBS) $(LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) $(LIBS) -link -opt:ref
 
 {tests\unit\windows}.cpp{tests\unit\windows}.exe:
-	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(UNIT_TEST_OBJ) $(LIBS) -link -opt:ref
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\cpp03\allocation}.cpp{examples\cpp03\allocation}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref

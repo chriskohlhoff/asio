@@ -11,8 +11,6 @@ PERFORMANCE_TEST_EXES = \
 	tests/performance/client.exe \
 	tests/performance/server.exe
 
-UNIT_TEST_OBJ = tests/unit/unit_test.o
-
 UNIT_TEST_EXES = \
 	tests/unit/basic_datagram_socket.exe \
 	tests/unit/basic_deadline_timer.exe \
@@ -146,12 +144,11 @@ OTHER_EXAMPLE_EXES = \
 
 all: \
 	$(PERFORMANCE_TEST_EXES) \
-	$(UNIT_TEST_OBJ) \
 	$(UNIT_TEST_EXES) \
 	$(EXAMPLE_EXES) \
 	$(OTHER_EXAMPLE_EXES)
 
-check: $(UNIT_TEST_OBJ) $(UNIT_TEST_EXES) $(addprefix run.,$(UNIT_TEST_EXES))
+check: $(UNIT_TEST_EXES) $(addprefix run.,$(UNIT_TEST_EXES))
 
 $(addprefix run.,$(UNIT_TEST_EXES))::
 	@echo === Running $(@:run.%=%) ===
@@ -170,7 +167,7 @@ clean:
 	-rm -f $(OTHER_EXAMPLE_EXES:.exe=.o)
 
 $(UNIT_TEST_EXES): %.exe: %.o
-	g++ -o$@ $(LDFLAGS) $< $(UNIT_TEST_OBJ) $(LIBS)
+	g++ -o$@ $(LDFLAGS) $< $(LIBS)
 
 $(PERFORMANCE_TEST_EXES) $(EXAMPLE_EXES): %.exe: %.o
 	g++ -o$@ $(LDFLAGS) $< $(LIBS)
