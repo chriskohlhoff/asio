@@ -34,7 +34,6 @@
 #endif // defined(ASIO_HAS_BOOST_BIND)
 
 using namespace asio;
-typedef io_service::strand strand;
 
 #if defined(ASIO_HAS_BOOST_BIND)
 namespace bindns = boost;
@@ -58,7 +57,7 @@ void increment(int* count)
   ++(*count);
 }
 
-void increment_without_lock(strand* s, int* count)
+void increment_without_lock(io_service::strand* s, int* count)
 {
   ASIO_CHECK(!s->running_in_this_thread());
 
@@ -71,7 +70,7 @@ void increment_without_lock(strand* s, int* count)
   ASIO_CHECK(*count == original_count + 1);
 }
 
-void increment_with_lock(strand* s, int* count)
+void increment_with_lock(io_service::strand* s, int* count)
 {
   ASIO_CHECK(s->running_in_this_thread());
 
@@ -92,7 +91,7 @@ void sleep_increment(io_service* ios, int* count)
   ++(*count);
 }
 
-void start_sleep_increments(io_service* ios, strand* s, int* count)
+void start_sleep_increments(io_service* ios, io_service::strand* s, int* count)
 {
   // Give all threads a chance to start.
   timer t(*ios, chronons::seconds(2));
@@ -117,7 +116,7 @@ void io_service_run(io_service* ios)
 void strand_test()
 {
   io_service ios;
-  strand s(ios);
+  io_service::strand s(ios);
   int count = 0;
 
   ios.post(bindns::bind(increment_without_lock, &s, &count));
