@@ -7,6 +7,31 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.5]
+
+* Fixed the [^kqueue] reactor so that it works on FreeBSD.
+
+* Fixed an issue in the [^kqueue] reactor which resulted in spinning when using
+  serial ports on Mac OS.
+
+* Fixed [^kqueue] reactor support for read-only file descriptors.
+
+* Fixed a compile error when using the [^/dev/poll] reactor.
+
+* Changed the Windows backend to use `WSASocketW`, as `WSASocketA` has been
+  deprecated.
+
+* Fixed some warnings reported by Visual C++ 2013.
+
+* Fixed integer type used in the WinRT version of the byte-order conversion
+  functions.
+
+* Changed documentation to indicate that `use_future` and `spawn()` are not
+  made available when including the `asio.hpp` convenience header.
+
+* Explicitly marked `asio::strand` as deprecated. Use
+  `asio::io_service::strand` instead.
+
 [heading Asio 1.10.4]
 
 * Stopped using certain Winsock functions that are marked as deprecated in the
