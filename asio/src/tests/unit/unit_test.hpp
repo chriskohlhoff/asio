@@ -52,7 +52,7 @@ inline const char*& test_name()
 
 inline atomic_count& test_errors()
 {
-  static atomic_count errors;
+  static atomic_count errors(0);
   return errors;
 }
 
