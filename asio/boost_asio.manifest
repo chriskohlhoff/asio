@@ -4480,6 +4480,8 @@
 /libs/asio/example/cpp11/spawn/echo_server.cpp
 /libs/asio/example/cpp11/spawn/Jamfile.v2
 /libs/asio/index.html
+/libs/asio/meta/
+/libs/asio/meta/libraries.json
 /libs/asio/test/
 /libs/asio/test/archetypes/
 /libs/asio/test/archetypes/async_result.hpp
@@ -4617,9 +4619,12 @@
 /libs/system/doc/index.html
 /libs/system/doc/reference.html
 /libs/system/index.html
+/libs/system/meta/
+/libs/system/meta/libraries.json
 /libs/system/src/
 /libs/system/src/error_code.cpp
 /libs/system/test/
+/libs/system/test/config_test.cpp
 /libs/system/test/dynamic_link_test.cpp
 /libs/system/test/error_code_test.cpp
 /libs/system/test/error_code_user_test.cpp
@@ -4628,6 +4633,8 @@
 /libs/system/test/Jamfile.v2
 /libs/system/test/system/
 /libs/system/test/system/common.props
+/libs/system/test/system/config_test/
+/libs/system/test/system/config_test/config_test.vcxproj
 /libs/system/test/system/error_code_test/
 /libs/system/test/system/error_code_test/error_code_test.vcxproj
 /libs/system/test/system_error_test.cpp
