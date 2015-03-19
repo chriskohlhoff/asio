@@ -45199,7 +45199,7 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 
 ['Header: ][^asio/spawn.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:basic_yield_context basic_yield_context::basic_yield_context]
@@ -45247,7 +45247,7 @@ When using Boost.Coroutine v2 (unidirectional coroutines), this type is:
 
 ['Header: ][^asio/spawn.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -45280,7 +45280,7 @@ When using Boost.Coroutine v2 (unidirectional coroutines), this type is:
 
 ['Header: ][^asio/spawn.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -88639,7 +88639,7 @@ The `spawn()` function is a high-level wrapper over the Boost.Coroutine library.
 
 ['Header: ][^asio/spawn.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:overload1 spawn (1 of 4 overloads)]
@@ -94361,7 +94361,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 [section:strand strand]
 
 [indexterm1 strand] 
-Typedef for backwards compatibility. 
+(Deprecated: Use [link asio.reference.io_service__strand `io_service::strand`].) Typedef for backwards compatibility. 
 
 
   typedef asio::io_service::strand strand;
@@ -96552,7 +96552,7 @@ See the documentation for [link asio.reference.use_future_t `use_future_t`] for 
 
 ['Header: ][^asio/use_future.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -96621,7 +96621,7 @@ The initiating function (async\_read\_some in the above example) returns a futur
 
 ['Header: ][^asio/use_future.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:allocator_type use_future_t::allocator_type]
@@ -96638,7 +96638,7 @@ The allocator type. The allocator is used when constructing the `std::promise` o
 
 ['Header: ][^asio/use_future.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -106196,7 +106196,7 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 
 ['Header: ][^asio/spawn.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]

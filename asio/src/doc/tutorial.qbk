@@ -706,7 +706,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::strand strand_;
+  ``''''''``  asio::io_service::strand strand_;
   ``''''''``  asio::deadline_timer timer1_;
   ``''''''``  asio::deadline_timer timer2_;
   ``''''''``  int count_;
@@ -805,7 +805,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::strand strand_;
+  ``''''''``  asio::io_service::strand strand_;
   ``''''''``  asio::deadline_timer timer1_;
   ``''''''``  asio::deadline_timer timer2_;
   ``''''''``  int count_;
