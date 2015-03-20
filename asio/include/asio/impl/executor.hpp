@@ -379,7 +379,7 @@ const Executor* executor::target() const ASIO_NOEXCEPT
     ? static_cast<Executor*>(impl_->target()) : 0;
 }
 
-#endif // !defined(ASIO_NO_DEPRECATED)
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

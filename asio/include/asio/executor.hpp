@@ -325,7 +325,7 @@ private:
   }
 
   impl_base* impl_;
-#endif // !defined(ASIO_NO_DEPRECATED)
+#endif // !defined(GENERATING_DOCUMENTATION)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
