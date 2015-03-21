@@ -96,7 +96,8 @@ void test()
     ip::icmp::socket socket4(ios, ip::icmp::endpoint(ip::icmp::v4(), 0));
     ip::icmp::socket socket5(ios, ip::icmp::endpoint(ip::icmp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket1 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    ip::icmp::socket::native_handle_type native_socket1
+      = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     ip::icmp::socket socket6(ios, ip::icmp::v4(), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -132,9 +133,11 @@ void test()
     socket1.open(ip::icmp::v6(), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket2 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    ip::icmp::socket::native_handle_type native_socket2
+      = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     socket1.assign(ip::icmp::v4(), native_socket2);
-    int native_socket3 = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    ip::icmp::socket::native_handle_type native_socket3
+      = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     socket1.assign(ip::icmp::v4(), native_socket3, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 

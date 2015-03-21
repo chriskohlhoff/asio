@@ -244,7 +244,8 @@ void test()
     ip::tcp::socket socket4(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
     ip::tcp::socket socket5(ios, ip::tcp::endpoint(ip::tcp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::socket::native_handle_type native_socket1
+      = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::socket socket6(ios, ip::tcp::v4(), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -283,9 +284,11 @@ void test()
     socket1.open(ip::tcp::v6(), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::socket::native_handle_type native_socket2
+      = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.assign(ip::tcp::v4(), native_socket2);
-    int native_socket3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::socket::native_handle_type native_socket3
+      = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     socket1.assign(ip::tcp::v4(), native_socket3, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -739,7 +742,8 @@ void test()
     ip::tcp::acceptor acceptor4(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
     ip::tcp::acceptor acceptor5(ios, ip::tcp::endpoint(ip::tcp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_acceptor1 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::acceptor::native_handle_type native_acceptor1
+      = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ip::tcp::acceptor acceptor6(ios, ip::tcp::v4(), native_acceptor1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -767,9 +771,11 @@ void test()
     acceptor1.open(ip::tcp::v6(), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_acceptor2 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::acceptor::native_handle_type native_acceptor2
+      = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     acceptor1.assign(ip::tcp::v4(), native_acceptor2);
-    int native_acceptor3 = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    ip::tcp::acceptor::native_handle_type native_acceptor3
+      = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     acceptor1.assign(ip::tcp::v4(), native_acceptor3, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
