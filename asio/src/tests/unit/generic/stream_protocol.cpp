@@ -83,7 +83,8 @@ void test()
 #if defined(ASIO_WINDOWS_RUNTIME)
     Windows::Networking::Sockets::StreamSocket^ native_socket1 = nullptr;
 #else // defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket1 = ::socket(af_inet, sock_stream, 0);
+    sp::socket::native_handle_type native_socket1
+      = ::socket(af_inet, sock_stream, 0);
 #endif // defined(ASIO_WINDOWS_RUNTIME)
     sp::socket socket4(ios, sp(af_inet, ipproto_tcp), native_socket1);
 
@@ -117,13 +118,15 @@ void test()
 #if defined(ASIO_WINDOWS_RUNTIME)
     Windows::Networking::Sockets::StreamSocket^ native_socket2 = nullptr;
 #else // defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket2 = ::socket(af_inet, sock_stream, 0);
+    sp::socket::native_handle_type native_socket2
+      = ::socket(af_inet, sock_stream, 0);
 #endif // defined(ASIO_WINDOWS_RUNTIME)
     socket1.assign(sp(af_inet, ipproto_tcp), native_socket2);
 #if defined(ASIO_WINDOWS_RUNTIME)
     Windows::Networking::Sockets::StreamSocket^ native_socket3 = nullptr;
 #else // defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket3 = ::socket(af_inet, sock_stream, 0);
+    sp::socket::native_handle_type native_socket3
+      = ::socket(af_inet, sock_stream, 0);
 #endif // defined(ASIO_WINDOWS_RUNTIME)
     socket1.assign(sp(af_inet, ipproto_tcp), native_socket3, ec);
 

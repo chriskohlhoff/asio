@@ -72,7 +72,8 @@ void test()
     spp::socket socket2(ios, spp(af_inet, 0));
     spp::socket socket3(ios, spp::endpoint());
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket1 = ::socket(af_inet, sock_seqpacket, 0);
+    spp::socket::native_handle_type native_socket1
+      = ::socket(af_inet, sock_seqpacket, 0);
     spp::socket socket4(ios, spp(af_inet, 0), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -101,9 +102,11 @@ void test()
     socket1.open(spp(af_inet, 0), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket2 = ::socket(af_inet, sock_seqpacket, 0);
+    spp::socket::native_handle_type native_socket2
+      = ::socket(af_inet, sock_seqpacket, 0);
     socket1.assign(spp(af_inet, 0), native_socket2);
-    int native_socket3 = ::socket(af_inet, sock_seqpacket, 0);
+    spp::socket::native_handle_type native_socket3
+      = ::socket(af_inet, sock_seqpacket, 0);
     socket1.assign(spp(af_inet, 0), native_socket3, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 

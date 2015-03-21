@@ -73,7 +73,8 @@ void test()
     rp::socket socket2(ios, rp(af_inet, ipproto_icmp));
     rp::socket socket3(ios, rp::endpoint());
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket1 = ::socket(af_inet, sock_raw, 0);
+    rp::socket::native_handle_type native_socket1
+      = ::socket(af_inet, sock_raw, 0);
     rp::socket socket4(ios, rp(af_inet, ipproto_icmp), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -105,9 +106,11 @@ void test()
     socket1.open(rp(af_inet, ipproto_icmp), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket2 = ::socket(af_inet, sock_raw, 0);
+    rp::socket::native_handle_type native_socket2
+      = ::socket(af_inet, sock_raw, 0);
     socket1.assign(rp(af_inet, ipproto_icmp), native_socket2);
-    int native_socket3 = ::socket(af_inet, sock_raw, 0);
+    rp::socket::native_handle_type native_socket3
+      = ::socket(af_inet, sock_raw, 0);
     socket1.assign(rp(af_inet, ipproto_icmp), native_socket3, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 

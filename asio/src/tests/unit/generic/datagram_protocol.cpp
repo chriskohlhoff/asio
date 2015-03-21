@@ -73,7 +73,8 @@ void test()
     dp::socket socket2(ios, dp(af_inet, ipproto_udp));
     dp::socket socket3(ios, dp::endpoint());
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket1 = ::socket(af_inet, sock_dgram, 0);
+    dp::socket::native_handle_type native_socket1
+      = ::socket(af_inet, sock_dgram, 0);
     dp::socket socket4(ios, dp(af_inet, ipproto_udp), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -105,9 +106,11 @@ void test()
     socket1.open(dp(af_inet, ipproto_udp), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    int native_socket2 = ::socket(af_inet, sock_dgram, 0);
+    dp::socket::native_handle_type native_socket2
+      = ::socket(af_inet, sock_dgram, 0);
     socket1.assign(dp(af_inet, ipproto_udp), native_socket2);
-    int native_socket3 = ::socket(af_inet, sock_dgram, 0);
+    dp::socket::native_handle_type native_socket3
+      = ::socket(af_inet, sock_dgram, 0);
     socket1.assign(dp(af_inet, ipproto_udp), native_socket3, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
