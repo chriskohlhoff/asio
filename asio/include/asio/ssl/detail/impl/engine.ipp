@@ -206,7 +206,7 @@ const asio::error_code& engine::map_error_code(
 
   // SSL v2 doesn't provide a protocol-level shutdown, so an eof on the
   // underlying transport is passed through.
-  if (ssl_ && ssl_->version == SSL2_VERSION)
+  if (ssl_->version == SSL2_VERSION)
     return ec;
 
   // Otherwise, the peer should have negotiated a proper shutdown.
