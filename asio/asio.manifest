@@ -2845,6 +2845,8 @@
 /doc/asio/reference/ssl__context_base/no_compression.html
 /doc/asio/reference/ssl__context_base/no_sslv2.html
 /doc/asio/reference/ssl__context_base/no_sslv3.html
+/doc/asio/reference/ssl__context_base/no_tlsv1_1.html
+/doc/asio/reference/ssl__context_base/no_tlsv1_2.html
 /doc/asio/reference/ssl__context_base/no_tlsv1.html
 /doc/asio/reference/ssl__context_base/options.html
 /doc/asio/reference/ssl__context_base/password_purpose.html
@@ -2874,6 +2876,8 @@
 /doc/asio/reference/ssl__context/no_compression.html
 /doc/asio/reference/ssl__context/no_sslv2.html
 /doc/asio/reference/ssl__context/no_sslv3.html
+/doc/asio/reference/ssl__context/no_tlsv1_1.html
+/doc/asio/reference/ssl__context/no_tlsv1_2.html
 /doc/asio/reference/ssl__context/no_tlsv1.html
 /doc/asio/reference/ssl__context/operator_eq_.html
 /doc/asio/reference/ssl__context/options.html
@@ -4328,7 +4332,6 @@
 /src/tests/unit/system_timer.cpp
 /src/tests/unit/thread.cpp
 /src/tests/unit/time_traits.cpp
-/src/tests/unit/unit_test.cpp
 /src/tests/unit/unit_test.hpp
 /src/tests/unit/waitable_timer_service.cpp
 /src/tests/unit/wait_traits.cpp
