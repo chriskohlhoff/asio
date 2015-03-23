@@ -54944,6 +54944,7 @@ The time traits type.
 [indexterm2 no_memory..error::basic_errors]
 [indexterm2 no_permission..error::basic_errors]
 [indexterm2 no_protocol_option..error::basic_errors]
+[indexterm2 no_such_device..error::basic_errors]
 [indexterm2 not_connected..error::basic_errors]
 [indexterm2 not_socket..error::basic_errors]
 [indexterm2 operation_aborted..error::basic_errors]
@@ -55079,6 +55080,11 @@ The time traits type.
   [
     [no_protocol_option]
     [Protocol not available. ]
+  ]
+
+  [
+    [no_such_device]
+    [No such device. ]
   ]
 
   [
@@ -89035,6 +89041,16 @@ This function is used to launch a new coroutine.
   ]
 
   [
+    [[link asio.reference.ssl__context.no_tlsv1_1 [*no_tlsv1_1]]]
+    [Disable TLS v1.1. ]
+  ]
+
+  [
+    [[link asio.reference.ssl__context.no_tlsv1_2 [*no_tlsv1_2]]]
+    [Disable TLS v1.2. ]
+  ]
+
+  [
     [[link asio.reference.ssl__context.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
   ]
@@ -89836,6 +89852,34 @@ Disable TLS v1.
 
 
   static const long no_tlsv1 = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:no_tlsv1_1 ssl::context::no_tlsv1_1]
+
+[indexterm2 no_tlsv1_1..ssl::context] 
+Disable TLS v1.1. 
+
+
+  static const long no_tlsv1_1 = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:no_tlsv1_2 ssl::context::no_tlsv1_2]
+
+[indexterm2 no_tlsv1_2..ssl::context] 
+Disable TLS v1.2. 
+
+
+  static const long no_tlsv1_2 = implementation_defined;
 
 
 
@@ -91693,6 +91737,16 @@ The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as
   ]
 
   [
+    [[link asio.reference.ssl__context_base.no_tlsv1_1 [*no_tlsv1_1]]]
+    [Disable TLS v1.1. ]
+  ]
+
+  [
+    [[link asio.reference.ssl__context_base.no_tlsv1_2 [*no_tlsv1_2]]]
+    [Disable TLS v1.2. ]
+  ]
+
+  [
     [[link asio.reference.ssl__context_base.single_dh_use [*single_dh_use]]]
     [Always create a new key when using tmp_dh parameters. ]
   ]
@@ -91929,6 +91983,34 @@ Disable TLS v1.
 
 
   static const long no_tlsv1 = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:no_tlsv1_1 ssl::context_base::no_tlsv1_1]
+
+[indexterm2 no_tlsv1_1..ssl::context_base] 
+Disable TLS v1.1. 
+
+
+  static const long no_tlsv1_1 = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:no_tlsv1_2 ssl::context_base::no_tlsv1_2]
+
+[indexterm2 no_tlsv1_2..ssl::context_base] 
+Disable TLS v1.2. 
+
+
+  static const long no_tlsv1_2 = implementation_defined;
 
 
 
