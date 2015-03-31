@@ -137,6 +137,10 @@ int kqueue_reactor::register_descriptor(socket_type descriptor,
 {
   descriptor_data = allocate_descriptor_state();
 
+  ASIO_HANDLER_REACTOR_REGISTRATION((
+        context(), static_cast<uintmax_t>(descriptor),
+        reinterpret_cast<uintmax_t>(descriptor_data)));
+
   mutex::scoped_lock lock(descriptor_data->mutex_);
 
   descriptor_data->descriptor_ = descriptor;
@@ -151,6 +155,10 @@ int kqueue_reactor::register_internal_descriptor(
     kqueue_reactor::per_descriptor_data& descriptor_data, reactor_op* op)
 {
   descriptor_data = allocate_descriptor_state();
+
+  ASIO_HANDLER_REACTOR_REGISTRATION((
+        context(), static_cast<uintmax_t>(descriptor),
+        reinterpret_cast<uintmax_t>(descriptor_data)));
 
   mutex::scoped_lock lock(descriptor_data->mutex_);
 
@@ -313,6 +321,10 @@ void kqueue_reactor::deregister_descriptor(socket_type descriptor,
 
     descriptor_lock.unlock();
 
+    ASIO_HANDLER_REACTOR_DEREGISTRATION((
+          context(), static_cast<uintmax_t>(descriptor),
+          reinterpret_cast<uintmax_t>(descriptor_data)));
+
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
 
@@ -346,6 +358,10 @@ void kqueue_reactor::deregister_internal_descriptor(socket_type descriptor,
 
     descriptor_lock.unlock();
 
+    ASIO_HANDLER_REACTOR_DEREGISTRATION((
+          context(), static_cast<uintmax_t>(descriptor),
+          reinterpret_cast<uintmax_t>(descriptor_data)));
+
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
   }
@@ -364,6 +380,31 @@ void kqueue_reactor::run(bool block, op_queue<operation>& ops)
   // Block on the kqueue descriptor.
   struct kevent events[128];
   int num_events = kevent(kqueue_fd_, 0, 0, events, 128, timeout);
+
+#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+  // Trace the waiting events.
+  for (int i = 0; i < num_events; ++i)
+  {
+    void* ptr = reinterpret_cast<void*>(events[i].udata);
+    if (ptr != &interrupter_)
+    {
+      unsigned event_mask = 0;
+      switch (events[i].filter)
+      {
+      case EVFILT_READ:
+        event_mask |= ASIO_HANDLER_REACTOR_READ_EVENT;
+        break;
+      case EVFILT_WRITE:
+        event_mask |= ASIO_HANDLER_REACTOR_WRITE_EVENT;
+        break;
+      }
+      if ((events[i].flags & (EV_ERROR | EV_OOBAND)) != 0)
+        event_mask |= ASIO_HANDLER_REACTOR_ERROR_EVENT;
+      ASIO_HANDLER_REACTOR_EVENTS((context(),
+            reinterpret_cast<uintmax_t>(ptr), event_mask));
+    }
+  }
+#endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
   // Dispatch the waiting events.
   for (int i = 0; i < num_events; ++i)

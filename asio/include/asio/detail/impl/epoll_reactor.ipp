@@ -150,6 +150,10 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
 {
   descriptor_data = allocate_descriptor_state();
 
+  ASIO_HANDLER_REACTOR_REGISTRATION((
+        context(), static_cast<uintmax_t>(descriptor),
+        reinterpret_cast<uintmax_t>(descriptor_data)));
+
   {
     mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
@@ -174,6 +178,10 @@ int epoll_reactor::register_internal_descriptor(
     epoll_reactor::per_descriptor_data& descriptor_data, reactor_op* op)
 {
   descriptor_data = allocate_descriptor_state();
+
+  ASIO_HANDLER_REACTOR_REGISTRATION((
+        context(), static_cast<uintmax_t>(descriptor),
+        reinterpret_cast<uintmax_t>(descriptor_data)));
 
   {
     mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
@@ -335,6 +343,10 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
 
     descriptor_lock.unlock();
 
+    ASIO_HANDLER_REACTOR_DEREGISTRATION((
+          context(), static_cast<uintmax_t>(descriptor),
+          reinterpret_cast<uintmax_t>(descriptor_data)));
+
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
 
@@ -364,6 +376,10 @@ void epoll_reactor::deregister_internal_descriptor(socket_type descriptor,
 
     descriptor_lock.unlock();
 
+    ASIO_HANDLER_REACTOR_DEREGISTRATION((
+          context(), static_cast<uintmax_t>(descriptor),
+          reinterpret_cast<uintmax_t>(descriptor_data)));
+
     free_descriptor_state(descriptor_data);
     descriptor_data = 0;
   }
@@ -390,6 +406,35 @@ void epoll_reactor::run(bool block, op_queue<operation>& ops)
   // Block on the epoll descriptor.
   epoll_event events[128];
   int num_events = epoll_wait(epoll_fd_, events, 128, timeout);
+
+#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+  // Trace the waiting events.
+  for (int i = 0; i < num_events; ++i)
+  {
+    void* ptr = events[i].data.ptr;
+    if (ptr == &interrupter_)
+    {
+      // Ignore.
+    }
+# if defined(ASIO_HAS_TIMERFD)
+    else if (ptr == &timer_fd_)
+    {
+      // Ignore.
+    }
+# endif // defined(ASIO_HAS_TIMERFD)
+    {
+      unsigned event_mask = 0;
+      if ((events[i].events & EPOLLIN) != 0)
+        event_mask |= ASIO_HANDLER_REACTOR_READ_EVENT;
+      if ((events[i].events & EPOLLOUT))
+        event_mask |= ASIO_HANDLER_REACTOR_WRITE_EVENT;
+      if ((events[i].events & (EPOLLERR | EPOLLHUP)) != 0)
+        event_mask |= ASIO_HANDLER_REACTOR_ERROR_EVENT;
+      ASIO_HANDLER_REACTOR_EVENTS((context(),
+            reinterpret_cast<uintmax_t>(ptr), event_mask));
+    }
+  }
+#endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 #if defined(ASIO_HAS_TIMERFD)
   bool check_timers = (timer_fd_ == -1);

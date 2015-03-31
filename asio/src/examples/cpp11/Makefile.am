@@ -77,6 +77,7 @@ spawn_parallel_grep_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_s
 endif
 
 EXTRA_DIST = \
+	handler_tracking/custom_tracking.hpp \
 	http/server/connection.hpp \
 	http/server/connection_manager.hpp \
 	http/server/header.hpp \

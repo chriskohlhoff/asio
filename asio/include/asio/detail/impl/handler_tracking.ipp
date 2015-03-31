@@ -280,6 +280,21 @@ void handler_tracking::operation(execution_context&,
       current_id, object_type, object, op_name);
 }
 
+void handler_tracking::reactor_registration(execution_context& /*context*/,
+    uintmax_t /*native_handle*/, uintmax_t /*registration*/)
+{
+}
+
+void handler_tracking::reactor_deregistration(execution_context& /*context*/,
+    uintmax_t /*native_handle*/, uintmax_t /*registration*/)
+{
+}
+
+void handler_tracking::reactor_events(execution_context& /*context*/,
+    uintmax_t /*native_handle*/, unsigned /*events*/)
+{
+}
+
 void handler_tracking::reactor_operation(
     const tracked_handler& h, const char* op_name,
     const asio::error_code& ec)

@@ -44,7 +44,17 @@ namespace detail {
 // - ASIO_HANDLER_INVOCATION_BEGIN(args)
 // - ASIO_HANDLER_INVOCATION_END
 // - ASIO_HANDLER_OPERATION(args)
+// - ASIO_HANDLER_REACTOR_REGISTRATION(args)
+// - ASIO_HANDLER_REACTOR_DEREGISTRATION(args)
+// - ASIO_HANDLER_REACTOR_READ_EVENT
+// - ASIO_HANDLER_REACTOR_WRITE_EVENT
+// - ASIO_HANDLER_REACTOR_ERROR_EVENT
+// - ASIO_HANDLER_REACTOR_EVENTS(args)
 // - ASIO_HANDLER_REACTOR_OPERATION(args)
+
+# if !defined(ASIO_ENABLE_HANDLER_TRACKING)
+#  define ASIO_ENABLE_HANDLER_TRACKING 1
+# endif /// !defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 #elif defined(ASIO_ENABLE_HANDLER_TRACKING)
 
@@ -122,6 +132,18 @@ public:
       const char* object_type, void* object,
       uintmax_t native_handle, const char* op_name);
 
+  // Record that a descriptor has been registered with the reactor.
+  ASIO_DECL static void reactor_registration(execution_context& context,
+      uintmax_t native_handle, uintmax_t registration);
+
+  // Record that a descriptor has been deregistered from the reactor.
+  ASIO_DECL static void reactor_deregistration(execution_context& context,
+      uintmax_t native_handle, uintmax_t registration);
+
+  // Record a reactor-based operation that is associated with a handler.
+  ASIO_DECL static void reactor_events(execution_context& context,
+      uintmax_t registration, unsigned events);
+
   // Record a reactor-based operation that is associated with a handler.
   ASIO_DECL static void reactor_operation(
       const tracked_handler& h, const char* op_name,
@@ -164,6 +186,19 @@ private:
 # define ASIO_HANDLER_OPERATION(args) \
   asio::detail::handler_tracking::operation args
 
+# define ASIO_HANDLER_REACTOR_REGISTRATION(args) \
+  asio::detail::handler_tracking::reactor_registration args
+
+# define ASIO_HANDLER_REACTOR_DEREGISTRATION(args) \
+  asio::detail::handler_tracking::reactor_deregistration args
+
+# define ASIO_HANDLER_REACTOR_READ_EVENT 1
+# define ASIO_HANDLER_REACTOR_WRITE_EVENT 2
+# define ASIO_HANDLER_REACTOR_ERROR_EVENT 4
+
+# define ASIO_HANDLER_REACTOR_EVENTS(args) \
+  asio::detail::handler_tracking::reactor_events args
+
 # define ASIO_HANDLER_REACTOR_OPERATION(args) \
   asio::detail::handler_tracking::reactor_operation args
 
@@ -177,6 +212,12 @@ private:
 # define ASIO_HANDLER_INVOCATION_BEGIN(args) (void)0
 # define ASIO_HANDLER_INVOCATION_END (void)0
 # define ASIO_HANDLER_OPERATION(args) (void)0
+# define ASIO_HANDLER_REACTOR_REGISTRATION(args) (void)0
+# define ASIO_HANDLER_REACTOR_DEREGISTRATION(args) (void)0
+# define ASIO_HANDLER_REACTOR_READ_EVENT 0
+# define ASIO_HANDLER_REACTOR_WRITE_EVENT 0
+# define ASIO_HANDLER_REACTOR_ERROR_EVENT 0
+# define ASIO_HANDLER_REACTOR_EVENTS(args) (void)0
 # define ASIO_HANDLER_REACTOR_OPERATION(args) (void)0
 
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
