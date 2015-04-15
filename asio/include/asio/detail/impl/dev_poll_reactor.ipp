@@ -67,28 +67,6 @@ void dev_poll_reactor::shutdown_service()
   scheduler_.abandon_operations(ops);
 } 
 
-<<<<<<< HEAD
-// Helper class to re-register all descriptors with /dev/poll.
-class dev_poll_reactor::fork_helper
-{
-public:
-  fork_helper(dev_poll_reactor* reactor, short events)
-    : reactor_(reactor), events_(events)
-  {
-  }
-
-  bool set(int descriptor)
-  {
-    ::pollfd& ev = reactor_->add_pending_event_change(descriptor);
-    ev.events = events_;
-    return true;
-  }
-
-private:
-  dev_poll_reactor* reactor_;
-  short events_;
-};
-
 void dev_poll_reactor::fork_service(asio::io_service::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)
