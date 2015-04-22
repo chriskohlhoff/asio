@@ -1086,7 +1086,7 @@
 # if defined(__linux__)
 #  if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 #   if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
-#    if !defined(__INTEL_COMPILER) && !defined(__ICL)
+#    if !defined(__INTEL_COMPILER) && !defined(__ICL) && !(defined(__clang__) && defined(__ANDROID__))
 #     define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
 #     define ASIO_THREAD_KEYWORD __thread
 #    elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
