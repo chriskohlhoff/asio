@@ -74,10 +74,28 @@ public:
     return host_name_;
   }
 
+  /// Get the host name associated with the entry.
+  template <class Allocator>
+  std::basic_string<char, std::char_traits<char>, Allocator> host_name(
+      const Allocator& alloc = Allocator()) const
+  {
+    return std::basic_string<char, std::char_traits<char>, Allocator>(
+        host_name_.c_str(), alloc);
+  }
+
   /// Get the service name associated with the entry.
   std::string service_name() const
   {
     return service_name_;
+  }
+
+  /// Get the service name associated with the entry.
+  template <class Allocator>
+  std::basic_string<char, std::char_traits<char>, Allocator> service_name(
+      const Allocator& alloc = Allocator()) const
+  {
+    return std::basic_string<char, std::char_traits<char>, Allocator>(
+        service_name_.c_str(), alloc);
   }
 
 private:

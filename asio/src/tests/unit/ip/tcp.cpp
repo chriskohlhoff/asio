@@ -1023,6 +1023,62 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_resolver_entry_compile test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks that all public member functions on the class
+// ip::tcp::resolver::entry compile and link correctly. Runtime failures are
+// ignored.
+
+namespace ip_tcp_resolver_entry_compile {
+
+void test()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+  const ip::tcp::endpoint endpoint;
+  const std::string host_name;
+  const std::string service_name;
+  const std::allocator<char> alloc;
+
+  try
+  {
+    // basic_resolver_entry constructors.
+
+    const ip::basic_resolver_entry<ip::tcp> entry1;
+    ip::basic_resolver_entry<ip::tcp> entry2(endpoint, host_name, service_name);
+    ip::basic_resolver_entry<ip::tcp> entry3(entry1);
+#if defined(ASIO_HAS_MOVE)
+    ip::basic_resolver_entry<ip::tcp> entry4(std::move(entry2));
+#endif // defined(ASIO_HAS_MOVE)
+
+    // basic_resolver_entry functions.
+
+    ip::tcp::endpoint e1 = entry1.endpoint();
+    (void)e1;
+
+    ip::tcp::endpoint e2 = entry1;
+    (void)e2;
+
+    std::string s1 = entry1.host_name();
+    (void)s1;
+
+    std::string s2 = entry1.host_name(alloc);
+    (void)s2;
+
+    std::string s3 = entry1.service_name();
+    (void)s3;
+
+    std::string s4 = entry1.service_name(alloc);
+    (void)s4;
+  }
+  catch (std::exception&)
+  {
+  }
+}
+
+} // namespace ip_tcp_resolver_compile
+//------------------------------------------------------------------------------
+
 ASIO_TEST_SUITE
 (
   "ip/tcp",
@@ -1033,4 +1089,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(ip_tcp_acceptor_compile::test)
   ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
   ASIO_TEST_CASE(ip_tcp_resolver_compile::test)
+  ASIO_TEST_CASE(ip_tcp_resolver_entry_compile::test)
 )
