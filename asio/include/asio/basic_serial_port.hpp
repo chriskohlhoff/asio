@@ -444,7 +444,7 @@ public:
    *
    * @param option The option value to be obtained from the serial port.
    *
-   * @param ec Set to indicate what error occured, if any.
+   * @param ec Set to indicate what error occurred, if any.
    *
    * @sa GettableSerialPortOption @n
    * asio::serial_port_base::baud_rate @n
