@@ -65,11 +65,11 @@ int main(int argc, char* argv[])
     // Resolve the address corresponding to the given host.
     asio::ip::tcp::resolver resolver(io_service);
     asio::ip::tcp::resolver::query query(argv[1], "daytime");
-    asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
+    asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(query);
 
     // Start an asynchronous connect.
     debug_stream_socket socket(io_service);
-    asio::async_connect(socket, iterator,
+    asio::async_connect(socket, endpoints,
         boost::bind(connect_handler,
           asio::placeholders::error, &socket));
 

@@ -33,11 +33,11 @@ int main(int argc, char* argv[])
     // Get a list of endpoints corresponding to the server name.
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(argv[1], "http");
-    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+    tcp::resolver::results_type endpoints = resolver.resolve(query);
 
     // Try each endpoint until we successfully establish a connection.
     tcp::socket socket(io_service);
-    asio::connect(socket, endpoint_iterator);
+    asio::connect(socket, endpoints);
 
     // Form the request. We specify the "Connection: close" header so that the
     // server will close the socket after transmitting the response. This will

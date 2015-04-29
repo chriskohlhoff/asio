@@ -24,7 +24,7 @@ void get_daytime(asio::io_service& io_service, const char* hostname)
   {
     udp::resolver resolver(io_service);
 
-    std::future<udp::resolver::iterator> iter =
+    std::future<udp::resolver::results_type> iter =
       resolver.async_resolve(
           {udp::v4(), hostname, "daytime"},
           asio::use_future);

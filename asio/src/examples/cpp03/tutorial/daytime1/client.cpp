@@ -28,10 +28,10 @@ int main(int argc, char* argv[])
 
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(argv[1], "daytime");
-    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+    tcp::resolver::results_type endpoints = resolver.resolve(query);
 
     tcp::socket socket(io_service);
-    asio::connect(socket, endpoint_iterator);
+    asio::connect(socket, endpoints);
 
     for (;;)
     {

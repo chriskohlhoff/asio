@@ -19,8 +19,8 @@
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/ip/basic_resolver_results.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/socket_ops.hpp"
@@ -48,8 +48,8 @@ public:
   // The query type.
   typedef asio::ip::basic_resolver_query<Protocol> query_type;
 
-  // The iterator type.
-  typedef asio::ip::basic_resolver_iterator<Protocol> iterator_type;
+  // The results type.
+  typedef asio::ip::basic_resolver_results<Protocol> results_type;
 
   // Constructor.
   winrt_resolver_service(asio::io_service& io_service)
@@ -89,7 +89,7 @@ public:
   }
 
   // Resolve a query to a list of entries.
-  iterator_type resolve(implementation_type&,
+  results_type resolve(implementation_type&,
       const query_type& query, asio::error_code& ec)
   {
     try
@@ -101,9 +101,9 @@ public:
             winrt_utils::string(query.service_name())), ec);
 
       if (ec)
-        return iterator_type();
+        return results_type();
 
-      return iterator_type::create(
+      return results_type::create(
           endpoint_pairs, query.hints(),
           query.host_name(), query.service_name());
     }
@@ -111,7 +111,7 @@ public:
     {
       ec = asio::error_code(e->HResult,
           asio::system_category());
-      return iterator_type();
+      return results_type();
     }
   }
 
@@ -151,11 +151,11 @@ public:
   }
 
   // Resolve an endpoint to a list of entries.
-  iterator_type resolve(implementation_type&,
+  results_type resolve(implementation_type&,
       const endpoint_type&, asio::error_code& ec)
   {
     ec = asio::error::operation_not_supported;
-    return iterator_type();
+    return results_type();
   }
 
   // Asynchronously resolve an endpoint to a list of entries.
@@ -164,9 +164,9 @@ public:
       const endpoint_type&, Handler& handler)
   {
     asio::error_code ec = asio::error::operation_not_supported;
-    const iterator_type iterator;
+    const results_type results;
     io_service_.get_io_service().post(
-        detail::bind_handler(handler, ec, iterator));
+        detail::bind_handler(handler, ec, results));
   }
 
 private:

@@ -21,6 +21,7 @@
 #include "asio/io_service.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/ip/basic_resolver_results.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 # include "asio/detail/winrt_resolver_service.hpp"
@@ -60,6 +61,9 @@ public:
 
   /// The iterator type.
   typedef basic_resolver_iterator<InternetProtocol> iterator_type;
+
+  /// The results type.
+  typedef basic_resolver_results<InternetProtocol> results_type;
 
 private:
   // The type of the platform-specific implementation.
@@ -106,7 +110,7 @@ public:
   }
 
   /// Resolve a query to a list of entries.
-  iterator_type resolve(implementation_type& impl, const query_type& query,
+  results_type resolve(implementation_type& impl, const query_type& query,
       asio::error_code& ec)
   {
     return service_impl_.resolve(impl, query, ec);
@@ -115,12 +119,12 @@ public:
   /// Asynchronously resolve a query to a list of entries.
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
-      void (asio::error_code, iterator_type))
+      void (asio::error_code, results_type))
   async_resolve(implementation_type& impl, const query_type& query,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     asio::async_completion<ResolveHandler,
-      void (asio::error_code, iterator_type)> init(handler);
+      void (asio::error_code, results_type)> init(handler);
 
     service_impl_.async_resolve(impl, query, init.handler);
 
@@ -128,7 +132,7 @@ public:
   }
 
   /// Resolve an endpoint to a list of entries.
-  iterator_type resolve(implementation_type& impl,
+  results_type resolve(implementation_type& impl,
       const endpoint_type& endpoint, asio::error_code& ec)
   {
     return service_impl_.resolve(impl, endpoint, ec);
@@ -137,12 +141,12 @@ public:
   /// Asynchronously resolve an endpoint to a list of entries.
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
-      void (asio::error_code, iterator_type))
+      void (asio::error_code, results_type))
   async_resolve(implementation_type& impl, const endpoint_type& endpoint,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     asio::async_completion<ResolveHandler,
-      void (asio::error_code, iterator_type)> init(handler);
+      void (asio::error_code, results_type)> init(handler);
 
     service_impl_.async_resolve(impl, endpoint, init.handler);
 

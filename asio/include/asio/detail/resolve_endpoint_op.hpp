@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/ip/basic_resolver_iterator.hpp"
+#include "asio/ip/basic_resolver_results.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -39,7 +39,7 @@ public:
   ASIO_DEFINE_HANDLER_PTR(resolve_endpoint_op);
 
   typedef typename Protocol::endpoint endpoint_type;
-  typedef asio::ip::basic_resolver_iterator<Protocol> iterator_type;
+  typedef asio::ip::basic_resolver_results<Protocol> results_type;
 
   resolve_endpoint_op(socket_ops::weak_cancel_token_type cancel_token,
       const endpoint_type& endpoint, io_service_impl& ios, Handler& handler)
@@ -72,7 +72,7 @@ public:
       socket_ops::background_getnameinfo(o->cancel_token_, o->endpoint_.data(),
           o->endpoint_.size(), host_name, NI_MAXHOST, service_name, NI_MAXSERV,
           o->endpoint_.protocol().type(), o->ec_);
-      o->iter_ = iterator_type::create(o->endpoint_, host_name, service_name);
+      o->results_ = results_type::create(o->endpoint_, host_name, service_name);
 
       // Pass operation back to main io_service for completion.
       o->io_service_impl_.post_deferred_completion(o);
@@ -91,8 +91,8 @@ public:
       // associated with the handler. Consequently, a local copy of the handler
       // is required to ensure that any owning sub-object remains valid until
       // after we have deallocated the memory here.
-      detail::binder2<Handler, asio::error_code, iterator_type>
-        handler(o->handler_, o->ec_, o->iter_);
+      detail::binder2<Handler, asio::error_code, results_type>
+        handler(o->handler_, o->ec_, o->results_);
       p.h = asio::detail::addressof(handler.handler_);
       p.reset();
 
@@ -112,7 +112,7 @@ private:
   io_service_impl& io_service_impl_;
   Handler handler_;
   asio::error_code ec_;
-  iterator_type iter_;
+  results_type results_;
 };
 
 } // namespace detail

@@ -40,18 +40,18 @@ public:
     resolver_.async_resolve(query,
         boost::bind(&client::handle_resolve, this,
           asio::placeholders::error,
-          asio::placeholders::iterator));
+          asio::placeholders::results));
   }
 
 private:
   void handle_resolve(const asio::error_code& err,
-      tcp::resolver::iterator endpoint_iterator)
+      const tcp::resolver::results_type& endpoints)
   {
     if (!err)
     {
       // Attempt a connection to each endpoint in the list until we
       // successfully establish a connection.
-      asio::async_connect(socket_, endpoint_iterator,
+      asio::async_connect(socket_, endpoints,
           boost::bind(&client::handle_connect, this,
             asio::placeholders::error));
     }

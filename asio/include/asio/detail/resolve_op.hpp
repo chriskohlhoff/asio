@@ -18,8 +18,8 @@
 #include "asio/detail/config.hpp"
 #include "asio/error.hpp"
 #include "asio/io_service.hpp"
-#include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/ip/basic_resolver_results.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -40,7 +40,7 @@ public:
   ASIO_DEFINE_HANDLER_PTR(resolve_op);
 
   typedef asio::ip::basic_resolver_query<Protocol> query_type;
-  typedef asio::ip::basic_resolver_iterator<Protocol> iterator_type;
+  typedef asio::ip::basic_resolver_results<Protocol> results_type;
 
   resolve_op(socket_ops::weak_cancel_token_type cancel_token,
       const query_type& query, io_service_impl& ios, Handler& handler)
@@ -96,12 +96,12 @@ public:
       // associated with the handler. Consequently, a local copy of the handler
       // is required to ensure that any owning sub-object remains valid until
       // after we have deallocated the memory here.
-      detail::binder2<Handler, asio::error_code, iterator_type>
-        handler(o->handler_, o->ec_, iterator_type());
+      detail::binder2<Handler, asio::error_code, results_type>
+        handler(o->handler_, o->ec_, results_type());
       p.h = asio::detail::addressof(handler.handler_);
       if (o->addrinfo_)
       {
-        handler.arg2_ = iterator_type::create(o->addrinfo_,
+        handler.arg2_ = results_type::create(o->addrinfo_,
             o->query_.host_name(), o->query_.service_name());
       }
       p.reset();

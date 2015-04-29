@@ -23,11 +23,11 @@ class chat_client
 {
 public:
   chat_client(asio::io_service& io_service,
-      tcp::resolver::iterator endpoint_iterator)
+      const tcp::resolver::results_type& endpoints)
     : io_service_(io_service),
       socket_(io_service)
   {
-    asio::async_connect(socket_, endpoint_iterator,
+    asio::async_connect(socket_, endpoints,
         boost::bind(&chat_client::handle_connect, this,
           asio::placeholders::error));
   }
@@ -149,9 +149,9 @@ int main(int argc, char* argv[])
 
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(argv[1], argv[2]);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
+    tcp::resolver::results_type endpoints = resolver.resolve(query);
 
-    chat_client c(io_service, iterator);
+    chat_client c(io_service, endpoints);
 
     asio::thread t(boost::bind(&asio::io_service::run, &io_service));
 

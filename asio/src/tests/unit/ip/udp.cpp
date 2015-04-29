@@ -516,7 +516,7 @@ struct resolve_handler
 {
   resolve_handler() {}
   void operator()(const asio::error_code&,
-      asio::ip::udp::resolver::iterator) {}
+      asio::ip::udp::resolver::results_type) {}
 #if defined(ASIO_HAS_MOVE)
   resolve_handler(resolve_handler&&) {}
 private:
@@ -550,16 +550,16 @@ void test()
 
     resolver.cancel();
 
-    ip::udp::resolver::iterator iter1 = resolver.resolve(q);
+    ip::udp::resolver::results_type iter1 = resolver.resolve(q);
     (void)iter1;
 
-    ip::udp::resolver::iterator iter2 = resolver.resolve(q, ec);
+    ip::udp::resolver::results_type iter2 = resolver.resolve(q, ec);
     (void)iter2;
 
-    ip::udp::resolver::iterator iter3 = resolver.resolve(e);
+    ip::udp::resolver::results_type iter3 = resolver.resolve(e);
     (void)iter3;
 
-    ip::udp::resolver::iterator iter4 = resolver.resolve(e, ec);
+    ip::udp::resolver::results_type iter4 = resolver.resolve(e, ec);
     (void)iter4;
 
     resolver.async_resolve(q, resolve_handler());

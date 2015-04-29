@@ -72,114 +72,45 @@ public:
   {
   }
 
-  /// Create an iterator from an addrinfo list returned by getaddrinfo.
-  static basic_resolver_iterator create(
-      asio::detail::addrinfo_type* address_info,
-      const std::string& host_name, const std::string& service_name)
+  /// Copy constructor.
+  basic_resolver_iterator(const basic_resolver_iterator& other)
+    : values_(other.values_),
+      index_(other.index_)
   {
-    basic_resolver_iterator iter;
-    if (!address_info)
-      return iter;
+  }
 
-    std::string actual_host_name = host_name;
-    if (address_info->ai_canonname)
-      actual_host_name = address_info->ai_canonname;
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move constructor.
+  basic_resolver_iterator(basic_resolver_iterator&& other)
+    : values_(ASIO_MOVE_CAST(values_ptr_type)(other.values_)),
+      index_(other.index_)
+  {
+    other.index_ = 0;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
-    iter.values_.reset(new values_type);
+  /// Assignment operator.
+  basic_resolver_iterator& operator=(const basic_resolver_iterator& other)
+  {
+    values_ = other.values_;
+    index_ = other.index_;
+    return *this;
+  }
 
-    while (address_info)
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-assignment operator.
+  basic_resolver_iterator& operator=(basic_resolver_iterator&& other)
+  {
+    if (this != &other)
     {
-      if (address_info->ai_family == ASIO_OS_DEF(AF_INET)
-          || address_info->ai_family == ASIO_OS_DEF(AF_INET6))
-      {
-        using namespace std; // For memcpy.
-        typename InternetProtocol::endpoint endpoint;
-        endpoint.resize(static_cast<std::size_t>(address_info->ai_addrlen));
-        memcpy(endpoint.data(), address_info->ai_addr,
-            address_info->ai_addrlen);
-        iter.values_->push_back(
-            basic_resolver_entry<InternetProtocol>(endpoint,
-              actual_host_name, service_name));
-      }
-      address_info = address_info->ai_next;
+      values_ = ASIO_MOVE_CAST(values_ptr_type)(other.values_);
+      index_ = other.index_;
+      other.index_ = 0;
     }
 
-    return iter;
+    return *this;
   }
-
-  /// Create an iterator from an endpoint, host name and service name.
-  static basic_resolver_iterator create(
-      const typename InternetProtocol::endpoint& endpoint,
-      const std::string& host_name, const std::string& service_name)
-  {
-    basic_resolver_iterator iter;
-    iter.values_.reset(new values_type);
-    iter.values_->push_back(
-        basic_resolver_entry<InternetProtocol>(
-          endpoint, host_name, service_name));
-    return iter;
-  }
-
-  /// Create an iterator from a sequence of endpoints, host and service name.
-  template <typename EndpointIterator>
-  static basic_resolver_iterator create(
-      EndpointIterator begin, EndpointIterator end,
-      const std::string& host_name, const std::string& service_name)
-  {
-    basic_resolver_iterator iter;
-    if (begin != end)
-    {
-      iter.values_.reset(new values_type);
-      for (EndpointIterator ep_iter = begin; ep_iter != end; ++ep_iter)
-      {
-        iter.values_->push_back(
-            basic_resolver_entry<InternetProtocol>(
-              *ep_iter, host_name, service_name));
-      }
-    }
-    return iter;
-  }
-
-#if defined(ASIO_WINDOWS_RUNTIME)
-  /// Create an iterator from a Windows Runtime list of EndpointPair objects.
-  static basic_resolver_iterator create(
-      Windows::Foundation::Collections::IVectorView<
-        Windows::Networking::EndpointPair^>^ endpoints,
-      const asio::detail::addrinfo_type& hints,
-      const std::string& host_name, const std::string& service_name)
-  {
-    basic_resolver_iterator iter;
-    if (endpoints->Size)
-    {
-      iter.values_.reset(new values_type);
-      for (unsigned int i = 0; i < endpoints->Size; ++i)
-      {
-        auto pair = endpoints->GetAt(i);
-
-        if (hints.ai_family == ASIO_OS_DEF(AF_INET)
-            && pair->RemoteHostName->Type
-              != Windows::Networking::HostNameType::Ipv4)
-          continue;
-
-        if (hints.ai_family == ASIO_OS_DEF(AF_INET6)
-            && pair->RemoteHostName->Type
-              != Windows::Networking::HostNameType::Ipv6)
-          continue;
-
-        iter.values_->push_back(
-            basic_resolver_entry<InternetProtocol>(
-              typename InternetProtocol::endpoint(
-                ip::address::from_string(
-                  asio::detail::winrt_utils::string(
-                    pair->RemoteHostName->CanonicalName)),
-                asio::detail::winrt_utils::integer(
-                  pair->RemoteServiceName)),
-              host_name, service_name));
-      }
-    }
-    return iter;
-  }
-#endif // defined(ASIO_WINDOWS_RUNTIME)
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Dereference an iterator.
   const basic_resolver_entry<InternetProtocol>& operator*() const
@@ -222,7 +153,7 @@ public:
     return !a.equal(b);
   }
 
-private:
+protected:
   void increment()
   {
     if (++index_ == values_->size())
@@ -248,7 +179,8 @@ private:
   }
 
   typedef std::vector<basic_resolver_entry<InternetProtocol> > values_type;
-  asio::detail::shared_ptr<values_type> values_;
+  typedef asio::detail::shared_ptr<values_type> values_ptr_type;
+  values_ptr_type values_;
   std::size_t index_;
 };
 

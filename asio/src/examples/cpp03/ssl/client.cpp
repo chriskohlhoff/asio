@@ -21,14 +21,14 @@ class client
 public:
   client(asio::io_service& io_service,
       asio::ssl::context& context,
-      asio::ip::tcp::resolver::iterator endpoint_iterator)
+      asio::ip::tcp::resolver::results_type endpoints)
     : socket_(io_service, context)
   {
     socket_.set_verify_mode(asio::ssl::verify_peer);
     socket_.set_verify_callback(
         boost::bind(&client::verify_certificate, this, _1, _2));
 
-    asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
+    asio::async_connect(socket_.lowest_layer(), endpoints,
         boost::bind(&client::handle_connect, this,
           asio::placeholders::error));
   }
@@ -138,12 +138,13 @@ int main(int argc, char* argv[])
 
     asio::ip::tcp::resolver resolver(io_service);
     asio::ip::tcp::resolver::query query(argv[1], argv[2]);
-    asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
+    asio::ip::tcp::resolver::results_type endpoints =
+      resolver.resolve(query);
 
     asio::ssl::context ctx(asio::ssl::context::sslv23);
     ctx.load_verify_file("ca.pem");
 
-    client c(io_service, ctx, iterator);
+    client c(io_service, ctx, endpoints);
 
     io_service.run();
   }

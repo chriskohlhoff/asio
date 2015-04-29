@@ -23,11 +23,11 @@ class chat_client
 {
 public:
   chat_client(asio::io_service& io_service,
-      tcp::resolver::iterator endpoint_iterator)
+      const tcp::resolver::results_type& endpoints)
     : io_service_(io_service),
       socket_(io_service)
   {
-    do_connect(endpoint_iterator);
+    do_connect(endpoints);
   }
 
   void write(const chat_message& msg)
@@ -50,10 +50,10 @@ public:
   }
 
 private:
-  void do_connect(tcp::resolver::iterator endpoint_iterator)
+  void do_connect(const tcp::resolver::results_type& endpoints)
   {
-    asio::async_connect(socket_, endpoint_iterator,
-        [this](std::error_code ec, tcp::resolver::iterator)
+    asio::async_connect(socket_, endpoints,
+        [this](std::error_code ec, tcp::endpoint)
         {
           if (!ec)
           {

@@ -22,6 +22,7 @@
 #include "asio/error.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/ip/basic_resolver_results.hpp"
 #include "asio/ip/resolver_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -53,8 +54,11 @@ public:
   /// The query type.
   typedef basic_resolver_query<InternetProtocol> query;
 
-  /// The iterator type.
+  /// (Deprecated.) The iterator type.
   typedef basic_resolver_iterator<InternetProtocol> iterator;
+
+  /// The results type.
+  typedef basic_resolver_results<InternetProtocol> results_type;
 
   /// Constructor.
   /**
@@ -85,22 +89,19 @@ public:
    *
    * @param q A query object that determines what endpoints will be returned.
    *
-   * @returns A forward-only iterator that can be used to traverse the list
-   * of endpoint entries.
+   * @returns A range object representing the list of endpoint entries. A
+   * successful call to this function is guaranteed to return a non-empty
+   * range.
    *
    * @throws asio::system_error Thrown on failure.
-   *
-   * @note A default constructed iterator represents the end of the list.
-   *
-   * A successful call to this function is guaranteed to return at least one
-   * entry.
    */
-  iterator resolve(const query& q)
+  results_type resolve(const query& q)
   {
     asio::error_code ec;
-    iterator i = this->get_service().resolve(this->get_implementation(), q, ec);
+    results_type r = this->get_service().resolve(
+        this->get_implementation(), q, ec);
     asio::detail::throw_error(ec, "resolve");
-    return i;
+    return r;
   }
 
   /// Perform forward resolution of a query to a list of entries.
@@ -111,16 +112,11 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns A forward-only iterator that can be used to traverse the list
-   * of endpoint entries. Returns a default constructed iterator if an error
-   * occurs.
-   *
-   * @note A default constructed iterator represents the end of the list.
-   *
-   * A successful call to this function is guaranteed to return at least one
-   * entry.
+   * @returns A range object representing the list of endpoint entries. An
+   * empty range is returned if an error occurs. A successful call to this
+   * function is guaranteed to return a non-empty range.
    */
-  iterator resolve(const query& q, asio::error_code& ec)
+  results_type resolve(const query& q, asio::error_code& ec)
   {
     return this->get_service().resolve(this->get_implementation(), q, ec);
   }
@@ -137,30 +133,26 @@ public:
    * signature of the handler must be:
    * @code void handler(
    *   const asio::error_code& error, // Result of operation.
-   *   resolver::iterator iterator             // Forward-only iterator that can
-   *                                           // be used to traverse the list
-   *                                           // of endpoint entries.
+   *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
-   * @note A default constructed iterator represents the end of the list.
-   *
-   * A successful resolve operation is guaranteed to pass at least one entry to
+   * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
    */
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
-      void (asio::error_code, iterator))
+      void (asio::error_code, results_type))
   async_resolve(const query& q,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
     ASIO_RESOLVE_HANDLER_CHECK(
-        ResolveHandler, handler, iterator) type_check;
+        ResolveHandler, handler, results_type) type_check;
 
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
@@ -174,20 +166,17 @@ public:
    * @param e An endpoint object that determines what endpoints will be
    * returned.
    *
-   * @returns A forward-only iterator that can be used to traverse the list
-   * of endpoint entries.
+   * @returns A range object representing the list of endpoint entries. A
+   * successful call to this function is guaranteed to return a non-empty
+   * range.
    *
    * @throws asio::system_error Thrown on failure.
-   *
-   * @note A default constructed iterator represents the end of the list.
-   *
-   * A successful call to this function is guaranteed to return at least one
-   * entry.
    */
-  iterator resolve(const endpoint_type& e)
+  results_type resolve(const endpoint_type& e)
   {
     asio::error_code ec;
-    iterator i = this->get_service().resolve(this->get_implementation(), e, ec);
+    results_type i = this->get_service().resolve(
+        this->get_implementation(), e, ec);
     asio::detail::throw_error(ec, "resolve");
     return i;
   }
@@ -202,16 +191,11 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @returns A forward-only iterator that can be used to traverse the list
-   * of endpoint entries. Returns a default constructed iterator if an error
-   * occurs.
-   *
-   * @note A default constructed iterator represents the end of the list.
-   *
-   * A successful call to this function is guaranteed to return at least one
-   * entry.
+   * @returns A range object representing the list of endpoint entries. An
+   * empty range is returned if an error occurs. A successful call to this
+   * function is guaranteed to return a non-empty range.
    */
-  iterator resolve(const endpoint_type& e, asio::error_code& ec)
+  results_type resolve(const endpoint_type& e, asio::error_code& ec)
   {
     return this->get_service().resolve(this->get_implementation(), e, ec);
   }
@@ -230,30 +214,26 @@ public:
    * signature of the handler must be:
    * @code void handler(
    *   const asio::error_code& error, // Result of operation.
-   *   resolver::iterator iterator             // Forward-only iterator that can
-   *                                           // be used to traverse the list
-   *                                           // of endpoint entries.
+   *   resolver::results_type results // Resolved endpoints as a range.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
    * asio::io_service::post().
    *
-   * @note A default constructed iterator represents the end of the list.
-   *
-   * A successful resolve operation is guaranteed to pass at least one entry to
+   * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
    */
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
-      void (asio::error_code, iterator))
+      void (asio::error_code, results_type))
   async_resolve(const endpoint_type& e,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     // If you get an error on the following line it means that your handler does
     // not meet the documented type requirements for a ResolveHandler.
     ASIO_RESOLVE_HANDLER_CHECK(
-        ResolveHandler, handler, iterator) type_check;
+        ResolveHandler, handler, results_type) type_check;
 
     return this->get_service().async_resolve(this->get_implementation(), e,
         ASIO_MOVE_CAST(ResolveHandler)(handler));

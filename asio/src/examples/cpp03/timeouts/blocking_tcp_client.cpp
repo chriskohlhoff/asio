@@ -72,7 +72,8 @@ public:
   {
     // Resolve the host name and service to a list of endpoints.
     tcp::resolver::query query(host, service);
-    tcp::resolver::iterator iter = tcp::resolver(io_service_).resolve(query);
+    tcp::resolver::results_type endpoints =
+      tcp::resolver(io_service_).resolve(query);
 
     // Set a deadline for the asynchronous operation. As a host name may
     // resolve to multiple endpoints, this function uses the composed operation
@@ -91,7 +92,7 @@ public:
     // object is used as a callback and will update the ec variable when the
     // operation completes. The blocking_udp_client.cpp example shows how you
     // can use boost::bind rather than boost::lambda.
-    asio::async_connect(socket_, iter, var(ec) = _1);
+    asio::async_connect(socket_, endpoints, var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
     do io_service_.run_one(); while (ec == asio::error::would_block);

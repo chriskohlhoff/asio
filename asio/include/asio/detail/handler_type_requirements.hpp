@@ -290,7 +290,34 @@ struct handler_type_requirements
             asio::detail::lvref<const asio::error_code>()), \
         char(0))> ASIO_UNUSED_TYPEDEF
 
-#define ASIO_COMPOSED_CONNECT_HANDLER_CHECK( \
+#define ASIO_RANGE_CONNECT_HANDLER_CHECK( \
+    handler_type, handler, endpoint_type) \
+  \
+  typedef ASIO_HANDLER_TYPE(handler_type, \
+      void(asio::error_code, endpoint_type)) \
+    asio_true_handler_type; \
+  \
+  ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
+      sizeof(asio::detail::two_arg_handler_test( \
+          asio::detail::rvref< \
+            asio_true_handler_type>(), \
+          static_cast<const asio::error_code*>(0), \
+          static_cast<const endpoint_type*>(0))) == 1, \
+      "RangeConnectHandler type requirements not met") \
+  \
+  typedef asio::detail::handler_type_requirements< \
+      sizeof( \
+        asio::detail::argbyv( \
+          asio::detail::rvref< \
+            asio_true_handler_type>())) + \
+      sizeof( \
+        asio::detail::lvref< \
+          asio_true_handler_type>()( \
+            asio::detail::lvref<const asio::error_code>(), \
+            asio::detail::lvref<const endpoint_type>()), \
+        char(0))> ASIO_UNUSED_TYPEDEF
+
+#define ASIO_ITERATOR_CONNECT_HANDLER_CHECK( \
     handler_type, handler, iter_type) \
   \
   typedef ASIO_HANDLER_TYPE(handler_type, \
@@ -303,7 +330,7 @@ struct handler_type_requirements
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0), \
           static_cast<const iter_type*>(0))) == 1, \
-      "ComposedConnectHandler type requirements not met") \
+      "IteratorConnectHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
       sizeof( \
@@ -318,10 +345,10 @@ struct handler_type_requirements
         char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_RESOLVE_HANDLER_CHECK( \
-    handler_type, handler, iter_type) \
+    handler_type, handler, range_type) \
   \
   typedef ASIO_HANDLER_TYPE(handler_type, \
-      void(asio::error_code, iter_type)) \
+      void(asio::error_code, range_type)) \
     asio_true_handler_type; \
   \
   ASIO_HANDLER_TYPE_REQUIREMENTS_ASSERT( \
@@ -329,7 +356,7 @@ struct handler_type_requirements
           asio::detail::rvref< \
             asio_true_handler_type>(), \
           static_cast<const asio::error_code*>(0), \
-          static_cast<const iter_type*>(0))) == 1, \
+          static_cast<const range_type*>(0))) == 1, \
       "ResolveHandler type requirements not met") \
   \
   typedef asio::detail::handler_type_requirements< \
@@ -341,7 +368,7 @@ struct handler_type_requirements
         asio::detail::lvref< \
           asio_true_handler_type>()( \
             asio::detail::lvref<const asio::error_code>(), \
-            asio::detail::lvref<const iter_type>()), \
+            asio::detail::lvref<const range_type>()), \
         char(0))> ASIO_UNUSED_TYPEDEF
 
 #define ASIO_WAIT_HANDLER_CHECK( \
@@ -495,7 +522,11 @@ struct handler_type_requirements
     handler_type, handler) \
   typedef int ASIO_UNUSED_TYPEDEF
 
-#define ASIO_COMPOSED_CONNECT_HANDLER_CHECK( \
+#define ASIO_RANGE_CONNECT_HANDLER_CHECK( \
+    handler_type, handler, iter_type) \
+  typedef int ASIO_UNUSED_TYPEDEF
+
+#define ASIO_ITERATOR_CONNECT_HANDLER_CHECK( \
     handler_type, handler, iter_type) \
   typedef int ASIO_UNUSED_TYPEDEF
 

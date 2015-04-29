@@ -31,10 +31,10 @@ int main(int argc, char* argv[])
 
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(tcp::v4(), argv[1], argv[2]);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
+    tcp::resolver::results_type endpoints = resolver.resolve(query);
 
     tcp::socket s(io_service);
-    asio::connect(s, iterator);
+    asio::connect(s, endpoints);
 
     using namespace std; // For strlen.
     std::cout << "Enter message: ";

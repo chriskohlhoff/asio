@@ -74,9 +74,9 @@ public:
     delete[] write_data_;
   }
 
-  void start(asio::ip::tcp::resolver::iterator endpoint_iterator)
+  void start(asio::ip::tcp::resolver::results_type endpoints)
   {
-    asio::async_connect(socket_, endpoint_iterator,
+    asio::async_connect(socket_, endpoints,
         asio::wrap(strand_,boost::bind(&session::handle_connect, this,
             asio::placeholders::error)));
   }
@@ -190,7 +190,7 @@ class client
 {
 public:
   client(asio::io_service& ios,
-      const asio::ip::tcp::resolver::iterator endpoint_iterator,
+      const asio::ip::tcp::resolver::results_type endpoints,
       size_t block_size, size_t session_count, int timeout)
     : io_service_(ios),
       stop_timer_(ios),
@@ -203,7 +203,7 @@ public:
     for (size_t i = 0; i < session_count; ++i)
     {
       session* new_session = new session(io_service_, block_size, stats_);
-      new_session->start(endpoint_iterator);
+      new_session->start(endpoints);
       sessions_.push_back(new_session);
     }
   }
@@ -254,10 +254,10 @@ int main(int argc, char* argv[])
     asio::io_service ios;
 
     asio::ip::tcp::resolver r(ios);
-    asio::ip::tcp::resolver::iterator iter =
+    asio::ip::tcp::resolver::results_type endpoints =
       r.resolve(asio::ip::tcp::resolver::query(host, port));
 
-    client c(ios, iter, block_size, session_count, timeout);
+    client c(ios, endpoints, block_size, session_count, timeout);
 
     std::list<asio::thread*> threads;
     while (--thread_count > 0)
