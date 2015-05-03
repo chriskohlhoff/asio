@@ -243,6 +243,12 @@ void scheduler::restart()
   stopped_ = false;
 }
 
+void scheduler::compensating_work_started()
+{
+  thread_info_base* this_thread = thread_call_stack::contains(this);
+  ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
+}
+
 void scheduler::post_immediate_completion(
     scheduler::operation* op, bool is_continuation)
 {

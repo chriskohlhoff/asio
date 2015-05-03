@@ -79,6 +79,10 @@ public:
     ++outstanding_work_;
   }
 
+  // Used to compensate for a forthcoming work_finished call. Must be called
+  // from within a scheduler-owned thread.
+  ASIO_DECL void compensating_work_started();
+
   // Notify that some work has finished.
   void work_finished()
   {

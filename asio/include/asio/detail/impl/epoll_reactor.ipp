@@ -635,7 +635,7 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
       // No user-initiated operations have completed, so we need to compensate
       // for the work_finished() call that the scheduler will make once this
       // operation returns.
-      reactor_->scheduler_.work_started();
+      reactor_->scheduler_.compensating_work_started();
     }
   }
 
