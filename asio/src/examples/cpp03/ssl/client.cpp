@@ -137,9 +137,8 @@ int main(int argc, char* argv[])
     asio::io_service io_service;
 
     asio::ip::tcp::resolver resolver(io_service);
-    asio::ip::tcp::resolver::query query(argv[1], argv[2]);
     asio::ip::tcp::resolver::results_type endpoints =
-      resolver.resolve(query);
+      resolver.resolve(argv[1], argv[2]);
 
     asio::ssl::context ctx(asio::ssl::context::sslv23);
     ctx.load_verify_file("ca.pem");

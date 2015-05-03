@@ -550,25 +550,72 @@ void test()
 
     resolver.cancel();
 
-    ip::udp::resolver::results_type iter1 = resolver.resolve(q);
-    (void)iter1;
+    ip::udp::resolver::results_type results1 = resolver.resolve(q);
+    (void)results1;
 
-    ip::udp::resolver::results_type iter2 = resolver.resolve(q, ec);
-    (void)iter2;
+    ip::udp::resolver::results_type results2 = resolver.resolve(q, ec);
+    (void)results2;
 
-    ip::udp::resolver::results_type iter3 = resolver.resolve(e);
-    (void)iter3;
+    ip::udp::resolver::results_type results3 = resolver.resolve("", "");
+    (void)results3;
 
-    ip::udp::resolver::results_type iter4 = resolver.resolve(e, ec);
-    (void)iter4;
+    ip::udp::resolver::results_type results4 = resolver.resolve("", "", ec);
+    (void)results4;
+
+    ip::udp::resolver::results_type results5 =
+      resolver.resolve("", "", ip::udp::resolver::flags());
+    (void)results5;
+
+    ip::udp::resolver::results_type results6 =
+      resolver.resolve("", "", ip::udp::resolver::flags(), ec);
+    (void)results6;
+
+    ip::udp::resolver::results_type results7 =
+      resolver.resolve(ip::udp::v4(), "", "");
+    (void)results7;
+
+    ip::udp::resolver::results_type results8 =
+      resolver.resolve(ip::udp::v4(), "", "", ec);
+    (void)results8;
+
+    ip::udp::resolver::results_type results9 =
+      resolver.resolve(ip::udp::v4(), "", "", ip::udp::resolver::flags());
+    (void)results9;
+
+    ip::udp::resolver::results_type results10 =
+      resolver.resolve(ip::udp::v4(), "", "", ip::udp::resolver::flags(), ec);
+    (void)results10;
+
+    ip::udp::resolver::results_type results11 = resolver.resolve(e);
+    (void)results11;
+
+    ip::udp::resolver::results_type results12 = resolver.resolve(e, ec);
+    (void)results12;
 
     resolver.async_resolve(q, resolve_handler());
     int i1 = resolver.async_resolve(q, lazy);
     (void)i1;
 
-    resolver.async_resolve(e, resolve_handler());
-    int i2 = resolver.async_resolve(e, lazy);
+    resolver.async_resolve(q, resolve_handler());
+    int i2 = resolver.async_resolve("", "", lazy);
     (void)i2;
+
+    resolver.async_resolve(q, resolve_handler());
+    int i3 = resolver.async_resolve("", "", ip::udp::resolver::flags(), lazy);
+    (void)i3;
+
+    resolver.async_resolve(q, resolve_handler());
+    int i4 = resolver.async_resolve(ip::udp::v4(), "", "", lazy);
+    (void)i4;
+
+    resolver.async_resolve(q, resolve_handler());
+    int i5 = resolver.async_resolve(ip::udp::v4(),
+        "", "", ip::udp::resolver::flags(), lazy);
+    (void)i5;
+
+    resolver.async_resolve(e, resolve_handler());
+    int i6 = resolver.async_resolve(e, lazy);
+    (void)i6;
   }
   catch (std::exception&)
   {

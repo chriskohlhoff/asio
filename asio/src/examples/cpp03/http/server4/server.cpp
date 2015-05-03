@@ -21,8 +21,9 @@ server::server(asio::io_service& io_service,
   : request_handler_(request_handler)
 {
   tcp::resolver resolver(io_service);
-  tcp::resolver::query query(address, port);
-  acceptor_.reset(new tcp::acceptor(io_service, *resolver.resolve(query)));
+  asio::ip::tcp::endpoint endpoint =
+    *resolver.resolve(address, port).begin();
+  acceptor_.reset(new tcp::acceptor(io_service, endpoint));
 }
 
 // Enable the pseudo-keywords reenter, yield and fork.

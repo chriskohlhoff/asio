@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
     asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
-    tcp::resolver::query query(argv[1], "daytime");
-    tcp::resolver::results_type endpoints = resolver.resolve(query);
+    tcp::resolver::results_type endpoints =
+      resolver.resolve(argv[1], "daytime");
 
     tcp::socket socket(io_service);
     asio::connect(socket, endpoints);

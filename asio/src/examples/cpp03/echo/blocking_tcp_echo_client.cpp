@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
     asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
-    tcp::resolver::query query(tcp::v4(), argv[1], argv[2]);
-    tcp::resolver::results_type endpoints = resolver.resolve(query);
+    tcp::resolver::results_type endpoints =
+      resolver.resolve(tcp::v4(), argv[1], argv[2]);
 
     tcp::socket s(io_service);
     asio::connect(s, endpoints);

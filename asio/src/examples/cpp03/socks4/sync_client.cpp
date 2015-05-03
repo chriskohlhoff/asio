@@ -35,8 +35,7 @@ int main(int argc, char* argv[])
 
     // Get a list of endpoints corresponding to the SOCKS 4 server name.
     tcp::resolver resolver(io_service);
-    tcp::resolver::query socks_query(argv[1], argv[2]);
-    tcp::resolver::results_type endpoints = resolver.resolve(socks_query);
+    tcp::resolver::results_type endpoints = resolver.resolve(argv[1], argv[2]);
 
     // Try each endpoint until we successfully establish a connection to the
     // SOCKS 4 server.
@@ -45,8 +44,8 @@ int main(int argc, char* argv[])
 
     // Get an endpoint for the Boost website. This will be passed to the SOCKS
     // 4 server. Explicitly specify IPv4 since SOCKS 4 does not support IPv6.
-    tcp::resolver::query http_query(tcp::v4(), "www.boost.org", "http");
-    tcp::endpoint http_endpoint = *resolver.resolve(http_query);
+    tcp::endpoint http_endpoint =
+      *resolver.resolve(tcp::v4(), "www.boost.org", "http").begin();
 
     // Send the request to the SOCKS 4 server.
     socks4::request socks_request(

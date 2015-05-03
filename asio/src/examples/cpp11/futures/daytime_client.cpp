@@ -24,20 +24,20 @@ void get_daytime(asio::io_service& io_service, const char* hostname)
   {
     udp::resolver resolver(io_service);
 
-    std::future<udp::resolver::results_type> iter =
+    std::future<udp::resolver::results_type> endpoints =
       resolver.async_resolve(
-          {udp::v4(), hostname, "daytime"},
+          udp::v4(), hostname, "daytime",
           asio::use_future);
 
-    // The async_resolve operation above returns the endpoint iterator as a
-    // future value that is not retrieved ...
+    // The async_resolve operation above returns the endpoints as a future
+    // value that is not retrieved ...
 
     udp::socket socket(io_service, udp::v4());
 
     std::array<char, 1> send_buf  = {{ 0 }};
     std::future<std::size_t> send_length =
       socket.async_send_to(asio::buffer(send_buf),
-          *iter.get(), // ... until here. This call may block.
+          *endpoints.get().begin(), // ... until here. This call may block.
           asio::use_future);
 
     // Do other things here while the send completes.

@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
     tcp::socket s(io_service);
     tcp::resolver resolver(io_service);
-    asio::connect(s, resolver.resolve({argv[1], argv[2]}));
+    asio::connect(s, resolver.resolve(argv[1], argv[2]));
 
     std::cout << "Enter message: ";
     char request[max_length];

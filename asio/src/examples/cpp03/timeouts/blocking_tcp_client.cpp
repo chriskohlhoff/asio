@@ -71,9 +71,8 @@ public:
       boost::posix_time::time_duration timeout)
   {
     // Resolve the host name and service to a list of endpoints.
-    tcp::resolver::query query(host, service);
     tcp::resolver::results_type endpoints =
-      tcp::resolver(io_service_).resolve(query);
+      tcp::resolver(io_service_).resolve(host, service);
 
     // Set a deadline for the asynchronous operation. As a host name may
     // resolve to multiple endpoints, this function uses the composed operation

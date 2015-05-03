@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     udp::socket s(io_service, udp::endpoint(udp::v4(), 0));
 
     udp::resolver resolver(io_service);
-    udp::endpoint endpoint = *resolver.resolve({udp::v4(), argv[1], argv[2]});
+    udp::endpoint endpoint = *resolver.resolve(udp::v4(), argv[1], argv[2]);
 
     std::cout << "Enter message: ";
     char request[max_length];

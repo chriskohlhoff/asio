@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
     udp::socket s(io_service, udp::endpoint(udp::v4(), 0));
 
     udp::resolver resolver(io_service);
-    udp::resolver::query query(udp::v4(), argv[1], argv[2]);
-    udp::resolver::iterator iterator = resolver.resolve(query);
+    udp::resolver::iterator iterator =
+      resolver.resolve(udp::v4(), argv[1], argv[2]);
 
     using namespace std; // For strlen.
     std::cout << "Enter message: ";

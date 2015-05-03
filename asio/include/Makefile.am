@@ -353,6 +353,7 @@ nobase_include_HEADERS = \
 	asio/ip/multicast.hpp \
 	asio/ip/network_v4.hpp \
 	asio/ip/network_v6.hpp \
+	asio/ip/resolver_base.hpp \
 	asio/ip/resolver_query_base.hpp \
 	asio/ip/resolver_service.hpp \
 	asio/ip/tcp.hpp \

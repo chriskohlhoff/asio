@@ -415,10 +415,17 @@ void test()
 
 namespace ip_icmp_resolver_compile {
 
-void resolve_handler(const asio::error_code&,
-    asio::ip::icmp::resolver::iterator)
+struct resolve_handler
 {
-}
+  resolve_handler() {}
+  void operator()(const asio::error_code&,
+      asio::ip::icmp::resolver::results_type) {}
+#if defined(ASIO_HAS_MOVE)
+  resolve_handler(resolve_handler&&) {}
+private:
+  resolve_handler(const resolve_handler&);
+#endif // defined(ASIO_HAS_MOVE)
+};
 
 void test()
 {
@@ -446,25 +453,72 @@ void test()
 
     resolver.cancel();
 
-    ip::icmp::resolver::iterator iter1 = resolver.resolve(q);
-    (void)iter1;
+    ip::icmp::resolver::results_type results1 = resolver.resolve(q);
+    (void)results1;
 
-    ip::icmp::resolver::iterator iter2 = resolver.resolve(q, ec);
-    (void)iter2;
+    ip::icmp::resolver::results_type results2 = resolver.resolve(q, ec);
+    (void)results2;
 
-    ip::icmp::resolver::iterator iter3 = resolver.resolve(e);
-    (void)iter3;
+    ip::icmp::resolver::results_type results3 = resolver.resolve("", "");
+    (void)results3;
 
-    ip::icmp::resolver::iterator iter4 = resolver.resolve(e, ec);
-    (void)iter4;
+    ip::icmp::resolver::results_type results4 = resolver.resolve("", "", ec);
+    (void)results4;
 
-    resolver.async_resolve(q, &resolve_handler);
+    ip::icmp::resolver::results_type results5 =
+      resolver.resolve("", "", ip::icmp::resolver::flags());
+    (void)results5;
+
+    ip::icmp::resolver::results_type results6 =
+      resolver.resolve("", "", ip::icmp::resolver::flags(), ec);
+    (void)results6;
+
+    ip::icmp::resolver::results_type results7 =
+      resolver.resolve(ip::icmp::v4(), "", "");
+    (void)results7;
+
+    ip::icmp::resolver::results_type results8 =
+      resolver.resolve(ip::icmp::v4(), "", "", ec);
+    (void)results8;
+
+    ip::icmp::resolver::results_type results9 =
+      resolver.resolve(ip::icmp::v4(), "", "", ip::icmp::resolver::flags());
+    (void)results9;
+
+    ip::icmp::resolver::results_type results10 =
+      resolver.resolve(ip::icmp::v4(), "", "", ip::icmp::resolver::flags(), ec);
+    (void)results10;
+
+    ip::icmp::resolver::results_type results11 = resolver.resolve(e);
+    (void)results11;
+
+    ip::icmp::resolver::results_type results12 = resolver.resolve(e, ec);
+    (void)results12;
+
+    resolver.async_resolve(q, resolve_handler());
     int i1 = resolver.async_resolve(q, lazy);
     (void)i1;
 
-    resolver.async_resolve(e, &resolve_handler);
-    int i2 = resolver.async_resolve(e, lazy);
+    resolver.async_resolve(q, resolve_handler());
+    int i2 = resolver.async_resolve("", "", lazy);
     (void)i2;
+
+    resolver.async_resolve(q, resolve_handler());
+    int i3 = resolver.async_resolve("", "", ip::icmp::resolver::flags(), lazy);
+    (void)i3;
+
+    resolver.async_resolve(q, resolve_handler());
+    int i4 = resolver.async_resolve(ip::icmp::v4(), "", "", lazy);
+    (void)i4;
+
+    resolver.async_resolve(q, resolve_handler());
+    int i5 = resolver.async_resolve(ip::icmp::v4(),
+        "", "", ip::icmp::resolver::flags(), lazy);
+    (void)i5;
+
+    resolver.async_resolve(e, resolve_handler());
+    int i6 = resolver.async_resolve(e, lazy);
+    (void)i6;
   }
   catch (std::exception&)
   {

@@ -36,8 +36,7 @@ public:
 
     // Start an asynchronous resolve to translate the server and service names
     // into a list of endpoints.
-    tcp::resolver::query query(server, "http");
-    resolver_.async_resolve(query,
+    resolver_.async_resolve(server, "http",
         boost::bind(&client::handle_resolve, this,
           asio::placeholders::error,
           asio::placeholders::results));

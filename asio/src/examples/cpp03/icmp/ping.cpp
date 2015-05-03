@@ -28,8 +28,7 @@ public:
     : resolver_(io_service), socket_(io_service, icmp::v4()),
       timer_(io_service), sequence_number_(0), num_replies_(0)
   {
-    icmp::resolver::query query(icmp::v4(), destination, "");
-    destination_ = *resolver_.resolve(query);
+    destination_ = *resolver_.resolve(icmp::v4(), destination, "");
 
     start_send();
     start_receive();

@@ -79,6 +79,7 @@
 #include "asio/ip/host_name.hpp"
 #include "asio/ip/icmp.hpp"
 #include "asio/ip/multicast.hpp"
+#include "asio/ip/resolver_base.hpp"
 #include "asio/ip/resolver_query_base.hpp"
 #include "asio/ip/resolver_service.hpp"
 #include "asio/ip/tcp.hpp"

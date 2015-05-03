@@ -64,8 +64,8 @@ int main(int argc, char* argv[])
 
     // Resolve the address corresponding to the given host.
     asio::ip::tcp::resolver resolver(io_service);
-    asio::ip::tcp::resolver::query query(argv[1], "daytime");
-    asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(query);
+    asio::ip::tcp::resolver::results_type endpoints =
+      resolver.resolve(argv[1], "daytime");
 
     // Start an asynchronous connect.
     debug_stream_socket socket(io_service);
