@@ -17,7 +17,11 @@
 
 #include "asio/detail/config.hpp"
 
-namespace asio { class execution_context; }
+namespace asio {
+
+class execution_context;
+
+} // namespace asio
 
 #if defined(ASIO_CUSTOM_HANDLER_TRACKING)
 # include ASIO_CUSTOM_HANDLER_TRACKING

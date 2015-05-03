@@ -75,7 +75,7 @@ private:
     {
     }
 
-    thread thread_;
+    asio::detail::thread thread_;
     item* next_;
   };
 
