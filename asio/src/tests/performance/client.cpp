@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
 
     asio::ip::tcp::resolver r(ios);
     asio::ip::tcp::resolver::results_type endpoints =
-      r.resolve(asio::ip::tcp::resolver::query(host, port));
+      r.resolve(host, port);
 
     client c(ios, endpoints, block_size, session_count, timeout);
 

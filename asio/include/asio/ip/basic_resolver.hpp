@@ -54,11 +54,13 @@ public:
   /// The endpoint type.
   typedef typename InternetProtocol::endpoint endpoint_type;
 
+#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated.) The query type.
   typedef basic_resolver_query<InternetProtocol> query;
 
   /// (Deprecated.) The iterator type.
   typedef basic_resolver_iterator<InternetProtocol> iterator;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// The results type.
   typedef basic_resolver_results<InternetProtocol> results_type;
@@ -86,6 +88,7 @@ public:
     return this->get_service().cancel(this->get_implementation());
   }
 
+#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated.) Perform forward resolution of a query to a list of entries.
   /**
    * This function is used to resolve a query into a list of endpoint entries.
@@ -123,6 +126,7 @@ public:
   {
     return this->get_service().resolve(this->get_implementation(), q, ec);
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Perform forward resolution of a query to a list of entries.
   /**
@@ -242,7 +246,7 @@ public:
       resolver_base::flags resolve_flags)
   {
     asio::error_code ec;
-    query q(host, service, resolve_flags);
+    basic_resolver_query<protocol_type> q(host, service, resolve_flags);
     results_type r = this->get_service().resolve(
         this->get_implementation(), q, ec);
     asio::detail::throw_error(ec, "resolve");
@@ -289,7 +293,7 @@ public:
   results_type resolve(const std::string& host, const std::string& service,
       resolver_base::flags resolve_flags, asio::error_code& ec)
   {
-    query q(host, service, resolve_flags);
+    basic_resolver_query<protocol_type> q(host, service, resolve_flags);
     return this->get_service().resolve(this->get_implementation(), q, ec);
   }
 
@@ -421,7 +425,8 @@ public:
       const std::string& service, resolver_base::flags resolve_flags)
   {
     asio::error_code ec;
-    query q(protocol, host, service, resolve_flags);
+    basic_resolver_query<protocol_type> q(
+        protocol, host, service, resolve_flags);
     results_type r = this->get_service().resolve(
         this->get_implementation(), q, ec);
     asio::detail::throw_error(ec, "resolve");
@@ -472,10 +477,12 @@ public:
       const std::string& service, resolver_base::flags resolve_flags,
       asio::error_code& ec)
   {
-    query q(protocol, host, service, resolve_flags);
+    basic_resolver_query<protocol_type> q(
+        protocol, host, service, resolve_flags);
     return this->get_service().resolve(this->get_implementation(), q, ec);
   }
 
+#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated.) Asynchronously perform forward resolution of a query to a
   /// list of entries.
   /**
@@ -513,6 +520,7 @@ public:
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
   /**
@@ -624,7 +632,7 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-    query q(host, service, resolve_flags);
+    basic_resolver_query<protocol_type> q(host, service, resolve_flags);
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }
@@ -745,7 +753,8 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-    query q(protocol, host, service, resolve_flags);
+    basic_resolver_query<protocol_type> q(
+        protocol, host, service, resolve_flags);
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
   }

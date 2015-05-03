@@ -46,9 +46,9 @@
 //     init_buffers();
 //     this->basic_socket<Protocol, StreamSocketService>::close(ec_);
 //     typedef typename Protocol::resolver resolver_type;
-//     typedef typename resolver_type::query resolver_query;
-//     resolver_query query(x1, ..., xn);
-//     resolve_and_connect(query);
+//     resolver_type resolver(detail::socket_streambuf_base::io_service_);
+//     connect_to_endpoints(
+//         resolver.resolve(x1, ..., xn, ec_));
 //     return !ec_ ? this : 0;
 //   }
 // This macro should only persist within this file.
@@ -62,9 +62,9 @@
     init_buffers(); \
     this->basic_socket<Protocol, StreamSocketService>::close(ec_); \
     typedef typename Protocol::resolver resolver_type; \
-    typedef typename resolver_type::query resolver_query; \
-    resolver_query query(ASIO_VARIADIC_BYVAL_ARGS(n)); \
-    resolve_and_connect(query); \
+    resolver_type resolver(detail::socket_streambuf_base::io_service_); \
+    connect_to_endpoints( \
+        resolver.resolve(ASIO_VARIADIC_BYVAL_ARGS(n), ec_)); \
     return !ec_ ? this : 0; \
   } \
   /**/
@@ -212,9 +212,8 @@ public:
     init_buffers();
     this->basic_socket<Protocol, StreamSocketService>::close(ec_);
     typedef typename Protocol::resolver resolver_type;
-    typedef typename resolver_type::query resolver_query;
-    resolver_query query(x...);
-    resolve_and_connect(query);
+    resolver_type resolver(detail::socket_streambuf_base::io_service_);
+    connect_to_endpoints(resolver.resolve(x..., ec_));
     return !ec_ ? this : 0;
   }
 #else
@@ -518,16 +517,13 @@ private:
       setp(&put_buffer_[0], &put_buffer_[0] + put_buffer_.size());
   }
 
-  template <typename ResolverQuery>
-  void resolve_and_connect(const ResolverQuery& query)
+  template <typename EndpointSequence>
+  void connect_to_endpoints(const EndpointSequence& endpoints)
   {
-    typedef typename Protocol::resolver resolver_type;
-    typedef typename resolver_type::iterator iterator_type;
-    resolver_type resolver(detail::socket_streambuf_base::io_service_);
-    iterator_type i = resolver.resolve(query, ec_);
     if (!ec_)
     {
-      iterator_type end;
+      typename EndpointSequence::iterator i = endpoints.begin();
+      typename EndpointSequence::iterator end = endpoints.end();
       ec_ = asio::error::host_not_found;
       while (ec_ && i != end)
       {

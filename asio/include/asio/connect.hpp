@@ -128,6 +128,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
 
+#if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated.) Establishes a socket connection by trying each endpoint in a
 /// sequence.
 /**
@@ -184,6 +185,7 @@ template <typename Protocol, typename SocketService, typename Iterator>
 Iterator connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, asio::error_code& ec,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
 /**
@@ -379,6 +381,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
 
+#if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated.) Establishes a socket connection by trying each endpoint in a
 /// sequence.
 /**
@@ -460,6 +463,7 @@ template <typename Protocol, typename SocketService,
 Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
     ConnectCondition connect_condition, asio::error_code& ec,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
 /**
@@ -670,6 +674,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
 
+#if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated.) Asynchronously establishes a socket connection by trying each
 /// endpoint in a sequence.
 /**
@@ -712,6 +717,7 @@ ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
 async_connect(basic_socket<Protocol, SocketService>& s,
     Iterator begin, ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.
@@ -875,6 +881,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
 
+#if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated.) Asynchronously establishes a socket connection by trying each
 /// endpoint in a sequence.
 /**
@@ -929,6 +936,7 @@ async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
     ConnectCondition connect_condition,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
 /// sequence.

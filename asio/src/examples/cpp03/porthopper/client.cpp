@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
     // Determine the location of the server.
     tcp::resolver resolver(io_service);
-    tcp::endpoint remote_endpoint = *resolver.resolve(host_name, port);
+    tcp::endpoint remote_endpoint = *resolver.resolve(host_name, port).begin();
 
     // Establish the control connection to the server.
     tcp::socket control_socket(io_service);

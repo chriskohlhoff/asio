@@ -92,11 +92,12 @@ public:
   }
 
   // Called by the user of the client class to initiate the connection process.
-  // The endpoint iterator will have been obtained using a tcp::resolver.
-  void start(tcp::resolver::iterator endpoint_iter)
+  // The endpoints will have been obtained using a tcp::resolver.
+  void start(tcp::resolver::results_type endpoints)
   {
     // Start the connect actor.
-    start_connect(endpoint_iter);
+    endpoints_ = endpoints;
+    start_connect(endpoints_.begin());
 
     // Start the deadline actor. You will note that we're not setting any
     // particular deadline here. Instead, the connect and input actors will
@@ -117,9 +118,9 @@ public:
   }
 
 private:
-  void start_connect(tcp::resolver::iterator endpoint_iter)
+  void start_connect(tcp::resolver::results_type::iterator endpoint_iter)
   {
-    if (endpoint_iter != tcp::resolver::iterator())
+    if (endpoint_iter != endpoints_.end())
     {
       std::cout << "Trying " << endpoint_iter->endpoint() << "...\n";
 
@@ -139,7 +140,7 @@ private:
   }
 
   void handle_connect(const asio::error_code& ec,
-      tcp::resolver::iterator endpoint_iter)
+      tcp::resolver::results_type::iterator endpoint_iter)
   {
     if (stopped_)
       return;
@@ -273,6 +274,7 @@ private:
 
 private:
   bool stopped_;
+  tcp::resolver::results_type endpoints_;
   tcp::socket socket_;
   asio::streambuf input_buffer_;
   deadline_timer deadline_;

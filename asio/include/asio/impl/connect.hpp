@@ -68,6 +68,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
   return ec ? typename Protocol::endpoint() : *iter;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 template <typename Protocol, typename SocketService, typename Iterator>
 Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
@@ -85,6 +86,7 @@ inline Iterator connect(basic_socket<Protocol, SocketService>& s,
 {
   return connect(s, begin, Iterator(), detail::default_connect_condition(), ec);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename Protocol, typename SocketService, typename Iterator>
 Iterator connect(basic_socket<Protocol, SocketService>& s,
@@ -130,6 +132,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
   return ec ? typename Protocol::endpoint() : *iter;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ConnectCondition>
 Iterator connect(basic_socket<Protocol, SocketService>& s,
@@ -151,6 +154,7 @@ inline Iterator connect(basic_socket<Protocol, SocketService>& s,
 {
   return connect(s, begin, Iterator(), connect_condition, ec);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename Protocol, typename SocketService,
     typename Iterator, typename ConnectCondition>
@@ -654,6 +658,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
   return init.result.get();
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 template <typename Protocol, typename SocketService,
     typename Iterator, typename IteratorConnectHandler>
 inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
@@ -678,6 +683,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
 
   return init.result.get();
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename Protocol, typename SocketService,
     typename Iterator, typename IteratorConnectHandler>
@@ -732,6 +738,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
   return init.result.get();
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
 inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
@@ -757,6 +764,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
 
   return init.result.get();
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename Protocol, typename SocketService, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
