@@ -17,9 +17,9 @@ namespace server {
 
 server::server(const std::string& address, const std::string& port,
     const std::string& doc_root)
-  : io_service_(),
-    signals_(io_service_),
-    acceptor_(io_service_),
+  : io_context_(),
+    signals_(io_context_),
+    acceptor_(io_context_),
     connection_manager_(),
     new_connection_(),
     request_handler_(doc_root)
@@ -35,7 +35,7 @@ server::server(const std::string& address, const std::string& port,
   signals_.async_wait(boost::bind(&server::handle_stop, this));
 
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-  asio::ip::tcp::resolver resolver(io_service_);
+  asio::ip::tcp::resolver resolver(io_context_);
   asio::ip::tcp::endpoint endpoint =
     *resolver.resolve(address, port).begin();
   acceptor_.open(endpoint.protocol());
@@ -48,16 +48,16 @@ server::server(const std::string& address, const std::string& port,
 
 void server::run()
 {
-  // The io_service::run() call will block until all asynchronous operations
+  // The io_context::run() call will block until all asynchronous operations
   // have finished. While the server is running, there is always at least one
   // asynchronous operation outstanding: the asynchronous accept call waiting
   // for new incoming connections.
-  io_service_.run();
+  io_context_.run();
 }
 
 void server::start_accept()
 {
-  new_connection_.reset(new connection(io_service_,
+  new_connection_.reset(new connection(io_context_,
         connection_manager_, request_handler_));
   acceptor_.async_accept(new_connection_->socket(),
       boost::bind(&server::handle_accept, this,
@@ -84,7 +84,7 @@ void server::handle_accept(const asio::error_code& e)
 void server::handle_stop()
 {
   // The server is stopped by cancelling all outstanding asynchronous
-  // operations. Once all operations have finished the io_service::run() call
+  // operations. Once all operations have finished the io_context::run() call
   // will exit.
   acceptor_.close();
   connection_manager_.stop_all();

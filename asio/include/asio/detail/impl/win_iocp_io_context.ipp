@@ -1,5 +1,5 @@
 //
-// detail/impl/win_iocp_io_service.ipp
+// detail/impl/win_iocp_io_context.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_IMPL_WIN_IOCP_IO_SERVICE_IPP
-#define ASIO_DETAIL_IMPL_WIN_IOCP_IO_SERVICE_IPP
+#ifndef ASIO_DETAIL_IMPL_WIN_IOCP_IO_CONTEXT_IPP
+#define ASIO_DETAIL_IMPL_WIN_IOCP_IO_CONTEXT_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -25,45 +25,45 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/throw_error.hpp"
-#include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/win_iocp_io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-struct win_iocp_io_service::work_finished_on_block_exit
+struct win_iocp_io_context::work_finished_on_block_exit
 {
   ~work_finished_on_block_exit()
   {
-    io_service_->work_finished();
+    io_context_->work_finished();
   }
 
-  win_iocp_io_service* io_service_;
+  win_iocp_io_context* io_context_;
 };
 
-struct win_iocp_io_service::timer_thread_function
+struct win_iocp_io_context::timer_thread_function
 {
   void operator()()
   {
-    while (::InterlockedExchangeAdd(&io_service_->shutdown_, 0) == 0)
+    while (::InterlockedExchangeAdd(&io_context_->shutdown_, 0) == 0)
     {
-      if (::WaitForSingleObject(io_service_->waitable_timer_.handle,
+      if (::WaitForSingleObject(io_context_->waitable_timer_.handle,
             INFINITE) == WAIT_OBJECT_0)
       {
-        ::InterlockedExchange(&io_service_->dispatch_required_, 1);
-        ::PostQueuedCompletionStatus(io_service_->iocp_.handle,
+        ::InterlockedExchange(&io_context_->dispatch_required_, 1);
+        ::PostQueuedCompletionStatus(io_context_->iocp_.handle,
             0, wake_for_dispatch, 0);
       }
     }
   }
 
-  win_iocp_io_service* io_service_;
+  win_iocp_io_context* io_context_;
 };
 
-win_iocp_io_service::win_iocp_io_service(
+win_iocp_io_context::win_iocp_io_context(
     asio::execution_context& ctx, size_t concurrency_hint)
-  : execution_context_service_base<win_iocp_io_service>(ctx),
+  : execution_context_service_base<win_iocp_io_context>(ctx),
     iocp_(),
     outstanding_work_(0),
     stopped_(0),
@@ -86,7 +86,7 @@ win_iocp_io_service::win_iocp_io_service(
   }
 }
 
-void win_iocp_io_service::shutdown_service()
+void win_iocp_io_context::shutdown_service()
 {
   ::InterlockedExchange(&shutdown_, 1);
 
@@ -130,7 +130,7 @@ void win_iocp_io_service::shutdown_service()
     timer_thread_->join();
 }
 
-asio::error_code win_iocp_io_service::register_handle(
+asio::error_code win_iocp_io_context::register_handle(
     HANDLE handle, asio::error_code& ec)
 {
   if (::CreateIoCompletionPort(handle, iocp_.handle, 0, 0) == 0)
@@ -146,7 +146,7 @@ asio::error_code win_iocp_io_service::register_handle(
   return ec;
 }
 
-size_t win_iocp_io_service::run(asio::error_code& ec)
+size_t win_iocp_io_context::run(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
@@ -165,7 +165,7 @@ size_t win_iocp_io_service::run(asio::error_code& ec)
   return n;
 }
 
-size_t win_iocp_io_service::run_one(asio::error_code& ec)
+size_t win_iocp_io_context::run_one(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
@@ -180,7 +180,7 @@ size_t win_iocp_io_service::run_one(asio::error_code& ec)
   return do_one(true, ec);
 }
 
-size_t win_iocp_io_service::poll(asio::error_code& ec)
+size_t win_iocp_io_context::poll(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
@@ -199,7 +199,7 @@ size_t win_iocp_io_service::poll(asio::error_code& ec)
   return n;
 }
 
-size_t win_iocp_io_service::poll_one(asio::error_code& ec)
+size_t win_iocp_io_context::poll_one(asio::error_code& ec)
 {
   if (::InterlockedExchangeAdd(&outstanding_work_, 0) == 0)
   {
@@ -214,7 +214,7 @@ size_t win_iocp_io_service::poll_one(asio::error_code& ec)
   return do_one(false, ec);
 }
 
-void win_iocp_io_service::stop()
+void win_iocp_io_context::stop()
 {
   if (::InterlockedExchange(&stopped_, 1) == 0)
   {
@@ -231,7 +231,7 @@ void win_iocp_io_service::stop()
   }
 }
 
-void win_iocp_io_service::post_deferred_completion(win_iocp_operation* op)
+void win_iocp_io_context::post_deferred_completion(win_iocp_operation* op)
 {
   // Flag the operation as ready.
   op->ready_ = 1;
@@ -246,7 +246,7 @@ void win_iocp_io_service::post_deferred_completion(win_iocp_operation* op)
   }
 }
 
-void win_iocp_io_service::post_deferred_completions(
+void win_iocp_io_context::post_deferred_completions(
     op_queue<win_iocp_operation>& ops)
 {
   while (win_iocp_operation* op = ops.front())
@@ -268,7 +268,7 @@ void win_iocp_io_service::post_deferred_completions(
   }
 }
 
-void win_iocp_io_service::abandon_operations(
+void win_iocp_io_context::abandon_operations(
     op_queue<win_iocp_operation>& ops)
 {
   while (win_iocp_operation* op = ops.front())
@@ -279,7 +279,7 @@ void win_iocp_io_service::abandon_operations(
   }
 }
 
-void win_iocp_io_service::on_pending(win_iocp_operation* op)
+void win_iocp_io_context::on_pending(win_iocp_operation* op)
 {
   if (::InterlockedCompareExchange(&op->ready_, 1, 0) == 1)
   {
@@ -295,7 +295,7 @@ void win_iocp_io_service::on_pending(win_iocp_operation* op)
   }
 }
 
-void win_iocp_io_service::on_completion(win_iocp_operation* op,
+void win_iocp_io_context::on_completion(win_iocp_operation* op,
     DWORD last_error, DWORD bytes_transferred)
 {
   // Flag that the operation is ready for invocation.
@@ -318,7 +318,7 @@ void win_iocp_io_service::on_completion(win_iocp_operation* op,
   }
 }
 
-void win_iocp_io_service::on_completion(win_iocp_operation* op,
+void win_iocp_io_context::on_completion(win_iocp_operation* op,
     const asio::error_code& ec, DWORD bytes_transferred)
 {
   // Flag that the operation is ready for invocation.
@@ -340,7 +340,7 @@ void win_iocp_io_service::on_completion(win_iocp_operation* op,
   }
 }
 
-size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
+size_t win_iocp_io_context::do_one(bool block, asio::error_code& ec)
 {
   for (;;)
   {
@@ -454,7 +454,7 @@ size_t win_iocp_io_service::do_one(bool block, asio::error_code& ec)
   }
 }
 
-DWORD win_iocp_io_service::get_gqcs_timeout()
+DWORD win_iocp_io_context::get_gqcs_timeout()
 {
   OSVERSIONINFOEX osvi;
   ZeroMemory(&osvi, sizeof(osvi));
@@ -470,7 +470,7 @@ DWORD win_iocp_io_service::get_gqcs_timeout()
   return default_gqcs_timeout;
 }
 
-void win_iocp_io_service::do_add_timer_queue(timer_queue_base& queue)
+void win_iocp_io_context::do_add_timer_queue(timer_queue_base& queue)
 {
   mutex::scoped_lock lock(dispatch_mutex_);
 
@@ -501,14 +501,14 @@ void win_iocp_io_service::do_add_timer_queue(timer_queue_base& queue)
   }
 }
 
-void win_iocp_io_service::do_remove_timer_queue(timer_queue_base& queue)
+void win_iocp_io_context::do_remove_timer_queue(timer_queue_base& queue)
 {
   mutex::scoped_lock lock(dispatch_mutex_);
 
   timer_queues_.erase(&queue);
 }
 
-void win_iocp_io_service::update_timeout()
+void win_iocp_io_context::update_timeout()
 {
   if (timer_thread_.get())
   {
@@ -534,4 +534,4 @@ void win_iocp_io_service::update_timeout()
 
 #endif // defined(ASIO_HAS_IOCP)
 
-#endif // ASIO_DETAIL_IMPL_WIN_IOCP_IO_SERVICE_IPP
+#endif // ASIO_DETAIL_IMPL_WIN_IOCP_IO_CONTEXT_IPP

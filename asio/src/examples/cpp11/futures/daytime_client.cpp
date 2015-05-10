@@ -12,17 +12,17 @@
 #include <future>
 #include <iostream>
 #include <thread>
-#include <asio/io_service.hpp>
+#include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 #include <asio/use_future.hpp>
 
 using asio::ip::udp;
 
-void get_daytime(asio::io_service& io_service, const char* hostname)
+void get_daytime(asio::io_context& io_context, const char* hostname)
 {
   try
   {
-    udp::resolver resolver(io_service);
+    udp::resolver resolver(io_context);
 
     std::future<udp::resolver::results_type> endpoints =
       resolver.async_resolve(
@@ -32,7 +32,7 @@ void get_daytime(asio::io_service& io_service, const char* hostname)
     // The async_resolve operation above returns the endpoints as a future
     // value that is not retrieved ...
 
-    udp::socket socket(io_service, udp::v4());
+    udp::socket socket(io_context, udp::v4());
 
     std::array<char, 1> send_buf  = {{ 0 }};
     std::future<std::size_t> send_length =
@@ -74,15 +74,15 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    // We run the io_service off in its own thread so that it operates
+    // We run the io_context off in its own thread so that it operates
     // completely asynchronously with respect to the rest of the program.
-    asio::io_service io_service;
-    asio::io_service::work work(io_service);
-    std::thread thread([&io_service](){ io_service.run(); });
+    asio::io_context io_context;
+    asio::io_context::work work(io_context);
+    std::thread thread([&io_context](){ io_context.run(); });
 
-    get_daytime(io_service, argv[1]);
+    get_daytime(io_context, argv[1]);
 
-    io_service.stop();
+    io_context.stop();
     thread.join();
   }
   catch (std::exception& e)

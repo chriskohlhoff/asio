@@ -15,7 +15,7 @@ to become ready to read, ready to write, or to have a pending error condition.
 As an example, to perform a non-blocking read something like the following may
 be used:
 
-  ip::tcp::socket socket(my_io_service);
+  ip::tcp::socket socket(my_io_context);
   ...
   socket.non_blocking(true);
   ...

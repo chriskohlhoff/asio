@@ -8,7 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <asio/io_service.hpp>
+#include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/read.hpp>
 #include <asio/write.hpp>
@@ -96,8 +96,8 @@ int main(int argc, char* argv[])
   std::size_t buf_size = std::atoi(argv[3]);
   bool spin = (std::strcmp(argv[4], "spin") == 0);
 
-  asio::io_service io_service(1);
-  tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
+  asio::io_context io_context(1);
+  tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), port));
   std::vector<boost::shared_ptr<tcp_server> > servers;
 
   for (int i = 0; i < max_connections; ++i)
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
   }
 
   if (spin)
-    for (;;) io_service.poll();
+    for (;;) io_context.poll();
   else
-    io_service.run();
+    io_context.run();
 }

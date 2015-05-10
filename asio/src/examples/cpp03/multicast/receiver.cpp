@@ -18,10 +18,10 @@ const short multicast_port = 30001;
 class receiver
 {
 public:
-  receiver(asio::io_service& io_service,
+  receiver(asio::io_context& io_context,
       const asio::ip::address& listen_address,
       const asio::ip::address& multicast_address)
-    : socket_(io_service)
+    : socket_(io_context)
   {
     // Create the socket so that multiple may be bound to the same address.
     asio::ip::udp::endpoint listen_endpoint(
@@ -78,11 +78,11 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
-    receiver r(io_service,
+    asio::io_context io_context;
+    receiver r(io_context,
         asio::ip::make_address(argv[1]),
         asio::ip::make_address(argv[2]));
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

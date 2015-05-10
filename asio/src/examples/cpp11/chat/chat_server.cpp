@@ -169,9 +169,9 @@ private:
 class chat_server
 {
 public:
-  chat_server(asio::io_service& io_service,
+  chat_server(asio::io_context& io_context,
       const tcp::endpoint& endpoint)
-    : acceptor_(io_service, endpoint)
+    : acceptor_(io_context, endpoint)
   {
     do_accept();
   }
@@ -207,16 +207,16 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     std::list<chat_server> servers;
     for (int i = 1; i < argc; ++i)
     {
       tcp::endpoint endpoint(tcp::v4(), std::atoi(argv[i]));
-      servers.emplace_back(io_service, endpoint);
+      servers.emplace_back(io_context, endpoint);
     }
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

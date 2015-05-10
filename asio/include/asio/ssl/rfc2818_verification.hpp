@@ -42,9 +42,9 @@ namespace ssl {
  * ctx.set_default_verify_paths();
  *
  * // Open a socket and connect it to the remote host.
- * asio::io_service io_service;
- * ssl_socket sock(io_service, ctx);
- * tcp::resolver resolver(io_service);
+ * asio::io_context io_context;
+ * ssl_socket sock(io_context, ctx);
+ * tcp::resolver resolver(io_context);
  * tcp::resolver::query query("host.name", "https");
  * asio::connect(sock.lowest_layer(), resolver.resolve(query));
  * sock.lowest_layer().set_option(tcp::no_delay(true));

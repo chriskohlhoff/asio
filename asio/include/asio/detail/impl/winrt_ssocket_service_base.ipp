@@ -30,9 +30,9 @@ namespace asio {
 namespace detail {
 
 winrt_ssocket_service_base::winrt_ssocket_service_base(
-    asio::io_service& io_service)
-  : io_service_(use_service<io_service_impl>(io_service)),
-    async_manager_(use_service<winrt_async_manager>(io_service)),
+    asio::io_context& io_context)
+  : io_context_(use_service<io_context_impl>(io_context)),
+    async_manager_(use_service<winrt_async_manager>(io_context)),
     mutex_(),
     impl_list_(0)
 {
@@ -381,7 +381,7 @@ void winrt_ssocket_service_base::start_connect_op(
   if (!is_open(impl))
   {
     op->ec_ = asio::error::bad_descriptor;
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -410,7 +410,7 @@ void winrt_ssocket_service_base::start_connect_op(
 
   if (op->ec_)
   {
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -425,7 +425,7 @@ void winrt_ssocket_service_base::start_connect_op(
   {
     op->ec_ = asio::error_code(
         e->HResult, asio::system_category());
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
   }
 }
 
@@ -476,14 +476,14 @@ void winrt_ssocket_service_base::start_send_op(
   if (flags)
   {
     op->ec_ = asio::error::operation_not_supported;
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
     return;
   }
 
   if (!is_open(impl))
   {
     op->ec_ = asio::error::bad_descriptor;
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -494,7 +494,7 @@ void winrt_ssocket_service_base::start_send_op(
 
     if (bufs.all_empty())
     {
-      io_service_.post_immediate_completion(op, is_continuation);
+      io_context_.post_immediate_completion(op, is_continuation);
       return;
     }
 
@@ -505,7 +505,7 @@ void winrt_ssocket_service_base::start_send_op(
   {
     op->ec_ = asio::error_code(e->HResult,
         asio::system_category());
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
   }
 }
 
@@ -567,14 +567,14 @@ void winrt_ssocket_service_base::start_receive_op(
   if (flags)
   {
     op->ec_ = asio::error::operation_not_supported;
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
     return;
   }
 
   if (!is_open(impl))
   {
     op->ec_ = asio::error::bad_descriptor;
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
     return;
   }
 
@@ -585,7 +585,7 @@ void winrt_ssocket_service_base::start_receive_op(
 
     if (bufs.all_empty())
     {
-      io_service_.post_immediate_completion(op, is_continuation);
+      io_context_.post_immediate_completion(op, is_continuation);
       return;
     }
 
@@ -598,7 +598,7 @@ void winrt_ssocket_service_base::start_receive_op(
   {
     op->ec_ = asio::error_code(e->HResult,
         asio::system_category());
-    io_service_.post_immediate_completion(op, is_continuation);
+    io_context_.post_immediate_completion(op, is_continuation);
   }
 }
 

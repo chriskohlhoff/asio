@@ -14,7 +14,7 @@
 
 int main()
 {
-  asio::io_service io;
+  asio::io_context io;
 
   asio::deadline_timer t(io, boost::posix_time::seconds(5));
   t.wait();

@@ -167,13 +167,13 @@ public:
 
   win_iocp_socket_move_accept_op(
       win_iocp_socket_service_base& socket_service, socket_type socket,
-      const Protocol& protocol, asio::io_service& peer_io_service,
+      const Protocol& protocol, asio::io_context& peer_io_context,
       typename Protocol::endpoint* peer_endpoint,
       bool enable_connection_aborted, Handler& handler)
     : operation(&win_iocp_socket_move_accept_op::do_complete),
       socket_service_(socket_service),
       socket_(socket),
-      peer_(peer_io_service),
+      peer_(peer_io_context),
       protocol_(protocol),
       peer_endpoint_(peer_endpoint),
       enable_connection_aborted_(enable_connection_aborted),

@@ -166,10 +166,10 @@ The following table shows the mapping between the BSD socket API and Asio:
     [`poll()`,
      `select()`,
      `pselect()`]
-    [          [link asio.reference.io_service.run io_service::run()],
-               [link asio.reference.io_service.run_one io_service::run_one()],
-               [link asio.reference.io_service.poll io_service::poll()],
-               [link asio.reference.io_service.poll_one io_service::poll_one()]
+    [          [link asio.reference.io_context.run io_context::run()],
+               [link asio.reference.io_context.run_one io_context::run_one()],
+               [link asio.reference.io_context.poll io_context::poll()],
+               [link asio.reference.io_context.poll_one io_context::poll_one()]
 
       Note: in conjunction with asynchronous operations. ]
   ]

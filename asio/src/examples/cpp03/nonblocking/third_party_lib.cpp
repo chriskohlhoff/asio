@@ -83,9 +83,9 @@ class connection
 public:
   typedef boost::shared_ptr<connection> pointer;
 
-  static pointer create(asio::io_service& io_service)
+  static pointer create(asio::io_context& io_context)
   {
-    return pointer(new connection(io_service));
+    return pointer(new connection(io_context));
   }
 
   tcp::socket& socket()
@@ -102,8 +102,8 @@ public:
   }
 
 private:
-  connection(asio::io_service& io_service)
-    : socket_(io_service),
+  connection(asio::io_context& io_context)
+    : socket_(io_context),
       session_impl_(socket_),
       read_in_progress_(false),
       write_in_progress_(false)
@@ -183,8 +183,8 @@ private:
 class server
 {
 public:
-  server(asio::io_service& io_service, unsigned short port)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port))
+  server(asio::io_context& io_context, unsigned short port)
+    : acceptor_(io_context, tcp::endpoint(tcp::v4(), port))
   {
     start_accept();
   }
@@ -224,12 +224,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     using namespace std; // For atoi.
-    server s(io_service, atoi(argv[1]));
+    server s(io_context, atoi(argv[1]));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

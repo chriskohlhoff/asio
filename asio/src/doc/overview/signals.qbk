@@ -27,7 +27,7 @@ however the signal number must be used only with Asio.
   ...
 
   // Construct a signal set registered for process termination.
-  asio::signal_set signals(io_service, SIGINT, SIGTERM);
+  asio::signal_set signals(io_context, SIGINT, SIGTERM);
 
   // Start an asynchronous wait for one of the signals to occur.
   signals.async_wait(handler);

@@ -30,11 +30,11 @@ Service& service_registry::use_service()
 }
 
 template <typename Service>
-Service& service_registry::use_service(io_service& owner)
+Service& service_registry::use_service(io_context& owner)
 {
   execution_context::service::key key;
   init_key(key, Service::id);
-  factory_type factory = &service_registry::create<Service, io_service>;
+  factory_type factory = &service_registry::create<Service, io_context>;
   return *static_cast<Service*>(do_use_service(key, factory, &owner));
 }
 

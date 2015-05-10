@@ -25,7 +25,7 @@
 
 namespace asio {
 
-class io_service;
+class io_context;
 
 namespace detail {
 
@@ -61,9 +61,9 @@ public:
   // create a new service object automatically if no such object already
   // exists. Ownership of the service object is not transferred to the caller.
   // This overload is used for backwards compatibility with services that
-  // inherit from io_service::service.
+  // inherit from io_context::service.
   template <typename Service>
-  Service& use_service(io_service& owner);
+  Service& use_service(io_context& owner);
 
   // Add a service object. Throws on error, in which case ownership of the
   // object is retained by the caller.

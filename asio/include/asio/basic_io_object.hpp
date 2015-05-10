@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -67,28 +67,42 @@ public:
   typedef typename service_type::implementation_type implementation_type;
 
 #if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use get_executor().) Get the io_service associated with the
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
   /// object.
   /**
-   * This function may be used to obtain the io_service object that the I/O
+   * This function may be used to obtain the io_context object that the I/O
    * object uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the io_service object that the I/O object will use
+   * @return A reference to the io_context object that the I/O object will use
    * to dispatch handlers. Ownership is not transferred to the caller.
    */
-  asio::io_service& get_io_service()
+  asio::io_context& get_io_context()
   {
-    return service_.get_io_service();
+    return service_.get_io_context();
+  }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_service()
+  {
+    return service_.get_io_context();
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// The type of the executor associated with the object.
-  typedef asio::io_service::executor_type executor_type;
+  typedef asio::io_context::executor_type executor_type;
 
   /// Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
-    return service_.get_io_service().get_executor();
+    return service_.get_io_context().get_executor();
   }
 
 protected:
@@ -97,8 +111,8 @@ protected:
    * Performs:
    * @code get_service().construct(get_implementation()); @endcode
    */
-  explicit basic_io_object(asio::io_service& io_service)
-    : service_(asio::use_service<IoObjectService>(io_service))
+  explicit basic_io_object(asio::io_context& io_context)
+    : service_(asio::use_service<IoObjectService>(io_context))
   {
     service_.construct(implementation_);
   }
@@ -180,22 +194,27 @@ public:
   typedef typename service_type::implementation_type implementation_type;
 
 #if !defined(ASIO_NO_DEPRECATED)
-  asio::io_service& get_io_service()
+  asio::io_context& get_io_context()
   {
-    return service_->get_io_service();
+    return service_->get_io_context();
+  }
+
+  asio::io_context& get_io_service()
+  {
+    return service_->get_io_context();
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-  typedef asio::io_service::executor_type executor_type;
+  typedef asio::io_context::executor_type executor_type;
 
   executor_type get_executor() ASIO_NOEXCEPT
   {
-    return service_->get_io_service().get_executor();
+    return service_->get_io_context().get_executor();
   }
 
 protected:
-  explicit basic_io_object(asio::io_service& io_service)
-    : service_(&asio::use_service<IoObjectService>(io_service))
+  explicit basic_io_object(asio::io_context& io_context)
+    : service_(&asio::use_service<IoObjectService>(io_context))
   {
     service_->construct(implementation_);
   }

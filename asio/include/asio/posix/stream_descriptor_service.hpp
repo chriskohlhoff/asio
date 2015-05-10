@@ -23,7 +23,7 @@
 #include <cstddef>
 #include "asio/async_result.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/reactive_descriptor_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -34,7 +34,7 @@ namespace posix {
 /// Default service implementation for a stream descriptor.
 class stream_descriptor_service
 #if defined(GENERATING_DOCUMENTATION)
-  : public asio::io_service::service
+  : public asio::io_context::service
 #else
   : public asio::detail::service_base<stream_descriptor_service>
 #endif
@@ -42,7 +42,7 @@ class stream_descriptor_service
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 #endif
 
 private:
@@ -64,10 +64,10 @@ public:
   typedef service_impl_type::native_handle_type native_handle_type;
 #endif
 
-  /// Construct a new stream descriptor service for the specified io_service.
-  explicit stream_descriptor_service(asio::io_service& io_service)
-    : asio::detail::service_base<stream_descriptor_service>(io_service),
-      service_impl_(io_service)
+  /// Construct a new stream descriptor service for the specified io_context.
+  explicit stream_descriptor_service(asio::io_context& io_context)
+    : asio::detail::service_base<stream_descriptor_service>(io_context),
+      service_impl_(io_context)
   {
   }
 

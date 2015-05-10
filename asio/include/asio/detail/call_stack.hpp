@@ -25,7 +25,7 @@ namespace asio {
 namespace detail {
 
 // Helper class to determine whether or not the current thread is inside an
-// invocation of io_service::run() for a specified io_service object.
+// invocation of io_context::run() for a specified io_context object.
 template <typename Key, typename Value = unsigned char>
 class call_stack
 {

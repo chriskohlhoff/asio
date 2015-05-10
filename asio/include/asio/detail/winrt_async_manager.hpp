@@ -23,7 +23,7 @@
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/winrt_async_op.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -35,9 +35,9 @@ class winrt_async_manager
 {
 public:
   // Constructor.
-  winrt_async_manager(asio::io_service& io_service)
-    : asio::detail::service_base<winrt_async_manager>(io_service),
-      io_service_(use_service<io_service_impl>(io_service)),
+  winrt_async_manager(asio::io_context& io_context)
+    : asio::detail::service_base<winrt_async_manager>(io_context),
+      io_context_(use_service<io_context_impl>(io_context)),
       outstanding_ops_(1)
   {
   }
@@ -185,12 +185,12 @@ public:
               asio::system_category());
           break;
         }
-        io_service_.post_deferred_completion(handler);
+        io_context_.post_deferred_completion(handler);
         if (--outstanding_ops_ == 0)
           promise_.set_value();
       });
 
-    io_service_.work_started();
+    io_context_.work_started();
     ++outstanding_ops_;
     action->Completed = on_completed;
   }
@@ -222,12 +222,12 @@ public:
               asio::system_category());
           break;
         }
-        io_service_.post_deferred_completion(handler);
+        io_context_.post_deferred_completion(handler);
         if (--outstanding_ops_ == 0)
           promise_.set_value();
       });
 
-    io_service_.work_started();
+    io_context_.work_started();
     ++outstanding_ops_;
     operation->Completed = on_completed;
   }
@@ -263,19 +263,19 @@ public:
                 asio::system_category());
             break;
           }
-          io_service_.post_deferred_completion(handler);
+          io_context_.post_deferred_completion(handler);
           if (--outstanding_ops_ == 0)
             promise_.set_value();
         });
 
-    io_service_.work_started();
+    io_context_.work_started();
     ++outstanding_ops_;
     operation->Completed = on_completed;
   }
 
 private:
-  // The io_service implementation used to post completed handlers.
-  io_service_impl& io_service_;
+  // The io_context implementation used to post completed handlers.
+  io_context_impl& io_context_;
 
   // Count of outstanding operations.
   atomic_count outstanding_ops_;

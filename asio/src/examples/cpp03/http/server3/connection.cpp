@@ -16,10 +16,10 @@
 namespace http {
 namespace server3 {
 
-connection::connection(asio::io_service& io_service,
+connection::connection(asio::io_context& io_context,
     request_handler& handler)
-  : strand_(io_service),
-    socket_(io_service),
+  : strand_(io_context),
+    socket_(io_context),
     request_handler_(handler)
 {
 }

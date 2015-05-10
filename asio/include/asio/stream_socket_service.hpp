@@ -20,7 +20,7 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 # include "asio/detail/winrt_ssocket_service.hpp"
@@ -38,7 +38,7 @@ namespace asio {
 template <typename Protocol>
 class stream_socket_service
 #if defined(GENERATING_DOCUMENTATION)
-  : public asio::io_service::service
+  : public asio::io_context::service
 #else
   : public asio::detail::service_base<stream_socket_service<Protocol> >
 #endif
@@ -46,7 +46,7 @@ class stream_socket_service
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 #endif
 
   /// The protocol type.
@@ -80,11 +80,11 @@ public:
   typedef typename service_impl_type::native_handle_type native_handle_type;
 #endif
 
-  /// Construct a new stream socket service for the specified io_service.
-  explicit stream_socket_service(asio::io_service& io_service)
+  /// Construct a new stream socket service for the specified io_context.
+  explicit stream_socket_service(asio::io_context& io_context)
     : asio::detail::service_base<
-        stream_socket_service<Protocol> >(io_service),
-      service_impl_(io_service)
+        stream_socket_service<Protocol> >(io_context),
+      service_impl_(io_context)
   {
   }
 

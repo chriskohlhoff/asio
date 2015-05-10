@@ -575,7 +575,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
@@ -653,7 +653,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
@@ -718,7 +718,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @note This overload is equivalent to calling:
  * @code asio::async_read(
@@ -793,7 +793,7 @@ async_read(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  */
 template <typename AsyncReadStream, typename DynamicBufferSequence,
     typename CompletionCondition, typename ReadHandler>
@@ -849,7 +849,7 @@ async_read(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @note This overload is equivalent to calling:
  * @code asio::async_read(
@@ -917,7 +917,7 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  */
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>

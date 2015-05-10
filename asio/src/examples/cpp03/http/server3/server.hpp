@@ -32,7 +32,7 @@ public:
   explicit server(const std::string& address, const std::string& port,
       const std::string& doc_root, std::size_t thread_pool_size);
 
-  /// Run the server's io_service loop.
+  /// Run the server's io_context loop.
   void run();
 
 private:
@@ -45,11 +45,11 @@ private:
   /// Handle a request to stop the server.
   void handle_stop();
 
-  /// The number of threads that will call io_service::run().
+  /// The number of threads that will call io_context::run().
   std::size_t thread_pool_size_;
 
-  /// The io_service used to perform asynchronous operations.
-  asio::io_service io_service_;
+  /// The io_context used to perform asynchronous operations.
+  asio::io_context io_context_;
 
   /// The signal_set is used to register for process termination notifications.
   asio::signal_set signals_;

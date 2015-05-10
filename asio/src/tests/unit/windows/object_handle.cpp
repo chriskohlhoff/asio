@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/windows/object_handle.hpp"
 
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
@@ -42,15 +42,15 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
 
     // basic_object_handle constructors.
 
-    win::object_handle handle1(ios);
+    win::object_handle handle1(ioc);
     HANDLE native_handle1 = INVALID_HANDLE_VALUE;
-    win::object_handle handle2(ios, native_handle1);
+    win::object_handle handle2(ioc, native_handle1);
 
 #if defined(ASIO_HAS_MOVE)
     win::object_handle handle3(std::move(handle2));
@@ -59,14 +59,14 @@ void test()
     // basic_object_handle operators.
 
 #if defined(ASIO_HAS_MOVE)
-    handle1 = win::object_handle(ios);
+    handle1 = win::object_handle(ioc);
     handle1 = std::move(handle2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = handle1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = handle1.get_io_context();
+    (void)ioc_ref;
 
     // basic_handle functions.
 

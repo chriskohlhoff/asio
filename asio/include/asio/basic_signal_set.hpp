@@ -54,7 +54,7 @@ namespace asio {
  * ...
  *
  * // Construct a signal set registered for process termination.
- * asio::signal_set signals(io_service, SIGINT, SIGTERM);
+ * asio::signal_set signals(io_context, SIGINT, SIGTERM);
  *
  * // Start an asynchronous wait for one of the signals to occur.
  * signals.async_wait(handler);
@@ -98,11 +98,11 @@ public:
   /**
    * This constructor creates a signal set without registering for any signals.
    *
-   * @param io_service The io_service object that the signal set will use to
+   * @param io_context The io_context object that the signal set will use to
    * dispatch handlers for any asynchronous operations performed on the set.
    */
-  explicit basic_signal_set(asio::io_service& io_service)
-    : basic_io_object<SignalSetService>(io_service)
+  explicit basic_signal_set(asio::io_context& io_context)
+    : basic_io_object<SignalSetService>(io_context)
   {
   }
 
@@ -110,17 +110,17 @@ public:
   /**
    * This constructor creates a signal set and registers for one signal.
    *
-   * @param io_service The io_service object that the signal set will use to
+   * @param io_context The io_context object that the signal set will use to
    * dispatch handlers for any asynchronous operations performed on the set.
    *
    * @param signal_number_1 The signal number to be added.
    *
    * @note This constructor is equivalent to performing:
-   * @code asio::signal_set signals(io_service);
+   * @code asio::signal_set signals(io_context);
    * signals.add(signal_number_1); @endcode
    */
-  basic_signal_set(asio::io_service& io_service, int signal_number_1)
-    : basic_io_object<SignalSetService>(io_service)
+  basic_signal_set(asio::io_context& io_context, int signal_number_1)
+    : basic_io_object<SignalSetService>(io_context)
   {
     asio::error_code ec;
     this->get_service().add(this->get_implementation(), signal_number_1, ec);
@@ -131,7 +131,7 @@ public:
   /**
    * This constructor creates a signal set and registers for two signals.
    *
-   * @param io_service The io_service object that the signal set will use to
+   * @param io_context The io_context object that the signal set will use to
    * dispatch handlers for any asynchronous operations performed on the set.
    *
    * @param signal_number_1 The first signal number to be added.
@@ -139,13 +139,13 @@ public:
    * @param signal_number_2 The second signal number to be added.
    *
    * @note This constructor is equivalent to performing:
-   * @code asio::signal_set signals(io_service);
+   * @code asio::signal_set signals(io_context);
    * signals.add(signal_number_1);
    * signals.add(signal_number_2); @endcode
    */
-  basic_signal_set(asio::io_service& io_service, int signal_number_1,
+  basic_signal_set(asio::io_context& io_context, int signal_number_1,
       int signal_number_2)
-    : basic_io_object<SignalSetService>(io_service)
+    : basic_io_object<SignalSetService>(io_context)
   {
     asio::error_code ec;
     this->get_service().add(this->get_implementation(), signal_number_1, ec);
@@ -158,7 +158,7 @@ public:
   /**
    * This constructor creates a signal set and registers for three signals.
    *
-   * @param io_service The io_service object that the signal set will use to
+   * @param io_context The io_context object that the signal set will use to
    * dispatch handlers for any asynchronous operations performed on the set.
    *
    * @param signal_number_1 The first signal number to be added.
@@ -168,14 +168,14 @@ public:
    * @param signal_number_3 The third signal number to be added.
    *
    * @note This constructor is equivalent to performing:
-   * @code asio::signal_set signals(io_service);
+   * @code asio::signal_set signals(io_context);
    * signals.add(signal_number_1);
    * signals.add(signal_number_2);
    * signals.add(signal_number_3); @endcode
    */
-  basic_signal_set(asio::io_service& io_service, int signal_number_1,
+  basic_signal_set(asio::io_context& io_context, int signal_number_1,
       int signal_number_2, int signal_number_3)
-    : basic_io_object<SignalSetService>(io_service)
+    : basic_io_object<SignalSetService>(io_context)
   {
     asio::error_code ec;
     this->get_service().add(this->get_implementation(), signal_number_1, ec);
@@ -363,7 +363,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    */
   template <typename SignalHandler>
   ASIO_INITFN_RESULT_TYPE(SignalHandler,

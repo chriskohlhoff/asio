@@ -17,7 +17,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "asio/deadline_timer.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/read_until.hpp"
@@ -133,12 +133,12 @@ class tcp_session
     public boost::enable_shared_from_this<tcp_session>
 {
 public:
-  tcp_session(asio::io_service& io_service, channel& ch)
+  tcp_session(asio::io_context& io_context, channel& ch)
     : channel_(ch),
-      socket_(io_service),
-      input_deadline_(io_service),
-      non_empty_output_queue_(io_service),
-      output_deadline_(io_service)
+      socket_(io_context),
+      input_deadline_(io_context),
+      non_empty_output_queue_(io_context),
+      output_deadline_(io_context)
   {
     input_deadline_.expires_at(boost::posix_time::pos_infin);
     output_deadline_.expires_at(boost::posix_time::pos_infin);
@@ -334,9 +334,9 @@ class udp_broadcaster
   : public subscriber
 {
 public:
-  udp_broadcaster(asio::io_service& io_service,
+  udp_broadcaster(asio::io_context& io_context,
       const udp::endpoint& broadcast_endpoint)
-    : socket_(io_service)
+    : socket_(io_context)
   {
     socket_.connect(broadcast_endpoint);
   }
@@ -356,13 +356,13 @@ private:
 class server
 {
 public:
-  server(asio::io_service& io_service,
+  server(asio::io_context& io_context,
       const tcp::endpoint& listen_endpoint,
       const udp::endpoint& broadcast_endpoint)
-    : io_service_(io_service),
-      acceptor_(io_service, listen_endpoint)
+    : io_context_(io_context),
+      acceptor_(io_context, listen_endpoint)
   {
-    subscriber_ptr bc(new udp_broadcaster(io_service_, broadcast_endpoint));
+    subscriber_ptr bc(new udp_broadcaster(io_context_, broadcast_endpoint));
     channel_.join(bc);
 
     start_accept();
@@ -370,7 +370,7 @@ public:
 
   void start_accept()
   {
-    tcp_session_ptr new_session(new tcp_session(io_service_, channel_));
+    tcp_session_ptr new_session(new tcp_session(io_context_, channel_));
 
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session, _1));
@@ -388,7 +388,7 @@ public:
   }
 
 private:
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
   tcp::acceptor acceptor_;
   channel channel_;
 };
@@ -407,16 +407,16 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     tcp::endpoint listen_endpoint(tcp::v4(), atoi(argv[1]));
 
     udp::endpoint broadcast_endpoint(
         asio::ip::make_address(argv[2]), atoi(argv[3]));
 
-    server s(io_service, listen_endpoint, broadcast_endpoint);
+    server s(io_context, listen_endpoint, broadcast_endpoint);
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

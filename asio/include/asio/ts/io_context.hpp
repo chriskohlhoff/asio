@@ -1,5 +1,5 @@
 //
-// ts/io_service.hpp
+// ts/io_context.hpp
 // ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,13 +8,13 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_TS_IO_SERVICE_HPP
-#define ASIO_TS_IO_SERVICE_HPP
+#ifndef ASIO_TS_IO_CONTEXT_HPP
+#define ASIO_TS_IO_CONTEXT_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
-#endif // ASIO_TS_IO_SERVICE_HPP
+#endif // ASIO_TS_IO_CONTEXT_HPP

@@ -120,8 +120,8 @@ class session
   : public boost::enable_shared_from_this<session>
 {
 public:
-  session(asio::io_service& io_service)
-    : socket_(io_service)
+  session(asio::io_context& io_context)
+    : socket_(io_context)
   {
   }
 
@@ -183,11 +183,11 @@ typedef boost::shared_ptr<session> session_ptr;
 class server
 {
 public:
-  server(asio::io_service& io_service, short port)
-    : io_service_(io_service),
-      acceptor_(io_service, tcp::endpoint(tcp::v4(), port))
+  server(asio::io_context& io_context, short port)
+    : io_context_(io_context),
+      acceptor_(io_context, tcp::endpoint(tcp::v4(), port))
   {
-    session_ptr new_session(new session(io_service_));
+    session_ptr new_session(new session(io_context_));
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
           asio::placeholders::error));
@@ -201,14 +201,14 @@ public:
       new_session->start();
     }
 
-    new_session.reset(new session(io_service_));
+    new_session.reset(new session(io_context_));
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&server::handle_accept, this, new_session,
           asio::placeholders::error));
   }
 
 private:
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
   tcp::acceptor acceptor_;
 };
 
@@ -222,12 +222,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     using namespace std; // For atoi.
-    server s(io_service, atoi(argv[1]));
+    server s(io_context, atoi(argv[1]));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

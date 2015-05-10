@@ -24,11 +24,11 @@ namespace posix = asio::posix;
 class posix_chat_client
 {
 public:
-  posix_chat_client(asio::io_service& io_service,
+  posix_chat_client(asio::io_context& io_context,
       const tcp::resolver::results_type& endpoints)
-    : socket_(io_service),
-      input_(io_service, ::dup(STDIN_FILENO)),
-      output_(io_service, ::dup(STDOUT_FILENO)),
+    : socket_(io_context),
+      input_(io_context, ::dup(STDIN_FILENO)),
+      output_(io_context, ::dup(STDOUT_FILENO)),
       input_buffer_(chat_message::max_body_length)
   {
     asio::async_connect(socket_, endpoints,
@@ -182,14 +182,14 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     tcp::resolver::results_type endpoints = resolver.resolve(argv[1], argv[2]);
 
-    posix_chat_client c(io_service, endpoints);
+    posix_chat_client c(io_context, endpoints);
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

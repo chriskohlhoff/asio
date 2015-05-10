@@ -29,8 +29,8 @@ namespace asio {
 namespace detail {
 
 win_iocp_serial_port_service::win_iocp_serial_port_service(
-    asio::io_service& io_service)
-  : handle_service_(io_service)
+    asio::io_context& io_context)
+  : handle_service_(io_context)
 {
 }
 

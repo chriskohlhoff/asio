@@ -50,12 +50,12 @@ int main(int argc, char* argv[])
   std::size_t buf_size = static_cast<std::size_t>(std::atoi(argv[4]));
   bool spin = (std::strcmp(argv[5], "spin") == 0);
 
-  asio::io_service io_service;
+  asio::io_context io_context;
   std::vector<boost::shared_ptr<tcp::socket> > sockets;
 
   for (int i = 0; i < num_connections; ++i)
   {
-    boost::shared_ptr<tcp::socket> s(new tcp::socket(io_service));
+    boost::shared_ptr<tcp::socket> s(new tcp::socket(io_context));
 
     tcp::endpoint target(asio::ip::make_address(ip), port);
     s->connect(target);

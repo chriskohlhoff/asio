@@ -436,7 +436,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
@@ -514,7 +514,7 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
@@ -574,7 +574,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @note This overload is equivalent to calling:
  * @code asio::async_read_at(
@@ -640,7 +640,7 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation of
  * the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  */
 template <typename AsyncRandomAccessReadDevice, typename Allocator,
     typename CompletionCondition, typename ReadHandler>

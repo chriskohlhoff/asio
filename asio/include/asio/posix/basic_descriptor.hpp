@@ -55,12 +55,12 @@ public:
   /**
    * This constructor creates a descriptor without opening it.
    *
-   * @param io_service The io_service object that the descriptor will use to
+   * @param io_context The io_context object that the descriptor will use to
    * dispatch handlers for any asynchronous operations performed on the
    * descriptor.
    */
-  explicit basic_descriptor(asio::io_service& io_service)
-    : basic_io_object<DescriptorService>(io_service)
+  explicit basic_descriptor(asio::io_context& io_context)
+    : basic_io_object<DescriptorService>(io_context)
   {
   }
 
@@ -69,7 +69,7 @@ public:
    * This constructor creates a descriptor object to hold an existing native
    * descriptor.
    *
-   * @param io_service The io_service object that the descriptor will use to
+   * @param io_context The io_context object that the descriptor will use to
    * dispatch handlers for any asynchronous operations performed on the
    * descriptor.
    *
@@ -77,9 +77,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  basic_descriptor(asio::io_service& io_service,
+  basic_descriptor(asio::io_context& io_context,
       const native_handle_type& native_descriptor)
-    : basic_io_object<DescriptorService>(io_service)
+    : basic_io_object<DescriptorService>(io_context)
   {
     asio::error_code ec;
     this->get_service().assign(this->get_implementation(),
@@ -96,7 +96,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_descriptor(io_service&) constructor.
+   * constructed using the @c basic_descriptor(io_context&) constructor.
    */
   basic_descriptor(basic_descriptor&& other)
     : basic_io_object<DescriptorService>(
@@ -112,7 +112,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_descriptor(io_service&) constructor.
+   * constructed using the @c basic_descriptor(io_context&) constructor.
    */
   basic_descriptor& operator=(basic_descriptor&& other)
   {
@@ -286,7 +286,7 @@ public:
    * @par Example
    * Getting the number of bytes ready to read:
    * @code
-   * asio::posix::stream_descriptor descriptor(io_service);
+   * asio::posix::stream_descriptor descriptor(io_context);
    * ...
    * asio::posix::stream_descriptor::bytes_readable command;
    * descriptor.io_control(command);
@@ -316,7 +316,7 @@ public:
    * @par Example
    * Getting the number of bytes ready to read:
    * @code
-   * asio::posix::stream_descriptor descriptor(io_service);
+   * asio::posix::stream_descriptor descriptor(io_context);
    * ...
    * asio::posix::stream_descriptor::bytes_readable command;
    * asio::error_code ec;
@@ -468,7 +468,7 @@ public:
    * @par Example
    * Waiting for a descriptor to become readable.
    * @code
-   * asio::posix::stream_descriptor descriptor(io_service);
+   * asio::posix::stream_descriptor descriptor(io_context);
    * ...
    * descriptor.wait(asio::posix::stream_descriptor::wait_read);
    * @endcode
@@ -493,7 +493,7 @@ public:
    * @par Example
    * Waiting for a descriptor to become readable.
    * @code
-   * asio::posix::stream_descriptor descriptor(io_service);
+   * asio::posix::stream_descriptor descriptor(io_context);
    * ...
    * asio::error_code ec;
    * descriptor.wait(asio::posix::stream_descriptor::wait_read, ec);
@@ -521,7 +521,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @par Example
    * @code
@@ -535,7 +535,7 @@ public:
    *
    * ...
    *
-   * asio::posix::stream_descriptor descriptor(io_service);
+   * asio::posix::stream_descriptor descriptor(io_context);
    * ...
    * descriptor.async_wait(
    *     asio::posix::stream_descriptor::wait_read,

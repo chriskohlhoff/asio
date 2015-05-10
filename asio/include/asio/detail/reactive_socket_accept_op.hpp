@@ -142,10 +142,10 @@ class reactive_socket_move_accept_op :
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_move_accept_op);
 
-  reactive_socket_move_accept_op(io_service& ios, socket_type socket,
+  reactive_socket_move_accept_op(io_context& ioc, socket_type socket,
       socket_ops::state_type state, const Protocol& protocol,
       typename Protocol::endpoint* peer_endpoint, Handler& handler)
-    : Protocol::socket(ios),
+    : Protocol::socket(ioc),
       reactive_socket_accept_op_base<typename Protocol::socket, Protocol>(
         socket, state, *this, protocol, peer_endpoint,
         &reactive_socket_move_accept_op::do_complete),

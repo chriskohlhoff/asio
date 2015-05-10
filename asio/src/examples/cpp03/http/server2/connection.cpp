@@ -16,9 +16,9 @@
 namespace http {
 namespace server2 {
 
-connection::connection(asio::io_service& io_service,
+connection::connection(asio::io_context& io_context,
     request_handler& handler)
-  : socket_(io_service),
+  : socket_(io_context),
     request_handler_(handler)
 {
 }

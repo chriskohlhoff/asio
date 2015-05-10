@@ -8,7 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <asio/io_service.hpp>
+#include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 #include <asio/signal_set.hpp>
 #include <boost/array.hpp>
@@ -23,8 +23,8 @@ using asio::ip::udp;
 class udp_daytime_server
 {
 public:
-  udp_daytime_server(asio::io_service& io_service)
-    : socket_(io_service, udp::endpoint(udp::v4(), 13))
+  udp_daytime_server(asio::io_context& io_context)
+    : socket_(io_context, udp::endpoint(udp::v4(), 13))
   {
     start_receive();
   }
@@ -62,24 +62,24 @@ int main()
 {
   try
   {
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     // Initialise the server before becoming a daemon. If the process is
     // started from a shell, this means any errors will be reported back to the
     // user.
-    udp_daytime_server server(io_service);
+    udp_daytime_server server(io_context);
 
     // Register signal handlers so that the daemon may be shut down. You may
     // also want to register for other signals, such as SIGHUP to trigger a
     // re-read of a configuration file.
-    asio::signal_set signals(io_service, SIGINT, SIGTERM);
+    asio::signal_set signals(io_context, SIGINT, SIGTERM);
     signals.async_wait(
-        boost::bind(&asio::io_service::stop, &io_service));
+        boost::bind(&asio::io_context::stop, &io_context));
 
-    // Inform the io_service that we are about to become a daemon. The
-    // io_service cleans up any internal resources, such as threads, that may
+    // Inform the io_context that we are about to become a daemon. The
+    // io_context cleans up any internal resources, such as threads, that may
     // interfere with forking.
-    io_service.notify_fork(asio::io_service::fork_prepare);
+    io_context.notify_fork(asio::io_context::fork_prepare);
 
     // Fork the process and have the parent exit. If the process was started
     // from a shell, this returns control to the user. Forking a new process is
@@ -92,15 +92,15 @@ int main()
         //
         // When the exit() function is used, the program terminates without
         // invoking local variables' destructors. Only global variables are
-        // destroyed. As the io_service object is a local variable, this means
+        // destroyed. As the io_context object is a local variable, this means
         // we do not have to call:
         //
-        //   io_service.notify_fork(asio::io_service::fork_parent);
+        //   io_context.notify_fork(asio::io_context::fork_parent);
         //
         // However, this line should be added before each call to exit() if
-        // using a global io_service object. An additional call:
+        // using a global io_context object. An additional call:
         //
-        //   io_service.notify_fork(asio::io_service::fork_prepare);
+        //   io_context.notify_fork(asio::io_context::fork_prepare);
         //
         // should also precede the second fork().
         exit(0);
@@ -171,14 +171,14 @@ int main()
       return 1;
     }
 
-    // Inform the io_service that we have finished becoming a daemon. The
-    // io_service uses this opportunity to create any internal file descriptors
+    // Inform the io_context that we have finished becoming a daemon. The
+    // io_context uses this opportunity to create any internal file descriptors
     // that need to be private to the new process.
-    io_service.notify_fork(asio::io_service::fork_child);
+    io_context.notify_fork(asio::io_context::fork_child);
 
-    // The io_service can now be used normally.
+    // The io_context can now be used normally.
     syslog(LOG_INFO | LOG_USER, "Daemon started");
-    io_service.run();
+    io_context.run();
     syslog(LOG_INFO | LOG_USER, "Daemon stopped");
   }
   catch (std::exception& e)

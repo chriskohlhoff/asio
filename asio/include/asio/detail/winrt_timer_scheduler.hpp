@@ -28,7 +28,7 @@
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/thread.hpp"
@@ -44,7 +44,7 @@ class winrt_timer_scheduler
 {
 public:
   // Constructor.
-  ASIO_DECL winrt_timer_scheduler(asio::io_service& io_service);
+  ASIO_DECL winrt_timer_scheduler(asio::io_context& io_context);
 
   // Destructor.
   ASIO_DECL ~winrt_timer_scheduler();
@@ -54,7 +54,7 @@ public:
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::io_context::fork_event fork_ev);
 
   // Initialise the task. No effect as this class uses its own thread.
   ASIO_DECL void init_task();
@@ -100,8 +100,8 @@ private:
   // Helper function to remove a timer queue.
   ASIO_DECL void do_remove_timer_queue(timer_queue_base& queue);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The io_context implementation used to post completions.
+  io_context_impl& io_context_;
 
   // Mutex used to protect internal variables.
   asio::detail::mutex mutex_;

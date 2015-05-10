@@ -26,7 +26,7 @@ namespace detail {
 
 struct strand_service::on_do_complete_exit
 {
-  io_service_impl* owner_;
+  io_context_impl* owner_;
   strand_impl* impl_;
 
   ~on_do_complete_exit()
@@ -41,9 +41,9 @@ struct strand_service::on_do_complete_exit
   }
 };
 
-strand_service::strand_service(asio::io_service& io_service)
-  : asio::detail::service_base<strand_service>(io_service),
-    io_service_(asio::use_service<io_service_impl>(io_service)),
+strand_service::strand_service(asio::io_context& io_context)
+  : asio::detail::service_base<strand_service>(io_context),
+    io_context_(asio::use_service<io_context_impl>(io_context)),
     mutex_(),
     salt_(0)
 {
@@ -92,9 +92,9 @@ bool strand_service::running_in_this_thread(
 
 bool strand_service::do_dispatch(implementation_type& impl, operation* op)
 {
-  // If we are running inside the io_service, and no other handler already
+  // If we are running inside the io_context, and no other handler already
   // holds the strand lock, then the handler can run immediately.
-  bool can_dispatch = io_service_.can_dispatch();
+  bool can_dispatch = io_context_.can_dispatch();
   impl->mutex_.lock();
   if (can_dispatch && !impl->locked_)
   {
@@ -117,7 +117,7 @@ bool strand_service::do_dispatch(implementation_type& impl, operation* op)
     impl->locked_ = true;
     impl->mutex_.unlock();
     impl->ready_queue_.push(op);
-    io_service_.post_immediate_completion(impl, false);
+    io_context_.post_immediate_completion(impl, false);
   }
 
   return false;
@@ -140,7 +140,7 @@ void strand_service::do_post(implementation_type& impl,
     impl->locked_ = true;
     impl->mutex_.unlock();
     impl->ready_queue_.push(op);
-    io_service_.post_immediate_completion(impl, is_continuation);
+    io_context_.post_immediate_completion(impl, is_continuation);
   }
 }
 
@@ -156,7 +156,7 @@ void strand_service::do_complete(void* owner, operation* base,
 
     // Ensure the next handler, if any, is scheduled on block exit.
     on_do_complete_exit on_exit;
-    on_exit.owner_ = static_cast<io_service_impl*>(owner);
+    on_exit.owner_ = static_cast<io_context_impl*>(owner);
     on_exit.impl_ = impl;
 
     // Run all ready handlers. No lock is required since the ready queue is

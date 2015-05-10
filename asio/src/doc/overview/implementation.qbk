@@ -22,10 +22,10 @@ descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
 Threads:
 
 * Demultiplexing using `select` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -42,10 +42,10 @@ Demultiplexing mechanism:
 Threads:
 
 * Demultiplexing using `epoll` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -63,10 +63,10 @@ Demultiplexing mechanism:
 Threads:
 
 * Demultiplexing using [^/dev/poll] is performed in one of the threads that
-calls `io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+calls `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -85,10 +85,10 @@ descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
 Threads:
 
 * Demultiplexing using `select` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -106,10 +106,10 @@ Demultiplexing mechanism:
 Threads:
 
 * Demultiplexing using `kqueue` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -127,10 +127,10 @@ Demultiplexing mechanism:
 Threads:
 
 * Demultiplexing using `kqueue` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -149,10 +149,10 @@ descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
 Threads:
 
 * Demultiplexing using `select` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -171,10 +171,10 @@ descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
 Threads:
 
 * Demultiplexing using `select` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -193,10 +193,10 @@ descriptors in the process cannot be permitted to exceed `FD_SETSIZE`.
 Threads:
 
 * Demultiplexing using `select` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -214,10 +214,10 @@ Demultiplexing mechanism:
 Threads:
 
 * Demultiplexing using `select` is performed in one of the threads that calls
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -238,17 +238,17 @@ operations except for asynchronous connect.
 Threads:
 
 * Demultiplexing using I/O completion ports is performed in all threads that call
-`io_service::run()`, `io_service::run_one()`, `io_service::poll()` or
-`io_service::poll_one()`.
+`io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
+`io_context::poll_one()`.
 
-* An additional thread per `io_service` is used to trigger timers. This thread
+* An additional thread per `io_context` is used to trigger timers. This thread
 is created on construction of the first `deadline_timer` or
 `deadline_timer_service` objects.
 
-* An additional thread per `io_service` is used for the `select`
+* An additional thread per `io_context` is used for the `select`
 demultiplexing. This thread is created on the first call to `async_connect()`.
 
-* An additional thread per `io_service` is used to emulate asynchronous host
+* An additional thread per `io_context` is used to emulate asynchronous host
 resolution. This thread is created on the first call to either
 `ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
 
@@ -265,7 +265,7 @@ Asio provides limited support for the Windows Runtime. It requires that the
 language extensions be enabled. Due to the restricted facilities exposed by the
 Windows Runtime API, the support comes with the following caveats:
 
-* The core facilities such as the `io_service`, `strand`, buffers, composed
+* The core facilities such as the `io_context`, `strand`, buffers, composed
   operations, timers, etc., should all work as normal.
 
 * For sockets, only client-side TCP is supported.
@@ -292,9 +292,9 @@ Demultiplexing mechanism:
 Threads:
 
 * Event completions are delivered to the Windows thread pool and posted to the
-  `io_service` for the handler to be executed.
+  `io_context` for the handler to be executed.
 
-* An additional thread per `io_service` is used to trigger timers. This thread
+* An additional thread per `io_context` is used to trigger timers. This thread
   is created on construction of the first timer objects.
 
 Scatter-Gather:

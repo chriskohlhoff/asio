@@ -54,7 +54,7 @@ Windows handles.
 
 Move support allows you to write code like:
 
-  tcp::socket make_socket(io_service& i)
+  tcp::socket make_socket(io_context& i)
   {
     tcp::socket s(i);
     ...

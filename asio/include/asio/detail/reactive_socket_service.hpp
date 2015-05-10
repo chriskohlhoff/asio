@@ -21,7 +21,7 @@
 
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/memory.hpp"
@@ -72,8 +72,8 @@ public:
   };
 
   // Constructor.
-  reactive_socket_service(asio::io_service& io_service)
-    : reactive_socket_service_base(io_service)
+  reactive_socket_service(asio::io_context& io_context)
+    : reactive_socket_service_base(io_context)
   {
   }
 
@@ -392,11 +392,11 @@ public:
 #if defined(ASIO_HAS_MOVE)
   // Accept a new connection.
   typename Protocol::socket accept(implementation_type& impl,
-      io_service* peer_io_service, endpoint_type* peer_endpoint,
+      io_context* peer_io_context, endpoint_type* peer_endpoint,
       asio::error_code& ec)
   {
     typename Protocol::socket peer(
-        peer_io_service ? *peer_io_service : io_service_);
+        peer_io_context ? *peer_io_context : io_context_);
 
     std::size_t addr_len = peer_endpoint ? peer_endpoint->capacity() : 0;
     socket_holder new_socket(socket_ops::sync_accept(impl.socket_,
@@ -444,7 +444,7 @@ public:
   // the accept's handler is invoked.
   template <typename Handler>
   void async_accept(implementation_type& impl,
-      asio::io_service* peer_io_service,
+      asio::io_context* peer_io_context,
       endpoint_type* peer_endpoint, Handler& handler)
   {
     bool is_continuation =
@@ -454,7 +454,7 @@ public:
     typedef reactive_socket_move_accept_op<Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(peer_io_service ? *peer_io_service : io_service_,
+    p.p = new (p.v) op(peer_io_context ? *peer_io_context : io_context_,
         impl.socket_, impl.state_, impl.protocol_, peer_endpoint, handler);
 
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",

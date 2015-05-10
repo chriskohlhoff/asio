@@ -17,7 +17,7 @@
 #include "asio/ip/icmp.hpp"
 
 #include <cstring>
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/placeholders.hpp"
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
@@ -74,7 +74,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
@@ -90,15 +90,15 @@ void test()
 
     // basic_datagram_socket constructors.
 
-    ip::icmp::socket socket1(ios);
-    ip::icmp::socket socket2(ios, ip::icmp::v4());
-    ip::icmp::socket socket3(ios, ip::icmp::v6());
-    ip::icmp::socket socket4(ios, ip::icmp::endpoint(ip::icmp::v4(), 0));
-    ip::icmp::socket socket5(ios, ip::icmp::endpoint(ip::icmp::v6(), 0));
+    ip::icmp::socket socket1(ioc);
+    ip::icmp::socket socket2(ioc, ip::icmp::v4());
+    ip::icmp::socket socket3(ioc, ip::icmp::v6());
+    ip::icmp::socket socket4(ioc, ip::icmp::endpoint(ip::icmp::v4(), 0));
+    ip::icmp::socket socket5(ioc, ip::icmp::endpoint(ip::icmp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
     ip::icmp::socket::native_handle_type native_socket1
       = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    ip::icmp::socket socket6(ios, ip::icmp::v4(), native_socket1);
+    ip::icmp::socket socket6(ioc, ip::icmp::v4(), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
@@ -108,14 +108,14 @@ void test()
     // basic_datagram_socket operators.
 
 #if defined(ASIO_HAS_MOVE)
-    socket1 = ip::icmp::socket(ios);
+    socket1 = ip::icmp::socket(ioc);
     socket1 = std::move(socket2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = socket1.get_io_context();
+    (void)ioc_ref;
 
     // basic_socket functions.
 
@@ -434,7 +434,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
     ip::icmp::resolver::query q(ip::icmp::v4(), "localhost", "0");
@@ -442,12 +442,12 @@ void test()
 
     // basic_resolver constructors.
 
-    ip::icmp::resolver resolver(ios);
+    ip::icmp::resolver resolver(ioc);
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = resolver.get_io_context();
+    (void)ioc_ref;
 
     // basic_resolver functions.
 

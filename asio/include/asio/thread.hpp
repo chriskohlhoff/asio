@@ -36,12 +36,12 @@ namespace asio {
  *
  * @par Example
  * A typical use of asio::thread would be to launch a thread to run an
- * io_service's event processing loop:
+ * io_context's event processing loop:
  *
  * @par
- * @code asio::io_service io_service;
+ * @code asio::io_context io_context;
  * // ...
- * asio::thread t(boost::bind(&asio::io_service::run, &io_service));
+ * asio::thread t(boost::bind(&asio::io_context::run, &io_context));
  * // ...
  * t.join(); @endcode
  */

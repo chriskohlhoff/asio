@@ -1,5 +1,5 @@
 //
-// impl/io_service.hpp
+// impl/io_context.hpp
 // ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IMPL_IO_SERVICE_HPP
-#define ASIO_IMPL_IO_SERVICE_HPP
+#ifndef ASIO_IMPL_IO_CONTEXT_HPP
+#define ASIO_IMPL_IO_CONTEXT_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -28,20 +28,20 @@
 namespace asio {
 
 template <typename Service>
-inline Service& use_service(io_service& ios)
+inline Service& use_service(io_context& ioc)
 {
   // Check that Service meets the necessary type requirements.
   (void)static_cast<execution_context::service*>(static_cast<Service*>(0));
   (void)static_cast<const execution_context::id*>(&Service::id);
 
-  return ios.service_registry_->template use_service<Service>(ios);
+  return ioc.service_registry_->template use_service<Service>(ioc);
 }
 
 template <>
-inline detail::io_service_impl& use_service<detail::io_service_impl>(
-    io_service& ios)
+inline detail::io_context_impl& use_service<detail::io_context_impl>(
+    io_context& ioc)
 {
-  return ios.impl_;
+  return ioc.impl_;
 }
 
 } // namespace asio
@@ -49,7 +49,7 @@ inline detail::io_service_impl& use_service<detail::io_service_impl>(
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_service.hpp"
+# include "asio/detail/win_iocp_io_context.hpp"
 #else
 # include "asio/detail/scheduler.hpp"
 #endif
@@ -58,22 +58,22 @@ inline detail::io_service_impl& use_service<detail::io_service_impl>(
 
 namespace asio {
 
-inline io_service::executor_type
-io_service::get_executor() ASIO_NOEXCEPT
+inline io_context::executor_type
+io_context::get_executor() ASIO_NOEXCEPT
 {
   return executor_type(*this);
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
 
-inline void io_service::reset()
+inline void io_context::reset()
 {
   restart();
 }
 
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
-io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
+io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
@@ -96,7 +96,7 @@ io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
     p.p = new (p.v) op(init.handler);
 
     ASIO_HANDLER_CREATION((*this, *p.p,
-          "io_service", this, 0, "dispatch"));
+          "io_context", this, 0, "dispatch"));
 
     impl_.do_dispatch(p.p);
     p.v = p.p = 0;
@@ -107,7 +107,7 @@ io_service::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
 
 template <typename CompletionHandler>
 ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
-io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
+io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a CompletionHandler.
@@ -126,7 +126,7 @@ io_service::post(ASIO_MOVE_ARG(CompletionHandler) handler)
   p.p = new (p.v) op(init.handler);
 
   ASIO_HANDLER_CREATION((*this, *p.p,
-        "io_service", this, 0, "post"));
+        "io_context", this, 0, "post"));
 
   impl_.post_immediate_completion(p.p, is_continuation);
   p.v = p.p = 0;
@@ -138,33 +138,33 @@ template <typename Handler>
 #if defined(GENERATING_DOCUMENTATION)
 unspecified
 #else
-inline detail::wrapped_handler<io_service&, Handler>
+inline detail::wrapped_handler<io_context&, Handler>
 #endif
-io_service::wrap(Handler handler)
+io_context::wrap(Handler handler)
 {
-  return detail::wrapped_handler<io_service&, Handler>(*this, handler);
+  return detail::wrapped_handler<io_context&, Handler>(*this, handler);
 }
 
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-inline io_service&
-io_service::executor_type::context() ASIO_NOEXCEPT
+inline io_context&
+io_context::executor_type::context() ASIO_NOEXCEPT
 {
-  return io_service_;
+  return io_context_;
 }
 
-inline void io_service::executor_type::on_work_started() ASIO_NOEXCEPT
+inline void io_context::executor_type::on_work_started() ASIO_NOEXCEPT
 {
-  io_service_.impl_.work_started();
+  io_context_.impl_.work_started();
 }
 
-inline void io_service::executor_type::on_work_finished() ASIO_NOEXCEPT
+inline void io_context::executor_type::on_work_finished() ASIO_NOEXCEPT
 {
-  io_service_.impl_.work_finished();
+  io_context_.impl_.work_finished();
 }
 
 template <typename Function, typename Allocator>
-void io_service::executor_type::dispatch(
+void io_context::executor_type::dispatch(
     ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
@@ -172,7 +172,7 @@ void io_service::executor_type::dispatch(
   function_type tmp(ASIO_MOVE_CAST(Function)(f));
 
   // Invoke immediately if we are already inside the thread pool.
-  if (io_service_.impl_.can_dispatch())
+  if (io_context_.impl_.can_dispatch())
   {
     detail::fenced_block b(detail::fenced_block::full);
     asio_handler_invoke_helpers::invoke(tmp, tmp);
@@ -190,14 +190,14 @@ void io_service::executor_type::dispatch(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_service", this, 0, "post"));
+        *p.p, "io_context", this, 0, "post"));
 
-  io_service_.impl_.post_immediate_completion(p.p, false);
+  io_context_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
 }
 
 template <typename Function, typename Allocator>
-void io_service::executor_type::post(
+void io_context::executor_type::post(
     ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
@@ -215,14 +215,14 @@ void io_service::executor_type::post(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_service", this, 0, "post"));
+        *p.p, "io_context", this, 0, "post"));
 
-  io_service_.impl_.post_immediate_completion(p.p, false);
+  io_context_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
 }
 
 template <typename Function, typename Allocator>
-void io_service::executor_type::defer(
+void io_context::executor_type::defer(
     ASIO_MOVE_ARG(Function) f, const Allocator& a)
 {
   // Make a local, non-const copy of the function.
@@ -240,47 +240,61 @@ void io_service::executor_type::defer(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_service", this, 0, "defer"));
+        *p.p, "io_context", this, 0, "defer"));
 
-  io_service_.impl_.post_immediate_completion(p.p, true);
+  io_context_.impl_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
 }
 
 inline bool
-io_service::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
+io_context::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
 {
-  return io_service_.impl_.can_dispatch();
+  return io_context_.impl_.can_dispatch();
 }
 
-inline io_service::work::work(asio::io_service& io_service)
-  : io_service_impl_(io_service.impl_)
+inline io_context::work::work(asio::io_context& io_context)
+  : io_context_impl_(io_context.impl_)
 {
-  io_service_impl_.work_started();
+  io_context_impl_.work_started();
 }
 
-inline io_service::work::work(const work& other)
-  : io_service_impl_(other.io_service_impl_)
+inline io_context::work::work(const work& other)
+  : io_context_impl_(other.io_context_impl_)
 {
-  io_service_impl_.work_started();
+  io_context_impl_.work_started();
 }
 
-inline io_service::work::~work()
+inline io_context::work::~work()
 {
-  io_service_impl_.work_finished();
+  io_context_impl_.work_finished();
 }
 
-inline asio::io_service& io_service::work::get_io_service()
+inline asio::io_context& io_context::work::get_io_context()
 {
-  return static_cast<asio::io_service&>(io_service_impl_.context());
+  return static_cast<asio::io_context&>(io_context_impl_.context());
 }
 
-inline asio::io_service& io_service::service::get_io_service()
+#if !defined(ASIO_NO_DEPRECATED)
+inline asio::io_context& io_context::work::get_io_service()
 {
-  return static_cast<asio::io_service&>(context());
+  return static_cast<asio::io_context&>(io_context_impl_.context());
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+inline asio::io_context& io_context::service::get_io_context()
+{
+  return static_cast<asio::io_context&>(context());
+}
+
+#if !defined(ASIO_NO_DEPRECATED)
+inline asio::io_context& io_context::service::get_io_service()
+{
+  return static_cast<asio::io_context&>(context());
+}
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IMPL_IO_SERVICE_HPP
+#endif // ASIO_IMPL_IO_CONTEXT_HPP

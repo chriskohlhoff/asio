@@ -23,12 +23,12 @@ class client
 {
 public:
   /// Constructor starts the asynchronous connect operation.
-  client(asio::io_service& io_service,
+  client(asio::io_context& io_context,
       const std::string& host, const std::string& service)
-    : connection_(io_service)
+    : connection_(io_context)
   {
     // Resolve the host name into an IP address.
-    asio::ip::tcp::resolver resolver(io_service);
+    asio::ip::tcp::resolver resolver(io_context);
     asio::ip::tcp::resolver::query query(host, service);
     asio::ip::tcp::resolver::iterator endpoint_iterator =
       resolver.resolve(query);
@@ -54,7 +54,7 @@ public:
     else
     {
       // An error occurred. Log it and return. Since we are not starting a new
-      // operation the io_service will run out of work to do and the client will
+      // operation the io_context will run out of work to do and the client will
       // exit.
       std::cerr << e.message() << std::endl;
     }
@@ -87,7 +87,7 @@ public:
       std::cerr << e.message() << std::endl;
     }
 
-    // Since we are not starting a new operation the io_service will run out of
+    // Since we are not starting a new operation the io_context will run out of
     // work to do and the client will exit.
   }
 
@@ -112,9 +112,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
-    s11n_example::client client(io_service, argv[1], argv[2]);
-    io_service.run();
+    asio::io_context io_context;
+    s11n_example::client client(io_context, argv[1], argv[2]);
+    io_context.run();
   }
   catch (std::exception& e)
   {

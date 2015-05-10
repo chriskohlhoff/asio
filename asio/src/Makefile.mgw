@@ -40,7 +40,7 @@ UNIT_TEST_EXES = \
 	tests/unit/generic/seq_packet_protocol.exe \
 	tests/unit/generic/stream_protocol.exe \
 	tests/unit/high_resolution_timer.exe \
-	tests/unit/io_service.exe \
+	tests/unit/io_context.exe \
 	tests/unit/ip/address.exe \
 	tests/unit/ip/address_v4.exe \
 	tests/unit/ip/address_v6.exe \
@@ -185,7 +185,7 @@ examples/cpp03/http/server/http_server.exe: \
 
 examples/cpp03/http/server2/http_server.exe: \
 		examples/cpp03/http/server2/connection.o \
-		examples/cpp03/http/server2/io_service_pool.o \
+		examples/cpp03/http/server2/io_context_pool.o \
 		examples/cpp03/http/server2/main.o \
 		examples/cpp03/http/server2/mime_types.o \
 		examples/cpp03/http/server2/reply.o \

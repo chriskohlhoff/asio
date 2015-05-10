@@ -28,9 +28,9 @@ namespace asio {
 namespace detail {
 
 winrt_timer_scheduler::winrt_timer_scheduler(
-    asio::io_service& io_service)
-  : asio::detail::service_base<winrt_timer_scheduler>(io_service),
-    io_service_(use_service<io_service_impl>(io_service)),
+    asio::io_context& io_context)
+  : asio::detail::service_base<winrt_timer_scheduler>(io_context),
+    io_context_(use_service<io_context_impl>(io_context)),
     mutex_(),
     event_(),
     timer_queues_(),
@@ -64,10 +64,10 @@ void winrt_timer_scheduler::shutdown_service()
 
   op_queue<operation> ops;
   timer_queues_.get_all_timers(ops);
-  io_service_.abandon_operations(ops);
+  io_context_.abandon_operations(ops);
 }
 
-void winrt_timer_scheduler::fork_service(asio::io_service::fork_event)
+void winrt_timer_scheduler::fork_service(asio::io_context::fork_event)
 {
 }
 
@@ -89,7 +89,7 @@ void winrt_timer_scheduler::run_thread()
     if (!ops.empty())
     {
       lock.unlock();
-      io_service_.post_deferred_completions(ops);
+      io_context_.post_deferred_completions(ops);
       lock.lock();
     }
   }

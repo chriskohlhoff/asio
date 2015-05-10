@@ -67,7 +67,7 @@ void dev_poll_reactor::shutdown_service()
   scheduler_.abandon_operations(ops);
 } 
 
-void dev_poll_reactor::fork_service(asio::io_service::fork_event fork_ev)
+void dev_poll_reactor::fork_service(asio::io_context::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)
   {

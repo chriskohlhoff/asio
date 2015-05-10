@@ -17,7 +17,7 @@
 #include "asio/generic/raw_protocol.hpp"
 
 #include <cstring>
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/icmp.hpp"
 #include "../unit_test.hpp"
 
@@ -59,7 +59,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
@@ -69,33 +69,33 @@ void test()
 
     // basic_raw_socket constructors.
 
-    rp::socket socket1(ios);
-    rp::socket socket2(ios, rp(af_inet, ipproto_icmp));
-    rp::socket socket3(ios, rp::endpoint());
+    rp::socket socket1(ioc);
+    rp::socket socket2(ioc, rp(af_inet, ipproto_icmp));
+    rp::socket socket3(ioc, rp::endpoint());
 #if !defined(ASIO_WINDOWS_RUNTIME)
     rp::socket::native_handle_type native_socket1
       = ::socket(af_inet, sock_raw, 0);
-    rp::socket socket4(ios, rp(af_inet, ipproto_icmp), native_socket1);
+    rp::socket socket4(ioc, rp(af_inet, ipproto_icmp), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
     rp::socket socket5(std::move(socket4));
-    asio::ip::icmp::socket icmp_socket(ios);
+    asio::ip::icmp::socket icmp_socket(ioc);
     rp::socket socket6(std::move(icmp_socket));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
 #if defined(ASIO_HAS_MOVE)
-    socket1 = rp::socket(ios);
+    socket1 = rp::socket(ioc);
     socket1 = std::move(socket2);
-    socket1 = asio::ip::icmp::socket(ios);
+    socket1 = asio::ip::icmp::socket(ioc);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = socket1.get_io_context();
+    (void)ioc_ref;
 
     // basic_socket functions.
 

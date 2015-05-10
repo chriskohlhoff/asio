@@ -9,7 +9,7 @@
 //
 
 #include <asio/deadline_timer.hpp>
-#include <asio/io_service.hpp>
+#include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/spawn.hpp>
 #include <asio/write.hpp>
@@ -23,10 +23,10 @@ using asio::ip::tcp;
 class session : public boost::enable_shared_from_this<session>
 {
 public:
-  explicit session(asio::io_service& io_service)
-    : strand_(io_service),
-      socket_(io_service),
-      timer_(io_service)
+  explicit session(asio::io_context& io_context)
+    : strand_(io_context),
+      socket_(io_context),
+      timer_(io_context)
   {
   }
 
@@ -76,20 +76,20 @@ private:
     }
   }
 
-  asio::io_service::strand strand_;
+  asio::io_context::strand strand_;
   tcp::socket socket_;
   asio::deadline_timer timer_;
 };
 
-void do_accept(asio::io_service& io_service,
+void do_accept(asio::io_context& io_context,
     unsigned short port, asio::yield_context yield)
 {
-  tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
+  tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), port));
 
   for (;;)
   {
     asio::error_code ec;
-    boost::shared_ptr<session> new_session(new session(io_service));
+    boost::shared_ptr<session> new_session(new session(io_context));
     acceptor.async_accept(new_session->socket(), yield[ec]);
     if (!ec) new_session->go();
   }
@@ -105,13 +105,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    asio::spawn(io_service,
+    asio::spawn(io_context,
         boost::bind(do_accept,
-          boost::ref(io_service), atoi(argv[1]), _1));
+          boost::ref(io_context), atoi(argv[1]), _1));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

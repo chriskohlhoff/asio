@@ -15,10 +15,10 @@ namespace http {
 namespace server2 {
 
 server::server(const std::string& address, const std::string& port,
-    const std::string& doc_root, std::size_t io_service_pool_size)
-  : io_service_pool_(io_service_pool_size),
-    signals_(io_service_pool_.get_io_service()),
-    acceptor_(io_service_pool_.get_io_service()),
+    const std::string& doc_root, std::size_t io_context_pool_size)
+  : io_context_pool_(io_context_pool_size),
+    signals_(io_context_pool_.get_io_context()),
+    acceptor_(io_context_pool_.get_io_context()),
     new_connection_(),
     request_handler_(doc_root)
 {
@@ -46,13 +46,13 @@ server::server(const std::string& address, const std::string& port,
 
 void server::run()
 {
-  io_service_pool_.run();
+  io_context_pool_.run();
 }
 
 void server::start_accept()
 {
   new_connection_.reset(new connection(
-        io_service_pool_.get_io_service(), request_handler_));
+        io_context_pool_.get_io_context(), request_handler_));
   acceptor_.async_accept(new_connection_->socket(),
       boost::bind(&server::handle_accept, this,
         asio::placeholders::error));
@@ -70,7 +70,7 @@ void server::handle_accept(const asio::error_code& e)
 
 void server::handle_stop()
 {
-  io_service_pool_.stop();
+  io_context_pool_.stop();
 }
 
 } // namespace server2

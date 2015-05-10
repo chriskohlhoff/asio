@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/ip/v6_only.hpp"
 
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "../unit_test.hpp"
@@ -37,8 +37,8 @@ void test()
 
   try
   {
-    io_service ios;
-    ip::udp::socket sock(ios);
+    io_context ioc;
+    ip::udp::socket sock(ioc);
 
     // v6_only class.
 
@@ -72,11 +72,11 @@ void test()
   using namespace asio;
   namespace ip = asio::ip;
 
-  io_service ios;
+  io_context ioc;
   asio::error_code ec;
 
   ip::tcp::endpoint ep_v6(ip::address_v6::loopback(), 0);
-  ip::tcp::acceptor acceptor_v6(ios);
+  ip::tcp::acceptor acceptor_v6(ioc);
   acceptor_v6.open(ep_v6.protocol(), ec);
   acceptor_v6.bind(ep_v6, ec);
   bool have_v6 = !ec;

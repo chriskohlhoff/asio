@@ -20,7 +20,7 @@
 #include "asio/ip/tcp.hpp"
 
 #include <cstring>
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
 #include "../unit_test.hpp"
@@ -57,8 +57,8 @@ void test()
 
   try
   {
-    io_service ios;
-    ip::tcp::socket sock(ios);
+    io_context ioc;
+    ip::tcp::socket sock(ioc);
 
     // no_delay class.
 
@@ -91,8 +91,8 @@ void test()
   using namespace asio;
   namespace ip = asio::ip;
 
-  io_service ios;
-  ip::tcp::socket sock(ios, ip::tcp::v4());
+  io_context ioc;
+  ip::tcp::socket sock(ioc, ip::tcp::v4());
   asio::error_code ec;
 
   // no_delay class.
@@ -216,7 +216,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     array<asio::mutable_buffer, 2> mutable_buffers = {{
@@ -238,15 +238,15 @@ void test()
 
     // basic_stream_socket constructors.
 
-    ip::tcp::socket socket1(ios);
-    ip::tcp::socket socket2(ios, ip::tcp::v4());
-    ip::tcp::socket socket3(ios, ip::tcp::v6());
-    ip::tcp::socket socket4(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
-    ip::tcp::socket socket5(ios, ip::tcp::endpoint(ip::tcp::v6(), 0));
+    ip::tcp::socket socket1(ioc);
+    ip::tcp::socket socket2(ioc, ip::tcp::v4());
+    ip::tcp::socket socket3(ioc, ip::tcp::v6());
+    ip::tcp::socket socket4(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+    ip::tcp::socket socket5(ioc, ip::tcp::endpoint(ip::tcp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
     ip::tcp::socket::native_handle_type native_socket1
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ip::tcp::socket socket6(ios, ip::tcp::v4(), native_socket1);
+    ip::tcp::socket socket6(ioc, ip::tcp::v4(), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
@@ -256,14 +256,14 @@ void test()
     // basic_stream_socket operators.
 
 #if defined(ASIO_HAS_MOVE)
-    socket1 = ip::tcp::socket(ios);
+    socket1 = ip::tcp::socket(ioc);
     socket1 = std::move(socket2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = socket1.get_io_context();
+    (void)ioc_ref;
 
     ip::tcp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
@@ -581,14 +581,14 @@ void test()
   using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
 
-  io_service ios;
+  io_context ioc;
 
-  ip::tcp::acceptor acceptor(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
   ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(ip::address_v4::loopback());
 
-  ip::tcp::socket client_side_socket(ios);
-  ip::tcp::socket server_side_socket(ios);
+  ip::tcp::socket client_side_socket(ioc);
+  ip::tcp::socket server_side_socket(ioc);
 
   client_side_socket.connect(server_endpoint);
   acceptor.accept(server_side_socket);
@@ -601,7 +601,7 @@ void test()
       bindns::bind(handle_read_noop,
         _1, _2, &read_noop_completed));
 
-  ios.run();
+  ioc.run();
   ASIO_CHECK(read_noop_completed);
 
   // No-op write.
@@ -612,8 +612,8 @@ void test()
       bindns::bind(handle_write_noop,
         _1, _2, &write_noop_completed));
 
-  ios.restart();
-  ios.run();
+  ioc.restart();
+  ioc.run();
   ASIO_CHECK(write_noop_completed);
 
   // Read and write to transfer data.
@@ -631,8 +631,8 @@ void test()
       bindns::bind(handle_write,
         _1, _2, &write_completed));
 
-  ios.restart();
-  ios.run();
+  ioc.restart();
+  ioc.run();
   ASIO_CHECK(read_completed);
   ASIO_CHECK(write_completed);
   ASIO_CHECK(memcmp(read_buffer, write_data, sizeof(write_data)) == 0);
@@ -645,14 +645,14 @@ void test()
       bindns::bind(handle_read_cancel,
         _1, _2, &read_cancel_completed));
 
-  ios.restart();
-  ios.poll();
+  ioc.restart();
+  ioc.poll();
   ASIO_CHECK(!read_cancel_completed);
 
   server_side_socket.cancel();
 
-  ios.restart();
-  ios.run();
+  ioc.restart();
+  ioc.run();
   ASIO_CHECK(read_cancel_completed);
 
   // A read when the peer closes socket should fail with eof.
@@ -665,8 +665,8 @@ void test()
 
   server_side_socket.close();
 
-  ios.restart();
-  ios.run();
+  ioc.restart();
+  ioc.run();
   ASIO_CHECK(read_eof_completed);
 }
 
@@ -721,8 +721,8 @@ void test()
 
   try
   {
-    io_service ios;
-    ip::tcp::socket peer_socket(ios);
+    io_context ioc;
+    ip::tcp::socket peer_socket(ioc);
     ip::tcp::endpoint peer_endpoint;
     archetypes::settable_socket_option<void> settable_socket_option1;
     archetypes::settable_socket_option<int> settable_socket_option2;
@@ -736,15 +736,15 @@ void test()
 
     // basic_socket_acceptor constructors.
 
-    ip::tcp::acceptor acceptor1(ios);
-    ip::tcp::acceptor acceptor2(ios, ip::tcp::v4());
-    ip::tcp::acceptor acceptor3(ios, ip::tcp::v6());
-    ip::tcp::acceptor acceptor4(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
-    ip::tcp::acceptor acceptor5(ios, ip::tcp::endpoint(ip::tcp::v6(), 0));
+    ip::tcp::acceptor acceptor1(ioc);
+    ip::tcp::acceptor acceptor2(ioc, ip::tcp::v4());
+    ip::tcp::acceptor acceptor3(ioc, ip::tcp::v6());
+    ip::tcp::acceptor acceptor4(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+    ip::tcp::acceptor acceptor5(ioc, ip::tcp::endpoint(ip::tcp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
     ip::tcp::acceptor::native_handle_type native_acceptor1
       = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    ip::tcp::acceptor acceptor6(ios, ip::tcp::v4(), native_acceptor1);
+    ip::tcp::acceptor acceptor6(ioc, ip::tcp::v4(), native_acceptor1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
@@ -754,14 +754,14 @@ void test()
     // basic_socket_acceptor operators.
 
 #if defined(ASIO_HAS_MOVE)
-    acceptor1 = ip::tcp::acceptor(ios);
+    acceptor1 = ip::tcp::acceptor(ioc);
     acceptor1 = std::move(acceptor2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = acceptor1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = acceptor1.get_io_context();
+    (void)ioc_ref;
 
     // basic_socket_acceptor functions.
 
@@ -841,9 +841,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     peer_socket = acceptor1.accept();
-    peer_socket = acceptor1.accept(ios);
+    peer_socket = acceptor1.accept(ioc);
     peer_socket = acceptor1.accept(peer_endpoint);
-    peer_socket = acceptor1.accept(ios, peer_endpoint);
+    peer_socket = acceptor1.accept(ioc, peer_endpoint);
     (void)peer_socket;
 #endif // defined(ASIO_HAS_MOVE)
 
@@ -856,9 +856,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     acceptor1.async_accept(move_accept_handler());
-    acceptor1.async_accept(ios, move_accept_handler());
+    acceptor1.async_accept(ioc, move_accept_handler());
     acceptor1.async_accept(peer_endpoint, move_accept_handler());
-    acceptor1.async_accept(ios, peer_endpoint, move_accept_handler());
+    acceptor1.async_accept(ioc, peer_endpoint, move_accept_handler());
 #endif // defined(ASIO_HAS_MOVE)
   }
   catch (std::exception&)
@@ -892,14 +892,14 @@ void test()
   using namespace asio;
   namespace ip = asio::ip;
 
-  io_service ios;
+  io_context ioc;
 
-  ip::tcp::acceptor acceptor(ios, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
   ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(ip::address_v4::loopback());
 
-  ip::tcp::socket client_side_socket(ios);
-  ip::tcp::socket server_side_socket(ios);
+  ip::tcp::socket client_side_socket(ioc);
+  ip::tcp::socket server_side_socket(ioc);
 
   client_side_socket.connect(server_endpoint);
   acceptor.accept(server_side_socket);
@@ -926,7 +926,7 @@ void test()
   acceptor.async_accept(server_side_socket, &handle_accept);
   client_side_socket.async_connect(server_endpoint, &handle_connect);
 
-  ios.run();
+  ioc.run();
 
   client_side_socket.close();
   server_side_socket.close();
@@ -934,8 +934,8 @@ void test()
   acceptor.async_accept(server_side_socket, client_endpoint, &handle_accept);
   client_side_socket.async_connect(server_endpoint, &handle_connect);
 
-  ios.restart();
-  ios.run();
+  ioc.restart();
+  ioc.run();
 
   client_side_local_endpoint = client_side_socket.local_endpoint();
   ASIO_CHECK(client_side_local_endpoint.port() == client_endpoint.port());
@@ -975,7 +975,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
     ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
@@ -983,12 +983,12 @@ void test()
 
     // basic_resolver constructors.
 
-    ip::tcp::resolver resolver(ios);
+    ip::tcp::resolver resolver(ioc);
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = resolver.get_io_context();
+    (void)ioc_ref;
 
     // basic_resolver functions.
 

@@ -1,5 +1,5 @@
 //
-// io_service_pool.hpp
+// io_context_pool.hpp
 // ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -19,35 +19,35 @@
 namespace http {
 namespace server2 {
 
-/// A pool of io_service objects.
-class io_service_pool
+/// A pool of io_context objects.
+class io_context_pool
   : private boost::noncopyable
 {
 public:
-  /// Construct the io_service pool.
-  explicit io_service_pool(std::size_t pool_size);
+  /// Construct the io_context pool.
+  explicit io_context_pool(std::size_t pool_size);
 
-  /// Run all io_service objects in the pool.
+  /// Run all io_context objects in the pool.
   void run();
 
-  /// Stop all io_service objects in the pool.
+  /// Stop all io_context objects in the pool.
   void stop();
 
-  /// Get an io_service to use.
-  asio::io_service& get_io_service();
+  /// Get an io_context to use.
+  asio::io_context& get_io_context();
 
 private:
-  typedef boost::shared_ptr<asio::io_service> io_service_ptr;
-  typedef boost::shared_ptr<asio::io_service::work> work_ptr;
+  typedef boost::shared_ptr<asio::io_context> io_context_ptr;
+  typedef boost::shared_ptr<asio::io_context::work> work_ptr;
 
-  /// The pool of io_services.
-  std::vector<io_service_ptr> io_services_;
+  /// The pool of io_contexts.
+  std::vector<io_context_ptr> io_contexts_;
 
-  /// The work that keeps the io_services running.
+  /// The work that keeps the io_contexts running.
   std::vector<work_ptr> work_;
 
-  /// The next io_service to use for a connection.
-  std::size_t next_io_service_;
+  /// The next io_context to use for a connection.
+  std::size_t next_io_context_;
 };
 
 } // namespace server2

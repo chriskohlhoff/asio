@@ -56,25 +56,25 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     // Set the name of the file that all logger instances will use.
-    services::logger logger(io_service, "");
+    services::logger logger(io_context, "");
     logger.use_file("log.txt");
 
     // Resolve the address corresponding to the given host.
-    asio::ip::tcp::resolver resolver(io_service);
+    asio::ip::tcp::resolver resolver(io_context);
     asio::ip::tcp::resolver::results_type endpoints =
       resolver.resolve(argv[1], "daytime");
 
     // Start an asynchronous connect.
-    debug_stream_socket socket(io_service);
+    debug_stream_socket socket(io_context);
     asio::async_connect(socket, endpoints,
         boost::bind(connect_handler,
           asio::placeholders::error, &socket));
 
-    // Run the io_service until all operations have finished.
-    io_service.run();
+    // Run the io_context until all operations have finished.
+    io_context.run();
   }
   catch (std::exception& e)
   {

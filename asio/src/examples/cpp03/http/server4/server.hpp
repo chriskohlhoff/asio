@@ -30,7 +30,7 @@ class server : asio::coroutine
 public:
   /// Construct the server to listen on the specified TCP address and port, and
   /// serve up files from the given directory.
-  explicit server(asio::io_service& io_service,
+  explicit server(asio::io_context& io_context,
       const std::string& address, const std::string& port,
       boost::function<void(const request&, reply&)> request_handler);
 

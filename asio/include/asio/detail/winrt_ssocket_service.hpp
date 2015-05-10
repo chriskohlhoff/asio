@@ -20,7 +20,7 @@
 #if defined(ASIO_WINDOWS_RUNTIME)
 
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/winrt_socket_connect_op.hpp"
 #include "asio/detail/winrt_ssocket_service_base.hpp"
@@ -60,8 +60,8 @@ public:
   };
 
   // Constructor.
-  winrt_ssocket_service(asio::io_service& io_service)
-    : winrt_ssocket_service_base(io_service)
+  winrt_ssocket_service(asio::io_context& io_context)
+    : winrt_ssocket_service_base(io_context)
   {
   }
 
@@ -214,7 +214,7 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((io_service_.context(),
+    ASIO_HANDLER_CREATION((io_context_.context(),
           *p.p, "socket", &impl, 0, "async_connect"));
 
     start_connect_op(impl, peer_endpoint.data(), p.p, is_continuation);

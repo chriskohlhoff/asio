@@ -9,7 +9,7 @@
 //
 
 #include "asio/deadline_timer.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/read_until.hpp"
 #include "asio/streambuf.hpp"
@@ -83,11 +83,11 @@ using asio::ip::tcp;
 class client
 {
 public:
-  client(asio::io_service& io_service)
+  client(asio::io_context& io_context)
     : stopped_(false),
-      socket_(io_service),
-      deadline_(io_service),
-      heartbeat_timer_(io_service)
+      socket_(io_context),
+      deadline_(io_context),
+      heartbeat_timer_(io_context)
   {
   }
 
@@ -291,13 +291,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
-    tcp::resolver r(io_service);
-    client c(io_service);
+    asio::io_context io_context;
+    tcp::resolver r(io_context);
+    client c(io_context);
 
     c.start(r.resolve(argv[1], argv[2]));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

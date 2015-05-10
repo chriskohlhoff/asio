@@ -24,7 +24,7 @@
 #include "asio/deadline_timer_service.hpp"
 #include "asio/detail/array.hpp"
 #include "asio/detail/throw_error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/stream_socket_service.hpp"
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
@@ -46,7 +46,7 @@
 //     init_buffers();
 //     this->basic_socket<Protocol, StreamSocketService>::close(ec_);
 //     typedef typename Protocol::resolver resolver_type;
-//     resolver_type resolver(detail::socket_streambuf_base::io_service_);
+//     resolver_type resolver(detail::socket_streambuf_base::io_context_);
 //     connect_to_endpoints(
 //         resolver.resolve(x1, ..., xn, ec_));
 //     return !ec_ ? this : 0;
@@ -62,7 +62,7 @@
     init_buffers(); \
     this->basic_socket<Protocol, StreamSocketService>::close(ec_); \
     typedef typename Protocol::resolver resolver_type; \
-    resolver_type resolver(detail::socket_streambuf_base::io_service_); \
+    resolver_type resolver(detail::socket_streambuf_base::io_context_); \
     connect_to_endpoints( \
         resolver.resolve(ASIO_VARIADIC_BYVAL_ARGS(n), ec_)); \
     return !ec_ ? this : 0; \
@@ -76,12 +76,12 @@
 namespace asio {
 namespace detail {
 
-// A separate base class is used to ensure that the io_service is initialised
+// A separate base class is used to ensure that the io_context is initialised
 // prior to the basic_socket_streambuf's basic_socket base class.
 class socket_streambuf_base
 {
 protected:
-  io_service io_service_;
+  io_context io_context_;
 };
 
 } // namespace detail
@@ -141,7 +141,7 @@ public:
   /// Construct a basic_socket_streambuf without establishing a connection.
   basic_socket_streambuf()
     : basic_socket<Protocol, StreamSocketService>(
-        this->detail::socket_streambuf_base::io_service_),
+        this->detail::socket_streambuf_base::io_context_),
       unbuffered_(false),
       timer_service_(0),
       timer_state_(no_timer)
@@ -184,8 +184,8 @@ public:
         endpoint, handler);
 
     ec_ = asio::error::would_block;
-    this->get_service().get_io_service().restart();
-    do this->get_service().get_io_service().run_one();
+    this->get_service().get_io_context().restart();
+    do this->get_service().get_io_context().run_one();
     while (ec_ == asio::error::would_block);
 
     return !ec_ ? this : 0;
@@ -212,7 +212,7 @@ public:
     init_buffers();
     this->basic_socket<Protocol, StreamSocketService>::close(ec_);
     typedef typename Protocol::resolver resolver_type;
-    resolver_type resolver(detail::socket_streambuf_base::io_service_);
+    resolver_type resolver(detail::socket_streambuf_base::io_context_);
     connect_to_endpoints(resolver.resolve(x..., ec_));
     return !ec_ ? this : 0;
   }
@@ -390,8 +390,8 @@ protected:
           0, handler);
 
       ec_ = asio::error::would_block;
-      this->get_service().get_io_service().restart();
-      do this->get_service().get_io_service().run_one();
+      this->get_service().get_io_context().restart();
+      do this->get_service().get_io_context().run_one();
       while (ec_ == asio::error::would_block);
       if (ec_)
         return traits_type::eof();
@@ -430,8 +430,8 @@ protected:
             asio::buffer(&ch, sizeof(char_type)), 0, handler);
 
         ec_ = asio::error::would_block;
-        this->get_service().get_io_service().restart();
-        do this->get_service().get_io_service().run_one();
+        this->get_service().get_io_context().restart();
+        do this->get_service().get_io_context().run_one();
         while (ec_ == asio::error::would_block);
         if (ec_)
           return traits_type::eof();
@@ -457,8 +457,8 @@ protected:
             asio::buffer(buffer), 0, handler);
 
         ec_ = asio::error::would_block;
-        this->get_service().get_io_service().restart();
-        do this->get_service().get_io_service().run_one();
+        this->get_service().get_io_context().restart();
+        do this->get_service().get_io_context().run_one();
         while (ec_ == asio::error::would_block);
         if (ec_)
           return traits_type::eof();
@@ -540,8 +540,8 @@ private:
             *i, handler);
 
         ec_ = asio::error::would_block;
-        this->get_service().get_io_service().restart();
-        do this->get_service().get_io_service().run_one();
+        this->get_service().get_io_context().restart();
+        do this->get_service().get_io_context().run_one();
         while (ec_ == asio::error::would_block);
 
         ++i;
@@ -600,7 +600,7 @@ private:
     if (timer_service_ == 0)
     {
       TimerService& timer_service = use_service<TimerService>(
-          detail::socket_streambuf_base::io_service_);
+          detail::socket_streambuf_base::io_context_);
       timer_service.construct(timer_implementation_);
       timer_service_ = &timer_service;
     }

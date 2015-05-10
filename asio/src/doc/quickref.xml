@@ -34,11 +34,11 @@
             <member><link linkend="asio.reference.executor">executor</link></member>
             <member><link linkend="asio.reference.executor_arg_t">executor_arg_t</link></member>
             <member><link linkend="asio.reference.invalid_service_owner">invalid_service_owner</link></member>
-            <member><link linkend="asio.reference.io_service">io_service</link></member>
-            <member><link linkend="asio.reference.io_service__executor_type">io_service::executor_type</link></member>
-            <member><link linkend="asio.reference.io_service__service">io_service::service</link></member>
-            <member><link linkend="asio.reference.io_service__strand">io_service::strand</link></member>
-            <member><link linkend="asio.reference.io_service__work">io_service::work</link></member>
+            <member><link linkend="asio.reference.io_context">io_context</link></member>
+            <member><link linkend="asio.reference.io_context__executor_type">io_context::executor_type</link></member>
+            <member><link linkend="asio.reference.io_context__service">io_context::service</link></member>
+            <member><link linkend="asio.reference.io_context__strand">io_context::strand</link></member>
+            <member><link linkend="asio.reference.io_context__work">io_context::work</link></member>
             <member><link linkend="asio.reference.service_already_exists">service_already_exists</link></member>
             <member><link linkend="asio.reference.system_error">system_error</link></member>
             <member><link linkend="asio.reference.system_executor">system_executor</link></member>

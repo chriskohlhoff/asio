@@ -21,7 +21,7 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -30,7 +30,7 @@
 #include "asio/detail/operation.hpp"
 #include "asio/detail/win_iocp_handle_read_op.hpp"
 #include "asio/detail/win_iocp_handle_write_op.hpp"
-#include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/win_iocp_io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -74,7 +74,7 @@ public:
     implementation_type* prev_;
   };
 
-  ASIO_DECL win_iocp_handle_service(asio::io_service& io_service);
+  ASIO_DECL win_iocp_handle_service(asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
@@ -299,7 +299,7 @@ private:
 
   // The IOCP service used for running asynchronous operations and dispatching
   // handlers.
-  win_iocp_io_service& iocp_service_;
+  win_iocp_io_context& iocp_service_;
 
   // Mutex to protect access to the linked list of implementations.
   mutex mutex_;

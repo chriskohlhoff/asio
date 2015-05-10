@@ -27,11 +27,11 @@
 namespace asio {
 
 class execution_context;
-class io_service;
+class io_context;
 
 #if !defined(GENERATING_DOCUMENTATION)
 template <typename Service> Service& use_service(execution_context&);
-template <typename Service> Service& use_service(io_service&);
+template <typename Service> Service& use_service(io_context&);
 template <typename Service> void add_service(execution_context&, Service*);
 template <typename Service> bool has_service(execution_context&);
 #endif // !defined(ASIO_NO_DEPRECATED)
@@ -41,7 +41,7 @@ namespace detail { class service_registry; }
 /// A context for function object execution.
 /**
  * An execution context represents a place where function objects will be
- * executed. An @c io_service is an example of an execution context.
+ * executed. An @c io_context is an example of an execution context.
  *
  * @par The execution_context class and services
  *
@@ -79,7 +79,7 @@ namespace detail { class service_registry; }
  * @par The execution_context as a base class
  *
  * Class execution_context may be used only as a base class for concrete
- * execution context types. The @c io_service is an example of such a derived
+ * execution context types. The @c io_context is an example of such a derived
  * type.
  *
  * On destruction, a class that is derived from execution_context must perform
@@ -96,8 +96,8 @@ namespace detail { class service_registry; }
  * complete. The corresponding handler objects are destroyed, and all @c
  * shared_ptr references to the objects are destroyed.
  *
- * @li To shut down the whole program, the io_service function stop() is called
- * to terminate any run() calls as soon as possible. The io_service destructor
+ * @li To shut down the whole program, the io_context function stop() is called
+ * to terminate any run() calls as soon as possible. The io_context destructor
  * calls @c shutdown_context() and @c destroy_context() to destroy all pending
  * handlers, causing all @c shared_ptr references to all connection objects to
  * be destroyed.
@@ -210,18 +210,18 @@ public:
   /**
    * This function is used to locate a service object that corresponds to the
    * given service type. If there is no existing implementation of the service,
-   * then the io_service will create a new instance of the service.
+   * then the io_context will create a new instance of the service.
    *
-   * @param ios The io_service object that owns the service.
+   * @param ioc The io_context object that owns the service.
    *
    * @return The service interface implementing the specified service type.
    * Ownership of the service interface is not transferred to the caller.
    *
    * @note This overload is preserved for backwards compatibility with services
-   * that inherit from io_service::service.
+   * that inherit from io_context::service.
    */
   template <typename Service>
-  friend Service& use_service(io_service& ios);
+  friend Service& use_service(io_context& ioc);
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -310,7 +310,7 @@ public:
   id() {}
 };
 
-/// Base class for all io_service services.
+/// Base class for all io_context services.
 class execution_context::service
   : private noncopyable
 {

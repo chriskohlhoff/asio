@@ -18,7 +18,7 @@
 #include "asio/serial_port.hpp"
 
 #include "archetypes/async_result.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     serial_port::baud_rate serial_port_option;
@@ -68,10 +68,10 @@ void test()
 
     // basic_serial_port constructors.
 
-    serial_port port1(ios);
-    serial_port port2(ios, "null");
+    serial_port port1(ioc);
+    serial_port port2(ioc, "null");
     serial_port::native_handle_type native_port1 = port1.native_handle();
-    serial_port port3(ios, native_port1);
+    serial_port port3(ioc, native_port1);
 
 #if defined(ASIO_HAS_MOVE)
     serial_port port4(std::move(port3));
@@ -80,14 +80,14 @@ void test()
     // basic_serial_port operators.
 
 #if defined(ASIO_HAS_MOVE)
-    port1 = serial_port(ios);
+    port1 = serial_port(ioc);
     port1 = std::move(port2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = port1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = port1.get_io_context();
+    (void)ioc_ref;
 
     // basic_serial_port functions.
 

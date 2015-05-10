@@ -17,7 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/serial_port_base.hpp"
 
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/serial_port.hpp"
 #include "unit_test.hpp"
 
@@ -37,8 +37,8 @@ void test()
 
   try
   {
-    io_service ios;
-    serial_port port(ios);
+    io_context ioc;
+    serial_port port(ioc);
 
     // baud_rate class.
 

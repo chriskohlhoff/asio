@@ -1,5 +1,5 @@
 //
-// impl/io_service.ipp
+// impl/io_context.ipp
 // ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,22 +8,22 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_IMPL_IO_SERVICE_IPP
-#define ASIO_IMPL_IO_SERVICE_IPP
+#ifndef ASIO_IMPL_IO_CONTEXT_IPP
+#define ASIO_IMPL_IO_CONTEXT_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_service.hpp"
+# include "asio/detail/win_iocp_io_context.hpp"
 #else
 # include "asio/detail/scheduler.hpp"
 #endif
@@ -32,17 +32,17 @@
 
 namespace asio {
 
-io_service::io_service()
+io_context::io_context()
   : impl_(create_impl())
 {
 }
 
-io_service::io_service(std::size_t concurrency_hint)
+io_context::io_context(std::size_t concurrency_hint)
   : impl_(create_impl(concurrency_hint))
 {
 }
 
-io_service::impl_type& io_service::create_impl(std::size_t concurrency_hint)
+io_context::impl_type& io_context::create_impl(std::size_t concurrency_hint)
 {
   asio::detail::scoped_ptr<impl_type> impl(
       new impl_type(*this, concurrency_hint));
@@ -50,11 +50,11 @@ io_service::impl_type& io_service::create_impl(std::size_t concurrency_hint)
   return *impl.release();
 }
 
-io_service::~io_service()
+io_context::~io_context()
 {
 }
 
-std::size_t io_service::run()
+std::size_t io_context::run()
 {
   asio::error_code ec;
   std::size_t s = impl_.run(ec);
@@ -62,12 +62,12 @@ std::size_t io_service::run()
   return s;
 }
 
-std::size_t io_service::run(asio::error_code& ec)
+std::size_t io_context::run(asio::error_code& ec)
 {
   return impl_.run(ec);
 }
 
-std::size_t io_service::run_one()
+std::size_t io_context::run_one()
 {
   asio::error_code ec;
   std::size_t s = impl_.run_one(ec);
@@ -75,12 +75,12 @@ std::size_t io_service::run_one()
   return s;
 }
 
-std::size_t io_service::run_one(asio::error_code& ec)
+std::size_t io_context::run_one(asio::error_code& ec)
 {
   return impl_.run_one(ec);
 }
 
-std::size_t io_service::poll()
+std::size_t io_context::poll()
 {
   asio::error_code ec;
   std::size_t s = impl_.poll(ec);
@@ -88,12 +88,12 @@ std::size_t io_service::poll()
   return s;
 }
 
-std::size_t io_service::poll(asio::error_code& ec)
+std::size_t io_context::poll(asio::error_code& ec)
 {
   return impl_.poll(ec);
 }
 
-std::size_t io_service::poll_one()
+std::size_t io_context::poll_one()
 {
   asio::error_code ec;
   std::size_t s = impl_.poll_one(ec);
@@ -101,32 +101,32 @@ std::size_t io_service::poll_one()
   return s;
 }
 
-std::size_t io_service::poll_one(asio::error_code& ec)
+std::size_t io_context::poll_one(asio::error_code& ec)
 {
   return impl_.poll_one(ec);
 }
 
-void io_service::stop()
+void io_context::stop()
 {
   impl_.stop();
 }
 
-bool io_service::stopped() const
+bool io_context::stopped() const
 {
   return impl_.stopped();
 }
 
-void io_service::restart()
+void io_context::restart()
 {
   impl_.restart();
 }
 
-io_service::service::service(asio::io_service& owner)
+io_context::service::service(asio::io_context& owner)
   : execution_context::service(owner)
 {
 }
 
-io_service::service::~service()
+io_context::service::~service()
 {
 }
 
@@ -134,4 +134,4 @@ io_service::service::~service()
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_IMPL_IO_SERVICE_IPP
+#endif // ASIO_IMPL_IO_CONTEXT_IPP

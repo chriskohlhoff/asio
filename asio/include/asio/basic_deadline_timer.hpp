@@ -50,7 +50,7 @@ namespace asio {
  * Performing a blocking wait:
  * @code
  * // Construct a timer without setting an expiry time.
- * asio::deadline_timer timer(io_service);
+ * asio::deadline_timer timer(io_context);
  *
  * // Set an expiry time relative to now.
  * timer.expires_from_now(boost::posix_time::seconds(5));
@@ -73,7 +73,7 @@ namespace asio {
  * ...
  *
  * // Construct a timer with an absolute expiry time.
- * asio::deadline_timer timer(io_service,
+ * asio::deadline_timer timer(io_context,
  *     boost::posix_time::time_from_string("2005-12-07 23:59:59.000"));
  *
  * // Start an asynchronous wait.
@@ -141,11 +141,11 @@ public:
    * expires_at() or expires_from_now() functions must be called to set an
    * expiry time before the timer can be waited on.
    *
-   * @param io_service The io_service object that the timer will use to dispatch
+   * @param io_context The io_context object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    */
-  explicit basic_deadline_timer(asio::io_service& io_service)
-    : basic_io_object<TimerService>(io_service)
+  explicit basic_deadline_timer(asio::io_context& io_context)
+    : basic_io_object<TimerService>(io_context)
   {
   }
 
@@ -153,15 +153,15 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param io_service The io_service object that the timer will use to dispatch
+   * @param io_context The io_context object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, expressed
    * as an absolute time.
    */
-  basic_deadline_timer(asio::io_service& io_service,
+  basic_deadline_timer(asio::io_context& io_context,
       const time_type& expiry_time)
-    : basic_io_object<TimerService>(io_service)
+    : basic_io_object<TimerService>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_at(this->get_implementation(), expiry_time, ec);
@@ -172,15 +172,15 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param io_service The io_service object that the timer will use to dispatch
+   * @param io_context The io_context object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, relative to
    * now.
    */
-  basic_deadline_timer(asio::io_service& io_service,
+  basic_deadline_timer(asio::io_context& io_context,
       const duration_type& expiry_time)
-    : basic_io_object<TimerService>(io_service)
+    : basic_io_object<TimerService>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_from_now(
@@ -495,7 +495,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    */
   template <typename WaitHandler>
   ASIO_INITFN_RESULT_TYPE(WaitHandler,

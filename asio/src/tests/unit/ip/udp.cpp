@@ -17,7 +17,7 @@
 #include "asio/ip/udp.hpp"
 
 #include <cstring>
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "../unit_test.hpp"
 #include "../archetypes/gettable_socket_option.hpp"
 #include "../archetypes/async_result.hpp"
@@ -90,7 +90,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
@@ -106,15 +106,15 @@ void test()
 
     // basic_datagram_socket constructors.
 
-    ip::udp::socket socket1(ios);
-    ip::udp::socket socket2(ios, ip::udp::v4());
-    ip::udp::socket socket3(ios, ip::udp::v6());
-    ip::udp::socket socket4(ios, ip::udp::endpoint(ip::udp::v4(), 0));
-    ip::udp::socket socket5(ios, ip::udp::endpoint(ip::udp::v6(), 0));
+    ip::udp::socket socket1(ioc);
+    ip::udp::socket socket2(ioc, ip::udp::v4());
+    ip::udp::socket socket3(ioc, ip::udp::v6());
+    ip::udp::socket socket4(ioc, ip::udp::endpoint(ip::udp::v4(), 0));
+    ip::udp::socket socket5(ioc, ip::udp::endpoint(ip::udp::v6(), 0));
 #if !defined(ASIO_WINDOWS_RUNTIME)
     ip::udp::socket::native_handle_type native_socket1
       = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    ip::udp::socket socket6(ios, ip::udp::v4(), native_socket1);
+    ip::udp::socket socket6(ioc, ip::udp::v4(), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_HAS_MOVE)
@@ -124,14 +124,14 @@ void test()
     // basic_datagram_socket operators.
 
 #if defined(ASIO_HAS_MOVE)
-    socket1 = ip::udp::socket(ios);
+    socket1 = ip::udp::socket(ioc);
     socket1 = std::move(socket2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = socket1.get_io_context();
+    (void)ioc_ref;
 
     ip::udp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
@@ -468,13 +468,13 @@ void test()
   using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
 
-  io_service ios;
+  io_context ioc;
 
-  ip::udp::socket s1(ios, ip::udp::endpoint(ip::udp::v4(), 0));
+  ip::udp::socket s1(ioc, ip::udp::endpoint(ip::udp::v4(), 0));
   ip::udp::endpoint target_endpoint = s1.local_endpoint();
   target_endpoint.address(ip::address_v4::loopback());
 
-  ip::udp::socket s2(ios);
+  ip::udp::socket s2(ioc);
   s2.open(ip::udp::v4());
   s2.bind(ip::udp::endpoint(ip::udp::v4(), 0));
   char send_msg[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -496,7 +496,7 @@ void test()
   s2.async_receive_from(buffer(recv_msg, sizeof(recv_msg)), sender_endpoint,
       bindns::bind(handle_recv, sizeof(recv_msg), _1, _2));
 
-  ios.run();
+  ioc.run();
 
   ASIO_CHECK(memcmp(send_msg, recv_msg, sizeof(send_msg)) == 0);
 }
@@ -531,7 +531,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
     ip::udp::resolver::query q(ip::udp::v4(), "localhost", "0");
@@ -539,12 +539,12 @@ void test()
 
     // basic_resolver constructors.
 
-    ip::udp::resolver resolver(ios);
+    ip::udp::resolver resolver(ioc);
 
     // basic_io_object functions.
 
-    io_service& ios_ref = resolver.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = resolver.get_io_context();
+    (void)ioc_ref;
 
     // basic_resolver functions.
 

@@ -38,7 +38,7 @@ check_PROGRAMS = \
 	unit/generic/seq_packet_protocol \
 	unit/generic/stream_protocol \
 	unit/high_resolution_timer \
-	unit/io_service \
+	unit/io_context \
 	unit/ip/address \
 	unit/ip/address_v4 \
 	unit/ip/address_v4_iterator \
@@ -151,7 +151,7 @@ TESTS = \
 	unit/deadline_timer \
 	unit/error \
 	unit/high_resolution_timer \
-	unit/io_service \
+	unit/io_context \
 	unit/ip/address \
 	unit/ip/address_v4 \
 	unit/ip/address_v4_iterator \
@@ -277,7 +277,7 @@ unit_generic_raw_protocol_SOURCES = unit/generic/raw_protocol.cpp
 unit_generic_seq_packet_protocol_SOURCES = unit/generic/seq_packet_protocol.cpp
 unit_generic_stream_protocol_SOURCES = unit/generic/stream_protocol.cpp
 unit_high_resolution_timer_SOURCES = unit/high_resolution_timer.cpp
-unit_io_service_SOURCES = unit/io_service.cpp
+unit_io_context_SOURCES = unit/io_context.cpp
 unit_ip_address_SOURCES = unit/ip/address.cpp
 unit_ip_address_v4_SOURCES = unit/ip/address_v4.cpp
 unit_ip_address_v4_iterator_SOURCES = unit/ip/address_v4_iterator.cpp

@@ -17,9 +17,9 @@ using asio::ip::udp;
 
 enum { max_length = 1024 };
 
-void server(asio::io_service& io_service, unsigned short port)
+void server(asio::io_context& io_context, unsigned short port)
 {
-  udp::socket sock(io_service, udp::endpoint(udp::v4(), port));
+  udp::socket sock(io_context, udp::endpoint(udp::v4(), port));
   for (;;)
   {
     char data[max_length];
@@ -40,9 +40,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    server(io_service, std::atoi(argv[1]));
+    server(io_context, std::atoi(argv[1]));
   }
   catch (std::exception& e)
   {

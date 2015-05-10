@@ -69,9 +69,9 @@ int main()
 {
   try
   {
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    time_t_timer timer(io_service);
+    time_t_timer timer(io_context);
 
     timer.expires_from_now(5);
     std::cout << "Starting synchronous wait\n";
@@ -81,7 +81,7 @@ int main()
     timer.expires_from_now(5);
     std::cout << "Starting asynchronous wait\n";
     timer.async_wait(&handle_timeout);
-    io_service.run();
+    io_context.run();
     std::cout << "Finished asynchronous wait\n";
   }
   catch (std::exception& e)

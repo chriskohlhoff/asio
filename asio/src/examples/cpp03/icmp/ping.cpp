@@ -24,9 +24,9 @@ namespace posix_time = boost::posix_time;
 class pinger
 {
 public:
-  pinger(asio::io_service& io_service, const char* destination)
-    : resolver_(io_service), socket_(io_service, icmp::v4()),
-      timer_(io_service), sequence_number_(0), num_replies_(0)
+  pinger(asio::io_context& io_context, const char* destination)
+    : resolver_(io_context), socket_(io_context, icmp::v4()),
+      timer_(io_context), sequence_number_(0), num_replies_(0)
   {
     destination_ = *resolver_.resolve(icmp::v4(), destination, "").begin();
 
@@ -150,9 +150,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
-    pinger p(io_service, argv[1]);
-    io_service.run();
+    asio::io_context io_context;
+    pinger p(io_context, argv[1]);
+    io_context.run();
   }
   catch (std::exception& e)
   {

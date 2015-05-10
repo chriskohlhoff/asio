@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ip/basic_resolver_results.hpp"
@@ -38,7 +38,7 @@ namespace ip {
 template <typename InternetProtocol>
 class resolver_service
 #if defined(GENERATING_DOCUMENTATION)
-  : public asio::io_service::service
+  : public asio::io_context::service
 #else
   : public asio::detail::service_base<
       resolver_service<InternetProtocol> >
@@ -47,7 +47,7 @@ class resolver_service
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 #endif
 
   /// The protocol type.
@@ -83,11 +83,11 @@ public:
   typedef typename service_impl_type::implementation_type implementation_type;
 #endif
 
-  /// Construct a new resolver service for the specified io_service.
-  explicit resolver_service(asio::io_service& io_service)
+  /// Construct a new resolver service for the specified io_context.
+  explicit resolver_service(asio::io_context& io_context)
     : asio::detail::service_base<
-        resolver_service<InternetProtocol> >(io_service),
-      service_impl_(io_service)
+        resolver_service<InternetProtocol> >(io_context),
+      service_impl_(io_context)
   {
   }
 
@@ -161,7 +161,7 @@ private:
   }
 
   // Perform any fork-related housekeeping.
-  void fork_service(asio::io_service::fork_event event)
+  void fork_service(asio::io_context::fork_event event)
   {
     service_impl_.fork_service(event);
   }

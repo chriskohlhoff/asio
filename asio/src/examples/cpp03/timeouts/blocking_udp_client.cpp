@@ -9,7 +9,7 @@
 //
 
 #include "asio/deadline_timer.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/udp.hpp"
 #include <cstdlib>
 #include <boost/bind.hpp>
@@ -51,15 +51,15 @@ using asio::ip::udp;
 //                |                |
 //                +----------------+
 //
-// The client object runs the io_service to block thread execution until the
+// The client object runs the io_context to block thread execution until the
 // actor completes.
 //
 class client
 {
 public:
   client(const udp::endpoint& listen_endpoint)
-    : socket_(io_service_, listen_endpoint),
-      deadline_(io_service_)
+    : socket_(io_context_, listen_endpoint),
+      deadline_(io_context_)
   {
     // No deadline is required until the first socket operation is started. We
     // set the deadline to positive infinity so that the actor takes no action
@@ -90,7 +90,7 @@ public:
         boost::bind(&client::handle_receive, _1, _2, &ec, &length));
 
     // Block until the asynchronous operation has completed.
-    do io_service_.run_one(); while (ec == asio::error::would_block);
+    do io_context_.run_one(); while (ec == asio::error::would_block);
 
     return length;
   }
@@ -129,7 +129,7 @@ private:
   }
 
 private:
-  asio::io_service io_service_;
+  asio::io_context io_context_;
   udp::socket socket_;
   deadline_timer deadline_;
 };

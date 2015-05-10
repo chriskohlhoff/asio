@@ -21,11 +21,11 @@ const int max_message_count = 10;
 class sender
 {
 public:
-  sender(asio::io_service& io_service,
+  sender(asio::io_context& io_context,
       const asio::ip::address& multicast_address)
     : endpoint_(multicast_address, multicast_port),
-      socket_(io_service, endpoint_.protocol()),
-      timer_(io_service),
+      socket_(io_context, endpoint_.protocol()),
+      timer_(io_context),
       message_count_(0)
   {
     std::ostringstream os;
@@ -86,9 +86,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
-    sender s(io_service, asio::ip::make_address(argv[1]));
-    io_service.run();
+    asio::io_context io_context;
+    sender s(io_context, asio::ip::make_address(argv[1]));
+    io_context.run();
   }
   catch (std::exception& e)
   {

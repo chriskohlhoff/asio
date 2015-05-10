@@ -19,7 +19,7 @@
 #include "asio/basic_socket.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 # include "asio/detail/null_socket_service.hpp"
@@ -37,7 +37,7 @@ namespace asio {
 template <typename Protocol>
 class socket_acceptor_service
 #if defined(GENERATING_DOCUMENTATION)
-  : public asio::io_service::service
+  : public asio::io_context::service
 #else
   : public asio::detail::service_base<socket_acceptor_service<Protocol> >
 #endif
@@ -45,7 +45,7 @@ class socket_acceptor_service
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 #endif
 
   /// The protocol type.
@@ -79,11 +79,11 @@ public:
   typedef typename service_impl_type::native_handle_type native_handle_type;
 #endif
 
-  /// Construct a new socket acceptor service for the specified io_service.
-  explicit socket_acceptor_service(asio::io_service& io_service)
+  /// Construct a new socket acceptor service for the specified io_context.
+  explicit socket_acceptor_service(asio::io_context& io_context)
     : asio::detail::service_base<
-        socket_acceptor_service<Protocol> >(io_service),
-      service_impl_(io_service)
+        socket_acceptor_service<Protocol> >(io_context),
+      service_impl_(io_context)
   {
   }
 
@@ -279,10 +279,10 @@ public:
 #if defined(ASIO_HAS_MOVE)
   /// Accept a new connection.
   typename Protocol::socket accept(implementation_type& impl,
-      io_service* peer_io_service, endpoint_type* peer_endpoint,
+      io_context* peer_io_context, endpoint_type* peer_endpoint,
       asio::error_code& ec)
   {
-    return service_impl_.accept(impl, peer_io_service, peer_endpoint, ec);
+    return service_impl_.accept(impl, peer_io_context, peer_endpoint, ec);
   }
 #endif // defined(ASIO_HAS_MOVE)
 
@@ -310,7 +310,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(implementation_type& impl,
-      asio::io_service* peer_io_service, endpoint_type* peer_endpoint,
+      asio::io_context* peer_io_context, endpoint_type* peer_endpoint,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
     async_completion<MoveAcceptHandler,
@@ -318,7 +318,7 @@ public:
         typename Protocol::socket)> init(handler);
 
     service_impl_.async_accept(impl,
-        peer_io_service, peer_endpoint, init.handler);
+        peer_io_context, peer_endpoint, init.handler);
 
     return init.result.get();
   }

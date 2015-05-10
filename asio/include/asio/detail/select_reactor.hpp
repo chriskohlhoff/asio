@@ -175,7 +175,7 @@ private:
 
   // The scheduler implementation used to post completions.
 # if defined(ASIO_HAS_IOCP)
-  typedef class win_iocp_io_service scheduler_type;
+  typedef class win_iocp_io_context scheduler_type;
 # else // defined(ASIO_HAS_IOCP)
   typedef class scheduler scheduler_type;
 # endif // defined(ASIO_HAS_IOCP)

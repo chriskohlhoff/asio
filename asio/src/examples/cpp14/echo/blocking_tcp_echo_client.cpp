@@ -27,10 +27,10 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    tcp::socket s(io_service);
-    tcp::resolver resolver(io_service);
+    tcp::socket s(io_context);
+    tcp::resolver resolver(io_context);
     asio::connect(s, resolver.resolve(argv[1], argv[2]));
 
     std::cout << "Enter message: ";

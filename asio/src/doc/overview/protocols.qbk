@@ -15,7 +15,7 @@ ICMP.
 Hostname resolution is performed using a resolver, where host and service names
 are looked up and converted into one or more endpoints:
 
-  ip::tcp::resolver resolver(my_io_service);
+  ip::tcp::resolver resolver(my_io_context);
   ip::tcp::resolver::query query("www.boost.org", "http");
   ip::tcp::resolver::iterator iter = resolver.resolve(query);
   ip::tcp::resolver::iterator end; // End marker.
@@ -35,7 +35,7 @@ connect()] and [link asio.reference.async_connect async_connect()]. These
 operations try each endpoint in a list until the socket is successfully
 connected. For example, a single call:
 
-  ip::tcp::socket socket(my_io_service);
+  ip::tcp::socket socket(my_io_context);
   asio::connect(socket, resolver.resolve(query));
 
 will synchronously try all endpoints until one is successfully connected.
@@ -61,7 +61,7 @@ Similarly, an asynchronous connect may be performed by writing:
 
 When a specific endpoint is available, a socket can be created and connected:
 
-  ip::tcp::socket socket(my_io_service);
+  ip::tcp::socket socket(my_io_context);
   socket.connect(endpoint);
 
 Data may be read from or written to a connected TCP socket using the [link
@@ -79,9 +79,9 @@ asio.reference.async_write async_write()].
 
 A program uses an acceptor to accept incoming TCP connections:
 
-  ip::tcp::acceptor acceptor(my_io_service, my_endpoint);
+  ip::tcp::acceptor acceptor(my_io_context, my_endpoint);
   ...
-  ip::tcp::socket socket(my_io_service);
+  ip::tcp::socket socket(my_io_context);
   acceptor.accept(socket);
 
 After a socket has been successfully accepted, it may be read from or written
@@ -91,7 +91,7 @@ to as illustrated for TCP clients above.
 
 UDP hostname resolution is also performed using a resolver:
 
-  ip::udp::resolver resolver(my_io_service);
+  ip::udp::resolver resolver(my_io_context);
   ip::udp::resolver::query query("localhost", "daytime");
   ip::udp::resolver::iterator iter = resolver.resolve(query);
   ...
@@ -101,7 +101,7 @@ create an IP version 4 UDP socket and bind it to the "any" address on port
 `12345`:
 
   ip::udp::endpoint endpoint(ip::udp::v4(), 12345);
-  ip::udp::socket socket(my_io_service, endpoint);
+  ip::udp::socket socket(my_io_context, endpoint);
 
 Data may be read from or written to an unconnected UDP socket using the [link
 asio.reference.basic_datagram_socket.receive_from receive_from()], [link
@@ -118,7 +118,7 @@ asio.reference.basic_datagram_socket.async_send async_send()] member functions.
 
 As with TCP and UDP, ICMP hostname resolution is performed using a resolver:
 
-  ip::icmp::resolver resolver(my_io_service);
+  ip::icmp::resolver resolver(my_io_context);
   ip::icmp::resolver::query query("localhost", "");
   ip::icmp::resolver::iterator iter = resolver.resolve(query);
   ...
@@ -127,7 +127,7 @@ An ICMP socket may be bound to a local endpoint. The following code will create
 an IP version 6 ICMP socket and bind it to the "any" address:
 
   ip::icmp::endpoint endpoint(ip::icmp::v6(), 0);
-  ip::icmp::socket socket(my_io_service, endpoint);
+  ip::icmp::socket socket(my_io_context, endpoint);
 
 The port number is not used for ICMP.
 

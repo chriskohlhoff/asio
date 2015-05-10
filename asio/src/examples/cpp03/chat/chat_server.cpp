@@ -77,8 +77,8 @@ class chat_session
     public boost::enable_shared_from_this<chat_session>
 {
 public:
-  chat_session(asio::io_service& io_service, chat_room& room)
-    : socket_(io_service),
+  chat_session(asio::io_context& io_context, chat_room& room)
+    : socket_(io_context),
       room_(room)
   {
   }
@@ -177,17 +177,17 @@ typedef boost::shared_ptr<chat_session> chat_session_ptr;
 class chat_server
 {
 public:
-  chat_server(asio::io_service& io_service,
+  chat_server(asio::io_context& io_context,
       const tcp::endpoint& endpoint)
-    : io_service_(io_service),
-      acceptor_(io_service, endpoint)
+    : io_context_(io_context),
+      acceptor_(io_context, endpoint)
   {
     start_accept();
   }
 
   void start_accept()
   {
-    chat_session_ptr new_session(new chat_session(io_service_, room_));
+    chat_session_ptr new_session(new chat_session(io_context_, room_));
     acceptor_.async_accept(new_session->socket(),
         boost::bind(&chat_server::handle_accept, this, new_session,
           asio::placeholders::error));
@@ -205,7 +205,7 @@ public:
   }
 
 private:
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
   tcp::acceptor acceptor_;
   chat_room room_;
 };
@@ -225,18 +225,18 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     chat_server_list servers;
     for (int i = 1; i < argc; ++i)
     {
       using namespace std; // For atoi.
       tcp::endpoint endpoint(tcp::v4(), atoi(argv[i]));
-      chat_server_ptr server(new chat_server(io_service, endpoint));
+      chat_server_ptr server(new chat_server(io_context, endpoint));
       servers.push_back(server);
     }
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

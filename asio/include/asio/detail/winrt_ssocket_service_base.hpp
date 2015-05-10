@@ -21,7 +21,7 @@
 
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/memory.hpp"
@@ -62,7 +62,7 @@ public:
 
   // Constructor.
   ASIO_DECL winrt_ssocket_service_base(
-      asio::io_service& io_service);
+      asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
@@ -202,7 +202,7 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((io_service_.context(),
+    ASIO_HANDLER_CREATION((io_context_.context(),
           *p.p, "socket", &impl, 0, "async_send"));
 
     start_send_op(impl,
@@ -219,7 +219,7 @@ public:
   {
     asio::error_code ec = asio::error::operation_not_supported;
     const std::size_t bytes_transferred = 0;
-    io_service_.get_io_service().post(
+    io_context_.get_io_context().post(
         detail::bind_handler(handler, ec, bytes_transferred));
   }
 
@@ -258,7 +258,7 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(buffers, handler);
 
-    ASIO_HANDLER_CREATION((io_service_.context(),
+    ASIO_HANDLER_CREATION((io_context_.context(),
           *p.p, "socket", &impl, 0, "async_receive"));
 
     start_receive_op(impl,
@@ -275,7 +275,7 @@ public:
   {
     asio::error_code ec = asio::error::operation_not_supported;
     const std::size_t bytes_transferred = 0;
-    io_service_.get_io_service().post(
+    io_context_.get_io_context().post(
         detail::bind_handler(handler, ec, bytes_transferred));
   }
 
@@ -328,8 +328,8 @@ protected:
       winrt_async_op<Windows::Storage::Streams::IBuffer^>* op,
       bool is_continuation);
 
-  // The io_service implementation used for delivering completions.
-  io_service_impl& io_service_;
+  // The io_context implementation used for delivering completions.
+  io_context_impl& io_context_;
 
   // The manager that keeps track of outstanding operations.
   winrt_async_manager& async_manager_;

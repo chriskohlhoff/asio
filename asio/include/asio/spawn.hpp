@@ -22,7 +22,7 @@
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/executor.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/strand.hpp"
 
@@ -299,7 +299,7 @@ void spawn(const strand<Executor>& ex,
  * @param attributes Boost.Coroutine attributes used to customise the coroutine.
  */
 template <typename Function>
-void spawn(const asio::io_service::strand& s,
+void spawn(const asio::io_context::strand& s,
     ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes());

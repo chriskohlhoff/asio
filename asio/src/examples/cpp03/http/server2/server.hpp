@@ -17,7 +17,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include "connection.hpp"
-#include "io_service_pool.hpp"
+#include "io_context_pool.hpp"
 #include "request_handler.hpp"
 
 namespace http {
@@ -31,9 +31,9 @@ public:
   /// Construct the server to listen on the specified TCP address and port, and
   /// serve up files from the given directory.
   explicit server(const std::string& address, const std::string& port,
-      const std::string& doc_root, std::size_t io_service_pool_size);
+      const std::string& doc_root, std::size_t io_context_pool_size);
 
-  /// Run the server's io_service loop.
+  /// Run the server's io_context loop.
   void run();
 
 private:
@@ -46,8 +46,8 @@ private:
   /// Handle a request to stop the server.
   void handle_stop();
 
-  /// The pool of io_service objects used to perform asynchronous operations.
-  io_service_pool io_service_pool_;
+  /// The pool of io_context objects used to perform asynchronous operations.
+  io_context_pool io_context_pool_;
 
   /// The signal_set is used to register for process termination notifications.
   asio::signal_set signals_;

@@ -24,11 +24,11 @@ namespace services {
 
 /// Service implementation for the logger.
 class logger_service
-  : public asio::io_service::service
+  : public asio::io_context::service
 {
 public:
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 
   /// The backend implementation of a logger.
   struct logger_impl
@@ -40,21 +40,21 @@ public:
   /// The type for an implementation of the logger.
   typedef logger_impl* impl_type;
 
-  /// Constructor creates a thread to run a private io_service.
-  logger_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
-      work_io_service_(),
-      work_(new asio::io_service::work(work_io_service_)),
+  /// Constructor creates a thread to run a private io_context.
+  logger_service(asio::io_context& io_context)
+    : asio::io_context::service(io_context),
+      work_io_context_(),
+      work_(new asio::io_context::work(work_io_context_)),
       work_thread_(new asio::thread(
-            boost::bind(&asio::io_service::run, &work_io_service_)))
+            boost::bind(&asio::io_context::run, &work_io_context_)))
   {
   }
 
-  /// Destructor shuts down the private io_service.
+  /// Destructor shuts down the private io_context.
   ~logger_service()
   {
-    /// Indicate that we have finished with the private io_service. Its
-    /// io_service::run() function will exit once all other work has completed.
+    /// Indicate that we have finished with the private io_context. Its
+    /// io_context::run() function will exit once all other work has completed.
     work_.reset();
     if (work_thread_)
       work_thread_->join();
@@ -91,7 +91,7 @@ public:
   void use_file(impl_type& /*impl*/, const std::string& file)
   {
     // Pass the work of opening the file to the background thread.
-    asio::post(work_io_service_, boost::bind(
+    asio::post(work_io_context_, boost::bind(
           &logger_service::use_file_impl, this, file));
   }
 
@@ -103,13 +103,13 @@ public:
     os << impl->identifier << ": " << message;
 
     // Pass the work of opening the file to the background thread.
-    asio::post(work_io_service_, boost::bind(
+    asio::post(work_io_context_, boost::bind(
           &logger_service::log_impl, this, os.str()));
   }
 
 private:
   /// Helper function used to open the output file from within the private
-  /// io_service's thread.
+  /// io_context's thread.
   void use_file_impl(const std::string& file)
   {
     ofstream_.close();
@@ -117,22 +117,22 @@ private:
     ofstream_.open(file.c_str());
   }
 
-  /// Helper function used to log a message from within the private io_service's
+  /// Helper function used to log a message from within the private io_context's
   /// thread.
   void log_impl(const std::string& text)
   {
     ofstream_ << text << std::endl;
   }
 
-  /// Private io_service used for performing logging operations.
-  asio::io_service work_io_service_;
+  /// Private io_context used for performing logging operations.
+  asio::io_context work_io_context_;
 
-  /// Work for the private io_service to perform. If we do not give the
-  /// io_service some work to do then the io_service::run() function will exit
+  /// Work for the private io_context to perform. If we do not give the
+  /// io_context some work to do then the io_context::run() function will exit
   /// immediately.
-  boost::scoped_ptr<asio::io_service::work> work_;
+  boost::scoped_ptr<asio::io_context::work> work_;
 
-  /// Thread used for running the work io_service's run loop.
+  /// Thread used for running the work io_context's run loop.
   boost::scoped_ptr<asio::thread> work_thread_;
 
   /// The file to which log messages will be written.

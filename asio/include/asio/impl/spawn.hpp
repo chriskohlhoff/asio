@@ -423,7 +423,7 @@ inline void spawn(const strand<Executor>& ex,
 }
 
 template <typename Function>
-inline void spawn(const asio::io_service::strand& s,
+inline void spawn(const asio::io_context::strand& s,
     ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes)
 {

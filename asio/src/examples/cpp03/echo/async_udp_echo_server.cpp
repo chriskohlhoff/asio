@@ -18,8 +18,8 @@ using asio::ip::udp;
 class server
 {
 public:
-  server(asio::io_service& io_service, short port)
-    : socket_(io_service, udp::endpoint(udp::v4(), port))
+  server(asio::io_context& io_context, short port)
+    : socket_(io_context, udp::endpoint(udp::v4(), port))
   {
     socket_.async_receive_from(
         asio::buffer(data_, max_length), sender_endpoint_,
@@ -76,12 +76,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     using namespace std; // For atoi.
-    server s(io_service, atoi(argv[1]));
+    server s(io_context, atoi(argv[1]));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

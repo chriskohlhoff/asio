@@ -27,9 +27,9 @@ int main()
 {
   try
   {
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    udp::socket socket(io_service, udp::endpoint(udp::v4(), 13));
+    udp::socket socket(io_context, udp::endpoint(udp::v4(), 13));
 
     for (;;)
     {

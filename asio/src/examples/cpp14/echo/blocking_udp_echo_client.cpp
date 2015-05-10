@@ -28,11 +28,11 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    udp::socket s(io_service, udp::endpoint(udp::v4(), 0));
+    udp::socket s(io_context, udp::endpoint(udp::v4(), 0));
 
-    udp::resolver resolver(io_service);
+    udp::resolver resolver(io_context);
     udp::endpoint endpoint =
       *resolver.resolve(udp::v4(), argv[1], argv[2]).begin();
 

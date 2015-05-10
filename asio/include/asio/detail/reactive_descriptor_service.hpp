@@ -22,7 +22,7 @@
   && !defined(__CYGWIN__)
 
 #include "asio/buffer.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
@@ -75,7 +75,7 @@ public:
 
   // Constructor.
   ASIO_DECL reactive_descriptor_service(
-      asio::io_service& io_service);
+      asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();

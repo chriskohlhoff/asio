@@ -28,8 +28,8 @@ namespace asio {
 namespace detail {
 
 win_object_handle_service::win_object_handle_service(
-    asio::io_service& io_service)
-  : io_service_(asio::use_service<io_service_impl>(io_service)),
+    asio::io_context& io_context)
+  : io_context_(asio::use_service<io_context_impl>(io_context)),
     mutex_(),
     impl_list_(0),
     shutdown_(false)
@@ -51,7 +51,7 @@ void win_object_handle_service::shutdown_service()
 
   lock.unlock();
 
-  io_service_.abandon_operations(ops);
+  io_context_.abandon_operations(ops);
 }
 
 void win_object_handle_service::construct(
@@ -177,7 +177,7 @@ void win_object_handle_service::destroy(
 
   if (is_open(impl))
   {
-    ASIO_HANDLER_OPERATION((io_service_.context(), "object_handle",
+    ASIO_HANDLER_OPERATION((io_context_.context(), "object_handle",
           &impl, reinterpret_cast<uintmax_t>(impl.wait_handle_), "close"));
 
     HANDLE wait_handle = impl.wait_handle_;
@@ -202,7 +202,7 @@ void win_object_handle_service::destroy(
     ::CloseHandle(impl.handle_);
     impl.handle_ = INVALID_HANDLE_VALUE;
 
-    io_service_.post_deferred_completions(ops);
+    io_context_.post_deferred_completions(ops);
   }
 }
 
@@ -227,7 +227,7 @@ asio::error_code win_object_handle_service::close(
 {
   if (is_open(impl))
   {
-    ASIO_HANDLER_OPERATION((io_service_.context(), "object_handle",
+    ASIO_HANDLER_OPERATION((io_context_.context(), "object_handle",
           &impl, reinterpret_cast<uintmax_t>(impl.wait_handle_), "close"));
 
     mutex::scoped_lock lock(mutex_);
@@ -263,7 +263,7 @@ asio::error_code win_object_handle_service::close(
           asio::error::get_system_category());
     }
 
-    io_service_.post_deferred_completions(completed_ops);
+    io_context_.post_deferred_completions(completed_ops);
   }
   else
   {
@@ -279,7 +279,7 @@ asio::error_code win_object_handle_service::cancel(
 {
   if (is_open(impl))
   {
-    ASIO_HANDLER_OPERATION((io_service_.context(), "object_handle",
+    ASIO_HANDLER_OPERATION((io_context_.context(), "object_handle",
           &impl, reinterpret_cast<uintmax_t>(impl.wait_handle_), "cancel"));
 
     mutex::scoped_lock lock(mutex_);
@@ -305,7 +305,7 @@ asio::error_code win_object_handle_service::cancel(
 
     ec = asio::error_code();
 
-    io_service_.post_deferred_completions(completed_ops);
+    io_context_.post_deferred_completions(completed_ops);
   }
   else
   {
@@ -339,7 +339,7 @@ void win_object_handle_service::wait(
 void win_object_handle_service::start_wait_op(
     win_object_handle_service::implementation_type& impl, wait_op* op)
 {
-  io_service_.work_started();
+  io_context_.work_started();
 
   if (is_open(impl))
   {
@@ -357,13 +357,13 @@ void win_object_handle_service::start_wait_op(
     else
     {
       lock.unlock();
-      io_service_.post_deferred_completion(op);
+      io_context_.post_deferred_completion(op);
     }
   }
   else
   {
     op->ec_ = asio::error::bad_descriptor;
-    io_service_.post_deferred_completion(op);
+    io_context_.post_deferred_completion(op);
   }
 }
 
@@ -390,7 +390,7 @@ void win_object_handle_service::register_wait_callback(
     }
 
     lock.unlock();
-    io_service_.post_deferred_completions(completed_ops);
+    io_context_.post_deferred_completions(completed_ops);
   }
 }
 
@@ -432,9 +432,9 @@ void win_object_handle_service::wait_callback(PVOID param, BOOLEAN)
       }
     }
 
-    io_service_impl& ios = impl->owner_->io_service_;
+    io_context_impl& ioc = impl->owner_->io_context_;
     lock.unlock();
-    ios.post_deferred_completions(completed_ops);
+    ioc.post_deferred_completions(completed_ops);
   }
 }
 

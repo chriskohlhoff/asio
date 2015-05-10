@@ -32,8 +32,8 @@ class connection
     private boost::noncopyable
 {
 public:
-  /// Construct a connection with the given io_service.
-  explicit connection(asio::io_service& io_service,
+  /// Construct a connection with the given io_context.
+  explicit connection(asio::io_context& io_context,
       connection_manager& manager, request_handler& handler);
 
   /// Get the socket associated with the connection.

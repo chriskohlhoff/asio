@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/operation.hpp"
@@ -39,7 +39,7 @@ public:
   typedef socket_ops::shared_cancel_token_type implementation_type;
 
   // Constructor.
-  ASIO_DECL resolver_service_base(asio::io_service& io_service);
+  ASIO_DECL resolver_service_base(asio::io_context& io_context);
 
   // Destructor.
   ASIO_DECL ~resolver_service_base();
@@ -49,7 +49,7 @@ public:
 
   // Perform any fork-related housekeeping.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::io_context::fork_event fork_ev);
 
   // Construct a new resolver implementation.
   ASIO_DECL void construct(implementation_type& impl);
@@ -91,29 +91,29 @@ protected:
   };
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-  // Helper class to run the work io_service in a thread.
-  class work_io_service_runner;
+  // Helper class to run the work io_context in a thread.
+  class work_io_context_runner;
 
   // Start the work thread if it's not already running.
   ASIO_DECL void start_work_thread();
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_impl_;
+  // The io_context implementation used to post completions.
+  io_context_impl& io_context_impl_;
 
 private:
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
 
-  // Private io_service used for performing asynchronous host resolution.
-  asio::detail::scoped_ptr<asio::io_service> work_io_service_;
+  // Private io_context used for performing asynchronous host resolution.
+  asio::detail::scoped_ptr<asio::io_context> work_io_context_;
 
-  // The work io_service implementation used to post completions.
-  io_service_impl& work_io_service_impl_;
+  // The work io_context implementation used to post completions.
+  io_context_impl& work_io_context_impl_;
 
-  // Work for the private io_service to perform.
-  asio::detail::scoped_ptr<asio::io_service::work> work_;
+  // Work for the private io_context to perform.
+  asio::detail::scoped_ptr<asio::io_context::work> work_;
 
-  // Thread used for running the work io_service's run loop.
+  // Thread used for running the work io_context's run loop.
   asio::detail::scoped_ptr<asio::detail::thread> work_thread_;
 };
 

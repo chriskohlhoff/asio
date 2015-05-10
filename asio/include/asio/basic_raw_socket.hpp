@@ -57,12 +57,12 @@ public:
    * This constructor creates a raw socket without opening it. The open()
    * function must be called before data can be sent or received on the socket.
    *
-   * @param io_service The io_service object that the raw socket will use
+   * @param io_context The io_context object that the raw socket will use
    * to dispatch handlers for any asynchronous operations performed on the
    * socket.
    */
-  explicit basic_raw_socket(asio::io_service& io_service)
-    : basic_socket<Protocol, RawSocketService>(io_service)
+  explicit basic_raw_socket(asio::io_context& io_context)
+    : basic_socket<Protocol, RawSocketService>(io_context)
   {
   }
 
@@ -70,7 +70,7 @@ public:
   /**
    * This constructor creates and opens a raw socket.
    *
-   * @param io_service The io_service object that the raw socket will use
+   * @param io_context The io_context object that the raw socket will use
    * to dispatch handlers for any asynchronous operations performed on the
    * socket.
    *
@@ -78,9 +78,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  basic_raw_socket(asio::io_service& io_service,
+  basic_raw_socket(asio::io_context& io_context,
       const protocol_type& protocol)
-    : basic_socket<Protocol, RawSocketService>(io_service, protocol)
+    : basic_socket<Protocol, RawSocketService>(io_context, protocol)
   {
   }
 
@@ -91,7 +91,7 @@ public:
    * to the specified endpoint on the local machine. The protocol used is the
    * protocol associated with the given endpoint.
    *
-   * @param io_service The io_service object that the raw socket will use
+   * @param io_context The io_context object that the raw socket will use
    * to dispatch handlers for any asynchronous operations performed on the
    * socket.
    *
@@ -100,9 +100,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  basic_raw_socket(asio::io_service& io_service,
+  basic_raw_socket(asio::io_context& io_context,
       const endpoint_type& endpoint)
-    : basic_socket<Protocol, RawSocketService>(io_service, endpoint)
+    : basic_socket<Protocol, RawSocketService>(io_context, endpoint)
   {
   }
 
@@ -111,7 +111,7 @@ public:
    * This constructor creates a raw socket object to hold an existing
    * native socket.
    *
-   * @param io_service The io_service object that the raw socket will use
+   * @param io_context The io_context object that the raw socket will use
    * to dispatch handlers for any asynchronous operations performed on the
    * socket.
    *
@@ -121,10 +121,10 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  basic_raw_socket(asio::io_service& io_service,
+  basic_raw_socket(asio::io_context& io_context,
       const protocol_type& protocol, const native_handle_type& native_socket)
     : basic_socket<Protocol, RawSocketService>(
-        io_service, protocol, native_socket)
+        io_context, protocol, native_socket)
   {
   }
 
@@ -137,7 +137,7 @@ public:
    * will occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
   basic_raw_socket(basic_raw_socket&& other)
     : basic_socket<Protocol, RawSocketService>(
@@ -153,7 +153,7 @@ public:
    * will occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
   basic_raw_socket& operator=(basic_raw_socket&& other)
   {
@@ -170,7 +170,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
   template <typename Protocol1, typename RawSocketService1>
   basic_raw_socket(basic_raw_socket<Protocol1, RawSocketService1>&& other,
@@ -189,7 +189,7 @@ public:
    * will occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_raw_socket(io_service&) constructor.
+   * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
   template <typename Protocol1, typename RawSocketService1>
   typename enable_if<is_convertible<Protocol1, Protocol>::value,
@@ -305,7 +305,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @note The async_send operation can only be used with a connected socket.
    * Use the async_send_to function to send data on an unconnected raw
@@ -356,7 +356,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @note The async_send operation can only be used with a connected socket.
    * Use the async_send_to function to send data on an unconnected raw
@@ -488,7 +488,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
@@ -542,7 +542,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    */
   template <typename ConstBufferSequence, typename WriteHandler>
   ASIO_INITFN_RESULT_TYPE(WriteHandler,
@@ -669,7 +669,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @note The async_receive operation can only be used with a connected socket.
    * Use the async_receive_from function to receive data on an unconnected
@@ -721,7 +721,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @note The async_receive operation can only be used with a connected socket.
    * Use the async_receive_from function to receive data on an unconnected
@@ -856,7 +856,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    *
    * @par Example
    * To receive into a single data buffer use the @ref buffer function as
@@ -910,7 +910,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    */
   template <typename MutableBufferSequence, typename ReadHandler>
   ASIO_INITFN_RESULT_TYPE(ReadHandler,

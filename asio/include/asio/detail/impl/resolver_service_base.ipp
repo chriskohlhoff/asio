@@ -23,23 +23,23 @@
 namespace asio {
 namespace detail {
 
-class resolver_service_base::work_io_service_runner
+class resolver_service_base::work_io_context_runner
 {
 public:
-  work_io_service_runner(asio::io_service& io_service)
-    : io_service_(io_service) {}
-  void operator()() { io_service_.run(); }
+  work_io_context_runner(asio::io_context& io_context)
+    : io_context_(io_context) {}
+  void operator()() { io_context_.run(); }
 private:
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
 };
 
 resolver_service_base::resolver_service_base(
-    asio::io_service& io_service)
-  : io_service_impl_(asio::use_service<io_service_impl>(io_service)),
-    work_io_service_(new asio::io_service),
-    work_io_service_impl_(asio::use_service<
-        io_service_impl>(*work_io_service_)),
-    work_(new asio::io_service::work(*work_io_service_)),
+    asio::io_context& io_context)
+  : io_context_impl_(asio::use_service<io_context_impl>(io_context)),
+    work_io_context_(new asio::io_context),
+    work_io_context_impl_(asio::use_service<
+        io_context_impl>(*work_io_context_)),
+    work_(new asio::io_context::work(*work_io_context_)),
     work_thread_(0)
 {
 }
@@ -52,33 +52,33 @@ resolver_service_base::~resolver_service_base()
 void resolver_service_base::shutdown_service()
 {
   work_.reset();
-  if (work_io_service_.get())
+  if (work_io_context_.get())
   {
-    work_io_service_->stop();
+    work_io_context_->stop();
     if (work_thread_.get())
     {
       work_thread_->join();
       work_thread_.reset();
     }
-    work_io_service_.reset();
+    work_io_context_.reset();
   }
 }
 
 void resolver_service_base::fork_service(
-    asio::io_service::fork_event fork_ev)
+    asio::io_context::fork_event fork_ev)
 {
   if (work_thread_.get())
   {
-    if (fork_ev == asio::io_service::fork_prepare)
+    if (fork_ev == asio::io_context::fork_prepare)
     {
-      work_io_service_->stop();
+      work_io_context_->stop();
       work_thread_->join();
     }
     else
     {
-      work_io_service_->restart();
+      work_io_context_->restart();
       work_thread_.reset(new asio::detail::thread(
-            work_io_service_runner(*work_io_service_)));
+            work_io_context_runner(*work_io_context_)));
     }
   }
 }
@@ -92,7 +92,7 @@ void resolver_service_base::construct(
 void resolver_service_base::destroy(
     resolver_service_base::implementation_type& impl)
 {
-  ASIO_HANDLER_OPERATION((io_service_impl_.context(),
+  ASIO_HANDLER_OPERATION((io_context_impl_.context(),
         "resolver", &impl, 0, "cancel"));
 
   impl.reset();
@@ -101,7 +101,7 @@ void resolver_service_base::destroy(
 void resolver_service_base::cancel(
     resolver_service_base::implementation_type& impl)
 {
-  ASIO_HANDLER_OPERATION((io_service_impl_.context(),
+  ASIO_HANDLER_OPERATION((io_context_impl_.context(),
         "resolver", &impl, 0, "cancel"));
 
   impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
@@ -110,8 +110,8 @@ void resolver_service_base::cancel(
 void resolver_service_base::start_resolve_op(operation* op)
 {
   start_work_thread();
-  io_service_impl_.work_started();
-  work_io_service_impl_.post_immediate_completion(op, false);
+  io_context_impl_.work_started();
+  work_io_context_impl_.post_immediate_completion(op, false);
 }
 
 void resolver_service_base::start_work_thread()
@@ -120,7 +120,7 @@ void resolver_service_base::start_work_thread()
   if (!work_thread_.get())
   {
     work_thread_.reset(new asio::detail::thread(
-          work_io_service_runner(*work_io_service_)));
+          work_io_context_runner(*work_io_context_)));
   }
 }
 

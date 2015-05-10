@@ -22,7 +22,7 @@
 
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/memory.hpp"
@@ -63,7 +63,7 @@ public:
 
   // Constructor.
   ASIO_DECL reactive_socket_service_base(
-      asio::io_service& io_service);
+      asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
@@ -493,8 +493,8 @@ protected:
       reactor_op* op, bool is_continuation,
       const socket_addr_type* addr, size_t addrlen);
 
-  // The io_service that owns this socket service.
-  io_service& io_service_;
+  // The io_context that owns this socket service.
+  io_context& io_context_;
 
   // The selector that performs event demultiplexing for the service.
   reactor& reactor_;

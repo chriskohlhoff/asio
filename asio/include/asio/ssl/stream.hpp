@@ -51,9 +51,9 @@ namespace ssl {
  * @par Example
  * To use the SSL stream template with an ip::tcp::socket, you would write:
  * @code
- * asio::io_service io_service;
+ * asio::io_context io_context;
  * asio::ssl::context ctx(asio::ssl::context::sslv23);
- * asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
+ * asio::ssl::stream<asio:ip::tcp::socket> sock(io_context, ctx);
  * @endcode
  *
  * @par Concepts:
@@ -112,17 +112,17 @@ public:
   {
   }
 
-  /// Get the io_service associated with the object.
+  /// Get the io_context associated with the object.
   /**
-   * This function may be used to obtain the io_service object that the stream
+   * This function may be used to obtain the io_context object that the stream
    * uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the io_service object that stream will use to
+   * @return A reference to the io_context object that stream will use to
    * dispatch handlers. Ownership is not transferred to the caller.
    */
-  asio::io_service& get_io_service()
+  asio::io_context& get_io_context()
   {
-    return next_layer_.lowest_layer().get_io_service();
+    return next_layer_.lowest_layer().get_io_context();
   }
 
   /// Get the underlying implementation in the native type.
@@ -136,7 +136,7 @@ public:
    * suitable for passing to functions such as @c SSL_get_verify_result and
    * @c SSL_get_peer_certificate:
    * @code
-   * asio::ssl::stream<asio:ip::tcp::socket> sock(io_service, ctx);
+   * asio::ssl::stream<asio:ip::tcp::socket> sock(io_context, ctx);
    *
    * // ... establish connection and perform handshake ...
    *

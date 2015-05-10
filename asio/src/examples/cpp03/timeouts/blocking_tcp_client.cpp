@@ -10,7 +10,7 @@
 
 #include "asio/connect.hpp"
 #include "asio/deadline_timer.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/read_until.hpp"
 #include "asio/streambuf.hpp"
@@ -49,14 +49,14 @@ using boost::lambda::_1;
 // and any outstanding operations are consequently cancelled. The socket
 // operations themselves use boost::lambda function objects as completion
 // handlers. For a given socket operation, the client object runs the
-// io_service to block thread execution until the actor completes.
+// io_context to block thread execution until the actor completes.
 //
 class client
 {
 public:
   client()
-    : socket_(io_service_),
-      deadline_(io_service_)
+    : socket_(io_context_),
+      deadline_(io_context_)
   {
     // No deadline is required until the first socket operation is started. We
     // set the deadline to positive infinity so that the actor takes no action
@@ -72,7 +72,7 @@ public:
   {
     // Resolve the host name and service to a list of endpoints.
     tcp::resolver::results_type endpoints =
-      tcp::resolver(io_service_).resolve(host, service);
+      tcp::resolver(io_context_).resolve(host, service);
 
     // Set a deadline for the asynchronous operation. As a host name may
     // resolve to multiple endpoints, this function uses the composed operation
@@ -94,7 +94,7 @@ public:
     asio::async_connect(socket_, endpoints, var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
-    do io_service_.run_one(); while (ec == asio::error::would_block);
+    do io_context_.run_one(); while (ec == asio::error::would_block);
 
     // Determine whether a connection was successfully established. The
     // deadline actor may have had a chance to run and close our socket, even
@@ -127,7 +127,7 @@ public:
     asio::async_read_until(socket_, input_buffer_, '\n', var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
-    do io_service_.run_one(); while (ec == asio::error::would_block);
+    do io_context_.run_one(); while (ec == asio::error::would_block);
 
     if (ec)
       throw asio::system_error(ec);
@@ -162,7 +162,7 @@ public:
     asio::async_write(socket_, asio::buffer(data), var(ec) = _1);
 
     // Block until the asynchronous operation has completed.
-    do io_service_.run_one(); while (ec == asio::error::would_block);
+    do io_context_.run_one(); while (ec == asio::error::would_block);
 
     if (ec)
       throw asio::system_error(ec);
@@ -191,7 +191,7 @@ private:
     deadline_.async_wait(bind(&client::check_deadline, this));
   }
 
-  asio::io_service io_service_;
+  asio::io_context io_context_;
   tcp::socket socket_;
   deadline_timer deadline_;
   asio::streambuf input_buffer_;

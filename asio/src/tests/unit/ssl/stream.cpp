@@ -62,7 +62,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     asio::ssl::context context(asio::ssl::context::sslv23);
@@ -71,14 +71,14 @@ void test()
 
     // ssl::stream constructors.
 
-    ssl::stream<ip::tcp::socket> stream1(ios, context);
-    ip::tcp::socket socket1(ios, ip::tcp::v4());
+    ssl::stream<ip::tcp::socket> stream1(ioc, context);
+    ip::tcp::socket socket1(ioc, ip::tcp::v4());
     ssl::stream<ip::tcp::socket&> stream2(socket1, context);
 
     // basic_io_object functions.
 
-    io_service& ios_ref = stream1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = stream1.get_io_context();
+    (void)ioc_ref;
 
     // ssl::stream functions.
 

@@ -22,17 +22,17 @@ typedef std::deque<chat_message> chat_message_queue;
 class chat_client
 {
 public:
-  chat_client(asio::io_service& io_service,
+  chat_client(asio::io_context& io_context,
       const tcp::resolver::results_type& endpoints)
-    : io_service_(io_service),
-      socket_(io_service)
+    : io_context_(io_context),
+      socket_(io_context)
   {
     do_connect(endpoints);
   }
 
   void write(const chat_message& msg)
   {
-    asio::post(io_service_,
+    asio::post(io_context_,
         [this, msg]()
         {
           bool write_in_progress = !write_msgs_.empty();
@@ -46,7 +46,7 @@ public:
 
   void close()
   {
-    asio::post(io_service_, [this]() { socket_.close(); });
+    asio::post(io_context_, [this]() { socket_.close(); });
   }
 
 private:
@@ -121,7 +121,7 @@ private:
   }
 
 private:
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
   tcp::socket socket_;
   chat_message read_msg_;
   chat_message_queue write_msgs_;
@@ -137,13 +137,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     auto endpoints = resolver.resolve(argv[1], argv[2]);
-    chat_client c(io_service, endpoints);
+    chat_client c(io_context, endpoints);
 
-    std::thread t([&io_service](){ io_service.run(); });
+    std::thread t([&io_context](){ io_context.run(); });
 
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))

@@ -27,13 +27,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     tcp::resolver::results_type endpoints =
       resolver.resolve(tcp::v4(), argv[1], argv[2]);
 
-    tcp::socket s(io_service);
+    tcp::socket s(io_context);
     asio::connect(s, endpoints);
 
     using namespace std; // For strlen.

@@ -81,9 +81,9 @@ struct is_endpoint_sequence
  * Otherwise, contains the error from the last connection attempt.
  *
  * @par Example
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::connect(s, r.resolve(q)); @endcode
  */
 template <typename Protocol, typename SocketService, typename EndpointSequence>
@@ -112,9 +112,9 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
  * default-constructed endpoint.
  *
  * @par Example
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::error_code ec;
  * asio::connect(s, r.resolve(q), ec);
  * if (ec)
@@ -208,10 +208,10 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  * Otherwise, contains the error from the last connection attempt.
  *
  * @par Example
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
  * tcp::resolver::results_type e = r.resolve(q);
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::connect(s, e.begin(), e.end()); @endcode
  */
 template <typename Protocol, typename SocketService, typename Iterator>
@@ -240,10 +240,10 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  * endpoint. Otherwise, the end iterator.
  *
  * @par Example
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
  * tcp::resolver::results_type e = r.resolve(q);
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::error_code ec;
  * asio::connect(s, e.begin(), e.end(), ec);
  * if (ec)
@@ -299,9 +299,9 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  *   }
  * }; @endcode
  * It would be used with the asio::connect function as follows:
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * tcp::endpoint e = asio::connect(s,
  *     r.resolve(q), my_connect_condition());
  * std::cout << "Connected to: " << e << std::endl; @endcode
@@ -358,9 +358,9 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
  *   }
  * }; @endcode
  * It would be used with the asio::connect function as follows:
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::error_code ec;
  * tcp::endpoint e = asio::connect(s,
  *     r.resolve(q), my_connect_condition(), ec);
@@ -511,10 +511,10 @@ Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  *   }
  * }; @endcode
  * It would be used with the asio::connect function as follows:
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
  * tcp::resolver::results_type e = r.resolve(q);
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * tcp::resolver::results_type::iterator i = asio::connect(
  *     s, e.begin(), e.end(), my_connect_condition());
  * std::cout << "Connected to: " << i->endpoint() << std::endl; @endcode
@@ -571,10 +571,10 @@ Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  *   }
  * }; @endcode
  * It would be used with the asio::connect function as follows:
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
  * tcp::resolver::results_type e = r.resolve(q);
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::error_code ec;
  * tcp::resolver::results_type::iterator i = asio::connect(
  *     s, e.begin(), e.end(), my_connect_condition());
@@ -632,12 +632,12 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation
  * of the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  *
  * // ...
  *
@@ -704,7 +704,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation
  * of the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @note This overload assumes that a default constructed object of type @c
  * Iterator represents the end of the sequence. This is a valid assumption for
@@ -750,11 +750,11 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation
  * of the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * @code std::vector<tcp::endpoint> endpoints = ...;
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  * asio::async_connect(s,
  *     endpoints.begin(), endpoints.end(),
  *     connect_handler);
@@ -816,7 +816,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation
  * of the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * The following connect condition function object can be used to output
@@ -833,9 +833,9 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  *   }
  * }; @endcode
  * It would be used with the asio::connect function as follows:
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  *
  * // ...
  *
@@ -922,7 +922,7 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation
  * of the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @note This overload assumes that a default constructed object of type @c
  * Iterator represents the end of the sequence. This is a valid assumption for
@@ -980,7 +980,7 @@ async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the handler will not be invoked from within this function. Invocation
  * of the handler will be performed in a manner equivalent to using
- * asio::io_service::post().
+ * asio::io_context::post().
  *
  * @par Example
  * The following connect condition function object can be used to output
@@ -997,9 +997,9 @@ async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  *   }
  * }; @endcode
  * It would be used with the asio::connect function as follows:
- * @code tcp::resolver r(io_service);
+ * @code tcp::resolver r(io_context);
  * tcp::resolver::query q("host", "service");
- * tcp::socket s(io_service);
+ * tcp::socket s(io_context);
  *
  * // ...
  *

@@ -31,15 +31,15 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     // Get a list of endpoints corresponding to the SOCKS 4 server name.
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     tcp::resolver::results_type endpoints = resolver.resolve(argv[1], argv[2]);
 
     // Try each endpoint until we successfully establish a connection to the
     // SOCKS 4 server.
-    tcp::socket socket(io_service);
+    tcp::socket socket(io_context);
     asio::connect(socket, endpoints);
 
     // Get an endpoint for the Boost website. This will be passed to the SOCKS

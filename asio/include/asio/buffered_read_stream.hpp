@@ -26,7 +26,7 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -96,11 +96,20 @@ public:
     return next_layer_.lowest_layer();
   }
 
-  /// Get the io_service associated with the object.
-  asio::io_service& get_io_service()
+  /// Get the io_context associated with the object.
+  asio::io_context& get_io_context()
+  {
+    return next_layer_.get_io_context();
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_io_context().) Get the io_context associated with the
+  /// object.
+  asio::io_context& get_io_service()
   {
     return next_layer_.get_io_service();
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Close the stream.
   void close()

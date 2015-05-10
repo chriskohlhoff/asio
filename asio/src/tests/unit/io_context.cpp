@@ -1,5 +1,5 @@
 //
-// io_service.cpp
+// io_context.cpp
 // ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -14,7 +14,7 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include <sstream>
 #include "asio/thread.hpp"
@@ -56,50 +56,50 @@ void increment(int* count)
   ++(*count);
 }
 
-void decrement_to_zero(io_service* ios, int* count)
+void decrement_to_zero(io_context* ioc, int* count)
 {
   if (*count > 0)
   {
     --(*count);
 
     int before_value = *count;
-    ios->post(bindns::bind(decrement_to_zero, ios, count));
+    ioc->post(bindns::bind(decrement_to_zero, ioc, count));
 
     // Handler execution cannot nest, so count value should remain unchanged.
     ASIO_CHECK(*count == before_value);
   }
 }
 
-void nested_decrement_to_zero(io_service* ios, int* count)
+void nested_decrement_to_zero(io_context* ioc, int* count)
 {
   if (*count > 0)
   {
     --(*count);
 
-    ios->dispatch(bindns::bind(nested_decrement_to_zero, ios, count));
+    ioc->dispatch(bindns::bind(nested_decrement_to_zero, ioc, count));
 
     // Handler execution is nested, so count value should now be zero.
     ASIO_CHECK(*count == 0);
   }
 }
 
-void sleep_increment(io_service* ios, int* count)
+void sleep_increment(io_context* ioc, int* count)
 {
-  timer t(*ios, chronons::seconds(2));
+  timer t(*ioc, chronons::seconds(2));
   t.wait();
 
   if (++(*count) < 3)
-    ios->post(bindns::bind(sleep_increment, ios, count));
+    ioc->post(bindns::bind(sleep_increment, ioc, count));
 }
 
-void start_sleep_increments(io_service* ios, int* count)
+void start_sleep_increments(io_context* ioc, int* count)
 {
   // Give all threads a chance to start.
-  timer t(*ios, chronons::seconds(2));
+  timer t(*ioc, chronons::seconds(2));
   t.wait();
 
   // Start the first of three increments.
-  ios->post(bindns::bind(sleep_increment, ios, count));
+  ioc->post(bindns::bind(sleep_increment, ioc, count));
 }
 
 void throw_exception()
@@ -107,158 +107,158 @@ void throw_exception()
   throw 1;
 }
 
-void io_service_run(io_service* ios)
+void io_context_run(io_context* ioc)
 {
-  ios->run();
+  ioc->run();
 }
 
-void io_service_test()
+void io_context_test()
 {
-  io_service ios;
+  io_context ioc;
   int count = 0;
 
-  ios.post(bindns::bind(increment, &count));
+  ioc.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 0);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 1);
 
   count = 0;
-  ios.restart();
-  ios.post(bindns::bind(increment, &count));
-  ios.post(bindns::bind(increment, &count));
-  ios.post(bindns::bind(increment, &count));
-  ios.post(bindns::bind(increment, &count));
-  ios.post(bindns::bind(increment, &count));
+  ioc.restart();
+  ioc.post(bindns::bind(increment, &count));
+  ioc.post(bindns::bind(increment, &count));
+  ioc.post(bindns::bind(increment, &count));
+  ioc.post(bindns::bind(increment, &count));
+  ioc.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 0);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 5);
 
   count = 0;
-  ios.restart();
-  io_service::work* w = new io_service::work(ios);
-  ios.post(bindns::bind(&io_service::stop, &ios));
-  ASIO_CHECK(!ios.stopped());
-  ios.run();
+  ioc.restart();
+  io_context::work* w = new io_context::work(ioc);
+  ioc.post(bindns::bind(&io_context::stop, &ioc));
+  ASIO_CHECK(!ioc.stopped());
+  ioc.run();
 
   // The only operation executed should have been to stop run().
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 0);
 
-  ios.restart();
-  ios.post(bindns::bind(increment, &count));
+  ioc.restart();
+  ioc.post(bindns::bind(increment, &count));
   delete w;
 
   // No handlers can be called until run() is called.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 0);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 1);
 
   count = 10;
-  ios.restart();
-  ios.post(bindns::bind(decrement_to_zero, &ios, &count));
+  ioc.restart();
+  ioc.post(bindns::bind(decrement_to_zero, &ioc, &count));
 
   // No handlers can be called until run() is called.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 10);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 0);
 
   count = 10;
-  ios.restart();
-  ios.post(bindns::bind(nested_decrement_to_zero, &ios, &count));
+  ioc.restart();
+  ioc.post(bindns::bind(nested_decrement_to_zero, &ioc, &count));
 
   // No handlers can be called until run() is called.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 10);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 0);
 
   count = 10;
-  ios.restart();
-  ios.dispatch(bindns::bind(nested_decrement_to_zero, &ios, &count));
+  ioc.restart();
+  ioc.dispatch(bindns::bind(nested_decrement_to_zero, &ioc, &count));
 
   // No handlers can be called until run() is called, even though nested
   // delivery was specifically allowed in the previous call.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 10);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 0);
 
   count = 0;
   int count2 = 0;
-  ios.restart();
-  ASIO_CHECK(!ios.stopped());
-  ios.post(bindns::bind(start_sleep_increments, &ios, &count));
-  ios.post(bindns::bind(start_sleep_increments, &ios, &count2));
-  thread thread1(bindns::bind(io_service_run, &ios));
-  thread thread2(bindns::bind(io_service_run, &ios));
+  ioc.restart();
+  ASIO_CHECK(!ioc.stopped());
+  ioc.post(bindns::bind(start_sleep_increments, &ioc, &count));
+  ioc.post(bindns::bind(start_sleep_increments, &ioc, &count2));
+  thread thread1(bindns::bind(io_context_run, &ioc));
+  thread thread2(bindns::bind(io_context_run, &ioc));
   thread1.join();
   thread2.join();
 
   // The run() calls will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 3);
   ASIO_CHECK(count2 == 3);
 
   count = 10;
-  io_service ios2;
-  ios.dispatch(ios2.wrap(bindns::bind(decrement_to_zero, &ios2, &count)));
-  ios.restart();
-  ASIO_CHECK(!ios.stopped());
-  ios.run();
+  io_context ioc2;
+  ioc.dispatch(ioc2.wrap(bindns::bind(decrement_to_zero, &ioc2, &count)));
+  ioc.restart();
+  ASIO_CHECK(!ioc.stopped());
+  ioc.run();
 
   // No decrement_to_zero handlers can be called until run() is called on the
-  // second io_service object.
-  ASIO_CHECK(ios.stopped());
+  // second io_context object.
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 10);
 
-  ios2.run();
+  ioc2.run();
 
   // The run() call will not return until all work has finished.
   ASIO_CHECK(count == 0);
 
   count = 0;
   int exception_count = 0;
-  ios.restart();
-  ios.post(&throw_exception);
-  ios.post(bindns::bind(increment, &count));
-  ios.post(bindns::bind(increment, &count));
-  ios.post(&throw_exception);
-  ios.post(bindns::bind(increment, &count));
+  ioc.restart();
+  ioc.post(&throw_exception);
+  ioc.post(bindns::bind(increment, &count));
+  ioc.post(bindns::bind(increment, &count));
+  ioc.post(&throw_exception);
+  ioc.post(bindns::bind(increment, &count));
 
   // No handlers can be called until run() is called.
-  ASIO_CHECK(!ios.stopped());
+  ASIO_CHECK(!ioc.stopped());
   ASIO_CHECK(count == 0);
   ASIO_CHECK(exception_count == 0);
 
@@ -266,7 +266,7 @@ void io_service_test()
   {
     try
     {
-      ios.run();
+      ioc.run();
       break;
     }
     catch (int)
@@ -276,39 +276,39 @@ void io_service_test()
   }
 
   // The run() calls will not return until all work has finished.
-  ASIO_CHECK(ios.stopped());
+  ASIO_CHECK(ioc.stopped());
   ASIO_CHECK(count == 3);
   ASIO_CHECK(exception_count == 2);
 }
 
-class test_service : public asio::io_service::service
+class test_service : public asio::io_context::service
 {
 public:
-  static asio::io_service::id id;
-  test_service(asio::io_service& s)
-    : asio::io_service::service(s) {}
+  static asio::io_context::id id;
+  test_service(asio::io_context& s)
+    : asio::io_context::service(s) {}
 private:
   virtual void shutdown_service() {}
 };
 
-asio::io_service::id test_service::id;
+asio::io_context::id test_service::id;
 
-void io_service_service_test()
+void io_context_service_test()
 {
-  asio::io_service ios1;
-  asio::io_service ios2;
-  asio::io_service ios3;
+  asio::io_context ioc1;
+  asio::io_context ioc2;
+  asio::io_context ioc3;
 
   // Implicit service registration.
 
-  asio::use_service<test_service>(ios1);
+  asio::use_service<test_service>(ioc1);
 
-  ASIO_CHECK(asio::has_service<test_service>(ios1));
+  ASIO_CHECK(asio::has_service<test_service>(ioc1));
 
-  test_service* svc1 = new test_service(ios1);
+  test_service* svc1 = new test_service(ioc1);
   try
   {
-    asio::add_service(ios1, svc1);
+    asio::add_service(ioc1, svc1);
     ASIO_ERROR("add_service did not throw");
   }
   catch (asio::service_already_exists&)
@@ -318,16 +318,16 @@ void io_service_service_test()
 
   // Explicit service registration.
 
-  test_service* svc2 = new test_service(ios2);
-  asio::add_service(ios2, svc2);
+  test_service* svc2 = new test_service(ioc2);
+  asio::add_service(ioc2, svc2);
 
-  ASIO_CHECK(asio::has_service<test_service>(ios2));
-  ASIO_CHECK(&asio::use_service<test_service>(ios2) == svc2);
+  ASIO_CHECK(asio::has_service<test_service>(ioc2));
+  ASIO_CHECK(&asio::use_service<test_service>(ioc2) == svc2);
 
-  test_service* svc3 = new test_service(ios2);
+  test_service* svc3 = new test_service(ioc2);
   try
   {
-    asio::add_service(ios2, svc3);
+    asio::add_service(ioc2, svc3);
     ASIO_ERROR("add_service did not throw");
   }
   catch (asio::service_already_exists&)
@@ -337,10 +337,10 @@ void io_service_service_test()
 
   // Explicit registration with invalid owner.
 
-  test_service* svc4 = new test_service(ios2);
+  test_service* svc4 = new test_service(ioc2);
   try
   {
-    asio::add_service(ios3, svc4);
+    asio::add_service(ioc3, svc4);
     ASIO_ERROR("add_service did not throw");
   }
   catch (asio::invalid_service_owner&)
@@ -348,12 +348,12 @@ void io_service_service_test()
   }
   delete svc4;
 
-  ASIO_CHECK(!asio::has_service<test_service>(ios3));
+  ASIO_CHECK(!asio::has_service<test_service>(ioc3));
 }
 
 ASIO_TEST_SUITE
 (
-  "io_service",
-  ASIO_TEST_CASE(io_service_test)
-  ASIO_TEST_CASE(io_service_service_test)
+  "io_context",
+  ASIO_TEST_CASE(io_context_test)
+  ASIO_TEST_CASE(io_context_service_test)
 )

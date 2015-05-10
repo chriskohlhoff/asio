@@ -120,13 +120,13 @@ cancelling all outstanding asynchronous operations.
 
 [heading HTTP Server 2]
 
-An HTTP server using an io_service-per-CPU design.
+An HTTP server using an io_context-per-CPU design.
 
 * [@../src/examples/cpp03/http/server2/connection.cpp]
 * [@../src/examples/cpp03/http/server2/connection.hpp]
 * [@../src/examples/cpp03/http/server2/header.hpp]
-* [@../src/examples/cpp03/http/server2/io_service_pool.cpp]
-* [@../src/examples/cpp03/http/server2/io_service_pool.hpp]
+* [@../src/examples/cpp03/http/server2/io_context_pool.cpp]
+* [@../src/examples/cpp03/http/server2/io_context_pool.hpp]
 * [@../src/examples/cpp03/http/server2/main.cpp]
 * [@../src/examples/cpp03/http/server2/mime_types.cpp]
 * [@../src/examples/cpp03/http/server2/mime_types.hpp]
@@ -143,7 +143,7 @@ An HTTP server using an io_service-per-CPU design.
 
 [heading HTTP Server 3]
 
-An HTTP server using a single io_service and a thread pool calling `io_service::run()`.
+An HTTP server using a single io_context and a thread pool calling `io_context::run()`.
 
 * [@../src/examples/cpp03/http/server3/connection.cpp]
 * [@../src/examples/cpp03/http/server3/connection.hpp]
@@ -231,7 +231,7 @@ decode structures for transmission over a socket.
 [heading Services]
 
 This example demonstrates how to integrate custom functionality (in this case,
-for logging) into asio's [link asio.reference.io_service io_service], and
+for logging) into asio's [link asio.reference.io_context io_context], and
 how to use a custom service with [link
 asio.reference.basic_stream_socket basic_stream_socket<>].
 

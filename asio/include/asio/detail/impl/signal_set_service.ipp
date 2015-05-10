@@ -117,12 +117,12 @@ public:
        //   && !defined(__CYGWIN__)
 
 signal_set_service::signal_set_service(
-    asio::io_service& io_service)
-  : io_service_(asio::use_service<io_service_impl>(io_service)),
+    asio::io_context& io_context)
+  : io_context_(asio::use_service<io_context_impl>(io_context)),
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
   && !defined(__CYGWIN__)
-    reactor_(asio::use_service<reactor>(io_service)),
+    reactor_(asio::use_service<reactor>(io_context)),
 #endif // !defined(ASIO_WINDOWS)
        //   && !defined(ASIO_WINDOWS_RUNTIME)
        //   && !defined(__CYGWIN__)
@@ -166,11 +166,11 @@ void signal_set_service::shutdown_service()
     }
   }
 
-  io_service_.abandon_operations(ops);
+  io_context_.abandon_operations(ops);
 }
 
 void signal_set_service::fork_service(
-    asio::io_service::fork_event fork_ev)
+    asio::io_context::fork_event fork_ev)
 {
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
@@ -180,7 +180,7 @@ void signal_set_service::fork_service(
 
   switch (fork_ev)
   {
-  case asio::io_service::fork_prepare:
+  case asio::io_context::fork_prepare:
     {
       int read_descriptor = state->read_descriptor_;
       state->fork_prepared_ = true;
@@ -188,7 +188,7 @@ void signal_set_service::fork_service(
       reactor_.deregister_internal_descriptor(read_descriptor, reactor_data_);
     }
     break;
-  case asio::io_service::fork_parent:
+  case asio::io_context::fork_parent:
     if (state->fork_prepared_)
     {
       int read_descriptor = state->read_descriptor_;
@@ -198,7 +198,7 @@ void signal_set_service::fork_service(
           read_descriptor, reactor_data_, new pipe_read_op);
     }
     break;
-  case asio::io_service::fork_child:
+  case asio::io_context::fork_child:
     if (state->fork_prepared_)
     {
       asio::detail::signal_blocker blocker;
@@ -437,7 +437,7 @@ asio::error_code signal_set_service::cancel(
     signal_set_service::implementation_type& impl,
     asio::error_code& ec)
 {
-  ASIO_HANDLER_OPERATION((io_service_.context(),
+  ASIO_HANDLER_OPERATION((io_context_.context(),
         "signal_set", &impl, 0, "cancel"));
 
   op_queue<operation> ops;
@@ -453,7 +453,7 @@ asio::error_code signal_set_service::cancel(
     }
   }
 
-  io_service_.post_deferred_completions(ops);
+  io_context_.post_deferred_completions(ops);
 
   ec = asio::error_code();
   return ec;
@@ -489,7 +489,7 @@ void signal_set_service::deliver_signal(int signal_number)
       reg = reg->next_in_table_;
     }
 
-    service->io_service_.post_deferred_completions(ops);
+    service->io_context_.post_deferred_completions(ops);
 
     service = service->next_;
   }
@@ -618,7 +618,7 @@ void signal_set_service::close_descriptors()
 void signal_set_service::start_wait_op(
     signal_set_service::implementation_type& impl, signal_op* op)
 {
-  io_service_.work_started();
+  io_context_.work_started();
 
   signal_state* state = get_signal_state();
   static_mutex::scoped_lock lock(state->mutex_);
@@ -630,7 +630,7 @@ void signal_set_service::start_wait_op(
     {
       --reg->undelivered_;
       op->signal_number_ = reg->signal_number_;
-      io_service_.post_deferred_completion(op);
+      io_context_.post_deferred_completion(op);
       return;
     }
 

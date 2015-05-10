@@ -201,7 +201,7 @@ public:
           // have to keep in mind that this function might be being called from
           // the async operation's initiating function. In this case we're not
           // allowed to call the handler directly. Instead, issue a zero-sized
-          // read so the handler runs "as-if" posted using io_service::post().
+          // read so the handler runs "as-if" posted using io_context::post().
           if (start)
           {
             next_layer_.async_read_some(

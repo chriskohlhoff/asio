@@ -26,13 +26,13 @@ int main()
 {
   try
   {
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 13));
+    tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 13));
 
     for (;;)
     {
-      tcp::socket socket(io_service);
+      tcp::socket socket(io_context);
       acceptor.accept(socket);
 
       std::string message = make_daytime_string();

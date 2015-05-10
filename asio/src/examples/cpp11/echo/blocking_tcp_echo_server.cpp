@@ -42,9 +42,9 @@ void session(tcp::socket sock)
   }
 }
 
-void server(asio::io_service& io_service, unsigned short port)
+void server(asio::io_context& io_context, unsigned short port)
 {
-  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
+  tcp::acceptor a(io_context, tcp::endpoint(tcp::v4(), port));
   for (;;)
   {
     std::thread(session, a.accept()).detach();
@@ -61,9 +61,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    server(io_service, std::atoi(argv[1]));
+    server(io_context, std::atoi(argv[1]));
   }
   catch (std::exception& e)
   {

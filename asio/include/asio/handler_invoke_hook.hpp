@@ -26,12 +26,12 @@ namespace asio {
  * @brief Default invoke function for handlers.
  *
  * Completion handlers for asynchronous operations are invoked by the
- * io_service associated with the corresponding object (e.g. a socket or
+ * io_context associated with the corresponding object (e.g. a socket or
  * deadline_timer). Certain guarantees are made on when the handler may be
  * invoked, in particular that a handler can only be invoked from a thread that
- * is currently calling @c run() on the corresponding io_service object.
+ * is currently calling @c run() on the corresponding io_context object.
  * Handlers may subsequently be invoked through other objects (such as
- * io_service::strand objects) that provide additional guarantees.
+ * io_context::strand objects) that provide additional guarantees.
  *
  * When asynchronous operations are composed from other asynchronous
  * operations, all intermediate handlers should be invoked using the same

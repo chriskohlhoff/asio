@@ -20,7 +20,7 @@
 #include <cstddef>
 #include <signal.h>
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/op_queue.hpp"
@@ -108,7 +108,7 @@ public:
   };
 
   // Constructor.
-  ASIO_DECL signal_set_service(asio::io_service& io_service);
+  ASIO_DECL signal_set_service(asio::io_context& io_context);
 
   // Destructor.
   ASIO_DECL ~signal_set_service();
@@ -118,7 +118,7 @@ public:
 
   // Perform fork-related housekeeping.
   ASIO_DECL void fork_service(
-      asio::io_service::fork_event fork_ev);
+      asio::io_context::fork_event fork_ev);
 
   // Construct a new signal_set implementation.
   ASIO_DECL void construct(implementation_type& impl);
@@ -152,7 +152,7 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((io_service_.context(),
+    ASIO_HANDLER_CREATION((io_context_.context(),
           *p.p, "signal_set", &impl, 0, "async_wait"));
 
     start_wait_op(impl, p.p);
@@ -178,8 +178,8 @@ private:
   // Helper function to start a wait operation.
   ASIO_DECL void start_wait_op(implementation_type& impl, signal_op* op);
 
-  // The io_service instance used for dispatching handlers.
-  io_service_impl& io_service_;
+  // The io_context instance used for dispatching handlers.
+  io_context_impl& io_context_;
 
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \

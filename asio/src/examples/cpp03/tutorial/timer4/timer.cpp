@@ -16,7 +16,7 @@
 class printer
 {
 public:
-  printer(asio::io_service& io)
+  printer(asio::io_context& io)
     : timer_(io, boost::posix_time::seconds(1)),
       count_(0)
   {
@@ -47,7 +47,7 @@ private:
 
 int main()
 {
-  asio::io_service io;
+  asio::io_context io;
   printer p(io);
   io.run();
 

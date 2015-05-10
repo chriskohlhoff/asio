@@ -27,9 +27,9 @@ namespace asio {
 namespace detail {
 
 win_iocp_socket_service_base::win_iocp_socket_service_base(
-    asio::io_service& io_service)
-  : io_service_(io_service),
-    iocp_service_(use_service<win_iocp_io_service>(io_service)),
+    asio::io_context& io_context)
+  : io_context_(io_context),
+    iocp_service_(use_service<win_iocp_io_context>(io_context)),
     reactor_(0),
     connect_ex_(0),
     mutex_(),
@@ -663,7 +663,7 @@ select_reactor& win_iocp_socket_service_base::get_reactor()
           reinterpret_cast<void**>(&reactor_), 0, 0));
   if (!r)
   {
-    r = &(use_service<select_reactor>(io_service_));
+    r = &(use_service<select_reactor>(io_context_));
     interlocked_exchange_pointer(reinterpret_cast<void**>(&reactor_), r);
   }
   return *r;

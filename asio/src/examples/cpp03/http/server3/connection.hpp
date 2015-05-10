@@ -30,8 +30,8 @@ class connection
     private boost::noncopyable
 {
 public:
-  /// Construct a connection with the given io_service.
-  explicit connection(asio::io_service& io_service,
+  /// Construct a connection with the given io_context.
+  explicit connection(asio::io_context& io_context,
       request_handler& handler);
 
   /// Get the socket associated with the connection.
@@ -49,7 +49,7 @@ private:
   void handle_write(const asio::error_code& e);
 
   /// Strand to ensure the connection's handlers are not called concurrently.
-  asio::io_service::strand strand_;
+  asio::io_context::strand strand_;
 
   /// Socket for the connection.
   asio::ip::tcp::socket socket_;

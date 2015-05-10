@@ -17,7 +17,7 @@
 #include "asio/local/datagram_protocol.hpp"
 
 #include <cstring>
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "../unit_test.hpp"
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
@@ -61,16 +61,16 @@ void test()
 
     // basic_datagram_socket constructors.
 
-    dp::socket socket1(ios);
-    dp::socket socket2(ios, dp());
-    dp::socket socket3(ios, dp::endpoint(""));
+    dp::socket socket1(ioc);
+    dp::socket socket2(ioc, dp());
+    dp::socket socket3(ioc, dp::endpoint(""));
     int native_socket1 = ::socket(AF_UNIX, SOCK_DGRAM, 0);
-    dp::socket socket4(ios, dp(), native_socket1);
+    dp::socket socket4(ioc, dp(), native_socket1);
 
     // basic_io_object functions.
 
-    io_service& ios_ref = socket1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = socket1.get_io_context();
+    (void)ioc_ref;
 
     // basic_socket functions.
 

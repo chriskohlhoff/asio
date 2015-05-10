@@ -19,7 +19,7 @@
 #include <cstring>
 #include "archetypes/async_result.hpp"
 #include "asio/buffer.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/system_error.hpp"
 #include "unit_test.hpp"
@@ -67,7 +67,7 @@ void test_compile()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     array<asio::mutable_buffer, 2> mutable_buffers = {{
@@ -79,11 +79,11 @@ void test_compile()
     archetypes::lazy_handler lazy;
     asio::error_code ec;
 
-    stream_type stream1(ios);
-    stream_type stream2(ios, 1024, 1024);
+    stream_type stream1(ioc);
+    stream_type stream2(ioc, 1024, 1024);
 
-    io_service& ios_ref = stream1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = stream1.get_io_context();
+    (void)ioc_ref;
 
     stream_type::lowest_layer_type& lowest_layer = stream1.lowest_layer();
     (void)lowest_layer;
@@ -155,17 +155,17 @@ void test_sync_operations()
 {
   using namespace std; // For memcmp.
 
-  asio::io_service io_service;
+  asio::io_context io_context;
 
-  asio::ip::tcp::acceptor acceptor(io_service,
+  asio::ip::tcp::acceptor acceptor(io_context,
       asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 0));
   asio::ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(asio::ip::address_v4::loopback());
 
-  stream_type client_socket(io_service);
+  stream_type client_socket(io_context);
   client_socket.lowest_layer().connect(server_endpoint);
 
-  stream_type server_socket(io_service);
+  stream_type server_socket(io_context);
   acceptor.accept(server_socket.lowest_layer());
 
   const char write_data[]
@@ -273,20 +273,20 @@ void test_async_operations()
   using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
 
-  asio::io_service io_service;
+  asio::io_context io_context;
 
-  asio::ip::tcp::acceptor acceptor(io_service,
+  asio::ip::tcp::acceptor acceptor(io_context,
       asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 0));
   asio::ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
   server_endpoint.address(asio::ip::address_v4::loopback());
 
-  stream_type client_socket(io_service);
+  stream_type client_socket(io_context);
   client_socket.lowest_layer().connect(server_endpoint);
 
-  stream_type server_socket(io_service);
+  stream_type server_socket(io_context);
   acceptor.async_accept(server_socket.lowest_layer(), &handle_accept);
-  io_service.run();
-  io_service.restart();
+  io_context.run();
+  io_context.restart();
 
   const char write_data[]
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -298,12 +298,12 @@ void test_async_operations()
     client_socket.async_write_some(
         asio::buffer(write_buf + bytes_written),
         bindns::bind(handle_write, _1, _2, &bytes_written));
-    io_service.run();
-    io_service.restart();
+    io_context.run();
+    io_context.restart();
     client_socket.async_flush(
         bindns::bind(handle_flush, _1));
-    io_service.run();
-    io_service.restart();
+    io_context.run();
+    io_context.restart();
   }
 
   char read_data[sizeof(write_data)];
@@ -315,8 +315,8 @@ void test_async_operations()
     server_socket.async_read_some(
         asio::buffer(read_buf + bytes_read),
         bindns::bind(handle_read, _1, _2, &bytes_read));
-    io_service.run();
-    io_service.restart();
+    io_context.run();
+    io_context.restart();
   }
 
   ASIO_CHECK(bytes_written == sizeof(write_data));
@@ -329,12 +329,12 @@ void test_async_operations()
     server_socket.async_write_some(
         asio::buffer(write_buf + bytes_written),
         bindns::bind(handle_write, _1, _2, &bytes_written));
-    io_service.run();
-    io_service.restart();
+    io_context.run();
+    io_context.restart();
     server_socket.async_flush(
         bindns::bind(handle_flush, _1));
-    io_service.run();
-    io_service.restart();
+    io_context.run();
+    io_context.restart();
   }
 
   bytes_read = 0;
@@ -343,8 +343,8 @@ void test_async_operations()
     client_socket.async_read_some(
         asio::buffer(read_buf + bytes_read),
         bindns::bind(handle_read, _1, _2, &bytes_read));
-    io_service.run();
-    io_service.restart();
+    io_context.run();
+    io_context.restart();
   }
 
   ASIO_CHECK(bytes_written == sizeof(write_data));

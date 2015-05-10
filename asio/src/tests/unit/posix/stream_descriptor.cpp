@@ -16,7 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/posix/stream_descriptor.hpp"
 
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "../archetypes/async_result.hpp"
 #include "../unit_test.hpp"
 
@@ -50,7 +50,7 @@ void test()
 
   try
   {
-    io_service ios;
+    io_context ioc;
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     posix::descriptor_base::bytes_readable io_control_command;
@@ -59,9 +59,9 @@ void test()
 
     // basic_stream_descriptor constructors.
 
-    posix::stream_descriptor descriptor1(ios);
+    posix::stream_descriptor descriptor1(ioc);
     int native_descriptor1 = -1;
-    posix::stream_descriptor descriptor2(ios, native_descriptor1);
+    posix::stream_descriptor descriptor2(ioc, native_descriptor1);
 
 #if defined(ASIO_HAS_MOVE)
     posix::stream_descriptor descriptor3(std::move(descriptor2));
@@ -70,14 +70,14 @@ void test()
     // basic_stream_descriptor operators.
 
 #if defined(ASIO_HAS_MOVE)
-    descriptor1 = posix::stream_descriptor(ios);
+    descriptor1 = posix::stream_descriptor(ioc);
     descriptor1 = std::move(descriptor2);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_service& ios_ref = descriptor1.get_io_service();
-    (void)ios_ref;
+    io_context& ioc_ref = descriptor1.get_io_context();
+    (void)ioc_ref;
 
     // basic_descriptor functions.
 

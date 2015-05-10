@@ -57,7 +57,7 @@ public:
    *
    * @par Example
    * @code
-   * asio::posix::stream_descriptor descriptor(io_service); 
+   * asio::posix::stream_descriptor descriptor(io_context); 
    * ...
    * asio::descriptor_base::bytes_readable command(true);
    * descriptor.io_control(command);

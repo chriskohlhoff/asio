@@ -10,7 +10,7 @@
 Asio includes classes for creating and manipulating serial ports in a portable
 manner. For example, a serial port may be opened using:
 
-  serial_port port(my_io_service, name);
+  serial_port port(my_io_context, name);
 
 where name is something like `"COM1"` on Windows, and `"/dev/ttyS0"` on POSIX
 platforms.

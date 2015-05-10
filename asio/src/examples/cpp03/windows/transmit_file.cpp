@@ -28,7 +28,7 @@ void transmit_file(tcp::socket& socket,
     random_access_handle& file, Handler handler)
 {
   // Construct an OVERLAPPED-derived object to contain the handler.
-  overlapped_ptr overlapped(socket.get_io_service(), handler);
+  overlapped_ptr overlapped(socket.get_io_context(), handler);
 
   // Initiate the TransmitFile operation.
   BOOL ok = ::TransmitFile(socket.native_handle(),
@@ -40,7 +40,7 @@ void transmit_file(tcp::socket& socket,
   {
     // The operation completed immediately, so a completion notification needs
     // to be posted. When complete() is called, ownership of the OVERLAPPED-
-    // derived object passes to the io_service.
+    // derived object passes to the io_context.
     asio::error_code ec(last_error,
         asio::error::get_system_category());
     overlapped.complete(ec, 0);
@@ -48,7 +48,7 @@ void transmit_file(tcp::socket& socket,
   else
   {
     // The operation was successfully initiated, so ownership of the
-    // OVERLAPPED-derived object has passed to the io_service.
+    // OVERLAPPED-derived object has passed to the io_context.
     overlapped.release();
   }
 }
@@ -59,10 +59,10 @@ class connection
 public:
   typedef boost::shared_ptr<connection> pointer;
 
-  static pointer create(asio::io_service& io_service,
+  static pointer create(asio::io_context& io_context,
       const std::string& filename)
   {
-    return pointer(new connection(io_service, filename));
+    return pointer(new connection(io_context, filename));
   }
 
   tcp::socket& socket()
@@ -85,10 +85,10 @@ public:
   }
 
 private:
-  connection(asio::io_service& io_service, const std::string& filename)
-    : socket_(io_service),
+  connection(asio::io_context& io_context, const std::string& filename)
+    : socket_(io_context),
       filename_(filename),
-      file_(io_service)
+      file_(io_context)
   {
   }
 
@@ -107,9 +107,9 @@ private:
 class server
 {
 public:
-  server(asio::io_service& io_service,
+  server(asio::io_context& io_context,
       unsigned short port, const std::string& filename)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
+    : acceptor_(io_context, tcp::endpoint(tcp::v4(), port)),
       filename_(filename)
   {
     start_accept();
@@ -119,7 +119,7 @@ private:
   void start_accept()
   {
     connection::pointer new_connection =
-      connection::create(acceptor_.get_io_service(), filename_);
+      connection::create(acceptor_.get_io_context(), filename_);
 
     acceptor_.async_accept(new_connection->socket(),
         boost::bind(&server::handle_accept, this, new_connection,
@@ -151,12 +151,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     using namespace std; // For atoi.
-    server s(io_service, atoi(argv[1]), argv[2]);
+    server s(io_context, atoi(argv[1]), argv[2]);
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

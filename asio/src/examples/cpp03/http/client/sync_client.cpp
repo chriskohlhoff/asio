@@ -28,14 +28,14 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     // Get a list of endpoints corresponding to the server name.
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     tcp::resolver::results_type endpoints = resolver.resolve(argv[1], "http");
 
     // Try each endpoint until we successfully establish a connection.
-    tcp::socket socket(io_service);
+    tcp::socket socket(io_context);
     asio::connect(socket, endpoints);
 
     // Form the request. We specify the "Connection: close" header so that the

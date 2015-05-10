@@ -29,9 +29,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    stream_protocol::socket s(io_service);
+    stream_protocol::socket s(io_context);
     s.connect(stream_protocol::endpoint(argv[1]));
 
     using namespace std; // For strlen.

@@ -127,32 +127,32 @@ void low_priority_handler()
 
 int main()
 {
-  asio::io_service io_service;
+  asio::io_context io_context;
 
   handler_priority_queue pri_queue;
 
   // Post a completion handler to be run immediately.
-  asio::post(io_service, pri_queue.wrap(0, low_priority_handler));
+  asio::post(io_context, pri_queue.wrap(0, low_priority_handler));
 
   // Start an asynchronous accept that will complete immediately.
   tcp::endpoint endpoint(asio::ip::address_v4::loopback(), 0);
-  tcp::acceptor acceptor(io_service, endpoint);
-  tcp::socket server_socket(io_service);
+  tcp::acceptor acceptor(io_context, endpoint);
+  tcp::socket server_socket(io_context);
   acceptor.async_accept(server_socket,
       pri_queue.wrap(100, high_priority_handler));
-  tcp::socket client_socket(io_service);
+  tcp::socket client_socket(io_context);
   client_socket.connect(acceptor.local_endpoint());
 
   // Set a deadline timer to expire immediately.
-  asio::deadline_timer timer(io_service);
+  asio::deadline_timer timer(io_context);
   timer.expires_at(boost::posix_time::neg_infin);
   timer.async_wait(pri_queue.wrap(42, middle_priority_handler));
 
-  while (io_service.run_one())
+  while (io_context.run_one())
   {
     // The custom invocation hook adds the handlers to the priority queue
     // rather than executing them from within the poll_one() call.
-    while (io_service.poll_one())
+    while (io_context.poll_one())
       ;
 
     pri_queue.execute_all();

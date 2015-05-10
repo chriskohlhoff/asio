@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/operation.hpp"
@@ -74,8 +74,8 @@ public:
 
   typedef strand_impl* implementation_type;
 
-  // Construct a new strand service for the specified io_service.
-  ASIO_DECL explicit strand_service(asio::io_service& io_service);
+  // Construct a new strand service for the specified io_context.
+  ASIO_DECL explicit strand_service(asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
@@ -83,11 +83,11 @@ public:
   // Construct a new strand implementation.
   ASIO_DECL void construct(implementation_type& impl);
 
-  // Request the io_service to invoke the given handler.
+  // Request the io_context to invoke the given handler.
   template <typename Handler>
   void dispatch(implementation_type& impl, Handler& handler);
 
-  // Request the io_service to invoke the given handler and return immediately.
+  // Request the io_context to invoke the given handler and return immediately.
   template <typename Handler>
   void post(implementation_type& impl, Handler& handler);
 
@@ -108,8 +108,8 @@ private:
       operation* base, const asio::error_code& ec,
       std::size_t bytes_transferred);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The io_context implementation used to post completions.
+  io_context_impl& io_context_;
 
   // Mutex to protect access to the array of implementations.
   asio::detail::mutex mutex_;

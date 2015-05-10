@@ -22,7 +22,7 @@ For example, to perform asynchronous operations on a named pipe, the following
 object may be created:
 
   HANDLE handle = ::CreateFile(...);
-  windows::stream_handle pipe(my_io_service, handle);
+  windows::stream_handle pipe(my_io_context, handle);
 
 These are then used as synchronous or asynchronous read and write streams. This
 means the objects can be used with any of the [link asio.reference.read
@@ -61,7 +61,7 @@ For example, to perform asynchronous operations on a file the following object
 may be created:
 
   HANDLE handle = ::CreateFile(...);
-  windows::random_access_handle file(my_io_service, handle);
+  windows::random_access_handle file(my_io_context, handle);
 
 Data may be read from or written to the handle using one of the
 `read_some_at()`, `async_read_some_at()`, `write_some_at()` or
@@ -110,7 +110,7 @@ For example, to perform asynchronous operations on an event, the following
 object may be created:
 
   HANDLE handle = ::CreateEvent(...);
-  windows::object_handle file(my_io_service, handle);
+  windows::object_handle file(my_io_context, handle);
 
 The `wait()` and `async_wait()` member functions may then be used to wait until
 the kernel object is signalled.

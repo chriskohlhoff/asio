@@ -20,7 +20,7 @@ independence, etc. To create a connection one might simply write:
 The iostream class can also be used in conjunction with an acceptor to create
 simple servers. For example:
 
-  io_service ios;
+  io_context ioc;
 
   ip::tcp::endpoint endpoint(tcp::v4(), 80);
   ip::tcp::acceptor acceptor(ios, endpoint);

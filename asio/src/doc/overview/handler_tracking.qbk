@@ -67,7 +67,7 @@ The `<action>` takes one of the following forms:
     [~n]
     [The handler number `n` was destroyed without having been invoked. This is
     usually the case for any unfinished asynchronous operations when the
-    `io_service` is destroyed.]
+    `io_context` is destroyed.]
   ]
   [
     [n*m]

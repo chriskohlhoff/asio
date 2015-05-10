@@ -26,10 +26,10 @@ int main()
 {
   try
   {
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     tcp::endpoint endpoint(tcp::v4(), 13);
-    tcp::acceptor acceptor(io_service, endpoint);
+    tcp::acceptor acceptor(io_context, endpoint);
 
     for (;;)
     {

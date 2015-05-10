@@ -14,7 +14,7 @@ calculated relative to the current time.
 As a simple example, to perform a synchronous wait operation on a timer using a
 relative time one may write:
 
-  io_service i;
+  io_context i;
   ...
   deadline_timer t(i);
   t.expires_from_now(boost::posix_time::seconds(5));
@@ -25,7 +25,7 @@ timer:
 
   void handler(asio::error_code ec) { ... }
   ...
-  io_service i;
+  io_context i;
   ...
   deadline_timer t(i);
   t.expires_from_now(boost::posix_time::milliseconds(400));

@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/ts/executor.hpp"
-#include "asio/ts/io_service.hpp"
+#include "asio/ts/io_context.hpp"
 #include "asio/ts/timer.hpp"
 #include "asio/ts/buffer.hpp"
 #include "asio/ts/socket.hpp"

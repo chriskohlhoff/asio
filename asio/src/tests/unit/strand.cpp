@@ -17,7 +17,7 @@
 #include "asio/strand.hpp"
 
 #include <sstream>
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/post.hpp"
 #include "asio/thread.hpp"
 #include "unit_test.hpp"
@@ -58,7 +58,7 @@ void increment(int* count)
   ++(*count);
 }
 
-void increment_without_lock(io_service::strand* s, int* count)
+void increment_without_lock(io_context::strand* s, int* count)
 {
   ASIO_CHECK(!s->running_in_this_thread());
 
@@ -71,7 +71,7 @@ void increment_without_lock(io_service::strand* s, int* count)
   ASIO_CHECK(*count == original_count + 1);
 }
 
-void increment_with_lock(io_service::strand* s, int* count)
+void increment_with_lock(io_context::strand* s, int* count)
 {
   ASIO_CHECK(s->running_in_this_thread());
 
@@ -84,24 +84,24 @@ void increment_with_lock(io_service::strand* s, int* count)
   ASIO_CHECK(*count == original_count + 1);
 }
 
-void sleep_increment(io_service* ios, int* count)
+void sleep_increment(io_context* ioc, int* count)
 {
-  timer t(*ios, chronons::seconds(2));
+  timer t(*ioc, chronons::seconds(2));
   t.wait();
 
   ++(*count);
 }
 
-void start_sleep_increments(io_service* ios, io_service::strand* s, int* count)
+void start_sleep_increments(io_context* ioc, io_context::strand* s, int* count)
 {
   // Give all threads a chance to start.
-  timer t(*ios, chronons::seconds(2));
+  timer t(*ioc, chronons::seconds(2));
   t.wait();
 
   // Start three increments.
-  s->post(bindns::bind(sleep_increment, ios, count));
-  s->post(bindns::bind(sleep_increment, ios, count));
-  s->post(bindns::bind(sleep_increment, ios, count));
+  s->post(bindns::bind(sleep_increment, ioc, count));
+  s->post(bindns::bind(sleep_increment, ioc, count));
+  s->post(bindns::bind(sleep_increment, ioc, count));
 }
 
 void throw_exception()
@@ -109,47 +109,47 @@ void throw_exception()
   throw 1;
 }
 
-void io_service_run(io_service* ios)
+void io_context_run(io_context* ioc)
 {
-  ios->run();
+  ioc->run();
 }
 
 void strand_test()
 {
-  io_service ios;
-  io_service::strand s(ios);
+  io_context ioc;
+  io_context::strand s(ioc);
   int count = 0;
 
-  post(ios, bindns::bind(increment_without_lock, &s, &count));
+  post(ioc, bindns::bind(increment_without_lock, &s, &count));
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(count == 0);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
   ASIO_CHECK(count == 1);
 
   count = 0;
-  ios.restart();
+  ioc.restart();
   post(s, bindns::bind(increment_with_lock, &s, &count));
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(count == 0);
 
-  ios.run();
+  ioc.run();
 
   // The run() call will not return until all work has finished.
   ASIO_CHECK(count == 1);
 
   count = 0;
-  ios.restart();
-  post(ios, bindns::bind(start_sleep_increments, &ios, &s, &count));
-  thread thread1(bindns::bind(io_service_run, &ios));
-  thread thread2(bindns::bind(io_service_run, &ios));
+  ioc.restart();
+  post(ioc, bindns::bind(start_sleep_increments, &ioc, &s, &count));
+  thread thread1(bindns::bind(io_context_run, &ioc));
+  thread thread2(bindns::bind(io_context_run, &ioc));
 
   // Check all events run one after another even though there are two threads.
-  timer timer1(ios, chronons::seconds(3));
+  timer timer1(ioc, chronons::seconds(3));
   timer1.wait();
   ASIO_CHECK(count == 0);
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
@@ -175,7 +175,7 @@ void strand_test()
 
   count = 0;
   int exception_count = 0;
-  ios.restart();
+  ioc.restart();
   post(s, throw_exception);
   post(s, bindns::bind(increment, &count));
   post(s, bindns::bind(increment, &count));
@@ -190,7 +190,7 @@ void strand_test()
   {
     try
     {
-      ios.run();
+      ioc.run();
       break;
     }
     catch (int)
@@ -204,12 +204,12 @@ void strand_test()
   ASIO_CHECK(exception_count == 2);
 
   count = 0;
-  ios.restart();
+  ioc.restart();
 
   // Check for clean shutdown when handlers posted through an orphaned strand
   // are abandoned.
   {
-    io_service::strand s2(ios);
+    io_context::strand s2(ioc);
     post(s2, bindns::bind(increment, &count));
     post(s2, bindns::bind(increment, &count));
     post(s2, bindns::bind(increment, &count));

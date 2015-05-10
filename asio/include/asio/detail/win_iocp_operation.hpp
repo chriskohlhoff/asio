@@ -29,7 +29,7 @@
 namespace asio {
 namespace detail {
 
-class win_iocp_io_service;
+class win_iocp_io_context;
 
 // Base class for all operations. A function pointer is used instead of virtual
 // functions to avoid the associated overhead.
@@ -80,7 +80,7 @@ protected:
 
 private:
   friend class op_queue_access;
-  friend class win_iocp_io_service;
+  friend class win_iocp_io_context;
   win_iocp_operation* next_;
   func_type func_;
   long ready_;

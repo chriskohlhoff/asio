@@ -24,13 +24,13 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     tcp::resolver::results_type endpoints =
       resolver.resolve(argv[1], "daytime");
 
-    tcp::socket socket(io_service);
+    tcp::socket socket(io_context);
     asio::connect(socket, endpoints);
 
     for (;;)

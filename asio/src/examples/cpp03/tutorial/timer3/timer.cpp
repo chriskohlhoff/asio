@@ -29,7 +29,7 @@ void print(const asio::error_code& /*e*/,
 
 int main()
 {
-  asio::io_service io;
+  asio::io_context io;
 
   int count = 0;
   asio::deadline_timer t(io, boost::posix_time::seconds(1));

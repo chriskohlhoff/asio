@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
   std::size_t buf_size = static_cast<std::size_t>(std::atoi(argv[4]));
   bool spin = (std::strcmp(argv[5], "spin") == 0);
 
-  asio::io_service io_service;
+  asio::io_context io_context;
 
-  udp::socket socket(io_service, udp::endpoint(udp::v4(), 0));
+  udp::socket socket(io_context, udp::endpoint(udp::v4(), 0));
 
   if (spin)
   {

@@ -19,10 +19,10 @@ enum { max_length = 1024 };
 class client
 {
 public:
-  client(asio::io_service& io_service,
+  client(asio::io_context& io_context,
       asio::ssl::context& context,
       asio::ip::tcp::resolver::results_type endpoints)
-    : socket_(io_service, context)
+    : socket_(io_context, context)
   {
     socket_.set_verify_mode(asio::ssl::verify_peer);
     socket_.set_verify_callback(
@@ -134,18 +134,18 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
-    asio::ip::tcp::resolver resolver(io_service);
+    asio::ip::tcp::resolver resolver(io_context);
     asio::ip::tcp::resolver::results_type endpoints =
       resolver.resolve(argv[1], argv[2]);
 
     asio::ssl::context ctx(asio::ssl::context::sslv23);
     ctx.load_verify_file("ca.pem");
 
-    client c(io_service, ctx, endpoints);
+    client c(io_context, ctx, endpoints);
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

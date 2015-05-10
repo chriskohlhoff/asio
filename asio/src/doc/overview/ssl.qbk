@@ -22,7 +22,7 @@ initialisation may look something like:
 
 To use SSL with a TCP socket, one may write:
 
-  ssl::stream<ip::tcp::socket> ssl_sock(my_io_service, ctx);
+  ssl::stream<ip::tcp::socket> ssl_sock(my_io_context, ctx);
 
 To perform socket-specific operations, such as establishing an outbound
 connection or accepting an incoming one, the underlying socket must first be
@@ -36,7 +36,7 @@ In some use cases the underlying stream object will need to have a longer
 lifetime than the SSL stream, in which case the template parameter should be a
 reference to the stream type:
 
-  ip::tcp::socket sock(my_io_service);
+  ip::tcp::socket sock(my_io_context);
   ssl::stream<ip::tcp::socket&> ssl_sock(sock, ctx);
 
 SSL handshaking must be performed prior to transmitting or receiving data over
@@ -82,9 +82,9 @@ according to the rules used by HTTPS:
   ctx.set_default_verify_paths();
 
   // Open a socket and connect it to the remote host.
-  asio::io_service io_service;
-  ssl_socket sock(io_service, ctx);
-  tcp::resolver resolver(io_service);
+  asio::io_context io_context;
+  ssl_socket sock(io_context, ctx);
+  tcp::resolver resolver(io_context);
   tcp::resolver::query query("host.name", "https");
   asio::connect(sock.lowest_layer(), resolver.resolve(query));
   sock.lowest_layer().set_option(tcp::no_delay(true));

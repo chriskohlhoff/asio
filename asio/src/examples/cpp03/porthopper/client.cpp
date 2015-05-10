@@ -37,19 +37,19 @@ int main(int argc, char* argv[])
     std::string host_name = argv[1];
     std::string port = argv[2];
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     // Determine the location of the server.
-    tcp::resolver resolver(io_service);
+    tcp::resolver resolver(io_context);
     tcp::endpoint remote_endpoint = *resolver.resolve(host_name, port).begin();
 
     // Establish the control connection to the server.
-    tcp::socket control_socket(io_service);
+    tcp::socket control_socket(io_context);
     control_socket.connect(remote_endpoint);
 
     // Create a datagram socket to receive data from the server.
     boost::shared_ptr<udp::socket> data_socket(
-        new udp::socket(io_service, udp::endpoint(udp::v4(), 0)));
+        new udp::socket(io_context, udp::endpoint(udp::v4(), 0)));
 
     // Determine what port we will receive data on.
     udp::endpoint data_endpoint = data_socket->local_endpoint();
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
       // Create the new data socket.
       boost::shared_ptr<udp::socket> new_data_socket(
-          new udp::socket(io_service, udp::endpoint(udp::v4(), 0)));
+          new udp::socket(io_context, udp::endpoint(udp::v4(), 0)));
 
       // Determine the new port we will use to receive data.
       udp::endpoint new_data_endpoint = new_data_socket->local_endpoint();
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
         // Even though we're performing a renegotation, we want to continue
         // receiving data as smoothly as possible. Therefore we will continue to
         // try to receive a frame from the server on the old data socket. If we
-        // receive a frame on this socket we will interrupt the io_service,
+        // receive a frame on this socket we will interrupt the io_context,
         // print the frame, and resume waiting for the other operations to
         // complete.
         frame f2;
@@ -137,19 +137,19 @@ int main(int argc, char* argv[])
                 lambda::if_(!lambda::_1)
                 [
                   // We have successfully received a frame on the old data
-                  // socket. Stop the io_service so that we can print it.
-                  lambda::bind(&asio::io_service::stop, &io_service),
+                  // socket. Stop the io_context so that we can print it.
+                  lambda::bind(&asio::io_context::stop, &io_context),
                   lambda::var(done) = false
                 ]
               ));
         }
 
         // Run the operations in parallel. This will block until all operations
-        // have finished, or until the io_service is interrupted. (No threads!)
-        io_service.restart();
-        io_service.run();
+        // have finished, or until the io_context is interrupted. (No threads!)
+        io_context.restart();
+        io_context.run();
 
-        // If the io_service.run() was interrupted then we have received a frame
+        // If the io_context.run() was interrupted then we have received a frame
         // on the old data socket. We need to keep waiting for the renegotation
         // operations to complete.
         if (!done)

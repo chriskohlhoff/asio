@@ -50,9 +50,9 @@ private:
 class session
 {
 public:
-  session(asio::io_service& ios, size_t block_size, stats& s)
-    : strand_(ios),
-      socket_(ios),
+  session(asio::io_context& ioc, size_t block_size, stats& s)
+    : strand_(ioc),
+      socket_(ioc),
       block_size_(block_size),
       read_data_(new char[block_size]),
       read_data_length_(0),
@@ -173,7 +173,7 @@ private:
   }
 
 private:
-  asio::io_service::strand strand_;
+  asio::io_context::strand strand_;
   asio::ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
@@ -190,11 +190,11 @@ private:
 class client
 {
 public:
-  client(asio::io_service& ios,
+  client(asio::io_context& ioc,
       const asio::ip::tcp::resolver::results_type endpoints,
       size_t block_size, size_t session_count, int timeout)
-    : io_service_(ios),
-      stop_timer_(ios),
+    : io_context_(ioc),
+      stop_timer_(ioc),
       sessions_(),
       stats_()
   {
@@ -203,7 +203,7 @@ public:
 
     for (size_t i = 0; i < session_count; ++i)
     {
-      session* new_session = new session(io_service_, block_size, stats_);
+      session* new_session = new session(io_context_, block_size, stats_);
       new_session->start(endpoints);
       sessions_.push_back(new_session);
     }
@@ -227,7 +227,7 @@ public:
   }
 
 private:
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
   asio::deadline_timer stop_timer_;
   std::list<session*> sessions_;
   stats stats_;
@@ -252,23 +252,23 @@ int main(int argc, char* argv[])
     size_t session_count = atoi(argv[5]);
     int timeout = atoi(argv[6]);
 
-    asio::io_service ios;
+    asio::io_context ioc;
 
-    asio::ip::tcp::resolver r(ios);
+    asio::ip::tcp::resolver r(ioc);
     asio::ip::tcp::resolver::results_type endpoints =
       r.resolve(host, port);
 
-    client c(ios, endpoints, block_size, session_count, timeout);
+    client c(ioc, endpoints, block_size, session_count, timeout);
 
     std::list<asio::thread*> threads;
     while (--thread_count > 0)
     {
       asio::thread* new_thread = new asio::thread(
-          boost::bind(&asio::io_service::run, &ios));
+          boost::bind(&asio::io_context::run, &ioc));
       threads.push_back(new_thread);
     }
 
-    ios.run();
+    ioc.run();
 
     while (!threads.empty())
     {

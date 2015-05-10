@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/memory.hpp"
@@ -61,8 +61,8 @@ public:
   };
 
   // Constructor.
-  deadline_timer_service(asio::io_service& io_service)
-    : scheduler_(asio::use_service<timer_scheduler>(io_service))
+  deadline_timer_service(asio::io_context& io_context)
+    : scheduler_(asio::use_service<timer_scheduler>(io_context))
   {
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);

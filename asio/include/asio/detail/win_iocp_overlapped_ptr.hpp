@@ -19,12 +19,12 @@
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/win_iocp_overlapped_op.hpp"
-#include "asio/detail/win_iocp_io_service.hpp"
+#include "asio/detail/win_iocp_io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -46,11 +46,11 @@ public:
   // Construct an win_iocp_overlapped_ptr to contain the specified handler.
   template <typename Handler>
   explicit win_iocp_overlapped_ptr(
-      asio::io_service& io_service, ASIO_MOVE_ARG(Handler) handler)
+      asio::io_context& io_context, ASIO_MOVE_ARG(Handler) handler)
     : ptr_(0),
       iocp_service_(0)
   {
-    this->reset(io_service, ASIO_MOVE_CAST(Handler)(handler));
+    this->reset(io_context, ASIO_MOVE_CAST(Handler)(handler));
   }
 
   // Destructor automatically frees the OVERLAPPED object unless released.
@@ -74,21 +74,21 @@ public:
   // Reset to contain the specified handler, freeing any current OVERLAPPED
   // object.
   template <typename Handler>
-  void reset(asio::io_service& io_service, Handler handler)
+  void reset(asio::io_context& io_context, Handler handler)
   {
     typedef win_iocp_overlapped_op<Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((io_service, *p.p,
-          "io_service", &io_service.impl_, 0, "overlapped"));
+    ASIO_HANDLER_CREATION((io_context, *p.p,
+          "io_context", &io_context.impl_, 0, "overlapped"));
 
-    io_service.impl_.work_started();
+    io_context.impl_.work_started();
     reset();
     ptr_ = p.p;
     p.v = p.p = 0;
-    iocp_service_ = &io_service.impl_;
+    iocp_service_ = &io_context.impl_;
   }
 
   // Get the contained OVERLAPPED object.
@@ -130,7 +130,7 @@ public:
 
 private:
   win_iocp_operation* ptr_;
-  win_iocp_io_service* iocp_service_;
+  win_iocp_io_context* iocp_service_;
 };
 
 } // namespace detail

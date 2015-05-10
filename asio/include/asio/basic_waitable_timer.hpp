@@ -51,7 +51,7 @@ namespace asio {
  * Performing a blocking wait (C++11):
  * @code
  * // Construct a timer without setting an expiry time.
- * asio::steady_timer timer(io_service);
+ * asio::steady_timer timer(io_context);
  *
  * // Set an expiry time relative to now.
  * timer.expires_after(std::chrono::seconds(5));
@@ -74,7 +74,7 @@ namespace asio {
  * ...
  *
  * // Construct a timer with an absolute expiry time.
- * asio::steady_timer timer(io_service,
+ * asio::steady_timer timer(io_context,
  *     std::chrono::steady_clock::now() + std::chrono::seconds(60));
  *
  * // Start an asynchronous wait.
@@ -145,11 +145,11 @@ public:
    * expires_at() or expires_after() functions must be called to set an expiry
    * time before the timer can be waited on.
    *
-   * @param io_service The io_service object that the timer will use to dispatch
+   * @param io_context The io_context object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    */
-  explicit basic_waitable_timer(asio::io_service& io_service)
-    : basic_io_object<WaitableTimerService>(io_service)
+  explicit basic_waitable_timer(asio::io_context& io_context)
+    : basic_io_object<WaitableTimerService>(io_context)
   {
   }
 
@@ -157,15 +157,15 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param io_service The io_service object that the timer will use to dispatch
+   * @param io_context The io_context object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, expressed
    * as an absolute time.
    */
-  basic_waitable_timer(asio::io_service& io_service,
+  basic_waitable_timer(asio::io_context& io_context,
       const time_point& expiry_time)
-    : basic_io_object<WaitableTimerService>(io_service)
+    : basic_io_object<WaitableTimerService>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_at(this->get_implementation(), expiry_time, ec);
@@ -176,15 +176,15 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param io_service The io_service object that the timer will use to dispatch
+   * @param io_context The io_context object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, relative to
    * now.
    */
-  basic_waitable_timer(asio::io_service& io_service,
+  basic_waitable_timer(asio::io_context& io_context,
       const duration& expiry_time)
-    : basic_io_object<WaitableTimerService>(io_service)
+    : basic_io_object<WaitableTimerService>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_after(
@@ -201,7 +201,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_waitable_timer(io_service&) constructor.
+   * constructed using the @c basic_waitable_timer(io_context&) constructor.
    */
   basic_waitable_timer(basic_waitable_timer&& other)
     : basic_io_object<WaitableTimerService>(
@@ -217,7 +217,7 @@ public:
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_waitable_timer(io_service&) constructor.
+   * constructed using the @c basic_waitable_timer(io_context&) constructor.
    */
   basic_waitable_timer& operator=(basic_waitable_timer&& other)
   {
@@ -611,7 +611,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * asio::io_service::post().
+   * asio::io_context::post().
    */
   template <typename WaitHandler>
   ASIO_INITFN_RESULT_TYPE(WaitHandler,

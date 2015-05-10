@@ -112,8 +112,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/timer_queue_set.ipp \
 	asio/detail/impl/win_event.ipp \
 	asio/detail/impl/win_iocp_handle_service.ipp \
-	asio/detail/impl/win_iocp_io_service.hpp \
-	asio/detail/impl/win_iocp_io_service.ipp \
+	asio/detail/impl/win_iocp_io_context.hpp \
+	asio/detail/impl/win_iocp_io_context.ipp \
 	asio/detail/impl/win_iocp_serial_port_service.ipp \
 	asio/detail/impl/win_iocp_socket_service_base.ipp \
 	asio/detail/impl/win_mutex.ipp \
@@ -235,7 +235,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_iocp_handle_read_op.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
 	asio/detail/win_iocp_handle_write_op.hpp \
-	asio/detail/win_iocp_io_service.hpp \
+	asio/detail/win_iocp_io_context.hpp \
 	asio/detail/win_iocp_null_buffers_op.hpp \
 	asio/detail/win_iocp_operation.hpp \
 	asio/detail/win_iocp_overlapped_op.hpp \
@@ -301,8 +301,8 @@ nobase_include_HEADERS = \
 	asio/impl/executor.hpp \
 	asio/impl/executor.ipp \
 	asio/impl/handler_alloc_hook.ipp \
-	asio/impl/io_service.hpp \
-	asio/impl/io_service.ipp \
+	asio/impl/io_context.hpp \
+	asio/impl/io_context.ipp \
 	asio/impl/post.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
@@ -319,6 +319,8 @@ nobase_include_HEADERS = \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
+	asio/io_context_strand.hpp \
+	asio/io_context.hpp \
 	asio/io_service_strand.hpp \
 	asio/io_service.hpp \
 	asio/ip/address.hpp \
@@ -432,7 +434,7 @@ nobase_include_HEADERS = \
 	asio/ts/buffer.hpp \
 	asio/ts/executor.hpp \
 	asio/ts/internet.hpp \
-	asio/ts/io_service.hpp \
+	asio/ts/io_context.hpp \
 	asio/ts/networking.hpp \
 	asio/ts/socket.hpp \
 	asio/ts/thread_pool.hpp \

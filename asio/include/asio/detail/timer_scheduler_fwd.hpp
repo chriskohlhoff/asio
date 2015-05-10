@@ -23,7 +23,7 @@ namespace detail {
 #if defined(ASIO_WINDOWS_RUNTIME)
 typedef class winrt_timer_scheduler timer_scheduler;
 #elif defined(ASIO_HAS_IOCP)
-typedef class win_iocp_io_service timer_scheduler;
+typedef class win_iocp_io_context timer_scheduler;
 #elif defined(ASIO_HAS_EPOLL)
 typedef class epoll_reactor timer_scheduler;
 #elif defined(ASIO_HAS_KQUEUE)

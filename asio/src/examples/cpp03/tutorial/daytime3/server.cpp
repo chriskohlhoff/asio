@@ -31,9 +31,9 @@ class tcp_connection
 public:
   typedef boost::shared_ptr<tcp_connection> pointer;
 
-  static pointer create(asio::io_service& io_service)
+  static pointer create(asio::io_context& io_context)
   {
-    return pointer(new tcp_connection(io_service));
+    return pointer(new tcp_connection(io_context));
   }
 
   tcp::socket& socket()
@@ -52,8 +52,8 @@ public:
   }
 
 private:
-  tcp_connection(asio::io_service& io_service)
-    : socket_(io_service)
+  tcp_connection(asio::io_context& io_context)
+    : socket_(io_context)
   {
   }
 
@@ -69,8 +69,8 @@ private:
 class tcp_server
 {
 public:
-  tcp_server(asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 13))
+  tcp_server(asio::io_context& io_context)
+    : acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
   {
     start_accept();
   }
@@ -104,9 +104,9 @@ int main()
 {
   try
   {
-    asio::io_service io_service;
-    tcp_server server(io_service);
-    io_service.run();
+    asio::io_context io_context;
+    tcp_server server(io_context);
+    io_context.run();
   }
   catch (std::exception& e)
   {

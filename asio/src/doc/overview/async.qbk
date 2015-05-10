@@ -52,7 +52,7 @@ a completed event to its caller.]
 
 [:Calls the asynchronous event demultiplexer to dequeue events, and dispatches
 the completion handler (i.e. invokes the function object) associated with the
-event. This abstraction is represented by the `io_service` class.]
+event. This abstraction is represented by the `io_context` class.]
 
 [mdash] Initiator
 
@@ -97,7 +97,7 @@ calling an overlapped function such as `AcceptEx`.]
 [mdash] Completion Event Queue
 
 [:This is implemented by the operating system, and is associated with an I/O
-completion port. There is one I/O completion port for each `io_service`
+completion port. There is one I/O completion port for each `io_context`
 instance.]
 
 [mdash] Asynchronous Event Demultiplexer

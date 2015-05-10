@@ -52,9 +52,9 @@ public:
   typedef asio::ip::basic_resolver_results<Protocol> results_type;
 
   // Constructor.
-  winrt_resolver_service(asio::io_service& io_service)
-    : io_service_(use_service<io_service_impl>(io_service)),
-      async_manager_(use_service<winrt_async_manager>(io_service))
+  winrt_resolver_service(asio::io_context& io_context)
+    : io_context_(use_service<io_context_impl>(io_context)),
+      async_manager_(use_service<winrt_async_manager>(io_context))
   {
   }
 
@@ -69,7 +69,7 @@ public:
   }
 
   // Perform any fork-related housekeeping.
-  void fork_service(asio::io_service::fork_event)
+  void fork_service(asio::io_context::fork_event)
   {
   }
 
@@ -129,7 +129,7 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(query, handler);
 
-    ASIO_HANDLER_CREATION((io_service_.context(),
+    ASIO_HANDLER_CREATION((io_context_.context(),
           *p.p, "resolver", &impl, 0, "async_resolve"));
     (void)impl;
 
@@ -145,7 +145,7 @@ public:
     {
       p.p->ec_ = asio::error_code(
           e->HResult, asio::system_category());
-      io_service_.post_immediate_completion(p.p, is_continuation);
+      io_context_.post_immediate_completion(p.p, is_continuation);
       p.v = p.p = 0;
     }
   }
@@ -165,12 +165,12 @@ public:
   {
     asio::error_code ec = asio::error::operation_not_supported;
     const results_type results;
-    io_service_.get_io_service().post(
+    io_context_.get_io_context().post(
         detail::bind_handler(handler, ec, results));
   }
 
 private:
-  io_service_impl& io_service_;
+  io_context_impl& io_context_;
   winrt_async_manager& async_manager_;
 };
 

@@ -12,6 +12,6 @@
 
 namespace services {
 
-asio::io_service::id logger_service::id;
+asio::io_context::id logger_service::id;
 
 } // namespace services

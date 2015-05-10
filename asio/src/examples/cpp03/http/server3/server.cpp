@@ -19,8 +19,8 @@ namespace server3 {
 server::server(const std::string& address, const std::string& port,
     const std::string& doc_root, std::size_t thread_pool_size)
   : thread_pool_size_(thread_pool_size),
-    signals_(io_service_),
-    acceptor_(io_service_),
+    signals_(io_context_),
+    acceptor_(io_context_),
     new_connection_(),
     request_handler_(doc_root)
 {
@@ -35,7 +35,7 @@ server::server(const std::string& address, const std::string& port,
   signals_.async_wait(boost::bind(&server::handle_stop, this));
 
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-  asio::ip::tcp::resolver resolver(io_service_);
+  asio::ip::tcp::resolver resolver(io_context_);
   asio::ip::tcp::endpoint endpoint =
     *resolver.resolve(address, port).begin();
   acceptor_.open(endpoint.protocol());
@@ -48,12 +48,12 @@ server::server(const std::string& address, const std::string& port,
 
 void server::run()
 {
-  // Create a pool of threads to run all of the io_services.
+  // Create a pool of threads to run all of the io_contexts.
   std::vector<boost::shared_ptr<asio::thread> > threads;
   for (std::size_t i = 0; i < thread_pool_size_; ++i)
   {
     boost::shared_ptr<asio::thread> thread(new asio::thread(
-          boost::bind(&asio::io_service::run, &io_service_)));
+          boost::bind(&asio::io_context::run, &io_context_)));
     threads.push_back(thread);
   }
 
@@ -64,7 +64,7 @@ void server::run()
 
 void server::start_accept()
 {
-  new_connection_.reset(new connection(io_service_, request_handler_));
+  new_connection_.reset(new connection(io_context_, request_handler_));
   acceptor_.async_accept(new_connection_->socket(),
       boost::bind(&server::handle_accept, this,
         asio::placeholders::error));
@@ -82,7 +82,7 @@ void server::handle_accept(const asio::error_code& e)
 
 void server::handle_stop()
 {
-  io_service_.stop();
+  io_context_.stop();
 }
 
 } // namespace server3

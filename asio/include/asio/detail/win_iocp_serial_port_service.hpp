@@ -22,7 +22,7 @@
 
 #include <string>
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -42,7 +42,7 @@ public:
 
   // Constructor.
   ASIO_DECL win_iocp_serial_port_service(
-      asio::io_service& io_service);
+      asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();

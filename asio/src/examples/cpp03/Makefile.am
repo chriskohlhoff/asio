@@ -116,7 +116,7 @@ http_server_http_server_SOURCES = \
 	http/server/server.cpp
 http_server2_http_server_SOURCES = \
 	http/server2/connection.cpp \
-	http/server2/io_service_pool.cpp \
+	http/server2/io_context_pool.cpp \
 	http/server2/main.cpp \
 	http/server2/mime_types.cpp \
 	http/server2/reply.cpp \
@@ -207,7 +207,7 @@ EXTRA_DIST = \
 	http/server/request_parser.hpp \
 	http/server/server.hpp \
 	http/server2/connection.hpp \
-	http/server2/io_service_pool.hpp \
+	http/server2/io_context_pool.hpp \
 	http/server2/header.hpp \
 	http/server2/mime_types.hpp \
 	http/server2/reply.hpp \

@@ -35,7 +35,7 @@ inline strand_service::strand_impl::strand_impl()
 
 struct strand_service::on_dispatch_exit
 {
-  io_service_impl* io_service_;
+  io_context_impl* io_context_;
   strand_impl* impl_;
 
   ~on_dispatch_exit()
@@ -46,7 +46,7 @@ struct strand_service::on_dispatch_exit
     impl_->mutex_.unlock();
 
     if (more_handlers)
-      io_service_->post_immediate_completion(impl_, false);
+      io_context_->post_immediate_completion(impl_, false);
   }
 };
 
@@ -81,15 +81,15 @@ void strand_service::dispatch(strand_service::implementation_type& impl,
     call_stack<strand_impl>::context ctx(impl);
 
     // Ensure the next handler, if any, is scheduled on block exit.
-    on_dispatch_exit on_exit = { &io_service_, impl };
+    on_dispatch_exit on_exit = { &io_context_, impl };
     (void)on_exit;
 
     completion_handler<Handler>::do_complete(
-        &io_service_, o, asio::error_code(), 0);
+        &io_context_, o, asio::error_code(), 0);
   }
 }
 
-// Request the io_service to invoke the given handler and return immediately.
+// Request the io_context to invoke the given handler and return immediately.
 template <typename Handler>
 void strand_service::post(strand_service::implementation_type& impl,
     Handler& handler)

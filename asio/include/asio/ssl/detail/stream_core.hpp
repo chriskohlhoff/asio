@@ -37,10 +37,10 @@ struct stream_core
   // sufficient to hold the largest possible TLS record.
   enum { max_tls_record_size = 17 * 1024 };
 
-  stream_core(SSL_CTX* context, asio::io_service& io_service)
+  stream_core(SSL_CTX* context, asio::io_context& io_context)
     : engine_(context),
-      pending_read_(io_service),
-      pending_write_(io_service),
+      pending_read_(io_context),
+      pending_write_(io_context),
       output_buffer_space_(max_tls_record_size),
       output_buffer_(asio::buffer(output_buffer_space_)),
       input_buffer_space_(max_tls_record_size),

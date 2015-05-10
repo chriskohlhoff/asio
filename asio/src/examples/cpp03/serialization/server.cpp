@@ -25,8 +25,8 @@ class server
 public:
   /// Constructor opens the acceptor and starts waiting for the first incoming
   /// connection.
-  server(asio::io_service& io_service, unsigned short port)
-    : acceptor_(io_service,
+  server(asio::io_context& io_context, unsigned short port)
+    : acceptor_(io_context,
         asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
   {
     // Create the data to be sent to each client.
@@ -55,7 +55,7 @@ public:
     stocks_.push_back(s);
 
     // Start an accept operation for a new connection.
-    connection_ptr new_conn(new connection(acceptor_.get_io_service()));
+    connection_ptr new_conn(new connection(acceptor_.get_io_context()));
     acceptor_.async_accept(new_conn->socket(),
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error, new_conn));
@@ -75,7 +75,7 @@ public:
     }
 
     // Start an accept operation for a new connection.
-    connection_ptr new_conn(new connection(acceptor_.get_io_service()));
+    connection_ptr new_conn(new connection(acceptor_.get_io_context()));
     acceptor_.async_accept(new_conn->socket(),
         boost::bind(&server::handle_accept, this,
           asio::placeholders::error, new_conn));
@@ -110,9 +110,9 @@ int main(int argc, char* argv[])
     }
     unsigned short port = boost::lexical_cast<unsigned short>(argv[1]);
 
-    asio::io_service io_service;
-    s11n_example::server server(io_service, port);
-    io_service.run();
+    asio::io_context io_context;
+    s11n_example::server server(io_context, port);
+    io_context.run();
   }
   catch (std::exception& e)
   {

@@ -15,15 +15,15 @@
 namespace http {
 namespace server4 {
 
-server::server(asio::io_service& io_service,
+server::server(asio::io_context& io_context,
     const std::string& address, const std::string& port,
     boost::function<void(const request&, reply&)> request_handler)
   : request_handler_(request_handler)
 {
-  tcp::resolver resolver(io_service);
+  tcp::resolver resolver(io_context);
   asio::ip::tcp::endpoint endpoint =
     *resolver.resolve(address, port).begin();
-  acceptor_.reset(new tcp::acceptor(io_service, endpoint));
+  acceptor_.reset(new tcp::acceptor(io_context, endpoint));
 }
 
 // Enable the pseudo-keywords reenter, yield and fork.
@@ -50,7 +50,7 @@ void server::operator()(asio::error_code ec, std::size_t length)
         // Accept a new connection. The "yield" pseudo-keyword saves the current
         // line number and exits the coroutine's "reenter" block. We use the
         // server coroutine as the completion handler for the async_accept
-        // operation. When the asynchronous operation completes, the io_service
+        // operation. When the asynchronous operation completes, the io_context
         // invokes the function call operator, we "reenter" the coroutine, and
         // then control resumes at the following line.
         yield acceptor_->async_accept(*socket_, *this);

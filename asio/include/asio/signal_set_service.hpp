@@ -19,7 +19,7 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -28,7 +28,7 @@ namespace asio {
 /// Default service implementation for a signal set.
 class signal_set_service
 #if defined(GENERATING_DOCUMENTATION)
-  : public asio::io_service::service
+  : public asio::io_context::service
 #else
   : public asio::detail::service_base<signal_set_service>
 #endif
@@ -36,7 +36,7 @@ class signal_set_service
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 #endif
 
 public:
@@ -47,10 +47,10 @@ public:
   typedef detail::signal_set_service::implementation_type implementation_type;
 #endif
 
-  /// Construct a new signal set service for the specified io_service.
-  explicit signal_set_service(asio::io_service& io_service)
-    : asio::detail::service_base<signal_set_service>(io_service),
-      service_impl_(io_service)
+  /// Construct a new signal set service for the specified io_context.
+  explicit signal_set_service(asio::io_context& io_context)
+    : asio::detail::service_base<signal_set_service>(io_context),
+      service_impl_(io_context)
   {
   }
 
@@ -117,7 +117,7 @@ private:
   }
 
   // Perform any fork-related housekeeping.
-  void fork_service(asio::io_service::fork_event event)
+  void fork_service(asio::io_context::fork_event event)
   {
     service_impl_.fork_service(event);
   }

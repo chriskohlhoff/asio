@@ -22,7 +22,7 @@ These classes implement the [link asio.reference.Protocol protocol type
 requirements], but allow the user to specify the address family (e.g. `AF_INET`)
 and protocol type (e.g. `IPPROTO_TCP`) at runtime. For example:
 
-  asio::generic::stream_protocol::socket my_socket(my_io_service);
+  asio::generic::stream_protocol::socket my_socket(my_io_context);
   my_socket.open(asio::generic::stream_protocol(AF_INET, IPPROTO_TCP));
   ...
 
@@ -38,7 +38,7 @@ endpoint] type requirements:
 
 The conversion is implicit, so as to support the following use cases:
 
-  asio::generic::stream_protocol::socket my_socket(my_io_service);
+  asio::generic::stream_protocol::socket my_socket(my_io_context);
   asio::ip::tcp::endpoint my_endpoint = ...;
   my_socket.connect(my_endpoint);
 
@@ -53,14 +53,14 @@ type. If the protocol conversion is valid:
 
 then the corresponding socket conversion is allowed:
 
-  Protocol1::socket my_socket1(my_io_service);
+  Protocol1::socket my_socket1(my_io_context);
   ...
   Protocol2::socket my_socket2(std::move(my_socket1));
 
 For example, one possible conversion is from a TCP socket to a generic
 stream-oriented socket:
 
-  asio::ip::tcp::socket my_socket1(my_io_service);
+  asio::ip::tcp::socket my_socket1(my_io_context);
   ...
   asio::generic::stream_protocol::socket my_socket2(std::move(my_socket1));
 
@@ -78,9 +78,9 @@ corresponding protocol conversion is valid. For example, the following is
 supported because the protocol `asio::ip::tcp` is convertible to
 `asio::generic::stream_protocol`:
 
-  asio::ip::tcp::acceptor my_acceptor(my_io_service);
+  asio::ip::tcp::acceptor my_acceptor(my_io_context);
   ...
-  asio::generic::stream_protocol::socket my_socket(my_io_service);
+  asio::generic::stream_protocol::socket my_socket(my_io_context);
   my_acceptor.accept(my_socket);
 
 [heading See Also]

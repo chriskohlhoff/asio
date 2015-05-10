@@ -25,7 +25,7 @@
 #include "asio/detail/cstdint.hpp"
 #include "asio/detail/win_iocp_handle_service.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -35,7 +35,7 @@ namespace windows {
 /// Default service implementation for a random-access handle.
 class random_access_handle_service
 #if defined(GENERATING_DOCUMENTATION)
-  : public asio::io_service::service
+  : public asio::io_context::service
 #else
   : public asio::detail::service_base<random_access_handle_service>
 #endif
@@ -43,7 +43,7 @@ class random_access_handle_service
 public:
 #if defined(GENERATING_DOCUMENTATION)
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 #endif
 
 private:
@@ -65,11 +65,11 @@ public:
   typedef service_impl_type::native_handle_type native_handle_type;
 #endif
 
-  /// Construct a new random-access handle service for the specified io_service.
-  explicit random_access_handle_service(asio::io_service& io_service)
+  /// Construct a new random-access handle service for the specified io_context.
+  explicit random_access_handle_service(asio::io_context& io_context)
     : asio::detail::service_base<
-        random_access_handle_service>(io_service),
-      service_impl_(io_service)
+        random_access_handle_service>(io_context),
+      service_impl_(io_context)
   {
   }
 

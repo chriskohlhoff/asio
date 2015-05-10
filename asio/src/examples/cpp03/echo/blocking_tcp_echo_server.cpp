@@ -44,12 +44,12 @@ void session(socket_ptr sock)
   }
 }
 
-void server(asio::io_service& io_service, unsigned short port)
+void server(asio::io_context& io_context, unsigned short port)
 {
-  tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
+  tcp::acceptor a(io_context, tcp::endpoint(tcp::v4(), port));
   for (;;)
   {
-    socket_ptr sock(new tcp::socket(io_service));
+    socket_ptr sock(new tcp::socket(io_context));
     a.accept(*sock);
     asio::thread t(boost::bind(session, sock));
   }
@@ -65,10 +65,10 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     using namespace std; // For atoi.
-    server(io_service, atoi(argv[1]));
+    server(io_context, atoi(argv[1]));
   }
   catch (std::exception& e)
   {

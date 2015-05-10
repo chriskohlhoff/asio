@@ -8,7 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <asio/io_service.hpp>
+#include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/signal_set.hpp>
 #include <asio/write.hpp>
@@ -25,11 +25,11 @@ using asio::ip::tcp;
 class server
 {
 public:
-  server(asio::io_service& io_service, unsigned short port)
-    : io_service_(io_service),
-      signal_(io_service, SIGCHLD),
-      acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
-      socket_(io_service)
+  server(asio::io_context& io_context, unsigned short port)
+    : io_context_(io_context),
+      signal_(io_context, SIGCHLD),
+      acceptor_(io_context, tcp::endpoint(tcp::v4(), port)),
+      socket_(io_context)
   {
     start_signal_wait();
     start_accept();
@@ -65,17 +65,17 @@ private:
   {
     if (!ec)
     {
-      // Inform the io_service that we are about to fork. The io_service cleans
+      // Inform the io_context that we are about to fork. The io_context cleans
       // up any internal resources, such as threads, that may interfere with
       // forking.
-      io_service_.notify_fork(asio::io_service::fork_prepare);
+      io_context_.notify_fork(asio::io_context::fork_prepare);
 
       if (fork() == 0)
       {
-        // Inform the io_service that the fork is finished and that this is the
-        // child process. The io_service uses this opportunity to create any
+        // Inform the io_context that the fork is finished and that this is the
+        // child process. The io_context uses this opportunity to create any
         // internal file descriptors that must be private to the new process.
-        io_service_.notify_fork(asio::io_service::fork_child);
+        io_context_.notify_fork(asio::io_context::fork_child);
 
         // The child won't be accepting new connections, so we can close the
         // acceptor. It remains open in the parent.
@@ -88,11 +88,11 @@ private:
       }
       else
       {
-        // Inform the io_service that the fork is finished (or failed) and that
-        // this is the parent process. The io_service uses this opportunity to
+        // Inform the io_context that the fork is finished (or failed) and that
+        // this is the parent process. The io_context uses this opportunity to
         // recreate any internal resources that were cleaned up during
         // preparation for the fork.
-        io_service_.notify_fork(asio::io_service::fork_parent);
+        io_context_.notify_fork(asio::io_context::fork_parent);
 
         socket_.close();
         start_accept();
@@ -129,7 +129,7 @@ private:
       start_read();
   }
 
-  asio::io_service& io_service_;
+  asio::io_context& io_context_;
   asio::signal_set signal_;
   tcp::acceptor acceptor_;
   tcp::socket socket_;
@@ -146,12 +146,12 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_service io_service;
+    asio::io_context io_context;
 
     using namespace std; // For atoi.
-    server s(io_service, atoi(argv[1]));
+    server s(io_context, atoi(argv[1]));
 
-    io_service.run();
+    io_context.run();
   }
   catch (std::exception& e)
   {

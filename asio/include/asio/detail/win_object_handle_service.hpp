@@ -24,7 +24,7 @@
 #include "asio/detail/memory.hpp"
 #include "asio/detail/wait_handler.hpp"
 #include "asio/error.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -79,7 +79,7 @@ public:
 
   // Constructor.
   ASIO_DECL win_object_handle_service(
-      asio::io_service& io_service);
+      asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown_service();
@@ -137,7 +137,7 @@ public:
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler);
 
-    ASIO_HANDLER_CREATION((io_service_.context(), *p.p, "object_handle",
+    ASIO_HANDLER_CREATION((io_context_.context(), *p.p, "object_handle",
           &impl, reinterpret_cast<uintmax_t>(impl.wait_handle_), "async_wait"));
 
     start_wait_op(impl, p.p);
@@ -156,8 +156,8 @@ private:
   static ASIO_DECL VOID CALLBACK wait_callback(
       PVOID param, BOOLEAN timeout);
 
-  // The io_service implementation used to post completions.
-  io_service_impl& io_service_;
+  // The io_context implementation used to post completions.
+  io_context_impl& io_context_;
 
   // Mutex to protect access to internal state.
   mutex mutex_;

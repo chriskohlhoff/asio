@@ -16,7 +16,7 @@
 class printer
 {
 public:
-  printer(asio::io_service& io)
+  printer(asio::io_context& io)
     : strand_(io),
       timer1_(io, boost::posix_time::seconds(1)),
       timer2_(io, boost::posix_time::seconds(1)),
@@ -63,7 +63,7 @@ public:
   }
 
 private:
-  asio::io_service::strand strand_;
+  asio::io_context::strand strand_;
   asio::deadline_timer timer1_;
   asio::deadline_timer timer2_;
   int count_;
@@ -71,9 +71,9 @@ private:
 
 int main()
 {
-  asio::io_service io;
+  asio::io_context io;
   printer p(io);
-  asio::thread t(boost::bind(&asio::io_service::run, &io));
+  asio::thread t(boost::bind(&asio::io_context::run, &io));
   io.run();
   t.join();
 

@@ -30,8 +30,8 @@ namespace asio {
 namespace detail {
 
 reactive_descriptor_service::reactive_descriptor_service(
-    asio::io_service& io_service)
-  : reactor_(asio::use_service<reactor>(io_service))
+    asio::io_context& io_context)
+  : reactor_(asio::use_service<reactor>(io_context))
 {
   reactor_.init_task();
 }

@@ -21,7 +21,7 @@ namespace services {
 /// Debugging stream socket service that wraps the normal stream socket service.
 template <typename Protocol>
 class stream_socket_service
-  : public asio::io_service::service
+  : public asio::io_context::service
 {
 private:
   /// The type of the wrapped stream socket service.
@@ -29,7 +29,7 @@ private:
 
 public:
   /// The unique service identifier.
-  static asio::io_service::id id;
+  static asio::io_context::id id;
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -43,11 +43,11 @@ public:
   /// The native type of a stream socket.
   typedef typename service_impl_type::native_handle_type native_handle_type;
 
-  /// Construct a new stream socket service for the specified io_service.
-  explicit stream_socket_service(asio::io_service& io_service)
-    : asio::io_service::service(io_service),
-      service_impl_(asio::use_service<service_impl_type>(io_service)),
-      logger_(io_service, "stream_socket")
+  /// Construct a new stream socket service for the specified io_context.
+  explicit stream_socket_service(asio::io_context& io_context)
+    : asio::io_context::service(io_context),
+      service_impl_(asio::use_service<service_impl_type>(io_context)),
+      logger_(io_context, "stream_socket")
   {
   }
 
@@ -344,7 +344,7 @@ private:
 };
 
 template <typename Protocol>
-asio::io_service::id stream_socket_service<Protocol>::id;
+asio::io_context::id stream_socket_service<Protocol>::id;
 
 } // namespace services
 

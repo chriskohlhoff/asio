@@ -18,7 +18,7 @@
 
 #include "asio/buffered_read_stream.hpp"
 #include "asio/buffered_write_stream.hpp"
-#include "asio/io_service.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "unit_test.hpp"
 
@@ -27,18 +27,18 @@ using namespace std; // For memcmp, memcpy and memset.
 class test_stream
 {
 public:
-  typedef asio::io_service io_service_type;
+  typedef asio::io_context io_context_type;
 
   typedef test_stream lowest_layer_type;
 
-  test_stream(asio::io_service& io_service)
-    : io_service_(io_service)
+  test_stream(asio::io_context& io_context)
+    : io_context_(io_context)
   {
   }
 
-  io_service_type& io_service()
+  io_context_type& io_context()
   {
-    return io_service_;
+    return io_context_;
   }
 
   lowest_layer_type& lowest_layer()
@@ -63,7 +63,7 @@ public:
   void async_write(const Const_Buffers&, Handler handler)
   {
     asio::error_code error;
-    io_service_.post(asio::detail::bind_handler(handler, error, 0));
+    io_context_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
   template <typename Mutable_Buffers>
@@ -83,11 +83,11 @@ public:
   void async_read(const Mutable_Buffers&, Handler handler)
   {
     asio::error_code error;
-    io_service_.post(asio::detail::bind_handler(handler, error, 0));
+    io_context_.post(asio::detail::bind_handler(handler, error, 0));
   }
 
 private:
-  io_service_type& io_service_;
+  io_context_type& io_context_;
 };
 
 void is_write_buffered_test()
