@@ -21,8 +21,10 @@
 
 namespace asio {
 
+#if !defined(ASIO_NO_DEPRECATED)
 /// Typedef for backwards compatibility.
 typedef io_context io_service;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 } // namespace asio
 
