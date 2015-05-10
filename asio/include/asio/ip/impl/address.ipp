@@ -134,7 +134,6 @@ address make_address(const std::string& str,
   return make_address(str.c_str(), ec);
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
 asio::ip::address_v4 address::to_v4() const
 {
   if (type_ != ipv4)
@@ -154,7 +153,6 @@ asio::ip::address_v6 address::to_v6() const
   }
   return ipv6_address_;
 }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 std::string address::to_string() const
 {

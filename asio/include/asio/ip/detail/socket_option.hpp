@@ -398,7 +398,7 @@ public:
     if (multicast_address.is_v6())
     {
       using namespace std; // For memcpy.
-      address_v6 ipv6_address = address_cast<address_v6>(multicast_address);
+      address_v6 ipv6_address = multicast_address.to_v6();
       address_v6::bytes_type bytes = ipv6_address.to_bytes();
       memcpy(ipv6_value_.ipv6mr_multiaddr.s6_addr, bytes.data(), 16);
       ipv6_value_.ipv6mr_interface = ipv6_address.scope_id();
@@ -407,7 +407,7 @@ public:
     {
       ipv4_value_.imr_multiaddr.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            address_cast<address_v4>(multicast_address).to_ulong());
+            multicast_address.to_v4().to_ulong());
       ipv4_value_.imr_interface.s_addr =
         asio::detail::socket_ops::host_to_network_long(
             address_v4::any().to_ulong());
