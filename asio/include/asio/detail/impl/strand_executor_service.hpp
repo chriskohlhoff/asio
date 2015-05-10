@@ -19,7 +19,7 @@
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/recycling_allocator.hpp"
-#include "asio/executor_work.hpp"
+#include "asio/executor_work_guard.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -45,7 +45,7 @@ public:
 #if defined(ASIO_HAS_MOVE)
   invoker(invoker&& other)
     : impl_(ASIO_MOVE_CAST(implementation_type)(other.impl_)),
-      work_(ASIO_MOVE_CAST(executor_work<Executor>)(other.work_))
+      work_(ASIO_MOVE_CAST(executor_work_guard<Executor>)(other.work_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
@@ -92,7 +92,7 @@ public:
 
 private:
   implementation_type impl_;
-  executor_work<Executor> work_;
+  executor_work_guard<Executor> work_;
 };
 
 template <typename Executor, typename Function, typename Allocator>

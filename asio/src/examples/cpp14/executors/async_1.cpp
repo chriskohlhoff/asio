@@ -5,7 +5,7 @@
 
 using asio::bind_executor;
 using asio::dispatch;
-using asio::make_work;
+using asio::make_work_guard;
 using asio::post;
 using asio::thread_pool;
 
@@ -14,7 +14,7 @@ template <class Handler>
 void async_getline(std::istream& is, Handler handler)
 {
   // Create executor_work for the handler's associated executor.
-  auto work = make_work(handler);
+  auto work = make_work_guard(handler);
 
   // Post a function object to do the work asynchronously.
   post([&is, work, handler=std::move(handler)]() mutable

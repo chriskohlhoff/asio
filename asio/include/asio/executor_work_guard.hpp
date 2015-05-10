@@ -1,5 +1,5 @@
 //
-// executor_work.hpp
+// executor_work_guard.hpp
 // ~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_EXECUTOR_WORK_HPP
-#define ASIO_EXECUTOR_WORK_HPP
+#ifndef ASIO_EXECUTOR_WORK_GUARD_HPP
+#define ASIO_EXECUTOR_WORK_GUARD_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,20 +23,20 @@
 
 namespace asio {
 
-/// An object of type @c executor_work controls ownership of executor work
+/// An object of type @c executor_work_guard controls ownership of executor work
 /// within a scope.
 template <typename Executor>
-class executor_work
+class executor_work_guard
 {
 public:
   /// The underlying executor type.
   typedef Executor executor_type;
 
-  /// Constructs a @c executor_work object for the specified executor.
+  /// Constructs a @c executor_work_guard object for the specified executor.
   /**
    * Stores a copy of @c e and calls <tt>on_work_started()</tt> on it.
    */
-  explicit executor_work(const executor_type& e) ASIO_NOEXCEPT
+  explicit executor_work_guard(const executor_type& e) ASIO_NOEXCEPT
     : executor_(e),
       owns_(true)
   {
@@ -44,7 +44,7 @@ public:
   }
 
   /// Copy constructor.
-  executor_work(const executor_work& other) ASIO_NOEXCEPT
+  executor_work_guard(const executor_work_guard& other) ASIO_NOEXCEPT
     : executor_(other.executor_),
       owns_(other.owns_)
   {
@@ -54,7 +54,7 @@ public:
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
-  executor_work(executor_work&& other)
+  executor_work_guard(executor_work_guard&& other)
     : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
       owns_(other.owns_)
   {
@@ -67,7 +67,7 @@ public:
    * Unless the object has already been reset, or is in a moved-from state,
    * calls <tt>on_work_finished()</tt> on the stored executor.
    */
-  ~executor_work()
+  ~executor_work_guard()
   {
     if (owns_)
       executor_.on_work_finished();
@@ -79,7 +79,7 @@ public:
     return executor_;
   }
 
-  /// Whether the executor_work object owns some outstanding work.
+  /// Whether the executor_work_guard object owns some outstanding work.
   bool owns_work() const ASIO_NOEXCEPT
   {
     return owns_;
@@ -101,61 +101,61 @@ public:
 
 private:
   // Disallow assignment.
-  executor_work& operator=(const executor_work&);
+  executor_work_guard& operator=(const executor_work_guard&);
 
   executor_type executor_;
   bool owns_;
 };
 
-/// Create an @ref executor_work object.
+/// Create an @ref executor_work_guard object.
 template <typename Executor>
-inline executor_work<Executor> make_work(const Executor& ex,
+inline executor_work_guard<Executor> make_work_guard(const Executor& ex,
     typename enable_if<is_executor<Executor>::value>::type* = 0)
 {
-  return executor_work<Executor>(ex);
+  return executor_work_guard<Executor>(ex);
 }
 
-/// Create an @ref executor_work object.
+/// Create an @ref executor_work_guard object.
 template <typename ExecutionContext>
-inline executor_work<typename ExecutionContext::executor_type>
-make_work(ExecutionContext& ctx,
+inline executor_work_guard<typename ExecutionContext::executor_type>
+make_work_guard(ExecutionContext& ctx,
     typename enable_if<
       is_convertible<ExecutionContext&, execution_context&>::value>::type* = 0)
 {
-  return executor_work<typename ExecutionContext::executor_type>(
+  return executor_work_guard<typename ExecutionContext::executor_type>(
       ctx.get_executor());
 }
 
-/// Create an @ref executor_work object.
+/// Create an @ref executor_work_guard object.
 template <typename T>
-inline executor_work<typename associated_executor<T>::type>
-make_work(const T& t,
+inline executor_work_guard<typename associated_executor<T>::type>
+make_work_guard(const T& t,
     typename enable_if<!is_executor<T>::value &&
       !is_convertible<T&, execution_context&>::value>::type* = 0)
 {
-  return executor_work<typename associated_executor<T>::type>(
+  return executor_work_guard<typename associated_executor<T>::type>(
       associated_executor<T>::get(t));
 }
 
-/// Create an @ref executor_work object.
+/// Create an @ref executor_work_guard object.
 template <typename T, typename Executor>
-inline executor_work<typename associated_executor<T, Executor>::type>
-make_work(const T& t, const Executor& ex,
+inline executor_work_guard<typename associated_executor<T, Executor>::type>
+make_work_guard(const T& t, const Executor& ex,
     typename enable_if<is_executor<Executor>::value>::type* = 0)
 {
-  return executor_work<typename associated_executor<T, Executor>::type>(
+  return executor_work_guard<typename associated_executor<T, Executor>::type>(
       associated_executor<T, Executor>::get(t, ex));
 }
 
-/// Create an @ref executor_work object.
+/// Create an @ref executor_work_guard object.
 template <typename T, typename ExecutionContext>
-inline executor_work<typename associated_executor<T,
+inline executor_work_guard<typename associated_executor<T,
   typename ExecutionContext::executor_type>::type>
-make_work(const T& t, ExecutionContext& ctx,
+make_work_guard(const T& t, ExecutionContext& ctx,
     typename enable_if<!is_executor<T>::value &&
       !is_convertible<T&, execution_context&>::value>::type* = 0)
 {
-  return executor_work<typename associated_executor<T,
+  return executor_work_guard<typename associated_executor<T,
     typename ExecutionContext::executor_type>::type>(
       associated_executor<T, typename ExecutionContext::executor_type>::get(
         t, ctx.get_executor()));
@@ -165,4 +165,4 @@ make_work(const T& t, ExecutionContext& ctx,
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_EXECUTOR_WORK_HPP
+#endif // ASIO_EXECUTOR_WORK_GUARD_HPP

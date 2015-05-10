@@ -22,7 +22,7 @@
 #include "asio/is_executor.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/bind_executor.hpp"
-#include "asio/executor_work.hpp"
+#include "asio/executor_work_guard.hpp"
 #include "asio/system_executor.hpp"
 #include "asio/executor.hpp"
 #include "asio/dispatch.hpp"
