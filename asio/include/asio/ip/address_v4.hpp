@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/detail/array.hpp"
+#include "asio/detail/cstdint.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/winsock_init.hpp"
 #include "asio/error_code.hpp"
@@ -43,6 +44,9 @@ namespace ip {
 class address_v4
 {
 public:
+  /// The type used to represent an address as an unsigned integer.
+  typedef uint_least32_t uint_type;
+
   /// The type used to represent an address as an array of bytes.
   /**
    * @note This type is defined in terms of the C++0x template @c std::array
@@ -63,8 +67,8 @@ public:
   /// Construct an address from raw bytes.
   ASIO_DECL explicit address_v4(const bytes_type& bytes);
 
-  /// Construct an address from an unsigned long in host byte order.
-  ASIO_DECL explicit address_v4(unsigned long addr);
+  /// Construct an address from an unsigned integer in host byte order.
+  ASIO_DECL explicit address_v4(uint_type addr);
 
   /// Copy constructor.
   address_v4(const address_v4& other)
@@ -99,8 +103,13 @@ public:
   /// Get the address in bytes, in network byte order.
   ASIO_DECL bytes_type to_bytes() const;
 
+  /// Get the address as an unsigned integer in host byte order
+  ASIO_DECL uint_type to_uint() const;
+
+#if !defined(ASIO_NO_DEPRECATED)
   /// Get the address as an unsigned long in host byte order
   ASIO_DECL unsigned long to_ulong() const;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Get the address as a string in dotted decimal format.
   ASIO_DECL std::string to_string() const;
@@ -167,25 +176,25 @@ public:
   /// Compare addresses for ordering.
   friend bool operator<(const address_v4& a1, const address_v4& a2)
   {
-    return a1.to_ulong() < a2.to_ulong();
+    return a1.to_uint() < a2.to_uint();
   }
 
   /// Compare addresses for ordering.
   friend bool operator>(const address_v4& a1, const address_v4& a2)
   {
-    return a1.to_ulong() > a2.to_ulong();
+    return a1.to_uint() > a2.to_uint();
   }
 
   /// Compare addresses for ordering.
   friend bool operator<=(const address_v4& a1, const address_v4& a2)
   {
-    return a1.to_ulong() <= a2.to_ulong();
+    return a1.to_uint() <= a2.to_uint();
   }
 
   /// Compare addresses for ordering.
   friend bool operator>=(const address_v4& a1, const address_v4& a2)
   {
-    return a1.to_ulong() >= a2.to_ulong();
+    return a1.to_uint() >= a2.to_uint();
   }
 
   /// Obtain an address object that represents any address.
@@ -232,11 +241,11 @@ inline address_v4 make_address_v4(const address_v4::bytes_type& bytes)
   return address_v4(bytes);
 }
 
-/// Create an IPv4 address from an unsigned long in host byte order.
+/// Create an IPv4 address from an unsigned integer in host byte order.
 /**
  * @relates address_v4
  */
-inline address_v4 make_address_v4(unsigned long addr)
+inline address_v4 make_address_v4(address_v4::uint_type addr)
 {
   return address_v4(addr);
 }

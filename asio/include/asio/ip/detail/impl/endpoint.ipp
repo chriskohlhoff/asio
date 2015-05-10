@@ -80,7 +80,7 @@ endpoint::endpoint(const asio::ip::address& addr,
       asio::detail::socket_ops::host_to_network_short(port_num);
     data_.v4.sin_addr.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-        addr.to_v4().to_ulong());
+        addr.to_v4().to_uint());
   }
   else
   {

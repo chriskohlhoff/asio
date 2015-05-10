@@ -109,7 +109,7 @@ public:
   /// Return the size of the range.
   std::size_t size() const ASIO_NOEXCEPT
   {
-    return end_->to_ulong() - begin_->to_ulong();
+    return end_->to_uint() - begin_->to_uint();
   }
 
   /// Find an address in the range.

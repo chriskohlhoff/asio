@@ -407,10 +407,10 @@ public:
     {
       ipv4_value_.imr_multiaddr.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            multicast_address.to_v4().to_ulong());
+            multicast_address.to_v4().to_uint());
       ipv4_value_.imr_interface.s_addr =
         asio::detail::socket_ops::host_to_network_long(
-            address_v4::any().to_ulong());
+            address_v4::any().to_uint());
     }
   }
 
@@ -421,10 +421,10 @@ public:
   {
     ipv4_value_.imr_multiaddr.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          multicast_address.to_ulong());
+          multicast_address.to_uint());
     ipv4_value_.imr_interface.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          network_interface.to_ulong());
+          network_interface.to_uint());
   }
 
   // Construct with multicast address and IPv6 network interface index.
@@ -493,7 +493,7 @@ public:
   {
     ipv4_value_.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          address_v4::any().to_ulong());
+          address_v4::any().to_uint());
     ipv6_value_ = 0;
   }
 
@@ -502,7 +502,7 @@ public:
   {
     ipv4_value_.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          ipv4_interface.to_ulong());
+          ipv4_interface.to_uint());
     ipv6_value_ = 0;
   }
 
@@ -511,7 +511,7 @@ public:
   {
     ipv4_value_.s_addr =
       asio::detail::socket_ops::host_to_network_long(
-          address_v4::any().to_ulong());
+          address_v4::any().to_uint());
     ipv6_value_ = ipv6_interface;
   }
 

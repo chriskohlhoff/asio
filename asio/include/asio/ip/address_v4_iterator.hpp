@@ -106,7 +106,7 @@ public:
   /// Pre-increment operator.
   basic_address_iterator& operator++() ASIO_NOEXCEPT
   {
-    address_ = address_v4((address_.to_ulong() + 1) & 0xFFFFFFFF);
+    address_ = address_v4((address_.to_uint() + 1) & 0xFFFFFFFF);
     return *this;
   }
 
@@ -121,7 +121,7 @@ public:
   /// Pre-decrement operator.
   basic_address_iterator& operator--() ASIO_NOEXCEPT
   {
-    address_ = address_v4((address_.to_ulong() - 1) & 0xFFFFFFFF);
+    address_ = address_v4((address_.to_uint() - 1) & 0xFFFFFFFF);
     return *this;
   }
 
