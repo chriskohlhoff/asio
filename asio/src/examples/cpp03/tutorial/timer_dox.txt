@@ -331,22 +331,23 @@ In addition to initialising a pair of asio::deadline_timer members, the
 constructor initialises the <tt>strand_</tt> member, an object of type
 asio::io_service::strand.
 
-An asio::io_service::strand guarantees that, for those handlers that are
-dispatched through it, an executing handler will be allowed to complete before
-the next one is started. This is guaranteed irrespective of the number of
-threads that are calling asio::io_service::run(). Of course, the handlers may
-still execute concurrently with other handlers that were <b>not</b> dispatched
-through an asio::io_service::strand, or were dispatched through a different
-asio::io_service::strand object.
+An asio::io_service::strand is an executor that guarantees that, for those
+handlers that are dispatched through it, an executing handler will be allowed
+to complete before the next one is started. This is guaranteed irrespective of
+the number of threads that are calling asio::io_service::run(). Of course, the
+handlers may still execute concurrently with other handlers that were
+<b>not</b> dispatched through an asio::io_service::strand, or were dispatched
+through a different asio::io_service::strand object.
 
 \until {
 
-When initiating the asynchronous operations, each callback handler is "wrapped"
-using the asio::io_service::strand object. The asio::io_service::strand::wrap()
-function returns a new handler that automatically dispatches its contained
-handler through the asio::io_service::strand object. By wrapping the handlers
-using the same asio::io_service::strand, we are ensuring that they cannot
-execute concurrently.
+When initiating the asynchronous operations, each callback handler is "bound"
+to an asio::io_service::strand object. The
+asio::io_service::strand::bind_executor() function returns a new handler that
+automatically dispatches its contained handler through the
+asio::io_service::strand object. By binding the handlers to the same
+asio::io_service::strand, we are ensuring that they cannot execute
+concurrently.
 
 \until }
 \until }

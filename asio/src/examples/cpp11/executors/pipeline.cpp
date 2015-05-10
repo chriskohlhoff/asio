@@ -1,9 +1,9 @@
 #include <asio/associated_executor.hpp>
+#include <asio/bind_executor.hpp>
 #include <asio/execution_context.hpp>
 #include <asio/package.hpp>
 #include <asio/post.hpp>
 #include <asio/system_executor.hpp>
-#include <asio/wrap.hpp>
 #include <condition_variable>
 #include <future>
 #include <memory>
@@ -13,7 +13,7 @@
 #include <vector>
 
 using asio::execution_context;
-using asio::executor_wrapper;
+using asio::executor_binder;
 using asio::get_associated_executor;
 using asio::package;
 using asio::post;
@@ -202,7 +202,7 @@ template <class T, class F, class... Tail>
 std::future<void> pipeline(queue_back<T> in, F f, Tail... t)
 {
   // Determine the output queue type.
-  typedef typename executor_wrapper<F, thread_executor>::second_argument_type::value_type output_value_type;
+  typedef typename executor_binder<F, thread_executor>::second_argument_type::value_type output_value_type;
 
   // Create the output queue and its implementation.
   auto out_impl = std::make_shared<queue_impl<output_value_type>>();
@@ -228,7 +228,7 @@ template <class F, class... Tail>
 std::future<void> pipeline(F f, Tail... t)
 {
   // Determine the output queue type.
-  typedef typename executor_wrapper<F, thread_executor>::argument_type::value_type output_value_type;
+  typedef typename executor_binder<F, thread_executor>::argument_type::value_type output_value_type;
 
   // Create the output queue and its implementation.
   auto out_impl = std::make_shared<queue_impl<output_value_type>>();
@@ -255,8 +255,8 @@ std::future<void> pipeline(F f, Tail... t)
 #include <iostream>
 #include <string>
 
+using asio::bind_executor;
 using asio::thread_pool;
-using asio::wrap;
 
 void reader(queue_front<std::string> out)
 {
@@ -297,6 +297,6 @@ int main()
 {
   thread_pool pool;
 
-  auto f = pipeline(reader, filter, wrap(pool, upper), writer);
+  auto f = pipeline(reader, filter, bind_executor(pool, upper), writer);
   f.wait();
 }

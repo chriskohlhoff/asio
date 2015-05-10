@@ -286,7 +286,7 @@ public:
   }
 
 #if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use asio::wrap().) Create a new handler that
+  /// (Deprecated: Use asio::bind_executor().) Create a new handler that
   /// automatically dispatches the wrapped handler on the strand.
   /**
    * This function is used to create a new handler function object that, when

@@ -21,7 +21,7 @@
 #include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/associated_executor.hpp"
-#include "asio/wrap.hpp"
+#include "asio/bind_executor.hpp"
 #include "asio/executor_work.hpp"
 #include "asio/system_executor.hpp"
 #include "asio/executor.hpp"

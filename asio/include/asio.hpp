@@ -31,6 +31,7 @@
 #include "asio/basic_stream_socket.hpp"
 #include "asio/basic_streambuf.hpp"
 #include "asio/basic_waitable_timer.hpp"
+#include "asio/bind_executor.hpp"
 #include "asio/buffer.hpp"
 #include "asio/buffered_read_stream_fwd.hpp"
 #include "asio/buffered_read_stream.hpp"
@@ -135,7 +136,6 @@
 #include "asio/windows/random_access_handle_service.hpp"
 #include "asio/windows/stream_handle.hpp"
 #include "asio/windows/stream_handle_service.hpp"
-#include "asio/wrap.hpp"
 #include "asio/write.hpp"
 #include "asio/write_at.hpp"
 

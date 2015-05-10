@@ -447,7 +447,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(CompletionHandler, void ())
   post(ASIO_MOVE_ARG(CompletionHandler) handler);
 
-  /// (Deprecated: Use asio::wrap().) Create a new handler that
+  /// (Deprecated: Use asio::bind_executor().) Create a new handler that
   /// automatically dispatches the wrapped handler on the io_service.
   /**
    * This function is used to create a new handler function object that, when

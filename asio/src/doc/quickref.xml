@@ -57,6 +57,7 @@
             <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></member>
             <member><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link></member>
             <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
+            <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
             <member><link linkend="asio.reference.dispatch">dispatch</link></member>
             <member><link linkend="asio.reference.defer">defer</link></member>
             <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
@@ -67,7 +68,6 @@
             <member><link linkend="asio.reference.post">post</link></member>
             <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.use_service">use_service</link></member>
-            <member><link linkend="asio.reference.wrap">wrap</link></member>
           </simplelist>
         </entry>
         <entry valign="top">

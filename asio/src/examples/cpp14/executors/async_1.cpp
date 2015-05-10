@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 
+using asio::bind_executor;
 using asio::dispatch;
 using asio::make_work;
 using asio::post;
 using asio::thread_pool;
-using asio::wrap;
 
 // A function to asynchronously read a single line from an input stream.
 template <class Handler>
@@ -38,7 +38,7 @@ int main()
   std::cout << "Enter a line: ";
 
   async_getline(std::cin,
-      wrap(pool, [](std::string line)
+      bind_executor(pool, [](std::string line)
         {
           std::cout << "Line: " << line << "\n";
         }));

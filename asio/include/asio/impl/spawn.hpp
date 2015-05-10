@@ -19,6 +19,7 @@
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/async_result.hpp"
+#include "asio/bind_executor.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
@@ -27,7 +28,6 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
-#include "asio/wrap.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -417,7 +417,8 @@ inline void spawn(const strand<Executor>& ex,
     ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes)
 {
-  asio::spawn(asio::wrap(ex, &detail::default_spawn_handler),
+  asio::spawn(asio::bind_executor(
+        ex, &detail::default_spawn_handler),
       ASIO_MOVE_CAST(Function)(function), attributes);
 }
 
@@ -426,7 +427,8 @@ inline void spawn(const asio::io_service::strand& s,
     ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes)
 {
-  asio::spawn(asio::wrap(s, &detail::default_spawn_handler),
+  asio::spawn(asio::bind_executor(
+        s, &detail::default_spawn_handler),
       ASIO_MOVE_CAST(Function)(function), attributes);
 }
 
