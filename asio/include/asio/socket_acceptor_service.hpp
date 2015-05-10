@@ -314,7 +314,8 @@ public:
       ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
     async_completion<MoveAcceptHandler,
-      void (asio::error_code, typename Protocol::socket)> init(handler);
+      void (asio::error_code,
+        typename Protocol::socket)> init(handler);
 
     service_impl_.async_accept(impl,
         peer_io_service, peer_endpoint, init.handler);

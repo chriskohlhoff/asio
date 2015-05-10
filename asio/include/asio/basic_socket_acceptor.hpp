@@ -1321,8 +1321,9 @@ public:
     ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
         handler, typename Protocol::socket) type_check;
 
-    return this->get_service().async_accept(this->get_implementation(),
-        static_cast<asio::io_service*>(0), static_cast<endpoint_type*>(0),
+    return this->get_service().async_accept(
+        this->get_implementation(), static_cast<asio::io_service*>(0),
+        static_cast<endpoint_type*>(0),
         ASIO_MOVE_CAST(MoveAcceptHandler)(handler));
   }
 
