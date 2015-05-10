@@ -105,10 +105,11 @@ public:
   /// Get the address as a string in dotted decimal format.
   ASIO_DECL std::string to_string() const;
 
-  /// Get the address as a string in dotted decimal format.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use other overload.) Get the address as a string in dotted
+  /// decimal format.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;
 
-#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use make_address_v4().) Create an address from an IP address
   /// string in dotted decimal form.
   static address_v4 from_string(const char* str);
@@ -134,14 +135,19 @@ public:
   /// Determine whether the address is unspecified.
   ASIO_DECL bool is_unspecified() const;
 
-  /// Determine whether the address is a class A address.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
+  /// class A address.
   ASIO_DECL bool is_class_a() const;
 
-  /// Determine whether the address is a class B address.
+  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
+  /// class B address.
   ASIO_DECL bool is_class_b() const;
 
-  /// Determine whether the address is a class C address.
+  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
+  /// class C address.
   ASIO_DECL bool is_class_c() const;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a multicast address.
   ASIO_DECL bool is_multicast() const;
@@ -200,14 +206,17 @@ public:
     return address_v4(0xFFFFFFFF);
   }
 
-  /// Obtain an address object that represents the broadcast address that
-  /// corresponds to the specified address and netmask.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use network_v4 class.) Obtain an address object that
+  /// represents the broadcast address that corresponds to the specified
+  /// address and netmask.
   ASIO_DECL static address_v4 broadcast(
       const address_v4& addr, const address_v4& mask);
 
-  /// Obtain the netmask that corresponds to the address, based on its address
-  /// class.
+  /// (Deprecated: Use network_v4 class.) Obtain the netmask that corresponds
+  /// to the address, based on its address class.
   ASIO_DECL static address_v4 netmask(const address_v4& addr);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   // The underlying IPv4 address.

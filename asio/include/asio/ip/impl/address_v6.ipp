@@ -101,11 +101,17 @@ address_v6::bytes_type address_v6::to_bytes() const
 std::string address_v6::to_string() const
 {
   asio::error_code ec;
-  std::string addr = to_string(ec);
-  asio::detail::throw_error(ec);
+  char addr_str[asio::detail::max_addr_v6_str_len];
+  const char* addr =
+    asio::detail::socket_ops::inet_ntop(
+        ASIO_OS_DEF(AF_INET6), &addr_, addr_str,
+        asio::detail::max_addr_v6_str_len, scope_id_, ec);
+  if (addr == 0)
+    asio::detail::throw_error(ec);
   return addr;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 std::string address_v6::to_string(asio::error_code& ec) const
 {
   char addr_str[asio::detail::max_addr_v6_str_len];
@@ -118,7 +124,6 @@ std::string address_v6::to_string(asio::error_code& ec) const
   return addr;
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
 address_v4 address_v6::to_v4() const
 {
   if (!is_v4_mapped() && !is_v4_compatible())

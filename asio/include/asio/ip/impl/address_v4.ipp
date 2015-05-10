@@ -78,11 +78,17 @@ unsigned long address_v4::to_ulong() const
 std::string address_v4::to_string() const
 {
   asio::error_code ec;
-  std::string addr = to_string(ec);
-  asio::detail::throw_error(ec);
+  char addr_str[asio::detail::max_addr_v4_str_len];
+  const char* addr =
+    asio::detail::socket_ops::inet_ntop(
+        ASIO_OS_DEF(AF_INET), &addr_, addr_str,
+        asio::detail::max_addr_v4_str_len, 0, ec);
+  if (addr == 0)
+    asio::detail::throw_error(ec);
   return addr;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 std::string address_v4::to_string(asio::error_code& ec) const
 {
   char addr_str[asio::detail::max_addr_v4_str_len];
@@ -94,6 +100,7 @@ std::string address_v4::to_string(asio::error_code& ec) const
     return std::string();
   return addr;
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 bool address_v4::is_loopback() const
 {
@@ -105,6 +112,7 @@ bool address_v4::is_unspecified() const
   return to_ulong() == 0;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 bool address_v4::is_class_a() const
 {
   return (to_ulong() & 0x80000000) == 0;
@@ -119,12 +127,14 @@ bool address_v4::is_class_c() const
 {
   return (to_ulong() & 0xE0000000) == 0xC0000000;
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 bool address_v4::is_multicast() const
 {
   return (to_ulong() & 0xF0000000) == 0xE0000000;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 address_v4 address_v4::broadcast(const address_v4& addr, const address_v4& mask)
 {
   return address_v4(addr.to_ulong() | (mask.to_ulong() ^ 0xFFFFFFFF));
@@ -140,6 +150,7 @@ address_v4 address_v4::netmask(const address_v4& addr)
     return address_v4(0xFFFFFF00);
   return address_v4(0xFFFFFFFF);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 address_v4 make_address_v4(const char* str)
 {

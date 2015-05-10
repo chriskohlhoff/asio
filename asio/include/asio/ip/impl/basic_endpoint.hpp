@@ -30,19 +30,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
     const basic_endpoint<InternetProtocol>& endpoint)
 {
   asio::ip::detail::endpoint tmp_ep(endpoint.address(), endpoint.port());
-  asio::error_code ec;
-  std::string s = tmp_ep.to_string(ec);
-  if (ec)
-  {
-    if (os.exceptions() & std::basic_ostream<Elem, Traits>::failbit)
-      asio::detail::throw_error(ec);
-    else
-      os.setstate(std::basic_ostream<Elem, Traits>::failbit);
-  }
-  else
-    for (std::string::iterator i = s.begin(); i != s.end(); ++i)
-      os << os.widen(*i);
-  return os;
+  return os << tmp_ep.to_string().c_str();
 }
 
 } // namespace ip

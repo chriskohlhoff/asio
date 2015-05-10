@@ -104,10 +104,10 @@ public:
   /// Get the address as a string.
   ASIO_DECL std::string to_string() const;
 
-  /// Get the address as a string.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use other overload.) Get the address as a string.
   ASIO_DECL std::string to_string(asio::error_code& ec) const;
 
-#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use make_address_v6().) Create an IPv6 address from an IP
   /// address string.
   static address_v6 from_string(const char* str);
