@@ -51,7 +51,7 @@ public:
       size_t concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown_service();
+  ASIO_DECL void shutdown();
 
   // Initialise the task. Nothing to do here.
   void init_task()
@@ -148,8 +148,8 @@ public:
     post_immediate_completion(op, false);
   }
 
-  // Process unfinished operations as part of a shutdown_service operation.
-  // Assumes that work_started() was previously called for the operations.
+  // Process unfinished operations as part of a shutdown operation. Assumes
+  // that work_started() was previously called for the operations.
   ASIO_DECL void abandon_operations(op_queue<operation>& ops);
 
   // Called after starting an overlapped I/O operation that did not complete

@@ -83,8 +83,8 @@ namespace detail { class service_registry; }
  * type.
  *
  * On destruction, a class that is derived from execution_context must perform
- * <tt>execution_context::shutdown_context()</tt> followed by
- * <tt>execution_context::destroy_context()</tt>.
+ * <tt>execution_context::shutdown()</tt> followed by
+ * <tt>execution_context::destroy()</tt>.
  *
  * This destruction sequence permits programs to simplify their resource
  * management by using @c shared_ptr<>. Where an object's lifetime is tied to
@@ -98,9 +98,9 @@ namespace detail { class service_registry; }
  *
  * @li To shut down the whole program, the io_context function stop() is called
  * to terminate any run() calls as soon as possible. The io_context destructor
- * calls @c shutdown_context() and @c destroy_context() to destroy all pending
- * handlers, causing all @c shared_ptr references to all connection objects to
- * be destroyed.
+ * calls @c shutdown() and @c destroy() to destroy all pending handlers,
+ * causing all @c shared_ptr references to all connection objects to be
+ * destroyed.
  */
 class execution_context
   : private noncopyable
@@ -122,9 +122,9 @@ protected:
    *
    * @li For each service object @c svc in the execution_context set, in
    * reverse order of the beginning of service object lifetime, performs @c
-   * svc->shutdown_service().
+   * svc->shutdown().
    */
-  ASIO_DECL void shutdown_context();
+  ASIO_DECL void shutdown();
 
   /// Destroys all services in the context.
   /**
@@ -134,7 +134,7 @@ protected:
    * reverse order * of the beginning of service object lifetime, performs
    * <tt>delete static_cast<execution_context::service*>(svc)</tt>.
    */
-  ASIO_DECL void destroy_context();
+  ASIO_DECL void destroy();
 
 public:
   /// Fork-related event notifications.
@@ -185,7 +185,7 @@ public:
    * } @endcode
    *
    * @note For each service object @c svc in the execution_context set,
-   * performs <tt>svc->fork_service();</tt>. When processing the fork_prepare
+   * performs <tt>svc->notify_fork();</tt>. When processing the fork_prepare
    * event, services are visited in reverse order of the beginning of service
    * object lifetime. Otherwise, services are visited in order of the beginning
    * of service object lifetime.
@@ -330,7 +330,7 @@ protected:
 
 private:
   /// Destroy all user-defined handler objects owned by the service.
-  virtual void shutdown_service() = 0;
+  virtual void shutdown() = 0;
 
   /// Handle notification of a fork-related event to perform any necessary
   /// housekeeping.
@@ -338,7 +338,7 @@ private:
    * This function is not a pure virtual so that services only have to
    * implement it if necessary. The default implementation does nothing.
    */
-  ASIO_DECL virtual void fork_service(
+  ASIO_DECL virtual void notify_fork(
       execution_context::fork_event event);
 
   friend class asio::detail::service_registry;

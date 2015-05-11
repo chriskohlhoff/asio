@@ -34,7 +34,7 @@ win_iocp_serial_port_service::win_iocp_serial_port_service(
 {
 }
 
-void win_iocp_serial_port_service::shutdown_service()
+void win_iocp_serial_port_service::shutdown()
 {
 }
 

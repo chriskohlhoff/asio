@@ -35,9 +35,9 @@ reactive_serial_port_service::reactive_serial_port_service(
 {
 }
 
-void reactive_serial_port_service::shutdown_service()
+void reactive_serial_port_service::shutdown()
 {
-  descriptor_service_.shutdown_service();
+  descriptor_service_.shutdown();
 }
 
 asio::error_code reactive_serial_port_service::open(

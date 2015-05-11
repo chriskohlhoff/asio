@@ -130,6 +130,34 @@ io_context::service::~service()
 {
 }
 
+void io_context::service::shutdown()
+{
+#if !defined(ASIO_NO_DEPRECATED)
+  shutdown_service();
+#endif // !defined(ASIO_NO_DEPRECATED)
+}
+
+#if !defined(ASIO_NO_DEPRECATED)
+void io_context::service::shutdown_service()
+{
+}
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+void io_context::service::notify_fork(io_context::fork_event ev)
+{
+#if !defined(ASIO_NO_DEPRECATED)
+  fork_service(ev);
+#else // !defined(ASIO_NO_DEPRECATED)
+  (void)ev;
+#endif // !defined(ASIO_NO_DEPRECATED)
+}
+
+#if !defined(ASIO_NO_DEPRECATED)
+void io_context::service::fork_service(io_context::fork_event)
+{
+}
+#endif // !defined(ASIO_NO_DEPRECATED)
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -31,7 +31,7 @@ strand_executor_service::strand_executor_service(execution_context& ctx)
 {
 }
 
-void strand_executor_service::shutdown_service()
+void strand_executor_service::shutdown()
 {
   op_queue<scheduler_operation> ops;
 

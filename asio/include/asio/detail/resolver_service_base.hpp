@@ -45,10 +45,10 @@ public:
   ASIO_DECL ~resolver_service_base();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown_service();
+  ASIO_DECL void shutdown();
 
   // Perform any fork-related housekeeping.
-  ASIO_DECL void fork_service(
+  ASIO_DECL void notify_fork(
       asio::io_context::fork_event fork_ev);
 
   // Construct a new resolver implementation.

@@ -78,10 +78,10 @@ public:
   ASIO_DECL ~epoll_reactor();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown_service();
+  ASIO_DECL void shutdown();
 
   // Recreate internal descriptors following a fork.
-  ASIO_DECL void fork_service(
+  ASIO_DECL void notify_fork(
       asio::execution_context::fork_event fork_ev);
 
   // Initialise the task.

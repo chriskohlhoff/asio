@@ -67,7 +67,7 @@ epoll_reactor::~epoll_reactor()
     close(timer_fd_);
 }
 
-void epoll_reactor::shutdown_service()
+void epoll_reactor::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
@@ -88,7 +88,7 @@ void epoll_reactor::shutdown_service()
   scheduler_.abandon_operations(ops);
 }
 
-void epoll_reactor::fork_service(
+void epoll_reactor::notify_fork(
     asio::execution_context::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)

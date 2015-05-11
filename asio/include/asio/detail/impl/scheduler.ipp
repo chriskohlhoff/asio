@@ -97,7 +97,7 @@ scheduler::scheduler(
   ASIO_HANDLER_TRACKING_INIT;
 }
 
-void scheduler::shutdown_service()
+void scheduler::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
   shutdown_ = true;

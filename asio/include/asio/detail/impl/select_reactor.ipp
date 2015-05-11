@@ -71,10 +71,10 @@ select_reactor::select_reactor(asio::execution_context& ctx)
 
 select_reactor::~select_reactor()
 {
-  shutdown_service();
+  shutdown();
 }
 
-void select_reactor::shutdown_service()
+void select_reactor::shutdown()
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
@@ -103,7 +103,7 @@ void select_reactor::shutdown_service()
   scheduler_.abandon_operations(ops);
 }
 
-void select_reactor::fork_service(
+void select_reactor::notify_fork(
     asio::execution_context::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)

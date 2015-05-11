@@ -46,10 +46,10 @@ resolver_service_base::resolver_service_base(
 
 resolver_service_base::~resolver_service_base()
 {
-  shutdown_service();
+  shutdown();
 }
 
-void resolver_service_base::shutdown_service()
+void resolver_service_base::shutdown()
 {
   work_.reset();
   if (work_io_context_.get())
@@ -64,7 +64,7 @@ void resolver_service_base::shutdown_service()
   }
 }
 
-void resolver_service_base::fork_service(
+void resolver_service_base::notify_fork(
     asio::io_context::fork_event fork_ev)
 {
   if (work_thread_.get())

@@ -150,7 +150,7 @@ signal_set_service::~signal_set_service()
   remove_service(this);
 }
 
-void signal_set_service::shutdown_service()
+void signal_set_service::shutdown()
 {
   remove_service(this);
 
@@ -169,7 +169,7 @@ void signal_set_service::shutdown_service()
   io_context_.abandon_operations(ops);
 }
 
-void signal_set_service::fork_service(
+void signal_set_service::notify_fork(
     asio::io_context::fork_event fork_ev)
 {
 #if !defined(ASIO_WINDOWS) \

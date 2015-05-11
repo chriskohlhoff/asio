@@ -111,15 +111,15 @@ public:
 
 private:
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
+  void shutdown()
   {
-    service_impl_.shutdown_service();
+    service_impl_.shutdown();
   }
 
   // Perform any fork-related housekeeping.
-  void fork_service(asio::io_context::fork_event event)
+  void notify_fork(asio::io_context::fork_event event)
   {
-    service_impl_.fork_service(event);
+    service_impl_.notify_fork(event);
   }
 
   // The platform-specific implementation.

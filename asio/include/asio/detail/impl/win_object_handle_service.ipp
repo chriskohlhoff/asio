@@ -36,7 +36,7 @@ win_object_handle_service::win_object_handle_service(
 {
 }
 
-void win_object_handle_service::shutdown_service()
+void win_object_handle_service::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
 

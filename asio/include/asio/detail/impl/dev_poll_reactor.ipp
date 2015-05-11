@@ -47,11 +47,11 @@ dev_poll_reactor::dev_poll_reactor(asio::execution_context& ctx)
 
 dev_poll_reactor::~dev_poll_reactor()
 {
-  shutdown_service();
+  shutdown();
   ::close(dev_poll_fd_);
 }
 
-void dev_poll_reactor::shutdown_service()
+void dev_poll_reactor::shutdown()
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
@@ -67,7 +67,7 @@ void dev_poll_reactor::shutdown_service()
   scheduler_.abandon_operations(ops);
 } 
 
-void dev_poll_reactor::fork_service(asio::io_context::fork_event fork_ev)
+void dev_poll_reactor::notify_fork(asio::io_context::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)
   {

@@ -36,7 +36,7 @@ reactive_descriptor_service::reactive_descriptor_service(
   reactor_.init_task();
 }
 
-void reactive_descriptor_service::shutdown_service()
+void reactive_descriptor_service::shutdown()
 {
 }
 

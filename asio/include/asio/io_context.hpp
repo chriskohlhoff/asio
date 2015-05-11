@@ -179,7 +179,7 @@ public:
    *
    * @li For each service object @c svc in the io_context set, in reverse order
    * of the beginning of service object lifetime, performs
-   * @c svc->shutdown_service().
+   * @c svc->shutdown().
    *
    * @li Uninvoked handler objects that were scheduled for deferred invocation
    * on the io_context, or any associated strand, are destroyed.
@@ -682,6 +682,36 @@ public:
 #if !defined(ASIO_NO_DEPRECATED)
   /// Get the io_context object that owns the service.
   asio::io_context& get_io_service();
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+private:
+  /// Destroy all user-defined handler objects owned by the service.
+  ASIO_DECL virtual void shutdown();
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use shutdown().) Destroy all user-defined handler objects
+  /// owned by the service.
+  ASIO_DECL virtual void shutdown_service();
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Handle notification of a fork-related event to perform any necessary
+  /// housekeeping.
+  /**
+   * This function is not a pure virtual so that services only have to
+   * implement it if necessary. The default implementation does nothing.
+   */
+  ASIO_DECL virtual void notify_fork(
+      execution_context::fork_event event);
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use notify_fork().) Handle notification of a fork-related
+  /// event to perform any necessary housekeeping.
+  /**
+   * This function is not a pure virtual so that services only have to
+   * implement it if necessary. The default implementation does nothing.
+   */
+  ASIO_DECL virtual void fork_service(
+      execution_context::fork_event event);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 protected:

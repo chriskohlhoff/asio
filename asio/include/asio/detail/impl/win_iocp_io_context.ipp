@@ -86,7 +86,7 @@ win_iocp_io_context::win_iocp_io_context(
   }
 }
 
-void win_iocp_io_context::shutdown_service()
+void win_iocp_io_context::shutdown()
 {
   ::InterlockedExchange(&shutdown_, 1);
 

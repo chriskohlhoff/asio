@@ -64,12 +64,12 @@ public:
   }
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
+  void shutdown()
   {
   }
 
   // Perform any fork-related housekeeping.
-  void fork_service(asio::io_context::fork_event)
+  void notify_fork(asio::io_context::fork_event)
   {
   }
 

@@ -38,7 +38,7 @@ winrt_ssocket_service_base::winrt_ssocket_service_base(
 {
 }
 
-void winrt_ssocket_service_base::shutdown_service()
+void winrt_ssocket_service_base::shutdown()
 {
   // Close all implementations, causing all operations to complete.
   asio::detail::mutex::scoped_lock lock(mutex_);

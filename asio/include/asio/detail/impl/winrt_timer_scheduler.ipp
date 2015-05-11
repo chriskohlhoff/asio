@@ -44,10 +44,10 @@ winrt_timer_scheduler::winrt_timer_scheduler(
 
 winrt_timer_scheduler::~winrt_timer_scheduler()
 {
-  shutdown_service();
+  shutdown();
 }
 
-void winrt_timer_scheduler::shutdown_service()
+void winrt_timer_scheduler::shutdown()
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
@@ -67,7 +67,7 @@ void winrt_timer_scheduler::shutdown_service()
   io_context_.abandon_operations(ops);
 }
 
-void winrt_timer_scheduler::fork_service(asio::io_context::fork_event)
+void winrt_timer_scheduler::notify_fork(asio::io_context::fork_event)
 {
 }
 

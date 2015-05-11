@@ -73,7 +73,7 @@ win_iocp_handle_service::win_iocp_handle_service(
 {
 }
 
-void win_iocp_handle_service::shutdown_service()
+void win_iocp_handle_service::shutdown()
 {
   // Close all implementations, causing all operations to complete.
   asio::detail::mutex::scoped_lock lock(mutex_);

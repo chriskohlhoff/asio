@@ -40,7 +40,7 @@ void service_registry::shutdown_services()
   execution_context::service* service = first_service_;
   while (service)
   {
-    service->shutdown_service();
+    service->shutdown();
     service = service->next_;
   }
 }
@@ -78,10 +78,10 @@ void service_registry::notify_fork(execution_context::fork_event fork_ev)
   std::size_t num_services = services.size();
   if (fork_ev == execution_context::fork_prepare)
     for (std::size_t i = 0; i < num_services; ++i)
-      services[i]->fork_service(fork_ev);
+      services[i]->notify_fork(fork_ev);
   else
     for (std::size_t i = num_services; i > 0; --i)
-      services[i - 1]->fork_service(fork_ev);
+      services[i - 1]->notify_fork(fork_ev);
 }
 
 void service_registry::init_key(execution_context::service::key& key,

@@ -38,7 +38,7 @@ private:
     }
 
   private:
-    virtual void shutdown_service()
+    virtual void shutdown()
     {
       for (auto& t : threads_)
         t.join();

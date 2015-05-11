@@ -49,7 +49,7 @@ strand_service::strand_service(asio::io_context& io_context)
 {
 }
 
-void strand_service::shutdown_service()
+void strand_service::shutdown()
 {
   op_queue<operation> ops;
 

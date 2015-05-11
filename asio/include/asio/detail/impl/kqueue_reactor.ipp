@@ -63,7 +63,7 @@ kqueue_reactor::~kqueue_reactor()
   close(kqueue_fd_);
 }
 
-void kqueue_reactor::shutdown_service()
+void kqueue_reactor::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
@@ -84,7 +84,7 @@ void kqueue_reactor::shutdown_service()
   scheduler_.abandon_operations(ops);
 }
 
-void kqueue_reactor::fork_service(
+void kqueue_reactor::notify_fork(
     asio::execution_context::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)

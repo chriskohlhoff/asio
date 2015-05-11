@@ -76,7 +76,7 @@ public:
   ASIO_DECL explicit strand_executor_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown_service();
+  ASIO_DECL void shutdown();
 
   // Create a new strand_executor implementation.
   ASIO_DECL implementation_type create_implementation();

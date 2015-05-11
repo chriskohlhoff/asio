@@ -78,7 +78,7 @@ public:
       asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown_service();
+  ASIO_DECL void shutdown();
 
   // Construct a new descriptor implementation.
   ASIO_DECL void construct(implementation_type& impl);
