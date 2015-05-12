@@ -82,8 +82,16 @@ void test_compile()
     stream_type stream1(ioc);
     stream_type stream2(ioc, 1024, 1024);
 
+    stream_type::executor_type ex = stream1.get_executor();
+    (void)ex;
+
+#if !defined(ASIO_NO_DEPRECATED)
     io_context& ioc_ref = stream1.get_io_context();
     (void)ioc_ref;
+
+    io_context& ioc_ref2 = stream1.get_io_service();
+    (void)ioc_ref2;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     stream_type::lowest_layer_type& lowest_layer = stream1.lowest_layer();
     (void)lowest_layer;

@@ -52,8 +52,16 @@ void test()
 
     // basic_io_object functions.
 
+    signal_set::executor_type ex = set1.get_executor();
+    (void)ex;
+
+#if !defined(ASIO_NO_DEPRECATED)
     io_context& ioc_ref = set1.get_io_context();
     (void)ioc_ref;
+
+    io_context& ioc_ref2 = set1.get_io_service();
+    (void)ioc_ref2;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     // basic_signal_set functions.
 

@@ -94,8 +94,16 @@ void test()
 
     // basic_io_object functions.
 
+    rp::socket::executor_type ex = socket1.get_executor();
+    (void)ex;
+
+#if !defined(ASIO_NO_DEPRECATED)
     io_context& ioc_ref = socket1.get_io_context();
     (void)ioc_ref;
+
+    io_context& ioc_ref2 = socket1.get_io_service();
+    (void)ioc_ref2;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     // basic_socket functions.
 

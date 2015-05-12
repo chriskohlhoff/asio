@@ -28,7 +28,7 @@ void transmit_file(tcp::socket& socket,
     random_access_handle& file, Handler handler)
 {
   // Construct an OVERLAPPED-derived object to contain the handler.
-  overlapped_ptr overlapped(socket.get_io_context(), handler);
+  overlapped_ptr overlapped(socket.get_executor().context(), handler);
 
   // Initiate the TransmitFile operation.
   BOOL ok = ::TransmitFile(socket.native_handle(),
@@ -119,7 +119,7 @@ private:
   void start_accept()
   {
     connection::pointer new_connection =
-      connection::create(acceptor_.get_io_context(), filename_);
+      connection::create(acceptor_.get_executor().context(), filename_);
 
     acceptor_.async_accept(new_connection->socket(),
         boost::bind(&server::handle_accept, this, new_connection,

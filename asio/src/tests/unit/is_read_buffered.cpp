@@ -31,6 +31,8 @@ public:
 
   typedef test_stream lowest_layer_type;
 
+  typedef io_context_type::executor_type executor_type;
+
   test_stream(asio::io_context& io_context)
     : io_context_(io_context)
   {

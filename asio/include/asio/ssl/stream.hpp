@@ -80,6 +80,9 @@ public:
   /// The type of the lowest layer.
   typedef typename next_layer_type::lowest_layer_type lowest_layer_type;
 
+  /// The type of the executor associated with the object.
+  typedef typename lowest_layer_type::executor_type executor_type;
+
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Construct a stream.
   /**
@@ -112,18 +115,33 @@ public:
   {
   }
 
-  /// Get the io_context associated with the object.
+  /// Get the executor associated with the object.
   /**
-   * This function may be used to obtain the io_context object that the stream
+   * This function may be used to obtain the executor object that the stream
    * uses to dispatch handlers for asynchronous operations.
    *
-   * @return A reference to the io_context object that stream will use to
-   * dispatch handlers. Ownership is not transferred to the caller.
+   * @return A copy of the executor that stream will use to dispatch handlers.
    */
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return next_layer_.lowest_layer().get_executor();
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
   asio::io_context& get_io_context()
   {
     return next_layer_.lowest_layer().get_io_context();
   }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  asio::io_context& get_io_service()
+  {
+    return next_layer_.lowest_layer().get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Get the underlying implementation in the native type.
   /**
