@@ -427,8 +427,8 @@ asio::error_code context::use_certificate(
   if (format == context_base::asn1)
   {
     if (::SSL_CTX_use_certificate_ASN1(handle_,
-          static_cast<int>(buffer_size(certificate)),
-          buffer_cast<const unsigned char*>(certificate)) == 1)
+          static_cast<int>(certificate.size()),
+          static_cast<const unsigned char*>(certificate.data())) == 1)
     {
       ec = asio::error_code();
       return ec;
@@ -943,8 +943,8 @@ int context::password_callback_function(
 BIO* context::make_buffer_bio(const const_buffer& b)
 {
   return ::BIO_new_mem_buf(
-      const_cast<void*>(buffer_cast<const void*>(b)),
-      static_cast<int>(buffer_size(b)));
+      const_cast<void*>(b.data()),
+      static_cast<int>(b.size()));
 }
 
 } // namespace ssl

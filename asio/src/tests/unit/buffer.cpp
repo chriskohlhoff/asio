@@ -68,6 +68,14 @@ void test()
     mutable_buffer mb2(void_ptr_data, 1024);
     mutable_buffer mb3(mb1);
 
+    // mutable_buffer functions.
+
+    void* ptr1 = mb1.data();
+    (void)ptr1;
+
+    std::size_t n1 = mb1.size();
+    (void)n1;
+
     // mutable_buffer operators.
 
     mb1 = mb2 + 128;
@@ -91,6 +99,14 @@ void test()
     const_buffer cb2(const_void_ptr_data, 1024);
     const_buffer cb3(cb1);
     const_buffer cb4(mb1);
+
+    // const_buffer functions.
+
+    const void* ptr2 = cb1.data();
+    (void)ptr2;
+
+    std::size_t n2 = cb1.size();
+    (void)n2;
 
     // const_buffer operators.
 
@@ -126,10 +142,12 @@ void test()
 
     // buffer_cast function overloads.
 
-    void* ptr1 = buffer_cast<void*>(mb1);
-    (void)ptr1;
-    const void* ptr2 = buffer_cast<const void*>(cb1);
-    (void)ptr2;
+#if !defined(ASIO_NO_DEPRECATED)
+    void* ptr3 = buffer_cast<void*>(mb1);
+    (void)ptr3;
+    const void* ptr4 = buffer_cast<const void*>(cb1);
+    (void)ptr4;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     // buffer function overloads.
 

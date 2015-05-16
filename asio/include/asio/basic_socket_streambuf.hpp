@@ -444,7 +444,7 @@ protected:
       // Send all data in the output buffer.
       asio::const_buffer buffer =
         asio::buffer(pbase(), pptr() - pbase());
-      while (asio::buffer_size(buffer) > 0)
+      while (buffer.size() > 0)
       {
         if (timer_state_ == timer_has_expired)
         {

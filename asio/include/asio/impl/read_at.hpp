@@ -295,7 +295,7 @@ namespace detail
           total_transferred_ += bytes_transferred;
           if ((!ec && bytes_transferred == 0)
               || (n = this->check_for_completion(ec, total_transferred_)) == 0
-              || total_transferred_ == asio::buffer_size(buffer_))
+              || total_transferred_ == buffer_.size())
             break;
         }
 
@@ -364,8 +364,8 @@ namespace detail
           boost::array<asio::mutable_buffer, 2> >::type bufs = {{
         asio::mutable_buffer(buffers_[0]),
         asio::mutable_buffer(buffers_[1]) }};
-      std::size_t buffer_size0 = asio::buffer_size(bufs[0]);
-      std::size_t buffer_size1 = asio::buffer_size(bufs[1]);
+      std::size_t buffer_size0 = bufs[0].size();
+      std::size_t buffer_size1 = bufs[1].size();
       std::size_t n = 0;
       switch (start_ = start)
       {
@@ -377,7 +377,7 @@ namespace detail
           bufs[1] = asio::buffer(
               bufs[1] + (total_transferred_ < buffer_size0
                 ? 0 : total_transferred_ - buffer_size0),
-              n - asio::buffer_size(bufs[0]));
+              n - bufs[0].size());
           device_.async_read_some_at(offset_ + total_transferred_,
               bufs, ASIO_MOVE_CAST(read_at_op)(*this));
           return; default:
@@ -455,8 +455,8 @@ namespace detail
           std::array<asio::mutable_buffer, 2> >::type bufs = {{
         asio::mutable_buffer(buffers_[0]),
         asio::mutable_buffer(buffers_[1]) }};
-      std::size_t buffer_size0 = asio::buffer_size(bufs[0]);
-      std::size_t buffer_size1 = asio::buffer_size(bufs[1]);
+      std::size_t buffer_size0 = bufs[0].size();
+      std::size_t buffer_size1 = bufs[1].size();
       std::size_t n = 0;
       switch (start_ = start)
       {
@@ -468,7 +468,7 @@ namespace detail
           bufs[1] = asio::buffer(
               bufs[1] + (total_transferred_ < buffer_size0
                 ? 0 : total_transferred_ - buffer_size0),
-              n - asio::buffer_size(bufs[0]));
+              n - bufs[0].size());
           device_.async_read_some_at(offset_ + total_transferred_,
               bufs, ASIO_MOVE_CAST(read_at_op)(*this));
           return; default:

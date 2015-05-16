@@ -136,7 +136,7 @@ public:
     while (new_iter.current_ != new_iter.end_)
     {
       new_iter.current_buffer_ = *new_iter.current_;
-      if (asio::buffer_size(new_iter.current_buffer_) > 0)
+      if (new_iter.current_buffer_.size() > 0)
         break;
       ++new_iter.current_;
     }
@@ -156,7 +156,7 @@ public:
     while (new_iter.current_ != new_iter.end_)
     {
       buffer_type buffer = *new_iter.current_;
-      new_iter.position_ += asio::buffer_size(buffer);
+      new_iter.position_ += buffer.size();
       ++new_iter.current_;
     }
     return new_iter;
@@ -300,7 +300,8 @@ private:
   // Dereference the iterator.
   reference dereference() const
   {
-    return buffer_cast<pointer>(current_buffer_)[current_buffer_position_];
+    return static_cast<pointer>(
+        current_buffer_.data())[current_buffer_position_];
   }
 
   // Compare two iterators for equality.
@@ -317,7 +318,7 @@ private:
 
     // Check if the increment can be satisfied by the current buffer.
     ++current_buffer_position_;
-    if (current_buffer_position_ != asio::buffer_size(current_buffer_))
+    if (current_buffer_position_ != current_buffer_.size())
       return;
 
     // Find the next non-empty buffer.
@@ -326,7 +327,7 @@ private:
     while (current_ != end_)
     {
       current_buffer_ = *current_;
-      if (asio::buffer_size(current_buffer_) > 0)
+      if (current_buffer_.size() > 0)
         return;
       ++current_;
     }
@@ -351,7 +352,7 @@ private:
     {
       --iter;
       buffer_type buffer = *iter;
-      std::size_t buffer_size = asio::buffer_size(buffer);
+      std::size_t buffer_size = buffer.size();
       if (buffer_size > 0)
       {
         current_ = iter;
@@ -371,8 +372,7 @@ private:
       for (;;)
       {
         std::ptrdiff_t current_buffer_balance
-          = asio::buffer_size(current_buffer_)
-          - current_buffer_position_;
+          = current_buffer_.size() - current_buffer_position_;
 
         // Check if the advance can be satisfied by the current buffer.
         if (current_buffer_balance > n)
@@ -431,7 +431,7 @@ private:
         {
           --iter;
           buffer_type buffer = *iter;
-          std::size_t buffer_size = asio::buffer_size(buffer);
+          std::size_t buffer_size = buffer.size();
           if (buffer_size > 0)
           {
             current_ = iter;

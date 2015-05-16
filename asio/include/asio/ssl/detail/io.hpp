@@ -38,7 +38,7 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // If the input buffer is empty then we need to read some more data from
     // the underlying transport.
-    if (asio::buffer_size(core.input_) == 0)
+    if (core.input_.size() == 0)
       core.input_ = asio::buffer(core.input_buffer_,
           next_layer.read_some(core.input_buffer_, ec));
 
@@ -138,7 +138,7 @@ public:
 
           // If the input buffer already has data in it we can pass it to the
           // engine and then retry the operation immediately.
-          if (asio::buffer_size(core_.input_) != 0)
+          if (core_.input_.size() != 0)
           {
             core_.input_ = core_.engine_.put_input(core_.input_);
             continue;

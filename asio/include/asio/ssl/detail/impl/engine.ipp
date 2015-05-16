@@ -141,37 +141,35 @@ engine::want engine::shutdown(asio::error_code& ec)
 engine::want engine::write(const asio::const_buffer& data,
     asio::error_code& ec, std::size_t& bytes_transferred)
 {
-  if (asio::buffer_size(data) == 0)
+  if (data.size() == 0)
   {
     ec = asio::error_code();
     return engine::want_nothing;
   }
 
   return perform(&engine::do_write,
-      const_cast<void*>(asio::buffer_cast<const void*>(data)),
-      asio::buffer_size(data), ec, &bytes_transferred);
+      const_cast<void*>(data.data()),
+      data.size(), ec, &bytes_transferred);
 }
 
 engine::want engine::read(const asio::mutable_buffer& data,
     asio::error_code& ec, std::size_t& bytes_transferred)
 {
-  if (asio::buffer_size(data) == 0)
+  if (data.size() == 0)
   {
     ec = asio::error_code();
     return engine::want_nothing;
   }
 
-  return perform(&engine::do_read,
-      asio::buffer_cast<void*>(data),
-      asio::buffer_size(data), ec, &bytes_transferred);
+  return perform(&engine::do_read, data.data(),
+      data.size(), ec, &bytes_transferred);
 }
 
 asio::mutable_buffers_1 engine::get_output(
     const asio::mutable_buffer& data)
 {
   int length = ::BIO_read(ext_bio_,
-      asio::buffer_cast<void*>(data),
-      static_cast<int>(asio::buffer_size(data)));
+      data.data(), static_cast<int>(data.size()));
 
   return asio::buffer(data,
       length > 0 ? static_cast<std::size_t>(length) : 0);
@@ -181,8 +179,7 @@ asio::const_buffer engine::put_input(
     const asio::const_buffer& data)
 {
   int length = ::BIO_write(ext_bio_,
-      asio::buffer_cast<const void*>(data),
-      static_cast<int>(asio::buffer_size(data)));
+      data.data(), static_cast<int>(data.size()));
 
   return asio::buffer(data +
       (length > 0 ? static_cast<std::size_t>(length) : 0));

@@ -305,7 +305,7 @@ size_t win_iocp_handle_service::do_write(
   }
 
   // A request to write 0 bytes on a handle is a no-op.
-  if (asio::buffer_size(buffer) == 0)
+  if (buffer.size() == 0)
   {
     ec = asio::error_code();
     return 0;
@@ -320,9 +320,8 @@ size_t win_iocp_handle_service::do_write(
   // Write the data. 
   overlapped.Offset = offset & 0xFFFFFFFF;
   overlapped.OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
-  BOOL ok = ::WriteFile(impl.handle_,
-      asio::buffer_cast<LPCVOID>(buffer),
-      static_cast<DWORD>(asio::buffer_size(buffer)), 0, &overlapped);
+  BOOL ok = ::WriteFile(impl.handle_, buffer.data(),
+      static_cast<DWORD>(buffer.size()), 0, &overlapped);
   if (!ok) 
   {
     DWORD last_error = ::GetLastError();
@@ -361,7 +360,7 @@ void win_iocp_handle_service::start_write_op(
   {
     iocp_service_.on_completion(op, asio::error::bad_descriptor);
   }
-  else if (asio::buffer_size(buffer) == 0)
+  else if (buffer.size() == 0)
   {
     // A request to write 0 bytes on a handle is a no-op.
     iocp_service_.on_completion(op);
@@ -371,9 +370,8 @@ void win_iocp_handle_service::start_write_op(
     DWORD bytes_transferred = 0;
     op->Offset = offset & 0xFFFFFFFF;
     op->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
-    BOOL ok = ::WriteFile(impl.handle_,
-        asio::buffer_cast<LPCVOID>(buffer),
-        static_cast<DWORD>(asio::buffer_size(buffer)),
+    BOOL ok = ::WriteFile(impl.handle_, buffer.data(),
+        static_cast<DWORD>(buffer.size()),
         &bytes_transferred, op);
     DWORD last_error = ::GetLastError();
     if (!ok && last_error != ERROR_IO_PENDING
@@ -399,7 +397,7 @@ size_t win_iocp_handle_service::do_read(
   }
   
   // A request to read 0 bytes on a stream handle is a no-op.
-  if (asio::buffer_size(buffer) == 0)
+  if (buffer.size() == 0)
   {
     ec = asio::error_code();
     return 0;
@@ -414,9 +412,8 @@ size_t win_iocp_handle_service::do_read(
   // Read some data.
   overlapped.Offset = offset & 0xFFFFFFFF;
   overlapped.OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
-  BOOL ok = ::ReadFile(impl.handle_,
-      asio::buffer_cast<LPVOID>(buffer),
-      static_cast<DWORD>(asio::buffer_size(buffer)), 0, &overlapped);
+  BOOL ok = ::ReadFile(impl.handle_, buffer.data(),
+      static_cast<DWORD>(buffer.size()), 0, &overlapped);
   if (!ok) 
   {
     DWORD last_error = ::GetLastError();
@@ -469,7 +466,7 @@ void win_iocp_handle_service::start_read_op(
   {
     iocp_service_.on_completion(op, asio::error::bad_descriptor);
   }
-  else if (asio::buffer_size(buffer) == 0)
+  else if (buffer.size() == 0)
   {
     // A request to read 0 bytes on a handle is a no-op.
     iocp_service_.on_completion(op);
@@ -479,9 +476,8 @@ void win_iocp_handle_service::start_read_op(
     DWORD bytes_transferred = 0;
     op->Offset = offset & 0xFFFFFFFF;
     op->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
-    BOOL ok = ::ReadFile(impl.handle_,
-        asio::buffer_cast<LPVOID>(buffer),
-        static_cast<DWORD>(asio::buffer_size(buffer)),
+    BOOL ok = ::ReadFile(impl.handle_, buffer.data(),
+        static_cast<DWORD>(buffer.size()),
         &bytes_transferred, op);
     DWORD last_error = ::GetLastError();
     if (!ok && last_error != ERROR_IO_PENDING

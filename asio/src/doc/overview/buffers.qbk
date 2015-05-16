@@ -45,7 +45,7 @@ an opaque representation of contiguous memory, where:
   mechanisms for automatically determining the size of a buffer from an array,
   `boost::array` or `std::vector` of POD elements, or from a `std::string`.
 
-* Type safety violations must be explicitly requested using the `buffer_cast`
+* The underlying memory is explicitly accessed using the `data()` member
   function. In general an application should never need to do this, but it is
   required by the library implementation to pass the raw memory to the
   underlying operating system functions.

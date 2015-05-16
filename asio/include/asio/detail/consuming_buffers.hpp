@@ -113,13 +113,13 @@ private:
     if (!at_end_)
     {
       if (begin_remainder_ == end_remainder_
-          || offset_ + buffer_size(first_) >= max_size_)
+          || offset_ + first_.size() >= max_size_)
       {
         at_end_ = true;
       }
       else
       {
-        offset_ += buffer_size(first_);
+        offset_ += first_.size();
         first_ = buffer(*begin_remainder_++, max_size_ - offset_);
       }
     }
@@ -130,9 +130,8 @@ private:
     if (at_end_ && other.at_end_)
       return true;
     return !at_end_ && !other.at_end_
-      && buffer_cast<const void*>(first_)
-        == buffer_cast<const void*>(other.first_)
-      && buffer_size(first_) == buffer_size(other.first_)
+      && first_.data() == other.first_.data()
+      && first_.size() == other.first_.size()
       && begin_remainder_ == other.begin_remainder_
       && end_remainder_ == other.end_remainder_;
   }
@@ -228,9 +227,9 @@ public:
     // Remove buffers from the start until the specified size is reached.
     while (size > 0 && !at_end_)
     {
-      if (buffer_size(first_) <= size)
+      if (first_.size() <= size)
       {
-        size -= buffer_size(first_);
+        size -= first_.size();
         if (begin_remainder_ == buffers_.end())
           at_end_ = true;
         else
@@ -244,7 +243,7 @@ public:
     }
 
     // Remove any more empty buffers at the start.
-    while (!at_end_ && buffer_size(first_) == 0)
+    while (!at_end_ && first_.size() == 0)
     {
       if (begin_remainder_ == buffers_.end())
         at_end_ = true;

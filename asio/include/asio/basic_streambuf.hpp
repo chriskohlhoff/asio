@@ -151,7 +151,7 @@ public:
    * while (i != bufs.end())
    * {
    *   const_buffer buf(*i++);
-   *   s += buffer_size(buf);
+   *   s += buf.size();
    * }
    * @endcode
    */

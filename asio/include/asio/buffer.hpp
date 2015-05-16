@@ -67,13 +67,6 @@ namespace asio {
 class mutable_buffer;
 class const_buffer;
 
-namespace detail {
-void* buffer_cast_helper(const mutable_buffer&);
-const void* buffer_cast_helper(const const_buffer&);
-std::size_t buffer_size_helper(const mutable_buffer&);
-std::size_t buffer_size_helper(const const_buffer&);
-} // namespace detail
-
 /// Holds a buffer that can be modified.
 /**
  * The mutable_buffer class provides a safe representation of a buffer that can
@@ -82,16 +75,16 @@ std::size_t buffer_size_helper(const const_buffer&);
  *
  * @par Accessing Buffer Contents
  *
- * The contents of a buffer may be accessed using the @ref buffer_size
- * and @ref buffer_cast functions:
+ * The contents of a buffer may be accessed using the @c data() and @c size()
+ * member functions:
  *
  * @code asio::mutable_buffer b1 = ...;
- * std::size_t s1 = asio::buffer_size(b1);
- * unsigned char* p1 = asio::buffer_cast<unsigned char*>(b1);
+ * std::size_t s1 = b1.size();
+ * unsigned char* p1 = static_cast<unsigned char*>(b1.data());
  * @endcode
  *
- * The asio::buffer_cast function permits violations of type safety, so
- * uses of it in application code should be carefully considered.
+ * The @c data() member function permits violations of type safety, so uses of
+ * it in application code should be carefully considered.
  */
 class mutable_buffer
 {
@@ -125,12 +118,23 @@ public:
   }
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
-private:
-  friend void* asio::detail::buffer_cast_helper(
-      const mutable_buffer& b);
-  friend std::size_t asio::detail::buffer_size_helper(
-      const mutable_buffer& b);
+  /// Get a pointer to the beginning of the memory range.
+  void* data() const
+  {
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+    if (size_ && debug_check_)
+      debug_check_();
+#endif // ASIO_ENABLE_BUFFER_DEBUGGING
+    return data_;
+  }
 
+  /// Get the size of the memory range.
+  std::size_t size() const
+  {
+    return size_;
+  }
+
+private:
   void* data_;
   std::size_t size_;
 
@@ -138,24 +142,6 @@ private:
   asio::detail::function<void()> debug_check_;
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 };
-
-namespace detail {
-
-inline void* buffer_cast_helper(const mutable_buffer& b)
-{
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-  if (b.size_ && b.debug_check_)
-    b.debug_check_();
-#endif // ASIO_ENABLE_BUFFER_DEBUGGING
-  return b.data_;
-}
-
-inline std::size_t buffer_size_helper(const mutable_buffer& b)
-{
-  return b.size_;
-}
-
-} // namespace detail
 
 /// Adapts a single modifiable buffer so that it meets the requirements of the
 /// MutableBufferSequence concept.
@@ -202,16 +188,16 @@ public:
  *
  * @par Accessing Buffer Contents
  *
- * The contents of a buffer may be accessed using the @ref buffer_size
- * and @ref buffer_cast functions:
+ * The contents of a buffer may be accessed using the @c data() and @c size()
+ * member functions:
  *
  * @code asio::const_buffer b1 = ...;
- * std::size_t s1 = asio::buffer_size(b1);
- * const unsigned char* p1 = asio::buffer_cast<const unsigned char*>(b1);
+ * std::size_t s1 = b1.size();
+ * const unsigned char* p1 = static_cast<const unsigned char*>(b1.data());
  * @endcode
  *
- * The asio::buffer_cast function permits violations of type safety, so
- * uses of it in application code should be carefully considered.
+ * The @c data() member function permits violations of type safety, so uses of
+ * it in application code should be carefully considered.
  */
 class const_buffer
 {
@@ -232,8 +218,8 @@ public:
 
   /// Construct a non-modifiable buffer from a modifiable one.
   const_buffer(const mutable_buffer& b)
-    : data_(asio::detail::buffer_cast_helper(b)),
-      size_(asio::detail::buffer_size_helper(b))
+    : data_(b.data()),
+      size_(b.size())
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       , debug_check_(b.get_debug_check())
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
@@ -255,12 +241,23 @@ public:
   }
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
-private:
-  friend const void* asio::detail::buffer_cast_helper(
-      const const_buffer& b);
-  friend std::size_t asio::detail::buffer_size_helper(
-      const const_buffer& b);
+  /// Get a pointer to the beginning of the memory range.
+  const void* data() const
+  {
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+    if (size_ && debug_check_)
+      debug_check_();
+#endif // ASIO_ENABLE_BUFFER_DEBUGGING
+    return data_;
+  }
 
+  /// Get the size of the memory range.
+  std::size_t size() const
+  {
+    return size_;
+  }
+
+private:
   const void* data_;
   std::size_t size_;
 
@@ -268,24 +265,6 @@ private:
   asio::detail::function<void()> debug_check_;
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 };
-
-namespace detail {
-
-inline const void* buffer_cast_helper(const const_buffer& b)
-{
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-  if (b.size_ && b.debug_check_)
-    b.debug_check_();
-#endif // ASIO_ENABLE_BUFFER_DEBUGGING
-  return b.data_;
-}
-
-inline std::size_t buffer_size_helper(const const_buffer& b)
-{
-  return b.size_;
-}
-
-} // namespace detail
 
 /// Adapts a single non-modifiable buffer so that it meets the requirements of
 /// the ConstBufferSequence concept.
@@ -398,25 +377,25 @@ private:
 /// Get the number of bytes in a modifiable buffer.
 inline std::size_t buffer_size(const mutable_buffer& b)
 {
-  return detail::buffer_size_helper(b);
+  return b.size();
 }
 
 /// Get the number of bytes in a modifiable buffer.
 inline std::size_t buffer_size(const mutable_buffers_1& b)
 {
-  return detail::buffer_size_helper(b);
+  return b.size();
 }
 
 /// Get the number of bytes in a non-modifiable buffer.
 inline std::size_t buffer_size(const const_buffer& b)
 {
-  return detail::buffer_size_helper(b);
+  return b.size();
 }
 
 /// Get the number of bytes in a non-modifiable buffer.
 inline std::size_t buffer_size(const const_buffers_1& b)
 {
-  return detail::buffer_size_helper(b);
+  return b.size();
 }
 
 /// Get the total number of bytes in a buffer sequence.
@@ -435,17 +414,20 @@ inline std::size_t buffer_size(const BufferSequence& b,
   typename BufferSequence::const_iterator iter = b.begin();
   typename BufferSequence::const_iterator end = b.end();
   for (; iter != end; ++iter)
-    total_buffer_size += detail::buffer_size_helper(*iter);
+    total_buffer_size += iter->size();
 
   return total_buffer_size;
 }
 
 /*@}*/
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 /** @defgroup buffer_cast asio::buffer_cast
  *
- * @brief The asio::buffer_cast function is used to obtain a pointer to
- * the underlying memory region associated with a buffer.
+ * @brief (Deprecated: Use the @c data() member function.) The
+ * asio::buffer_cast function is used to obtain a pointer to the underlying
+ * memory region associated with a buffer.
  *
  * @par Examples:
  *
@@ -468,17 +450,19 @@ inline std::size_t buffer_size(const BufferSequence& b,
 template <typename PointerToPodType>
 inline PointerToPodType buffer_cast(const mutable_buffer& b)
 {
-  return static_cast<PointerToPodType>(detail::buffer_cast_helper(b));
+  return static_cast<PointerToPodType>(b.data());
 }
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
 template <typename PointerToPodType>
 inline PointerToPodType buffer_cast(const const_buffer& b)
 {
-  return static_cast<PointerToPodType>(detail::buffer_cast_helper(b));
+  return static_cast<PointerToPodType>(b.data());
 }
 
 /*@}*/
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Create a new modifiable buffer that is offset from the start of another.
 /**
@@ -486,10 +470,10 @@ inline PointerToPodType buffer_cast(const const_buffer& b)
  */
 inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
 {
-  if (start > buffer_size(b))
+  if (start > b.size())
     return mutable_buffer();
-  char* new_data = buffer_cast<char*>(b) + start;
-  std::size_t new_size = buffer_size(b) - start;
+  char* new_data = static_cast<char*>(b.data()) + start;
+  std::size_t new_size = b.size() - start;
   return mutable_buffer(new_data, new_size
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       , b.get_debug_check()
@@ -503,15 +487,7 @@ inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
  */
 inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
 {
-  if (start > buffer_size(b))
-    return mutable_buffer();
-  char* new_data = buffer_cast<char*>(b) + start;
-  std::size_t new_size = buffer_size(b) - start;
-  return mutable_buffer(new_data, new_size
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-      , b.get_debug_check()
-#endif // ASIO_ENABLE_BUFFER_DEBUGGING
-      );
+  return b + start;
 }
 
 /// Create a new non-modifiable buffer that is offset from the start of another.
@@ -520,10 +496,10 @@ inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
  */
 inline const_buffer operator+(const const_buffer& b, std::size_t start)
 {
-  if (start > buffer_size(b))
+  if (start > b.size())
     return const_buffer();
-  const char* new_data = buffer_cast<const char*>(b) + start;
-  std::size_t new_size = buffer_size(b) - start;
+  const char* new_data = static_cast<const char*>(b.data()) + start;
+  std::size_t new_size = b.size() - start;
   return const_buffer(new_data, new_size
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       , b.get_debug_check()
@@ -537,15 +513,7 @@ inline const_buffer operator+(const const_buffer& b, std::size_t start)
  */
 inline const_buffer operator+(std::size_t start, const const_buffer& b)
 {
-  if (start > buffer_size(b))
-    return const_buffer();
-  const char* new_data = buffer_cast<const char*>(b) + start;
-  std::size_t new_size = buffer_size(b) - start;
-  return const_buffer(new_data, new_size
-#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
-      , b.get_debug_check()
-#endif // ASIO_ENABLE_BUFFER_DEBUGGING
-      );
+  return b + start;
 }
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
@@ -630,24 +598,24 @@ private:
  *
  * @par Accessing Buffer Contents
  *
- * The contents of a buffer may be accessed using the @ref buffer_size and
- * @ref buffer_cast functions:
+ * The contents of a buffer may be accessed using the @c data() and @c size()
+ * member functions:
  *
  * @code asio::mutable_buffer b1 = ...;
- * std::size_t s1 = asio::buffer_size(b1);
- * unsigned char* p1 = asio::buffer_cast<unsigned char*>(b1);
+ * std::size_t s1 = b1.size();
+ * unsigned char* p1 = static_cast<unsigned char*>(b1.data());
  *
  * asio::const_buffer b2 = ...;
- * std::size_t s2 = asio::buffer_size(b2);
- * const void* p2 = asio::buffer_cast<const void*>(b2); @endcode
+ * std::size_t s2 = b2.size();
+ * const void* p2 = b2.data(); @endcode
  *
- * The asio::buffer_cast function permits violations of type safety, so
+ * The @c data() member function permits violations of type safety, so
  * uses of it in application code should be carefully considered.
  *
- * For convenience, the @ref buffer_size function also works on buffer
- * sequences (that is, types meeting the ConstBufferSequence or
- * MutableBufferSequence type requirements). In this case, the function returns
- * the total size of all buffers in the sequence.
+ * For convenience, a @ref buffer_size function is provided that works with
+ * both buffers and buffer sequences (that is, types meeting the
+ * ConstBufferSequence or MutableBufferSequence type requirements). In this
+ * case, the function returns the total size of all buffers in the sequence.
  *
  * @par Buffer Copying
  *
@@ -757,16 +725,16 @@ inline mutable_buffers_1 buffer(const mutable_buffer& b)
 /**
  * @returns A mutable_buffers_1 value equivalent to:
  * @code mutable_buffers_1(
- *     buffer_cast<void*>(b),
- *     min(buffer_size(b), max_size_in_bytes)); @endcode
+ *     b.data(),
+ *     min(b.size(), max_size_in_bytes)); @endcode
  */
 inline mutable_buffers_1 buffer(const mutable_buffer& b,
     std::size_t max_size_in_bytes)
 {
   return mutable_buffers_1(
-      mutable_buffer(buffer_cast<void*>(b),
-        buffer_size(b) < max_size_in_bytes
-        ? buffer_size(b) : max_size_in_bytes
+      mutable_buffer(b.data(),
+        b.size() < max_size_in_bytes
+        ? b.size() : max_size_in_bytes
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
         , b.get_debug_check()
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
@@ -786,16 +754,16 @@ inline const_buffers_1 buffer(const const_buffer& b)
 /**
  * @returns A const_buffers_1 value equivalent to:
  * @code const_buffers_1(
- *     buffer_cast<const void*>(b),
- *     min(buffer_size(b), max_size_in_bytes)); @endcode
+ *     b.data(),
+ *     min(b.size(), max_size_in_bytes)); @endcode
  */
 inline const_buffers_1 buffer(const const_buffer& b,
     std::size_t max_size_in_bytes)
 {
   return const_buffers_1(
-      const_buffer(buffer_cast<const void*>(b),
-        buffer_size(b) < max_size_in_bytes
-        ? buffer_size(b) : max_size_in_bytes
+      const_buffer(b.data(),
+        b.size() < max_size_in_bytes
+        ? b.size() : max_size_in_bytes
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
         , b.get_debug_check()
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
@@ -806,7 +774,8 @@ inline const_buffers_1 buffer(const const_buffer& b,
 /**
  * @returns <tt>mutable_buffers_1(data, size_in_bytes)</tt>.
  */
-inline mutable_buffers_1 buffer(void* data, std::size_t size_in_bytes)
+inline mutable_buffers_1 buffer(void* data,
+    std::size_t size_in_bytes)
 {
   return mutable_buffers_1(mutable_buffer(data, size_in_bytes));
 }
@@ -1744,10 +1713,10 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
     const const_buffer& source)
 {
   using namespace std; // For memcpy.
-  std::size_t target_size = buffer_size(target);
-  std::size_t source_size = buffer_size(source);
+  std::size_t target_size = target.size();
+  std::size_t source_size = source.size();
   std::size_t n = target_size < source_size ? target_size : source_size;
-  memcpy(buffer_cast<void*>(target), buffer_cast<const void*>(source), n);
+  memcpy(target.data(), source.data(), n);
   return n;
 }
 
@@ -1860,7 +1829,7 @@ std::size_t buffer_copy(const mutable_buffer& target,
   typename ConstBufferSequence::const_iterator source_end = source.end();
 
   for (mutable_buffer target_buffer(target);
-      buffer_size(target_buffer) && source_iter != source_end; ++source_iter)
+      target_buffer.size() && source_iter != source_end; ++source_iter)
   {
     const_buffer source_buffer(*source_iter);
     std::size_t bytes_copied = buffer_copy(target_buffer, source_buffer);
@@ -2037,7 +2006,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
   typename MutableBufferSequence::const_iterator target_end = target.end();
 
   for (const_buffer source_buffer(source);
-      buffer_size(source_buffer) && target_iter != target_end; ++target_iter)
+      source_buffer.size() && target_iter != target_end; ++target_iter)
   {
     mutable_buffer target_buffer(*target_iter);
     std::size_t bytes_copied = buffer_copy(target_buffer, source_buffer);
@@ -2185,7 +2154,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
     std::size_t bytes_copied = buffer_copy(target_buffer, source_buffer);
     total_bytes_copied += bytes_copied;
 
-    if (bytes_copied == buffer_size(target_buffer))
+    if (bytes_copied == target_buffer.size())
     {
       ++target_iter;
       target_buffer_offset = 0;
@@ -2193,7 +2162,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
     else
       target_buffer_offset += bytes_copied;
 
-    if (bytes_copied == buffer_size(source_buffer))
+    if (bytes_copied == source_buffer.size())
     {
       ++source_iter;
       source_buffer_offset = 0;
@@ -2702,7 +2671,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
         source_buffer, max_bytes_to_copy - total_bytes_copied);
     total_bytes_copied += bytes_copied;
 
-    if (bytes_copied == buffer_size(target_buffer))
+    if (bytes_copied == target_buffer.size())
     {
       ++target_iter;
       target_buffer_offset = 0;
@@ -2710,7 +2679,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
     else
       target_buffer_offset += bytes_copied;
 
-    if (bytes_copied == buffer_size(source_buffer))
+    if (bytes_copied == source_buffer.size())
     {
       ++source_iter;
       source_buffer_offset = 0;

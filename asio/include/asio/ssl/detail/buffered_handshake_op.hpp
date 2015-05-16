@@ -58,9 +58,9 @@ public:
         const_buffer buffer(*iter);
 
         // Skip over any buffers which have already been consumed by the engine.
-        if (bytes_transferred >= accumulated_size + buffer_size(buffer))
+        if (bytes_transferred >= accumulated_size + buffer.size())
         {
-          accumulated_size += buffer_size(buffer);
+          accumulated_size += buffer.size();
           ++iter;
           continue;
         }
@@ -73,9 +73,9 @@ public:
 
         // Pass the buffer to the engine, and update the bytes transferred to
         // reflect the total number of bytes consumed so far.
-        bytes_transferred += buffer_size(buffer);
+        bytes_transferred += buffer.size();
         buffer = eng.put_input(buffer);
-        bytes_transferred -= buffer_size(buffer);
+        bytes_transferred -= buffer.size();
         break;
       }
     }
