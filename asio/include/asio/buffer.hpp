@@ -90,14 +90,14 @@ class mutable_buffer
 {
 public:
   /// Construct an empty buffer.
-  mutable_buffer()
+  mutable_buffer() ASIO_NOEXCEPT
     : data_(0),
       size_(0)
   {
   }
 
   /// Construct a buffer to represent a given memory range.
-  mutable_buffer(void* data, std::size_t size)
+  mutable_buffer(void* data, std::size_t size) ASIO_NOEXCEPT
     : data_(data),
       size_(size)
   {
@@ -119,7 +119,7 @@ public:
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
   /// Get a pointer to the beginning of the memory range.
-  void* data() const
+  void* data() const ASIO_NOEXCEPT
   {
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
     if (size_ && debug_check_)
@@ -129,7 +129,7 @@ public:
   }
 
   /// Get the size of the memory range.
-  std::size_t size() const
+  std::size_t size() const ASIO_NOEXCEPT
   {
     return size_;
   }
@@ -156,25 +156,25 @@ public:
   typedef const mutable_buffer* const_iterator;
 
   /// Construct to represent a given memory range.
-  mutable_buffers_1(void* data, std::size_t size)
+  mutable_buffers_1(void* data, std::size_t size) ASIO_NOEXCEPT
     : mutable_buffer(data, size)
   {
   }
 
   /// Construct to represent a single modifiable buffer.
-  explicit mutable_buffers_1(const mutable_buffer& b)
+  explicit mutable_buffers_1(const mutable_buffer& b) ASIO_NOEXCEPT
     : mutable_buffer(b)
   {
   }
 
   /// Get a random-access iterator to the first element.
-  const_iterator begin() const
+  const_iterator begin() const ASIO_NOEXCEPT
   {
     return this;
   }
 
   /// Get a random-access iterator for one past the last element.
-  const_iterator end() const
+  const_iterator end() const ASIO_NOEXCEPT
   {
     return begin() + 1;
   }
@@ -203,21 +203,21 @@ class const_buffer
 {
 public:
   /// Construct an empty buffer.
-  const_buffer()
+  const_buffer() ASIO_NOEXCEPT
     : data_(0),
       size_(0)
   {
   }
 
   /// Construct a buffer to represent a given memory range.
-  const_buffer(const void* data, std::size_t size)
+  const_buffer(const void* data, std::size_t size) ASIO_NOEXCEPT
     : data_(data),
       size_(size)
   {
   }
 
   /// Construct a non-modifiable buffer from a modifiable one.
-  const_buffer(const mutable_buffer& b)
+  const_buffer(const mutable_buffer& b) ASIO_NOEXCEPT
     : data_(b.data()),
       size_(b.size())
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
@@ -242,7 +242,7 @@ public:
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
 
   /// Get a pointer to the beginning of the memory range.
-  const void* data() const
+  const void* data() const ASIO_NOEXCEPT
   {
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
     if (size_ && debug_check_)
@@ -252,7 +252,7 @@ public:
   }
 
   /// Get the size of the memory range.
-  std::size_t size() const
+  std::size_t size() const ASIO_NOEXCEPT
   {
     return size_;
   }
@@ -279,25 +279,25 @@ public:
   typedef const const_buffer* const_iterator;
 
   /// Construct to represent a given memory range.
-  const_buffers_1(const void* data, std::size_t size)
+  const_buffers_1(const void* data, std::size_t size) ASIO_NOEXCEPT
     : const_buffer(data, size)
   {
   }
 
   /// Construct to represent a single non-modifiable buffer.
-  explicit const_buffers_1(const const_buffer& b)
+  explicit const_buffers_1(const const_buffer& b) ASIO_NOEXCEPT
     : const_buffer(b)
   {
   }
 
   /// Get a random-access iterator to the first element.
-  const_iterator begin() const
+  const_iterator begin() const ASIO_NOEXCEPT
   {
     return this;
   }
 
   /// Get a random-access iterator for one past the last element.
-  const_iterator end() const
+  const_iterator end() const ASIO_NOEXCEPT
   {
     return begin() + 1;
   }
@@ -352,13 +352,13 @@ public:
   typedef const mutable_buffer* const_iterator;
 
   /// Get a random-access iterator to the first element.
-  const_iterator begin() const
+  const_iterator begin() const ASIO_NOEXCEPT
   {
     return &buf_;
   }
 
   /// Get a random-access iterator for one past the last element.
-  const_iterator end() const
+  const_iterator end() const ASIO_NOEXCEPT
   {
     return &buf_;
   }
@@ -375,25 +375,25 @@ private:
 /*@{*/
 
 /// Get the number of bytes in a modifiable buffer.
-inline std::size_t buffer_size(const mutable_buffer& b)
+inline std::size_t buffer_size(const mutable_buffer& b) ASIO_NOEXCEPT
 {
   return b.size();
 }
 
 /// Get the number of bytes in a modifiable buffer.
-inline std::size_t buffer_size(const mutable_buffers_1& b)
+inline std::size_t buffer_size(const mutable_buffers_1& b) ASIO_NOEXCEPT
 {
   return b.size();
 }
 
 /// Get the number of bytes in a non-modifiable buffer.
-inline std::size_t buffer_size(const const_buffer& b)
+inline std::size_t buffer_size(const const_buffer& b) ASIO_NOEXCEPT
 {
   return b.size();
 }
 
 /// Get the number of bytes in a non-modifiable buffer.
-inline std::size_t buffer_size(const const_buffers_1& b)
+inline std::size_t buffer_size(const const_buffers_1& b) ASIO_NOEXCEPT
 {
   return b.size();
 }
@@ -407,7 +407,7 @@ template <typename BufferSequence>
 inline std::size_t buffer_size(const BufferSequence& b,
     typename enable_if<
       is_const_buffer_sequence<BufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   std::size_t total_buffer_size = 0;
 
@@ -426,8 +426,8 @@ inline std::size_t buffer_size(const BufferSequence& b,
 /** @defgroup buffer_cast asio::buffer_cast
  *
  * @brief (Deprecated: Use the @c data() member function.) The
- * asio::buffer_cast function is used to obtain a pointer to the underlying
- * memory region associated with a buffer.
+ * asio::buffer_cast function is used to obtain a pointer to the
+ * underlying memory region associated with a buffer.
  *
  * @par Examples:
  *
@@ -448,14 +448,14 @@ inline std::size_t buffer_size(const BufferSequence& b,
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
 template <typename PointerToPodType>
-inline PointerToPodType buffer_cast(const mutable_buffer& b)
+inline PointerToPodType buffer_cast(const mutable_buffer& b) ASIO_NOEXCEPT
 {
   return static_cast<PointerToPodType>(b.data());
 }
 
 /// Cast a non-modifiable buffer to a specified pointer to POD type.
 template <typename PointerToPodType>
-inline PointerToPodType buffer_cast(const const_buffer& b)
+inline PointerToPodType buffer_cast(const const_buffer& b) ASIO_NOEXCEPT
 {
   return static_cast<PointerToPodType>(b.data());
 }
@@ -468,7 +468,8 @@ inline PointerToPodType buffer_cast(const const_buffer& b)
 /**
  * @relates mutable_buffer
  */
-inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
+inline mutable_buffer operator+(const mutable_buffer& b,
+    std::size_t start) ASIO_NOEXCEPT
 {
   if (start > b.size())
     return mutable_buffer();
@@ -485,7 +486,8 @@ inline mutable_buffer operator+(const mutable_buffer& b, std::size_t start)
 /**
  * @relates mutable_buffer
  */
-inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
+inline mutable_buffer operator+(std::size_t start,
+    const mutable_buffer& b) ASIO_NOEXCEPT
 {
   return b + start;
 }
@@ -494,7 +496,8 @@ inline mutable_buffer operator+(std::size_t start, const mutable_buffer& b)
 /**
  * @relates const_buffer
  */
-inline const_buffer operator+(const const_buffer& b, std::size_t start)
+inline const_buffer operator+(const const_buffer& b,
+    std::size_t start) ASIO_NOEXCEPT
 {
   if (start > b.size())
     return const_buffer();
@@ -511,7 +514,8 @@ inline const_buffer operator+(const const_buffer& b, std::size_t start)
 /**
  * @relates const_buffer
  */
-inline const_buffer operator+(std::size_t start, const const_buffer& b)
+inline const_buffer operator+(std::size_t start,
+    const const_buffer& b) ASIO_NOEXCEPT
 {
   return b + start;
 }
@@ -716,7 +720,7 @@ private:
 /**
  * @returns <tt>mutable_buffers_1(b)</tt>.
  */
-inline mutable_buffers_1 buffer(const mutable_buffer& b)
+inline mutable_buffers_1 buffer(const mutable_buffer& b) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(b);
 }
@@ -729,7 +733,7 @@ inline mutable_buffers_1 buffer(const mutable_buffer& b)
  *     min(b.size(), max_size_in_bytes)); @endcode
  */
 inline mutable_buffers_1 buffer(const mutable_buffer& b,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(b.data(),
@@ -745,7 +749,7 @@ inline mutable_buffers_1 buffer(const mutable_buffer& b,
 /**
  * @returns <tt>const_buffers_1(b)</tt>.
  */
-inline const_buffers_1 buffer(const const_buffer& b)
+inline const_buffers_1 buffer(const const_buffer& b) ASIO_NOEXCEPT
 {
   return const_buffers_1(b);
 }
@@ -758,7 +762,7 @@ inline const_buffers_1 buffer(const const_buffer& b)
  *     min(b.size(), max_size_in_bytes)); @endcode
  */
 inline const_buffers_1 buffer(const const_buffer& b,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(b.data(),
@@ -775,7 +779,7 @@ inline const_buffers_1 buffer(const const_buffer& b,
  * @returns <tt>mutable_buffers_1(data, size_in_bytes)</tt>.
  */
 inline mutable_buffers_1 buffer(void* data,
-    std::size_t size_in_bytes)
+    std::size_t size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(mutable_buffer(data, size_in_bytes));
 }
@@ -785,7 +789,7 @@ inline mutable_buffers_1 buffer(void* data,
  * @returns <tt>const_buffers_1(data, size_in_bytes)</tt>.
  */
 inline const_buffers_1 buffer(const void* data,
-    std::size_t size_in_bytes)
+    std::size_t size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(const_buffer(data, size_in_bytes));
 }
@@ -798,7 +802,7 @@ inline const_buffers_1 buffer(const void* data,
  *     N * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline mutable_buffers_1 buffer(PodType (&data)[N])
+inline mutable_buffers_1 buffer(PodType (&data)[N]) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(mutable_buffer(data, N * sizeof(PodType)));
 }
@@ -812,7 +816,7 @@ inline mutable_buffers_1 buffer(PodType (&data)[N])
  */
 template <typename PodType, std::size_t N>
 inline mutable_buffers_1 buffer(PodType (&data)[N],
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data,
@@ -828,7 +832,7 @@ inline mutable_buffers_1 buffer(PodType (&data)[N],
  *     N * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline const_buffers_1 buffer(const PodType (&data)[N])
+inline const_buffers_1 buffer(const PodType (&data)[N]) ASIO_NOEXCEPT
 {
   return const_buffers_1(const_buffer(data, N * sizeof(PodType)));
 }
@@ -842,7 +846,7 @@ inline const_buffers_1 buffer(const PodType (&data)[N])
  */
 template <typename PodType, std::size_t N>
 inline const_buffers_1 buffer(const PodType (&data)[N],
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data,
@@ -893,7 +897,7 @@ struct buffer_types
 
 template <typename PodType, std::size_t N>
 inline typename detail::buffer_types<PodType>::container_type
-buffer(boost::array<PodType, N>& data)
+buffer(boost::array<PodType, N>& data) ASIO_NOEXCEPT
 {
   typedef typename asio::detail::buffer_types<PodType>::buffer_type
     buffer_type;
@@ -905,7 +909,8 @@ buffer(boost::array<PodType, N>& data)
 
 template <typename PodType, std::size_t N>
 inline typename detail::buffer_types<PodType>::container_type
-buffer(boost::array<PodType, N>& data, std::size_t max_size_in_bytes)
+buffer(boost::array<PodType, N>& data,
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   typedef typename asio::detail::buffer_types<PodType>::buffer_type
     buffer_type;
@@ -927,7 +932,8 @@ buffer(boost::array<PodType, N>& data, std::size_t max_size_in_bytes)
  *     data.size() * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline mutable_buffers_1 buffer(boost::array<PodType, N>& data)
+inline mutable_buffers_1 buffer(
+    boost::array<PodType, N>& data) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.c_array(), data.size() * sizeof(PodType)));
@@ -942,7 +948,7 @@ inline mutable_buffers_1 buffer(boost::array<PodType, N>& data)
  */
 template <typename PodType, std::size_t N>
 inline mutable_buffers_1 buffer(boost::array<PodType, N>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.c_array(),
@@ -958,7 +964,8 @@ inline mutable_buffers_1 buffer(boost::array<PodType, N>& data,
  *     data.size() * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline const_buffers_1 buffer(boost::array<const PodType, N>& data)
+inline const_buffers_1 buffer(
+    boost::array<const PodType, N>& data) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(), data.size() * sizeof(PodType)));
@@ -973,7 +980,7 @@ inline const_buffers_1 buffer(boost::array<const PodType, N>& data)
  */
 template <typename PodType, std::size_t N>
 inline const_buffers_1 buffer(boost::array<const PodType, N>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(),
@@ -991,7 +998,8 @@ inline const_buffers_1 buffer(boost::array<const PodType, N>& data,
  *     data.size() * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline const_buffers_1 buffer(const boost::array<PodType, N>& data)
+inline const_buffers_1 buffer(
+    const boost::array<PodType, N>& data) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(), data.size() * sizeof(PodType)));
@@ -1006,7 +1014,7 @@ inline const_buffers_1 buffer(const boost::array<PodType, N>& data)
  */
 template <typename PodType, std::size_t N>
 inline const_buffers_1 buffer(const boost::array<PodType, N>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(),
@@ -1024,7 +1032,8 @@ inline const_buffers_1 buffer(const boost::array<PodType, N>& data,
  *     data.size() * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline mutable_buffers_1 buffer(std::array<PodType, N>& data)
+inline mutable_buffers_1 buffer(
+    std::array<PodType, N>& data) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.data(), data.size() * sizeof(PodType)));
@@ -1039,7 +1048,7 @@ inline mutable_buffers_1 buffer(std::array<PodType, N>& data)
  */
 template <typename PodType, std::size_t N>
 inline mutable_buffers_1 buffer(std::array<PodType, N>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.data(),
@@ -1055,7 +1064,8 @@ inline mutable_buffers_1 buffer(std::array<PodType, N>& data,
  *     data.size() * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline const_buffers_1 buffer(std::array<const PodType, N>& data)
+inline const_buffers_1 buffer(
+    std::array<const PodType, N>& data) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(), data.size() * sizeof(PodType)));
@@ -1070,7 +1080,7 @@ inline const_buffers_1 buffer(std::array<const PodType, N>& data)
  */
 template <typename PodType, std::size_t N>
 inline const_buffers_1 buffer(std::array<const PodType, N>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(),
@@ -1086,7 +1096,8 @@ inline const_buffers_1 buffer(std::array<const PodType, N>& data,
  *     data.size() * sizeof(PodType)); @endcode
  */
 template <typename PodType, std::size_t N>
-inline const_buffers_1 buffer(const std::array<PodType, N>& data)
+inline const_buffers_1 buffer(
+    const std::array<PodType, N>& data) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(), data.size() * sizeof(PodType)));
@@ -1101,7 +1112,7 @@ inline const_buffers_1 buffer(const std::array<PodType, N>& data)
  */
 template <typename PodType, std::size_t N>
 inline const_buffers_1 buffer(const std::array<PodType, N>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(),
@@ -1122,7 +1133,8 @@ inline const_buffers_1 buffer(const std::array<PodType, N>& data,
  * invalidate iterators.
  */
 template <typename PodType, typename Allocator>
-inline mutable_buffers_1 buffer(std::vector<PodType, Allocator>& data)
+inline mutable_buffers_1 buffer(
+    std::vector<PodType, Allocator>& data) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.size() ? &data[0] : 0, data.size() * sizeof(PodType)
@@ -1146,7 +1158,7 @@ inline mutable_buffers_1 buffer(std::vector<PodType, Allocator>& data)
  */
 template <typename PodType, typename Allocator>
 inline mutable_buffers_1 buffer(std::vector<PodType, Allocator>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.size() ? &data[0] : 0,
@@ -1172,7 +1184,7 @@ inline mutable_buffers_1 buffer(std::vector<PodType, Allocator>& data,
  */
 template <typename PodType, typename Allocator>
 inline const_buffers_1 buffer(
-    const std::vector<PodType, Allocator>& data)
+    const std::vector<PodType, Allocator>& data) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.size() ? &data[0] : 0, data.size() * sizeof(PodType)
@@ -1196,7 +1208,8 @@ inline const_buffers_1 buffer(
  */
 template <typename PodType, typename Allocator>
 inline const_buffers_1 buffer(
-    const std::vector<PodType, Allocator>& data, std::size_t max_size_in_bytes)
+    const std::vector<PodType, Allocator>& data,
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.size() ? &data[0] : 0,
@@ -1220,7 +1233,7 @@ inline const_buffers_1 buffer(
  */
 template <typename Elem, typename Traits, typename Allocator>
 inline mutable_buffers_1 buffer(
-    std::basic_string<Elem, Traits, Allocator>& data)
+    std::basic_string<Elem, Traits, Allocator>& data) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(mutable_buffer(data.size() ? &data[0] : 0,
         data.size() * sizeof(Elem)
@@ -1245,7 +1258,7 @@ inline mutable_buffers_1 buffer(
 template <typename Elem, typename Traits, typename Allocator>
 inline mutable_buffers_1 buffer(
     std::basic_string<Elem, Traits, Allocator>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(
       mutable_buffer(data.size() ? &data[0] : 0,
@@ -1268,7 +1281,7 @@ inline mutable_buffers_1 buffer(
  */
 template <typename Elem, typename Traits, typename Allocator>
 inline const_buffers_1 buffer(
-    const std::basic_string<Elem, Traits, Allocator>& data)
+    const std::basic_string<Elem, Traits, Allocator>& data) ASIO_NOEXCEPT
 {
   return const_buffers_1(const_buffer(data.data(), data.size() * sizeof(Elem)
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
@@ -1292,7 +1305,7 @@ inline const_buffers_1 buffer(
 template <typename Elem, typename Traits, typename Allocator>
 inline const_buffers_1 buffer(
     const std::basic_string<Elem, Traits, Allocator>& data,
-    std::size_t max_size_in_bytes)
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
 {
   return const_buffers_1(
       const_buffer(data.data(),
@@ -1333,7 +1346,8 @@ public:
    * @param maximum_size Specifies a maximum size for the buffer, in bytes.
    */
   explicit dynamic_string_buffer(std::basic_string<Elem, Traits, Allocator>& s,
-      std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)())
+      std::size_t maximum_size =
+        (std::numeric_limits<std::size_t>::max)()) ASIO_NOEXCEPT
     : string_(s),
       size_(string_.size()),
       max_size_(maximum_size)
@@ -1342,7 +1356,7 @@ public:
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move construct a dynamic buffer.
-  dynamic_string_buffer(dynamic_string_buffer&& other)
+  dynamic_string_buffer(dynamic_string_buffer&& other) ASIO_NOEXCEPT
     : string_(other.string_),
       size_(other.size_),
       max_size_(other.max_size_)
@@ -1483,7 +1497,8 @@ public:
    * @param maximum_size Specifies a maximum size for the buffer, in bytes.
    */
   explicit dynamic_vector_buffer(std::vector<Elem, Allocator>& v,
-      std::size_t maximum_size = (std::numeric_limits<std::size_t>::max)())
+      std::size_t maximum_size =
+        (std::numeric_limits<std::size_t>::max)()) ASIO_NOEXCEPT
     : vector_(v),
       size_(vector_.size()),
       max_size_(maximum_size)
@@ -1492,7 +1507,7 @@ public:
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move construct a dynamic buffer.
-  dynamic_vector_buffer(dynamic_vector_buffer&& other)
+  dynamic_vector_buffer(dynamic_vector_buffer&& other) ASIO_NOEXCEPT
     : vector_(other.vector_),
       size_(other.size_),
       max_size_(other.max_size_)
@@ -1621,7 +1636,7 @@ private:
  */
 template <typename Elem, typename Traits, typename Allocator>
 inline dynamic_string_buffer<Elem, Traits, Allocator> dynamic_buffer(
-    std::basic_string<Elem, Traits, Allocator>& data)
+    std::basic_string<Elem, Traits, Allocator>& data) ASIO_NOEXCEPT
 {
   return dynamic_string_buffer<Elem, Traits, Allocator>(data);
 }
@@ -1633,7 +1648,8 @@ inline dynamic_string_buffer<Elem, Traits, Allocator> dynamic_buffer(
  */
 template <typename Elem, typename Traits, typename Allocator>
 inline dynamic_string_buffer<Elem, Traits, Allocator> dynamic_buffer(
-    std::basic_string<Elem, Traits, Allocator>& data, std::size_t max_size)
+    std::basic_string<Elem, Traits, Allocator>& data,
+    std::size_t max_size) ASIO_NOEXCEPT
 {
   return dynamic_string_buffer<Elem, Traits, Allocator>(data, max_size);
 }
@@ -1644,7 +1660,7 @@ inline dynamic_string_buffer<Elem, Traits, Allocator> dynamic_buffer(
  */
 template <typename Elem, typename Allocator>
 inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
-    std::vector<Elem, Allocator>& data)
+    std::vector<Elem, Allocator>& data) ASIO_NOEXCEPT
 {
   return dynamic_vector_buffer<Elem, Allocator>(data);
 }
@@ -1655,7 +1671,8 @@ inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
  */
 template <typename Elem, typename Allocator>
 inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
-    std::vector<Elem, Allocator>& data, std::size_t max_size)
+    std::vector<Elem, Allocator>& data,
+    std::size_t max_size) ASIO_NOEXCEPT
 {
   return dynamic_vector_buffer<Elem, Allocator>(data, max_size);
 }
@@ -1710,7 +1727,7 @@ inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffer& source)
+    const const_buffer& source) ASIO_NOEXCEPT
 {
   using namespace std; // For memcpy.
   std::size_t target_size = target.size();
@@ -1740,7 +1757,7 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffers_1& source)
+    const const_buffers_1& source) ASIO_NOEXCEPT
 {
   return buffer_copy(target, static_cast<const const_buffer&>(source));
 }
@@ -1766,7 +1783,7 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffer& source)
+    const mutable_buffer& source) ASIO_NOEXCEPT
 {
   return buffer_copy(target, const_buffer(source));
 }
@@ -1792,7 +1809,7 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffers_1& source)
+    const mutable_buffers_1& source) ASIO_NOEXCEPT
 {
   return buffer_copy(target, const_buffer(source));
 }
@@ -1821,7 +1838,7 @@ std::size_t buffer_copy(const mutable_buffer& target,
     const ConstBufferSequence& source,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   std::size_t total_bytes_copied = 0;
 
@@ -1860,7 +1877,7 @@ std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffer& source)
+    const const_buffer& source) ASIO_NOEXCEPT
 {
   return buffer_copy(static_cast<const mutable_buffer&>(target), source);
 }
@@ -1885,7 +1902,7 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffers_1& source)
+    const const_buffers_1& source) ASIO_NOEXCEPT
 {
   return buffer_copy(static_cast<const mutable_buffer&>(target),
       static_cast<const const_buffer&>(source));
@@ -1912,7 +1929,7 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffer& source)
+    const mutable_buffer& source) ASIO_NOEXCEPT
 {
   return buffer_copy(static_cast<const mutable_buffer&>(target),
       const_buffer(source));
@@ -1939,7 +1956,7 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffers_1& source)
+    const mutable_buffers_1& source) ASIO_NOEXCEPT
 {
   return buffer_copy(static_cast<const mutable_buffer&>(target),
       const_buffer(source));
@@ -1969,7 +1986,7 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
     const ConstBufferSequence& source,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(static_cast<const mutable_buffer&>(target), source);
 }
@@ -1998,7 +2015,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
     const const_buffer& source,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   std::size_t total_bytes_copied = 0;
 
@@ -2041,7 +2058,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const const_buffers_1& source,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, static_cast<const const_buffer&>(source));
 }
@@ -2071,7 +2088,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const mutable_buffer& source,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, const_buffer(source));
 }
@@ -2101,7 +2118,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const mutable_buffers_1& source,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, const_buffer(source));
 }
@@ -2131,7 +2148,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value &&
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   std::size_t total_bytes_copied = 0;
 
@@ -2198,7 +2215,8 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffer& source, std::size_t max_bytes_to_copy)
+    const const_buffer& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2227,7 +2245,8 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffers_1& source, std::size_t max_bytes_to_copy)
+    const const_buffers_1& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2257,7 +2276,8 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffer& source, std::size_t max_bytes_to_copy)
+    const mutable_buffer& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2287,7 +2307,8 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffers_1& source, std::size_t max_bytes_to_copy)
+    const mutable_buffers_1& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2321,7 +2342,7 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
     const ConstBufferSequence& source, std::size_t max_bytes_to_copy,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2350,7 +2371,8 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffer& source, std::size_t max_bytes_to_copy)
+    const const_buffer& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2379,7 +2401,8 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffers_1& source, std::size_t max_bytes_to_copy)
+    const const_buffers_1& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2409,7 +2432,8 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffer& source, std::size_t max_bytes_to_copy)
+    const mutable_buffer& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2439,7 +2463,8 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
  * cannot be used to copy between overlapping memory regions.
  */
 inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffers_1& source, std::size_t max_bytes_to_copy)
+    const mutable_buffers_1& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2473,7 +2498,7 @@ inline std::size_t buffer_copy(const mutable_buffers_1& target,
     const ConstBufferSequence& source, std::size_t max_bytes_to_copy,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(buffer(target, max_bytes_to_copy), source);
 }
@@ -2507,7 +2532,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const const_buffer& source, std::size_t max_bytes_to_copy,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, buffer(source, max_bytes_to_copy));
 }
@@ -2541,7 +2566,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const const_buffers_1& source, std::size_t max_bytes_to_copy,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, buffer(source, max_bytes_to_copy));
 }
@@ -2576,7 +2601,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const mutable_buffer& source, std::size_t max_bytes_to_copy,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, buffer(source, max_bytes_to_copy));
 }
@@ -2611,7 +2636,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
     const mutable_buffers_1& source, std::size_t max_bytes_to_copy,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return buffer_copy(target, buffer(source, max_bytes_to_copy));
 }
@@ -2646,7 +2671,7 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value &&
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   std::size_t total_bytes_copied = 0;
 
