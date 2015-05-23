@@ -170,7 +170,7 @@ public:
    * @param concurrency_hint A suggestion to the implementation on how many
    * threads it should allow to run simultaneously.
    */
-  ASIO_DECL explicit io_context(std::size_t concurrency_hint);
+  ASIO_DECL explicit io_context(int concurrency_hint);
 
   /// Destructor.
   /**
@@ -479,8 +479,8 @@ public:
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
-  // Helper function to create the implementation.
-  ASIO_DECL impl_type& create_impl(std::size_t concurrency_hint = 0);
+  // Helper function to add the implementation.
+  ASIO_DECL impl_type& add_impl(impl_type* impl);
 
   // Backwards compatible overload for use with services derived from
   // io_context::service.

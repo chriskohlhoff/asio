@@ -84,7 +84,7 @@ struct scheduler::work_cleanup
 };
 
 scheduler::scheduler(
-    asio::execution_context& ctx, std::size_t concurrency_hint)
+    asio::execution_context& ctx, int concurrency_hint)
   : asio::detail::execution_context_service_base<scheduler>(ctx),
     one_thread_(concurrency_hint == 1),
     mutex_(),

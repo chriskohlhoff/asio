@@ -44,7 +44,7 @@ public:
   // Constructor. Specifies the number of concurrent threads that are likely to
   // run the scheduler. If set to 1 certain optimisation are performed.
   ASIO_DECL scheduler(asio::execution_context& ctx,
-      std::size_t concurrency_hint = 0);
+      int concurrency_hint = 0);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown();

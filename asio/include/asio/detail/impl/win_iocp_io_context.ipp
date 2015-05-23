@@ -62,7 +62,7 @@ struct win_iocp_io_context::timer_thread_function
 };
 
 win_iocp_io_context::win_iocp_io_context(
-    asio::execution_context& ctx, size_t concurrency_hint)
+    asio::execution_context& ctx, int concurrency_hint)
   : execution_context_service_base<win_iocp_io_context>(ctx),
     iocp_(),
     outstanding_work_(0),
@@ -75,8 +75,7 @@ win_iocp_io_context::win_iocp_io_context(
   ASIO_HANDLER_TRACKING_INIT;
 
   iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
-      static_cast<DWORD>(concurrency_hint < DWORD(~0)
-        ? concurrency_hint : DWORD(~0)));
+      static_cast<DWORD>(concurrency_hint >= 0 ? concurrency_hint : DWORD(~0)));
   if (!iocp_.handle)
   {
     DWORD last_error = ::GetLastError();

@@ -33,21 +33,20 @@
 namespace asio {
 
 io_context::io_context()
-  : impl_(create_impl())
+  : impl_(add_impl(new impl_type(*this)))
 {
 }
 
-io_context::io_context(std::size_t concurrency_hint)
-  : impl_(create_impl(concurrency_hint))
+io_context::io_context(int concurrency_hint)
+  : impl_(add_impl(new impl_type(*this, concurrency_hint)))
 {
 }
 
-io_context::impl_type& io_context::create_impl(std::size_t concurrency_hint)
+io_context::impl_type& io_context::add_impl(io_context::impl_type* impl)
 {
-  asio::detail::scoped_ptr<impl_type> impl(
-      new impl_type(*this, concurrency_hint));
-  asio::add_service<impl_type>(*this, impl.get());
-  return *impl.release();
+  asio::detail::scoped_ptr<impl_type> scoped_impl(impl);
+  asio::add_service<impl_type>(*this, scoped_impl.get());
+  return *scoped_impl.release();
 }
 
 io_context::~io_context()

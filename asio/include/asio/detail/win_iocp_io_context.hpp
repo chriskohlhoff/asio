@@ -48,7 +48,7 @@ public:
   // Constructor. Specifies a concurrency hint that is passed through to the
   // underlying I/O completion port.
   ASIO_DECL win_iocp_io_context(asio::execution_context& ctx,
-      size_t concurrency_hint = 0);
+      int concurrency_hint = -1);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown();
