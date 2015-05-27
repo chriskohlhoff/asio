@@ -307,7 +307,7 @@ namespace detail
 
           default:
 
-          if (iter == end)
+          if (std::next(iter) == end)
             break;
 
           if (!socket_.is_open())
