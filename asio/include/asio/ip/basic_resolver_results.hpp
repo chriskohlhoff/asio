@@ -258,9 +258,7 @@ public:
   /// Obtain an end iterator for the results range.
   const_iterator end() const
   {
-    basic_resolver_results tmp(*this);
-    tmp.index_ = size();
-    return tmp;
+    return const_iterator();
   }
 
   /// Obtain a begin iterator for the results range.
