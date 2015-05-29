@@ -324,7 +324,8 @@ namespace detail
         }
 
         handler_(static_cast<const asio::error_code&>(ec),
-            static_cast<const typename Protocol::endpoint&>(*iter));
+            static_cast<const typename Protocol::endpoint&>(
+              ec || iter == end ? typename Protocol::endpoint() : *iter));
       }
     }
 
