@@ -101,7 +101,11 @@ public:
     {
       state_ += 2;
       lock.unlock();
+#if defined(ASIO_WINDOWS_APP)
+      ::WaitForMultipleObjectsEx(2, events_, false, INFINITE, false);
+#else // defined(ASIO_WINDOWS_APP)
       ::WaitForMultipleObjects(2, events_, false, INFINITE);
+#endif // defined(ASIO_WINDOWS_APP)
       lock.lock();
       state_ -= 2;
     }

@@ -17,7 +17,9 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS) && !defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_APP) \
+  && !defined(UNDER_CE)
 
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -134,6 +136,8 @@ private:
 # include "asio/detail/impl/win_thread.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(ASIO_WINDOWS) && !defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS)
+       // && !defined(ASIO_WINDOWS_APP)
+       // && !defined(UNDER_CE)
 
 #endif // ASIO_DETAIL_WIN_THREAD_HPP

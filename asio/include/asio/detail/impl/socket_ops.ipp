@@ -1633,7 +1633,8 @@ int getpeername(socket_type s, socket_addr_type* addr,
     return socket_error_retval;
   }
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) && !defined(ASIO_WINDOWS_APP) \
+  || defined(__CYGWIN__)
   if (cached)
   {
     // Check if socket is still connected.
@@ -1654,9 +1655,11 @@ int getpeername(socket_type s, socket_addr_type* addr,
     ec = asio::error_code();
     return 0;
   }
-#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(ASIO_WINDOWS) && !defined(ASIO_WINDOWS_APP)
+      // || defined(__CYGWIN__)
   (void)cached;
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) && !defined(ASIO_WINDOWS_APP)
+       // || defined(__CYGWIN__)
 
   clear_last_error();
   int result = error_wrapper(call_getpeername(

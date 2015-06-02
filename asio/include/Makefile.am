@@ -211,6 +211,7 @@ nobase_include_HEADERS = \
 	asio/detail/wait_handler.hpp \
 	asio/detail/wait_op.hpp \
 	asio/detail/weak_ptr.hpp \
+	asio/detail/winapp_thread.hpp \
 	asio/detail/wince_thread.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_fd_set_adapter.hpp \
