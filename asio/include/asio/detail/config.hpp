@@ -220,7 +220,12 @@
 #      define ASIO_NOEXCEPT_OR_NOTHROW noexcept(true)
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
-#  endif // defined(__GNUC__)
+#  elif defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define ASIO_NOEXCEPT noexcept(true)
+#    define ASIO_NOEXCEPT_OR_NOTHROW noexcept(true)
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_NOEXCEPT)
 # if !defined(ASIO_NOEXCEPT)
 #  define ASIO_NOEXCEPT
