@@ -50,7 +50,8 @@ public:
     {
       DWORD wlength = ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
           | FORMAT_MESSAGE_IGNORE_INSERTS, 0, value,
-          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &wmsg[0], wmsg.size(), 0);
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          &wmsg[0], static_cast<DWORD>(wmsg.size()), 0);
       if (wlength == 0 && ::GetLastError() == ERROR_INSUFFICIENT_BUFFER)
       {
         wmsg.resize(wmsg.size() + wmsg.size() / 2);
