@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS_APP)
 
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -52,6 +53,7 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
+#endif // !defined(ASIO_WINDOWS_APP)
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
 #endif // ASIO_DETAIL_LOCAL_FREE_ON_BLOCK_EXIT_HPP

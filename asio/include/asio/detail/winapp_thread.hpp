@@ -1,6 +1,6 @@
 //
-// detail/wince_thread.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// detail/winapp_thread.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_WINCE_THREAD_HPP
-#define ASIO_DETAIL_WINCE_THREAD_HPP
+#ifndef ASIO_DETAIL_WINAPP_THREAD_HPP
+#define ASIO_DETAIL_WINAPP_THREAD_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS) && defined(UNDER_CE)
+#if defined(ASIO_WINDOWS) && defined(ASIO_WINDOWS_APP)
 
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -30,19 +30,19 @@
 namespace asio {
 namespace detail {
 
-DWORD WINAPI wince_thread_function(LPVOID arg);
+DWORD WINAPI winapp_thread_function(LPVOID arg);
 
-class wince_thread
+class winapp_thread
   : private noncopyable
 {
 public:
   // Constructor.
   template <typename Function>
-  wince_thread(Function f, unsigned int = 0)
+  winapp_thread(Function f, unsigned int = 0)
   {
     std::auto_ptr<func_base> arg(new func<Function>(f));
     DWORD thread_id = 0;
-    thread_ = ::CreateThread(0, 0, wince_thread_function,
+    thread_ = ::CreateThread(0, 0, winapp_thread_function,
         arg.get(), 0, &thread_id);
     if (!thread_)
     {
@@ -55,7 +55,7 @@ public:
   }
 
   // Destructor.
-  ~wince_thread()
+  ~winapp_thread()
   {
     ::CloseHandle(thread_);
   }
@@ -63,19 +63,19 @@ public:
   // Wait for the thread to exit.
   void join()
   {
-    ::WaitForSingleObject(thread_, INFINITE);
+    ::WaitForSingleObjectEx(thread_, INFINITE, false);
   }
 
   // Get number of CPUs.
   static std::size_t hardware_concurrency()
   {
     SYSTEM_INFO system_info;
-    ::GetSystemInfo(&system_info);
+    ::GetNativeSystemInfo(&system_info);
     return system_info.dwNumberOfProcessors;
   }
 
 private:
-  friend DWORD WINAPI wince_thread_function(LPVOID arg);
+  friend DWORD WINAPI winapp_thread_function(LPVOID arg);
 
   class func_base
   {
@@ -106,10 +106,10 @@ private:
   ::HANDLE thread_;
 };
 
-inline DWORD WINAPI wince_thread_function(LPVOID arg)
+inline DWORD WINAPI winapp_thread_function(LPVOID arg)
 {
-  std::auto_ptr<wince_thread::func_base> func(
-      static_cast<wince_thread::func_base*>(arg));
+  std::auto_ptr<winapp_thread::func_base> func(
+      static_cast<winapp_thread::func_base*>(arg));
   func->run();
   return 0;
 }
@@ -119,6 +119,6 @@ inline DWORD WINAPI wince_thread_function(LPVOID arg)
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(ASIO_WINDOWS) && defined(UNDER_CE)
+#endif // defined(ASIO_WINDOWS) && defined(ASIO_WINDOWS_APP)
 
-#endif // ASIO_DETAIL_WINCE_THREAD_HPP
+#endif // ASIO_DETAIL_WINAPP_THREAD_HPP

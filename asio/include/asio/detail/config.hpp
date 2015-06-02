@@ -661,24 +661,40 @@
 # endif // !defined(ASIO_DISABLE_STD_CALL_ONCE)
 #endif // !defined(ASIO_HAS_STD_CALL_ONCE)
 
-// WinRT target.
-#if !defined(ASIO_WINDOWS_RUNTIME)
-# if defined(__cplusplus_winrt)
+// Windows App target. Windows but with a limited API.
+#if !defined(ASIO_WINDOWS_APP)
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
 #  include <winapifamily.h>
 #  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) \
    && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-#   define ASIO_WINDOWS_RUNTIME 1
+#   define ASIO_WINDOWS_APP 1
 #  endif // WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
          // && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-# endif // defined(__cplusplus_winrt)
+# endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
+#endif // !defined(ASIO_WINDOWS_APP)
+
+// Legacy WinRT target. Windows App is preferred.
+#if !defined(ASIO_WINDOWS_RUNTIME)
+# if !defined(ASIO_WINDOWS_APP)
+#  if defined(__cplusplus_winrt)
+#   include <winapifamily.h>
+#   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) \
+    && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+#    define ASIO_WINDOWS_RUNTIME 1
+#   endif // WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+          // && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+#  endif // defined(__cplusplus_winrt)
+# endif // !defined(ASIO_WINDOWS_APP)
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-// Windows target. Excludes WinRT.
+// Windows target. Excludes WinRT but includes Windows App targets.
 #if !defined(ASIO_WINDOWS)
 # if !defined(ASIO_WINDOWS_RUNTIME)
 #  if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
 #   define ASIO_WINDOWS 1
 #  elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#   define ASIO_WINDOWS 1
+#  elif defined(ASIO_WINDOWS_APP)
 #   define ASIO_WINDOWS 1
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
 # endif // !defined(ASIO_WINDOWS_RUNTIME)
@@ -747,11 +763,11 @@
 #if !defined(ASIO_HAS_IOCP)
 # if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
-#   if !defined(UNDER_CE)
+#   if !defined(UNDER_CE) && !defined(ASIO_WINDOWS_APP)
 #    if !defined(ASIO_DISABLE_IOCP)
 #     define ASIO_HAS_IOCP 1
 #    endif // !defined(ASIO_DISABLE_IOCP)
-#   endif // !defined(UNDER_CE)
+#   endif // !defined(UNDER_CE) && !defined(ASIO_WINDOWS_APP)
 #  endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 # endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_HAS_IOCP)
@@ -867,9 +883,9 @@
 #if !defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
 # if !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 #  if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-#   if !defined(UNDER_CE)
+#   if !defined(UNDER_CE) && !defined(ASIO_WINDOWS_APP)
 #    define ASIO_HAS_WINDOWS_OBJECT_HANDLE 1
-#   endif // !defined(UNDER_CE)
+#   endif // !defined(UNDER_CE) && !defined(ASIO_WINDOWS_APP)
 #  endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # endif // !defined(ASIO_DISABLE_WINDOWS_OBJECT_HANDLE)
 #endif // !defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)

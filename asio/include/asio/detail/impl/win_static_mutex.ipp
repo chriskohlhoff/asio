@@ -49,13 +49,23 @@ int win_static_mutex::do_init()
       mutex_name, 128, L"asio-58CCDC44-6264-4842-90C2-F3C545CB8AA7-%u-%p",
       static_cast<unsigned int>(::GetCurrentProcessId()), this);
 
+#if defined(ASIO_WINDOWS_APP)
+  HANDLE mutex = ::CreateMutexExW(0, mutex_name, CREATE_MUTEX_INITIAL_OWNER, 0);
+#else // defined(ASIO_WINDOWS_APP)
   HANDLE mutex = ::CreateMutexW(0, TRUE, mutex_name);
+#endif // defined(ASIO_WINDOWS_APP)
   DWORD last_error = ::GetLastError();
   if (mutex == 0)
     return ::GetLastError();
 
   if (last_error == ERROR_ALREADY_EXISTS)
+  {
+#if defined(ASIO_WINDOWS_APP)
+    ::WaitForSingleObjectEx(mutex, INFINITE, false);
+#else // defined(ASIO_WINDOWS_APP)
     ::WaitForSingleObject(mutex, INFINITE);
+#endif // defined(ASIO_WINDOWS_APP)
+  }
 
   if (initialised_)
   {
@@ -83,6 +93,8 @@ int win_static_mutex::do_init()
   {
 # if defined(UNDER_CE)
     ::InitializeCriticalSection(&crit_section_);
+# elif defined(ASIO_WINDOWS_APP)
+    ::InitializeCriticalSectionEx(&crit_section_, 0x80000000, 0);
 # else
     if (!::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000))
     {

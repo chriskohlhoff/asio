@@ -41,10 +41,10 @@ struct wait_traits
       const typename Clock::time_point& t)
   {
     typename Clock::time_point now = Clock::now();
-    if (now + Clock::duration::max() < t)
-      return Clock::duration::max();
-    if (now + Clock::duration::min() > t)
-      return Clock::duration::min();
+    if (now + (Clock::duration::max)() < t)
+      return (Clock::duration::max)();
+    if (now + (Clock::duration::min)() > t)
+      return (Clock::duration::min)();
     return t - now;
   }
 };

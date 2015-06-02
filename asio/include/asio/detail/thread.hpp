@@ -22,6 +22,8 @@
 #elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
 #  include "asio/detail/wince_thread.hpp"
+# elif defined(ASIO_WINDOWS_APP)
+#  include "asio/detail/winapp_thread.hpp"
 # else
 #  include "asio/detail/win_thread.hpp"
 # endif
@@ -41,6 +43,8 @@ typedef null_thread thread;
 #elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
 typedef wince_thread thread;
+# elif defined(ASIO_WINDOWS_APP)
+typedef winapp_thread thread;
 # else
 typedef win_thread thread;
 # endif
