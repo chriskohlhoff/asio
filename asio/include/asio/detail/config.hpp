@@ -991,11 +991,18 @@
 # if !defined(ASIO_DISABLE_THREADS)
 #  if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
 #   define ASIO_HAS_THREADS 1
-#  elif defined(_MSC_VER) && defined(_MT)
+#  elif defined(__GNUC__) && !defined(__MINGW32__) \
+     && !defined(linux) && !defined(__linux) && !defined(__linux__)
 #   define ASIO_HAS_THREADS 1
-#  elif defined(__BORLANDC__) && defined(__MT__)
+#  elif defined(_MT) || defined(__MT__)
 #   define ASIO_HAS_THREADS 1
-#  elif defined(_POSIX_THREADS)
+#  elif defined(_REENTRANT)
+#   define ASIO_HAS_THREADS 1
+#  elif defined(__APPLE__)
+#   define ASIO_HAS_THREADS 1
+#  elif defined(_POSIX_THREADS) && (_POSIX_THREADS + 0 >= 0)
+#   define ASIO_HAS_THREADS 1
+#  elif defined(_PTHREADS)
 #   define ASIO_HAS_THREADS 1
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
 # endif // !defined(ASIO_DISABLE_THREADS)
@@ -1006,7 +1013,7 @@
 # if defined(ASIO_HAS_THREADS)
 #  if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_PTHREADS)
 #   define ASIO_HAS_PTHREADS 1
-#  elif defined(_POSIX_THREADS)
+#  elif defined(_POSIX_THREADS) && (_POSIX_THREADS + 0 >= 0)
 #   define ASIO_HAS_PTHREADS 1
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_PTHREADS)
 # endif // defined(ASIO_HAS_THREADS)
