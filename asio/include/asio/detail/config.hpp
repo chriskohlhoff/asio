@@ -454,6 +454,15 @@
 # endif // !defined(ASIO_DISABLE_BOOST_CHRONO)
 #endif // !defined(ASIO_HAS_BOOST_CHRONO)
 
+// Some form of chrono library is available.
+#if !defined(ASIO_HAS_CHRONO)
+# if defined(ASIO_HAS_STD_CHRONO) \
+    || defined(ASIO_HAS_BOOST_CHRONO)
+#  define ASIO_HAS_CHRONO 1
+# endif // defined(ASIO_HAS_STD_CHRONO)
+        // || defined(ASIO_HAS_BOOST_CHRONO)
+#endif // !defined(ASIO_HAS_CHRONO)
+
 // Boost support for the DateTime library.
 #if !defined(ASIO_HAS_BOOST_DATE_TIME)
 # if !defined(ASIO_DISABLE_BOOST_DATE_TIME)

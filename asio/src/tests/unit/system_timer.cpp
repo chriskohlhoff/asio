@@ -40,8 +40,6 @@ namespace bindns = boost;
 namespace bindns = std;
 #endif // defined(ASIO_HAS_BOOST_BIND)
 
-namespace chronons = std::chrono;
-
 void increment(int* count)
 {
   ++(*count);
@@ -55,7 +53,7 @@ void decrement_to_zero(asio::system_timer* t, int* count)
 
     int before_value = *count;
 
-    t->expires_at(t->expiry() + chronons::seconds(1));
+    t->expires_at(t->expiry() + asio::chrono::seconds(1));
     t->async_wait(bindns::bind(decrement_to_zero, t, count));
 
     // Completion cannot nest, so count value should remain unchanged.
@@ -89,8 +87,8 @@ asio::system_timer::time_point now()
 
 void system_timer_test()
 {
-  using chronons::seconds;
-  using chronons::microseconds;
+  using asio::chrono::seconds;
+  using asio::chrono::microseconds;
 #if !defined(ASIO_HAS_BOOST_BIND)
   using std::placeholders::_1;
   using std::placeholders::_2;
@@ -334,13 +332,13 @@ void system_timer_thread_test()
 
   asio::thread th(bindns::bind(io_context_run, &ioc));
 
-  t2.expires_after(chronons::seconds(2));
+  t2.expires_after(asio::chrono::seconds(2));
   t2.wait();
 
-  t1.expires_after(chronons::seconds(2));
+  t1.expires_after(asio::chrono::seconds(2));
   t1.async_wait(bindns::bind(increment, &count));
 
-  t2.expires_after(chronons::seconds(4));
+  t2.expires_after(asio::chrono::seconds(4));
   t2.wait();
 
   ioc.stop();
@@ -353,7 +351,7 @@ void system_timer_thread_test()
 asio::system_timer make_timer(asio::io_context& ioc, int* count)
 {
   asio::system_timer t(ioc);
-  t.expires_after(std::chrono::seconds(1));
+  t.expires_after(asio::chrono::seconds(1));
   t.async_wait(bindns::bind(increment, count));
   return t;
 }

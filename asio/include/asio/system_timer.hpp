@@ -17,21 +17,13 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_STD_CHRONO) \
-  || defined(ASIO_HAS_BOOST_CHRONO) \
-  || defined(GENERATING_DOCUMENTATION)
-
-#if defined(ASIO_HAS_STD_CHRONO)
-# include <chrono>
-#elif defined(ASIO_HAS_BOOST_CHRONO)
-# include <boost/chrono/system_clocks.hpp>
-#endif
+#if defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/basic_waitable_timer.hpp"
+#include "asio/detail/chrono.hpp"
 
 namespace asio {
 
-#if defined(GENERATING_DOCUMENTATION)
 /// Typedef for a timer based on the system clock.
 /**
  * This typedef uses the C++11 @c &lt;chrono&gt; standard library facility, if
@@ -42,16 +34,9 @@ namespace asio {
  * @endcode
  */
 typedef basic_waitable_timer<chrono::system_clock> system_timer;
-#elif defined(ASIO_HAS_STD_CHRONO)
-typedef basic_waitable_timer<std::chrono::system_clock> system_timer;
-#elif defined(ASIO_HAS_BOOST_CHRONO)
-typedef basic_waitable_timer<boost::chrono::system_clock> system_timer;
-#endif
 
 } // namespace asio
 
-#endif // defined(ASIO_HAS_STD_CHRONO) 
-       //   || defined(ASIO_HAS_BOOST_CHRONO)
-       //   || defined(GENERATING_DOCUMENTATION)
+#endif // defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_SYSTEM_TIMER_HPP

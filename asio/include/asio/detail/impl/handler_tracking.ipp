@@ -29,12 +29,8 @@
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 # include "asio/time_traits.hpp"
-#else // defined(ASIO_HAS_BOOST_DATE_TIME)
-# if defined(ASIO_HAS_STD_CHRONO)
-#  include <chrono>
-# elif defined(ASIO_HAS_BOOST_CHRONO)
-#  include <boost/chrono/system_clocks.hpp>
-# endif
+#elif defined(ASIO_HAS_CHRONO)
+# include "asio/detail/chrono.hpp"
 # include "asio/detail/chrono_time_traits.hpp"
 # include "asio/wait_traits.hpp"
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
@@ -61,16 +57,11 @@ struct handler_tracking_timestamp
     boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
     boost::posix_time::time_duration now =
       boost::posix_time::microsec_clock::universal_time() - epoch;
-#elif defined(ASIO_HAS_STD_CHRONO)
-    typedef chrono_time_traits<std::chrono::system_clock,
-        asio::wait_traits<std::chrono::system_clock> > traits_helper;
+#elif defined(ASIO_HAS_CHRONO)
+    typedef chrono_time_traits<chrono::system_clock,
+        asio::wait_traits<chrono::system_clock> > traits_helper;
     traits_helper::posix_time_duration now(
-        std::chrono::system_clock::now().time_since_epoch());
-#elif defined(ASIO_HAS_BOOST_CHRONO)
-    typedef chrono_time_traits<boost::chrono::system_clock,
-        asio::wait_traits<boost::chrono::system_clock> > traits_helper;
-    traits_helper::posix_time_duration now(
-        boost::chrono::system_clock::now().time_since_epoch());
+        chrono::system_clock::now().time_since_epoch());
 #endif
     seconds = static_cast<uint64_t>(now.total_seconds());
     microseconds = static_cast<uint64_t>(now.total_microseconds() % 1000000);

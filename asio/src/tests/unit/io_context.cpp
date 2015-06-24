@@ -43,12 +43,9 @@ namespace bindns = std;
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 typedef deadline_timer timer;
 namespace chronons = boost::posix_time;
-#elif defined(ASIO_HAS_STD_CHRONO)
+#elif defined(ASIO_HAS_CHRONO)
 typedef steady_timer timer;
-namespace chronons = std::chrono;
-#elif defined(ASIO_HAS_BOOST_CHRONO)
-typedef steady_timer timer;
-namespace chronons = boost::chrono;
+namespace chronons = asio::chrono;
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 void increment(int* count)
