@@ -301,7 +301,8 @@ namespace detail
           {
             ec = asio::error::not_found;
             asio::post(socket_.get_executor(),
-                detail::bind_handler(*this, ec));
+                detail::bind_handler(
+                  ASIO_MOVE_CAST(range_connect_op)(*this), ec));
             return;
           }
 
@@ -455,7 +456,8 @@ namespace detail
           {
             ec = asio::error::not_found;
             asio::post(socket_.get_executor(),
-                detail::bind_handler(*this, ec));
+                detail::bind_handler(
+                  ASIO_MOVE_CAST(iterator_connect_op)(*this), ec));
             return;
           }
 

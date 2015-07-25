@@ -21,6 +21,7 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -31,8 +32,9 @@ template <typename Handler, typename Arg1>
 class binder1
 {
 public:
-  binder1(int, ASIO_MOVE_ARG(Handler) handler, const Arg1& arg1)
-    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+  template <typename T>
+  binder1(int, ASIO_MOVE_ARG(T) handler, const Arg1& arg1)
+    : handler_(ASIO_MOVE_CAST(T)(handler)),
       arg1_(arg1)
   {
   }
@@ -113,10 +115,10 @@ inline void asio_handler_invoke(const Function& function,
 }
 
 template <typename Handler, typename Arg1>
-inline binder1<Handler, Arg1> bind_handler(
+inline binder1<typename decay<Handler>::type, Arg1> bind_handler(
     ASIO_MOVE_ARG(Handler) handler, const Arg1& arg1)
 {
-  return binder1<Handler, Arg1>(0,
+  return binder1<typename decay<Handler>::type, Arg1>(0,
       ASIO_MOVE_CAST(Handler)(handler), arg1);
 }
 
@@ -124,9 +126,10 @@ template <typename Handler, typename Arg1, typename Arg2>
 class binder2
 {
 public:
-  binder2(int, ASIO_MOVE_ARG(Handler) handler,
+  template <typename T>
+  binder2(int, ASIO_MOVE_ARG(T) handler,
       const Arg1& arg1, const Arg2& arg2)
-    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+    : handler_(ASIO_MOVE_CAST(T)(handler)),
       arg1_(arg1),
       arg2_(arg2)
   {
@@ -213,10 +216,10 @@ inline void asio_handler_invoke(const Function& function,
 }
 
 template <typename Handler, typename Arg1, typename Arg2>
-inline binder2<Handler, Arg1, Arg2> bind_handler(
+inline binder2<typename decay<Handler>::type, Arg1, Arg2> bind_handler(
     ASIO_MOVE_ARG(Handler) handler, const Arg1& arg1, const Arg2& arg2)
 {
-  return binder2<Handler, Arg1, Arg2>(0,
+  return binder2<typename decay<Handler>::type, Arg1, Arg2>(0,
       ASIO_MOVE_CAST(Handler)(handler), arg1, arg2);
 }
 
