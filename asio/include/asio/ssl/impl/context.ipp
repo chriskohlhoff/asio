@@ -556,11 +556,15 @@ asio::error_code context::use_certificate_chain(
       return ec;
     }
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+    ::SSL_CTX_clear_chain_certs(handle_);
+#else
     if (handle_->extra_certs)
     {
       ::sk_X509_pop_free(handle_->extra_certs, X509_free);
       handle_->extra_certs = 0;
     }
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10002000L)
 
     while (X509* cacert = ::PEM_read_bio_X509(bio.p, 0,
           handle_->default_passwd_callback,
