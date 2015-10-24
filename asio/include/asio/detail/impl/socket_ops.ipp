@@ -3286,7 +3286,8 @@ asio::error_code background_getaddrinfo(
     const char* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec)
 {
-  if (cancel_token.expired())
+  shared_cancel_token_type shared_token = cancel_token.lock();
+  if (!shared_token)
     ec = asio::error::operation_aborted;
   else
     socket_ops::getaddrinfo(host, service, hints, result, ec);
@@ -3391,7 +3392,8 @@ asio::error_code background_getnameinfo(
     char* host, std::size_t hostlen, char* serv,
     std::size_t servlen, int sock_type, asio::error_code& ec)
 {
-  if (cancel_token.expired())
+  shared_cancel_token_type shared_token = cancel_token.lock();
+  if (!shared_token)
   {
     ec = asio::error::operation_aborted;
   }
