@@ -25,14 +25,14 @@
 
 namespace asio {
 
-inline execution_context& system_executor::context() ASIO_NOEXCEPT
+inline execution_context& system_executor::context() const ASIO_NOEXCEPT
 {
   return detail::global<context_impl>();
 }
 
 template <typename Function, typename Allocator>
 void system_executor::dispatch(
-    ASIO_MOVE_ARG(Function) f, const Allocator&)
+    ASIO_MOVE_ARG(Function) f, const Allocator&) const
 {
   typename decay<Function>::type tmp(ASIO_MOVE_CAST(Function)(f));
   asio_handler_invoke_helpers::invoke(tmp, tmp);
@@ -40,7 +40,7 @@ void system_executor::dispatch(
 
 template <typename Function, typename Allocator>
 void system_executor::post(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   context_impl& ctx = detail::global<context_impl>();
 
@@ -66,7 +66,7 @@ void system_executor::post(
 
 template <typename Function, typename Allocator>
 void system_executor::defer(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   context_impl& ctx = detail::global<context_impl>();
 

@@ -148,24 +148,26 @@ io_context::wrap(Handler handler)
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 inline io_context&
-io_context::executor_type::context() ASIO_NOEXCEPT
+io_context::executor_type::context() const ASIO_NOEXCEPT
 {
   return io_context_;
 }
 
-inline void io_context::executor_type::on_work_started() ASIO_NOEXCEPT
+inline void
+io_context::executor_type::on_work_started() const ASIO_NOEXCEPT
 {
   io_context_.impl_.work_started();
 }
 
-inline void io_context::executor_type::on_work_finished() ASIO_NOEXCEPT
+inline void
+io_context::executor_type::on_work_finished() const ASIO_NOEXCEPT
 {
   io_context_.impl_.work_finished();
 }
 
 template <typename Function, typename Allocator>
 void io_context::executor_type::dispatch(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
@@ -198,7 +200,7 @@ void io_context::executor_type::dispatch(
 
 template <typename Function, typename Allocator>
 void io_context::executor_type::post(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
@@ -223,7 +225,7 @@ void io_context::executor_type::post(
 
 template <typename Function, typename Allocator>
 void io_context::executor_type::defer(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;

@@ -126,19 +126,19 @@ public:
   }
 
   /// Obtain the underlying execution context.
-  execution_context& context() ASIO_NOEXCEPT
+  execution_context& context() const ASIO_NOEXCEPT
   {
     return get_impl()->context();
   }
 
   /// Inform the executor that it has some outstanding work to do.
-  void on_work_started() ASIO_NOEXCEPT
+  void on_work_started() const ASIO_NOEXCEPT
   {
     get_impl()->on_work_started();
   }
 
   /// Inform the executor that some work is no longer outstanding.
-  void on_work_finished() ASIO_NOEXCEPT
+  void on_work_finished() const ASIO_NOEXCEPT
   {
     get_impl()->on_work_finished();
   }
@@ -157,7 +157,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
   /// Request the executor to invoke the given function object.
   /**
@@ -173,7 +173,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
   /// Request the executor to invoke the given function object.
   /**
@@ -189,7 +189,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
   struct unspecified_bool_type_t {};
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
@@ -301,7 +301,7 @@ private:
   };
 
   // Helper function to check and return the implementation pointer.
-  impl_base* get_impl()
+  impl_base* get_impl() const
   {
     if (!impl_)
     {

@@ -36,13 +36,13 @@ class system_executor
 {
 public:
   /// Obtain the underlying execution context.
-  execution_context& context() ASIO_NOEXCEPT;
+  execution_context& context() const ASIO_NOEXCEPT;
 
   /// Inform the executor that it has some outstanding work to do.
   /**
    * For the system executor, this is a no-op.
    */
-  void on_work_started() ASIO_NOEXCEPT
+  void on_work_started() const ASIO_NOEXCEPT
   {
   }
 
@@ -50,7 +50,7 @@ public:
   /**
    * For the system executor, this is a no-op.
    */
-  void on_work_finished() ASIO_NOEXCEPT
+  void on_work_finished() const ASIO_NOEXCEPT
   {
   }
 
@@ -67,7 +67,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
   /// Request the system executor to invoke the given function object.
   /**
@@ -83,7 +83,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
   /// Request the system executor to invoke the given function object.
   /**
@@ -99,7 +99,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a);
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
   /// Compare two executors for equality.
   /**

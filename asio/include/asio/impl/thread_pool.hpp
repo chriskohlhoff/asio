@@ -32,24 +32,26 @@ thread_pool::get_executor() ASIO_NOEXCEPT
 }
 
 inline thread_pool&
-thread_pool::executor_type::context() ASIO_NOEXCEPT
+thread_pool::executor_type::context() const ASIO_NOEXCEPT
 {
   return pool_;
 }
 
-inline void thread_pool::executor_type::on_work_started() ASIO_NOEXCEPT
+inline void
+thread_pool::executor_type::on_work_started() const ASIO_NOEXCEPT
 {
   pool_.scheduler_.work_started();
 }
 
-inline void thread_pool::executor_type::on_work_finished() ASIO_NOEXCEPT
+inline void thread_pool::executor_type::on_work_finished()
+const ASIO_NOEXCEPT
 {
   pool_.scheduler_.work_finished();
 }
 
 template <typename Function, typename Allocator>
 void thread_pool::executor_type::dispatch(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
@@ -82,7 +84,7 @@ void thread_pool::executor_type::dispatch(
 
 template <typename Function, typename Allocator>
 void thread_pool::executor_type::post(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;
@@ -107,7 +109,7 @@ void thread_pool::executor_type::post(
 
 template <typename Function, typename Allocator>
 void thread_pool::executor_type::defer(
-    ASIO_MOVE_ARG(Function) f, const Allocator& a)
+    ASIO_MOVE_ARG(Function) f, const Allocator& a) const
 {
   // Make a local, non-const copy of the function.
   typedef typename decay<Function>::type function_type;

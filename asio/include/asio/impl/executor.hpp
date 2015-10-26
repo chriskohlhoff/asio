@@ -344,7 +344,8 @@ executor::executor(allocator_arg_t, const Allocator& a, Executor e)
 }
 
 template <typename Function, typename Allocator>
-void executor::dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+void executor::dispatch(ASIO_MOVE_ARG(Function) f,
+    const Allocator& a) const
 {
   impl_base* i = get_impl();
   if (i->fast_dispatch_)
@@ -354,13 +355,15 @@ void executor::dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a)
 }
 
 template <typename Function, typename Allocator>
-void executor::post(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+void executor::post(ASIO_MOVE_ARG(Function) f,
+    const Allocator& a) const
 {
   get_impl()->post(function(ASIO_MOVE_CAST(Function)(f), a));
 }
 
 template <typename Function, typename Allocator>
-void executor::defer(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+void executor::defer(ASIO_MOVE_ARG(Function) f,
+    const Allocator& a) const
 {
   get_impl()->defer(function(ASIO_MOVE_CAST(Function)(f), a));
 }
