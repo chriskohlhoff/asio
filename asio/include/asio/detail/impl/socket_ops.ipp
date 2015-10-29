@@ -2624,7 +2624,8 @@ inline void gai_strcpy(char* target, const char* source, std::size_t max_size)
   strcpy_s(target, max_size, source);
 #else // defined(ASIO_HAS_SECURE_RTL)
   *target = 0;
-  strncat(target, source, max_size);
+  if (max_size > 0)
+    strncat(target, source, max_size - 1);
 #endif // defined(ASIO_HAS_SECURE_RTL)
 }
 

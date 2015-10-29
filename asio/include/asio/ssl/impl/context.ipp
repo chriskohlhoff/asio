@@ -935,7 +935,8 @@ int context::password_callback_function(
     strcpy_s(buf, size, passwd.c_str());
 #else // defined(ASIO_HAS_SECURE_RTL)
     *buf = '\0';
-    strncat(buf, passwd.c_str(), size);
+    if (size > 0)
+      strncat(buf, passwd.c_str(), size - 1);
 #endif // defined(ASIO_HAS_SECURE_RTL)
 
     return static_cast<int>(strlen(buf));
