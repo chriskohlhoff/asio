@@ -242,7 +242,7 @@ EXTRA_DIST = \
 	ssl/README \
 	ssl/ca.pem \
 	ssl/server.pem \
-	ssl/dh512.pem \
+	ssl/dh2048.pem \
 	timers/tick_count_timer.cpp
 
 MAINTAINERCLEANFILES = \
