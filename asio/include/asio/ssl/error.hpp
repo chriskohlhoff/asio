@@ -25,6 +25,7 @@ namespace error {
 
 enum ssl_errors
 {
+  // Error numbers are those produced by openssl.
 };
 
 extern ASIO_DECL
@@ -34,12 +35,34 @@ static const asio::error_category& ssl_category
   = asio::error::get_ssl_category();
 
 } // namespace error
+namespace ssl {
+namespace error {
+
+enum stream_errors
+{
+  /// The underlying stream closed before the ssl stream gracefully shut down.
+  stream_truncated = 1
+};
+
+extern ASIO_DECL
+const asio::error_category& get_stream_category();
+
+static const asio::error_category& stream_category
+  = asio::ssl::error::get_stream_category();
+
+} // namespace error
+} // namespace ssl
 } // namespace asio
 
 #if defined(ASIO_HAS_STD_SYSTEM_ERROR)
 namespace std {
 
 template<> struct is_error_code_enum<asio::error::ssl_errors>
+{
+  static const bool value = true;
+};
+
+template<> struct is_error_code_enum<asio::ssl::error::stream_errors>
 {
   static const bool value = true;
 };
@@ -57,6 +80,17 @@ inline asio::error_code make_error_code(ssl_errors e)
 }
 
 } // namespace error
+namespace ssl {
+namespace error {
+
+inline asio::error_code make_error_code(stream_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_stream_category());
+}
+
+} // namespace error
+} // namespace ssl
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
