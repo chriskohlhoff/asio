@@ -70,7 +70,9 @@ public:
 #endif // (OPENSSL_VERSION_NUMBER >= 0x10000000L)
     ::EVP_cleanup();
     ::CRYPTO_cleanup_all_ex_data();
+#if !defined(OPENSSL_IS_BORINGSSL)
     ::CONF_modules_unload(1);
+#endif // !defined(OPENSSL_IS_BORINGSSL)
 #if !defined(OPENSSL_NO_ENGINE)
     ::ENGINE_cleanup();
 #endif // !defined(OPENSSL_NO_ENGINE)
