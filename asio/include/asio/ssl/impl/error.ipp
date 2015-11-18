@@ -23,7 +23,6 @@
 
 namespace asio {
 namespace error {
-
 namespace detail {
 
 class ssl_category : public asio::error_category
@@ -50,6 +49,38 @@ const asio::error_category& get_ssl_category()
 }
 
 } // namespace error
+namespace ssl {
+namespace error {
+namespace detail {
+
+class stream_category : public asio::error_category
+{
+public:
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
+  {
+    return "asio.ssl.stream";
+  }
+
+  std::string message(int value) const
+  {
+    switch (value)
+    {
+    case stream_truncated: return "stream truncated";
+    default: return "asio.ssl.stream error";
+    }
+  }
+};
+
+} // namespace detail
+
+const asio::error_category& get_stream_category()
+{
+  static detail::stream_category instance;
+  return instance;
+}
+
+} // namespace error
+} // namespace ssl
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

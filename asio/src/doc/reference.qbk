@@ -92101,6 +92101,91 @@ Protected destructor to prevent deletion through this type.
 
 [endsect]
 
+
+[section:ssl__error__get_stream_category ssl::error::get_stream_category]
+
+[indexterm1 ssl::error::get_stream_category] 
+
+  const asio::error_category & get_stream_category();
+
+
+[heading Requirements]
+
+['Header: ][^asio/ssl/error.hpp]
+
+['Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__error__make_error_code ssl::error::make_error_code]
+
+[indexterm1 ssl::error::make_error_code] 
+
+  asio::error_code make_error_code(
+      stream_errors e);
+
+
+[heading Requirements]
+
+['Header: ][^asio/ssl/error.hpp]
+
+['Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__error__stream_category ssl::error::stream_category]
+
+[indexterm1 ssl::error::stream_category] 
+
+  static const asio::error_category & stream_category = asio::ssl::error::get_stream_category();
+
+
+[heading Requirements]
+
+['Header: ][^asio/ssl/error.hpp]
+
+['Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
+
+[section:ssl__error__stream_errors ssl::error::stream_errors]
+
+[indexterm1 ssl::error::stream_errors] 
+
+  enum stream_errors
+
+[indexterm2 stream_truncated..ssl::error::stream_errors]
+
+[heading Values]
+[variablelist
+
+  [
+    [stream_truncated]
+    [The underlying stream closed before the ssl stream gracefully shut down. ]
+  ]
+
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/ssl/error.hpp]
+
+['Convenience header: ][^asio/ssl.hpp]
+
+
+[endsect]
+
+
 [section:ssl__rfc2818_verification ssl::rfc2818_verification]
 
 
