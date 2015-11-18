@@ -32,9 +32,9 @@ win_event::win_event()
   : state_(0)
 {
 #if defined(ASIO_WINDOWS_APP)
-  events_[0] = ::CreateEventEx(0, 0, CREATE_EVENT_MANUAL_RESET, 0);
+  events_[0] = ::CreateEventExW(0, 0, CREATE_EVENT_MANUAL_RESET, 0);
 #else // defined(ASIO_WINDOWS_APP)
-  events_[0] = ::CreateEvent(0, true, false, 0);
+  events_[0] = ::CreateEventW(0, true, false, 0);
 #endif // defined(ASIO_WINDOWS_APP)
   if (!events_[0])
   {
@@ -45,9 +45,9 @@ win_event::win_event()
   }
 
 #if defined(ASIO_WINDOWS_APP)
-  events_[1] = ::CreateEventEx(0, 0, 0, 0);
+  events_[1] = ::CreateEventExW(0, 0, 0, 0);
 #else // defined(ASIO_WINDOWS_APP)
-  events_[1] = ::CreateEvent(0, false, false, 0);
+  events_[1] = ::CreateEventW(0, false, false, 0);
 #endif // defined(ASIO_WINDOWS_APP)
   if (!events_[1])
   {
