@@ -111,6 +111,10 @@ public:
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
+  /**
+   * @note A @c stream object must not be destroyed while there are pending
+   * asynchronous operations associated with it.
+   */
   ~stream()
   {
   }
