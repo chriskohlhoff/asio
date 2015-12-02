@@ -949,7 +949,7 @@ namespace detail
 
     read_until_expr_op(read_until_expr_op&& other)
       : stream_(other.stream_),
-        buffers_(ASIO_MOVE_CAST(DynamicBufferSequence)(other.buffers)),
+        buffers_(ASIO_MOVE_CAST(DynamicBufferSequence)(other.buffers_)),
         expr_(other.expr_),
         start_(other.start_),
         search_position_(other.search_position_),
