@@ -191,8 +191,8 @@ void io_context::executor_type::dispatch(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_context", this, 0, "post"));
+  ASIO_HANDLER_CREATION((this->context(), *p.p,
+        "io_context", &this->context(), 0, "post"));
 
   io_context_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -216,8 +216,8 @@ void io_context::executor_type::post(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_context", this, 0, "post"));
+  ASIO_HANDLER_CREATION((this->context(), *p.p,
+        "io_context", &this->context(), 0, "post"));
 
   io_context_.impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -241,8 +241,8 @@ void io_context::executor_type::defer(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((this->context(),
-        *p.p, "io_context", this, 0, "defer"));
+  ASIO_HANDLER_CREATION((this->context(), *p.p,
+        "io_context", &this->context(), 0, "defer"));
 
   io_context_.impl_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;

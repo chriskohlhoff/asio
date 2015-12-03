@@ -58,7 +58,8 @@ void system_executor::post(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((ctx, *p.p, "system_executor", this, 0, "post"));
+  ASIO_HANDLER_CREATION((ctx, *p.p,
+        "system_executor", &this->context(), 0, "post"));
 
   ctx.scheduler_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -84,7 +85,8 @@ void system_executor::defer(
   p.v = p.a.allocate(1);
   p.p = new (p.v) op(tmp, allocator);
 
-  ASIO_HANDLER_CREATION((ctx, *p.p, "system_executor", this, 0, "defer"));
+  ASIO_HANDLER_CREATION((ctx, *p.p,
+        "system_executor", &this->context(), 0, "defer"));
 
   ctx.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;

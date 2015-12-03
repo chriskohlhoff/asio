@@ -76,7 +76,7 @@ void thread_pool::executor_type::dispatch(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((pool_, *p.p,
-        "thread_pool", this, 0, "dispatch"));
+        "thread_pool", &this->context(), 0, "dispatch"));
 
   pool_.scheduler_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -101,7 +101,7 @@ void thread_pool::executor_type::post(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((pool_, *p.p,
-        "thread_pool", this, 0, "post"));
+        "thread_pool", &this->context(), 0, "post"));
 
   pool_.scheduler_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
@@ -126,7 +126,7 @@ void thread_pool::executor_type::defer(
   p.p = new (p.v) op(tmp, allocator);
 
   ASIO_HANDLER_CREATION((pool_, *p.p,
-        "thread_pool", this, 0, "defer"));
+        "thread_pool", &this->context(), 0, "defer"));
 
   pool_.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
