@@ -35,7 +35,29 @@ A shutdown handler function object:
     ...
   };
 
-A non-static class member function adapted to a shutdown handler using `bind()`:
+A lambda as a shutdown handler:
+
+  ssl_stream.async_shutdown(...,
+      [](const asio::error_code& ec)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a shutdown handler using
+`std::bind()`:
+
+  void my_class::shutdown_handler(
+      const asio::error_code& ec)
+  {
+    ...
+  }
+  ...
+  ssl_stream.async_shutdown(
+      std::bind(&my_class::shutdown_handler,
+        this, std::placeholders::_1));
+
+A non-static class member function adapted to a shutdown handler using
+`boost::bind()`:
 
   void my_class::shutdown_handler(
       const asio::error_code& ec)

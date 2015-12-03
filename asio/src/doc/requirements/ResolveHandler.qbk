@@ -40,7 +40,32 @@ A resolve handler function object:
     ...
   };
 
-A non-static class member function adapted to a resolve handler using `bind()`:
+A lambda as a resolve handler:
+
+  resolver.async_resolve(...,
+      [](const asio::error_code& ec,
+        asio::ip::tcp::resolver::results_type results)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a resolve handler using
+`std::bind()`:
+
+  void my_class::resolve_handler(
+      const asio::error_code& ec,
+      asio::ip::tcp::resolver::results_type results)
+  {
+    ...
+  }
+  ...
+  resolver.async_resolve(...,
+      std::bind(&my_class::resolve_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
+
+A non-static class member function adapted to a resolve handler using
+`boost::bind()`:
 
   void my_class::resolve_handler(
       const asio::error_code& ec,

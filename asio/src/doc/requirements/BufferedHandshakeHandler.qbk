@@ -37,7 +37,8 @@ A buffered handshake handler function object:
     ...
   };
 
-A non-static class member function adapted to a buffered handshake handler using `bind()`:
+A non-static class member function adapted to a buffered handshake handler
+using `boost::bind()`:
 
   void my_class::handshake_handler(
       const asio::error_code& ec,

@@ -37,7 +37,32 @@ A signal handler function object:
     ...
   };
 
-A non-static class member function adapted to a signal handler using `bind()`:
+A lambda as a signal handler:
+
+  my_signal_set.async_wait(
+      [](const asio::error_code& ec,
+        int signal_number)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a signal handler using
+`std::bind()`:
+
+  void my_class::signal_handler(
+      const asio::error_code& ec,
+      int signal_number)
+  {
+    ...
+  }
+  ...
+  my_signal_set.async_wait(
+      std::bind(&my_class::signal_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
+
+A non-static class member function adapted to a signal handler using
+`boost::bind()`:
 
   void my_class::signal_handler(
       const asio::error_code& ec,

@@ -35,7 +35,29 @@ An accept handler function object:
     ...
   };
 
-A non-static class member function adapted to an accept handler using `bind()`:
+A lambda as an accept handler:
+
+  acceptor.async_accept(...,
+      [](const asio::error_code& ec)
+      {
+        ...
+      });
+
+A non-static class member function adapted to an accept handler using
+`std::bind()`:
+
+  void my_class::accept_handler(
+      const asio::error_code& ec)
+  {
+    ...
+  }
+  ...
+  acceptor.async_accept(...,
+      std::bind(&my_class::accept_handler,
+        this, std::placeholders::_1));
+
+A non-static class member function adapted to an accept handler using
+`boost::bind()`:
 
   void my_class::accept_handler(
       const asio::error_code& ec)

@@ -35,7 +35,29 @@ A handshake handler function object:
     ...
   };
 
-A non-static class member function adapted to a handshake handler using `bind()`:
+A lambda as a handshake handler:
+
+  ssl_stream.async_handshake(...,
+      [](const asio::error_code& ec)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a handshake handler using
+`std::bind()`:
+
+  void my_class::handshake_handler(
+      const asio::error_code& ec)
+  {
+    ...
+  }
+  ...
+  ssl_stream.async_handshake(...,
+      std::bind(&my_class::handshake_handler,
+        this, std::placeholders::_1));
+
+A non-static class member function adapted to a handshake handler using
+`boost::bind()`:
 
   void my_class::handshake_handler(
       const asio::error_code& ec)

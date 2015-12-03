@@ -37,7 +37,32 @@ A read handler function object:
     ...
   };
 
-A non-static class member function adapted to a read handler using `bind()`:
+A lambda as a read handler:
+
+  socket.async_read(...
+      [](const asio::error_code& ec,
+        std::size_t bytes_transferred)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a read handler using
+`std::bind()`:
+
+  void my_class::read_handler(
+      const asio::error_code& ec,
+      std::size_t bytes_transferred)
+  {
+    ...
+  }
+  ...
+  socket.async_read(...,
+      std::bind(&my_class::read_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
+
+A non-static class member function adapted to a read handler using
+`boost::bind()`:
 
   void my_class::read_handler(
       const asio::error_code& ec,

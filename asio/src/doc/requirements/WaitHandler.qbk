@@ -35,7 +35,29 @@ A wait handler function object:
     ...
   };
 
-A non-static class member function adapted to a wait handler using `bind()`:
+A lambda as a wait handler:
+
+  socket.async_wait(...,
+      [](const asio::error_code& ec)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a wait handler using
+`std::bind()`:
+
+  void my_class::wait_handler(
+      const asio::error_code& ec)
+  {
+    ...
+  }
+  ...
+  socket.async_wait(...,
+      std::bind(&my_class::wait_handler,
+        this, std::placeholders::_1));
+
+A non-static class member function adapted to a wait handler using
+`boost::bind()`:
 
   void my_class::wait_handler(
       const asio::error_code& ec)

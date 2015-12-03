@@ -39,8 +39,32 @@ An iterator connect handler function object:
     ...
   };
 
+A lambda as an iterator connect handler:
+
+  asio::async_connect(...,
+      [](const asio::error_code& ec,
+        asio::ip::tcp::resolver::iterator iterator)
+      {
+        ...
+      });
+
 A non-static class member function adapted to an iterator connect handler using
-`bind()`:
+`std::bind()`:
+
+  void my_class::connect_handler(
+      const asio::error_code& ec,
+      asio::ip::tcp::resolver::iterator iterator)
+  {
+    ...
+  }
+  ...
+  asio::async_connect(...,
+      std::bind(&my_class::connect_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
+
+A non-static class member function adapted to an iterator connect handler using
+`boost::bind()`:
 
   void my_class::connect_handler(
       const asio::error_code& ec,

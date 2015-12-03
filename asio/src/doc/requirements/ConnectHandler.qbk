@@ -35,7 +35,29 @@ A connect handler function object:
     ...
   };
 
-A non-static class member function adapted to a connect handler using `bind()`:
+A lambda as a connect handler:
+
+  socket.async_connect(...,
+      [](const asio::error_code& ec)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a connect handler using
+`std::bind()`:
+
+  void my_class::connect_handler(
+      const asio::error_code& ec)
+  {
+    ...
+  }
+  ...
+  socket.async_connect(...,
+      std::bind(&my_class::connect_handler,
+        this, std::placeholders::_1));
+
+A non-static class member function adapted to a connect handler using
+`boost::bind()`:
 
   void my_class::connect_handler(
       const asio::error_code& ec)

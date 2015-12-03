@@ -40,8 +40,32 @@ A range connect handler function object:
     ...
   };
 
+A lambda as a range connect handler:
+
+  asio::async_connect(...,
+      [](const asio::error_code& ec,
+        const asio::ip::tcp::endpoint& endpoint)
+      {
+        ...
+      });
+
 A non-static class member function adapted to a range connect handler using
-`bind()`:
+`std::bind()`:
+
+  void my_class::connect_handler(
+      const asio::error_code& ec,
+      const asio::ip::tcp::endpoint& endpoint)
+  {
+    ...
+  }
+  ...
+  asio::async_connect(...,
+      std::bind(&my_class::connect_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
+
+A non-static class member function adapted to a range connect handler using
+`boost::bind()`:
 
   void my_class::connect_handler(
       const asio::error_code& ec,

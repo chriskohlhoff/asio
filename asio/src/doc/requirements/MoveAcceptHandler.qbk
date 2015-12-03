@@ -17,25 +17,45 @@ type `const error_code` and `s` is an lvalue of the nested type
 
 A free function as a move accept handler:
 
-  void connect_handler(
-      const asio::error_code& ec,
-      asio::ip::tcp::socket s)
+  void accept_handler(
+      const asio::error_code& ec, asio::ip::tcp::socket s)
   {
     ...
   }
 
 A move accept handler function object:
 
-  struct connect_handler
+  struct accept_handler
   {
     ...
     void operator()(
-        const asio::error_code& ec,
-        asio::ip::tcp::socket s)
+        const asio::error_code& ec, asio::ip::tcp::socket s)
     {
       ...
     }
     ...
   };
+
+A lambda as a move accept handler:
+
+  acceptor.async_accept(...,
+      [](const asio::error_code& ec, asio::ip::tcp::socket s)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a move accept handler using
+`std::bind()`:
+
+  void my_class::accept_handler(
+      const asio::error_code& ec, asio::ip::tcp::socket socket)
+  {
+    ...
+  }
+  ...
+  asio::async_accept(...,
+      std::bind(&my_class::accept_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
 
 [endsect]
