@@ -3,6 +3,7 @@ nobase_include_HEADERS = \
 	asio/associated_allocator.hpp \
 	asio/associated_executor.hpp \
 	asio/async_result.hpp \
+	asio/await.hpp \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
@@ -290,6 +291,7 @@ nobase_include_HEADERS = \
 	asio/handler_type.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/impl/await.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/connect.hpp \
