@@ -35,6 +35,7 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/deadline_timer_service.hpp \
 	asio/defer.hpp \
+	asio/detached.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
@@ -296,6 +297,7 @@ nobase_include_HEADERS = \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/defer.hpp \
+	asio/impl/detached.hpp \
 	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
