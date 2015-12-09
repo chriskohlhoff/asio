@@ -9,10 +9,12 @@
 //
 
 #include <asio/await.hpp>
+#include <asio/detached.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/signal_set.hpp>
 #include <asio/write.hpp>
+#include <asio/use_future.hpp>
 #include <cstdio>
 
 using asio::ip::tcp;
@@ -20,20 +22,20 @@ using asio::ip::tcp;
 typedef asio::basic_unsynchronized_await_context<
   asio::io_context::executor_type> await_context;
 
-asio::awaitable<void> echo_once(await_context ctx, tcp::socket& socket)
+asio::awaitable<void> echo_once(tcp::socket& socket, await_context ctx)
 {
   char data[128];
   std::size_t n = co_await socket.async_read_some(asio::buffer(data), ctx);
   n = co_await async_write(socket, asio::buffer(data, n), ctx);
 }
 
-asio::awaitable<void> echo(await_context ctx, tcp::socket socket)
+asio::awaitable<void> echo(tcp::socket socket, await_context ctx)
 {
   try
   {
     for (;;)
     {
-      co_await echo_once(ctx, socket);
+      co_await echo_once(socket, ctx);
     }
   }
   catch (std::exception& e)
@@ -46,7 +48,7 @@ asio::awaitable<void> listener(await_context ctx)
 {
   tcp::acceptor acceptor(ctx.get_executor().context(), {tcp::v4(), 55555});
   for (;;)
-    asio::spawn(echo, ctx, co_await acceptor.async_accept(ctx));
+    asio::spawn(ctx, echo, co_await acceptor.async_accept(ctx), asio::detached);
 }
 
 int main()
@@ -56,7 +58,7 @@ int main()
     asio::io_context io_context;
     asio::signal_set signals(io_context, SIGINT, SIGTERM);
     signals.async_wait([&](auto, auto){ io_context.stop(); });
-    asio::spawn(listener, io_context);
+    asio::spawn(io_context, listener, asio::detached);
     io_context.run();
   }
   catch (std::exception& e)

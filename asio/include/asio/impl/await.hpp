@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <exception>
+#include <functional>
 #include <memory>
 #include <new>
 #include <tuple>
@@ -42,7 +43,7 @@ public:
 
   auto initial_suspend()
   {
-    return std::experimental::suspend_always();
+    return std::experimental::suspend_never();
   }
 
   auto final_suspend()
@@ -490,22 +491,118 @@ private:
   awaiter* awaiter_ = nullptr;
 };
 
-template <typename F, typename Executor, typename... Args, std::size_t... Index>
-awaiter* spawn_entry_point(F f, Executor ex,
-    std::tuple<Args...> args, std::index_sequence<Index...>)
+template <typename T>
+struct awaitable_signature;
+
+template <typename T>
+struct awaitable_signature<awaitable<T>>
 {
-  co_await f(co_await make_await_context<Executor>(ex),
-      std::forward<Args>(std::get<Index>(args))...);
+  typedef void type(std::exception_ptr, T);
+};
+
+template <>
+struct awaitable_signature<awaitable<void>>
+{
+  typedef void type(std::exception_ptr);
+};
+
+template <typename T, typename WorkGuard, typename Handler,
+    typename Executor, typename F, typename... Args>
+awaiter* spawn_entry_point(awaitable<T>*, WorkGuard work_guard,
+    Handler handler, Executor ex, F f, Args... args)
+{
+  bool done = false;
+
+  try
+  {
+    T t = co_await std::invoke(std::move(f), std::move(args)...,
+        co_await make_await_context<Executor>(ex));
+
+    done = true;
+
+    (dispatch)(work_guard.get_executor(),
+        [handler = std::move(handler), t = std::move(t)]() mutable
+        {
+          handler(std::exception_ptr(), std::move(t));
+        });
+  }
+  catch (...)
+  {
+    if (done)
+      throw;
+
+    (dispatch)(work_guard.get_executor(),
+        [handler = std::move(handler), e = std::current_exception()]() mutable
+        {
+          handler(e, T());
+        });
+  }
 }
 
-template <typename F, typename Executor, typename... Args>
-void spawn(F f, Executor ex, Args&&... args)
+template <typename WorkGuard, typename Handler,
+    typename Executor, typename F, typename... Args>
+awaiter* spawn_entry_point(awaitable<void>*, WorkGuard work_guard,
+    Handler handler, Executor ex, F f, Args... args)
 {
-  awaiter* a = spawn_entry_point(std::move(f), ex,
-      std::forward_as_tuple(std::forward<Args>(args)...),
-      std::make_index_sequence<sizeof...(Args)>());
-  coroutine_handle<awaiter>::from_promise(a).resume();
-  (dispatch)(spawn_handler<Executor>(ex, a));
+  std::exception_ptr e = nullptr;
+
+  try
+  {
+    co_await std::invoke(std::move(f), std::move(args)...,
+        co_await make_await_context<Executor>(ex));
+  }
+  catch (...)
+  {
+    e = std::current_exception();
+  }
+
+  (dispatch)(work_guard.get_executor(),
+      [handler = std::move(handler), e]() mutable
+      {
+        handler(e);
+      });
+}
+
+template <typename CompletionToken,
+    typename Executor, typename F, typename... Args>
+auto spawn(CompletionToken&& token, const Executor& ex, F&& f, Args&&... args)
+{
+  typedef decltype(
+      std::invoke(std::declval<std::decay_t<F>>(),
+        std::declval<std::decay_t<Args>>()...,
+        std::declval<basic_unsynchronized_await_context<Executor>>()))
+    awaitable_type;
+
+  typedef typename awaitable_signature<awaitable_type>::type signature_type;
+
+  async_completion<CompletionToken, signature_type> completion(token);
+
+  auto work_guard = make_work_guard(completion.handler, ex);
+  awaiter* a = (spawn_entry_point)(static_cast<awaitable_type*>(nullptr),
+      std::move(work_guard), std::move(completion.handler), ex,
+      std::forward<F>(f), std::forward<Args>(args)...);
+
+  (post)(spawn_handler<Executor>(ex, a));
+
+  return completion.result.get();
+}
+
+template <typename ArgTypes, typename Executor,
+    typename F, typename CompletionToken>
+inline auto spawn_reorder(std::index_sequence<> index_seq,
+    const Executor& ex, F&& f, CompletionToken&& token)
+{
+  return (spawn)(std::forward<CompletionToken>(token), ex, std::forward<F>(f));
+}
+
+template <typename ArgTypes, std::size_t... Index,
+    typename Executor, typename F, typename CompletionToken>
+inline auto spawn_reorder(std::index_sequence<Index...> index_seq,
+    const Executor& ex, F&& f, std::tuple_element_t<Index, ArgTypes>&&... args,
+    CompletionToken&& token)
+{
+  return (spawn)(std::forward<CompletionToken>(token), ex, std::move(f),
+      std::forward<std::tuple_element_t<Index, ArgTypes>>(args)...);
 }
 
 } // namespace detail
@@ -522,25 +619,27 @@ awaitable<T>::~awaitable()
 }
 
 template <typename T>
-bool awaitable<T>::await_ready()
+inline bool awaitable<T>::await_ready()
 {
   return awaitee_->ready_;
 }
 
 template <typename T>
-void awaitable<T>::await_suspend(detail::coroutine_handle<detail::awaiter> h)
+inline void awaitable<T>::await_suspend(
+    detail::coroutine_handle<detail::awaiter> h)
 {
   awaitee_->caller_ = h;
 }
 
 template <typename T> template <typename U>
-void awaitable<T>::await_suspend(detail::coroutine_handle<detail::awaitee<U>> h)
+inline void awaitable<T>::await_suspend(
+    detail::coroutine_handle<detail::awaitee<U>> h)
 {
   awaitee_->caller_ = h;
 }
 
 template <typename T>
-T awaitable<T>::await_resume()
+inline T awaitable<T>::await_resume()
 {
   awaitee_->caller_ = nullptr;
   return awaitee_->value();
@@ -574,26 +673,29 @@ private:
   type awaitable_;
 };
 
-template <typename F, typename E, typename... Args>
-inline void spawn(F f, const basic_unsynchronized_await_context<E>& ctx,
-    Args&&... args)
+template <typename Executor, typename F, typename... Args, typename>
+inline auto spawn(const Executor& ex, F&& f, Args&&... args)
 {
-  detail::spawn(std::move(f), ctx.get_executor(), std::forward<Args>(args)...);
+  static_assert(sizeof...(Args) > 0, "CompletionToken required");
+
+  return detail::spawn_reorder<std::tuple<Args...>>(
+      std::make_index_sequence<sizeof...(Args) - 1>(),
+      ex, std::forward<F>(f), std::forward<Args>(args)...);
 }
 
-template <typename F, typename Executor, typename... Args>
-inline auto spawn(F f, Executor ex, Args&&... args)
-  -> typename enable_if<is_executor<Executor>::value>::type
+template <typename ExecutionContext, typename F, typename... Args, typename>
+inline auto spawn(ExecutionContext& ctx, F&& f, Args&&... args)
 {
-  detail::spawn(std::move(f), ex, std::forward<Args>(args)...);
+  return (spawn)(ctx.get_executor(), std::forward<F>(f),
+      std::forward<Args>(args)...);
 }
 
-template <typename F, typename ExecutionContext, typename... Args>
-inline auto spawn(F f, ExecutionContext& ctx, Args&&... args)
-  -> typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type
+template <typename Executor, typename F, typename... Args>
+inline auto spawn(const basic_unsynchronized_await_context<Executor>& ctx,
+    F&& f, Args&&... args)
 {
-  detail::spawn(std::move(f), ctx.get_executor(), std::forward<Args>(args)...);
+  return (spawn)(ctx.get_executor(), std::forward<F>(f),
+      std::forward<Args>(args)...);
 }
 
 } // namespace asio
@@ -601,8 +703,8 @@ inline auto spawn(F f, ExecutionContext& ctx, Args&&... args)
 namespace std {
 namespace experimental {
 
-template <typename F, typename Executor, typename... Args>
-struct coroutine_traits<asio::detail::awaiter*, F, Executor, Args...>
+template <typename... Args>
+struct coroutine_traits<asio::detail::awaiter*, Args...>
 {
   typedef asio::detail::awaiter promise_type;
 };

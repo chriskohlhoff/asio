@@ -134,6 +134,9 @@ template <typename T>
 class awaitable
 {
 public:
+  /// The type of the awaited value.
+  typedef T value_type;
+
   // Construct the awaitable from a coroutine's promise object.
   explicit awaitable(detail::awaitee<T>* a) : awaitee_(a) {}
 
@@ -163,20 +166,20 @@ private:
 };
 
 /// Spawn a new thread of execution.
-template <typename F, typename E, typename... Args>
-void spawn(F f, const basic_unsynchronized_await_context<E>& ctx,
-    Args&&... args);
+template <typename Executor, typename F, typename... Args,
+    typename = typename enable_if<is_executor<Executor>::value>::type>
+auto spawn(const Executor& ex, F&& f, Args&&... args);
 
 /// Spawn a new thread of execution.
-template <typename F, typename Executor, typename... Args>
-auto spawn(F f, Executor ex, Args&&... args)
-  -> typename enable_if<is_executor<Executor>::value>::type;
+template <typename ExecutionContext, typename F, typename... Args,
+    typename = typename enable_if<
+      is_convertible<ExecutionContext&, execution_context&>::value>::type>
+auto spawn(ExecutionContext& ctx, F&& f, Args&&... args);
 
 /// Spawn a new thread of execution.
-template <typename F, typename ExecutionContext, typename... Args>
-auto spawn(F f, ExecutionContext& ctx, Args&&... args)
-  -> typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type;
+template <typename Executor, typename F, typename... Args>
+auto spawn(const basic_unsynchronized_await_context<Executor>& ctx,
+    F&& f, Args&&... args);
 
 } // namespace asio
 
