@@ -94,7 +94,13 @@ int win_static_mutex::do_init()
 # if defined(UNDER_CE)
     ::InitializeCriticalSection(&crit_section_);
 # elif defined(ASIO_WINDOWS_APP)
-    ::InitializeCriticalSectionEx(&crit_section_, 0x80000000, 0);
+    if (!::InitializeCriticalSectionEx(&crit_section_, 0, 0))
+    {
+      last_error = ::GetLastError();
+      ::ReleaseMutex(mutex);
+      ::CloseHandle(mutex);
+      return last_error;
+    }
 # else
     if (!::InitializeCriticalSectionAndSpinCount(&crit_section_, 0x80000000))
     {
