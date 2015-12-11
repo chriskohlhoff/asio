@@ -587,7 +587,7 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
       ASIO_SYNC_OP_VOID_RETURN(ec);
     }
 
-#if (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L) && !defined(LIBRESSL_VERSION_NUMBER)
     ::SSL_CTX_clear_chain_certs(handle_);
 #else
     if (handle_->extra_certs)
