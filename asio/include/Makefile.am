@@ -44,6 +44,7 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/chrono.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
 	asio/detail/config.hpp \
@@ -337,6 +338,7 @@ nobase_include_HEADERS = \
 	asio/ip/basic_resolver.hpp \
 	asio/ip/basic_resolver_iterator.hpp \
 	asio/ip/basic_resolver_query.hpp \
+	asio/ip/basic_resolver_results.hpp \
 	asio/ip/detail/endpoint.hpp \
 	asio/ip/detail/impl/endpoint.ipp \
 	asio/ip/detail/socket_option.hpp \
