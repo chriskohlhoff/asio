@@ -3772,7 +3772,7 @@
 /include/asio/detail/wait_handler.hpp
 /include/asio/detail/wait_op.hpp
 /include/asio/detail/weak_ptr.hpp
-/include/asio/detail/wince_thread.hpp
+/include/asio/detail/winapi_thread.hpp
 /include/asio/detail/win_event.hpp
 /include/asio/detail/win_fd_set_adapter.hpp
 /include/asio/detail/win_fenced_block.hpp
@@ -4135,7 +4135,7 @@
 /src/examples/cpp03/ssl/
 /src/examples/cpp03/ssl/ca.pem
 /src/examples/cpp03/ssl/client.cpp
-/src/examples/cpp03/ssl/dh512.pem
+/src/examples/cpp03/ssl/dh2048.pem
 /src/examples/cpp03/ssl/README
 /src/examples/cpp03/ssl/server.cpp
 /src/examples/cpp03/ssl/server.pem
