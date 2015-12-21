@@ -55,6 +55,14 @@ namespace detail {
         promise_->set_value(t);
     }
 
+    void operator()(std::exception_ptr ex, T t)
+    {
+      if (ex)
+        promise_->set_exception(ex);
+      else
+        promise_->set_value(t);
+    }
+
   //private:
     std::shared_ptr<std::promise<T> > promise_;
   };
@@ -83,6 +91,14 @@ namespace detail {
         promise_->set_exception(
             std::make_exception_ptr(
               asio::system_error(ec)));
+      else
+        promise_->set_value();
+    }
+
+    void operator()(std::exception_ptr ex)
+    {
+      if (ex)
+        promise_->set_exception(ex);
       else
         promise_->set_value();
     }
@@ -159,6 +175,22 @@ struct handler_type<use_future_t<Allocator>,
 template <typename Allocator, typename ReturnType, typename Arg2>
 struct handler_type<use_future_t<Allocator>,
     ReturnType(asio::error_code, Arg2)>
+{
+  typedef detail::promise_handler<Arg2> type;
+};
+
+// Handler type specialisation for use_future.
+template <typename Allocator, typename ReturnType>
+struct handler_type<use_future_t<Allocator>,
+    ReturnType(std::exception_ptr)>
+{
+  typedef detail::promise_handler<void> type;
+};
+
+// Handler type specialisation for use_future.
+template <typename Allocator, typename ReturnType, typename Arg2>
+struct handler_type<use_future_t<Allocator>,
+    ReturnType(std::exception_ptr, Arg2)>
 {
   typedef detail::promise_handler<Arg2> type;
 };
