@@ -22,6 +22,8 @@
 #include "asio/async_result.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/uses_executor.hpp"
+#include "asio/is_executor.hpp"
+#include "asio/associated_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
