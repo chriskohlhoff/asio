@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <boost/coroutine/all.hpp>
 #include "asio/bind_executor.hpp"
+#include "asio/detail/functional.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/wrapped_handler.hpp"
@@ -136,6 +137,9 @@ public:
     tmp.ec_ = &ec;
     return tmp;
   }
+
+  asio::detail::function< void() > onYield;
+  asio::detail::function< void() > onResume;
 
 #if defined(GENERATING_DOCUMENTATION)
 private:

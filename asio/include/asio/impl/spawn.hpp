@@ -38,13 +38,14 @@ namespace detail {
   class coro_handler
   {
   public:
-    coro_handler(basic_yield_context<Handler> ctx)
+    coro_handler(basic_yield_context<Handler>& ctx)
       : coro_(ctx.coro_.lock()),
         ca_(ctx.ca_),
         handler_(ctx.handler_),
         ready_(0),
         ec_(ctx.ec_),
-        value_(0)
+        value_(0),
+        ctx_(&ctx)
     {
     }
 
@@ -52,16 +53,22 @@ namespace detail {
     {
       *ec_ = asio::error_code();
       *value_ = ASIO_MOVE_CAST(T)(value);
-      if (--*ready_ == 0)
+      if (--*ready_ == 0) {
+        if( ctx_ && ctx_->onResume )
+          ctx_->onResume();
         (*coro_)();
+      }
     }
 
     void operator()(asio::error_code ec, T value)
     {
       *ec_ = ec;
       *value_ = ASIO_MOVE_CAST(T)(value);
-      if (--*ready_ == 0)
+      if (--*ready_ == 0) {
+        if( ctx_ && ctx_->onResume )
+          ctx_->onResume();
         (*coro_)();
+      }
     }
 
   //private:
@@ -71,33 +78,41 @@ namespace detail {
     atomic_count* ready_;
     asio::error_code* ec_;
     T* value_;
+    basic_yield_context<Handler>* ctx_;
   };
 
   template <typename Handler>
   class coro_handler<Handler, void>
   {
   public:
-    coro_handler(basic_yield_context<Handler> ctx)
+    coro_handler(basic_yield_context<Handler>& ctx)
       : coro_(ctx.coro_.lock()),
         ca_(ctx.ca_),
         handler_(ctx.handler_),
         ready_(0),
-        ec_(ctx.ec_)
+        ec_(ctx.ec_),
+        ctx_(&ctx)
     {
     }
 
     void operator()()
     {
       *ec_ = asio::error_code();
-      if (--*ready_ == 0)
+      if (--*ready_ == 0) {
+        if( ctx_ && ctx_->onResume )
+          ctx_->onResume();
         (*coro_)();
+      }
     }
 
     void operator()(asio::error_code ec)
     {
       *ec_ = ec;
-      if (--*ready_ == 0)
+      if (--*ready_ == 0) {
+        if( ctx_ && ctx_->onResume )
+          ctx_->onResume();
         (*coro_)();
+      }
     }
 
   //private:
@@ -106,6 +121,7 @@ namespace detail {
     Handler handler_;
     atomic_count* ready_;
     asio::error_code* ec_;
+    basic_yield_context<Handler>* ctx_;
   };
 
   template <typename Handler, typename T>
@@ -196,8 +212,11 @@ public:
   type get()
   {
     handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
-    if (--ready_ != 0)
+    if (--ready_ != 0) {
+      if( handler_.ctx_ && handler_.ctx_->onYield )
+        handler_.ctx_->onYield();
       ca_();
+    }
     if (!out_ec_ && ec_) throw asio::system_error(ec_);
     return ASIO_MOVE_CAST(type)(value_);
   }
@@ -230,8 +249,11 @@ public:
   void get()
   {
     handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
-    if (--ready_ != 0)
+    if (--ready_ != 0) {
+      if( handler_.ctx_ && handler_.ctx_->onYield )
+        handler_.ctx_->onYield();
       ca_();
+    }
     if (!out_ec_ && ec_) throw asio::system_error(ec_);
   }
 
