@@ -52,6 +52,10 @@ public:
     // itself has been scheduled in order to invoke some pending handlers.
     bool locked_;
 
+    // Indicates that the strand has been shut down and will accept no further
+    // handlers.
+    bool shutdown_;
+
     // The handlers that are waiting on the strand but should not be run until
     // after the next time the strand is scheduled. This queue must only be
     // modified while the mutex is locked.
