@@ -108,6 +108,7 @@
 #include "asio/read.hpp"
 #include "asio/read_at.hpp"
 #include "asio/read_until.hpp"
+#include "asio/redirect_error.hpp"
 #include "asio/seq_packet_socket_service.hpp"
 #include "asio/serial_port.hpp"
 #include "asio/serial_port_base.hpp"

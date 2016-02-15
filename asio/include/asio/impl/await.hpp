@@ -396,7 +396,7 @@ public:
   void operator()(std::exception_ptr ex)
   {
     awaiter_ptr ptr(std::move(awaiter_));
-    if (ec)
+    if (ex)
       awaitee_->set_exception(ex);
     else
       awaitee_->return_void();
@@ -415,10 +415,7 @@ public:
   void operator()(T t)
   {
     awaiter_ptr ptr(std::move(awaiter_));
-    if (ec)
-      awaitee_->set_exception(ex);
-    else
-      awaitee_->return_value(std::forward<T>(t));
+    awaitee_->return_value(std::forward<T>(t));
     awaitee_->wake_caller();
     ptr->rethrow_exception();
   }
@@ -453,7 +450,7 @@ public:
   void operator()(std::exception_ptr ex, T t)
   {
     awaiter_ptr ptr(std::move(awaiter_));
-    if (ec)
+    if (ex)
       awaitee_->set_exception(ex);
     else
       awaitee_->return_value(std::forward<T>(t));
