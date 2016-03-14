@@ -214,6 +214,12 @@ case $host in
     LIBS="$LIBS -lws2_32 -lmswsock"
     WINDOWS=yes
     ;;
+  *-*-mingw64*)
+    CXXFLAGS="$CXXFLAGS -mthreads"
+    LDFLAGS="$LDFLAGS -mthreads"
+    LIBS="$LIBS -lws2_32 -lmswsock"
+    WINDOWS=yes
+    ;;
   *-pc-cygwin*)
     CXXFLAGS="$CXXFLAGS -D__USE_W32_SOCKETS -D_WIN32_WINNT=0x0501"
     LIBS="$LIBS -lws2_32 -lmswsock"
