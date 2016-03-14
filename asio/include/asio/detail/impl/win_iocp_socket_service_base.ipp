@@ -488,12 +488,13 @@ void win_iocp_socket_service_base::start_accept_op(
   {
     asio::error_code ec;
     new_socket.reset(socket_ops::socket(family, type, protocol, ec));
-    if (new_socket.get() == invalid_socket)
+    accept_ex_fn accept_ex = get_accept_ex(impl, type);
+    if (new_socket.get() == invalid_socket || !accept_ex)
       iocp_service_.on_completion(op, ec);
     else
     {
       DWORD bytes_read = 0;
-      BOOL result = ::AcceptEx(impl.socket_, new_socket.get(), output_buffer,
+      BOOL result = accept_ex(impl.socket_, new_socket.get(), output_buffer,
           0, address_length, address_length, &bytes_read, op);
       DWORD last_error = ::WSAGetLastError();
       if (!result && last_error != WSA_IO_PENDING)
