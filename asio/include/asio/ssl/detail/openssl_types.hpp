@@ -17,12 +17,17 @@
 
 #include "asio/detail/config.hpp"
 #include <openssl/conf.h>
+#if defined(ASIO_WINDOWS)
+#include "asio/detail/socket_types.hpp"
+#endif // defined(ASIO_WINDOWS)
 #include <openssl/ssl.h>
 #if !defined(OPENSSL_NO_ENGINE)
 # include <openssl/engine.h>
 #endif // !defined(OPENSSL_NO_ENGINE)
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
+#if !defined(ASIO_WINDOWS)
 #include "asio/detail/socket_types.hpp"
+#endif // !defined(ASIO_WINDOWS)
 
 #endif // ASIO_SSL_DETAIL_OPENSSL_TYPES_HPP
