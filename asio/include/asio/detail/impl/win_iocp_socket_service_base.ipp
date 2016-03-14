@@ -32,6 +32,7 @@ win_iocp_socket_service_base::win_iocp_socket_service_base(
     iocp_service_(use_service<win_iocp_io_context>(io_context)),
     reactor_(0),
     connect_ex_(0),
+    accept_ex_(0),
     mutex_(),
     impl_list_(0)
 {
@@ -678,30 +679,50 @@ win_iocp_socket_service_base::get_connect_ex(
   (void)type;
   return 0;
 #else // defined(ASIO_DISABLE_CONNECTEX)
+  GUID guid = { 0x25a207b9, 0xddf3, 0x4660,
+    { 0x8e, 0xe9, 0x76, 0xe5, 0x8c, 0x74, 0x06, 0x3e } };
+  void * ptr = lookup_extension_pointer(impl, type, connect_ex_, guid);
+  return reinterpret_cast<connect_ex_fn>(ptr == this ? 0 : ptr);
+#endif // defined(ASIO_DISABLE_CONNECTEX)
+}
+
+win_iocp_socket_service_base::accept_ex_fn
+win_iocp_socket_service_base::get_accept_ex(
+    win_iocp_socket_service_base::base_implementation_type& impl, int type)
+{
+  // this is WSAID_ACCEPTEX
+  GUID guid = { 0xb5367df1, 0xcbac, 0x11cf,
+    { 0x95, 0xca, 0x00, 0x80, 0x5f, 0x48, 0xa1, 0x92 } };
+  void * ptr = lookup_extension_pointer(impl, type, accept_ex_, guid);
+  return reinterpret_cast<accept_ex_fn>(ptr == this ? 0 : ptr);
+}
+void *
+win_iocp_socket_service_base::lookup_extension_pointer(
+    win_iocp_socket_service_base::base_implementation_type& impl, int type,
+    void*&cache, GUID& guid)
+{
+  // GUID can't be const& or the pointer type will be wrong.
+
   if (type != ASIO_OS_DEF(SOCK_STREAM)
       && type != ASIO_OS_DEF(SOCK_SEQPACKET))
     return 0;
 
-  void* ptr = interlocked_compare_exchange_pointer(&connect_ex_, 0, 0);
+  void* ptr = interlocked_compare_exchange_pointer(&cache, 0, 0);
   if (!ptr)
   {
-    GUID guid = { 0x25a207b9, 0xddf3, 0x4660,
-      { 0x8e, 0xe9, 0x76, 0xe5, 0x8c, 0x74, 0x06, 0x3e } };
 
     DWORD bytes = 0;
     if (::WSAIoctl(impl.socket_, SIO_GET_EXTENSION_FUNCTION_POINTER,
           &guid, sizeof(guid), &ptr, sizeof(ptr), &bytes, 0, 0) != 0)
     {
-      // Set connect_ex_ to a special value to indicate that ConnectEx is
+      // Set the cache to a special value to indicate that this function is
       // unavailable. That way we won't bother trying to look it up again.
       ptr = this;
     }
 
-    interlocked_exchange_pointer(&connect_ex_, ptr);
+    interlocked_exchange_pointer(&cache, ptr);
   }
-
-  return reinterpret_cast<connect_ex_fn>(ptr == this ? 0 : ptr);
-#endif // defined(ASIO_DISABLE_CONNECTEX)
+  return cache;
 }
 
 void* win_iocp_socket_service_base::interlocked_compare_exchange_pointer(
