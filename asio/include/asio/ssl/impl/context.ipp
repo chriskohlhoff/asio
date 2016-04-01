@@ -66,7 +66,8 @@ context::context(context::method m)
 
   switch (m)
   {
-#if defined(OPENSSL_NO_SSL2)
+#if defined(OPENSSL_NO_SSL2) \
+  || (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   case context::sslv2:
   case context::sslv2_client:
   case context::sslv2_server:
@@ -74,6 +75,7 @@ context::context(context::method m)
         asio::error::invalid_argument, "context");
     break;
 #else // defined(OPENSSL_NO_SSL2)
+      // || (OPENSSL_VERSION_NUMBER >= 0x10100000L)
   case context::sslv2:
     handle_ = ::SSL_CTX_new(::SSLv2_method());
     break;
@@ -84,6 +86,7 @@ context::context(context::method m)
     handle_ = ::SSL_CTX_new(::SSLv2_server_method());
     break;
 #endif // defined(OPENSSL_NO_SSL2)
+       // || (OPENSSL_VERSION_NUMBER >= 0x10100000L)
 #if defined(OPENSSL_NO_SSL3)
   case context::sslv3:
   case context::sslv3_client:
@@ -192,13 +195,22 @@ context::~context()
 {
   if (handle_)
   {
-    if (handle_->default_passwd_callback_userdata)
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    if (cb_userdata)
     {
       detail::password_callback_base* callback =
         static_cast<detail::password_callback_base*>(
-            handle_->default_passwd_callback_userdata);
+            cb_userdata);
       delete callback;
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+      ::SSL_CTX_set_default_passwd_cb_userdata(handle_, 0);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
       handle_->default_passwd_callback_userdata = 0;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     }
 
     if (SSL_CTX_get_app_data(handle_))
@@ -528,10 +540,17 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
   bio_cleanup bio = { make_buffer_bio(chain) };
   if (bio.p)
   {
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = handle_->default_passwd_callback;
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
     x509_cleanup cert = {
       ::PEM_read_bio_X509_AUX(bio.p, 0,
-          handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata) };
+          callback,
+          cb_userdata) };
     if (!cert.p)
     {
       ec = asio::error_code(ERR_R_PEM_LIB,
@@ -559,8 +578,8 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
 #endif // (OPENSSL_VERSION_NUMBER >= 0x10002000L)
 
     while (X509* cacert = ::PEM_read_bio_X509(bio.p, 0,
-          handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata))
+          callback,
+          cb_userdata))
     {
       if (!::SSL_CTX_add_extra_chain_cert(handle_, cacert))
       {
@@ -625,6 +644,14 @@ ASIO_SYNC_OP_VOID context::use_private_key(
 {
   ::ERR_clear_error();
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = handle_->default_passwd_callback;
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
   {
@@ -636,8 +663,8 @@ ASIO_SYNC_OP_VOID context::use_private_key(
       break;
     case context_base::pem:
       evp_private_key.p = ::PEM_read_bio_PrivateKey(
-          bio.p, 0, handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata);
+          bio.p, 0, callback,
+          cb_userdata);
       break;
     default:
       {
@@ -684,6 +711,14 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
 {
   ::ERR_clear_error();
 
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    pem_password_cb* callback = handle_->default_passwd_callback;
+    void* cb_userdata = handle_->default_passwd_callback_userdata;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
   {
@@ -695,8 +730,8 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
       break;
     case context_base::pem:
       rsa_private_key.p = ::PEM_read_bio_RSAPrivateKey(
-          bio.p, 0, handle_->default_passwd_callback,
-          handle_->default_passwd_callback_userdata);
+          bio.p, 0, callback,
+          cb_userdata);
       break;
     default:
       {
@@ -915,11 +950,17 @@ int context::verify_callback_function(int preverified, X509_STORE_CTX* ctx)
 ASIO_SYNC_OP_VOID context::do_set_password_callback(
     detail::password_callback_base* callback, asio::error_code& ec)
 {
-  if (handle_->default_passwd_callback_userdata)
-    delete static_cast<detail::password_callback_base*>(
-        handle_->default_passwd_callback_userdata);
-
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+  void* old_callback = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+  ::SSL_CTX_set_default_passwd_cb_userdata(handle_, callback);
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+  void* old_callback = handle_->default_passwd_callback_userdata;
   handle_->default_passwd_callback_userdata = callback;
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+
+  if (old_callback)
+    delete static_cast<detail::password_callback_base*>(
+        old_callback);
 
   SSL_CTX_set_default_passwd_cb(handle_, &context::password_callback_function);
 
