@@ -667,6 +667,37 @@ public:
   ASIO_DECL ASIO_SYNC_OP_VOID use_tmp_dh_file(
       const std::string& filename, asio::error_code& ec);
 
+  /// Use the specified certificate to obtain temporary Diffie-Hellman parameters
+  /// for Elliptic Curve Diffie-Hellman.
+  /**
+   * This function is used to load Elliptic Curve Diffie-Hellman parameters into
+   * the context from a certificate based on Elliptic Curve Cryptography (ECC).
+   *
+   * @param certificate The name of the file containing the ECC-based certificate.
+   * The file must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_ecdh.
+   */
+  ASIO_DECL void use_tmp_ecdh(const std::string& certificate);
+
+  /// Use the specified certificate to obtain temporary Diffie-Hellman parameters
+  /// for Elliptic Curve Diffie-Hellman.
+  /**
+   * This function is used to load Elliptic Curve Diffie-Hellman parameters into
+   * the context from a certificate based on Elliptic Curve Cryptography (ECC).
+   *
+   * @param certificate The name of the file containing the ECC-based certificate.
+   * The file must use the PEM format.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note Calls @c SSL_CTX_set_tmp_ecdh.
+   */
+  ASIO_DECL ASIO_SYNC_OP_VOID use_tmp_ecdh(
+		  const std::string& certificate, asio::error_code& ec);
+
   /// Set the password callback.
   /**
    * This function is used to specify a callback function to obtain password
@@ -714,6 +745,7 @@ private:
   struct evp_pkey_cleanup;
   struct rsa_cleanup;
   struct dh_cleanup;
+  struct ec_key_cleanup;
 
   // Helper function used to set a peer certificate verification callback.
   ASIO_DECL ASIO_SYNC_OP_VOID do_set_verify_callback(
@@ -734,6 +766,10 @@ private:
   // Helper function to set the temporary Diffie-Hellman parameters from a BIO.
   ASIO_DECL ASIO_SYNC_OP_VOID do_use_tmp_dh(
       BIO* bio, asio::error_code& ec);
+
+  // Helper function to set the temprorary ECC Diffie-Hellman parameters from a BIO.
+  ASIO_DECL ASIO_SYNC_OP_VOID do_use_tmp_ecdh(
+  		  BIO* bio, asio::error_code& ec);
 
   // Helper function to make a BIO from a memory buffer.
   ASIO_DECL BIO* make_buffer_bio(const const_buffer& b);
