@@ -15,6 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/thread_pool.hpp"
+#include "../../thread_pool.hpp"
 
 #endif // ASIO_TS_THREAD_POOL_HPP

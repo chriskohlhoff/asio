@@ -16,17 +16,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
 
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/wait_handler.hpp"
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
+#include "../detail/handler_alloc_helpers.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/wait_handler.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -172,7 +172,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/win_object_handle_service.ipp"

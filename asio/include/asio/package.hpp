@@ -15,15 +15,15 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 #include <future>
 #include <memory>
-#include "asio/async_result.hpp"
-#include "asio/detail/type_traits.hpp"
-#include "asio/detail/variadic_templates.hpp"
-#include "asio/handler_type.hpp"
+#include "async_result.hpp"
+#include "detail/type_traits.hpp"
+#include "detail/variadic_templates.hpp"
+#include "handler_type.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -289,6 +289,6 @@ public:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // ASIO_USE_PACKAGE_HPP

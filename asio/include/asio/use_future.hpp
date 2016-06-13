@@ -15,10 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 #include <memory>
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -94,8 +94,8 @@ __declspec(selectany) use_future_t<> use_future;
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
-#include "asio/impl/use_future.hpp"
+#include "impl/use_future.hpp"
 
 #endif // ASIO_USE_FUTURE_HPP

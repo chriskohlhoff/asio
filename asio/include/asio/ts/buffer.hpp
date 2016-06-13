@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/buffer.hpp"
-#include "asio/streambuf.hpp"
-#include "asio/completion_condition.hpp"
-#include "asio/read.hpp"
-#include "asio/write.hpp"
-#include "asio/read_until.hpp"
+#include "../buffer.hpp"
+#include "../streambuf.hpp"
+#include "../completion_condition.hpp"
+#include "../read.hpp"
+#include "../write.hpp"
+#include "../read_until.hpp"
 
 #endif // ASIO_TS_BUFFER_HPP

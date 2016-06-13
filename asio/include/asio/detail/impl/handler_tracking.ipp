@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 
 #if defined(ASIO_CUSTOM_HANDLER_TRACKING)
 
@@ -28,11 +28,11 @@
 #include "asio/detail/handler_tracking.hpp"
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/time_traits.hpp"
+# include "../../time_traits.hpp"
 #elif defined(ASIO_HAS_CHRONO)
-# include "asio/detail/chrono.hpp"
-# include "asio/detail/chrono_time_traits.hpp"
-# include "asio/wait_traits.hpp"
+# include "../../detail/chrono.hpp"
+# include "../../detail/chrono_time_traits.hpp"
+# include "../../wait_traits.hpp"
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 #if defined(ASIO_WINDOWS_RUNTIME)

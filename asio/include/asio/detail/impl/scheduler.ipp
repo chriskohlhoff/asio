@@ -15,15 +15,15 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 
-#include "asio/detail/event.hpp"
-#include "asio/detail/limits.hpp"
-#include "asio/detail/reactor.hpp"
-#include "asio/detail/scheduler.hpp"
-#include "asio/detail/scheduler_thread_info.hpp"
+#include "../../detail/event.hpp"
+#include "../../detail/limits.hpp"
+#include "../../detail/reactor.hpp"
+#include "../../detail/scheduler.hpp"
+#include "../../detail/scheduler_thread_info.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -471,6 +471,6 @@ void scheduler::wake_one_thread_and_unlock(
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_IMPL_SCHEDULER_IPP

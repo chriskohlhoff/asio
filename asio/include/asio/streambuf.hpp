@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 
 #if !defined(ASIO_NO_IOSTREAM)
 
-#include "asio/basic_streambuf.hpp"
+#include "basic_streambuf.hpp"
 
 namespace asio {
 

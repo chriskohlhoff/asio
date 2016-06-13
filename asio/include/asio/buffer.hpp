@@ -15,17 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 #include <cstddef>
 #include <cstring>
 #include <limits>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include "asio/detail/array_fwd.hpp"
-#include "asio/detail/is_buffer_sequence.hpp"
-#include "asio/detail/throw_exception.hpp"
-#include "asio/detail/type_traits.hpp"
+#include "detail/array_fwd.hpp"
+#include "detail/is_buffer_sequence.hpp"
+#include "detail/throw_exception.hpp"
+#include "detail/type_traits.hpp"
 
 #if defined(ASIO_MSVC)
 # if defined(_HAS_ITERATOR_DEBUGGING) && (_HAS_ITERATOR_DEBUGGING != 0)
@@ -60,7 +60,7 @@
 # include "asio/detail/type_traits.hpp"
 #endif // defined(ASIO_ENABLE_ARRAY_BUFFER_WORKAROUND)
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -399,7 +399,7 @@ inline std::size_t buffer_size(const const_buffers_1& b) ASIO_NOEXCEPT
 }
 
 /// Get the total number of bytes in a buffer sequence.
-/** 
+/**
  * The @c BufferSequence template parameter may meet either of the @c
  * ConstBufferSequence or @c MutableBufferSequence type requirements.
  */
@@ -806,7 +806,7 @@ inline mutable_buffers_1 buffer(PodType (&data)[N]) ASIO_NOEXCEPT
 {
   return mutable_buffers_1(mutable_buffer(data, N * sizeof(PodType)));
 }
- 
+
 /// Create a new modifiable buffer that represents the given POD array.
 /**
  * @returns A mutable_buffers_1 value equivalent to:
@@ -823,7 +823,7 @@ inline mutable_buffers_1 buffer(PodType (&data)[N],
         N * sizeof(PodType) < max_size_in_bytes
         ? N * sizeof(PodType) : max_size_in_bytes));
 }
- 
+
 /// Create a new non-modifiable buffer that represents the given POD array.
 /**
  * @returns A const_buffers_1 value equivalent to:
@@ -2720,6 +2720,6 @@ std::size_t buffer_copy(const MutableBufferSequence& target,
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // ASIO_BUFFER_HPP

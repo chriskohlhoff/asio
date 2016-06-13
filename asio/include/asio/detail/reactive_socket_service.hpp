@@ -15,30 +15,30 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if !defined(ASIO_HAS_IOCP)
 
-#include "asio/buffer.hpp"
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/socket_base.hpp"
-#include "asio/detail/buffer_sequence_adapter.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/reactive_null_buffers_op.hpp"
-#include "asio/detail/reactive_socket_accept_op.hpp"
-#include "asio/detail/reactive_socket_connect_op.hpp"
-#include "asio/detail/reactive_socket_recvfrom_op.hpp"
-#include "asio/detail/reactive_socket_sendto_op.hpp"
-#include "asio/detail/reactive_socket_service_base.hpp"
-#include "asio/detail/reactor.hpp"
-#include "asio/detail/reactor_op.hpp"
-#include "asio/detail/socket_holder.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_types.hpp"
+#include "../buffer.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
+#include "../socket_base.hpp"
+#include "../detail/buffer_sequence_adapter.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../detail/reactive_null_buffers_op.hpp"
+#include "../detail/reactive_socket_accept_op.hpp"
+#include "../detail/reactive_socket_connect_op.hpp"
+#include "../detail/reactive_socket_recvfrom_op.hpp"
+#include "../detail/reactive_socket_sendto_op.hpp"
+#include "../detail/reactive_socket_service_base.hpp"
+#include "../detail/reactor.hpp"
+#include "../detail/reactor_op.hpp"
+#include "../detail/socket_holder.hpp"
+#include "../detail/socket_ops.hpp"
+#include "../detail/socket_types.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -500,7 +500,7 @@ public:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // !defined(ASIO_HAS_IOCP)
 

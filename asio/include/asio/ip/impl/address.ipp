@@ -15,16 +15,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 #include <typeinfo>
-#include "asio/detail/throw_error.hpp"
-#include "asio/detail/throw_exception.hpp"
-#include "asio/error.hpp"
-#include "asio/ip/address.hpp"
-#include "asio/ip/bad_address_cast.hpp"
-#include "asio/system_error.hpp"
+#include "../../detail/throw_error.hpp"
+#include "../../detail/throw_exception.hpp"
+#include "../../error.hpp"
+#include "../../ip/address.hpp"
+#include "../../ip/bad_address_cast.hpp"
+#include "../../system_error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -214,6 +214,6 @@ bool operator<(const address& a1, const address& a2)
 } // namespace ip
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // ASIO_IP_IMPL_ADDRESS_IPP

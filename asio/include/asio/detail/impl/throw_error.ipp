@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/detail/throw_exception.hpp"
-#include "asio/system_error.hpp"
+#include "../../detail/config.hpp"
+#include "../../detail/throw_error.hpp"
+#include "../../detail/throw_exception.hpp"
+#include "../../system_error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -55,6 +55,6 @@ void do_throw_error(const asio::error_code& err, const char* location)
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_IMPL_THROW_ERROR_IPP

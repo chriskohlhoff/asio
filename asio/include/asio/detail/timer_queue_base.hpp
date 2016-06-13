@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/op_queue.hpp"
-#include "asio/detail/operation.hpp"
+#include "../detail/config.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../detail/op_queue.hpp"
+#include "../detail/operation.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -63,6 +63,6 @@ class timer_queue;
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_TIMER_QUEUE_BASE_HPP

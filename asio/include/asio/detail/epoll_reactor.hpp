@@ -15,24 +15,24 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_EPOLL)
 
-#include "asio/detail/atomic_count.hpp"
-#include "asio/detail/limits.hpp"
-#include "asio/detail/mutex.hpp"
-#include "asio/detail/object_pool.hpp"
-#include "asio/detail/op_queue.hpp"
-#include "asio/detail/reactor_op.hpp"
-#include "asio/detail/select_interrupter.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_queue_base.hpp"
-#include "asio/detail/timer_queue_set.hpp"
-#include "asio/detail/wait_op.hpp"
-#include "asio/execution_context.hpp"
+#include "../detail/atomic_count.hpp"
+#include "../detail/limits.hpp"
+#include "../detail/mutex.hpp"
+#include "../detail/object_pool.hpp"
+#include "../detail/op_queue.hpp"
+#include "../detail/reactor_op.hpp"
+#include "../detail/select_interrupter.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/timer_queue_base.hpp"
+#include "../detail/timer_queue_set.hpp"
+#include "../detail/wait_op.hpp"
+#include "../execution_context.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -236,9 +236,9 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
-#include "asio/detail/impl/epoll_reactor.hpp"
+#include "../detail/impl/epoll_reactor.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/epoll_reactor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

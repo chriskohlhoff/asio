@@ -15,18 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/reactor_fwd.hpp"
+#include "../detail/reactor_fwd.hpp"
 
 #if defined(ASIO_HAS_EPOLL)
-# include "asio/detail/epoll_reactor.hpp"
+# include "../detail/epoll_reactor.hpp"
 #elif defined(ASIO_HAS_KQUEUE)
-# include "asio/detail/kqueue_reactor.hpp"
+# include "../detail/kqueue_reactor.hpp"
 #elif defined(ASIO_HAS_DEV_POLL)
-# include "asio/detail/dev_poll_reactor.hpp"
+# include "../detail/dev_poll_reactor.hpp"
 #elif defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
-# include "asio/detail/null_reactor.hpp"
+# include "../detail/null_reactor.hpp"
 #else
-# include "asio/detail/select_reactor.hpp"
+# include "../detail/select_reactor.hpp"
 #endif
 
 #endif // ASIO_DETAIL_REACTOR_HPP

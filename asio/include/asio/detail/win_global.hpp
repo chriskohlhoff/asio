@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/static_mutex.hpp"
-#include "asio/detail/tss_ptr.hpp"
+#include "../detail/config.hpp"
+#include "../detail/static_mutex.hpp"
+#include "../detail/tss_ptr.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -68,6 +68,6 @@ T& win_global()
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_WIN_GLOBAL_HPP

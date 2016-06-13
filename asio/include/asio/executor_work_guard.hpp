@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/associated_executor.hpp"
-#include "asio/detail/type_traits.hpp"
+#include "detail/config.hpp"
+#include "associated_executor.hpp"
+#include "detail/type_traits.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -163,6 +163,6 @@ make_work_guard(const T& t, ExecutionContext& ctx,
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // ASIO_EXECUTOR_WORK_GUARD_HPP

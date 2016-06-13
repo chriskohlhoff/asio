@@ -16,7 +16,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_KQUEUE)
 
@@ -24,25 +24,25 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
-#include "asio/detail/limits.hpp"
-#include "asio/detail/mutex.hpp"
-#include "asio/detail/object_pool.hpp"
-#include "asio/detail/op_queue.hpp"
-#include "asio/detail/reactor_op.hpp"
-#include "asio/detail/select_interrupter.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_queue_base.hpp"
-#include "asio/detail/timer_queue_set.hpp"
-#include "asio/detail/wait_op.hpp"
-#include "asio/error.hpp"
-#include "asio/execution_context.hpp"
+#include "../detail/limits.hpp"
+#include "../detail/mutex.hpp"
+#include "../detail/object_pool.hpp"
+#include "../detail/op_queue.hpp"
+#include "../detail/reactor_op.hpp"
+#include "../detail/select_interrupter.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/timer_queue_base.hpp"
+#include "../detail/timer_queue_set.hpp"
+#include "../detail/wait_op.hpp"
+#include "../error.hpp"
+#include "../execution_context.hpp"
 
 // Older versions of Mac OS X may not define EV_OOBAND.
 #if !defined(EV_OOBAND)
 # define EV_OOBAND EV_FLAG1
 #endif // !defined(EV_OOBAND)
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -216,9 +216,9 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
-#include "asio/detail/impl/kqueue_reactor.hpp"
+#include "../detail/impl/kqueue_reactor.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/kqueue_reactor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

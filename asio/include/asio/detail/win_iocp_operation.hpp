@@ -15,16 +15,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/detail/handler_tracking.hpp"
-#include "asio/detail/op_queue.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/error_code.hpp"
+#include "../detail/handler_tracking.hpp"
+#include "../detail/op_queue.hpp"
+#include "../detail/socket_types.hpp"
+#include "../error_code.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -89,7 +89,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_IOCP)
 

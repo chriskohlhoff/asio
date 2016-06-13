@@ -15,13 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/associated_allocator.hpp"
-#include "asio/handler_alloc_hook.hpp"
+#include "../detail/config.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../associated_allocator.hpp"
+#include "../handler_alloc_hook.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 // Calls to asio_handler_allocate and asio_handler_deallocate must be made from
 // a namespace that does not contain any overloads of these functions. The
@@ -184,6 +184,6 @@ public:
   } \
   /**/
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_HANDLER_ALLOC_HELPERS_HPP

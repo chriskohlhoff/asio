@@ -15,13 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/async_result.hpp"
-#include "asio/detail/type_traits.hpp"
-#include "asio/execution_context.hpp"
-#include "asio/is_executor.hpp"
+#include "detail/config.hpp"
+#include "async_result.hpp"
+#include "detail/type_traits.hpp"
+#include "execution_context.hpp"
+#include "is_executor.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -101,8 +101,8 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
-#include "asio/impl/dispatch.hpp"
+#include "impl/dispatch.hpp"
 
 #endif // ASIO_DISPATCH_HPP

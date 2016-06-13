@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/thread_context.hpp"
-#include "asio/detail/thread_info_base.hpp"
+#include "../detail/config.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/thread_context.hpp"
+#include "../detail/thread_info_base.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -95,6 +95,6 @@ struct get_recycling_allocator<std::allocator<T> >
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_RECYCLING_ALLOCATOR_HPP

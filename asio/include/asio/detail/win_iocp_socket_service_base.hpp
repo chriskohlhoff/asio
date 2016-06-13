@@ -15,35 +15,35 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/socket_base.hpp"
-#include "asio/detail/bind_handler.hpp"
-#include "asio/detail/buffer_sequence_adapter.hpp"
-#include "asio/detail/fenced_block.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/mutex.hpp"
-#include "asio/detail/operation.hpp"
-#include "asio/detail/reactor_op.hpp"
-#include "asio/detail/select_reactor.hpp"
-#include "asio/detail/socket_holder.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/win_iocp_io_context.hpp"
-#include "asio/detail/win_iocp_null_buffers_op.hpp"
-#include "asio/detail/win_iocp_socket_connect_op.hpp"
-#include "asio/detail/win_iocp_socket_send_op.hpp"
-#include "asio/detail/win_iocp_socket_recv_op.hpp"
-#include "asio/detail/win_iocp_socket_recvmsg_op.hpp"
-#include "asio/detail/win_iocp_wait_op.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
+#include "../socket_base.hpp"
+#include "../detail/bind_handler.hpp"
+#include "../detail/buffer_sequence_adapter.hpp"
+#include "../detail/fenced_block.hpp"
+#include "../detail/handler_alloc_helpers.hpp"
+#include "../detail/handler_invoke_helpers.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/mutex.hpp"
+#include "../detail/operation.hpp"
+#include "../detail/reactor_op.hpp"
+#include "../detail/select_reactor.hpp"
+#include "../detail/socket_holder.hpp"
+#include "../detail/socket_ops.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/win_iocp_io_context.hpp"
+#include "../detail/win_iocp_null_buffers_op.hpp"
+#include "../detail/win_iocp_socket_connect_op.hpp"
+#include "../detail/win_iocp_socket_send_op.hpp"
+#include "../detail/win_iocp_socket_recv_op.hpp"
+#include "../detail/win_iocp_socket_recvmsg_op.hpp"
+#include "../detail/win_iocp_wait_op.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -562,7 +562,7 @@ protected:
   // Pointer to ConnectEx implementation.
   void* connect_ex_;
 
-  // Mutex to protect access to the linked list of implementations. 
+  // Mutex to protect access to the linked list of implementations.
   asio::detail::mutex mutex_;
 
   // The head of a linked list of all implementations.
@@ -572,10 +572,10 @@ protected:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/win_iocp_socket_service_base.ipp"
+# include "../detail/impl/win_iocp_socket_service_base.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(ASIO_HAS_IOCP)

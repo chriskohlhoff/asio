@@ -15,19 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 #include <string>
-#include "asio/detail/array.hpp"
-#include "asio/detail/cstdint.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/winsock_init.hpp"
-#include "asio/error_code.hpp"
+#include "../detail/array.hpp"
+#include "../detail/cstdint.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/winsock_init.hpp"
+#include "../error_code.hpp"
 
 #if !defined(ASIO_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(ASIO_NO_IOSTREAM)
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -299,11 +299,11 @@ std::basic_ostream<Elem, Traits>& operator<<(
 } // namespace ip
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
-#include "asio/ip/impl/address_v4.hpp"
+#include "../ip/impl/address_v4.hpp"
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/ip/impl/address_v4.ipp"
+# include "../ip/impl/address_v4.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_IP_ADDRESS_V4_HPP

@@ -15,13 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/detail/winsock_init.hpp"
-#include "asio/ip/host_name.hpp"
+#include "../../detail/config.hpp"
+#include "../../detail/socket_ops.hpp"
+#include "../../detail/throw_error.hpp"
+#include "../../detail/winsock_init.hpp"
+#include "../../ip/host_name.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -49,6 +49,6 @@ std::string host_name(asio::error_code& ec)
 } // namespace ip
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // ASIO_IP_IMPL_HOST_NAME_IPP

@@ -16,20 +16,20 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include <string>
-#include "asio/basic_io_object.hpp"
-#include "asio/detail/handler_type_requirements.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
-#include "asio/serial_port_base.hpp"
-#include "asio/serial_port_service.hpp"
+#include "basic_io_object.hpp"
+#include "detail/handler_type_requirements.hpp"
+#include "detail/throw_error.hpp"
+#include "error.hpp"
+#include "serial_port_base.hpp"
+#include "serial_port_service.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -671,7 +671,7 @@ public:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)

@@ -15,13 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/scheduler.hpp"
-#include "asio/detail/thread_group.hpp"
-#include "asio/execution_context.hpp"
-#include "asio/is_executor.hpp"
+#include "detail/config.hpp"
+#include "detail/scheduler.hpp"
+#include "detail/thread_group.hpp"
+#include "execution_context.hpp"
+#include "is_executor.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -148,11 +148,11 @@ template <> struct is_executor<system_executor> : true_type {};
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
-#include "asio/impl/system_executor.hpp"
+#include "impl/system_executor.hpp"
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/impl/system_executor.ipp"
+# include "impl/system_executor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_SYSTEM_EXECUTOR_HPP

@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if !defined(ASIO_WINDOWS)
 #if !defined(ASIO_WINDOWS_RUNTIME)
@@ -23,7 +23,7 @@
 #if !defined(__SYMBIAN32__)
 #if !defined(ASIO_HAS_EVENTFD)
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -74,7 +74,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/pipe_select_interrupter.ipp"

@@ -16,7 +16,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
@@ -25,8 +25,8 @@
 # include <termios.h>
 #endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
-#include "asio/detail/socket_types.hpp"
-#include "asio/error_code.hpp"
+#include "detail/socket_types.hpp"
+#include "error_code.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_OPTION_STORAGE implementation_defined
@@ -36,7 +36,7 @@
 # define ASIO_OPTION_STORAGE termios
 #endif
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -152,11 +152,11 @@ protected:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #undef ASIO_OPTION_STORAGE
 
-#include "asio/impl/serial_port_base.hpp"
+#include "impl/serial_port_base.hpp"
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/impl/serial_port_base.ipp"
 #endif // defined(ASIO_HEADER_ONLY)

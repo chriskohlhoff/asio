@@ -15,18 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/winrt_socket_connect_op.hpp"
-#include "asio/detail/winrt_ssocket_service_base.hpp"
-#include "asio/detail/winrt_utils.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/winrt_socket_connect_op.hpp"
+#include "../detail/winrt_ssocket_service_base.hpp"
+#include "../detail/winrt_utils.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -225,7 +225,7 @@ public:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 

@@ -15,22 +15,22 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 #include <cstddef>
-#include "asio/async_result.hpp"
-#include "asio/detail/type_traits.hpp"
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
+#include "async_result.hpp"
+#include "detail/type_traits.hpp"
+#include "error.hpp"
+#include "io_context.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
-# include "asio/detail/winrt_ssocket_service.hpp"
+# include "detail/winrt_ssocket_service.hpp"
 #elif defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_socket_service.hpp"
+# include "detail/win_iocp_socket_service.hpp"
 #else
-# include "asio/detail/reactive_socket_service.hpp"
+# include "detail/reactive_socket_service.hpp"
 #endif
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -379,6 +379,6 @@ private:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // ASIO_STREAM_SOCKET_SERVICE_HPP

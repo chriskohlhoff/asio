@@ -15,19 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 
 #if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include <cstddef>
-#include "asio/async_result.hpp"
-#include "asio/detail/cstdint.hpp"
-#include "asio/detail/win_iocp_handle_service.hpp"
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
+#include "../../async_result.hpp"
+#include "../../detail/cstdint.hpp"
+#include "../../detail/win_iocp_handle_service.hpp"
+#include "../../error.hpp"
+#include "../../io_context.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace windows {
@@ -197,7 +197,7 @@ private:
 } // namespace windows
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)

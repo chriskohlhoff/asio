@@ -17,9 +17,9 @@
 
 #include <climits>
 #include <cstddef>
-#include "asio/detail/call_stack.hpp"
+#include "../detail/call_stack.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -37,6 +37,6 @@ public:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_THREAD_CONTEXT_HPP
