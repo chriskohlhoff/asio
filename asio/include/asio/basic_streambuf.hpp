@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 
 #if !defined(ASIO_NO_IOSTREAM)
 
@@ -24,13 +24,13 @@
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
-#include "asio/basic_streambuf_fwd.hpp"
-#include "asio/buffer.hpp"
-#include "asio/detail/limits.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/throw_exception.hpp"
+#include "basic_streambuf_fwd.hpp"
+#include "buffer.hpp"
+#include "detail/limits.hpp"
+#include "detail/noncopyable.hpp"
+#include "detail/throw_exception.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -446,7 +446,7 @@ private:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // !defined(ASIO_NO_IOSTREAM)
 

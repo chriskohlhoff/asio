@@ -16,18 +16,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_LOCAL_SOCKETS) \
   || defined(GENERATING_DOCUMENTATION)
 
-#include "asio/local/detail/endpoint.hpp"
+#include "../local/detail/endpoint.hpp"
 
 #if !defined(ASIO_NO_IOSTREAM)
 # include <iosfwd>
 #endif // !defined(ASIO_NO_IOSTREAM)
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace local {
@@ -231,7 +231,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
 } // namespace local
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_LOCAL_SOCKETS)
        //   || defined(GENERATING_DOCUMENTATION)

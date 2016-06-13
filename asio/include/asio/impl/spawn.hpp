@@ -15,21 +15,21 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
-#include "asio/async_result.hpp"
-#include "asio/bind_executor.hpp"
-#include "asio/detail/atomic_count.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_cont_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/handler_type.hpp"
-#include "asio/system_error.hpp"
+#include "../detail/config.hpp"
+#include "../associated_allocator.hpp"
+#include "../associated_executor.hpp"
+#include "../async_result.hpp"
+#include "../bind_executor.hpp"
+#include "../detail/atomic_count.hpp"
+#include "../detail/handler_alloc_helpers.hpp"
+#include "../detail/handler_cont_helpers.hpp"
+#include "../detail/handler_invoke_helpers.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../handler_type.hpp"
+#include "../system_error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -447,6 +447,6 @@ inline void spawn(ExecutionContext& ctx,
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_SPAWN_HPP

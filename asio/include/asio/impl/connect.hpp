@@ -16,19 +16,19 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <algorithm>
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
-#include "asio/detail/bind_handler.hpp"
-#include "asio/detail/consuming_buffers.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_cont_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/handler_type_requirements.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
-#include "asio/post.hpp"
+#include "../associated_allocator.hpp"
+#include "../associated_executor.hpp"
+#include "../detail/bind_handler.hpp"
+#include "../detail/consuming_buffers.hpp"
+#include "../detail/handler_alloc_helpers.hpp"
+#include "../detail/handler_cont_helpers.hpp"
+#include "../detail/handler_invoke_helpers.hpp"
+#include "../detail/handler_type_requirements.hpp"
+#include "../detail/throw_error.hpp"
+#include "../error.hpp"
+#include "../post.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 
@@ -796,6 +796,6 @@ async_connect(basic_socket<Protocol, SocketService>& s,
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_CONNECT_HPP

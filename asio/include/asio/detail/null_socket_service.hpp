@@ -15,17 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/buffer.hpp"
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/socket_base.hpp"
-#include "asio/detail/bind_handler.hpp"
+#include "../buffer.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
+#include "../socket_base.hpp"
+#include "../detail/bind_handler.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -490,7 +490,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 

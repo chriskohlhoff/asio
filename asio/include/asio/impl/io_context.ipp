@@ -15,20 +15,20 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/io_context.hpp"
-#include "asio/detail/limits.hpp"
-#include "asio/detail/scoped_ptr.hpp"
-#include "asio/detail/service_registry.hpp"
-#include "asio/detail/throw_error.hpp"
+#include "../detail/config.hpp"
+#include "../io_context.hpp"
+#include "../detail/limits.hpp"
+#include "../detail/scoped_ptr.hpp"
+#include "../detail/service_registry.hpp"
+#include "../detail/throw_error.hpp"
 
 #if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_context.hpp"
+# include "../detail/win_iocp_io_context.hpp"
 #else
-# include "asio/detail/scheduler.hpp"
+# include "../detail/scheduler.hpp"
 #endif
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 
@@ -159,6 +159,6 @@ void io_context::service::fork_service(io_context::fork_event)
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_IO_CONTEXT_IPP

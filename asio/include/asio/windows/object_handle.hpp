@@ -16,12 +16,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 
 #if defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
-#include "asio/windows/basic_object_handle.hpp"
+#include "../../windows/basic_object_handle.hpp"
 
 namespace asio {
 namespace windows {

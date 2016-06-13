@@ -15,21 +15,21 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/async_result.hpp"
-#include "asio/error_code.hpp"
-#include "asio/io_context.hpp"
-#include "asio/ip/basic_resolver_iterator.hpp"
-#include "asio/ip/basic_resolver_query.hpp"
-#include "asio/ip/basic_resolver_results.hpp"
+#include "../detail/config.hpp"
+#include "../async_result.hpp"
+#include "../error_code.hpp"
+#include "../io_context.hpp"
+#include "../ip/basic_resolver_iterator.hpp"
+#include "../ip/basic_resolver_query.hpp"
+#include "../ip/basic_resolver_results.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
-# include "asio/detail/winrt_resolver_service.hpp"
+# include "../detail/winrt_resolver_service.hpp"
 #else
-# include "asio/detail/resolver_service.hpp"
+# include "../detail/resolver_service.hpp"
 #endif
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -173,6 +173,6 @@ private:
 } // namespace ip
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IP_RESOLVER_SERVICE_HPP

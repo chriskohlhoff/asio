@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
 
@@ -24,13 +24,13 @@
   || defined(__SYMBIAN32__)
 
 #include <cstdlib>
-#include "asio/detail/socket_holder.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_select_interrupter.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
+#include "../../detail/socket_holder.hpp"
+#include "../../detail/socket_ops.hpp"
+#include "../../detail/socket_select_interrupter.hpp"
+#include "../../detail/throw_error.hpp"
+#include "../../error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -89,7 +89,7 @@ void socket_select_interrupter::open_descriptors()
   socket_holder server(socket_ops::accept(acceptor.get(), 0, 0, ec));
   if (server.get() == invalid_socket)
     asio::detail::throw_error(ec, "socket_select_interrupter");
-  
+
   ioctl_arg_type non_blocking = 1;
   socket_ops::state_type client_state = 0;
   if (socket_ops::ioctl(client.get(), client_state,
@@ -164,7 +164,7 @@ bool socket_select_interrupter::reset()
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // defined(ASIO_WINDOWS)
        // || defined(__CYGWIN__)

@@ -15,6 +15,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/io_context.hpp"
+#include "../../io_context.hpp"
 
 #endif // ASIO_TS_IO_CONTEXT_HPP

@@ -15,9 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/scoped_ptr.hpp"
-#include "asio/detail/thread.hpp"
+#include "../detail/config.hpp"
+#include "../detail/scoped_ptr.hpp"
+#include "../detail/thread.hpp"
 
 namespace asio {
 namespace detail {

@@ -15,27 +15,27 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 #include <cstddef>
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/detail/bind_handler.hpp"
-#include "asio/detail/fenced_block.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_queue.hpp"
-#include "asio/detail/timer_scheduler.hpp"
-#include "asio/detail/wait_handler.hpp"
-#include "asio/detail/wait_op.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
+#include "../detail/bind_handler.hpp"
+#include "../detail/fenced_block.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../detail/socket_ops.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/timer_queue.hpp"
+#include "../detail/timer_scheduler.hpp"
+#include "../detail/wait_handler.hpp"
+#include "../detail/wait_op.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 # include <chrono>
 # include <thread>
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -250,6 +250,6 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_DEADLINE_TIMER_SERVICE_HPP

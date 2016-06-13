@@ -15,15 +15,15 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 #include <cstddef>
-#include "asio/async_result.hpp"
-#include "asio/detail/chrono_time_traits.hpp"
-#include "asio/detail/deadline_timer_service.hpp"
-#include "asio/io_context.hpp"
-#include "asio/wait_traits.hpp"
+#include "async_result.hpp"
+#include "detail/chrono_time_traits.hpp"
+#include "detail/deadline_timer_service.hpp"
+#include "io_context.hpp"
+#include "wait_traits.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 
@@ -200,6 +200,6 @@ private:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #endif // ASIO_WAITABLE_TIMER_SERVICE_HPP

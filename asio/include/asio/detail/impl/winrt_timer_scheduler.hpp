@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../../detail/config.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 
-#include "asio/detail/push_options.hpp"
+#include "../../../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -85,7 +85,7 @@ void winrt_timer_scheduler::move_timer(timer_queue<Time_Traits>& queue,
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../../detail/pop_options.hpp"
 
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 

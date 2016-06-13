@@ -15,13 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/executor_op.hpp"
-#include "asio/detail/global.hpp"
-#include "asio/detail/recycling_allocator.hpp"
-#include "asio/detail/type_traits.hpp"
-#include "asio/execution_context.hpp"
+#include "../detail/executor_op.hpp"
+#include "../detail/global.hpp"
+#include "../detail/recycling_allocator.hpp"
+#include "../detail/type_traits.hpp"
+#include "../execution_context.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 
@@ -94,6 +94,6 @@ void system_executor::defer(
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_SYSTEM_EXECUTOR_HPP

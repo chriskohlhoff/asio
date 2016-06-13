@@ -15,18 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_IOCP)
 
-#include "asio/io_context.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/win_iocp_overlapped_op.hpp"
-#include "asio/detail/win_iocp_io_context.hpp"
+#include "../io_context.hpp"
+#include "../detail/handler_alloc_helpers.hpp"
+#include "../detail/memory.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../detail/win_iocp_overlapped_op.hpp"
+#include "../detail/win_iocp_io_context.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -136,7 +136,7 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_IOCP)
 

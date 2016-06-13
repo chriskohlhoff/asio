@@ -16,23 +16,23 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <algorithm>
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
-#include "asio/buffer.hpp"
-#include "asio/completion_condition.hpp"
-#include "asio/detail/array_fwd.hpp"
-#include "asio/detail/base_from_completion_cond.hpp"
-#include "asio/detail/bind_handler.hpp"
-#include "asio/detail/consuming_buffers.hpp"
-#include "asio/detail/dependent_type.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_cont_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
-#include "asio/detail/handler_type_requirements.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
+#include "../associated_allocator.hpp"
+#include "../associated_executor.hpp"
+#include "../buffer.hpp"
+#include "../completion_condition.hpp"
+#include "../detail/array_fwd.hpp"
+#include "../detail/base_from_completion_cond.hpp"
+#include "../detail/bind_handler.hpp"
+#include "../detail/consuming_buffers.hpp"
+#include "../detail/dependent_type.hpp"
+#include "../detail/handler_alloc_helpers.hpp"
+#include "../detail/handler_cont_helpers.hpp"
+#include "../detail/handler_invoke_helpers.hpp"
+#include "../detail/handler_type_requirements.hpp"
+#include "../detail/throw_error.hpp"
+#include "../error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 
@@ -883,6 +883,6 @@ async_read_at(AsyncRandomAccessReadDevice& d,
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_READ_AT_HPP

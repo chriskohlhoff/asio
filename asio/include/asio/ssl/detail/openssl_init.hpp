@@ -15,13 +15,13 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 #include <cstring>
-#include "asio/detail/memory.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/ssl/detail/openssl_types.hpp"
+#include "../../detail/memory.hpp"
+#include "../../detail/noncopyable.hpp"
+#include "../../ssl/detail/openssl_types.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
@@ -92,7 +92,7 @@ openssl_init<Do_Init> openssl_init<Do_Init>::instance_;
 } // namespace ssl
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/ssl/detail/impl/openssl_init.ipp"

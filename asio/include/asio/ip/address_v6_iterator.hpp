@@ -16,10 +16,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/ip/address_v6.hpp"
+#include "../detail/config.hpp"
+#include "../ip/address_v6.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -178,6 +178,6 @@ typedef basic_address_iterator<address_v6> address_v6_iterator;
 } // namespace ip
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IP_ADDRESS_V6_ITERATOR_HPP

@@ -15,27 +15,27 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "detail/config.hpp"
 
 #if !defined(ASIO_NO_IOSTREAM)
 
 #include <streambuf>
-#include "asio/basic_socket.hpp"
-#include "asio/deadline_timer_service.hpp"
-#include "asio/detail/array.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/stream_socket_service.hpp"
+#include "basic_socket.hpp"
+#include "deadline_timer_service.hpp"
+#include "detail/array.hpp"
+#include "detail/throw_error.hpp"
+#include "io_context.hpp"
+#include "stream_socket_service.hpp"
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/deadline_timer.hpp"
+# include "deadline_timer.hpp"
 #else
-# include "asio/steady_timer.hpp"
+# include "steady_timer.hpp"
 #endif
 
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-# include "asio/detail/variadic_templates.hpp"
+# include "detail/variadic_templates.hpp"
 
 // A macro that should expand to:
 //   template <typename T1, ..., typename Tn>
@@ -71,7 +71,7 @@
 
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -635,7 +635,7 @@ private:
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 # undef ASIO_PRIVATE_CONNECT_DEF

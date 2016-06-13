@@ -15,16 +15,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/winsock_init.hpp"
-#include "asio/detail/throw_error.hpp"
-#include "asio/error.hpp"
+#include "../../detail/socket_types.hpp"
+#include "../../detail/winsock_init.hpp"
+#include "../../detail/throw_error.hpp"
+#include "../../error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -75,7 +75,7 @@ void winsock_init_base::throw_on_error(data& d)
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 

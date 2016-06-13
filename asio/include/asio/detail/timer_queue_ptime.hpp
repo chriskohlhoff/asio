@@ -15,10 +15,10 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/time_traits.hpp"
-#include "asio/detail/timer_queue.hpp"
+#include "../time_traits.hpp"
+#include "../detail/timer_queue.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 
@@ -84,7 +84,7 @@ private:
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/timer_queue_ptime.ipp"

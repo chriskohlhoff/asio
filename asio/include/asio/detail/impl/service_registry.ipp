@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../../detail/config.hpp"
 #include <vector>
-#include "asio/detail/service_registry.hpp"
-#include "asio/detail/throw_exception.hpp"
+#include "../../detail/service_registry.hpp"
+#include "../../detail/throw_exception.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -192,6 +192,6 @@ bool service_registry::do_has_service(
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_IMPL_SERVICE_REGISTRY_IPP

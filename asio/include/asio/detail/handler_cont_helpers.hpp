@@ -15,11 +15,11 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/detail/memory.hpp"
-#include "asio/handler_continuation_hook.hpp"
+#include "../detail/config.hpp"
+#include "../detail/memory.hpp"
+#include "../handler_continuation_hook.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 // Calls to asio_handler_is_continuation must be made from a namespace that
 // does not contain overloads of this function. This namespace is defined here
@@ -40,6 +40,6 @@ inline bool is_continuation(Context& context)
 
 } // namespace asio_handler_cont_helpers
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_HANDLER_CONT_HELPERS_HPP

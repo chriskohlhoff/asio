@@ -15,9 +15,9 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/error_code.hpp"
-#include "asio/system_error.hpp"
+#include "detail/config.hpp"
+#include "error_code.hpp"
+#include "system_error.hpp"
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(ASIO_WINDOWS_RUNTIME)
@@ -58,7 +58,7 @@
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_posix
 #endif
 
-#include "asio/detail/push_options.hpp"
+#include "detail/push_options.hpp"
 
 namespace asio {
 namespace error {
@@ -337,7 +337,7 @@ namespace resolver_errc {
 } // namespace resolver_errc
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "detail/pop_options.hpp"
 
 #undef ASIO_NATIVE_ERROR
 #undef ASIO_SOCKET_ERROR
@@ -346,7 +346,7 @@ namespace resolver_errc {
 #undef ASIO_WIN_OR_POSIX
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/impl/error.ipp"
+# include "impl/error.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_ERROR_HPP

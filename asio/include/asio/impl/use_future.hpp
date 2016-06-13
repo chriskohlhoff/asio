@@ -15,14 +15,14 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 #include <future>
-#include "asio/async_result.hpp"
-#include "asio/error_code.hpp"
-#include "asio/handler_type.hpp"
-#include "asio/system_error.hpp"
+#include "../async_result.hpp"
+#include "../error_code.hpp"
+#include "../handler_type.hpp"
+#include "../system_error.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -167,6 +167,6 @@ struct handler_type<use_future_t<Allocator>,
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_USE_FUTURE_HPP

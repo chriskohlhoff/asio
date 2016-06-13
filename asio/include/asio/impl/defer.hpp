@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
-#include "asio/detail/work_dispatcher.hpp"
+#include "../detail/config.hpp"
+#include "../associated_allocator.hpp"
+#include "../associated_executor.hpp"
+#include "../detail/work_dispatcher.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 
@@ -72,6 +72,6 @@ inline ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_DEFER_HPP

@@ -15,18 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/basic_socket_acceptor.hpp"
-#include "asio/basic_socket_iostream.hpp"
-#include "asio/basic_stream_socket.hpp"
-#include "asio/detail/socket_option.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/ip/basic_endpoint.hpp"
-#include "asio/ip/basic_resolver.hpp"
-#include "asio/ip/basic_resolver_iterator.hpp"
-#include "asio/ip/basic_resolver_query.hpp"
+#include "../detail/config.hpp"
+#include "../basic_socket_acceptor.hpp"
+#include "../basic_socket_iostream.hpp"
+#include "../basic_stream_socket.hpp"
+#include "../detail/socket_option.hpp"
+#include "../detail/socket_types.hpp"
+#include "../ip/basic_endpoint.hpp"
+#include "../ip/basic_resolver.hpp"
+#include "../ip/basic_resolver_iterator.hpp"
+#include "../ip/basic_resolver_query.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace ip {
@@ -150,6 +150,6 @@ private:
 } // namespace ip
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IP_TCP_HPP

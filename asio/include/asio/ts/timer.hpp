@@ -17,10 +17,10 @@
 
 #include <chrono>
 
-#include "asio/wait_traits.hpp"
-#include "asio/basic_waitable_timer.hpp"
-#include "asio/system_timer.hpp"
-#include "asio/steady_timer.hpp"
-#include "asio/high_resolution_timer.hpp"
+#include "../../wait_traits.hpp"
+#include "../../basic_waitable_timer.hpp"
+#include "../../system_timer.hpp"
+#include "../../steady_timer.hpp"
+#include "../../high_resolution_timer.hpp"
 
 #endif // ASIO_TS_TIMER_HPP

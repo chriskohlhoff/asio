@@ -15,16 +15,16 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #include <typeinfo>
-#include "asio/basic_socket_iostream.hpp"
-#include "asio/basic_stream_socket.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/throw_exception.hpp"
-#include "asio/generic/basic_endpoint.hpp"
+#include "../basic_socket_iostream.hpp"
+#include "../basic_stream_socket.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/throw_exception.hpp"
+#include "../generic/basic_endpoint.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace generic {
@@ -122,6 +122,6 @@ private:
 } // namespace generic
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_GENERIC_STREAM_PROTOCOL_HPP

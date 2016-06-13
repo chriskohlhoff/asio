@@ -15,17 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 #include <list>
 #include <utility>
-#include "asio/detail/assert.hpp"
-#include "asio/detail/noncopyable.hpp"
+#include "../detail/assert.hpp"
+#include "../detail/noncopyable.hpp"
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-# include "asio/detail/socket_types.hpp"
+# include "../detail/socket_types.hpp"
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -326,6 +326,6 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_DETAIL_HASH_MAP_HPP

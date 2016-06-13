@@ -15,18 +15,18 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
-#include "asio/error.hpp"
-#include "asio/io_context.hpp"
-#include "asio/detail/mutex.hpp"
-#include "asio/detail/noncopyable.hpp"
-#include "asio/detail/operation.hpp"
-#include "asio/detail/socket_ops.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/scoped_ptr.hpp"
-#include "asio/detail/thread.hpp"
+#include "../detail/config.hpp"
+#include "../error.hpp"
+#include "../io_context.hpp"
+#include "../detail/mutex.hpp"
+#include "../detail/noncopyable.hpp"
+#include "../detail/operation.hpp"
+#include "../detail/socket_ops.hpp"
+#include "../detail/socket_types.hpp"
+#include "../detail/scoped_ptr.hpp"
+#include "../detail/thread.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -120,10 +120,10 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/resolver_service_base.ipp"
+# include "../detail/impl/resolver_service_base.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_RESOLVER_SERVICE_BASE_HPP

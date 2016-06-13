@@ -15,22 +15,22 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if !defined(ASIO_HAS_THREADS)
-# include "asio/detail/null_thread.hpp"
+# include "../detail/null_thread.hpp"
 #elif defined(ASIO_WINDOWS)
 # if defined(UNDER_CE)
-#  include "asio/detail/wince_thread.hpp"
+#  include "../detail/wince_thread.hpp"
 # elif defined(ASIO_WINDOWS_APP)
-#  include "asio/detail/winapp_thread.hpp"
+#  include "../detail/winapp_thread.hpp"
 # else
-#  include "asio/detail/win_thread.hpp"
+#  include "../detail/win_thread.hpp"
 # endif
 #elif defined(ASIO_HAS_PTHREADS)
-# include "asio/detail/posix_thread.hpp"
+# include "../detail/posix_thread.hpp"
 #elif defined(ASIO_HAS_STD_THREAD)
-# include "asio/detail/std_thread.hpp"
+# include "../detail/std_thread.hpp"
 #else
 # error Only Windows, POSIX and std::thread are supported!
 #endif

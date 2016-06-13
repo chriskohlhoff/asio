@@ -15,12 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 
 #if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_operation.hpp"
+# include "../detail/win_iocp_operation.hpp"
 #else
-# include "asio/detail/scheduler_operation.hpp"
+# include "../detail/scheduler_operation.hpp"
 #endif
 
 namespace asio {

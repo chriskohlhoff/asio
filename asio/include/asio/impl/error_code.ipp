@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include "../detail/config.hpp"
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include <winerror.h>
 #elif defined(ASIO_WINDOWS_RUNTIME)
@@ -25,11 +25,11 @@
 # include <cstring>
 # include <string>
 #endif
-#include "asio/detail/local_free_on_block_exit.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/error_code.hpp"
+#include "../detail/local_free_on_block_exit.hpp"
+#include "../detail/socket_types.hpp"
+#include "../error_code.hpp"
 
-#include "asio/detail/push_options.hpp"
+#include "../detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
@@ -203,6 +203,6 @@ const error_category& system_category()
 
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include "../detail/pop_options.hpp"
 
 #endif // ASIO_IMPL_ERROR_CODE_IPP
