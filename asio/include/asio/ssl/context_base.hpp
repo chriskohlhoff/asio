@@ -83,7 +83,25 @@ public:
     tlsv12_client,
 
     /// TLS version 1.2 server.
-    tlsv12_server
+    tlsv12_server,
+
+    /// DTLS version 1.0
+    dtlsv1,
+
+    /// DTLS version 1.0 client
+    dtlsv1_client,
+
+    /// DTLS version 1.0 server
+    dtlsv1_server,
+
+    /// DTLS version 1.2
+    dtlsv12,
+
+    /// DTLS version 1.2 client
+    dtlsv12_client,
+
+     /// DTLS version 1.2 server
+     dtlsv12_server
   };
 
   /// Bitmask type for SSL options.

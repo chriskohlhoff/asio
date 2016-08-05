@@ -154,7 +154,26 @@ context::context(context::method m)
   case context::tlsv12_server:
     handle_ = ::SSL_CTX_new(::TLSv1_2_server_method());
     break;
-#else // defined(SSL_TXT_TLSV1_2) 
+
+  case dtlsv1:
+    handle_ = ::SSL_CTX_new(::DTLSv1_method());
+    break;
+  case dtlsv1_client:
+    handle_ = ::SSL_CTX_new(::DTLSv1_client_method());
+    break;
+  case dtlsv1_server:
+    handle_ = ::SSL_CTX_new(::DTLSv1_server_method());
+    break;
+  case dtlsv12:
+    handle_ = ::SSL_CTX_new(::DTLSv1_2_method());
+    break;
+  case dtlsv12_client:
+    handle_ = ::SSL_CTX_new(::DTLSv1_2_client_method());
+    break;
+  case dtlsv12_server:
+    handle_ = ::SSL_CTX_new(::DTLSv1_2_server_method());
+    break;
+#else // defined(SSL_TXT_TLSV1_2)
   case context::tlsv12:
   case context::tlsv12_client:
   case context::tlsv12_server:
