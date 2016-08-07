@@ -34,7 +34,8 @@ namespace asio {
 namespace detail {
 
 // Extend reactive_descriptor_service to provide serial port support.
-class reactive_serial_port_service
+class reactive_serial_port_service :
+  public service_base<reactive_serial_port_service>
 {
 public:
   // The native type of a serial port.

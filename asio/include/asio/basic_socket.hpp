@@ -25,6 +25,23 @@
 #include "asio/post.hpp"
 #include "asio/socket_base.hpp"
 
+#if defined(ASIO_HAS_MOVE)
+# include <utility>
+#endif // defined(ASIO_HAS_MOVE)
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# if defined(ASIO_WINDOWS_RUNTIME)
+#  include "asio/detail/winrt_ssocket_service.hpp"
+#  define ASIO_SVC_T detail::winrt_ssocket_service<Protocol>
+# elif defined(ASIO_HAS_IOCP)
+#  include "asio/detail/win_iocp_socket_service.hpp"
+#  define ASIO_SVC_T detail::win_iocp_socket_service<Protocol>
+# else
+#  include "asio/detail/reactive_socket_service.hpp"
+#  define ASIO_SVC_T detail::reactive_socket_service<Protocol>
+# endif
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -38,14 +55,21 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol, typename SocketService>
+template <typename Protocol ASIO_SVC_TPARAM>
 class basic_socket
-  : public basic_io_object<SocketService>,
+  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
     public socket_base
 {
 public:
+  /// The type of the executor associated with the object.
+  typedef io_context::executor_type executor_type;
+
   /// The native representation of a socket.
-  typedef typename SocketService::native_handle_type native_handle_type;
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef typename ASIO_SVC_T::native_handle_type native_handle_type;
+#endif
 
   /// The protocol type.
   typedef Protocol protocol_type;
@@ -54,7 +78,7 @@ public:
   typedef typename Protocol::endpoint endpoint_type;
 
   /// A basic_socket is always the lowest layer.
-  typedef basic_socket<Protocol, SocketService> lowest_layer_type;
+  typedef basic_socket<Protocol ASIO_SVC_TARG> lowest_layer_type;
 
   /// Construct a basic_socket without opening it.
   /**
@@ -64,7 +88,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the socket.
    */
   explicit basic_socket(asio::io_context& io_context)
-    : basic_io_object<SocketService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
   }
 
@@ -81,7 +105,7 @@ public:
    */
   basic_socket(asio::io_context& io_context,
       const protocol_type& protocol)
-    : basic_io_object<SocketService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().open(this->get_implementation(), protocol, ec);
@@ -105,7 +129,7 @@ public:
    */
   basic_socket(asio::io_context& io_context,
       const endpoint_type& endpoint)
-    : basic_io_object<SocketService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     const protocol_type protocol = endpoint.protocol();
@@ -130,7 +154,7 @@ public:
    */
   basic_socket(asio::io_context& io_context,
       const protocol_type& protocol, const native_handle_type& native_socket)
-    : basic_io_object<SocketService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().assign(this->get_implementation(),
@@ -150,8 +174,7 @@ public:
    * constructed using the @c basic_socket(io_context&) constructor.
    */
   basic_socket(basic_socket&& other)
-    : basic_io_object<SocketService>(
-        ASIO_MOVE_CAST(basic_socket)(other))
+    : basic_io_object<ASIO_SVC_T>(std::move(other))
   {
   }
 
@@ -167,13 +190,12 @@ public:
    */
   basic_socket& operator=(basic_socket&& other)
   {
-    basic_io_object<SocketService>::operator=(
-        ASIO_MOVE_CAST(basic_socket)(other));
+    basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
     return *this;
   }
 
   // All sockets have access to each other's implementations.
-  template <typename Protocol1, typename SocketService1>
+  template <typename Protocol1 ASIO_SVC_TPARAM1>
   friend class basic_socket;
 
   /// Move-construct a basic_socket from a socket of another protocol type.
@@ -186,10 +208,10 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_socket(io_context&) constructor.
    */
-  template <typename Protocol1, typename SocketService1>
-  basic_socket(basic_socket<Protocol1, SocketService1>&& other,
+  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  basic_socket(basic_socket<Protocol1 ASIO_SVC_TARG1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_io_object<SocketService>(other.get_service().get_io_context())
+    : basic_io_object<ASIO_SVC_T>(other.get_service().get_io_context())
   {
     this->get_service().template converting_move_construct<Protocol1>(
         this->get_implementation(), other.get_implementation());
@@ -205,18 +227,56 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_socket(io_context&) constructor.
    */
-  template <typename Protocol1, typename SocketService1>
+  template <typename Protocol1 ASIO_SVC_TPARAM1>
   typename enable_if<is_convertible<Protocol1, Protocol>::value,
       basic_socket>::type& operator=(
-        basic_socket<Protocol1, SocketService1>&& other)
+        basic_socket<Protocol1 ASIO_SVC_TARG1>&& other)
   {
-    basic_socket tmp(ASIO_MOVE_CAST2(basic_socket<
-            Protocol1, SocketService1>)(other));
-    basic_io_object<SocketService>::operator=(
-        ASIO_MOVE_CAST(basic_socket)(tmp));
+    basic_socket tmp(std::move(other));
+    basic_io_object<ASIO_SVC_T>::operator=(std::move(tmp));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+  // These functions are provided by basic_io_object<>.
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_context()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_context();
+  }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_service()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Get the executor associated with the object.
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::get_executor();
+  }
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
   /// Get a reference to the lowest layer.
   /**
@@ -758,8 +818,18 @@ public:
       }
     }
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_connect(this->get_implementation(),
         peer_endpoint, ASIO_MOVE_CAST(ConnectHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    async_completion<ConnectHandler,
+      void (asio::error_code)> init(handler);
+
+    this->get_service().async_connect(
+        this->get_implementation(), peer_endpoint, init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Set an option on the socket.
@@ -1581,19 +1651,40 @@ public:
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_wait(this->get_implementation(),
         w, ASIO_MOVE_CAST(WaitHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    async_completion<WaitHandler,
+      void (asio::error_code)> init(handler);
+
+    this->get_service().async_wait(this->get_implementation(), w, init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
 protected:
   /// Protected destructor to prevent deletion through this type.
+  /**
+   * This function destroys the socket, cancelling any outstanding asynchronous
+   * operations associated with the socket as if by calling @c cancel.
+   */
   ~basic_socket()
   {
   }
+
+  // Disallow copying and assignment.
+  basic_socket(const basic_socket&) ASIO_DELETED;
+  basic_socket& operator=(const basic_socket&) ASIO_DELETED;
 };
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# undef ASIO_SVC_T
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_BASIC_SOCKET_HPP

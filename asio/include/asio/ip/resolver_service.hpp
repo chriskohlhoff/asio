@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
 #include "asio/io_context.hpp"
@@ -174,5 +177,7 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_IP_RESOLVER_SERVICE_HPP

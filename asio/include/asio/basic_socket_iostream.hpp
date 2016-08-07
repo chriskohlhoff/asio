@@ -33,8 +33,8 @@
 //   explicit basic_socket_iostream(T1 x1, ..., Tn xn)
 //     : std::basic_iostream<char>(
 //         &this->detail::socket_iostream_base<
-//           Protocol, StreamSocketService, Time,
-//           TimeTraits, TimerService>::streambuf_)
+//           Protocol ASIO_SVC_TARG, Time,
+//           TimeTraits ASIO_SVC_TARG1>::streambuf_)
 //   {
 //     if (rdbuf()->connect(x1, ..., xn) == 0)
 //       this->setstate(std::ios_base::failbit);
@@ -46,8 +46,8 @@
   explicit basic_socket_iostream(ASIO_VARIADIC_BYVAL_PARAMS(n)) \
     : std::basic_iostream<char>( \
         &this->detail::socket_iostream_base< \
-          Protocol, StreamSocketService, Time, \
-          TimeTraits, TimerService>::streambuf_) \
+          Protocol ASIO_SVC_TARG, Time, \
+          TimeTraits ASIO_SVC_TARG1>::streambuf_) \
   { \
     this->setf(std::ios_base::unitbuf); \
     if (rdbuf()->connect(ASIO_VARIADIC_BYVAL_ARGS(n)) == 0) \
@@ -82,33 +82,33 @@ namespace detail {
 
 // A separate base class is used to ensure that the streambuf is initialised
 // prior to the basic_socket_iostream's basic_iostream base class.
-template <typename Protocol, typename StreamSocketService,
-    typename Time, typename TimeTraits, typename TimerService>
+template <typename Protocol ASIO_SVC_TPARAM,
+    typename Time, typename TimeTraits ASIO_SVC_TPARAM1>
 class socket_iostream_base
 {
 protected:
-  basic_socket_streambuf<Protocol, StreamSocketService,
-    Time, TimeTraits, TimerService> streambuf_;
+  basic_socket_streambuf<Protocol ASIO_SVC_TARG,
+    Time, TimeTraits ASIO_SVC_TARG1> streambuf_;
 };
 
-}
+} // namespace detail
 
 /// Iostream interface for a socket.
-template <typename Protocol,
-    typename StreamSocketService = stream_socket_service<Protocol>,
+template <typename Protocol
+    ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
     typename Time = boost::posix_time::ptime,
-    typename TimeTraits = asio::time_traits<Time>,
-    typename TimerService = deadline_timer_service<Time, TimeTraits> >
+    typename TimeTraits = asio::time_traits<Time>
+    ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Time, TimeTraits>)>
 #else
     typename Time = steady_timer::clock_type,
-    typename TimeTraits = steady_timer::traits_type,
-    typename TimerService = steady_timer::service_type>
+    typename TimeTraits = steady_timer::traits_type
+    ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
 #endif
 class basic_socket_iostream
-  : private detail::socket_iostream_base<Protocol,
-        StreamSocketService, Time, TimeTraits, TimerService>,
+  : private detail::socket_iostream_base<Protocol
+        ASIO_SVC_TARG, Time, TimeTraits ASIO_SVC_TARG1>,
     public std::basic_iostream<char>
 {
 private:
@@ -149,8 +149,8 @@ public:
   basic_socket_iostream()
     : std::basic_iostream<char>(
         &this->detail::socket_iostream_base<
-          Protocol, StreamSocketService, Time,
-          TimeTraits, TimerService>::streambuf_)
+          Protocol ASIO_SVC_TARG, Time,
+          TimeTraits ASIO_SVC_TARG1>::streambuf_)
   {
     this->setf(std::ios_base::unitbuf);
   }
@@ -169,8 +169,8 @@ public:
   explicit basic_socket_iostream(T... x)
     : std::basic_iostream<char>(
         &this->detail::socket_iostream_base<
-          Protocol, StreamSocketService, Time,
-          TimeTraits, TimerService>::streambuf_)
+          Protocol ASIO_SVC_TARG, Time,
+          TimeTraits ASIO_SVC_TARG1>::streambuf_)
   {
     this->setf(std::ios_base::unitbuf);
     if (rdbuf()->connect(x...) == 0)
@@ -208,14 +208,14 @@ public:
   }
 
   /// Return a pointer to the underlying streambuf.
-  basic_socket_streambuf<Protocol, StreamSocketService,
-    Time, TimeTraits, TimerService>* rdbuf() const
+  basic_socket_streambuf<Protocol ASIO_SVC_TARG,
+    Time, TimeTraits ASIO_SVC_TARG1>* rdbuf() const
   {
-    return const_cast<basic_socket_streambuf<Protocol, StreamSocketService,
-      Time, TimeTraits, TimerService>*>(
+    return const_cast<basic_socket_streambuf<Protocol ASIO_SVC_TARG,
+      Time, TimeTraits ASIO_SVC_TARG1>*>(
         &this->detail::socket_iostream_base<
-          Protocol, StreamSocketService, Time,
-          TimeTraits, TimerService>::streambuf_);
+          Protocol ASIO_SVC_TARG, Time,
+          TimeTraits ASIO_SVC_TARG1>::streambuf_);
   }
 
   /// Get the last error associated with the stream.

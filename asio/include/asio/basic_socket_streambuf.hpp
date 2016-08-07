@@ -21,14 +21,13 @@
 
 #include <streambuf>
 #include "asio/basic_socket.hpp"
-#include "asio/deadline_timer_service.hpp"
 #include "asio/detail/array.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/io_context.hpp"
 #include "asio/stream_socket_service.hpp"
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/deadline_timer.hpp"
+# include "asio/deadline_timer_service.hpp"
 #else
 # include "asio/steady_timer.hpp"
 #endif
@@ -39,12 +38,10 @@
 
 // A macro that should expand to:
 //   template <typename T1, ..., typename Tn>
-//   basic_socket_streambuf<Protocol, StreamSocketService,
-//     Time, TimeTraits, TimerService>* connect(
-//       T1 x1, ..., Tn xn)
+//   basic_socket_streambuf* connect(T1 x1, ..., Tn xn)
 //   {
 //     init_buffers();
-//     this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+//     this->basic_socket<Protocol ASIO_SVC_TARG>::close(ec_);
 //     typedef typename Protocol::resolver resolver_type;
 //     resolver_type resolver(detail::socket_streambuf_base::io_context_);
 //     connect_to_endpoints(
@@ -55,12 +52,10 @@
 
 # define ASIO_PRIVATE_CONNECT_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
-  basic_socket_streambuf<Protocol, StreamSocketService, \
-    Time, TimeTraits, TimerService>* connect( \
-      ASIO_VARIADIC_BYVAL_PARAMS(n)) \
+  basic_socket_streambuf* connect(ASIO_VARIADIC_BYVAL_PARAMS(n)) \
   { \
     init_buffers(); \
-    this->basic_socket<Protocol, StreamSocketService>::close(ec_); \
+    this->basic_socket<Protocol ASIO_SVC_TARG>::close(ec_); \
     typedef typename Protocol::resolver resolver_type; \
     resolver_type resolver(detail::socket_streambuf_base::io_context_); \
     connect_to_endpoints( \
@@ -70,6 +65,10 @@
   /**/
 
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# define ASIO_SVC_T1 detail::deadline_timer_service<traits_helper>
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -87,22 +86,22 @@ protected:
 } // namespace detail
 
 /// Iostream streambuf for a socket.
-template <typename Protocol,
-    typename StreamSocketService = stream_socket_service<Protocol>,
+template <typename Protocol
+    ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
     typename Time = boost::posix_time::ptime,
-    typename TimeTraits = asio::time_traits<Time>,
-    typename TimerService = deadline_timer_service<Time, TimeTraits> >
+    typename TimeTraits = asio::time_traits<Time>
+    ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Time, TimeTraits>)>
 #else
     typename Time = steady_timer::clock_type,
-    typename TimeTraits = steady_timer::traits_type,
-    typename TimerService = steady_timer::service_type>
+    typename TimeTraits = steady_timer::traits_type
+    ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
 #endif
 class basic_socket_streambuf
   : public std::streambuf,
     private detail::socket_streambuf_base,
-    public basic_socket<Protocol, StreamSocketService>
+    public basic_socket<Protocol ASIO_SVC_TARG>
 {
 private:
   // These typedefs are intended keep this class's implementation independent
@@ -140,7 +139,7 @@ public:
 
   /// Construct a basic_socket_streambuf without establishing a connection.
   basic_socket_streambuf()
-    : basic_socket<Protocol, StreamSocketService>(
+    : basic_socket<Protocol ASIO_SVC_TARG>(
         this->detail::socket_streambuf_base::io_context_),
       unbuffered_(false),
       timer_service_(0),
@@ -165,13 +164,11 @@ public:
    * @return \c this if a connection was successfully established, a null
    * pointer otherwise.
    */
-  basic_socket_streambuf<Protocol, StreamSocketService,
-    Time, TimeTraits, TimerService>* connect(
-      const endpoint_type& endpoint)
+  basic_socket_streambuf* connect(const endpoint_type& endpoint)
   {
     init_buffers();
 
-    this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+    this->basic_socket<Protocol ASIO_SVC_TARG>::close(ec_);
 
     if (timer_state_ == timer_has_expired)
     {
@@ -180,7 +177,7 @@ public:
     }
 
     io_handler handler = { this };
-    this->basic_socket<Protocol, StreamSocketService>::async_connect(
+    this->basic_socket<Protocol ASIO_SVC_TARG>::async_connect(
         endpoint, handler);
 
     ec_ = asio::error::would_block;
@@ -202,15 +199,13 @@ public:
    * pointer otherwise.
    */
   template <typename T1, ..., typename TN>
-  basic_socket_streambuf<Protocol, StreamSocketService>* connect(
-      T1 t1, ..., TN tn);
+  basic_socket_streambuf* connect(T1 t1, ..., TN tn);
 #elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
   template <typename... T>
-  basic_socket_streambuf<Protocol, StreamSocketService,
-    Time, TimeTraits, TimerService>* connect(T... x)
+  basic_socket_streambuf* connect(T... x)
   {
     init_buffers();
-    this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+    this->basic_socket<Protocol ASIO_SVC_TARG>::close(ec_);
     typedef typename Protocol::resolver resolver_type;
     resolver_type resolver(detail::socket_streambuf_base::io_context_);
     connect_to_endpoints(resolver.resolve(x..., ec_));
@@ -225,11 +220,10 @@ public:
    * @return \c this if a connection was successfully established, a null
    * pointer otherwise.
    */
-  basic_socket_streambuf<Protocol, StreamSocketService,
-    Time, TimeTraits, TimerService>* close()
+  basic_socket_streambuf* close()
   {
     sync();
-    this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+    this->basic_socket<Protocol ASIO_SVC_TARG>::close(ec_);
     if (!ec_)
       init_buffers();
     return !ec_ ? this : 0;
@@ -305,26 +299,6 @@ public:
    *
    * @param expiry_time The expiry time to be used for the timer.
    */
-  void expires_at(const duration& expiry_time)
-  {
-    construct_timer();
-
-    asio::error_code ec;
-    timer_service_->expires_from_now(timer_implementation_, expiry_time, ec);
-    asio::detail::throw_error(ec, "expires_from_now");
-
-    start_timer();
-  }
-
-  /// Set the stream buffer's expiry time relative to now.
-  /**
-   * This function sets the expiry time associated with the stream. Stream
-   * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * asio::error::operation_aborted.
-   *
-   * @param expiry_time The expiry time to be used for the timer.
-   */
   void expires_after(const duration& expiry_time)
   {
     construct_timer();
@@ -335,7 +309,7 @@ public:
 #else // defined(ASIO_HAS_BOOST_DATE_TIME)
     timer_service_->expires_after(timer_implementation_, expiry_time, ec);
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
-    asio::detail::throw_error(ec, "after");
+    asio::detail::throw_error(ec, "expires_after");
 
     start_timer();
   }
@@ -527,7 +501,7 @@ private:
       ec_ = asio::error::host_not_found;
       while (ec_ && i != end)
       {
-        this->basic_socket<Protocol, StreamSocketService>::close(ec_);
+        this->basic_socket<Protocol ASIO_SVC_TARG>::close(ec_);
 
         if (timer_state_ == timer_has_expired)
         {
@@ -536,7 +510,7 @@ private:
         }
 
         io_handler handler = { this };
-        this->basic_socket<Protocol, StreamSocketService>::async_connect(
+        this->basic_socket<Protocol ASIO_SVC_TARG>::async_connect(
             *i, handler);
 
         ec_ = asio::error::would_block;
@@ -590,7 +564,7 @@ private:
       {
         this_->timer_state_ = timer_has_expired;
         asio::error_code ec;
-        this_->basic_socket<Protocol, StreamSocketService>::close(ec);
+        this_->basic_socket<Protocol ASIO_SVC_TARG>::close(ec);
       }
     }
   };
@@ -599,7 +573,7 @@ private:
   {
     if (timer_service_ == 0)
     {
-      TimerService& timer_service = use_service<TimerService>(
+      ASIO_SVC_T1& timer_service = use_service<ASIO_SVC_T1>(
           detail::socket_streambuf_base::io_context_);
       timer_service.construct(timer_implementation_);
       timer_service_ = &timer_service;
@@ -628,14 +602,18 @@ private:
   bool unbuffered_;
   asio::error_code ec_;
   std::size_t bytes_transferred_;
-  TimerService* timer_service_;
-  typename TimerService::implementation_type timer_implementation_;
+  ASIO_SVC_T1* timer_service_;
+  typename ASIO_SVC_T1::implementation_type timer_implementation_;
   enum state { no_timer, timer_is_pending, timer_has_expired } timer_state_;
 };
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# undef ASIO_SVC_T1
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 # undef ASIO_PRIVATE_CONNECT_DEF

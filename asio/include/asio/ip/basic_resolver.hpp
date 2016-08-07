@@ -17,15 +17,30 @@
 
 #include "asio/detail/config.hpp"
 #include <string>
+#include "asio/async_result.hpp"
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ip/basic_resolver_results.hpp"
 #include "asio/ip/resolver_base.hpp"
-#include "asio/ip/resolver_service.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/ip/resolver_service.hpp"
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+# if defined(ASIO_WINDOWS_RUNTIME)
+#  include "asio/detail/winrt_resolver_service.hpp"
+#  define ASIO_SVC_T \
+    asio::detail::winrt_resolver_service<InternetProtocol>
+# else
+#  include "asio/detail/resolver_service.hpp"
+#  define ASIO_SVC_T \
+    asio::detail::resolver_service<InternetProtocol>
+# endif
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -41,13 +56,16 @@ namespace ip {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename InternetProtocol,
-    typename ResolverService = resolver_service<InternetProtocol> >
+template <typename InternetProtocol
+    ASIO_SVC_TPARAM_DEF1(= resolver_service<InternetProtocol>)>
 class basic_resolver
-  : public basic_io_object<ResolverService>,
+  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
     public resolver_base
 {
 public:
+  /// The type of the executor associated with the object.
+  typedef io_context::executor_type executor_type;
+
   /// The protocol type.
   typedef InternetProtocol protocol_type;
 
@@ -73,9 +91,59 @@ public:
    * dispatch handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_resolver(asio::io_context& io_context)
-    : basic_io_object<ResolverService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
   }
+
+  /// Destroys the resolver.
+  /**
+   * This function destroys the resolver, cancelling any outstanding
+   * asynchronous wait operations associated with the resolver as if by calling
+   * @c cancel.
+   */
+  ~basic_resolver()
+  {
+  }
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+  // These functions are provided by basic_io_object<>.
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_context()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_context();
+  }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_service()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Get the executor associated with the object.
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::get_executor();
+  }
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
   /// Cancel any asynchronous operations that are waiting on the resolver.
   /**
@@ -517,8 +585,18 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    asio::async_completion<ResolveHandler,
+      void (asio::error_code, results_type)> init(handler);
+
+    this->get_service().async_resolve(
+        this->get_implementation(), q, init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -633,8 +711,19 @@ public:
         ResolveHandler, handler, results_type) type_check;
 
     basic_resolver_query<protocol_type> q(host, service, resolve_flags);
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    asio::async_completion<ResolveHandler,
+      void (asio::error_code, results_type)> init(handler);
+
+    this->get_service().async_resolve(
+        this->get_implementation(), q, init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
@@ -755,8 +844,19 @@ public:
 
     basic_resolver_query<protocol_type> q(
         protocol, host, service, resolve_flags);
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_resolve(this->get_implementation(), q,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    asio::async_completion<ResolveHandler,
+      void (asio::error_code, results_type)> init(handler);
+
+    this->get_service().async_resolve(
+        this->get_implementation(), q, init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Perform reverse resolution of an endpoint to a list of entries.
@@ -836,8 +936,18 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_resolve(this->get_implementation(), e,
         ASIO_MOVE_CAST(ResolveHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    asio::async_completion<ResolveHandler,
+      void (asio::error_code, results_type)> init(handler);
+
+    this->get_service().async_resolve(
+        this->get_implementation(), e, init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 };
 
@@ -845,5 +955,9 @@ public:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# undef ASIO_SVC_T
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_IP_BASIC_RESOLVER_HPP

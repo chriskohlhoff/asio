@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
@@ -382,5 +384,7 @@ public:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_BASIC_SIGNAL_SET_HPP

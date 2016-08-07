@@ -118,7 +118,8 @@ public:
 
 signal_set_service::signal_set_service(
     asio::io_context& io_context)
-  : io_context_(asio::use_service<io_context_impl>(io_context)),
+  : service_base<signal_set_service>(io_context),
+    io_context_(asio::use_service<io_context_impl>(io_context)),
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
   && !defined(__CYGWIN__)

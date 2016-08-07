@@ -31,7 +31,8 @@ namespace detail {
 
 reactive_serial_port_service::reactive_serial_port_service(
     asio::io_context& io_context)
-  : descriptor_service_(io_context)
+  : service_base<reactive_serial_port_service>(io_context),
+    descriptor_service_(io_context)
 {
 }
 

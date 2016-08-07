@@ -34,7 +34,8 @@ namespace asio {
 namespace detail {
 
 template <typename Protocol>
-class winrt_resolver_service
+class winrt_resolver_service :
+  public service_base<winrt_resolver_service<Protocol> >
 {
 public:
   // The implementation type of the resolver. A cancellation token is used to
@@ -53,7 +54,8 @@ public:
 
   // Constructor.
   winrt_resolver_service(asio::io_context& io_context)
-    : io_context_(use_service<io_context_impl>(io_context)),
+    : service_base<winrt_resolver_service<Protocol> >(io_context),
+      io_context_(use_service<io_context_impl>(io_context)),
       async_manager_(use_service<winrt_async_manager>(io_context))
   {
   }

@@ -26,6 +26,7 @@
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_queue.hpp"
+#include "asio/detail/timer_queue_ptime.hpp"
 #include "asio/detail/timer_scheduler.hpp"
 #include "asio/detail/wait_handler.hpp"
 #include "asio/detail/wait_op.hpp"
@@ -42,6 +43,7 @@ namespace detail {
 
 template <typename Time_Traits>
 class deadline_timer_service
+  : public service_base<deadline_timer_service<Time_Traits> >
 {
 public:
   // The time type.
@@ -62,7 +64,8 @@ public:
 
   // Constructor.
   deadline_timer_service(asio::io_context& io_context)
-    : scheduler_(asio::use_service<timer_scheduler>(io_context))
+    : service_base<deadline_timer_service<Time_Traits> >(io_context),
+      scheduler_(asio::use_service<timer_scheduler>(io_context))
   {
     scheduler_.init_task();
     scheduler_.add_timer_queue(timer_queue_);
@@ -170,6 +173,18 @@ public:
     return impl.expiry;
   }
 
+  // Get the expiry time for the timer as an absolute time.
+  time_type expires_at(const implementation_type& impl) const
+  {
+    return impl.expiry;
+  }
+
+  // Get the expiry time for the timer relative to now.
+  duration_type expires_from_now(const implementation_type& impl) const
+  {
+    return Time_Traits::subtract(this->expiry(impl), Time_Traits::now());
+  }
+
   // Set the expiry time for the timer as an absolute time.
   std::size_t expires_at(implementation_type& impl,
       const time_type& expiry_time, asio::error_code& ec)
@@ -182,6 +197,14 @@ public:
 
   // Set the expiry time for the timer relative to now.
   std::size_t expires_after(implementation_type& impl,
+      const duration_type& expiry_time, asio::error_code& ec)
+  {
+    return expires_at(impl,
+        Time_Traits::add(Time_Traits::now(), expiry_time), ec);
+  }
+
+  // Set the expiry time for the timer relative to now.
+  std::size_t expires_from_now(implementation_type& impl,
       const duration_type& expiry_time, asio::error_code& ec)
   {
     return expires_at(impl,

@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include <cstddef>
 #include "asio/async_result.hpp"
 #include "asio/detail/type_traits.hpp"
@@ -384,5 +387,7 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_SEQ_PACKET_SOCKET_SERVICE_HPP

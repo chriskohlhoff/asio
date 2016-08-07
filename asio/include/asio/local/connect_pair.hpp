@@ -32,32 +32,32 @@ namespace asio {
 namespace local {
 
 /// Create a pair of connected sockets.
-template <typename Protocol, typename SocketService1, typename SocketService2>
+template <typename Protocol ASIO_SVC_TPARAM ASIO_SVC_TPARAM1>
 void connect_pair(
-    basic_socket<Protocol, SocketService1>& socket1,
-    basic_socket<Protocol, SocketService2>& socket2);
+    basic_socket<Protocol ASIO_SVC_TARG>& socket1,
+    basic_socket<Protocol ASIO_SVC_TARG1>& socket2);
 
 /// Create a pair of connected sockets.
-template <typename Protocol, typename SocketService1, typename SocketService2>
+template <typename Protocol ASIO_SVC_TPARAM ASIO_SVC_TPARAM1>
 asio::error_code connect_pair(
-    basic_socket<Protocol, SocketService1>& socket1,
-    basic_socket<Protocol, SocketService2>& socket2,
+    basic_socket<Protocol ASIO_SVC_TARG>& socket1,
+    basic_socket<Protocol ASIO_SVC_TARG1>& socket2,
     asio::error_code& ec);
 
-template <typename Protocol, typename SocketService1, typename SocketService2>
+template <typename Protocol ASIO_SVC_TPARAM ASIO_SVC_TPARAM1>
 inline void connect_pair(
-    basic_socket<Protocol, SocketService1>& socket1,
-    basic_socket<Protocol, SocketService2>& socket2)
+    basic_socket<Protocol ASIO_SVC_TARG>& socket1,
+    basic_socket<Protocol ASIO_SVC_TARG1>& socket2)
 {
   asio::error_code ec;
   connect_pair(socket1, socket2, ec);
   asio::detail::throw_error(ec, "connect_pair");
 }
 
-template <typename Protocol, typename SocketService1, typename SocketService2>
+template <typename Protocol ASIO_SVC_TPARAM ASIO_SVC_TPARAM1>
 inline asio::error_code connect_pair(
-    basic_socket<Protocol, SocketService1>& socket1,
-    basic_socket<Protocol, SocketService2>& socket2,
+    basic_socket<Protocol ASIO_SVC_TARG>& socket1,
+    basic_socket<Protocol ASIO_SVC_TARG1>& socket2,
     asio::error_code& ec)
 {
   // Check that this function is only being used with a UNIX domain socket.

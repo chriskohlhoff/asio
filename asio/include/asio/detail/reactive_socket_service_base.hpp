@@ -66,7 +66,7 @@ public:
       asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void base_shutdown();
 
   // Construct a new socket implementation.
   ASIO_DECL void construct(base_implementation_type& impl);
@@ -160,14 +160,6 @@ public:
       bool mode, asio::error_code& ec)
   {
     socket_ops::set_internal_non_blocking(impl.socket_, impl.state_, mode, ec);
-    return ec;
-  }
-
-  // Disable sends or receives on the socket.
-  asio::error_code shutdown(base_implementation_type& impl,
-      socket_base::shutdown_type what, asio::error_code& ec)
-  {
-    socket_ops::shutdown(impl.socket_, what, ec);
     return ec;
   }
 

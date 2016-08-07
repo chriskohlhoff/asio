@@ -22,6 +22,7 @@
   && !defined(__CYGWIN__)
 
 #include <cstddef>
+#include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/detail/socket_types.hpp"
 

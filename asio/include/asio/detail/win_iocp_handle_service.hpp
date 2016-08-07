@@ -37,7 +37,8 @@
 namespace asio {
 namespace detail {
 
-class win_iocp_handle_service
+class win_iocp_handle_service :
+  public service_base<win_iocp_handle_service>
 {
 public:
   // The native type of a stream handle.

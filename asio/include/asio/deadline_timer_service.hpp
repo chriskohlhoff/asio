@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -25,7 +27,6 @@
 #include "asio/detail/deadline_timer_service.hpp"
 #include "asio/io_context.hpp"
 #include "asio/time_traits.hpp"
-#include "asio/detail/timer_queue_ptime.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -166,5 +167,7 @@ private:
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
        // || defined(GENERATING_DOCUMENTATION)
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_DEADLINE_TIMER_SERVICE_HPP

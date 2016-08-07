@@ -31,7 +31,8 @@
 namespace asio {
 namespace detail {
 
-class win_object_handle_service
+class win_object_handle_service :
+  public service_base<win_object_handle_service>
 {
 public:
   // The native type of an object handle.

@@ -12,15 +12,13 @@
 #include <boost/bind.hpp>
 #include <iostream>
 #include "logger.hpp"
-#include "stream_socket_service.hpp"
 
-typedef asio::basic_stream_socket<asio::ip::tcp,
-    services::stream_socket_service<asio::ip::tcp> > debug_stream_socket;
+using asio::ip::tcp;
 
 char read_buffer[1024];
 
 void read_handler(const asio::error_code& e,
-    std::size_t bytes_transferred, debug_stream_socket* s)
+    std::size_t bytes_transferred, tcp::socket* s)
 {
   if (!e)
   {
@@ -30,19 +28,33 @@ void read_handler(const asio::error_code& e,
         boost::bind(read_handler, asio::placeholders::error,
           asio::placeholders::bytes_transferred, s));
   }
+  else
+  {
+    services::logger logger(s->get_executor().context(), "read_handler");
+
+    std::string msg = "Read error: ";
+    msg += e.message();
+    logger.log(msg);
+  }
 }
 
-void connect_handler(const asio::error_code& e, debug_stream_socket* s)
+void connect_handler(const asio::error_code& e, tcp::socket* s)
 {
+  services::logger logger(s->get_executor().context(), "connect_handler");
+
   if (!e)
   {
+    logger.log("Connection established");
+
     s->async_read_some(asio::buffer(read_buffer),
         boost::bind(read_handler, asio::placeholders::error,
           asio::placeholders::bytes_transferred, s));
   }
   else
   {
-    std::cerr << e.message() << std::endl;
+    std::string msg = "Unable to establish connection: ";
+    msg += e.message();
+    logger.log(msg);
   }
 }
 
@@ -63,12 +75,12 @@ int main(int argc, char* argv[])
     logger.use_file("log.txt");
 
     // Resolve the address corresponding to the given host.
-    asio::ip::tcp::resolver resolver(io_context);
-    asio::ip::tcp::resolver::results_type endpoints =
+    tcp::resolver resolver(io_context);
+    tcp::resolver::results_type endpoints =
       resolver.resolve(argv[1], "daytime");
 
     // Start an asynchronous connect.
-    debug_stream_socket socket(io_context);
+    tcp::socket socket(io_context);
     asio::async_connect(socket, endpoints,
         boost::bind(connect_handler,
           asio::placeholders::error, &socket));

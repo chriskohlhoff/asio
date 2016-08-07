@@ -26,6 +26,12 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
+#include "asio/time_traits.hpp"
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/detail/deadline_timer_service.hpp"
+# define ASIO_SVC_T detail::deadline_timer_service<TimeTraits>
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
@@ -120,12 +126,15 @@ namespace asio {
  * it contains the value asio::error::operation_aborted.
  */
 template <typename Time,
-    typename TimeTraits = asio::time_traits<Time>,
-    typename TimerService = deadline_timer_service<Time, TimeTraits> >
+    typename TimeTraits = asio::time_traits<Time>
+    ASIO_SVC_TPARAM_DEF2(= deadline_timer_service<Time, TimeTraits>)>
 class basic_deadline_timer
-  : public basic_io_object<TimerService>
+  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>
 {
 public:
+  /// The type of the executor associated with the object.
+  typedef io_context::executor_type executor_type;
+
   /// The time traits type.
   typedef TimeTraits traits_type;
 
@@ -145,7 +154,7 @@ public:
    * handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_deadline_timer(asio::io_context& io_context)
-    : basic_io_object<TimerService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
   }
 
@@ -161,7 +170,7 @@ public:
    */
   basic_deadline_timer(asio::io_context& io_context,
       const time_type& expiry_time)
-    : basic_io_object<TimerService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_at(this->get_implementation(), expiry_time, ec);
@@ -180,13 +189,62 @@ public:
    */
   basic_deadline_timer(asio::io_context& io_context,
       const duration_type& expiry_time)
-    : basic_io_object<TimerService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_from_now(
         this->get_implementation(), expiry_time, ec);
     asio::detail::throw_error(ec, "expires_from_now");
   }
+
+  /// Destroys the timer.
+  /**
+   * This function destroys the timer, cancelling any outstanding asynchronous
+   * wait operations associated with the timer as if by calling @c cancel.
+   */
+  ~basic_deadline_timer()
+  {
+  }
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+  // These functions are provided by basic_io_object<>.
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_context()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_context();
+  }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_service()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Get the executor associated with the object.
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::get_executor();
+  }
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
   /// Cancel any asynchronous operations that are waiting on the timer.
   /**
@@ -506,14 +564,27 @@ public:
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_wait(this->get_implementation(),
         ASIO_MOVE_CAST(WaitHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    async_completion<WaitHandler,
+      void (asio::error_code)> init(handler);
+
+    this->get_service().async_wait(this->get_implementation(), init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 };
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# undef ASIO_SVC_T
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
        // || defined(GENERATING_DOCUMENTATION)

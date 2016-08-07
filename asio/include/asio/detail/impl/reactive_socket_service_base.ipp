@@ -35,7 +35,7 @@ reactive_socket_service_base::reactive_socket_service_base(
   reactor_.init_task();
 }
 
-void reactive_socket_service_base::shutdown()
+void reactive_socket_service_base::base_shutdown()
 {
 }
 

@@ -120,7 +120,6 @@
             <member><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></member>
             <member><link linkend="asio.reference.Executor1">Executor</link></member>
             <member><link linkend="asio.reference.Handler">Handler</link></member>
-            <member><link linkend="asio.reference.IoObjectService">IoObjectService</link></member>
             <member><link linkend="asio.reference.Service">Service</link></member>
           </simplelist>
         </entry>
@@ -292,7 +291,6 @@
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.basic_datagram_socket">basic_datagram_socket</link></member>
-            <member><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
             <member><link linkend="asio.reference.basic_raw_socket">basic_raw_socket</link></member>
             <member><link linkend="asio.reference.basic_seq_packet_socket">basic_seq_packet_socket</link></member>
             <member><link linkend="asio.reference.basic_socket">basic_socket</link></member>
@@ -306,15 +304,6 @@
             <member><link linkend="asio.reference.ip__basic_resolver_entry">ip::basic_resolver_entry</link></member>
             <member><link linkend="asio.reference.ip__basic_resolver_iterator">ip::basic_resolver_iterator</link></member>
             <member><link linkend="asio.reference.ip__basic_resolver_query">ip::basic_resolver_query</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.datagram_socket_service">datagram_socket_service</link></member>
-            <member><link linkend="asio.reference.ip__resolver_service">ip::resolver_service</link></member>
-            <member><link linkend="asio.reference.raw_socket_service">raw_socket_service</link></member>
-            <member><link linkend="asio.reference.seq_packet_socket_service">seq_packet_socket_service</link></member>
-            <member><link linkend="asio.reference.socket_acceptor_service">socket_acceptor_service</link></member>
-            <member><link linkend="asio.reference.stream_socket_service">stream_socket_service</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -352,20 +341,13 @@
             <member><link linkend="asio.reference.AcceptHandler">AcceptHandler</link></member>
             <member><link linkend="asio.reference.ComposedConnectHandler">ComposedConnectHandler</link></member>
             <member><link linkend="asio.reference.ConnectHandler">ConnectHandler</link></member>
-            <member><link linkend="asio.reference.DatagramSocketService">DatagramSocketService</link></member>
             <member><link linkend="asio.reference.Endpoint">Endpoint</link></member>
             <member><link linkend="asio.reference.GettableSocketOption">GettableSocketOption</link></member>
             <member><link linkend="asio.reference.InternetProtocol">InternetProtocol</link></member>
             <member><link linkend="asio.reference.IoControlCommand">IoControlCommand</link></member>
             <member><link linkend="asio.reference.Protocol">Protocol</link></member>
-            <member><link linkend="asio.reference.RawSocketService">RawSocketService</link></member>
             <member><link linkend="asio.reference.ResolveHandler">ResolveHandler</link></member>
-            <member><link linkend="asio.reference.ResolverService">ResolverService</link></member>
-            <member><link linkend="asio.reference.SeqPacketSocketService">SeqPacketSocketService</link></member>
             <member><link linkend="asio.reference.SettableSocketOption">SettableSocketOption</link></member>
-            <member><link linkend="asio.reference.SocketAcceptorService">SocketAcceptorService</link></member>
-            <member><link linkend="asio.reference.SocketService">SocketService</link></member>
-            <member><link linkend="asio.reference.StreamSocketService">StreamSocketService</link></member>
           </simplelist>
         </entry>
       </row>
@@ -404,13 +386,8 @@
             <member><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
             <member><link linkend="asio.reference.time_traits_lt__ptime__gt_">time_traits</link></member>
           </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.deadline_timer_service">deadline_timer_service</link></member>
-          </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.TimerService">TimerService</link></member>
             <member><link linkend="asio.reference.TimeTraits">TimeTraits</link></member>
             <member><link linkend="asio.reference.WaitHandler">WaitHandler</link></member>
           </simplelist>
@@ -441,14 +418,6 @@
             <member><link linkend="asio.reference.serial_port">serial_port</link></member>
             <member><link linkend="asio.reference.serial_port_base">serial_port_base</link></member>
           </simplelist>
-          <bridgehead renderas="sect3">Class Templates</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.basic_serial_port">basic_serial_port</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.serial_port_service">serial_port_service</link></member>
-          </simplelist>
           <bridgehead renderas="sect3">Serial Port Options</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.serial_port_base__baud_rate">serial_port_base::baud_rate</link></member>
@@ -460,7 +429,6 @@
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.GettableSerialPortOption">GettableSerialPortOption</link></member>
-            <member><link linkend="asio.reference.SerialPortService">SerialPortService</link></member>
             <member><link linkend="asio.reference.SettableSerialPortOption">SettableSerialPortOption</link></member>
           </simplelist>
         </entry>
@@ -469,17 +437,8 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.signal_set">signal_set</link></member>
           </simplelist>
-          <bridgehead renderas="sect3">Class Templates</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.basic_signal_set">basic_signal_set</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.signal_set_service">signal_set_service</link></member>
-          </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.SignalSetService">SignalSetService</link></member>
             <member><link linkend="asio.reference.SignalHandler">SignalHandler</link></member>
           </simplelist>
         </entry>
@@ -514,6 +473,7 @@
             <member><link linkend="asio.reference.local__datagram_protocol">local::datagram_protocol</link></member>
             <member><link linkend="asio.reference.local__datagram_protocol.endpoint">local::datagram_protocol::endpoint</link></member>
             <member><link linkend="asio.reference.local__datagram_protocol.socket">local::datagram_protocol::socket</link></member>
+            <member><link linkend="asio.reference.posix__descriptor">posix::descriptor</link></member>
             <member><link linkend="asio.reference.posix__descriptor_base">posix::descriptor_base</link></member>
             <member><link linkend="asio.reference.posix__stream_descriptor">posix::stream_descriptor</link></member>
           </simplelist>
@@ -526,42 +486,16 @@
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.local__basic_endpoint">local::basic_endpoint</link></member>
-            <member><link linkend="asio.reference.posix__basic_descriptor">posix::basic_descriptor</link></member>
-            <member><link linkend="asio.reference.posix__basic_stream_descriptor">posix::basic_stream_descriptor</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.posix__stream_descriptor_service">posix::stream_descriptor_service</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Type Requirements</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.DescriptorService">DescriptorService</link></member>
-            <member><link linkend="asio.reference.StreamDescriptorService">StreamDescriptorService</link></member>
           </simplelist>
         </entry>
         <entry valign="top" namest="c" nameend="d">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.windows__object_handle">windows::object_handle</link></member>
+            <member><link linkend="asio.reference.windows__overlapped_handle">windows::overlapped_handle</link></member>
             <member><link linkend="asio.reference.windows__overlapped_ptr">windows::overlapped_ptr</link></member>
             <member><link linkend="asio.reference.windows__random_access_handle">windows::random_access_handle</link></member>
             <member><link linkend="asio.reference.windows__stream_handle">windows::stream_handle</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Class Templates</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.windows__basic_handle">windows::basic_handle</link></member>
-            <member><link linkend="asio.reference.windows__basic_random_access_handle">windows::basic_random_access_handle</link></member>
-            <member><link linkend="asio.reference.windows__basic_stream_handle">windows::basic_stream_handle</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Services</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.windows__random_access_handle_service">windows::random_access_handle_service</link></member>
-            <member><link linkend="asio.reference.windows__stream_handle_service">windows::stream_handle_service</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Type Requirements</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.HandleService">HandleService</link></member>
-            <member><link linkend="asio.reference.RandomAccessHandleService">RandomAccessHandleService</link></member>
-            <member><link linkend="asio.reference.StreamHandleService">StreamHandleService</link></member>
           </simplelist>
         </entry>
       </row>

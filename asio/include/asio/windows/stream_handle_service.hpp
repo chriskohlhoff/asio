@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #if defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -199,5 +201,7 @@ private:
 
 #endif // defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_WINDOWS_STREAM_HANDLE_SERVICE_HPP

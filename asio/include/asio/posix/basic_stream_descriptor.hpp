@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -354,5 +356,7 @@ public:
 
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
        //   || defined(GENERATING_DOCUMENTATION)
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_POSIX_BASIC_STREAM_DESCRIPTOR_HPP

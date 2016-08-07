@@ -31,7 +31,8 @@ namespace asio {
 namespace detail {
 
 // Extend win_iocp_handle_service to provide serial port support.
-class win_iocp_serial_port_service
+class win_iocp_serial_port_service :
+  public service_base<win_iocp_serial_port_service>
 {
 public:
   // The native type of a serial port.

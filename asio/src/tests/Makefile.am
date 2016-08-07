@@ -71,6 +71,7 @@ check_PROGRAMS = \
 	unit/placeholders \
 	unit/posix/basic_descriptor \
 	unit/posix/basic_stream_descriptor \
+	unit/posix/descriptor \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/posix/stream_descriptor_service \
@@ -101,6 +102,7 @@ check_PROGRAMS = \
 	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
 	unit/windows/object_handle_service \
+	unit/windows/overlapped_handle \
 	unit/windows/overlapped_ptr \
 	unit/windows/random_access_handle \
 	unit/windows/random_access_handle_service \
@@ -184,6 +186,7 @@ TESTS = \
 	unit/placeholders \
 	unit/posix/basic_descriptor \
 	unit/posix/basic_stream_descriptor \
+	unit/posix/descriptor\
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/posix/stream_descriptor_service \
@@ -214,6 +217,7 @@ TESTS = \
 	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
 	unit/windows/object_handle_service \
+	unit/windows/overlapped_handle \
 	unit/windows/overlapped_ptr \
 	unit/windows/random_access_handle \
 	unit/windows/random_access_handle_service \
@@ -310,6 +314,7 @@ unit_local_stream_protocol_SOURCES = unit/local/stream_protocol.cpp
 unit_placeholders_SOURCES = unit/placeholders.cpp
 unit_posix_basic_descriptor_SOURCES = unit/posix/basic_descriptor.cpp
 unit_posix_basic_stream_descriptor_SOURCES = unit/posix/basic_stream_descriptor.cpp
+unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
 unit_posix_stream_descriptor_service_SOURCES = unit/posix/stream_descriptor_service.cpp
@@ -340,6 +345,7 @@ unit_windows_basic_random_access_handle_SOURCES = unit/windows/basic_random_acce
 unit_windows_basic_stream_handle_SOURCES = unit/windows/basic_stream_handle.cpp
 unit_windows_object_handle_SOURCES = unit/windows/object_handle.cpp
 unit_windows_object_handle_service_SOURCES = unit/windows/object_handle_service.cpp
+unit_windows_overlapped_handle_SOURCES = unit/windows/overlapped_handle.cpp
 unit_windows_overlapped_ptr_SOURCES = unit/windows/overlapped_ptr.cpp
 unit_windows_random_access_handle_SOURCES = unit/windows/random_access_handle.cpp
 unit_windows_random_access_handle_service_SOURCES = unit/windows/random_access_handle_service.cpp

@@ -28,15 +28,14 @@
 namespace asio {
 namespace posix {
 
-/// The descriptor_base class is used as a base for the basic_stream_descriptor
-/// class template so that we have a common place to define the associated
-/// IO control commands.
+/// The descriptor_base class is used as a base for the descriptor class as a
+/// place to define the associated IO control commands.
 class descriptor_base
 {
 public:
   /// Wait types.
   /**
-   * For use with basic_descriptor::wait() and basic_descriptor::async_wait().
+   * For use with descriptor::wait() and descriptor::async_wait().
    */
   enum wait_type
   {

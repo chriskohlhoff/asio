@@ -196,13 +196,13 @@ Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link
 
 
 
-Finally, we must call the asio::io\_service::run() member function on the io\_service object.
+Finally, we must call the [link asio.reference.io_context.run io_service::run()] member function on the io\_service object.
 
-The asio library provides a guarantee that callback handlers will only be called from threads that are currently calling asio::io\_service::run(). Therefore unless the asio::io\_service::run() function is called the callback for the asynchronous wait completion will never be invoked.
+The asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_context.run io_service::run()]. Therefore unless the [link asio.reference.io_context.run io_service::run()] function is called the callback for the asynchronous wait completion will never be invoked.
 
-The asio::io\_service::run() function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
+The [link asio.reference.io_context.run io_service::run()] function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
 
-It is important to remember to give the io\_service some work to do before calling asio::io\_service::run(). For example, if we had omitted the above call to [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()], the io\_service would not have had any work to do, and consequently asio::io\_service::run() would have returned immediately.
+It is important to remember to give the io\_service some work to do before calling [link asio.reference.io_context.run io_service::run()]. For example, if we had omitted the above call to [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()], the io\_service would not have had any work to do, and consequently [link asio.reference.io_context.run io_service::run()] would have returned immediately.
 
 
   ``''''''``  io.run();
@@ -294,7 +294,7 @@ To implement a repeating timer using asio you need to change the timer's expiry 
 
 
 
-As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_service to stop. Recall that in tutorial Timer.2 we learnt that the asio::io\_service::run() function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_service will run out of work and stop running.
+As mentioned above, this tutorial program uses a counter to stop running when the timer fires for the sixth time. However you will observe that there is no explicit call to ask the io\_service to stop. Recall that in tutorial Timer.2 we learnt that the [link asio.reference.io_context.run io_service::run()] function completes when there is no more "work" to do. By not starting a new asynchronous wait on the timer when `count` reaches 5, the io\_service will run out of work and stop running.
 
 
   ``''''''``  if (*count < 5)
@@ -580,7 +580,7 @@ Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 
 This tutorial demonstrates the use of the asio::io\_service::strand class to synchronise callback handlers in a multithreaded program.
 
-The previous four tutorials avoided the issue of handler synchronisation by calling the asio::io\_service::run() function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling asio::io\_service::run(). Consequently, calling asio::io\_service::run() from only one thread ensures that callback handlers cannot run concurrently.
+The previous four tutorials avoided the issue of handler synchronisation by calling the [link asio.reference.io_context.run io_service::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_context.run io_service::run()]. Consequently, calling [link asio.reference.io_context.run io_service::run()] from only one thread ensures that callback handlers cannot run concurrently.
 
 The single threaded approach is usually the best place to start when developing applications using asio. The downside is the limitations it places on programs, particularly servers, including:
 
@@ -592,7 +592,7 @@ The single threaded approach is usually the best place to start when developing 
 
 
 
-If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling asio::io\_service::run(). However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
+If you find yourself running into these limitations, an alternative approach is to have a pool of threads calling [link asio.reference.io_context.run io_service::run()]. However, as this allows handlers to execute concurrently, we need a method of synchronisation when handlers might be accessing a shared, thread-unsafe resource.
 
 
 
@@ -618,7 +618,7 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 In addition to initialising a pair of asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type asio::io\_service::strand.
 
-An asio::io\_service::strand is an executor that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling asio::io\_service::run(). Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an asio::io\_service::strand, or were dispatched through a different asio::io\_service::strand object.
+An asio::io\_service::strand is an executor that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_service::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an asio::io\_service::strand, or were dispatched through a different asio::io\_service::strand object.
 
 
   ``''''''``  printer(asio::io_context& io)
@@ -688,10 +688,10 @@ In a multithreaded program, the handlers for asynchronous operations should be s
 
 
 
-The `main` function now causes asio::io\_service::run() to be called from two threads: the main thread and one additional thread. This is accomplished using an 
+The `main` function now causes [link asio.reference.io_context.run io_service::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an 
 [link asio.reference.thread thread] object.
 
-Just as it would with a call from a single thread, concurrent calls to asio::io\_service::run() will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
+Just as it would with a call from a single thread, concurrent calls to [link asio.reference.io_context.run io_service::run()] will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
 
 
 

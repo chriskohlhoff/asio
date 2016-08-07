@@ -37,7 +37,7 @@ win_iocp_socket_service_base::win_iocp_socket_service_base(
 {
 }
 
-void win_iocp_socket_service_base::shutdown()
+void win_iocp_socket_service_base::base_shutdown()
 {
   // Close all implementations, causing all operations to complete.
   asio::detail::mutex::scoped_lock lock(mutex_);

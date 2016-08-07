@@ -31,7 +31,8 @@ namespace asio {
 namespace detail {
 
 template <typename Protocol>
-class null_socket_service
+class null_socket_service :
+  public service_base<null_socket_service<Protocol> >
 {
 public:
   // The protocol type.
@@ -50,7 +51,8 @@ public:
 
   // Constructor.
   null_socket_service(asio::io_context& io_context)
-    : io_context_(io_context)
+    : service_base<null_socket_service<Protocol> >(io_context),
+      io_context_(io_context)
   {
   }
 

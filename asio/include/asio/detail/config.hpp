@@ -1153,4 +1153,31 @@
         //   || (defined(__MACH__) && defined(__APPLE__))
 #endif // !defined(ASIO_DISABLE_SSIZE_T)
 
+// Helper macros to manage the transition away from the old services-based API.
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# define ASIO_SVC_TPARAM , typename Service
+# define ASIO_SVC_TPARAM_DEF1(d1) , typename Service d1
+# define ASIO_SVC_TPARAM_DEF2(d1, d2) , typename Service d1, d2
+# define ASIO_SVC_TARG , Service
+# define ASIO_SVC_T Service
+# define ASIO_SVC_TPARAM1 , typename Service1
+# define ASIO_SVC_TPARAM1_DEF1(d1) , typename Service1 d1
+# define ASIO_SVC_TPARAM1_DEF2(d1, d2) , typename Service1 d1, d2
+# define ASIO_SVC_TARG1 , Service1
+# define ASIO_SVC_T1 Service1
+# define ASIO_SVC_ACCESS public
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+# define ASIO_SVC_TPARAM
+# define ASIO_SVC_TPARAM_DEF1(d1)
+# define ASIO_SVC_TPARAM_DEF2(d1, d2)
+# define ASIO_SVC_TARG
+// ASIO_SVC_T is defined at each point of use.
+# define ASIO_SVC_TPARAM1
+# define ASIO_SVC_TPARAM1_DEF1(d1)
+# define ASIO_SVC_TPARAM1_DEF2(d1, d2)
+# define ASIO_SVC_TARG1
+// ASIO_SVC_T1 is defined at each point of use.
+# define ASIO_SVC_ACCESS protected
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

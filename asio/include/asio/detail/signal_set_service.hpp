@@ -47,7 +47,8 @@ extern ASIO_DECL struct signal_state* get_signal_state();
 
 extern "C" ASIO_DECL void asio_signal_handler(int signal_number);
 
-class signal_set_service
+class signal_set_service :
+  public service_base<signal_set_service>
 {
 public:
   // Type used for tracking an individual signal registration.

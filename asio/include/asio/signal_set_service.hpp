@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include "asio/async_result.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/error.hpp"
@@ -129,5 +132,7 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_SIGNAL_SET_SERVICE_HPP

@@ -41,7 +41,8 @@
 namespace asio {
 namespace detail {
 
-class reactive_descriptor_service
+class reactive_descriptor_service :
+  public service_base<reactive_descriptor_service>
 {
 public:
   // The native type of a descriptor.

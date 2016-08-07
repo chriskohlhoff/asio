@@ -88,8 +88,7 @@ noinst_HEADERS = \
 	chat/chat_message.hpp \
 	services/basic_logger.hpp \
 	services/logger.hpp \
-	services/logger_service.hpp \
-	services/stream_socket_service.hpp
+	services/logger_service.hpp
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
@@ -240,7 +239,6 @@ EXTRA_DIST = \
 	services/basic_logger.hpp \
 	services/logger.hpp \
 	services/logger_service.hpp \
-	services/stream_socket_service.hpp \
 	socks4/socks4.hpp \
 	ssl/README \
 	ssl/ca.pem \

@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include "asio/basic_socket.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
@@ -338,5 +341,7 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_SOCKET_ACCEPTOR_SERVICE_HPP

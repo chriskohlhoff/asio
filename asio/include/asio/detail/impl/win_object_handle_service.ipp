@@ -29,7 +29,8 @@ namespace detail {
 
 win_object_handle_service::win_object_handle_service(
     asio::io_context& io_context)
-  : io_context_(asio::use_service<io_context_impl>(io_context)),
+  : service_base<win_object_handle_service>(io_context),
+    io_context_(asio::use_service<io_context_impl>(io_context)),
     mutex_(),
     impl_list_(0),
     shutdown_(false)

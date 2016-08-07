@@ -24,6 +24,18 @@
 #include "asio/wait_traits.hpp"
 #include "asio/waitable_timer_service.hpp"
 
+#if defined(ASIO_HAS_MOVE)
+# include <utility>
+#endif // defined(ASIO_HAS_MOVE)
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/detail/chrono_time_traits.hpp"
+# include "asio/detail/deadline_timer_service.hpp"
+# define ASIO_SVC_T \
+    detail::deadline_timer_service< \
+      detail::chrono_time_traits<Clock, WaitTraits> >
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -121,12 +133,15 @@ namespace asio {
  * it contains the value asio::error::operation_aborted.
  */
 template <typename Clock,
-    typename WaitTraits = asio::wait_traits<Clock>,
-    typename WaitableTimerService = waitable_timer_service<Clock, WaitTraits> >
+    typename WaitTraits = asio::wait_traits<Clock>
+    ASIO_SVC_TPARAM_DEF2(= waitable_timer_service<Clock, WaitTraits>)>
 class basic_waitable_timer
-  : public basic_io_object<WaitableTimerService>
+  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>
 {
 public:
+  /// The type of the executor associated with the object.
+  typedef io_context::executor_type executor_type;
+
   /// The clock type.
   typedef Clock clock_type;
 
@@ -149,7 +164,7 @@ public:
    * handlers for any asynchronous operations performed on the timer.
    */
   explicit basic_waitable_timer(asio::io_context& io_context)
-    : basic_io_object<WaitableTimerService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
   }
 
@@ -165,7 +180,7 @@ public:
    */
   basic_waitable_timer(asio::io_context& io_context,
       const time_point& expiry_time)
-    : basic_io_object<WaitableTimerService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_at(this->get_implementation(), expiry_time, ec);
@@ -184,7 +199,7 @@ public:
    */
   basic_waitable_timer(asio::io_context& io_context,
       const duration& expiry_time)
-    : basic_io_object<WaitableTimerService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().expires_after(
@@ -204,14 +219,14 @@ public:
    * constructed using the @c basic_waitable_timer(io_context&) constructor.
    */
   basic_waitable_timer(basic_waitable_timer&& other)
-    : basic_io_object<WaitableTimerService>(
-        ASIO_MOVE_CAST(basic_waitable_timer)(other))
+    : basic_io_object<ASIO_SVC_T>(std::move(other))
   {
   }
 
   /// Move-assign a basic_waitable_timer from another.
   /**
-   * This assignment operator moves a timer from one object to another.
+   * This assignment operator moves a timer from one object to another. Cancels
+   * any outstanding asynchronous operations associated with the target object.
    *
    * @param other The other basic_waitable_timer object from which the move will
    * occur.
@@ -221,11 +236,59 @@ public:
    */
   basic_waitable_timer& operator=(basic_waitable_timer&& other)
   {
-    basic_io_object<WaitableTimerService>::operator=(
-        ASIO_MOVE_CAST(basic_waitable_timer)(other));
+    basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Destroys the timer.
+  /**
+   * This function destroys the timer, cancelling any outstanding asynchronous
+   * wait operations associated with the timer as if by calling @c cancel.
+   */
+  ~basic_waitable_timer()
+  {
+  }
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+  // These functions are provided by basic_io_object<>.
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_context()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_context();
+  }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_service()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Get the executor associated with the object.
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::get_executor();
+  }
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
   /// Cancel any asynchronous operations that are waiting on the timer.
   /**
@@ -257,7 +320,9 @@ public:
     return s;
   }
 
-  /// Cancel any asynchronous operations that are waiting on the timer.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overload.) Cancel any asynchronous
+  /// operations that are waiting on the timer.
   /**
    * This function forces the completion of any pending asynchronous wait
    * operations against the timer. The handler for each cancelled operation will
@@ -283,6 +348,7 @@ public:
   {
     return this->get_service().cancel(this->get_implementation(), ec);
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Cancels one asynchronous operation that is waiting on the timer.
   /**
@@ -317,7 +383,9 @@ public:
     return s;
   }
 
-  /// Cancels one asynchronous operation that is waiting on the timer.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overload.) Cancels one asynchronous
+  /// operation that is waiting on the timer.
   /**
    * This function forces the completion of one pending asynchronous wait
    * operation against the timer. Handlers are cancelled in FIFO order. The
@@ -346,7 +414,6 @@ public:
     return this->get_service().cancel_one(this->get_implementation(), ec);
   }
 
-#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use expiry().) Get the timer's expiry time as an absolute
   /// time.
   /**
@@ -400,7 +467,9 @@ public:
     return s;
   }
 
-  /// Set the timer's expiry time as an absolute time.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overload.) Set the timer's expiry time as
+  /// an absolute time.
   /**
    * This function sets the expiry time. Any pending asynchronous wait
    * operations will be cancelled. The handler for each cancelled operation will
@@ -428,6 +497,7 @@ public:
     return this->get_service().expires_at(
         this->get_implementation(), expiry_time, ec);
   }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Set the timer's expiry time relative to now.
   /**
@@ -458,35 +528,6 @@ public:
         this->get_implementation(), expiry_time, ec);
     asio::detail::throw_error(ec, "expires_after");
     return s;
-  }
-
-  /// Set the timer's expiry time relative to now.
-  /**
-   * This function sets the expiry time. Any pending asynchronous wait
-   * operations will be cancelled. The handler for each cancelled operation will
-   * be invoked with the asio::error::operation_aborted error code.
-   *
-   * @param expiry_time The expiry time to be used for the timer.
-   *
-   * @param ec Set to indicate what error occurred, if any.
-   *
-   * @return The number of asynchronous operations that were cancelled.
-   *
-   * @note If the timer has already expired when expires_after() is called,
-   * then the handlers for asynchronous wait operations will:
-   *
-   * @li have already been invoked; or
-   *
-   * @li have been queued for invocation in the near future.
-   *
-   * These handlers can no longer be cancelled, and therefore are passed an
-   * error code that indicates the successful completion of the wait operation.
-   */
-  std::size_t expires_after(const duration& expiry_time,
-      asio::error_code& ec)
-  {
-    return this->get_service().expires_after(
-        this->get_implementation(), expiry_time, ec);
   }
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -622,13 +663,32 @@ public:
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_wait(this->get_implementation(),
         ASIO_MOVE_CAST(WaitHandler)(handler));
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
+    async_completion<WaitHandler,
+      void (asio::error_code)> init(handler);
+
+    this->get_service().async_wait(this->get_implementation(), init.handler);
+
+    return init.result.get();
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
+
+private:
+  // Disallow copying and assignment.
+  basic_waitable_timer(const basic_waitable_timer&) ASIO_DELETED;
+  basic_waitable_timer& operator=(
+      const basic_waitable_timer&) ASIO_DELETED;
 };
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
+# undef ASIO_SVC_T
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_BASIC_WAITABLE_TIMER_HPP

@@ -13,6 +13,7 @@ basic_random_access_handle
 basic_stream_handle
 object_handle
 object_handle_service
+overlapped_handle
 overlapped_ptr
 random_access_handle
 random_access_handle_service

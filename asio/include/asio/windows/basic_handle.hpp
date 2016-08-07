@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE) \
   || defined(ASIO_HAS_WINDOWS_STREAM_HANDLE) \
   || defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE) \
@@ -262,5 +264,7 @@ protected:
        //   || defined(ASIO_HAS_WINDOWS_STREAM_HANDLE)
        //   || defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_WINDOWS_BASIC_HANDLE_HPP

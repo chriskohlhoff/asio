@@ -86,8 +86,9 @@ struct is_endpoint_sequence
  * tcp::socket s(io_context);
  * asio::connect(s, r.resolve(q)); @endcode
  */
-template <typename Protocol, typename SocketService, typename EndpointSequence>
-typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
+template <typename Protocol ASIO_SVC_TPARAM, typename EndpointSequence>
+typename Protocol::endpoint connect(
+    basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
@@ -122,8 +123,9 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
  *   // An error occurred.
  * } @endcode
  */
-template <typename Protocol, typename SocketService, typename EndpointSequence>
-typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
+template <typename Protocol ASIO_SVC_TPARAM, typename EndpointSequence>
+typename Protocol::endpoint connect(
+    basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints, asio::error_code& ec,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
@@ -153,8 +155,8 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename SocketService, typename Iterator>
-Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
+template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 
 /// (Deprecated.) Establishes a socket connection by trying each endpoint in a
@@ -181,8 +183,8 @@ Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename SocketService, typename Iterator>
-Iterator connect(basic_socket<Protocol, SocketService>& s,
+template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, asio::error_code& ec,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 #endif // !defined(ASIO_NO_DEPRECATED)
@@ -214,8 +216,8 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  * tcp::socket s(io_context);
  * asio::connect(s, e.begin(), e.end()); @endcode
  */
-template <typename Protocol, typename SocketService, typename Iterator>
-Iterator connect(basic_socket<Protocol, SocketService>& s,
+template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -251,8 +253,8 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  *   // An error occurred.
  * } @endcode
  */
-template <typename Protocol, typename SocketService, typename Iterator>
-Iterator connect(basic_socket<Protocol, SocketService>& s,
+template <typename Protocol ASIO_SVC_TPARAM, typename Iterator>
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end, asio::error_code& ec);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -306,9 +308,10 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  *     r.resolve(q), my_connect_condition());
  * std::cout << "Connected to: " << e << std::endl; @endcode
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename EndpointSequence, typename ConnectCondition>
-typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
+typename Protocol::endpoint connect(
+    basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type* = 0);
@@ -373,9 +376,10 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
  *   std::cout << "Connected to: " << e << std::endl;
  * } @endcode
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename EndpointSequence, typename ConnectCondition>
-typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
+typename Protocol::endpoint connect(
+    basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     asio::error_code& ec,
     typename enable_if<is_endpoint_sequence<
@@ -417,9 +421,9 @@ typename Protocol::endpoint connect(basic_socket<Protocol, SocketService>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol, SocketService>& s,
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, ConnectCondition connect_condition,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 
@@ -458,9 +462,9 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
     ConnectCondition connect_condition, asio::error_code& ec,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 #endif // !defined(ASIO_NO_DEPRECATED)
@@ -519,9 +523,9 @@ Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  *     s, e.begin(), e.end(), my_connect_condition());
  * std::cout << "Connected to: " << i->endpoint() << std::endl; @endcode
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
     Iterator end, ConnectCondition connect_condition);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -587,9 +591,9 @@ Iterator connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  *   std::cout << "Connected to: " << i->endpoint() << std::endl;
  * } @endcode
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename Iterator, typename ConnectCondition>
-Iterator connect(basic_socket<Protocol, SocketService>& s,
+Iterator connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     asio::error_code& ec);
 
@@ -664,11 +668,11 @@ Iterator connect(basic_socket<Protocol, SocketService>& s,
  *   // ...
  * } @endcode
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename EndpointSequence, typename RangeConnectHandler>
 ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
-async_connect(basic_socket<Protocol, SocketService>& s,
+async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints,
     ASIO_MOVE_ARG(RangeConnectHandler) handler,
     typename enable_if<is_endpoint_sequence<
@@ -710,11 +714,11 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename Iterator, typename IteratorConnectHandler>
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol, SocketService>& s,
+async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
 #endif // !defined(ASIO_NO_DEPRECATED)
@@ -768,11 +772,11 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  *   // ...
  * } @endcode
  */
-template <typename Protocol, typename SocketService,
+template <typename Protocol ASIO_SVC_TPARAM,
     typename Iterator, typename IteratorConnectHandler>
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol, SocketService>& s,
+async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler);
 
@@ -871,11 +875,11 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  *   }
  * } @endcode
  */
-template <typename Protocol, typename SocketService, typename EndpointSequence,
+template <typename Protocol ASIO_SVC_TPARAM, typename EndpointSequence,
     typename ConnectCondition, typename RangeConnectHandler>
 ASIO_INITFN_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
-async_connect(basic_socket<Protocol, SocketService>& s,
+async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(RangeConnectHandler) handler,
     typename enable_if<is_endpoint_sequence<
@@ -928,11 +932,11 @@ async_connect(basic_socket<Protocol, SocketService>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename SocketService, typename Iterator,
+template <typename Protocol ASIO_SVC_TPARAM, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
+async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s, Iterator begin,
     ConnectCondition connect_condition,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
@@ -1036,11 +1040,11 @@ async_connect(basic_socket<Protocol, SocketService>& s, Iterator begin,
  *   }
  * } @endcode
  */
-template <typename Protocol, typename SocketService, typename Iterator,
+template <typename Protocol ASIO_SVC_TPARAM, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler>
 ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
-async_connect(basic_socket<Protocol, SocketService>& s,
+async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     Iterator begin, Iterator end, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler);
 

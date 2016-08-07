@@ -32,7 +32,9 @@ namespace asio {
 namespace detail {
 
 template <typename Protocol>
-class resolver_service : public resolver_service_base
+class resolver_service :
+  public service_base<resolver_service<Protocol> >,
+  public resolver_service_base
 {
 public:
   // The implementation type of the resolver. A cancellation token is used to
@@ -50,8 +52,21 @@ public:
 
   // Constructor.
   resolver_service(asio::io_context& io_context)
-    : resolver_service_base(io_context)
+    : service_base<resolver_service<Protocol> >(io_context),
+      resolver_service_base(io_context)
   {
+  }
+
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown()
+  {
+    this->base_shutdown();
+  }
+
+  // Perform any fork-related housekeeping.
+  void notify_fork(asio::io_context::fork_event fork_ev)
+  {
+    this->base_notify_fork(fork_ev);
   }
 
   // Resolve a query to a list of entries.

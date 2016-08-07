@@ -1,6 +1,6 @@
 //
-// posix/basic_descriptor.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+// posix/descriptor.hpp
+// ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_POSIX_BASIC_DESCRIPTOR_HPP
-#define ASIO_POSIX_BASIC_DESCRIPTOR_HPP
+#ifndef ASIO_POSIX_DESCRIPTOR_HPP
+#define ASIO_POSIX_DESCRIPTOR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,15 +17,25 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
+#if !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
 
+#include "asio/async_result.hpp"
 #include "asio/basic_io_object.hpp"
+#include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/reactive_descriptor_service.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
+#include "asio/io_context.hpp"
 #include "asio/posix/descriptor_base.hpp"
+
+#if defined(ASIO_HAS_MOVE)
+# include <utility>
+#endif // defined(ASIO_HAS_MOVE)
+
+#define ASIO_SVC_T asio::detail::reactive_descriptor_service
 
 #include "asio/detail/push_options.hpp"
 
@@ -34,26 +44,32 @@ namespace posix {
 
 /// Provides POSIX descriptor functionality.
 /**
- * The posix::basic_descriptor class template provides the ability to wrap a
+ * The posix::descriptor class template provides the ability to wrap a
  * POSIX descriptor.
  *
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename DescriptorService>
-class basic_descriptor
-  : public basic_io_object<DescriptorService>,
+class descriptor
+  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
     public descriptor_base
 {
 public:
+  /// The type of the executor associated with the object.
+  typedef io_context::executor_type executor_type;
+
   /// The native representation of a descriptor.
-  typedef typename DescriptorService::native_handle_type native_handle_type;
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined native_handle_type;
+#else
+  typedef ASIO_SVC_T::native_handle_type native_handle_type;
+#endif
 
-  /// A basic_descriptor is always the lowest layer.
-  typedef basic_descriptor<DescriptorService> lowest_layer_type;
+  /// A descriptor is always the lowest layer.
+  typedef descriptor lowest_layer_type;
 
-  /// Construct a basic_descriptor without opening it.
+  /// Construct a descriptor without opening it.
   /**
    * This constructor creates a descriptor without opening it.
    *
@@ -61,12 +77,12 @@ public:
    * dispatch handlers for any asynchronous operations performed on the
    * descriptor.
    */
-  explicit basic_descriptor(asio::io_context& io_context)
-    : basic_io_object<DescriptorService>(io_context)
+  explicit descriptor(asio::io_context& io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
   }
 
-  /// Construct a basic_descriptor on an existing native descriptor.
+  /// Construct a descriptor on an existing native descriptor.
   /**
    * This constructor creates a descriptor object to hold an existing native
    * descriptor.
@@ -79,9 +95,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  basic_descriptor(asio::io_context& io_context,
+  descriptor(asio::io_context& io_context,
       const native_handle_type& native_descriptor)
-    : basic_io_object<DescriptorService>(io_context)
+    : basic_io_object<ASIO_SVC_T>(io_context)
   {
     asio::error_code ec;
     this->get_service().assign(this->get_implementation(),
@@ -90,44 +106,78 @@ public:
   }
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Move-construct a basic_descriptor from another.
+  /// Move-construct a descriptor from another.
   /**
    * This constructor moves a descriptor from one object to another.
    *
-   * @param other The other basic_descriptor object from which the move will
+   * @param other The other descriptor object from which the move will
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_descriptor(io_context&) constructor.
+   * constructed using the @c descriptor(io_context&) constructor.
    */
-  basic_descriptor(basic_descriptor&& other)
-    : basic_io_object<DescriptorService>(
-        ASIO_MOVE_CAST(basic_descriptor)(other))
+  descriptor(descriptor&& other)
+    : basic_io_object<ASIO_SVC_T>(std::move(other))
   {
   }
 
-  /// Move-assign a basic_descriptor from another.
+  /// Move-assign a descriptor from another.
   /**
    * This assignment operator moves a descriptor from one object to another.
    *
-   * @param other The other basic_descriptor object from which the move will
+   * @param other The other descriptor object from which the move will
    * occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c basic_descriptor(io_context&) constructor.
+   * constructed using the @c descriptor(io_context&) constructor.
    */
-  basic_descriptor& operator=(basic_descriptor&& other)
+  descriptor& operator=(descriptor&& other)
   {
-    basic_io_object<DescriptorService>::operator=(
-        ASIO_MOVE_CAST(basic_descriptor)(other));
+    basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_context()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_context();
+  }
+
+  /// (Deprecated: Use get_executor().) Get the io_context associated with the
+  /// object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& get_io_service()
+  {
+    return basic_io_object<ASIO_SVC_T>::get_io_service();
+  }
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  /// Get the executor associated with the object.
+  executor_type get_executor() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::get_executor();
+  }
+
   /// Get a reference to the lowest layer.
   /**
    * This function returns a reference to the lowest layer in a stack of
-   * layers. Since a basic_descriptor cannot contain any further layers, it
+   * layers. Since a descriptor cannot contain any further layers, it
    * simply returns a reference to itself.
    *
    * @return A reference to the lowest layer in the stack of layers. Ownership
@@ -141,7 +191,7 @@ public:
   /// Get a const reference to the lowest layer.
   /**
    * This function returns a const reference to the lowest layer in a stack of
-   * layers. Since a basic_descriptor cannot contain any further layers, it
+   * layers. Since a descriptor cannot contain any further layers, it
    * simply returns a reference to itself.
    *
    * @return A const reference to the lowest layer in the stack of layers.
@@ -553,13 +603,23 @@ public:
     // not meet the documented type requirements for a WaitHandler.
     ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
-    return this->get_service().async_wait(this->get_implementation(),
-        w, ASIO_MOVE_CAST(WaitHandler)(handler));
+    async_completion<WaitHandler,
+      void (asio::error_code)> init(handler);
+
+    this->get_service().async_wait(
+        this->get_implementation(), w, init.handler);
+
+    return init.result.get();
   }
 
 protected:
   /// Protected destructor to prevent deletion through this type.
-  ~basic_descriptor()
+  /**
+   * This function destroys the descriptor, cancelling any outstanding
+   * asynchronous wait operations associated with the descriptor as if by
+   * calling @c cancel.
+   */
+  ~descriptor()
   {
   }
 };
@@ -569,9 +629,11 @@ protected:
 
 #include "asio/detail/pop_options.hpp"
 
+#undef ASIO_SVC_T
+
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
        //   || defined(GENERATING_DOCUMENTATION)
 
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
+#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
-#endif // ASIO_POSIX_BASIC_DESCRIPTOR_HPP
+#endif // ASIO_POSIX_DESCRIPTOR_HPP

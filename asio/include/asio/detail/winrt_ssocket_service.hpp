@@ -33,6 +33,7 @@ namespace detail {
 
 template <typename Protocol>
 class winrt_ssocket_service :
+  public service_base<winrt_ssocket_service<Protocol> >,
   public winrt_ssocket_service_base
 {
 public:
@@ -61,8 +62,15 @@ public:
 
   // Constructor.
   winrt_ssocket_service(asio::io_context& io_context)
-    : winrt_ssocket_service_base(io_context)
+    : service_base<winrt_ssocket_service<Protocol> >(io_context),
+      winrt_ssocket_service_base(io_context)
   {
+  }
+
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown()
+  {
+    this->base_shutdown();
   }
 
   // Move-construct a new socket implementation.

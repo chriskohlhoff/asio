@@ -18,6 +18,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -675,5 +677,7 @@ public:
 
 #endif // defined(ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)
+
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // ASIO_BASIC_SERIAL_PORT_HPP
