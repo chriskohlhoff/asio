@@ -19,7 +19,6 @@
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
-#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -141,10 +140,6 @@ private:
     detail::thread_group threads_;
   };
 };
-
-#if !defined(GENERATING_DOCUMENTATION)
-template <> struct is_executor<system_executor> : true_type {};
-#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

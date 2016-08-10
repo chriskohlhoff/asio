@@ -96,10 +96,6 @@ public:
 
 execution_context::id thread_executor::thread_bag::id;
 
-namespace asio {
-  template <> struct is_executor<thread_executor> : std::true_type {};
-}
-
 // Base class for all thread-safe queue implementations.
 class queue_impl_base
 {

@@ -24,7 +24,6 @@
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
-#include "asio/is_executor.hpp"
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/winsock_init.hpp"
@@ -610,11 +609,6 @@ private:
   // The underlying io_context.
   io_context& io_context_;
 };
-
-#if !defined(GENERATING_DOCUMENTATION)
-template <> struct is_executor<io_context::executor_type> : true_type {};
-#endif // !defined(GENERATING_DOCUMENTATION)
-
 
 /// (Deprecated: Use executor_work_guard.) Class to inform the io_context when
 /// it has work to do.

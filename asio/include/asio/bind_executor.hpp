@@ -21,6 +21,7 @@
 #include "asio/associated_allocator.hpp"
 #include "asio/async_result.hpp"
 #include "asio/handler_type.hpp"
+#include "asio/is_executor.hpp"
 #include "asio/uses_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -166,27 +167,27 @@ class executor_binder_base<T, Executor, true>
 protected:
   template <typename E, typename U>
   executor_binder_base(ASIO_MOVE_ARG(E) e, ASIO_MOVE_ARG(U) u)
-    : Executor(ASIO_MOVE_CAST(E)(e)),
-      target_(executor_arg_t(), static_cast<const Executor&>(*this),
-          ASIO_MOVE_CAST(U)(u))
+    : executor_(ASIO_MOVE_CAST(E)(e)),
+      target_(executor_arg_t(), executor_, ASIO_MOVE_CAST(U)(u))
   {
   }
 
+  Executor executor_;
   T target_;
 };
 
 template <typename T, typename Executor>
 class executor_binder_base<T, Executor, false>
-  : protected Executor
 {
 protected:
   template <typename E, typename U>
   executor_binder_base(ASIO_MOVE_ARG(E) e, ASIO_MOVE_ARG(U) u)
-    : Executor(ASIO_MOVE_CAST(E)(e)),
+    : executor_(ASIO_MOVE_CAST(E)(e)),
       target_(ASIO_MOVE_CAST(U)(u))
   {
   }
 
+  Executor executor_;
   T target_;
 };
 
@@ -393,7 +394,7 @@ public:
   /// Obtain the associated executor.
   executor_type get_executor() const ASIO_NOEXCEPT
   {
-    return static_cast<const Executor&>(*this);
+    return this->executor_;
   }
 
 #if defined(GENERATING_DOCUMENTATION)

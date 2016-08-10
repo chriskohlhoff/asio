@@ -18,7 +18,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/strand_executor_service.hpp"
 #include "asio/detail/type_traits.hpp"
-#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -271,11 +270,6 @@ private:
     implementation_type;
   implementation_type impl_;
 };
-
-#if !defined(GENERATING_DOCUMENTATION)
-template <typename Executor>
-struct is_executor<strand<Executor> > : true_type {};
-#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

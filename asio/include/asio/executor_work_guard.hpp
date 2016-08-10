@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 

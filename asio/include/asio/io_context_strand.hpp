@@ -370,11 +370,6 @@ private:
   asio::detail::strand_service::implementation_type impl_;
 };
 
-#if !defined(GENERATING_DOCUMENTATION)
-template <>
-struct is_executor<io_context::strand> : true_type {};
-#endif // !defined(GENERATING_DOCUMENTATION)
-
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -145,10 +145,6 @@ private:
   bool stopped_ = false;
 };
 
-namespace asio {
-  template <> struct is_executor<priority_scheduler::executor_type> : std::true_type {};
-}
-
 int main()
 {
   priority_scheduler sched;
