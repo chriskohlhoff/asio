@@ -101,7 +101,11 @@ template <typename Protocol
 class basic_socket_streambuf
   : public std::streambuf,
     private detail::socket_streambuf_base,
+#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
+    private basic_socket<Protocol ASIO_SVC_TARG>
+#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
     public basic_socket<Protocol ASIO_SVC_TARG>
+#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
 {
 private:
   // These typedefs are intended keep this class's implementation independent
@@ -229,7 +233,25 @@ public:
     return !ec_ ? this : 0;
   }
 
+  /// Get a reference to the underlying socket.
+  basic_socket<Protocol ASIO_SVC_TARG>& socket()
+  {
+    return *this;
+  }
+
   /// Get the last error associated with the stream buffer.
+  /**
+   * @return An \c error_code corresponding to the last error from the stream
+   * buffer.
+   */
+  const asio::error_code& error() const
+  {
+    return ec_;
+  }
+
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use error().) Get the last error associated with the stream
+  /// buffer.
   /**
    * @return An \c error_code corresponding to the last error from the stream
    * buffer.
@@ -239,7 +261,6 @@ public:
     return error();
   }
 
-#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use expiry().) Get the stream buffer's expiry time as an
   /// absolute time.
   /**
@@ -467,16 +488,6 @@ protected:
     }
 
     return 0;
-  }
-
-  /// Get the last error associated with the stream buffer.
-  /**
-   * @return An \c error_code corresponding to the last error from the stream
-   * buffer.
-   */
-  virtual const asio::error_code& error() const
-  {
-    return ec_;
   }
 
 private:

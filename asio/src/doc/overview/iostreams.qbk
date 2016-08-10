@@ -28,7 +28,7 @@ simple servers. For example:
   for (;;)
   {
     ip::tcp::iostream stream;
-    acceptor.accept(*stream.rdbuf());
+    acceptor.accept(stream.socket());
     ...
   }
 

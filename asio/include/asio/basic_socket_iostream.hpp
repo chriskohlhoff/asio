@@ -218,6 +218,12 @@ public:
           TimeTraits ASIO_SVC_TARG1>::streambuf_);
   }
 
+  /// Get a reference to the underlying socket.
+  basic_socket<Protocol ASIO_SVC_TARG>& socket()
+  {
+    return rdbuf()->socket();
+  }
+
   /// Get the last error associated with the stream.
   /**
    * @return An \c error_code corresponding to the last error from the stream.
@@ -232,7 +238,7 @@ public:
    */
   const asio::error_code& error() const
   {
-    return rdbuf()->puberror();
+    return rdbuf()->error();
   }
 
 #if !defined(ASIO_NO_DEPRECATED)

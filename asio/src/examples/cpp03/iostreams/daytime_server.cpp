@@ -35,7 +35,7 @@ int main()
     {
       tcp::iostream stream;
       asio::error_code ec;
-      acceptor.accept(*stream.rdbuf(), ec);
+      acceptor.accept(stream.socket(), ec);
       if (!ec)
       {
         stream << make_daytime_string();
