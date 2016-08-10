@@ -80,6 +80,18 @@ public:
   {
   }
 
+  // Move-construct a new resolver implementation.
+  void move_construct(implementation_type&,
+      implementation_type&)
+  {
+  }
+
+  // Move-assign from another resolver implementation.
+  void move_assign(implementation_type&,
+      winrt_resolver_service&, implementation_type&)
+  {
+  }
+
   // Destroy a resolver implementation.
   void destroy(implementation_type&)
   {

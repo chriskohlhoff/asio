@@ -98,6 +98,19 @@ void resolver_service_base::destroy(
   impl.reset();
 }
 
+void resolver_service_base::move_construct(implementation_type& impl,
+    implementation_type& other_impl)
+{
+  impl = ASIO_MOVE_CAST(implementation_type)(other_impl);
+}
+
+void resolver_service_base::move_assign(implementation_type& impl,
+    resolver_service_base&, implementation_type& other_impl)
+{
+  destroy(impl);
+  impl = ASIO_MOVE_CAST(implementation_type)(other_impl);
+}
+
 void resolver_service_base::cancel(
     resolver_service_base::implementation_type& impl)
 {

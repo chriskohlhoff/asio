@@ -28,6 +28,10 @@
 #include "asio/ip/basic_resolver_results.hpp"
 #include "asio/ip/resolver_base.hpp"
 
+#if defined(ASIO_HAS_MOVE)
+# include <utility>
+#endif // defined(ASIO_HAS_MOVE)
+
 #if defined(ASIO_ENABLE_OLD_SERVICES)
 # include "asio/ip/resolver_service.hpp"
 #else // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -88,12 +92,48 @@ public:
    * This constructor creates a basic_resolver.
    *
    * @param io_context The io_context object that the resolver will use to
-   * dispatch handlers for any asynchronous operations performed on the timer.
+   * dispatch handlers for any asynchronous operations performed on the
+   * resolver.
    */
   explicit basic_resolver(asio::io_context& io_context)
     : basic_io_object<ASIO_SVC_T>(io_context)
   {
   }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move-construct a basic_resolver from another.
+  /**
+   * This constructor moves a resolver from one object to another.
+   *
+   * @param other The other basic_resolver object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_resolver(io_context&) constructor.
+   */
+  basic_resolver(basic_resolver&& other)
+    : basic_io_object<ASIO_SVC_T>(std::move(other))
+  {
+  }
+
+  /// Move-assign a basic_resolver from another.
+  /**
+   * This assignment operator moves a resolver from one object to another.
+   * Cancels any outstanding asynchronous operations associated with the target
+   * object.
+   *
+   * @param other The other basic_resolver object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_resolver(io_context&) constructor.
+   */
+  basic_resolver& operator=(basic_resolver&& other)
+  {
+    basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
+    return *this;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destroys the resolver.
   /**

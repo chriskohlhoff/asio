@@ -985,6 +985,17 @@ void test()
 
     ip::tcp::resolver resolver(ioc);
 
+#if defined(ASIO_HAS_MOVE)
+    ip::tcp::resolver resolver2(std::move(resolver));
+#endif // defined(ASIO_HAS_MOVE)
+
+    // basic_resolver operators.
+
+#if defined(ASIO_HAS_MOVE)
+    resolver = ip::tcp::resolver(ioc);
+    resolver = std::move(resolver2);
+#endif // defined(ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     io_context& ioc_ref = resolver.get_io_context();
