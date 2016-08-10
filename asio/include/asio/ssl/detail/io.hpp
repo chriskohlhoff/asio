@@ -49,6 +49,10 @@ ASIO_SSL_CREATE_MEMBER_DETECTOR(read_some)
 ASIO_SSL_CREATE_MEMBER_DETECTOR(receive)
 ASIO_SSL_CREATE_MEMBER_DETECTOR(write_some)
 ASIO_SSL_CREATE_MEMBER_DETECTOR(send)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_read_some)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_receive)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_write_some)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_send)
 
 template <class Readable>
 class io_helper
@@ -77,6 +81,30 @@ public:
   static size_t write(U &stream, const Buffer &buffer, asio::error_code &ec, typename std::enable_if< detect_send<U>::value, bool>::type = 0)
   {
     return stream.send(buffer, 0, ec);
+  }
+
+  template <typename U, typename Buffer, typename ReadHandler>
+  static void async_read_some(U &stream, const Buffer &buffer, ReadHandler &rh,  typename std::enable_if< detect_async_read_some<U>::value, bool>::type = 0)
+  {
+    stream.async_read_some(buffer, rh);
+  }
+
+  template <typename U, typename Buffer, typename ReadHandler>
+  static void async_read_some(U &stream, const Buffer &buffer, ReadHandler rh, typename std::enable_if< detect_async_receive<U>::value, bool>::type = 0)
+  {
+    stream.async_receive(buffer, rh);
+  }
+
+  template <typename U, typename Buffer, typename WriteHandler>
+  static void async_write(U &stream, const Buffer &buffer, const WriteHandler &wh, typename std::enable_if< detect_async_write_some<U>::value, bool>::type = 0)
+  {
+    asio::async_write(stream, buffer, wh);
+  }
+
+  template <typename U, typename Buffer, typename WriteHandler>
+  static void async_write(U &stream, const Buffer &buffer, const WriteHandler &wh, typename std::enable_if< detect_async_send<U>::value, bool>::type = 0)
+  {
+    stream.async_send(buffer, 0, wh);
   }
 };
 
@@ -208,7 +236,7 @@ public:
             core_.pending_read_.expires_at(core_.pos_infin());
 
             // Start reading some data from the underlying transport.
-            next_layer_.async_read_some(
+            io_helper<Stream>::async_read_some(next_layer_,
                 asio::buffer(core_.input_buffer_),
                 ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -235,7 +263,7 @@ public:
             core_.pending_write_.expires_at(core_.pos_infin());
 
             // Start writing all the data to the underlying transport.
-            asio::async_write(next_layer_,
+            io_helper<Stream>::async_write(next_layer_,
                 core_.engine_.get_output(core_.output_buffer_),
                 ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -258,7 +286,8 @@ public:
           // read so the handler runs "as-if" posted using io_context::post().
           if (start)
           {
-            next_layer_.async_read_some(
+            io_helper<Stream>::async_read_some(
+                next_layer_,
                 asio::buffer(core_.input_buffer_, 0),
                 ASIO_MOVE_CAST(io_op)(*this));
 
