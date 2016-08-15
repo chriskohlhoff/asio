@@ -190,7 +190,7 @@ public:
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    service_impl_.async_write_some(impl, buffers, init.handler);
+    service_impl_.async_write_some(impl, buffers, init.completion_handler);
 
     return init.result.get();
   }
@@ -214,7 +214,7 @@ public:
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    service_impl_.async_read_some(impl, buffers, init.handler);
+    service_impl_.async_read_some(impl, buffers, init.completion_handler);
 
     return init.result.get();
   }

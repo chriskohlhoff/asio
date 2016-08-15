@@ -20,7 +20,6 @@
 #include "asio/detail/variadic_templates.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/async_result.hpp"
-#include "asio/handler_type.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/uses_executor.hpp"
 
@@ -520,6 +519,35 @@ struct uses_executor<executor_binder<T, Executor>, Executor>
   : true_type {};
 
 template <typename T, typename Executor, typename Signature>
+class async_result<executor_binder<T, Executor>, Signature>
+{
+public:
+  typedef executor_binder<
+    typename async_result<T, Signature>::completion_handler_type, Executor>
+      completion_handler_type;
+
+  typedef typename async_result<T, Signature>::return_type return_type;
+
+  explicit async_result(executor_binder<T, Executor>& b)
+    : target_(b.get())
+  {
+  }
+
+  return_type get()
+  {
+    return target_.get();
+  }
+
+private:
+  async_result(const async_result&) ASIO_DELETED;
+  async_result& operator=(const async_result&) ASIO_DELETED;
+
+  async_result<T, Signature> target_;
+};
+
+#if !defined(ASIO_NO_DEPRECATED)
+
+template <typename T, typename Executor, typename Signature>
 struct handler_type<executor_binder<T, Executor>, Signature>
 {
   typedef executor_binder<
@@ -545,6 +573,8 @@ public:
 private:
   async_result<T> target_;
 };
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename T, typename Executor, typename Allocator>
 struct associated_allocator<executor_binder<T, Executor>, Allocator>

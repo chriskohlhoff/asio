@@ -659,8 +659,8 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
     detail::default_connect_condition,
       ASIO_HANDLER_TYPE(RangeConnectHandler,
         void (asio::error_code, typename Protocol::endpoint))>(s,
-          endpoints, detail::default_connect_condition(), init.handler)(
-            asio::error_code(), 1);
+          endpoints, detail::default_connect_condition(),
+            init.completion_handler)(asio::error_code(), 1);
 
   return init.result.get();
 }
@@ -685,8 +685,8 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
   detail::iterator_connect_op<Protocol ASIO_SVC_TARG, Iterator,
     detail::default_connect_condition, ASIO_HANDLER_TYPE(
       IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, Iterator(), detail::default_connect_condition(), init.handler)(
-          asio::error_code(), 1);
+        begin, Iterator(), detail::default_connect_condition(),
+          init.completion_handler)(asio::error_code(), 1);
 
   return init.result.get();
 }
@@ -711,8 +711,8 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
   detail::iterator_connect_op<Protocol ASIO_SVC_TARG, Iterator,
     detail::default_connect_condition, ASIO_HANDLER_TYPE(
       IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, end, detail::default_connect_condition(), init.handler)(
-          asio::error_code(), 1);
+        begin, end, detail::default_connect_condition(),
+          init.completion_handler)(asio::error_code(), 1);
 
   return init.result.get();
 }
@@ -739,7 +739,7 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
   detail::range_connect_op<Protocol ASIO_SVC_TARG, EndpointSequence,
     ConnectCondition, ASIO_HANDLER_TYPE(RangeConnectHandler,
       void (asio::error_code, typename Protocol::endpoint))>(s,
-        endpoints, connect_condition, init.handler)(
+        endpoints, connect_condition, init.completion_handler)(
           asio::error_code(), 1);
 
   return init.result.get();
@@ -766,7 +766,7 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
   detail::iterator_connect_op<Protocol ASIO_SVC_TARG, Iterator,
     ConnectCondition, ASIO_HANDLER_TYPE(
       IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, Iterator(), connect_condition, init.handler)(
+        begin, Iterator(), connect_condition, init.completion_handler)(
           asio::error_code(), 1);
 
   return init.result.get();
@@ -792,7 +792,7 @@ async_connect(basic_socket<Protocol ASIO_SVC_TARG>& s,
   detail::iterator_connect_op<Protocol ASIO_SVC_TARG, Iterator,
     ConnectCondition, ASIO_HANDLER_TYPE(
       IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, end, connect_condition, init.handler)(
+        begin, end, connect_condition, init.completion_handler)(
           asio::error_code(), 1);
 
   return init.result.get();

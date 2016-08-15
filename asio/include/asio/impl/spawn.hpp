@@ -26,7 +26,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"

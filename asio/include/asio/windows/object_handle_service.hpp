@@ -151,7 +151,7 @@ public:
     asio::async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    service_impl_.async_wait(impl, init.handler);
+    service_impl_.async_wait(impl, init.completion_handler);
 
     return init.result.get();
   }

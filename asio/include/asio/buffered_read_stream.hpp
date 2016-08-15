@@ -163,7 +163,8 @@ public:
 
     next_layer_.async_write_some(buffers,
         ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(WriteHandler,
-            void (asio::error_code, std::size_t)))(init.handler));
+            void (asio::error_code, std::size_t)))(
+              init.completion_handler));
 
     return init.result.get();
   }

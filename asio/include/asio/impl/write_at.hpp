@@ -686,7 +686,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   detail::write_at_op<AsyncRandomAccessWriteDevice, ConstBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(
       WriteHandler, void (asio::error_code, std::size_t))>(
-        d, offset, buffers, completion_condition, init.handler)(
+        d, offset, buffers, completion_condition, init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -710,7 +710,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   detail::write_at_op<AsyncRandomAccessWriteDevice, ConstBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(
       WriteHandler, void (asio::error_code, std::size_t))>(
-        d, offset, buffers, transfer_all(), init.handler)(
+        d, offset, buffers, transfer_all(), init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -860,7 +860,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   async_write_at(d, offset, b.data(), completion_condition,
     detail::write_at_streambuf_op<Allocator, ASIO_HANDLER_TYPE(
       WriteHandler, void (asio::error_code, std::size_t))>(
-        b, init.handler));
+        b, init.completion_handler));
 
   return init.result.get();
 }
@@ -883,7 +883,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
   async_write_at(d, offset, b.data(), transfer_all(),
     detail::write_at_streambuf_op<Allocator, ASIO_HANDLER_TYPE(
       WriteHandler, void (asio::error_code, std::size_t))>(
-        b, init.handler));
+        b, init.completion_handler));
 
   return init.result.get();
 }

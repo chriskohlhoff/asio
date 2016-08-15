@@ -172,7 +172,7 @@ buffered_write_stream<Stream>::async_flush(
   async_write(next_layer_, buffer(storage_.data(), storage_.size()),
       detail::buffered_flush_handler<ASIO_HANDLER_TYPE(
         WriteHandler, void (asio::error_code, std::size_t))>(
-        storage_, init.handler));
+        storage_, init.completion_handler));
 
   return init.result.get();
 }
@@ -372,14 +372,14 @@ buffered_write_stream<Stream>::async_write_some(
         detail::buffered_write_some_handler<
           ConstBufferSequence, ASIO_HANDLER_TYPE(
             WriteHandler, void (asio::error_code, std::size_t))>(
-            storage_, buffers, init.handler));
+            storage_, buffers, init.completion_handler));
   }
   else
   {
     this->async_flush(detail::buffered_write_some_handler<
           ConstBufferSequence, ASIO_HANDLER_TYPE(
             WriteHandler, void (asio::error_code, std::size_t))>(
-            storage_, buffers, init.handler));
+            storage_, buffers, init.completion_handler));
   }
 
   return init.result.get();

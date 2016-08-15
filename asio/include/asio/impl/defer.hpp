@@ -28,18 +28,19 @@ template <typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
     ASIO_MOVE_ARG(CompletionToken) token)
 {
-  typedef typename handler_type<CompletionToken, void()>::type handler;
-  async_completion<CompletionToken, void()> completion(token);
+  typedef ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
+
+  async_completion<CompletionToken, void()> init(token);
 
   typename associated_executor<handler>::type ex(
-      (get_associated_executor)(completion.handler));
+      (get_associated_executor)(init.completion_handler));
 
   typename associated_allocator<handler>::type alloc(
-      (get_associated_allocator)(completion.handler));
+      (get_associated_allocator)(init.completion_handler));
 
-  ex.defer(ASIO_MOVE_CAST(handler)(completion.handler), alloc);
+  ex.defer(ASIO_MOVE_CAST(handler)(init.completion_handler), alloc);
 
-  return completion.result.get();
+  return init.result.get();
 }
 
 template <typename Executor, typename CompletionToken>
@@ -47,17 +48,18 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
     const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_executor<Executor>::value>::type*)
 {
-  typedef typename handler_type<CompletionToken, void()>::type handler;
-  async_completion<CompletionToken, void()> completion(token);
+  typedef ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
+
+  async_completion<CompletionToken, void()> init(token);
 
   Executor ex1(ex);
 
   typename associated_allocator<handler>::type alloc(
-      (get_associated_allocator)(completion.handler));
+      (get_associated_allocator)(init.completion_handler));
 
-  ex1.defer(detail::work_dispatcher<handler>(completion.handler), alloc);
+  ex1.defer(detail::work_dispatcher<handler>(init.completion_handler), alloc);
 
-  return completion.result.get();
+  return init.result.get();
 }
 
 template <typename ExecutionContext, typename CompletionToken>

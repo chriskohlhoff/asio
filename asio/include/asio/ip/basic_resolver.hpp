@@ -633,7 +633,7 @@ public:
       void (asio::error_code, results_type)> init(handler);
 
     this->get_service().async_resolve(
-        this->get_implementation(), q, init.handler);
+        this->get_implementation(), q, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -760,7 +760,7 @@ public:
       void (asio::error_code, results_type)> init(handler);
 
     this->get_service().async_resolve(
-        this->get_implementation(), q, init.handler);
+        this->get_implementation(), q, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -893,7 +893,7 @@ public:
       void (asio::error_code, results_type)> init(handler);
 
     this->get_service().async_resolve(
-        this->get_implementation(), q, init.handler);
+        this->get_implementation(), q, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -984,7 +984,7 @@ public:
       void (asio::error_code, results_type)> init(handler);
 
     this->get_service().async_resolve(
-        this->get_implementation(), e, init.handler);
+        this->get_implementation(), e, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)

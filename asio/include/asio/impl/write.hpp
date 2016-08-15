@@ -705,7 +705,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(
       WriteHandler, void (asio::error_code, std::size_t))>(
-        s, buffers, completion_condition, init.handler)(
+        s, buffers, completion_condition, init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -731,7 +731,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
   detail::write_op<AsyncWriteStream, ConstBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(
       WriteHandler, void (asio::error_code, std::size_t))>(
-        s, buffers, transfer_all(), init.handler)(
+        s, buffers, transfer_all(), init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -930,7 +930,7 @@ async_write(AsyncWriteStream& s,
       CompletionCondition, ASIO_HANDLER_TYPE(
         WriteHandler, void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBufferSequence)(buffers),
-            completion_condition, init.handler)(
+            completion_condition, init.completion_handler)(
               asio::error_code(), 0, 1);
 
   return init.result.get();

@@ -217,7 +217,7 @@ public:
     async_completion<ConnectHandler,
       void (asio::error_code)> init(handler);
 
-    service_impl_.async_connect(impl, peer_endpoint, init.handler);
+    service_impl_.async_connect(impl, peer_endpoint, init.completion_handler);
 
     return init.result.get();
   }
@@ -312,7 +312,7 @@ public:
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    service_impl_.async_wait(impl, w, init.handler);
+    service_impl_.async_wait(impl, w, init.completion_handler);
 
     return init.result.get();
   }
@@ -338,7 +338,7 @@ public:
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    service_impl_.async_send(impl, buffers, flags, init.handler);
+    service_impl_.async_send(impl, buffers, flags, init.completion_handler);
 
     return init.result.get();
   }
@@ -364,7 +364,7 @@ public:
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    service_impl_.async_receive(impl, buffers, flags, init.handler);
+    service_impl_.async_receive(impl, buffers, flags, init.completion_handler);
 
     return init.result.get();
   }

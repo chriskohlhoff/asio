@@ -84,16 +84,17 @@ io_context::dispatch(ASIO_MOVE_ARG(CompletionHandler) handler)
   if (impl_.can_dispatch())
   {
     detail::fenced_block b(detail::fenced_block::full);
-    asio_handler_invoke_helpers::invoke(init.handler, init.handler);
+    asio_handler_invoke_helpers::invoke(
+        init.completion_handler, init.completion_handler);
   }
   else
   {
     // Allocate and construct an operation to wrap the handler.
     typedef detail::completion_handler<
       typename handler_type<CompletionHandler, void ()>::type> op;
-    typename op::ptr p = { detail::addressof(init.handler),
-      op::ptr::allocate(init.handler), 0 };
-    p.p = new (p.v) op(init.handler);
+    typename op::ptr p = { detail::addressof(init.completion_handler),
+      op::ptr::allocate(init.completion_handler), 0 };
+    p.p = new (p.v) op(init.completion_handler);
 
     ASIO_HANDLER_CREATION((*this, *p.p,
           "io_context", this, 0, "dispatch"));
@@ -116,14 +117,14 @@ io_context::post(ASIO_MOVE_ARG(CompletionHandler) handler)
   async_completion<CompletionHandler, void ()> init(handler);
 
   bool is_continuation =
-    asio_handler_cont_helpers::is_continuation(init.handler);
+    asio_handler_cont_helpers::is_continuation(init.completion_handler);
 
   // Allocate and construct an operation to wrap the handler.
   typedef detail::completion_handler<
     typename handler_type<CompletionHandler, void ()>::type> op;
-  typename op::ptr p = { detail::addressof(init.handler),
-      op::ptr::allocate(init.handler), 0 };
-  p.p = new (p.v) op(init.handler);
+  typename op::ptr p = { detail::addressof(init.completion_handler),
+      op::ptr::allocate(init.completion_handler), 0 };
+  p.p = new (p.v) op(init.completion_handler);
 
   ASIO_HANDLER_CREATION((*this, *p.p,
         "io_context", this, 0, "post"));

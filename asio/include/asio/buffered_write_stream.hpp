@@ -198,7 +198,8 @@ public:
 
     next_layer_.async_read_some(buffers,
         ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(ReadHandler,
-            void (asio::error_code, std::size_t)))(init.handler));
+            void (asio::error_code, std::size_t)))(
+              init.completion_handler));
 
     return init.result.get();
   }

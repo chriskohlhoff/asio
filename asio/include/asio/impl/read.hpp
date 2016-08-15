@@ -645,7 +645,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(
       ReadHandler, void (asio::error_code, std::size_t))>(
-        s, buffers, completion_condition, init.handler)(
+        s, buffers, completion_condition, init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -671,7 +671,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
   detail::read_op<AsyncReadStream, MutableBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(
       ReadHandler, void (asio::error_code, std::size_t))>(
-        s, buffers, transfer_all(), init.handler)(
+        s, buffers, transfer_all(), init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -897,7 +897,7 @@ async_read(AsyncReadStream& s,
       CompletionCondition, ASIO_HANDLER_TYPE(
         ReadHandler, void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBufferSequence)(buffers),
-            completion_condition, init.handler)(
+            completion_condition, init.completion_handler)(
               asio::error_code(), 0, 1);
 
   return init.result.get();

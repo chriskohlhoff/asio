@@ -218,7 +218,7 @@ public:
 
     async_completion<CompletionHandler, void ()> init(handler);
 
-    service_.dispatch(impl_, init.handler);
+    service_.dispatch(impl_, init.completion_handler);
 
     return init.result.get();
   }
@@ -272,7 +272,7 @@ public:
 
     async_completion<CompletionHandler, void ()> init(handler);
 
-    service_.post(impl_, init.handler);
+    service_.post(impl_, init.completion_handler);
 
     return init.result.get();
   }

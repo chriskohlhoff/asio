@@ -624,7 +624,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
     CompletionCondition, ASIO_HANDLER_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))>(
-        d, offset, buffers, completion_condition, init.handler)(
+        d, offset, buffers, completion_condition, init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -648,7 +648,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))>(
-        d, offset, buffers, transfer_all(), init.handler)(
+        d, offset, buffers, transfer_all(), init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -849,7 +849,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
     CompletionCondition, ASIO_HANDLER_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))>(
-        d, offset, b, completion_condition, init.handler)(
+        d, offset, b, completion_condition, init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();
@@ -873,7 +873,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
   detail::read_at_streambuf_op<AsyncRandomAccessReadDevice, Allocator,
     detail::transfer_all_t, ASIO_HANDLER_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))>(
-        d, offset, b, transfer_all(), init.handler)(
+        d, offset, b, transfer_all(), init.completion_handler)(
           asio::error_code(), 0, 1);
 
   return init.result.get();

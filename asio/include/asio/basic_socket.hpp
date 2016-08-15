@@ -812,7 +812,7 @@ public:
             asio::detail::bind_handler(
               ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
                 ConnectHandler, void (asio::error_code)))(
-                  init.handler), ec));
+                  init.completion_handler), ec));
 
         return init.result.get();
       }
@@ -826,7 +826,7 @@ public:
       void (asio::error_code)> init(handler);
 
     this->get_service().async_connect(
-        this->get_implementation(), peer_endpoint, init.handler);
+        this->get_implementation(), peer_endpoint, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1658,7 +1658,8 @@ public:
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    this->get_service().async_wait(this->get_implementation(), w, init.handler);
+    this->get_service().async_wait(this->get_implementation(),
+        w, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)

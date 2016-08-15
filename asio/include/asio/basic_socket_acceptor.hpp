@@ -1060,7 +1060,8 @@ public:
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    this->get_service().async_wait(this->get_implementation(), w, init.handler);
+    this->get_service().async_wait(this->get_implementation(),
+        w, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1207,7 +1208,7 @@ public:
       void (asio::error_code)> init(handler);
 
     this->get_service().async_accept(this->get_implementation(),
-        peer, static_cast<endpoint_type*>(0), init.handler);
+        peer, static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1344,7 +1345,7 @@ public:
       void (asio::error_code)> init(handler);
 
     this->get_service().async_accept(this->get_implementation(),
-        peer, &peer_endpoint, init.handler);
+        peer, &peer_endpoint, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1471,7 +1472,7 @@ public:
 
     this->get_service().async_accept(
         this->get_implementation(), static_cast<asio::io_context*>(0),
-        static_cast<endpoint_type*>(0), init.handler);
+        static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1607,7 +1608,7 @@ public:
         typename Protocol::socket)> init(handler);
 
     this->get_service().async_accept(this->get_implementation(),
-        &io_context, static_cast<endpoint_type*>(0), init.handler);
+        &io_context, static_cast<endpoint_type*>(0), init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1748,7 +1749,8 @@ public:
         typename Protocol::socket)> init(handler);
 
     this->get_service().async_accept(this->get_implementation(),
-        static_cast<asio::io_context*>(0), &peer_endpoint, init.handler);
+        static_cast<asio::io_context*>(0), &peer_endpoint,
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1902,7 +1904,7 @@ public:
         typename Protocol::socket)> init(handler);
 
     this->get_service().async_accept(this->get_implementation(),
-        &io_context, &peer_endpoint, init.handler);
+        &io_context, &peer_endpoint, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)

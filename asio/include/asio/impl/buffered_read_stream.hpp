@@ -191,7 +191,7 @@ buffered_read_stream<Stream>::async_fill(
         storage_.size() - previous_size),
       detail::buffered_fill_handler<ASIO_HANDLER_TYPE(
         ReadHandler, void (asio::error_code, std::size_t))>(
-        storage_, previous_size, init.handler));
+        storage_, previous_size, init.completion_handler));
 
   return init.result.get();
 }
@@ -385,14 +385,14 @@ buffered_read_stream<Stream>::async_read_some(
         detail::buffered_read_some_handler<
           MutableBufferSequence, ASIO_HANDLER_TYPE(
             ReadHandler, void (asio::error_code, std::size_t))>(
-            storage_, buffers, init.handler));
+            storage_, buffers, init.completion_handler));
   }
   else
   {
     this->async_fill(detail::buffered_read_some_handler<
           MutableBufferSequence, ASIO_HANDLER_TYPE(
             ReadHandler, void (asio::error_code, std::size_t))>(
-            storage_, buffers, init.handler));
+            storage_, buffers, init.completion_handler));
   }
 
   return init.result.get();

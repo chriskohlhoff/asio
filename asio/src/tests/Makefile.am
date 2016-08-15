@@ -366,6 +366,7 @@ EXTRA_DIST = \
 	latency/allocator.hpp \
 	performance/handler_allocator.hpp \
 	unit/archetypes/async_result.hpp \
+	unit/archetypes/deprecated_async_result.hpp \
 	unit/archetypes/gettable_socket_option.hpp \
 	unit/archetypes/io_control_command.hpp \
 	unit/archetypes/settable_socket_option.hpp

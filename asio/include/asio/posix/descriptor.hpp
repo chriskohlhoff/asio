@@ -607,7 +607,7 @@ public:
       void (asio::error_code)> init(handler);
 
     this->get_service().async_wait(
-        this->get_implementation(), w, init.handler);
+        this->get_implementation(), w, init.completion_handler);
 
     return init.result.get();
   }

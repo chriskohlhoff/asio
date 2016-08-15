@@ -146,7 +146,7 @@ public:
     asio::async_completion<ResolveHandler,
       void (asio::error_code, results_type)> init(handler);
 
-    service_impl_.async_resolve(impl, query, init.handler);
+    service_impl_.async_resolve(impl, query, init.completion_handler);
 
     return init.result.get();
   }
@@ -168,7 +168,7 @@ public:
     asio::async_completion<ResolveHandler,
       void (asio::error_code, results_type)> init(handler);
 
-    service_impl_.async_resolve(impl, endpoint, init.handler);
+    service_impl_.async_resolve(impl, endpoint, init.completion_handler);
 
     return init.result.get();
   }

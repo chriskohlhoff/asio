@@ -50,7 +50,7 @@
 #endif // !defined(ASIO_DISABLE_HANDLER_TYPE_REQUIREMENTS)
 
 #if defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
-# include "asio/handler_type.hpp"
+# include "asio/async_result.hpp"
 #endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 // Newer gcc, clang need special treatment to suppress unused typedef warnings.

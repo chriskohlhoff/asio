@@ -19,7 +19,6 @@
 #include <future>
 #include "asio/async_result.hpp"
 #include "asio/error_code.hpp"
-#include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"

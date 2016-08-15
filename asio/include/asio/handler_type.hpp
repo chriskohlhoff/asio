@@ -22,7 +22,8 @@
 
 namespace asio {
 
-/// Default handler type traits provided for all completion token types.
+/// (Deprecated: Use two-parameter version of async_result.) Default handler
+/// type traits provided for all completion token types.
 /**
  * The handler_type traits class is used for determining the concrete handler
  * type to be used for an asynchronous operation. It allows the handler type to
@@ -45,8 +46,5 @@ struct handler_type
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#define ASIO_HANDLER_TYPE(h, sig) \
-  typename handler_type<h, sig>::type
 
 #endif // ASIO_HANDLER_TYPE_HPP

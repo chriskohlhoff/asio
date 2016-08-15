@@ -346,7 +346,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_send(this->get_implementation(),
-        buffers, 0, init.handler);
+        buffers, 0, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -399,7 +399,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_send(this->get_implementation(),
-        buffers, flags, init.handler);
+        buffers, flags, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -549,7 +549,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_send_to(this->get_implementation(),
-        buffers, destination, 0, init.handler);
+        buffers, destination, 0, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -603,7 +603,7 @@ public:
 
     this->get_service().async_send_to(
         this->get_implementation(), buffers, destination, flags,
-        init.handler);
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -752,7 +752,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_receive(this->get_implementation(),
-        buffers, 0, init.handler);
+        buffers, 0, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -805,7 +805,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_receive(this->get_implementation(),
-        buffers, flags, init.handler);
+        buffers, flags, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -957,7 +957,7 @@ public:
 
     this->get_service().async_receive_from(
         this->get_implementation(), buffers, sender_endpoint, 0,
-        init.handler);
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -1013,7 +1013,7 @@ public:
 
     this->get_service().async_receive_from(
         this->get_implementation(), buffers, sender_endpoint, flags,
-        init.handler);
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)

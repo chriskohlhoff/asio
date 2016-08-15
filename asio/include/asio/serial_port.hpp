@@ -625,7 +625,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_write_some(
-        this->get_implementation(), buffers, init.handler);
+        this->get_implementation(), buffers, init.completion_handler);
 
     return init.result.get();
   }
@@ -743,7 +743,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_read_some(
-        this->get_implementation(), buffers, init.handler);
+        this->get_implementation(), buffers, init.completion_handler);
 
     return init.result.get();
   }

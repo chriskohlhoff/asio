@@ -107,7 +107,7 @@ public:
     async_completion<SignalHandler,
       void (asio::error_code, int)> init(handler);
 
-    service_impl_.async_wait(impl, init.handler);
+    service_impl_.async_wait(impl, init.completion_handler);
 
     return init.result.get();
   }

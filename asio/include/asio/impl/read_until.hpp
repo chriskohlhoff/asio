@@ -656,7 +656,7 @@ async_read_until(AsyncReadStream& s,
       ASIO_HANDLER_TYPE(ReadHandler,
         void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBufferSequence)(buffers),
-            delim, init.handler)(asio::error_code(), 0, 1);
+            delim, init.completion_handler)(asio::error_code(), 0, 1);
 
   return init.result.get();
 }
@@ -909,7 +909,7 @@ async_read_until(AsyncReadStream& s,
       ASIO_HANDLER_TYPE(ReadHandler,
         void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBufferSequence)(buffers),
-            delim, init.handler)(asio::error_code(), 0, 1);
+            delim, init.completion_handler)(asio::error_code(), 0, 1);
 
   return init.result.get();
 }
@@ -1168,7 +1168,7 @@ async_read_until(AsyncReadStream& s,
       boost::regex, ASIO_HANDLER_TYPE(ReadHandler,
         void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBufferSequence)(buffers),
-            expr, init.handler)(asio::error_code(), 0, 1);
+            expr, init.completion_handler)(asio::error_code(), 0, 1);
 
   return init.result.get();
 }
@@ -1425,7 +1425,8 @@ async_read_until(AsyncReadStream& s,
       MatchCondition, ASIO_HANDLER_TYPE(ReadHandler,
         void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBufferSequence)(buffers),
-            match_condition, init.handler)(asio::error_code(), 0, 1);
+            match_condition, init.completion_handler)(
+              asio::error_code(), 0, 1);
 
   return init.result.get();
 }

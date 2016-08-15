@@ -432,7 +432,8 @@ public:
     async_completion<SignalHandler,
       void (asio::error_code, int)> init(handler);
 
-    this->get_service().async_wait(this->get_implementation(), init.handler);
+    this->get_service().async_wait(this->get_implementation(),
+        init.completion_handler);
 
     return init.result.get();
   }

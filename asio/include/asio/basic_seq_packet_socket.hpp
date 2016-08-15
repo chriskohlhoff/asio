@@ -332,7 +332,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_send(this->get_implementation(),
-        buffers, flags, init.handler);
+        buffers, flags, init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -531,7 +531,7 @@ public:
 
     this->get_service().async_receive_with_flags(
         this->get_implementation(), buffers, 0, out_flags,
-        init.handler);
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
@@ -601,7 +601,7 @@ public:
 
     this->get_service().async_receive_with_flags(
         this->get_implementation(), buffers, in_flags, out_flags,
-        init.handler);
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)

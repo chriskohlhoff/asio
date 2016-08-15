@@ -21,7 +21,6 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
-#include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
 

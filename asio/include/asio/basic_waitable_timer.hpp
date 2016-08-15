@@ -670,7 +670,8 @@ public:
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    this->get_service().async_wait(this->get_implementation(), init.handler);
+    this->get_service().async_wait(this->get_implementation(),
+        init.completion_handler);
 
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)

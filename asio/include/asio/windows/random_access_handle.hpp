@@ -234,7 +234,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_write_some_at(this->get_implementation(),
-        offset, buffers, init.handler);
+        offset, buffers, init.completion_handler);
 
     return init.result.get();
   }
@@ -360,7 +360,7 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     this->get_service().async_read_some_at(this->get_implementation(),
-        offset, buffers, init.handler);
+        offset, buffers, init.completion_handler);
 
     return init.result.get();
   }

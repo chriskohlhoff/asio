@@ -264,7 +264,7 @@ public:
     async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    service_impl_.async_wait(impl, w, init.handler);
+    service_impl_.async_wait(impl, w, init.completion_handler);
 
     return init.result.get();
   }
@@ -302,7 +302,8 @@ public:
     async_completion<AcceptHandler,
       void (asio::error_code)> init(handler);
 
-    service_impl_.async_accept(impl, peer, peer_endpoint, init.handler);
+    service_impl_.async_accept(impl,
+        peer, peer_endpoint, init.completion_handler);
 
     return init.result.get();
   }
@@ -321,7 +322,7 @@ public:
         typename Protocol::socket)> init(handler);
 
     service_impl_.async_accept(impl,
-        peer_io_context, peer_endpoint, init.handler);
+        peer_io_context, peer_endpoint, init.completion_handler);
 
     return init.result.get();
   }

@@ -8,20 +8,24 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ARCHETYPES_ASYNC_RESULT_HPP
-#define ARCHETYPES_ASYNC_RESULT_HPP
+#ifndef ARCHETYPES_DEPRECATED_ASYNC_RESULT_HPP
+#define ARCHETYPES_DEPRECATED_ASYNC_RESULT_HPP
 
 #include <asio/async_result.hpp>
 
+#if !defined(ASIO_NO_DEPRECATED)
+
+#include <asio/handler_type.hpp>
+
 namespace archetypes {
 
-struct lazy_handler
+struct deprecated_lazy_handler
 {
 };
 
-struct concrete_handler
+struct deprecated_concrete_handler
 {
-  concrete_handler(lazy_handler)
+  deprecated_concrete_handler(deprecated_lazy_handler)
   {
   }
 
@@ -36,9 +40,9 @@ struct concrete_handler
   }
 
 #if defined(ASIO_HAS_MOVE)
-  concrete_handler(concrete_handler&&) {}
+  deprecated_concrete_handler(deprecated_concrete_handler&&) {}
 private:
-  concrete_handler(const concrete_handler&);
+  deprecated_concrete_handler(const deprecated_concrete_handler&);
 #endif // defined(ASIO_HAS_MOVE)
 };
 
@@ -47,32 +51,32 @@ private:
 namespace asio {
 
 template <typename Signature>
-class async_result<archetypes::lazy_handler, Signature>
+struct handler_type<archetypes::deprecated_lazy_handler, Signature>
+{
+  typedef archetypes::deprecated_concrete_handler type;
+};
+
+template <>
+class async_result<archetypes::deprecated_concrete_handler>
 {
 public:
-  // The concrete completion handler type.
-  typedef archetypes::concrete_handler completion_handler_type;
-
   // The return type of the initiating function.
-  typedef int return_type;
+  typedef double type;
 
   // Construct an async_result from a given handler.
-  explicit async_result(completion_handler_type&)
+  explicit async_result(archetypes::deprecated_concrete_handler&)
   {
   }
 
   // Obtain the value to be returned from the initiating function.
-  return_type get()
+  type get()
   {
     return 42;
   }
-
-private:
-  // Disallow copying and assignment.
-  async_result(const async_result&) ASIO_DELETED;
-  async_result& operator=(const async_result&) ASIO_DELETED;
 };
 
 } // namespace asio
 
-#endif // ARCHETYPES_ASYNC_RESULT_HPP
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+#endif // ARCHETYPES_DEPRECATED_ASYNC_RESULT_HPP
