@@ -458,7 +458,7 @@ public:
       void (asio::error_code)> init(handler);
 
     detail::async_io(next_layer_, core_,
-        detail::handshake_op(type), init.handler);
+        detail::handshake_op(type), init.completion_handler);
 
     return init.result.get();
   }
@@ -500,7 +500,7 @@ public:
 
     detail::async_io(next_layer_, core_,
         detail::buffered_handshake_op<ConstBufferSequence>(type, buffers),
-        init.handler);
+        init.completion_handler);
 
     return init.result.get();
   }
@@ -556,7 +556,8 @@ public:
     asio::async_completion<ShutdownHandler,
       void (asio::error_code)> init(handler);
 
-    detail::async_io(next_layer_, core_, detail::shutdown_op(), init.handler);
+    detail::async_io(next_layer_, core_, detail::shutdown_op(),
+        init.completion_handler);
 
     return init.result.get();
   }
@@ -646,7 +647,8 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     detail::async_io(next_layer_, core_,
-        detail::write_op<ConstBufferSequence>(buffers), init.handler);
+        detail::write_op<ConstBufferSequence>(buffers),
+        init.completion_handler);
 
     return init.result.get();
   }
@@ -737,7 +739,8 @@ public:
       void (asio::error_code, std::size_t)> init(handler);
 
     detail::async_io(next_layer_, core_,
-        detail::read_op<MutableBufferSequence>(buffers), init.handler);
+        detail::read_op<MutableBufferSequence>(buffers),
+        init.completion_handler);
 
     return init.result.get();
   }
