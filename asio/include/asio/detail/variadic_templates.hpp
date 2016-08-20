@@ -94,6 +94,24 @@
   ASIO_MOVE_CAST(T3)(x3), ASIO_MOVE_CAST(T4)(x4), \
   ASIO_MOVE_CAST(T5)(x5)
 
+# define ASIO_VARIADIC_DECAY(n) \
+  ASIO_VARIADIC_DECAY_##n
+
+# define ASIO_VARIADIC_DECAY_1 \
+  typename decay<T1>::type
+# define ASIO_VARIADIC_DECAY_2 \
+  typename decay<T1>::type, typename decay<T2>::type
+# define ASIO_VARIADIC_DECAY_3 \
+  typename decay<T1>::type, typename decay<T2>::type, \
+  typename decay<T3>::type
+# define ASIO_VARIADIC_DECAY_4 \
+  typename decay<T1>::type, typename decay<T2>::type, \
+  typename decay<T3>::type, typename decay<T4>::type
+# define ASIO_VARIADIC_DECAY_5 \
+  typename decay<T1>::type, typename decay<T2>::type, \
+  typename decay<T3>::type, typename decay<T4>::type, \
+  typename decay<T5>::type
+
 # define ASIO_VARIADIC_GENERATE(m) m(1) m(2) m(3) m(4) m(5)
 
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)

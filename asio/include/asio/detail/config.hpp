@@ -675,6 +675,33 @@
 # endif // !defined(ASIO_DISABLE_STD_CALL_ONCE)
 #endif // !defined(ASIO_HAS_STD_CALL_ONCE)
 
+// Standard library support for futures.
+#if !defined(ASIO_HAS_STD_FUTURE)
+# if !defined(ASIO_DISABLE_STD_FUTURE)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_FUTURE 1
+#   elif (__cplusplus >= 201103)
+#    if __has_include(<future>)
+#     define ASIO_HAS_STD_FUTURE 1
+#    endif // __has_include(<mutex>)
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_FUTURE 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_FUTURE 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_FUTURE)
+#endif // !defined(ASIO_HAS_STD_FUTURE)
+
 // Windows App target. Windows but with a limited API.
 #if !defined(ASIO_WINDOWS_APP)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)

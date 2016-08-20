@@ -94,6 +94,7 @@ check_PROGRAMS = \
 	unit/system_timer \
 	unit/thread \
 	unit/time_traits \
+	unit/use_future \
 	unit/wait_traits \
 	unit/waitable_timer_service \
 	unit/windows/basic_handle \
@@ -209,6 +210,7 @@ TESTS = \
 	unit/system_timer \
 	unit/thread \
 	unit/time_traits \
+	unit/use_future \
 	unit/wait_traits \
 	unit/waitable_timer_service \
 	unit/windows/basic_handle \
@@ -337,6 +339,7 @@ unit_streambuf_SOURCES = unit/streambuf.cpp
 unit_system_timer_SOURCES = unit/system_timer.cpp
 unit_thread_SOURCES = unit/thread.cpp
 unit_time_traits_SOURCES = unit/time_traits.cpp
+unit_use_future_SOURCES = unit/use_future.cpp
 unit_wait_traits_SOURCES = unit/wait_traits.cpp
 unit_waitable_timer_service_SOURCES = unit/waitable_timer_service.cpp
 unit_windows_basic_handle_SOURCES = unit/windows/basic_handle.cpp
@@ -365,8 +368,10 @@ endif
 EXTRA_DIST = \
 	latency/allocator.hpp \
 	performance/handler_allocator.hpp \
+	unit/archetypes/async_ops.hpp \
 	unit/archetypes/async_result.hpp \
 	unit/archetypes/deprecated_async_result.hpp \
+	unit/archetypes/deprecated_async_ops.hpp \
 	unit/archetypes/gettable_socket_option.hpp \
 	unit/archetypes/io_control_command.hpp \
 	unit/archetypes/settable_socket_option.hpp

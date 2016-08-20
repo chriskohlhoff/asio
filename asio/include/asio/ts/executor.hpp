@@ -29,7 +29,7 @@
 #include "asio/post.hpp"
 #include "asio/defer.hpp"
 #include "asio/strand.hpp"
-#include "asio/package.hpp"
+#include "asio/packaged_task.hpp"
 #include "asio/use_future.hpp"
 
 #endif // ASIO_TS_EXECUTOR_HPP

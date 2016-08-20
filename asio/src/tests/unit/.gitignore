@@ -54,6 +54,7 @@ streambuf
 system_timer
 thread
 time_traits
+use_future
 wait_traits
 waitable_timer_service
 write

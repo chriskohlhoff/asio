@@ -16,11 +16,25 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_STD_FUTURE) \
+  || defined(GENERATING_DOCUMENTATION)
+
 #include <memory>
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+namespace detail {
+
+template <typename Function, typename Allocator>
+class packaged_token;
+
+template <typename Function, typename Allocator, typename Result>
+class packaged_handler;
+
+} // namespace detail
 
 /// Class used to specify that an asynchronous operation should return a future.
 /**
@@ -78,6 +92,31 @@ public:
     return allocator_;
   }
 
+  /// Wrap a function object in a packaged task.
+  /**
+   * The @c package function is used to adapt a function object as a packaged
+   * task. When this adapter is passed as a completion token to an asynchronous
+   * operation, the result of the function object is retuned via a std::future.
+   *
+   * @par Example
+   *
+   * @code std::future<std::size_t> fut =
+   *   my_socket.async_read_some(buffer,
+   *     use_future([](asio::error_code ec, std::size_t n)
+   *       {
+   *         return ec ? 0 : n;
+   *       }));
+   * ...
+   * std::size_t n = fut.get(); @endcode
+   */
+  template <typename Function>
+#if defined(GENERATING_DOCUMENTATION)
+  unspecified
+#else // defined(GENERATING_DOCUMENTATION)
+  detail::packaged_token<typename decay<Function>::type, Allocator>
+#endif // defined(GENERATING_DOCUMENTATION)
+  operator()(ASIO_MOVE_ARG(Function) f) const;
+
 private:
   Allocator allocator_;
 };
@@ -97,5 +136,8 @@ __declspec(selectany) use_future_t<> use_future;
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/impl/use_future.hpp"
+
+#endif // defined(ASIO_HAS_STD_FUTURE)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_USE_FUTURE_HPP

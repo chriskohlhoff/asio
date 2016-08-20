@@ -10,9 +10,9 @@
 using asio::execution_context;
 using asio::executor_binder;
 using asio::get_associated_executor;
-using asio::package;
 using asio::post;
 using asio::system_executor;
+using asio::use_future;
 using asio::use_service;
 
 // An executor that launches a new thread for each function submitted to it.
@@ -185,7 +185,7 @@ std::future<void> pipeline(queue_back<T> in, F f)
 
   // Run the function, and as we're the last stage return a future so that the
   // caller can wait for the pipeline to finish.
-  return post(ex, package([in, f = std::move(f)]() mutable { f(in); }));
+  return post(ex, use_future([in, f = std::move(f)]() mutable { f(in); }));
 }
 
 // Launch an intermediate stage in a pipeline.

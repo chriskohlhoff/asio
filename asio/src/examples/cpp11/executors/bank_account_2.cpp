@@ -1,11 +1,11 @@
-#include <asio/package.hpp>
 #include <asio/post.hpp>
 #include <asio/thread_pool.hpp>
+#include <asio/use_future.hpp>
 #include <iostream>
 
-using asio::package;
 using asio::post;
 using asio::thread_pool;
+using asio::use_future;
 
 // Traditional active object pattern.
 // Member functions block until operation is finished.
@@ -19,7 +19,7 @@ public:
   void deposit(int amount)
   {
     post(pool_,
-      package([=]
+      use_future([=]
         {
           balance_ += amount;
         })).get();
@@ -28,7 +28,7 @@ public:
   void withdraw(int amount)
   {
     post(pool_,
-      package([=]
+      use_future([=]
         {
           if (balance_ >= amount)
             balance_ -= amount;
@@ -38,7 +38,7 @@ public:
   int balance() const
   {
     return post(pool_,
-      package([=]
+      use_future([=]
         {
           return balance_;
         })).get();
