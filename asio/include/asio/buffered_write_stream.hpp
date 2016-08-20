@@ -193,15 +193,8 @@ public:
   async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    async_completion<ReadHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    next_layer_.async_read_some(buffers,
-        ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(ReadHandler,
-            void (asio::error_code, std::size_t)))(
-              init.completion_handler));
-
-    return init.result.get();
+    return next_layer_.async_read_some(buffers,
+        ASIO_MOVE_CAST(ReadHandler)(handler));
   }
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read.

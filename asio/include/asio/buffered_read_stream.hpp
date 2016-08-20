@@ -158,15 +158,8 @@ public:
   async_write_some(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    async_completion<WriteHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    next_layer_.async_write_some(buffers,
-        ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(WriteHandler,
-            void (asio::error_code, std::size_t)))(
-              init.completion_handler));
-
-    return init.result.get();
+    return next_layer_.async_write_some(buffers,
+        ASIO_MOVE_CAST(WriteHandler)(handler));
   }
 
   /// Fill the buffer with some data. Returns the number of bytes placed in the
