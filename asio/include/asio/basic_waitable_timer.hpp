@@ -40,6 +40,17 @@
 
 namespace asio {
 
+#if !defined(ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
+#define ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Clock,
+    typename WaitTraits = asio::wait_traits<Clock>
+    ASIO_SVC_TPARAM_DEF2(= waitable_timer_service<Clock, WaitTraits>)>
+class basic_waitable_timer;
+
+#endif // !defined(ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
+
 /// Provides waitable timer functionality.
 /**
  * The basic_waitable_timer class template provides the ability to perform a
@@ -132,9 +143,7 @@ namespace asio {
  * @li If a wait handler is cancelled, the asio::error_code passed to
  * it contains the value asio::error::operation_aborted.
  */
-template <typename Clock,
-    typename WaitTraits = asio::wait_traits<Clock>
-    ASIO_SVC_TPARAM_DEF2(= waitable_timer_service<Clock, WaitTraits>)>
+template <typename Clock, typename WaitTraits ASIO_SVC_TPARAM>
 class basic_waitable_timer
   : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>
 {

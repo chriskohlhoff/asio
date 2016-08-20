@@ -93,19 +93,34 @@ protected:
 
 } // namespace detail
 
-/// Iostream interface for a socket.
+#if !defined(ASIO_BASIC_SOCKET_IOSTREAM_FWD_DECL)
+#define ASIO_BASIC_SOCKET_IOSTREAM_FWD_DECL
+
+// Forward declaration with defaulted arguments.
 template <typename Protocol
     ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
-#if defined(ASIO_HAS_BOOST_DATE_TIME) \
-  || defined(GENERATING_DOCUMENTATION)
+#if defined(ASIO_HAS_BOOST_DATE_TIME)
     typename Time = boost::posix_time::ptime,
-    typename TimeTraits = asio::time_traits<Time>
+    typename TimeTraits = time_traits<Time>
     ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Time, TimeTraits>)>
 #else
-    typename Time = steady_timer::clock_type,
-    typename TimeTraits = steady_timer::traits_type
+    typename Time = chrono::steady_clock,
+    typename TimeTraits = wait_traits<Time>
     ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
 #endif
+class basic_socket_iostream;
+
+#endif // !defined(ASIO_BASIC_SOCKET_IOSTREAM_FWD_DECL)
+
+/// Iostream interface for a socket.
+#if defined(GENERATING_DOCUMENTATION)
+template <typename Protocol,
+    typename Time = chrono::steady_clock,
+    typename TimeTraits = wait_traits<Time> >
+#else // defined(GENERATING_DOCUMENTATION)
+template <typename Protocol ASIO_SVC_TPARAM,
+    typename Time, typename TimeTraits ASIO_SVC_TPARAM1>
+#endif // defined(GENERATING_DOCUMENTATION)
 class basic_socket_iostream
   : private detail::socket_iostream_base<Protocol
         ASIO_SVC_TARG, Time, TimeTraits ASIO_SVC_TARG1>,

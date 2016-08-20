@@ -440,6 +440,7 @@ nobase_include_HEADERS = \
 	asio/ts/executor.hpp \
 	asio/ts/internet.hpp \
 	asio/ts/io_context.hpp \
+	asio/ts/netfwd.hpp \
 	asio/ts/networking.hpp \
 	asio/ts/socket.hpp \
 	asio/ts/thread_pool.hpp \
