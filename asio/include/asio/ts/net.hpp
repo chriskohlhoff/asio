@@ -1,6 +1,6 @@
 //
-// ts/networking.hpp
-// ~~~~~~~~~~~~~~~~~
+// ts/net.hpp
+// ~~~~~~~~~~
 //
 // Copyright (c) 2003-2015 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_TS_NETWORKING_HPP
-#define ASIO_TS_NETWORKING_HPP
+#ifndef ASIO_TS_NET_HPP
+#define ASIO_TS_NET_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,4 +23,4 @@
 #include "asio/ts/socket.hpp"
 #include "asio/ts/internet.hpp"
 
-#endif // ASIO_TS_NETWORKING_HPP
+#endif // ASIO_TS_NET_HPP
