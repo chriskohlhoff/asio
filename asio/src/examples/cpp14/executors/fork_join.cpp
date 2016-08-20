@@ -171,56 +171,58 @@ public:
   {
   }
 
-  fork_join_pool& context() noexcept
+  fork_join_pool& context() const noexcept
   {
     return context_;
   }
 
-  void on_work_started() noexcept
+  void on_work_started() const noexcept
   {
     std::lock_guard<std::mutex> lock(context_.mutex_);
     context_.do_work_started(work_count_);
   }
 
-  void on_work_finished() noexcept
+  void on_work_finished() const noexcept
   {
     std::lock_guard<std::mutex> lock(context_.mutex_);
     context_.do_work_finished(work_count_);
   }
 
   template <class Func, class Alloc>
-  void dispatch(Func&& f, const Alloc& a)
+  void dispatch(Func&& f, const Alloc& a) const
   {
     auto p(std::allocate_shared<function<Func>>(a, std::move(f), work_count_));
     context_.do_dispatch(p, work_count_);
   }
 
   template <class Func, class Alloc>
-  void post(Func f, const Alloc& a)
+  void post(Func f, const Alloc& a) const
   {
     auto p(std::allocate_shared<function<Func>>(a, std::move(f), work_count_));
     context_.do_post(p, work_count_);
   }
 
   template <class Func, class Alloc>
-  void defer(Func&& f, const Alloc& a)
+  void defer(Func&& f, const Alloc& a) const
   {
     post(std::forward<Func>(f), a);
   }
 
-  friend bool operator==(const fork_executor& a, const fork_executor& b)
+  friend bool operator==(const fork_executor& a,
+      const fork_executor& b) noexcept
   {
     return a.work_count_ == b.work_count_;
   }
 
-  friend bool operator!=(const fork_executor& a, const fork_executor& b)
+  friend bool operator!=(const fork_executor& a,
+      const fork_executor& b) noexcept
   {
     return a.work_count_ != b.work_count_;
   }
 
   // Block until all work associated with the executor is complete. While it is
   // waiting, the thread may be borrowed to execute functions from the queue.
-  void join()
+  void join() const
   {
     std::unique_lock<std::mutex> lock(context_.mutex_);
     while (*work_count_ > 0)

@@ -21,31 +21,31 @@ public:
     {
     }
 
-    priority_scheduler& context() noexcept
+    priority_scheduler& context() const noexcept
     {
       return context_;
     }
 
-    void on_work_started() noexcept
+    void on_work_started() const noexcept
     {
       // This executor doesn't count work. Instead, the scheduler simply runs
       // until explicitly stopped.
     }
 
-    void on_work_finished() noexcept
+    void on_work_finished() const noexcept
     {
       // This executor doesn't count work. Instead, the scheduler simply runs
       // until explicitly stopped.
     }
 
     template <class Func, class Alloc>
-    void dispatch(Func&& f, const Alloc& a)
+    void dispatch(Func&& f, const Alloc& a) const
     {
       post(std::forward<Func>(f), a);
     }
 
     template <class Func, class Alloc>
-    void post(Func f, const Alloc& a)
+    void post(Func f, const Alloc& a) const
     {
       auto p(std::allocate_shared<item<Func>>(a, priority_, std::move(f)));
       std::lock_guard<std::mutex> lock(context_.mutex_);
@@ -54,17 +54,19 @@ public:
     }
 
     template <class Func, class Alloc>
-    void defer(Func&& f, const Alloc& a)
+    void defer(Func&& f, const Alloc& a) const
     {
       post(std::forward<Func>(f), a);
     }
 
-    friend bool operator==(const executor_type& a, const executor_type& b)
+    friend bool operator==(const executor_type& a,
+        const executor_type& b) noexcept
     {
       return &a.context_ == &b.context_;
     }
 
-    friend bool operator!=(const executor_type& a, const executor_type& b)
+    friend bool operator!=(const executor_type& a,
+        const executor_type& b) noexcept
     {
       return &a.context_ != &b.context_;
     }

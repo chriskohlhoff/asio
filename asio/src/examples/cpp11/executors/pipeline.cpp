@@ -54,46 +54,48 @@ private:
   };
 
 public:
-  execution_context& context() noexcept
+  execution_context& context() const noexcept
   {
     return system_executor().context();
   }
 
-  void on_work_started() noexcept
+  void on_work_started() const noexcept
   {
     // This executor doesn't count work.
   }
 
-  void on_work_finished() noexcept
+  void on_work_finished() const noexcept
   {
     // This executor doesn't count work.
   }
 
   template <class Func, class Alloc>
-  void dispatch(Func&& f, const Alloc& a)
+  void dispatch(Func&& f, const Alloc& a) const
   {
     post(std::forward<Func>(f), a);
   }
 
   template <class Func, class Alloc>
-  void post(Func f, const Alloc&)
+  void post(Func f, const Alloc&) const
   {
     thread_bag& bag = use_service<thread_bag>(context());
     bag.add_thread(std::thread(std::move(f)));
   }
 
   template <class Func, class Alloc>
-  void defer(Func&& f, const Alloc& a)
+  void defer(Func&& f, const Alloc& a) const
   {
     post(std::forward<Func>(f), a);
   }
 
-  friend bool operator==(const thread_executor&, const thread_executor&)
+  friend bool operator==(const thread_executor&,
+      const thread_executor&) noexcept
   {
     return true;
   }
 
-  friend bool operator!=(const thread_executor&, const thread_executor&)
+  friend bool operator!=(const thread_executor&,
+      const thread_executor&) noexcept
   {
     return false;
   }
