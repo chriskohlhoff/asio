@@ -24,6 +24,7 @@
 # include <boost/type_traits/conditional.hpp>
 # include <boost/type_traits/decay.hpp>
 # include <boost/type_traits/integral_constant.hpp>
+# include <boost/type_traits/is_base_of.hpp>
 # include <boost/type_traits/is_class.hpp>
 # include <boost/type_traits/is_const.hpp>
 # include <boost/type_traits/is_convertible.hpp>
@@ -44,6 +45,7 @@ using std::decay;
 using std::enable_if;
 using std::false_type;
 using std::integral_constant;
+using std::is_base_of;
 using std::is_class;
 using std::is_const;
 using std::is_convertible;
@@ -61,6 +63,7 @@ using boost::conditional;
 using boost::decay;
 using boost::false_type;
 using boost::integral_constant;
+using boost::is_base_of;
 using boost::is_class;
 using boost::is_const;
 using boost::is_convertible;

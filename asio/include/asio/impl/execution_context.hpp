@@ -28,7 +28,6 @@ inline Service& use_service(execution_context& e)
 {
   // Check that Service meets the necessary type requirements.
   (void)static_cast<execution_context::service*>(static_cast<Service*>(0));
-  (void)static_cast<const execution_context::id*>(&Service::id);
 
   return e.service_registry_->template use_service<Service>();
 }
@@ -83,7 +82,6 @@ inline void add_service(execution_context& e, Service* svc)
 {
   // Check that Service meets the necessary type requirements.
   (void)static_cast<execution_context::service*>(static_cast<Service*>(0));
-  (void)static_cast<const execution_context::id*>(&Service::id);
 
   e.service_registry_->template add_service<Service>(svc);
 }
@@ -93,7 +91,6 @@ inline bool has_service(execution_context& e)
 {
   // Check that Service meets the necessary type requirements.
   (void)static_cast<execution_context::service*>(static_cast<Service*>(0));
-  (void)static_cast<const execution_context::id*>(&Service::id);
 
   return e.service_registry_->template has_service<Service>();
 }

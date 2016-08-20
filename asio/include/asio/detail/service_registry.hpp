@@ -19,6 +19,7 @@
 #include <typeinfo>
 #include "asio/detail/mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -75,15 +76,27 @@ public:
   bool has_service() const;
 
 private:
+  // Initalise a service's key when the key_type typedef is not available.
+  template <typename Service>
+  static void init_key(execution_context::service::key& key, ...);
+
+#if !defined(ASIO_NO_TYPEID)
+  // Initalise a service's key when the key_type typedef is available.
+  template <typename Service>
+  static void init_key(execution_context::service::key& key,
+      typename enable_if<
+        is_base_of<typename Service::key_type, Service>::value>::type*);
+#endif // !defined(ASIO_NO_TYPEID)
+
   // Initialise a service's key based on its id.
-  ASIO_DECL static void init_key(
+  ASIO_DECL static void init_key_from_id(
       execution_context::service::key& key,
       const execution_context::id& id);
 
 #if !defined(ASIO_NO_TYPEID)
   // Initialise a service's key based on its id.
   template <typename Service>
-  static void init_key(execution_context::service::key& key,
+  static void init_key_from_id(execution_context::service::key& key,
       const service_id<Service>& /*id*/);
 #endif // !defined(ASIO_NO_TYPEID)
 

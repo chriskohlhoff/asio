@@ -29,7 +29,7 @@ private:
   class thread_bag : public execution_context::service
   {
   public:
-    static execution_context::id id;
+    typedef thread_bag key_type;
 
     explicit thread_bag(execution_context& ctx)
       : execution_context::service(ctx)
@@ -100,8 +100,6 @@ public:
     return false;
   }
 };
-
-execution_context::id thread_executor::thread_bag::id;
 
 // Base class for all thread-safe queue implementations.
 class queue_impl_base

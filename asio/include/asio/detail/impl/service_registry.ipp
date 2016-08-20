@@ -84,7 +84,7 @@ void service_registry::notify_fork(execution_context::fork_event fork_ev)
       services[i - 1]->notify_fork(fork_ev);
 }
 
-void service_registry::init_key(execution_context::service::key& key,
+void service_registry::init_key_from_id(execution_context::service::key& key,
     const execution_context::id& id)
 {
   key.type_info_ = 0;
