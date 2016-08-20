@@ -61,10 +61,12 @@ std::size_t io_context::run()
   return s;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 std::size_t io_context::run(asio::error_code& ec)
 {
   return impl_.run(ec);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 std::size_t io_context::run_one()
 {
@@ -74,10 +76,12 @@ std::size_t io_context::run_one()
   return s;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 std::size_t io_context::run_one(asio::error_code& ec)
 {
   return impl_.run_one(ec);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 std::size_t io_context::poll()
 {
@@ -87,10 +91,12 @@ std::size_t io_context::poll()
   return s;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 std::size_t io_context::poll(asio::error_code& ec)
 {
   return impl_.poll(ec);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 std::size_t io_context::poll_one()
 {
@@ -100,10 +106,12 @@ std::size_t io_context::poll_one()
   return s;
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 std::size_t io_context::poll_one(asio::error_code& ec)
 {
   return impl_.poll_one(ec);
 }
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 void io_context::stop()
 {

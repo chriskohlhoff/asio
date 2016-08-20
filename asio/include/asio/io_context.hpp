@@ -225,8 +225,6 @@ public:
    *
    * @return The number of handlers that were executed.
    *
-   * @throws asio::system_error Thrown on failure.
-   *
    * @note The run() function must not be called from a thread that is currently
    * calling one of run(), run_one(), poll() or poll_one() on the same
    * io_context object.
@@ -236,7 +234,9 @@ public:
    */
   ASIO_DECL std::size_t run();
 
-  /// Run the io_context object's event processing loop.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
+  /// event processing loop.
   /**
    * The run() function blocks until all work has finished and there are no
    * more handlers to be dispatched, or until the io_context has been stopped.
@@ -263,6 +263,7 @@ public:
    * without blocking.
    */
   ASIO_DECL std::size_t run(asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Run the io_context object's event processing loop to execute at most one
   /// handler.
@@ -275,13 +276,12 @@ public:
    * returns @c true). Subsequent calls to run(), run_one(), poll() or
    * poll_one() will return immediately unless there is a prior call to
    * restart().
-   *
-   * @throws asio::system_error Thrown on failure.
    */
   ASIO_DECL std::size_t run_one();
 
-  /// Run the io_context object's event processing loop to execute at most one
-  /// handler.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overlaod.) Run the io_context object's
+  /// event processing loop to execute at most one handler.
   /**
    * The run_one() function blocks until one handler has been dispatched, or
    * until the io_context has been stopped.
@@ -295,6 +295,7 @@ public:
    * @return The number of handlers that were executed.
    */
   ASIO_DECL std::size_t run_one(asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Run the io_context object's event processing loop to execute ready
   /// handlers.
@@ -303,13 +304,12 @@ public:
    * until the io_context has been stopped or there are no more ready handlers.
    *
    * @return The number of handlers that were executed.
-   *
-   * @throws asio::system_error Thrown on failure.
    */
   ASIO_DECL std::size_t poll();
 
-  /// Run the io_context object's event processing loop to execute ready
-  /// handlers.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
+  /// event processing loop to execute ready handlers.
   /**
    * The poll() function runs handlers that are ready to run, without blocking,
    * until the io_context has been stopped or there are no more ready handlers.
@@ -319,6 +319,7 @@ public:
    * @return The number of handlers that were executed.
    */
   ASIO_DECL std::size_t poll(asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Run the io_context object's event processing loop to execute one ready
   /// handler.
@@ -327,13 +328,12 @@ public:
    * without blocking.
    *
    * @return The number of handlers that were executed.
-   *
-   * @throws asio::system_error Thrown on failure.
    */
   ASIO_DECL std::size_t poll_one();
 
-  /// Run the io_context object's event processing loop to execute one ready
-  /// handler.
+#if !defined(ASIO_NO_DEPRECATED)
+  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
+  /// event processing loop to execute one ready handler.
   /**
    * The poll_one() function runs at most one handler that is ready to run,
    * without blocking.
@@ -343,6 +343,7 @@ public:
    * @return The number of handlers that were executed.
    */
   ASIO_DECL std::size_t poll_one(asio::error_code& ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Stop the io_context object's event processing loop.
   /**
