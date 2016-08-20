@@ -53,61 +53,61 @@ io_context::~io_context()
 {
 }
 
-std::size_t io_context::run()
+io_context::count_type io_context::run()
 {
   asio::error_code ec;
-  std::size_t s = impl_.run(ec);
+  count_type s = impl_.run(ec);
   asio::detail::throw_error(ec);
   return s;
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
-std::size_t io_context::run(asio::error_code& ec)
+io_context::count_type io_context::run(asio::error_code& ec)
 {
   return impl_.run(ec);
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-std::size_t io_context::run_one()
+io_context::count_type io_context::run_one()
 {
   asio::error_code ec;
-  std::size_t s = impl_.run_one(ec);
+  count_type s = impl_.run_one(ec);
   asio::detail::throw_error(ec);
   return s;
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
-std::size_t io_context::run_one(asio::error_code& ec)
+io_context::count_type io_context::run_one(asio::error_code& ec)
 {
   return impl_.run_one(ec);
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-std::size_t io_context::poll()
+io_context::count_type io_context::poll()
 {
   asio::error_code ec;
-  std::size_t s = impl_.poll(ec);
+  count_type s = impl_.poll(ec);
   asio::detail::throw_error(ec);
   return s;
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
-std::size_t io_context::poll(asio::error_code& ec)
+io_context::count_type io_context::poll(asio::error_code& ec)
 {
   return impl_.poll(ec);
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-std::size_t io_context::poll_one()
+io_context::count_type io_context::poll_one()
 {
   asio::error_code ec;
-  std::size_t s = impl_.poll_one(ec);
+  count_type s = impl_.poll_one(ec);
   asio::detail::throw_error(ec);
   return s;
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
-std::size_t io_context::poll_one(asio::error_code& ec)
+io_context::count_type io_context::poll_one(asio::error_code& ec)
 {
   return impl_.poll_one(ec);
 }

@@ -159,6 +159,9 @@ public:
 
   class strand;
 
+  /// The type used to count the number of handlers executed by the context.
+  typedef std::size_t count_type;
+
   /// Constructor.
   ASIO_DECL io_context();
 
@@ -232,7 +235,7 @@ public:
    * The poll() function may also be used to dispatch ready handlers, but
    * without blocking.
    */
-  ASIO_DECL std::size_t run();
+  ASIO_DECL count_type run();
 
 #if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use non-error_code overload.) Run the io_context object's
@@ -262,7 +265,7 @@ public:
    * The poll() function may also be used to dispatch ready handlers, but
    * without blocking.
    */
-  ASIO_DECL std::size_t run(asio::error_code& ec);
+  ASIO_DECL count_type run(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Run the io_context object's event processing loop to execute at most one
@@ -277,7 +280,7 @@ public:
    * poll_one() will return immediately unless there is a prior call to
    * restart().
    */
-  ASIO_DECL std::size_t run_one();
+  ASIO_DECL count_type run_one();
 
 #if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use non-error_code overlaod.) Run the io_context object's
@@ -294,7 +297,7 @@ public:
    *
    * @return The number of handlers that were executed.
    */
-  ASIO_DECL std::size_t run_one(asio::error_code& ec);
+  ASIO_DECL count_type run_one(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Run the io_context object's event processing loop to execute ready
@@ -305,7 +308,7 @@ public:
    *
    * @return The number of handlers that were executed.
    */
-  ASIO_DECL std::size_t poll();
+  ASIO_DECL count_type poll();
 
 #if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use non-error_code overload.) Run the io_context object's
@@ -318,7 +321,7 @@ public:
    *
    * @return The number of handlers that were executed.
    */
-  ASIO_DECL std::size_t poll(asio::error_code& ec);
+  ASIO_DECL count_type poll(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Run the io_context object's event processing loop to execute one ready
@@ -329,7 +332,7 @@ public:
    *
    * @return The number of handlers that were executed.
    */
-  ASIO_DECL std::size_t poll_one();
+  ASIO_DECL count_type poll_one();
 
 #if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use non-error_code overload.) Run the io_context object's
@@ -342,7 +345,7 @@ public:
    *
    * @return The number of handlers that were executed.
    */
-  ASIO_DECL std::size_t poll_one(asio::error_code& ec);
+  ASIO_DECL count_type poll_one(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Stop the io_context object's event processing loop.
