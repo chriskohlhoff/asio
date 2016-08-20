@@ -180,7 +180,7 @@ void select_reactor::deregister_internal_descriptor(
     op_queue_[i].cancel_operations(descriptor, ops);
 }
 
-void select_reactor::run(bool block, op_queue<operation>& ops)
+void select_reactor::run(long usec, op_queue<operation>& ops)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -217,12 +217,12 @@ void select_reactor::run(bool block, op_queue<operation>& ops)
 
   // We can return immediately if there's no work to do and the reactor is
   // not supposed to block.
-  if (!block && !have_work_to_do)
+  if (!usec && !have_work_to_do)
     return;
 
   // Determine how long to block while waiting for events.
   timeval tv_buf = { 0, 0 };
-  timeval* tv = block ? get_timeout(tv_buf) : &tv_buf;
+  timeval* tv = usec ? get_timeout(usec, tv_buf) : &tv_buf;
 
   lock.unlock();
 
@@ -289,11 +289,13 @@ void select_reactor::do_remove_timer_queue(timer_queue_base& queue)
   timer_queues_.erase(&queue);
 }
 
-timeval* select_reactor::get_timeout(timeval& tv)
+timeval* select_reactor::get_timeout(long usec, timeval& tv)
 {
   // By default we will wait no longer than 5 minutes. This will ensure that
   // any changes to the system clock are detected after no longer than this.
-  long usec = timer_queues_.wait_duration_usec(5 * 60 * 1000 * 1000);
+  const long max_usec = 5 * 60 * 1000 * 1000;
+  usec = timer_queues_.wait_duration_usec(
+      (usec < 0 || max_usec < usec) ? max_usec : usec);
   tv.tv_sec = usec / 1000000;
   tv.tv_usec = usec % 1000000;
   return &tv;

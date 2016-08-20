@@ -58,6 +58,10 @@ public:
   // Run until interrupted or one operation is performed.
   ASIO_DECL std::size_t run_one(asio::error_code& ec);
 
+  // Run until timeout, interrupted, or one operation is performed.
+  ASIO_DECL std::size_t wait_one(
+      long usec, asio::error_code& ec);
+
   // Poll for operations without blocking.
   ASIO_DECL std::size_t poll(asio::error_code& ec);
 
@@ -124,6 +128,10 @@ private:
   // Run at most one operation. May block.
   ASIO_DECL std::size_t do_run_one(mutex::scoped_lock& lock,
       thread_info& this_thread, const asio::error_code& ec);
+
+  // Run at most one operation with a timeout. May block.
+  ASIO_DECL std::size_t do_wait_one(mutex::scoped_lock& lock,
+      thread_info& this_thread, long usec, const asio::error_code& ec);
 
   // Poll for at most one operation.
   ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,

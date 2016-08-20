@@ -21,6 +21,7 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/service_registry.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -63,6 +64,61 @@ io_context::get_executor() ASIO_NOEXCEPT
 {
   return executor_type(*this);
 }
+
+#if defined(ASIO_HAS_CHRONO)
+
+template <typename Rep, typename Period>
+std::size_t io_context::run_for(
+    const chrono::duration<Rep, Period>& rel_time)
+{
+  return this->run_until(chrono::steady_clock::now() + rel_time);
+}
+
+template <typename Clock, typename Duration>
+std::size_t io_context::run_until(
+    const chrono::time_point<Clock, Duration>& abs_time)
+{
+  std::size_t n = 0;
+  while (this->run_one_until(abs_time))
+    if (n != (std::numeric_limits<std::size_t>::max)())
+      ++n;
+  return n;
+}
+
+template <typename Rep, typename Period>
+std::size_t io_context::run_one_for(
+    const chrono::duration<Rep, Period>& rel_time)
+{
+  return this->run_one_until(chrono::steady_clock::now() + rel_time);
+}
+
+template <typename Clock, typename Duration>
+std::size_t io_context::run_one_until(
+    const chrono::time_point<Clock, Duration>& abs_time)
+{
+  typename Clock::time_point now = Clock::now();
+  while (now < abs_time)
+  {
+    typename Clock::duration rel_time = abs_time - now;
+    if (rel_time > chrono::seconds(1))
+      rel_time = chrono::seconds(1);
+
+    asio::error_code ec;
+    std::size_t s = impl_.wait_one(
+        static_cast<long>(chrono::duration_cast<
+          chrono::microseconds>(rel_time).count()), ec);
+    asio::detail::throw_error(ec);
+
+    if (s || impl_.stopped())
+      return s;
+
+    now = Clock::now();
+  }
+
+  return 0;
+}
+
+#endif // defined(ASIO_HAS_CHRONO)
 
 #if !defined(ASIO_NO_DEPRECATED)
 

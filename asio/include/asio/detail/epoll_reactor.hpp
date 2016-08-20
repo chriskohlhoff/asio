@@ -159,7 +159,7 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run epoll once until interrupted or events are ready to be dispatched.
-  ASIO_DECL void run(bool block, op_queue<operation>& ops);
+  ASIO_DECL void run(long usec, op_queue<operation>& ops);
 
   // Interrupt the select loop.
   ASIO_DECL void interrupt();
@@ -193,7 +193,7 @@ private:
   // Get the timeout value for the epoll_wait call. The timeout value is
   // returned as a number of milliseconds. A return value of -1 indicates
   // that epoll_wait should block indefinitely.
-  ASIO_DECL int get_timeout();
+  ASIO_DECL int get_timeout(int msec);
 
 #if defined(ASIO_HAS_TIMERFD)
   // Get the timeout value for the timer descriptor. The return value is the

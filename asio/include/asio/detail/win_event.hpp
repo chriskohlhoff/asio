@@ -111,6 +111,27 @@ public:
     }
   }
 
+  // Timed wait for the event to become signalled.
+  template <typename Lock>
+  bool wait_for_usec(Lock& lock, long usec)
+  {
+    ASIO_ASSERT(lock.locked());
+    if ((state_ & 1) == 0)
+    {
+      state_ += 2;
+      lock.unlock();
+      DWORD msec = usec > 0 ? (usec < 1000 ? 1 : usec / 1000) : 0;
+#if defined(ASIO_WINDOWS_APP)
+      ::WaitForMultipleObjectsEx(2, events_, false, msec, false);
+#else // defined(ASIO_WINDOWS_APP)
+      ::WaitForMultipleObjects(2, events_, false, msec);
+#endif // defined(ASIO_WINDOWS_APP)
+      lock.lock();
+      state_ -= 2;
+    }
+    return (state_ & 1) != 0;
+  }
+
 private:
   HANDLE events_[2];
   std::size_t state_;

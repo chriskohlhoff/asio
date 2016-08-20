@@ -48,7 +48,7 @@ public:
   }
 
   // No-op because should never be called.
-  void run(bool /*block*/, op_queue<scheduler_operation>& /*ops*/)
+  void run(long /*usec*/, op_queue<scheduler_operation>& /*ops*/)
   {
   }
 

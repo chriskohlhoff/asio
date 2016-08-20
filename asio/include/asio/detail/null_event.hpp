@@ -76,6 +76,13 @@ public:
   void wait(Lock&)
   {
   }
+
+  // Timed wait for the event to become signalled.
+  template <typename Lock>
+  bool wait_for_usec(Lock& lock, long usec)
+  {
+    return true;
+  }
 };
 
 } // namespace detail

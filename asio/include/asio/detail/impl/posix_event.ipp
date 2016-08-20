@@ -31,7 +31,16 @@ namespace detail {
 posix_event::posix_event()
   : state_(0)
 {
+#if (defined(__MACH__) && defined(__APPLE__))
   int error = ::pthread_cond_init(&cond_, 0);
+#else // (defined(__MACH__) && defined(__APPLE__))
+  ::pthread_condattr_t attr;
+  ::pthread_condattr_init(&attr);
+  int error = ::pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+  if (error == 0)
+    error = ::pthread_cond_init(&cond_, &attr);
+#endif // (defined(__MACH__) && defined(__APPLE__))
+
   asio::error_code ec(error,
       asio::error::get_system_category());
   asio::detail::throw_error(ec, "event");

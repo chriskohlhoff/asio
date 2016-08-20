@@ -163,7 +163,7 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run the kqueue loop.
-  ASIO_DECL void run(bool block, op_queue<operation>& ops);
+  ASIO_DECL void run(long usec, op_queue<operation>& ops);
 
   // Interrupt the kqueue loop.
   ASIO_DECL void interrupt();
@@ -186,7 +186,7 @@ private:
   ASIO_DECL void do_remove_timer_queue(timer_queue_base& queue);
 
   // Get the timeout value for the kevent call.
-  ASIO_DECL timespec* get_timeout(timespec& ts);
+  ASIO_DECL timespec* get_timeout(long usec, timespec& ts);
 
   // The scheduler used to post completions.
   scheduler& scheduler_;

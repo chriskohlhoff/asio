@@ -367,13 +367,13 @@ void kqueue_reactor::deregister_internal_descriptor(socket_type descriptor,
   }
 }
 
-void kqueue_reactor::run(bool block, op_queue<operation>& ops)
+void kqueue_reactor::run(long usec, op_queue<operation>& ops)
 {
   mutex::scoped_lock lock(mutex_);
 
   // Determine how long to block while waiting for events.
   timespec timeout_buf = { 0, 0 };
-  timespec* timeout = block ? get_timeout(timeout_buf) : &timeout_buf;
+  timespec* timeout = usec ? get_timeout(usec, timeout_buf) : &timeout_buf;
 
   lock.unlock();
 
@@ -517,11 +517,13 @@ void kqueue_reactor::do_remove_timer_queue(timer_queue_base& queue)
   timer_queues_.erase(&queue);
 }
 
-timespec* kqueue_reactor::get_timeout(timespec& ts)
+timespec* kqueue_reactor::get_timeout(long usec, timespec& ts)
 {
   // By default we will wait no longer than 5 minutes. This will ensure that
   // any changes to the system clock are detected after no longer than this.
-  long usec = timer_queues_.wait_duration_usec(5 * 60 * 1000 * 1000);
+  const long max_usec = 5 * 60 * 1000 * 1000;
+  usec = timer_queues_.wait_duration_usec(
+      (usec < 0 || max_usec < usec) ? max_usec : usec);
   ts.tv_sec = usec / 1000000;
   ts.tv_nsec = (usec % 1000000) * 1000;
   return &ts;

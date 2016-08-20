@@ -234,7 +234,7 @@ void dev_poll_reactor::deregister_internal_descriptor(
     op_queue_[i].cancel_operations(descriptor, ops, ec);
 }
 
-void dev_poll_reactor::run(bool block, op_queue<operation>& ops)
+void dev_poll_reactor::run(long usec, op_queue<operation>& ops)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -266,7 +266,15 @@ void dev_poll_reactor::run(bool block, op_queue<operation>& ops)
     pending_event_change_index_.clear();
   }
 
-  int timeout = block ? get_timeout() : 0;
+  // Calculate timeout.
+  int timeout;
+  if (usec == 0)
+    timeout = 0;
+  else
+  {
+    timeout = (usec < 0) ? -1 : ((usec - 1) / 1000 + 1);
+    timeout = get_timeout(timeout);
+  }
   lock.unlock();
 
   // Block on the /dev/poll descriptor.
@@ -380,11 +388,13 @@ void dev_poll_reactor::do_remove_timer_queue(timer_queue_base& queue)
   timer_queues_.erase(&queue);
 }
 
-int dev_poll_reactor::get_timeout()
+int dev_poll_reactor::get_timeout(int msec)
 {
   // By default we will wait no longer than 5 minutes. This will ensure that
   // any changes to the system clock are detected after no longer than this.
-  return timer_queues_.wait_duration_msec(5 * 60 * 1000);
+  const int max_msec = 5 * 60 * 1000;
+  return timer_queues_.wait_duration_msec(
+      (msec < 0 || max_msec < msec) ? max_msec : msec);
 }
 
 void dev_poll_reactor::cancel_ops_unlocked(socket_type descriptor,

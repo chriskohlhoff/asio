@@ -68,6 +68,9 @@ public:
   // Run until stopped or one operation is performed.
   ASIO_DECL size_t run_one(asio::error_code& ec);
 
+  // Run until timeout, interrupted, or one operation is performed.
+  ASIO_DECL size_t wait_one(long usec, asio::error_code& ec);
+
   // Poll for operations without blocking.
   ASIO_DECL size_t poll(asio::error_code& ec);
 
@@ -209,7 +212,7 @@ private:
   // Dequeues at most one operation from the I/O completion port, and then
   // executes it. Returns the number of operations that were dequeued (i.e.
   // either 0 or 1).
-  ASIO_DECL size_t do_one(bool block, asio::error_code& ec);
+  ASIO_DECL size_t do_one(DWORD msec, asio::error_code& ec);
 
   // Helper to calculate the GetQueuedCompletionStatus timeout.
   ASIO_DECL static DWORD get_gqcs_timeout();

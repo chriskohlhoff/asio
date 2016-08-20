@@ -25,6 +25,10 @@
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
 
+#if defined(ASIO_HAS_CHRONO)
+# include "asio/detail/chrono.hpp"
+#endif // defined(ASIO_HAS_CHRONO)
+
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/winsock_init.hpp"
 #elif defined(__sun) || defined(__QNX__) || defined(__hpux) || defined(_AIX) \
@@ -268,6 +272,35 @@ public:
   ASIO_DECL count_type run(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
+#if defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
+  /// Run the io_context object's event processing loop for a specified
+  /// duration.
+  /**
+   * The run_for() function blocks until all work has finished and there are no
+   * more handlers to be dispatched, until the io_context has been stopped, or
+   * until the specified duration has elapsed.
+   *
+   * @param rel_time The duration for which the call may block.
+   *
+   * @return The number of handlers that were executed.
+   */
+  template <typename Rep, typename Period>
+  std::size_t run_for(const chrono::duration<Rep, Period>& rel_time);
+
+  /// Run the io_context object's event processing loop until a specified time.
+  /**
+   * The run_until() function blocks until all work has finished and there are
+   * no more handlers to be dispatched, until the io_context has been stopped,
+   * or until the specified time has been reached.
+   *
+   * @param abs_time The time point until which the call may block.
+   *
+   * @return The number of handlers that were executed.
+   */
+  template <typename Clock, typename Duration>
+  std::size_t run_until(const chrono::time_point<Clock, Duration>& abs_time);
+#endif // defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
+
   /// Run the io_context object's event processing loop to execute at most one
   /// handler.
   /**
@@ -299,6 +332,37 @@ public:
    */
   ASIO_DECL count_type run_one(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
+
+#if defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
+  /// Run the io_context object's event processing loop for a specified duration
+  /// to execute at most one handler.
+  /**
+   * The run_one_for() function blocks until one handler has been dispatched,
+   * until the io_context has been stopped, or until the specified duration has
+   * elapsed.
+   *
+   * @param rel_time The duration for which the call may block.
+   *
+   * @return The number of handlers that were executed.
+   */
+  template <typename Rep, typename Period>
+  std::size_t run_one_for(const chrono::duration<Rep, Period>& rel_time);
+
+  /// Run the io_context object's event processing loop until a specified time
+  /// to execute at most one handler.
+  /**
+   * The run_one_until() function blocks until one handler has been dispatched,
+   * until the io_context has been stopped, or until the specified time has
+   * been reached.
+   *
+   * @param abs_time The time point until which the call may block.
+   *
+   * @return The number of handlers that were executed.
+   */
+  template <typename Clock, typename Duration>
+  std::size_t run_one_until(
+      const chrono::time_point<Clock, Duration>& abs_time);
+#endif // defined(ASIO_HAS_CHRONO) || defined(GENERATING_DOCUMENTATION)
 
   /// Run the io_context object's event processing loop to execute ready
   /// handlers.

@@ -148,7 +148,7 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run select once until interrupted or events are ready to be dispatched.
-  ASIO_DECL void run(bool block, op_queue<operation>& ops);
+  ASIO_DECL void run(long usec, op_queue<operation>& ops);
 
   // Interrupt the select loop.
   ASIO_DECL void interrupt();
@@ -166,7 +166,7 @@ private:
   ASIO_DECL void do_remove_timer_queue(timer_queue_base& queue);
 
   // Get the timeout value for the select call.
-  ASIO_DECL timeval* get_timeout(timeval& tv);
+  ASIO_DECL timeval* get_timeout(long usec, timeval& tv);
 
   // Cancel all operations associated with the given descriptor. This function
   // does not acquire the select_reactor's mutex.
