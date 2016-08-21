@@ -73,27 +73,32 @@ public:
     next_read_length_ = length;
   }
 
-  template <typename Const_Buffers>
-  bool check_buffers(const Const_Buffers& buffers, size_t length)
+  template <typename Iterator>
+  bool check_buffers(Iterator begin, Iterator end, size_t length)
   {
     if (length != position_)
       return false;
 
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    Iterator iter = begin;
     size_t checked_length = 0;
     for (; iter != end && checked_length < length; ++iter)
     {
       size_t buffer_length = asio::buffer_size(*iter);
       if (buffer_length > length - checked_length)
         buffer_length = length - checked_length;
-      if (memcmp(data_ + checked_length,
-            asio::buffer_cast<const void*>(*iter), buffer_length) != 0)
+      if (memcmp(data_ + checked_length, iter->data(), buffer_length) != 0)
         return false;
       checked_length += buffer_length;
     }
 
     return true;
+  }
+
+  template <typename Const_Buffers>
+  bool check_buffers(const Const_Buffers& buffers, size_t length)
+  {
+    return check_buffers(asio::buffer_sequence_begin(buffers),
+        asio::buffer_sequence_end(buffers), length);
   }
 
   template <typename Mutable_Buffers>
@@ -146,12 +151,12 @@ void test_2_arg_zero_buffers_read()
   ASIO_CHECK(bytes_transferred == 0);
 }
 
-void test_2_arg_mutable_buffers_1_read()
+void test_2_arg_mutable_buffer_read()
 {
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -247,12 +252,12 @@ void test_3_arg_nothrow_zero_buffers_read()
   ASIO_CHECK(!error);
 }
 
-void test_3_arg_nothrow_mutable_buffers_1_read()
+void test_3_arg_nothrow_mutable_buffer_read()
 {
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -360,12 +365,12 @@ size_t short_transfer(const asio::error_code& ec,
   return !!ec ? 0 : 3;
 }
 
-void test_3_arg_mutable_buffers_1_read()
+void test_3_arg_mutable_buffer_read()
 {
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -1016,12 +1021,12 @@ void test_3_arg_streambuf_read()
   ASIO_CHECK(s.check_buffers(sb.data(), sizeof(read_data)));
 }
 
-void test_4_arg_mutable_buffers_1_read()
+void test_4_arg_mutable_buffer_read()
 {
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -1845,7 +1850,7 @@ void async_read_handler(const asio::error_code& e,
   ASIO_CHECK(bytes_transferred == expected_bytes_transferred);
 }
 
-void test_3_arg_mutable_buffers_1_async_read()
+void test_3_arg_mutable_buffer_async_read()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = boost;
@@ -1858,7 +1863,7 @@ void test_3_arg_mutable_buffers_1_async_read()
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -2154,7 +2159,7 @@ void test_3_arg_streambuf_async_read()
   ASIO_CHECK(s.check_buffers(sb.data(), sizeof(read_data)));
 }
 
-void test_4_arg_mutable_buffers_1_async_read()
+void test_4_arg_mutable_buffer_async_read()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = boost;
@@ -2167,7 +2172,7 @@ void test_4_arg_mutable_buffers_1_async_read()
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(read_buf, sizeof(read_buf));
 
   s.reset(read_data, sizeof(read_data));
@@ -3896,25 +3901,25 @@ ASIO_TEST_SUITE
 (
   "read",
   ASIO_TEST_CASE(test_2_arg_zero_buffers_read)
-  ASIO_TEST_CASE(test_2_arg_mutable_buffers_1_read)
+  ASIO_TEST_CASE(test_2_arg_mutable_buffer_read)
   ASIO_TEST_CASE(test_2_arg_vector_buffers_read)
   ASIO_TEST_CASE(test_2_arg_streambuf_read)
   ASIO_TEST_CASE(test_3_arg_nothrow_zero_buffers_read)
-  ASIO_TEST_CASE(test_3_arg_nothrow_mutable_buffers_1_read)
+  ASIO_TEST_CASE(test_3_arg_nothrow_mutable_buffer_read)
   ASIO_TEST_CASE(test_3_arg_nothrow_vector_buffers_read)
   ASIO_TEST_CASE(test_3_arg_nothrow_streambuf_read)
-  ASIO_TEST_CASE(test_3_arg_mutable_buffers_1_read)
+  ASIO_TEST_CASE(test_3_arg_mutable_buffer_read)
   ASIO_TEST_CASE(test_3_arg_vector_buffers_read)
   ASIO_TEST_CASE(test_3_arg_streambuf_read)
-  ASIO_TEST_CASE(test_4_arg_mutable_buffers_1_read)
+  ASIO_TEST_CASE(test_4_arg_mutable_buffer_read)
   ASIO_TEST_CASE(test_4_arg_vector_buffers_read)
   ASIO_TEST_CASE(test_4_arg_streambuf_read)
-  ASIO_TEST_CASE(test_3_arg_mutable_buffers_1_async_read)
+  ASIO_TEST_CASE(test_3_arg_mutable_buffer_async_read)
   ASIO_TEST_CASE(test_3_arg_boost_array_buffers_async_read)
   ASIO_TEST_CASE(test_3_arg_std_array_buffers_async_read)
   ASIO_TEST_CASE(test_3_arg_vector_buffers_async_read)
   ASIO_TEST_CASE(test_3_arg_streambuf_async_read)
-  ASIO_TEST_CASE(test_4_arg_mutable_buffers_1_async_read)
+  ASIO_TEST_CASE(test_4_arg_mutable_buffer_async_read)
   ASIO_TEST_CASE(test_4_arg_vector_buffers_async_read)
   ASIO_TEST_CASE(test_4_arg_boost_array_buffers_async_read)
   ASIO_TEST_CASE(test_4_arg_std_array_buffers_async_read)

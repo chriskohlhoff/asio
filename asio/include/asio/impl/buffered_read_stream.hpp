@@ -381,7 +381,7 @@ buffered_read_stream<Stream>::async_read_some(
 
   if (asio::buffer_size(buffers) == 0 || !storage_.empty())
   {
-    next_layer_.async_read_some(asio::mutable_buffers_1(0, 0),
+    next_layer_.async_read_some(ASIO_MUTABLE_BUFFER(0, 0),
         detail::buffered_read_some_handler<
           MutableBufferSequence, ASIO_HANDLER_TYPE(
             ReadHandler, void (asio::error_code, std::size_t))>(

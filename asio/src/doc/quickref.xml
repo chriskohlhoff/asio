@@ -204,8 +204,6 @@
             <member><link linkend="asio.reference.AsyncReadStream">AsyncReadStream</link></member>
             <member><link linkend="asio.reference.AsyncWriteStream">AsyncWriteStream</link></member>
             <member><link linkend="asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
-            <member><link linkend="asio.reference.ConvertibleToConstBuffer">ConvertibleToConstBuffer</link></member>
-            <member><link linkend="asio.reference.ConvertibleToMutableBuffer">ConvertibleToMutableBuffer</link></member>
             <member><link linkend="asio.reference.DynamicBufferSequence">DynamicBufferSequence</link></member>
             <member><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
             <member><link linkend="asio.reference.ReadHandler">ReadHandler</link></member>

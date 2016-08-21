@@ -47,8 +47,6 @@
 [include requirements/CompletionHandler.qbk]
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConstBufferSequence.qbk]
-[include requirements/ConvertibleToConstBuffer.qbk]
-[include requirements/ConvertibleToMutableBuffer.qbk]
 [include requirements/DynamicBufferSequence.qbk]
 [include requirements/Endpoint.qbk]
 [include requirements/Executor.qbk]

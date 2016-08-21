@@ -81,6 +81,8 @@ void test()
     mb1 = mb2 + 128;
     mb1 = 128 + mb2;
 
+#if !defined(ASIO_NO_DEPRECATED)
+
     // mutable_buffers_1 constructors.
 
     mutable_buffers_1 mbc1(mb1);
@@ -92,6 +94,8 @@ void test()
     (void)iter1;
     mutable_buffers_1::const_iterator iter2 = mbc1.end();
     (void)iter2;
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     // const_buffer constructors.
 
@@ -113,6 +117,8 @@ void test()
     cb1 = cb2 + 128;
     cb1 = 128 + cb2;
 
+#if !defined(ASIO_NO_DEPRECATED)
+
     // const_buffers_1 constructors.
 
     const_buffers_1 cbc1(cb1);
@@ -125,16 +131,20 @@ void test()
     const_buffers_1::const_iterator iter4 = cbc1.end();
     (void)iter4;
 
+#endif // !defined(ASIO_NO_DEPRECATED)
+
     // buffer_size function overloads.
 
     std::size_t size1 = buffer_size(mb1);
     (void)size1;
     std::size_t size2 = buffer_size(cb1);
     (void)size2;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size3 = buffer_size(mbc1);
     (void)size3;
     std::size_t size4 = buffer_size(cbc1);
     (void)size4;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size5 = buffer_size(mutable_buffer_sequence);
     (void)size5;
     std::size_t size6 = buffer_size(const_buffer_sequence);
@@ -190,14 +200,19 @@ void test()
 
     std::size_t size7 = buffer_copy(mb1, cb2);
     (void)size7;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size8 = buffer_copy(mb1, cbc2);
     (void)size8;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size9 = buffer_copy(mb1, mb2);
     (void)size9;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size10 = buffer_copy(mb1, mbc2);
     (void)size10;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size11 = buffer_copy(mb1, const_buffer_sequence);
     (void)size11;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size12 = buffer_copy(mbc1, cb2);
     (void)size12;
     std::size_t size13 = buffer_copy(mbc1, cbc2);
@@ -208,27 +223,37 @@ void test()
     (void)size15;
     std::size_t size16 = buffer_copy(mbc1, const_buffer_sequence);
     (void)size16;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size17 = buffer_copy(mutable_buffer_sequence, cb2);
     (void)size17;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size18 = buffer_copy(mutable_buffer_sequence, cbc2);
     (void)size18;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size19 = buffer_copy(mutable_buffer_sequence, mb2);
     (void)size19;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size20 = buffer_copy(mutable_buffer_sequence, mbc2);
     (void)size20;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size21 = buffer_copy(
         mutable_buffer_sequence, const_buffer_sequence);
     (void)size21;
     std::size_t size22 = buffer_copy(mb1, cb2, 128);
     (void)size22;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size23 = buffer_copy(mb1, cbc2, 128);
     (void)size23;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size24 = buffer_copy(mb1, mb2, 128);
     (void)size24;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size25 = buffer_copy(mb1, mbc2, 128);
     (void)size25;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size26 = buffer_copy(mb1, const_buffer_sequence, 128);
     (void)size26;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size27 = buffer_copy(mbc1, cb2, 128);
     (void)size27;
     std::size_t size28 = buffer_copy(mbc1, cbc2, 128);
@@ -239,14 +264,19 @@ void test()
     (void)size30;
     std::size_t size31 = buffer_copy(mbc1, const_buffer_sequence, 128);
     (void)size31;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size32 = buffer_copy(mutable_buffer_sequence, cb2, 128);
     (void)size32;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size33 = buffer_copy(mutable_buffer_sequence, cbc2, 128);
     (void)size33;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size34 = buffer_copy(mutable_buffer_sequence, mb2, 128);
     (void)size34;
+#if !defined(ASIO_NO_DEPRECATED)
     std::size_t size35 = buffer_copy(mutable_buffer_sequence, mbc2, 128);
     (void)size35;
+#endif // !defined(ASIO_NO_DEPRECATED)
     std::size_t size36 = buffer_copy(
         mutable_buffer_sequence, const_buffer_sequence, 128);
     (void)size36;

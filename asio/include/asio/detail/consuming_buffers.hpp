@@ -150,7 +150,7 @@ private:
 };
 
 // A proxy for a sub-range in a list of buffers.
-template <typename Buffer, typename Buffers>
+template <typename Buffer, typename Buffers, typename Buffer_Iterator>
 class consuming_buffers
 {
 public:
@@ -158,19 +158,19 @@ public:
   typedef Buffer value_type;
 
   // A forward-only iterator type that may be used to read elements.
-  typedef consuming_buffers_iterator<Buffer, typename Buffers::const_iterator>
+  typedef consuming_buffers_iterator<Buffer, Buffer_Iterator>
     const_iterator;
 
   // Construct to represent the entire list of buffers.
   consuming_buffers(const Buffers& buffers)
     : buffers_(buffers),
-      at_end_(buffers_.begin() == buffers_.end()),
-      begin_remainder_(buffers_.begin()),
+      at_end_(buffer_sequence_begin(buffers_) == buffer_sequence_end(buffers_)),
+      begin_remainder_(buffer_sequence_begin(buffers_)),
       max_size_((std::numeric_limits<std::size_t>::max)())
   {
     if (!at_end_)
     {
-      first_ = *buffers_.begin();
+      first_ = *buffer_sequence_begin(buffers_);
       ++begin_remainder_;
     }
   }
@@ -180,11 +180,11 @@ public:
     : buffers_(other.buffers_),
       at_end_(other.at_end_),
       first_(other.first_),
-      begin_remainder_(buffers_.begin()),
+      begin_remainder_(buffer_sequence_begin(buffers_)),
       max_size_(other.max_size_)
   {
-    typename Buffers::const_iterator first = other.buffers_.begin();
-    typename Buffers::const_iterator second = other.begin_remainder_;
+    Buffer_Iterator first = buffer_sequence_begin(other.buffers_);
+    Buffer_Iterator second = other.begin_remainder_;
     std::advance(begin_remainder_, std::distance(first, second));
   }
 
@@ -194,9 +194,9 @@ public:
     buffers_ = other.buffers_;
     at_end_ = other.at_end_;
     first_ = other.first_;
-    begin_remainder_ = buffers_.begin();
-    typename Buffers::const_iterator first = other.buffers_.begin();
-    typename Buffers::const_iterator second = other.begin_remainder_;
+    begin_remainder_ = buffer_sequence_begin(buffers_);
+    Buffer_Iterator first = buffer_sequence_begin(other.buffers_);
+    Buffer_Iterator second = other.begin_remainder_;
     std::advance(begin_remainder_, std::distance(first, second));
     max_size_ = other.max_size_;
     return *this;
@@ -206,7 +206,7 @@ public:
   const_iterator begin() const
   {
     return const_iterator(at_end_, first_,
-        begin_remainder_, buffers_.end(), max_size_);
+        begin_remainder_, buffer_sequence_end(buffers_), max_size_);
   }
 
   // Get a forward-only iterator for one past the last element.
@@ -230,7 +230,7 @@ public:
       if (first_.size() <= size)
       {
         size -= first_.size();
-        if (begin_remainder_ == buffers_.end())
+        if (begin_remainder_ == buffer_sequence_end(buffers_))
           at_end_ = true;
         else
           first_ = *begin_remainder_++;
@@ -245,7 +245,7 @@ public:
     // Remove any more empty buffers at the start.
     while (!at_end_ && first_.size() == 0)
     {
-      if (begin_remainder_ == buffers_.end())
+      if (begin_remainder_ == buffer_sequence_end(buffers_))
         at_end_ = true;
       else
         first_ = *begin_remainder_++;
@@ -256,14 +256,15 @@ private:
   Buffers buffers_;
   bool at_end_;
   Buffer first_;
-  typename Buffers::const_iterator begin_remainder_;
+  Buffer_Iterator begin_remainder_;
   std::size_t max_size_;
 };
 
 // Specialisation for null_buffers to ensure that the null_buffers type is
 // always passed through to the underlying read or write operation.
 template <typename Buffer>
-class consuming_buffers<Buffer, asio::null_buffers>
+class consuming_buffers<Buffer,
+      asio::null_buffers, const mutable_buffer*>
   : public asio::null_buffers
 {
 public:

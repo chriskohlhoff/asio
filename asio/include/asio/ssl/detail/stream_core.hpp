@@ -113,13 +113,13 @@ struct stream_core
   std::vector<unsigned char> output_buffer_space_;
 
   // A buffer that may be used to prepare output intended for the transport.
-  const asio::mutable_buffers_1 output_buffer_;
+  const asio::mutable_buffer output_buffer_;
 
   // Buffer space used to read input intended for the engine.
   std::vector<unsigned char> input_buffer_space_;
 
   // A buffer that may be used to read input intended for the engine.
-  const asio::mutable_buffers_1 input_buffer_;
+  const asio::mutable_buffer input_buffer_;
 
   // The buffer pointing to the engine's unconsumed input.
   asio::const_buffer input_;

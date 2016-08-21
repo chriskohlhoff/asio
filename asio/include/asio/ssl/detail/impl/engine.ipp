@@ -165,7 +165,7 @@ engine::want engine::read(const asio::mutable_buffer& data,
       data.size(), ec, &bytes_transferred);
 }
 
-asio::mutable_buffers_1 engine::get_output(
+asio::mutable_buffer engine::get_output(
     const asio::mutable_buffer& data)
 {
   int length = ::BIO_read(ext_bio_,

@@ -74,27 +74,32 @@ public:
     next_write_length_ = length;
   }
 
-  template <typename Const_Buffers>
-  bool check_buffers(const Const_Buffers& buffers, size_t length)
+  template <typename Iterator>
+  bool check_buffers(Iterator begin, Iterator end, size_t length)
   {
     if (length != position_)
       return false;
 
-    typename Const_Buffers::const_iterator iter = buffers.begin();
-    typename Const_Buffers::const_iterator end = buffers.end();
+    Iterator iter = begin;
     size_t checked_length = 0;
     for (; iter != end && checked_length < length; ++iter)
     {
       size_t buffer_length = asio::buffer_size(*iter);
       if (buffer_length > length - checked_length)
         buffer_length = length - checked_length;
-      if (memcmp(data_ + checked_length,
-            asio::buffer_cast<const void*>(*iter), buffer_length) != 0)
+      if (memcmp(data_ + checked_length, iter->data(), buffer_length) != 0)
         return false;
       checked_length += buffer_length;
     }
 
     return true;
+  }
+
+  template <typename Const_Buffers>
+  bool check_buffers(const Const_Buffers& buffers, size_t length)
+  {
+    return check_buffers(asio::buffer_sequence_begin(buffers),
+        asio::buffer_sequence_end(buffers), length);
   }
 
   template <typename Const_Buffers>
@@ -148,11 +153,11 @@ void test_2_arg_zero_buffers_write()
   ASIO_CHECK(bytes_transferred == 0);
 }
 
-void test_2_arg_const_buffers_1_write()
+void test_2_arg_const_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -173,11 +178,11 @@ void test_2_arg_const_buffers_1_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
 
-void test_2_arg_mutable_buffers_1_write()
+void test_2_arg_mutable_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
 
   s.reset();
@@ -236,11 +241,11 @@ void test_3_arg_nothrow_zero_buffers_write()
   ASIO_CHECK(!error);
 }
 
-void test_3_arg_nothrow_const_buffers_1_write()
+void test_3_arg_nothrow_const_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -265,11 +270,11 @@ void test_3_arg_nothrow_const_buffers_1_write()
   ASIO_CHECK(!error);
 }
 
-void test_3_arg_nothrow_mutable_buffers_1_write()
+void test_3_arg_nothrow_mutable_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
 
   s.reset();
@@ -336,11 +341,11 @@ size_t short_transfer(const asio::error_code& ec,
   return !!ec ? 0 : 3;
 }
 
-void test_3_arg_const_buffers_1_write()
+void test_3_arg_const_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -518,11 +523,11 @@ void test_3_arg_const_buffers_1_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
 
-void test_3_arg_mutable_buffers_1_write()
+void test_3_arg_mutable_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
 
   s.reset();
@@ -883,11 +888,11 @@ void test_3_arg_vector_buffers_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
 
-void test_4_arg_const_buffers_1_write()
+void test_4_arg_const_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -1120,11 +1125,11 @@ void test_4_arg_const_buffers_1_write()
   ASIO_CHECK(!error);
 }
 
-void test_4_arg_mutable_buffers_1_write()
+void test_4_arg_mutable_buffer_write()
 {
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
 
   s.reset();
@@ -1603,7 +1608,7 @@ void async_write_handler(const asio::error_code& e,
   ASIO_CHECK(bytes_transferred == expected_bytes_transferred);
 }
 
-void test_3_arg_const_buffers_1_async_write()
+void test_3_arg_const_buffer_async_write()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = boost;
@@ -1615,7 +1620,7 @@ void test_3_arg_const_buffers_1_async_write()
 
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -1658,7 +1663,7 @@ void test_3_arg_const_buffers_1_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
 
-void test_3_arg_mutable_buffers_1_async_write()
+void test_3_arg_mutable_buffer_async_write()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = boost;
@@ -1670,7 +1675,7 @@ void test_3_arg_mutable_buffers_1_async_write()
 
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
 
   s.reset();
@@ -1898,7 +1903,7 @@ void test_3_arg_streambuf_async_write()
   asio::io_context ioc;
   test_stream s(ioc);
   asio::streambuf sb;
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -1949,7 +1954,7 @@ void test_3_arg_streambuf_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
 
-void test_4_arg_const_buffers_1_async_write()
+void test_4_arg_const_buffer_async_write()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = boost;
@@ -1961,7 +1966,7 @@ void test_4_arg_const_buffers_1_async_write()
 
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -2261,7 +2266,7 @@ void test_4_arg_const_buffers_1_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
 
-void test_4_arg_mutable_buffers_1_async_write()
+void test_4_arg_mutable_buffer_async_write()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = boost;
@@ -2273,7 +2278,7 @@ void test_4_arg_mutable_buffers_1_async_write()
 
   asio::io_context ioc;
   test_stream s(ioc);
-  asio::mutable_buffers_1 buffers
+  asio::mutable_buffer buffers
     = asio::buffer(mutable_write_data, sizeof(mutable_write_data));
 
   s.reset();
@@ -3529,7 +3534,7 @@ void test_4_arg_streambuf_async_write()
   asio::io_context ioc;
   test_stream s(ioc);
   asio::streambuf sb;
-  asio::const_buffers_1 buffers
+  asio::const_buffer buffers
     = asio::buffer(write_data, sizeof(write_data));
 
   s.reset();
@@ -3889,27 +3894,27 @@ ASIO_TEST_SUITE
 (
   "write",
   ASIO_TEST_CASE(test_2_arg_zero_buffers_write)
-  ASIO_TEST_CASE(test_2_arg_const_buffers_1_write)
-  ASIO_TEST_CASE(test_2_arg_mutable_buffers_1_write)
+  ASIO_TEST_CASE(test_2_arg_const_buffer_write)
+  ASIO_TEST_CASE(test_2_arg_mutable_buffer_write)
   ASIO_TEST_CASE(test_2_arg_vector_buffers_write)
   ASIO_TEST_CASE(test_3_arg_nothrow_zero_buffers_write)
-  ASIO_TEST_CASE(test_3_arg_nothrow_const_buffers_1_write)
-  ASIO_TEST_CASE(test_3_arg_nothrow_mutable_buffers_1_write)
+  ASIO_TEST_CASE(test_3_arg_nothrow_const_buffer_write)
+  ASIO_TEST_CASE(test_3_arg_nothrow_mutable_buffer_write)
   ASIO_TEST_CASE(test_3_arg_nothrow_vector_buffers_write)
-  ASIO_TEST_CASE(test_3_arg_const_buffers_1_write)
-  ASIO_TEST_CASE(test_3_arg_mutable_buffers_1_write)
+  ASIO_TEST_CASE(test_3_arg_const_buffer_write)
+  ASIO_TEST_CASE(test_3_arg_mutable_buffer_write)
   ASIO_TEST_CASE(test_3_arg_vector_buffers_write)
-  ASIO_TEST_CASE(test_4_arg_const_buffers_1_write)
-  ASIO_TEST_CASE(test_4_arg_mutable_buffers_1_write)
+  ASIO_TEST_CASE(test_4_arg_const_buffer_write)
+  ASIO_TEST_CASE(test_4_arg_mutable_buffer_write)
   ASIO_TEST_CASE(test_4_arg_vector_buffers_write)
-  ASIO_TEST_CASE(test_3_arg_const_buffers_1_async_write)
-  ASIO_TEST_CASE(test_3_arg_mutable_buffers_1_async_write)
+  ASIO_TEST_CASE(test_3_arg_const_buffer_async_write)
+  ASIO_TEST_CASE(test_3_arg_mutable_buffer_async_write)
   ASIO_TEST_CASE(test_3_arg_boost_array_buffers_async_write)
   ASIO_TEST_CASE(test_3_arg_std_array_buffers_async_write)
   ASIO_TEST_CASE(test_3_arg_vector_buffers_async_write)
   ASIO_TEST_CASE(test_3_arg_streambuf_async_write)
-  ASIO_TEST_CASE(test_4_arg_const_buffers_1_async_write)
-  ASIO_TEST_CASE(test_4_arg_mutable_buffers_1_async_write)
+  ASIO_TEST_CASE(test_4_arg_const_buffer_async_write)
+  ASIO_TEST_CASE(test_4_arg_mutable_buffer_async_write)
   ASIO_TEST_CASE(test_4_arg_boost_array_buffers_async_write)
   ASIO_TEST_CASE(test_4_arg_std_array_buffers_async_write)
   ASIO_TEST_CASE(test_4_arg_vector_buffers_async_write)

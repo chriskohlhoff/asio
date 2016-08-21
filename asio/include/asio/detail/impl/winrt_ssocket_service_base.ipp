@@ -449,7 +449,7 @@ std::size_t winrt_ssocket_service_base::do_send(
   try
   {
     buffer_sequence_adapter<asio::const_buffer,
-      asio::const_buffers_1> bufs(asio::buffer(data));
+      asio::const_buffer> bufs(asio::buffer(data));
 
     if (bufs.all_empty())
     {
@@ -490,7 +490,7 @@ void winrt_ssocket_service_base::start_send_op(
   try
   {
     buffer_sequence_adapter<asio::const_buffer,
-        asio::const_buffers_1> bufs(asio::buffer(data));
+        asio::const_buffer> bufs(asio::buffer(data));
 
     if (bufs.all_empty())
     {
@@ -529,7 +529,7 @@ std::size_t winrt_ssocket_service_base::do_receive(
   try
   {
     buffer_sequence_adapter<asio::mutable_buffer,
-        asio::mutable_buffers_1> bufs(asio::buffer(data));
+        asio::mutable_buffer> bufs(asio::buffer(data));
 
     if (bufs.all_empty())
     {
@@ -581,7 +581,7 @@ void winrt_ssocket_service_base::start_receive_op(
   try
   {
     buffer_sequence_adapter<asio::mutable_buffer,
-        asio::mutable_buffers_1> bufs(asio::buffer(data));
+        asio::mutable_buffer> bufs(asio::buffer(data));
 
     if (bufs.all_empty())
     {

@@ -671,7 +671,7 @@ void test()
 
   bool read_noop_completed = false;
   client_side_socket.async_read_some(
-      asio::mutable_buffers_1(0, 0),
+      asio::mutable_buffer(0, 0),
       bindns::bind(handle_read_noop,
         _1, _2, &read_noop_completed));
 
@@ -682,7 +682,7 @@ void test()
 
   bool write_noop_completed = false;
   client_side_socket.async_write_some(
-      asio::const_buffers_1(0, 0),
+      asio::const_buffer(0, 0),
       bindns::bind(handle_write_noop,
         _1, _2, &write_noop_completed));
 

@@ -209,7 +209,9 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_SVC_TPARAM1_DEF2()= \
                          ASIO_SVC_TARG1= \
                          ASIO_SVC_T=asio::detail::service \
-                         ASIO_SVC_T1=asio::detail::service
+                         ASIO_SVC_T1=asio::detail::service \
+                         ASIO_CONST_BUFFER=const_buffer \
+                         ASIO_MUTABLE_BUFFER=mutable_buffer
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

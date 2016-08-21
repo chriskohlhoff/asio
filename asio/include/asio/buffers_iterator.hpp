@@ -65,7 +65,44 @@ namespace detail
     typedef buffers_iterator_types_helper<is_mutable> helper;
     typedef typename helper::buffer_type buffer_type;
     typedef typename helper::template byte_type<ByteType>::type byte_type;
+    typedef typename BufferSequence::const_iterator const_iterator;
   };
+
+  template <typename ByteType>
+  struct buffers_iterator_types<mutable_buffer, ByteType>
+  {
+    typedef mutable_buffer buffer_type;
+    typedef ByteType byte_type;
+    typedef const mutable_buffer* const_iterator;
+  };
+
+  template <typename ByteType>
+  struct buffers_iterator_types<const_buffer, ByteType>
+  {
+    typedef const_buffer buffer_type;
+    typedef typename add_const<ByteType>::type byte_type;
+    typedef const const_buffer* const_iterator;
+  };
+
+#if !defined(ASIO_NO_DEPRECATED)
+
+  template <typename ByteType>
+  struct buffers_iterator_types<mutable_buffers_1, ByteType>
+  {
+    typedef mutable_buffer buffer_type;
+    typedef ByteType byte_type;
+    typedef const mutable_buffer* const_iterator;
+  };
+
+  template <typename ByteType>
+  struct buffers_iterator_types<const_buffers_1, ByteType>
+  {
+    typedef const_buffer buffer_type;
+    typedef typename add_const<ByteType>::type byte_type;
+    typedef const const_buffer* const_iterator;
+  };
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 }
 
 /// A random access iterator over the bytes in a buffer sequence.
@@ -75,6 +112,9 @@ class buffers_iterator
 private:
   typedef typename detail::buffers_iterator_types<
       BufferSequence, ByteType>::buffer_type buffer_type;
+
+  typedef typename detail::buffers_iterator_types<BufferSequence,
+          ByteType>::const_iterator buffer_sequence_iterator_type;
 
 public:
   /// The type used for the distance between two iterators.
@@ -130,9 +170,9 @@ public:
 #endif // defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 3)
   {
     buffers_iterator new_iter;
-    new_iter.begin_ = buffers.begin();
-    new_iter.current_ = buffers.begin();
-    new_iter.end_ = buffers.end();
+    new_iter.begin_ = asio::buffer_sequence_begin(buffers);
+    new_iter.current_ = asio::buffer_sequence_begin(buffers);
+    new_iter.end_ = asio::buffer_sequence_end(buffers);
     while (new_iter.current_ != new_iter.end_)
     {
       new_iter.current_buffer_ = *new_iter.current_;
@@ -150,9 +190,9 @@ public:
 #endif // defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ == 3)
   {
     buffers_iterator new_iter;
-    new_iter.begin_ = buffers.begin();
-    new_iter.current_ = buffers.begin();
-    new_iter.end_ = buffers.end();
+    new_iter.begin_ = asio::buffer_sequence_begin(buffers);
+    new_iter.current_ = asio::buffer_sequence_begin(buffers);
+    new_iter.end_ = asio::buffer_sequence_end(buffers);
     while (new_iter.current_ != new_iter.end_)
     {
       buffer_type buffer = *new_iter.current_;
@@ -347,7 +387,7 @@ private:
     }
 
     // Find the previous non-empty buffer.
-    typename BufferSequence::const_iterator iter = current_;
+    buffer_sequence_iterator_type iter = current_;
     while (iter != begin_)
     {
       --iter;
@@ -426,7 +466,7 @@ private:
         }
 
         // Find the previous non-empty buffer.
-        typename BufferSequence::const_iterator iter = current_;
+        buffer_sequence_iterator_type iter = current_;
         while (iter != begin_)
         {
           --iter;
@@ -452,9 +492,9 @@ private:
 
   buffer_type current_buffer_;
   std::size_t current_buffer_position_;
-  typename BufferSequence::const_iterator begin_;
-  typename BufferSequence::const_iterator current_;
-  typename BufferSequence::const_iterator end_;
+  buffer_sequence_iterator_type begin_;
+  buffer_sequence_iterator_type current_;
+  buffer_sequence_iterator_type end_;
   std::size_t position_;
 };
 

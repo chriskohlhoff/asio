@@ -93,7 +93,7 @@ public:
       asio::error_code& ec, std::size_t& bytes_transferred);
 
   // Get output data to be written to the transport.
-  ASIO_DECL asio::mutable_buffers_1 get_output(
+  ASIO_DECL asio::mutable_buffer get_output(
       const asio::mutable_buffer& data);
 
   // Put input data that was read from the transport.

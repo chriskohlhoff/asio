@@ -119,8 +119,8 @@ public:
   /// The type used to represent the output sequence as a list of buffers.
   typedef implementation_defined mutable_buffers_type;
 #else
-  typedef asio::const_buffers_1 const_buffers_type;
-  typedef asio::mutable_buffers_1 mutable_buffers_type;
+  typedef ASIO_CONST_BUFFER const_buffers_type;
+  typedef ASIO_MUTABLE_BUFFER mutable_buffers_type;
 #endif
 
   /// Construct a basic_streambuf object.

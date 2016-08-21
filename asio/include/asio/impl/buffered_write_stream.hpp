@@ -368,7 +368,7 @@ buffered_write_stream<Stream>::async_write_some(
   if (asio::buffer_size(buffers) == 0
       || storage_.size() < storage_.capacity())
   {
-    next_layer_.async_write_some(asio::const_buffers_1(0, 0),
+    next_layer_.async_write_some(ASIO_CONST_BUFFER(0, 0),
         detail::buffered_write_some_handler<
           ConstBufferSequence, ASIO_HANDLER_TYPE(
             WriteHandler, void (asio::error_code, std::size_t))>(

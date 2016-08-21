@@ -41,8 +41,27 @@ public:
       asio::error_code& ec,
       std::size_t& bytes_transferred) const
   {
-    typename ConstBufferSequence::const_iterator iter = buffers_.begin();
-    typename ConstBufferSequence::const_iterator end = buffers_.end();
+    return this->process(eng, ec, bytes_transferred,
+        asio::buffer_sequence_begin(buffers_),
+        asio::buffer_sequence_end(buffers_));
+  }
+
+  template <typename Handler>
+  void call_handler(Handler& handler,
+      const asio::error_code& ec,
+      const std::size_t& bytes_transferred) const
+  {
+    handler(ec, bytes_transferred);
+  }
+
+private:
+  template <typename Iterator>
+  engine::want process(engine& eng,
+      asio::error_code& ec,
+      std::size_t& bytes_transferred,
+      Iterator begin, Iterator end) const
+  {
+    Iterator iter = begin;
     std::size_t accumulated_size = 0;
 
     for (;;)
@@ -81,15 +100,6 @@ public:
     }
   }
 
-  template <typename Handler>
-  void call_handler(Handler& handler,
-      const asio::error_code& ec,
-      const std::size_t& bytes_transferred) const
-  {
-    handler(ec, bytes_transferred);
-  }
-
-private:
   stream_base::handshake_type type_;
   ConstBufferSequence buffers_;
   std::size_t total_buffer_size_;
