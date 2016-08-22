@@ -208,7 +208,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-#include <asio/ts/thread_pool.hpp>
+#include <asio/thread_pool.hpp>
 #include <iostream>
 
 using asio::thread_pool;

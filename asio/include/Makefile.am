@@ -443,7 +443,6 @@ nobase_include_HEADERS = \
 	asio/ts/netfwd.hpp \
 	asio/ts/net.hpp \
 	asio/ts/socket.hpp \
-	asio/ts/thread_pool.hpp \
 	asio/ts/timer.hpp \
 	asio/unyield.hpp \
 	asio/use_future.hpp \

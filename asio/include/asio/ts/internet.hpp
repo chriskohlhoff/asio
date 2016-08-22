@@ -29,6 +29,8 @@
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver.hpp"
 #include "asio/ip/host_name.hpp"
+#include "asio/ip/network_v4.hpp"
+#include "asio/ip/network_v6.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/ip/v6_only.hpp"

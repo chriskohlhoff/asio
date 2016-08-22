@@ -242,7 +242,7 @@ std::future<void> pipeline(F f, Tail... t)
 
 //------------------------------------------------------------------------------
 
-#include <asio/ts/thread_pool.hpp>
+#include <asio/thread_pool.hpp>
 #include <iostream>
 #include <string>
 
