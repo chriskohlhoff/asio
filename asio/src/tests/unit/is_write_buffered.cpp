@@ -65,7 +65,8 @@ public:
   void async_write(const Const_Buffers&, Handler handler)
   {
     asio::error_code error;
-    io_context_.post(asio::detail::bind_handler(handler, error, 0));
+    asio::post(io_context_,
+        asio::detail::bind_handler(handler, error, 0));
   }
 
   template <typename Mutable_Buffers>
@@ -85,7 +86,8 @@ public:
   void async_read(const Mutable_Buffers&, Handler handler)
   {
     asio::error_code error;
-    io_context_.post(asio::detail::bind_handler(handler, error, 0));
+    asio::post(io_context_,
+        asio::detail::bind_handler(handler, error, 0));
   }
 
 private:

@@ -18,6 +18,7 @@
 
 #include <sstream>
 #include "asio/io_context.hpp"
+#include "asio/dispatch.hpp"
 #include "asio/post.hpp"
 #include "asio/thread.hpp"
 #include "unit_test.hpp"
@@ -61,7 +62,7 @@ void increment_without_lock(io_context::strand* s, int* count)
 
   int original_count = *count;
 
-  s->dispatch(bindns::bind(increment, count));
+  dispatch(*s, bindns::bind(increment, count));
 
   // No other functions are currently executing through the locking dispatcher,
   // so the previous call to dispatch should have successfully nested.
@@ -74,7 +75,7 @@ void increment_with_lock(io_context::strand* s, int* count)
 
   int original_count = *count;
 
-  s->dispatch(bindns::bind(increment, count));
+  dispatch(*s, bindns::bind(increment, count));
 
   // The current function already holds the strand's lock, so the
   // previous call to dispatch should have successfully nested.
@@ -96,9 +97,9 @@ void start_sleep_increments(io_context* ioc, io_context::strand* s, int* count)
   t.wait();
 
   // Start three increments.
-  s->post(bindns::bind(sleep_increment, ioc, count));
-  s->post(bindns::bind(sleep_increment, ioc, count));
-  s->post(bindns::bind(sleep_increment, ioc, count));
+  post(*s, bindns::bind(sleep_increment, ioc, count));
+  post(*s, bindns::bind(sleep_increment, ioc, count));
+  post(*s, bindns::bind(sleep_increment, ioc, count));
 }
 
 void throw_exception()

@@ -69,14 +69,18 @@ void test()
     (void)addr_v6_value;
 
     std::string string_value = addr1.to_string();
+#if !defined(ASIO_NO_DEPRECATED)
     string_value = addr1.to_string(ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     // address static functions.
 
+#if !defined(ASIO_NO_DEPRECATED)
     addr1 = ip::address::from_string("127.0.0.1");
     addr1 = ip::address::from_string("127.0.0.1", ec);
     addr1 = ip::address::from_string(string_value);
     addr1 = ip::address::from_string(string_value, ec);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
     // address comparisons.
 
