@@ -54,10 +54,10 @@ public:
   public:
     explicit baud_rate(unsigned int rate = 0);
     unsigned int value() const;
-    ASIO_DECL asio::error_code store(
+    ASIO_DECL ASIO_SYNC_OP_VOID store(
         ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    ASIO_DECL asio::error_code load(
+    ASIO_DECL ASIO_SYNC_OP_VOID load(
         const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
@@ -74,10 +74,10 @@ public:
     enum type { none, software, hardware };
     ASIO_DECL explicit flow_control(type t = none);
     type value() const;
-    ASIO_DECL asio::error_code store(
+    ASIO_DECL ASIO_SYNC_OP_VOID store(
         ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    ASIO_DECL asio::error_code load(
+    ASIO_DECL ASIO_SYNC_OP_VOID load(
         const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
@@ -94,10 +94,10 @@ public:
     enum type { none, odd, even };
     ASIO_DECL explicit parity(type t = none);
     type value() const;
-    ASIO_DECL asio::error_code store(
+    ASIO_DECL ASIO_SYNC_OP_VOID store(
         ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    ASIO_DECL asio::error_code load(
+    ASIO_DECL ASIO_SYNC_OP_VOID load(
         const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
@@ -114,10 +114,10 @@ public:
     enum type { one, onepointfive, two };
     ASIO_DECL explicit stop_bits(type t = one);
     type value() const;
-    ASIO_DECL asio::error_code store(
+    ASIO_DECL ASIO_SYNC_OP_VOID store(
         ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    ASIO_DECL asio::error_code load(
+    ASIO_DECL ASIO_SYNC_OP_VOID load(
         const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:
@@ -133,10 +133,10 @@ public:
   public:
     ASIO_DECL explicit character_size(unsigned int t = 8);
     unsigned int value() const;
-    ASIO_DECL asio::error_code store(
+    ASIO_DECL ASIO_SYNC_OP_VOID store(
         ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec) const;
-    ASIO_DECL asio::error_code load(
+    ASIO_DECL ASIO_SYNC_OP_VOID load(
         const ASIO_OPTION_STORAGE& storage,
         asio::error_code& ec);
   private:

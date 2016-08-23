@@ -133,18 +133,20 @@ public:
   }
 
   /// Open a new socket acceptor implementation.
-  asio::error_code open(implementation_type& impl,
+  ASIO_SYNC_OP_VOID open(implementation_type& impl,
       const protocol_type& protocol, asio::error_code& ec)
   {
-    return service_impl_.open(impl, protocol, ec);
+    service_impl_.open(impl, protocol, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Assign an existing native acceptor to a socket acceptor.
-  asio::error_code assign(implementation_type& impl,
+  ASIO_SYNC_OP_VOID assign(implementation_type& impl,
       const protocol_type& protocol, const native_handle_type& native_acceptor,
       asio::error_code& ec)
   {
-    return service_impl_.assign(impl, protocol, native_acceptor, ec);
+    service_impl_.assign(impl, protocol, native_acceptor, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the acceptor is open.
@@ -154,32 +156,36 @@ public:
   }
 
   /// Cancel all asynchronous operations associated with the acceptor.
-  asio::error_code cancel(implementation_type& impl,
+  ASIO_SYNC_OP_VOID cancel(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.cancel(impl, ec);
+    service_impl_.cancel(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Bind the socket acceptor to the specified local endpoint.
-  asio::error_code bind(implementation_type& impl,
+  ASIO_SYNC_OP_VOID bind(implementation_type& impl,
       const endpoint_type& endpoint, asio::error_code& ec)
   {
-    return service_impl_.bind(impl, endpoint, ec);
+    service_impl_.bind(impl, endpoint, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Place the socket acceptor into the state where it will listen for new
   /// connections.
-  asio::error_code listen(implementation_type& impl, int backlog,
+  ASIO_SYNC_OP_VOID listen(implementation_type& impl, int backlog,
       asio::error_code& ec)
   {
-    return service_impl_.listen(impl, backlog, ec);
+    service_impl_.listen(impl, backlog, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Close a socket acceptor implementation.
-  asio::error_code close(implementation_type& impl,
+  ASIO_SYNC_OP_VOID close(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.close(impl, ec);
+    service_impl_.close(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the native acceptor implementation.
@@ -190,26 +196,29 @@ public:
 
   /// Set a socket option.
   template <typename SettableSocketOption>
-  asio::error_code set_option(implementation_type& impl,
+  ASIO_SYNC_OP_VOID set_option(implementation_type& impl,
       const SettableSocketOption& option, asio::error_code& ec)
   {
-    return service_impl_.set_option(impl, option, ec);
+    service_impl_.set_option(impl, option, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get a socket option.
   template <typename GettableSocketOption>
-  asio::error_code get_option(const implementation_type& impl,
+  ASIO_SYNC_OP_VOID get_option(const implementation_type& impl,
       GettableSocketOption& option, asio::error_code& ec) const
   {
-    return service_impl_.get_option(impl, option, ec);
+    service_impl_.get_option(impl, option, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Perform an IO control command on the socket.
   template <typename IoControlCommand>
-  asio::error_code io_control(implementation_type& impl,
+  ASIO_SYNC_OP_VOID io_control(implementation_type& impl,
       IoControlCommand& command, asio::error_code& ec)
   {
-    return service_impl_.io_control(impl, command, ec);
+    service_impl_.io_control(impl, command, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Gets the non-blocking mode of the acceptor.
@@ -219,10 +228,11 @@ public:
   }
 
   /// Sets the non-blocking mode of the acceptor.
-  asio::error_code non_blocking(implementation_type& impl,
+  ASIO_SYNC_OP_VOID non_blocking(implementation_type& impl,
       bool mode, asio::error_code& ec)
   {
-    return service_impl_.non_blocking(impl, mode, ec);
+    service_impl_.non_blocking(impl, mode, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Gets the non-blocking mode of the native acceptor implementation.
@@ -232,10 +242,11 @@ public:
   }
 
   /// Sets the non-blocking mode of the native acceptor implementation.
-  asio::error_code native_non_blocking(implementation_type& impl,
+  ASIO_SYNC_OP_VOID native_non_blocking(implementation_type& impl,
       bool mode, asio::error_code& ec)
   {
-    return service_impl_.native_non_blocking(impl, mode, ec);
+    service_impl_.native_non_blocking(impl, mode, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the local endpoint.
@@ -247,10 +258,11 @@ public:
 
   /// Wait for the acceptor to become ready to read, ready to write, or to have
   /// pending error conditions.
-  asio::error_code wait(implementation_type& impl,
+  ASIO_SYNC_OP_VOID wait(implementation_type& impl,
       socket_base::wait_type w, asio::error_code& ec)
   {
-    return service_impl_.wait(impl, w, ec);
+    service_impl_.wait(impl, w, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Asynchronously wait for the acceptor to become ready to read, ready to
@@ -271,12 +283,13 @@ public:
 
   /// Accept a new connection.
   template <typename Protocol1, typename SocketService>
-  asio::error_code accept(implementation_type& impl,
+  ASIO_SYNC_OP_VOID accept(implementation_type& impl,
       basic_socket<Protocol1, SocketService>& peer,
       endpoint_type* peer_endpoint, asio::error_code& ec,
       typename enable_if<is_convertible<Protocol, Protocol1>::value>::type* = 0)
   {
-    return service_impl_.accept(impl, peer, peer_endpoint, ec);
+    service_impl_.accept(impl, peer, peer_endpoint, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
 #if defined(ASIO_HAS_MOVE)

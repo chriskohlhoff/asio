@@ -128,9 +128,10 @@ public:
   }
 
   /// Close the stream.
-  asio::error_code close(asio::error_code& ec)
+  ASIO_SYNC_OP_VOID close(asio::error_code& ec)
   {
-    return next_layer_.close(ec);
+    next_layer_.close(ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Flush all data from the buffer to the next layer. Returns the number of

@@ -34,11 +34,12 @@ void context::set_verify_callback(VerifyCallback callback)
 }
 
 template <typename VerifyCallback>
-asio::error_code context::set_verify_callback(
+ASIO_SYNC_OP_VOID context::set_verify_callback(
     VerifyCallback callback, asio::error_code& ec)
 {
-  return do_set_verify_callback(
+  do_set_verify_callback(
       new detail::verify_callback<VerifyCallback>(callback), ec);
+  ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
 template <typename PasswordCallback>
@@ -50,11 +51,12 @@ void context::set_password_callback(PasswordCallback callback)
 }
 
 template <typename PasswordCallback>
-asio::error_code context::set_password_callback(
+ASIO_SYNC_OP_VOID context::set_password_callback(
     PasswordCallback callback, asio::error_code& ec)
 {
-  return do_set_password_callback(
+  do_set_password_callback(
       new detail::password_callback<PasswordCallback>(callback), ec);
+  ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
 } // namespace ssl

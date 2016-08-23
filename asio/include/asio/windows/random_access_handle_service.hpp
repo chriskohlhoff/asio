@@ -105,10 +105,11 @@ public:
   }
 
   /// Assign an existing native handle to a random-access handle.
-  asio::error_code assign(implementation_type& impl,
+  ASIO_SYNC_OP_VOID assign(implementation_type& impl,
       const native_handle_type& handle, asio::error_code& ec)
   {
-    return service_impl_.assign(impl, handle, ec);
+    service_impl_.assign(impl, handle, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the handle is open.
@@ -118,10 +119,11 @@ public:
   }
 
   /// Close a random-access handle implementation.
-  asio::error_code close(implementation_type& impl,
+  ASIO_SYNC_OP_VOID close(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.close(impl, ec);
+    service_impl_.close(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the native handle implementation.
@@ -131,10 +133,11 @@ public:
   }
 
   /// Cancel all asynchronous operations associated with the handle.
-  asio::error_code cancel(implementation_type& impl,
+  ASIO_SYNC_OP_VOID cancel(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.cancel(impl, ec);
+    service_impl_.cancel(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Write the given data at the specified offset.

@@ -42,7 +42,6 @@ void test()
   {
     asio::io_context io_context;
     asio::error_code ec1;
-    asio::error_code ec2;
 
     dp::socket s1(io_context);
     dp::socket s2(io_context);
@@ -50,7 +49,7 @@ void test()
 
     dp::socket s3(io_context);
     dp::socket s4(io_context);
-    ec1 = local::connect_pair(s3, s4, ec2);
+    local::connect_pair(s3, s4, ec1);
 
     sp::socket s5(io_context);
     sp::socket s6(io_context);
@@ -58,7 +57,7 @@ void test()
 
     sp::socket s7(io_context);
     sp::socket s8(io_context);
-    ec1 = local::connect_pair(s7, s8, ec2);
+    local::connect_pair(s7, s8, ec1);
   }
   catch (std::exception&)
   {

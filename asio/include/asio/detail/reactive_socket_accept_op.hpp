@@ -64,7 +64,8 @@ public:
       socket_holder new_socket_holder(new_socket);
       if (o->peer_endpoint_)
         o->peer_endpoint_->resize(addrlen);
-      if (!o->peer_.assign(o->protocol_, new_socket, o->ec_))
+      o->peer_.assign(o->protocol_, new_socket, o->ec_);
+      if (!o->ec_)
         new_socket_holder.release();
     }
 

@@ -350,10 +350,11 @@ public:
    * }
    * @endcode
    */
-  asio::error_code open(const protocol_type& protocol,
+  ASIO_SYNC_OP_VOID open(const protocol_type& protocol,
       asio::error_code& ec)
   {
-    return this->get_service().open(this->get_implementation(), protocol, ec);
+    this->get_service().open(this->get_implementation(), protocol, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Assign an existing native socket to the socket.
@@ -385,11 +386,12 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  asio::error_code assign(const protocol_type& protocol,
+  ASIO_SYNC_OP_VOID assign(const protocol_type& protocol,
       const native_handle_type& native_socket, asio::error_code& ec)
   {
-    return this->get_service().assign(this->get_implementation(),
+    this->get_service().assign(this->get_implementation(),
         protocol, native_socket, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the socket is open.
@@ -441,9 +443,10 @@ public:
    * @note For portable behaviour with respect to graceful closure of a
    * connected socket, call shutdown() before closing the socket.
    */
-  asio::error_code close(asio::error_code& ec)
+  ASIO_SYNC_OP_VOID close(asio::error_code& ec)
   {
-    return this->get_service().close(this->get_implementation(), ec);
+    this->get_service().close(this->get_implementation(), ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the native socket representation.
@@ -546,9 +549,10 @@ public:
         "operation_not_supported when used on Windows XP, Windows Server 2003, "
         "or earlier. Consult documentation for details."))
 #endif
-  asio::error_code cancel(asio::error_code& ec)
+  ASIO_SYNC_OP_VOID cancel(asio::error_code& ec)
   {
-    return this->get_service().cancel(this->get_implementation(), ec);
+    this->get_service().cancel(this->get_implementation(), ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the socket is at the out-of-band data mark.
@@ -666,10 +670,11 @@ public:
    * }
    * @endcode
    */
-  asio::error_code bind(const endpoint_type& endpoint,
+  ASIO_SYNC_OP_VOID bind(const endpoint_type& endpoint,
       asio::error_code& ec)
   {
-    return this->get_service().bind(this->get_implementation(), endpoint, ec);
+    this->get_service().bind(this->get_implementation(), endpoint, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Connect the socket to the specified endpoint.
@@ -736,20 +741,21 @@ public:
    * }
    * @endcode
    */
-  asio::error_code connect(const endpoint_type& peer_endpoint,
+  ASIO_SYNC_OP_VOID connect(const endpoint_type& peer_endpoint,
       asio::error_code& ec)
   {
     if (!is_open())
     {
-      if (this->get_service().open(this->get_implementation(),
-            peer_endpoint.protocol(), ec))
+      this->get_service().open(this->get_implementation(),
+            peer_endpoint.protocol(), ec);
+      if (ec)
       {
-        return ec;
+        ASIO_SYNC_OP_VOID_RETURN(ec);
       }
     }
 
-    return this->get_service().connect(
-        this->get_implementation(), peer_endpoint, ec);
+    this->get_service().connect(this->get_implementation(), peer_endpoint, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Start an asynchronous connect.
@@ -807,7 +813,8 @@ public:
     {
       asio::error_code ec;
       const protocol_type protocol = peer_endpoint.protocol();
-      if (this->get_service().open(this->get_implementation(), protocol, ec))
+      this->get_service().open(this->get_implementation(), protocol, ec);
+      if (ec)
       {
         async_completion<ConnectHandler,
           void (asio::error_code)> init(handler);
@@ -918,11 +925,11 @@ public:
    * @endcode
    */
   template <typename SettableSocketOption>
-  asio::error_code set_option(const SettableSocketOption& option,
+  ASIO_SYNC_OP_VOID set_option(const SettableSocketOption& option,
       asio::error_code& ec)
   {
-    return this->get_service().set_option(
-        this->get_implementation(), option, ec);
+    this->get_service().set_option(this->get_implementation(), option, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get an option from the socket.
@@ -1009,11 +1016,11 @@ public:
    * @endcode
    */
   template <typename GettableSocketOption>
-  asio::error_code get_option(GettableSocketOption& option,
+  ASIO_SYNC_OP_VOID get_option(GettableSocketOption& option,
       asio::error_code& ec) const
   {
-    return this->get_service().get_option(
-        this->get_implementation(), option, ec);
+    this->get_service().get_option(this->get_implementation(), option, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Perform an IO control command on the socket.
@@ -1074,11 +1081,11 @@ public:
    * @endcode
    */
   template <typename IoControlCommand>
-  asio::error_code io_control(IoControlCommand& command,
+  ASIO_SYNC_OP_VOID io_control(IoControlCommand& command,
       asio::error_code& ec)
   {
-    return this->get_service().io_control(
-        this->get_implementation(), command, ec);
+    this->get_service().io_control(this->get_implementation(), command, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Gets the non-blocking mode of the socket.
@@ -1130,11 +1137,11 @@ public:
    * operations. Asynchronous operations will never fail with the error
    * asio::error::would_block.
    */
-  asio::error_code non_blocking(
+  ASIO_SYNC_OP_VOID non_blocking(
       bool mode, asio::error_code& ec)
   {
-    return this->get_service().non_blocking(
-        this->get_implementation(), mode, ec);
+    this->get_service().non_blocking(this->get_implementation(), mode, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Gets the non-blocking mode of the native socket implementation.
@@ -1404,11 +1411,12 @@ public:
    *   sock.async_wait(tcp::socket::wait_write, op);
    * } @endcode
    */
-  asio::error_code native_non_blocking(
+  ASIO_SYNC_OP_VOID native_non_blocking(
       bool mode, asio::error_code& ec)
   {
-    return this->get_service().native_non_blocking(
+    this->get_service().native_non_blocking(
         this->get_implementation(), mode, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the local endpoint of the socket.
@@ -1557,10 +1565,11 @@ public:
    * }
    * @endcode
    */
-  asio::error_code shutdown(shutdown_type what,
+  ASIO_SYNC_OP_VOID shutdown(shutdown_type what,
       asio::error_code& ec)
   {
-    return this->get_service().shutdown(this->get_implementation(), what, ec);
+    this->get_service().shutdown(this->get_implementation(), what, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Wait for the socket to become ready to read, ready to write, or to have
@@ -1605,9 +1614,10 @@ public:
    * socket.wait(asio::ip::tcp::socket::wait_read, ec);
    * @endcode
    */
-  asio::error_code wait(wait_type w, asio::error_code& ec)
+  ASIO_SYNC_OP_VOID wait(wait_type w, asio::error_code& ec)
   {
-    return this->get_service().wait(this->get_implementation(), w, ec);
+    this->get_service().wait(this->get_implementation(), w, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Asynchronously wait for the socket to become ready to read, ready to

@@ -70,31 +70,35 @@ public:
   }
 
   /// Add a signal to a signal_set.
-  asio::error_code add(implementation_type& impl,
+  ASIO_SYNC_OP_VOID add(implementation_type& impl,
       int signal_number, asio::error_code& ec)
   {
-    return service_impl_.add(impl, signal_number, ec);
+    service_impl_.add(impl, signal_number, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Remove a signal to a signal_set.
-  asio::error_code remove(implementation_type& impl,
+  ASIO_SYNC_OP_VOID remove(implementation_type& impl,
       int signal_number, asio::error_code& ec)
   {
-    return service_impl_.remove(impl, signal_number, ec);
+    service_impl_.remove(impl, signal_number, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Remove all signals from a signal_set.
-  asio::error_code clear(implementation_type& impl,
+  ASIO_SYNC_OP_VOID clear(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.clear(impl, ec);
+    service_impl_.clear(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Cancel all operations associated with the signal set.
-  asio::error_code cancel(implementation_type& impl,
+  ASIO_SYNC_OP_VOID cancel(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.cancel(impl, ec);
+    service_impl_.cancel(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   // Start an asynchronous operation to wait for a signal to be delivered.

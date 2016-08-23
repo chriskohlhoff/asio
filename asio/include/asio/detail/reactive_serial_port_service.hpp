@@ -190,8 +190,8 @@ private:
   static asio::error_code store_option(const void* option,
       termios& storage, asio::error_code& ec)
   {
-    return static_cast<const SettableSerialPortOption*>(option)->store(
-        storage, ec);
+    static_cast<const SettableSerialPortOption*>(option)->store(storage, ec);
+    return ec;
   }
 
   // Helper function to set a serial port option.
@@ -208,7 +208,8 @@ private:
   static asio::error_code load_option(void* option,
       const termios& storage, asio::error_code& ec)
   {
-    return static_cast<GettableSerialPortOption*>(option)->load(storage, ec);
+    static_cast<GettableSerialPortOption*>(option)->load(storage, ec);
+    return ec;
   }
 
   // Helper function to get a serial port option.

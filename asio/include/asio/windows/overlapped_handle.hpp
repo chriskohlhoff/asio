@@ -222,10 +222,11 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  asio::error_code assign(const native_handle_type& handle,
+  ASIO_SYNC_OP_VOID assign(const native_handle_type& handle,
       asio::error_code& ec)
   {
-    return this->get_service().assign(this->get_implementation(), handle, ec);
+    this->get_service().assign(this->get_implementation(), handle, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the handle is open.
@@ -257,9 +258,10 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  asio::error_code close(asio::error_code& ec)
+  ASIO_SYNC_OP_VOID close(asio::error_code& ec)
   {
-    return this->get_service().close(this->get_implementation(), ec);
+    this->get_service().close(this->get_implementation(), ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the native handle representation.
@@ -296,9 +298,10 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    */
-  asio::error_code cancel(asio::error_code& ec)
+  ASIO_SYNC_OP_VOID cancel(asio::error_code& ec)
   {
-    return this->get_service().cancel(this->get_implementation(), ec);
+    this->get_service().cancel(this->get_implementation(), ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
 protected:

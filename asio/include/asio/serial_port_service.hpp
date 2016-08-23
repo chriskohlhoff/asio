@@ -109,17 +109,19 @@ public:
   }
 
   /// Open a serial port.
-  asio::error_code open(implementation_type& impl,
+  ASIO_SYNC_OP_VOID open(implementation_type& impl,
       const std::string& device, asio::error_code& ec)
   {
-    return service_impl_.open(impl, device, ec);
+    service_impl_.open(impl, device, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Assign an existing native handle to a serial port.
-  asio::error_code assign(implementation_type& impl,
+  ASIO_SYNC_OP_VOID assign(implementation_type& impl,
       const native_handle_type& handle, asio::error_code& ec)
   {
-    return service_impl_.assign(impl, handle, ec);
+    service_impl_.assign(impl, handle, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the handle is open.
@@ -129,10 +131,11 @@ public:
   }
 
   /// Close a serial port implementation.
-  asio::error_code close(implementation_type& impl,
+  ASIO_SYNC_OP_VOID close(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.close(impl, ec);
+    service_impl_.close(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get the native handle implementation.
@@ -142,33 +145,37 @@ public:
   }
 
   /// Cancel all asynchronous operations associated with the handle.
-  asio::error_code cancel(implementation_type& impl,
+  ASIO_SYNC_OP_VOID cancel(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.cancel(impl, ec);
+    service_impl_.cancel(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Set a serial port option.
   template <typename SettableSerialPortOption>
-  asio::error_code set_option(implementation_type& impl,
+  ASIO_SYNC_OP_VOID set_option(implementation_type& impl,
       const SettableSerialPortOption& option, asio::error_code& ec)
   {
-    return service_impl_.set_option(impl, option, ec);
+    service_impl_.set_option(impl, option, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Get a serial port option.
   template <typename GettableSerialPortOption>
-  asio::error_code get_option(const implementation_type& impl,
+  ASIO_SYNC_OP_VOID get_option(const implementation_type& impl,
       GettableSerialPortOption& option, asio::error_code& ec) const
   {
-    return service_impl_.get_option(impl, option, ec);
+    service_impl_.get_option(impl, option, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Send a break sequence to the serial port.
-  asio::error_code send_break(implementation_type& impl,
+  ASIO_SYNC_OP_VOID send_break(implementation_type& impl,
       asio::error_code& ec)
   {
-    return service_impl_.send_break(impl, ec);
+    service_impl_.send_break(impl, ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Write the given data to the stream.

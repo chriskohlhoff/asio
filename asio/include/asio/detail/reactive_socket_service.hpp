@@ -398,7 +398,8 @@ public:
     {
       if (peer_endpoint)
         peer_endpoint->resize(addr_len);
-      if (!peer.assign(impl.protocol_, new_socket.get(), ec))
+      peer.assign(impl.protocol_, new_socket.get(), ec);
+      if (!ec)
         new_socket.release();
     }
 
@@ -424,7 +425,8 @@ public:
     {
       if (peer_endpoint)
         peer_endpoint->resize(addr_len);
-      if (!peer.assign(impl.protocol_, new_socket.get(), ec))
+      peer.assign(impl.protocol_, new_socket.get(), ec);
+      if (!ec)
         new_socket.release();
     }
 

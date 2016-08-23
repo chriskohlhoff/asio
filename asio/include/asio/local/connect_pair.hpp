@@ -39,7 +39,7 @@ void connect_pair(
 
 /// Create a pair of connected sockets.
 template <typename Protocol ASIO_SVC_TPARAM ASIO_SVC_TPARAM1>
-asio::error_code connect_pair(
+ASIO_SYNC_OP_VOID connect_pair(
     basic_socket<Protocol ASIO_SVC_TARG>& socket1,
     basic_socket<Protocol ASIO_SVC_TARG1>& socket2,
     asio::error_code& ec);
@@ -55,7 +55,7 @@ inline void connect_pair(
 }
 
 template <typename Protocol ASIO_SVC_TPARAM ASIO_SVC_TPARAM1>
-inline asio::error_code connect_pair(
+inline ASIO_SYNC_OP_VOID connect_pair(
     basic_socket<Protocol ASIO_SVC_TARG>& socket1,
     basic_socket<Protocol ASIO_SVC_TARG1>& socket2,
     asio::error_code& ec)
@@ -70,27 +70,29 @@ inline asio::error_code connect_pair(
   if (asio::detail::socket_ops::socketpair(protocol.family(),
         protocol.type(), protocol.protocol(), sv, ec)
       == asio::detail::socket_error_retval)
-    return ec;
+    ASIO_SYNC_OP_VOID_RETURN(ec);
 
-  if (socket1.assign(protocol, sv[0], ec))
+  socket1.assign(protocol, sv[0], ec);
+  if (ec)
   {
     asio::error_code temp_ec;
     asio::detail::socket_ops::state_type state[2] = { 0, 0 };
     asio::detail::socket_ops::close(sv[0], state[0], true, temp_ec);
     asio::detail::socket_ops::close(sv[1], state[1], true, temp_ec);
-    return ec;
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
-  if (socket2.assign(protocol, sv[1], ec))
+  socket2.assign(protocol, sv[1], ec);
+  if (ec)
   {
     asio::error_code temp_ec;
     socket1.close(temp_ec);
     asio::detail::socket_ops::state_type state = 0;
     asio::detail::socket_ops::close(sv[1], state, true, temp_ec);
-    return ec;
+    ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
-  return ec;
+  ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
 } // namespace local
