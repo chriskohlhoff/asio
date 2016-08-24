@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_NO_EXTENSIONS)
+
 #include "asio/async_result.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/strand_service.hpp"
@@ -373,5 +376,7 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #endif // ASIO_IO_CONTEXT_STRAND_HPP

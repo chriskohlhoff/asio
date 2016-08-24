@@ -1067,6 +1067,7 @@ public:
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
+#if !defined(ASIO_NO_EXTENSIONS)
   /// Accept a new connection.
   /**
    * This function is used to accept a new connection from a peer into the
@@ -1350,6 +1351,7 @@ public:
     return init.result.get();
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Accept a new connection.

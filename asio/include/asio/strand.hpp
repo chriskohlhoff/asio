@@ -277,8 +277,10 @@ private:
 
 // If both io_context.hpp and strand.hpp have been included, automatically
 // include the header file needed for the io_context::strand class.
-#if defined(ASIO_IO_CONTEXT_HPP)
-# include "asio/io_context_strand.hpp"
-#endif // defined(ASIO_IO_CONTEXT_HPP)
+#if !defined(ASIO_NO_EXTENSIONS)
+# if defined(ASIO_IO_CONTEXT_HPP)
+#  include "asio/io_context_strand.hpp"
+# endif // defined(ASIO_IO_CONTEXT_HPP)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #endif // ASIO_STRAND_HPP

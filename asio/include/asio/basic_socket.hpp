@@ -77,8 +77,10 @@ public:
   /// The endpoint type.
   typedef typename Protocol::endpoint endpoint_type;
 
+#if !defined(ASIO_NO_EXTENSIONS)
   /// A basic_socket is always the lowest layer.
   typedef basic_socket<Protocol ASIO_SVC_TARG> lowest_layer_type;
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
   /// Construct a basic_socket without opening it.
   /**
@@ -278,6 +280,7 @@ public:
   }
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
+#if !defined(ASIO_NO_EXTENSIONS)
   /// Get a reference to the lowest layer.
   /**
    * This function returns a reference to the lowest layer in a stack of
@@ -305,6 +308,7 @@ public:
   {
     return *this;
   }
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
   /// Open the socket using the specified protocol.
   /**

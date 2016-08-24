@@ -161,7 +161,9 @@ public:
 
   class service;
 
+#if !defined(ASIO_NO_EXTENSIONS)
   class strand;
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
   /// The type used to count the number of handlers executed by the context.
   typedef std::size_t count_type;
@@ -819,8 +821,10 @@ asio::detail::service_id<Type> service_base<Type>::id;
 
 // If both io_context.hpp and strand.hpp have been included, automatically
 // include the header file needed for the io_context::strand class.
-#if defined(ASIO_STRAND_HPP)
-# include "asio/io_context_strand.hpp"
-#endif // defined(ASIO_STRAND_HPP)
+#if !defined(ASIO_NO_EXTENSIONS)
+# if defined(ASIO_STRAND_HPP)
+#  include "asio/io_context_strand.hpp"
+# endif // defined(ASIO_STRAND_HPP)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #endif // ASIO_IO_CONTEXT_HPP
