@@ -38,7 +38,9 @@ public:
 
 private:
   typedef boost::shared_ptr<asio::io_context> io_context_ptr;
-  typedef boost::shared_ptr<asio::io_context::work> work_ptr;
+  typedef asio::executor_work_guard<
+    asio::io_context::executor_type> io_context_work;
+  typedef boost::shared_ptr<io_context_work> work_ptr;
 
   /// The pool of io_contexts.
   std::vector<io_context_ptr> io_contexts_;

@@ -311,6 +311,7 @@ io_context::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
   return io_context_.impl_.can_dispatch();
 }
 
+#if !defined(ASIO_NO_DEPRECATED)
 inline io_context::work::work(asio::io_context& io_context)
   : io_context_impl_(io_context.impl_)
 {
@@ -333,7 +334,6 @@ inline asio::io_context& io_context::work::get_io_context()
   return static_cast<asio::io_context&>(io_context_impl_.context());
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
 inline asio::io_context& io_context::work::get_io_service()
 {
   return static_cast<asio::io_context&>(io_context_impl_.context());

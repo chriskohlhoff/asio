@@ -25,6 +25,7 @@
 
 #if defined(ASIO_HAS_STD_CHRONO)
 
+#include "asio/executor_work_guard.hpp"
 #include "asio/io_context.hpp"
 #include "asio/thread.hpp"
 
@@ -325,7 +326,8 @@ void io_context_run(asio::io_context* ioc)
 void system_timer_thread_test()
 {
   asio::io_context ioc;
-  asio::io_context::work w(ioc);
+  asio::executor_work_guard<asio::io_context::executor_type> work
+    = asio::make_work_guard(ioc);
   asio::system_timer t1(ioc);
   asio::system_timer t2(ioc);
   int count = 0;

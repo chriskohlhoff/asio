@@ -123,10 +123,12 @@ namespace detail {
  * returning when there is no more work to do. For example, the io_context may
  * be being run in a background thread that is launched prior to the
  * application's asynchronous operations. The run() call may be kept running by
- * creating an object of type asio::io_context::work:
+ * creating an object of type
+ * asio::executor_work_guard<io_context::executor_type>:
  *
  * @code asio::io_context io_context;
- * asio::io_context::work work(io_context);
+ * asio::executor_work_guard<asio::io_context::executor_type>
+ *   = asio::make_work_guard(io_context);
  * ... @endcode
  *
  * To effect a shutdown, the application will then need to call the io_context
@@ -135,11 +137,11 @@ namespace detail {
  * permitting ready handlers to be dispatched.
  *
  * Alternatively, if the application requires that all operations and handlers
- * be allowed to finish normally, the work object may be explicitly destroyed.
+ * be allowed to finish normally, the work object may be explicitly reset.
  *
  * @code asio::io_context io_context;
- * auto_ptr<asio::io_context::work> work(
- *     new asio::io_context::work(io_context));
+ * asio::executor_work_guard<asio::io_context::executor_type>
+ *   = asio::make_work_guard(io_context);
  * ...
  * work.reset(); // Allow run() to exit. @endcode
  */
@@ -156,8 +158,10 @@ public:
   class executor_type;
   friend class executor_type;
 
+#if !defined(ASIO_NO_DEPRECATED)
   class work;
   friend class work;
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   class service;
 
@@ -680,6 +684,7 @@ private:
   io_context& io_context_;
 };
 
+#if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated: Use executor_work_guard.) Class to inform the io_context when
 /// it has work to do.
 /**
@@ -734,6 +739,7 @@ private:
   // The io_context implementation.
   detail::io_context_impl& io_context_impl_;
 };
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Base class for all io_context services.
 class io_context::service

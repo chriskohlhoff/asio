@@ -22,6 +22,7 @@
 
 #include <boost/bind.hpp>
 #include "archetypes/async_result.hpp"
+#include "asio/executor_work_guard.hpp"
 #include "asio/io_context.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/thread.hpp"
@@ -304,7 +305,8 @@ void io_context_run(asio::io_context* ioc)
 void deadline_timer_thread_test()
 {
   asio::io_context ioc;
-  asio::io_context::work w(ioc);
+  asio::executor_work_guard<asio::io_context::executor_type> work
+    = asio::make_work_guard(ioc);
   asio::deadline_timer t1(ioc);
   asio::deadline_timer t2(ioc);
   int count = 0;

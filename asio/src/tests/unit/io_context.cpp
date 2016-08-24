@@ -150,7 +150,7 @@ void io_context_test()
 
   count = 0;
   ioc.restart();
-  io_context::work* w = new io_context::work(ioc);
+  executor_work_guard<io_context::executor_type> w = make_work_guard(ioc);
   asio::post(ioc, bindns::bind(&io_context::stop, &ioc));
   ASIO_CHECK(!ioc.stopped());
   ioc.run();
@@ -161,7 +161,7 @@ void io_context_test()
 
   ioc.restart();
   asio::post(ioc, bindns::bind(increment, &count));
-  delete w;
+  w.reset();
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(!ioc.stopped());

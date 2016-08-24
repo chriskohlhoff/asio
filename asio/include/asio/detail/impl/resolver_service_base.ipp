@@ -39,7 +39,7 @@ resolver_service_base::resolver_service_base(
     work_io_context_(new asio::io_context),
     work_io_context_impl_(asio::use_service<
         io_context_impl>(*work_io_context_)),
-    work_(new asio::io_context::work(*work_io_context_)),
+    work_(asio::make_work_guard(*work_io_context_)),
     work_thread_(0)
 {
 }

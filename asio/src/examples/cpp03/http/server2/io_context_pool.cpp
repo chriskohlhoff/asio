@@ -27,7 +27,7 @@ io_context_pool::io_context_pool(std::size_t pool_size)
   for (std::size_t i = 0; i < pool_size; ++i)
   {
     io_context_ptr io_context(new asio::io_context);
-    work_ptr work(new asio::io_context::work(*io_context));
+    work_ptr work(new io_context_work(asio::make_work_guard(*io_context)));
     io_contexts_.push_back(io_context);
     work_.push_back(work);
   }
