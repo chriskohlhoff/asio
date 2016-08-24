@@ -7,48 +7,42 @@
 
 [section:AsyncReadStream Buffer-oriented asynchronous read stream requirements]
 
-In the table below, `a` denotes an asynchronous read stream object, `mb`
-denotes an object satisfying [link
-asio.reference.MutableBufferSequence mutable buffer sequence]
-requirements, and `h` denotes an object satisfying [link
-asio.reference.ReadHandler read handler] requirements.
+A type `X` meets the `AsyncReadStream` requirements if it satisfies the
+requirements listed below.
 
-[table Buffer-oriented asynchronous read stream requirements
+In the table below, `a` denotes a value of type `X`, `mb` denotes a (possibly
+const) value satisfying the [link asio.reference.MutableBufferSequence
+`MutableBufferSequence`] requirements, and `t` is a completion token.
+
+[table AsyncReadStream requirements
   [[operation] [type] [semantics, pre/post-conditions]]
   [
-    [`a.get_io_service();`]
-    [`io_service&`]
-    [Returns the `io_service` object through which the `async_read_some`
-    handler `h` will be invoked.]
+    [`a.get_executor()`]
+    [A type satisfying the [link asio.reference.Executor1 Executor requirements].]
+    [Returns the associated I/O executor.]
   ]
   [
-    [`a.async_read_some(mb, h);`]
-    [`void`]
+    [`a.async_read_some(mb,t)`]
     [
-      Initiates an asynchronous operation to read one or more bytes of data
-      from the stream `a`. The operation is performed via the `io_service`
-      object `a.get_io_service()` and behaves according to [link
-      asio.reference.asynchronous_operations asynchronous operation]
-      requirements.\n
+      The return type is determined according to the requirements for an
+      [link asio.reference.asynchronous_operations asynchronous operation].
+    ]
+    [
+      Meets the requirements for a [link asio.reference.read_write_operations
+      read operation] and an [link asio.reference.asynchronous_operations
+      asynchronous operation] with completion signature `void(error_code ec,
+      size_t n)`.\n
       \n
-      The mutable buffer sequence `mb` specifies memory where the data should
-      be placed. The `async_read_some` operation shall always fill a buffer in
-      the sequence completely before proceeding to the next.\n
+      If `buffer_size(mb) > 0`, initiates an asynchronous operation to read one
+      or more bytes of data from the stream `a` into the buffer sequence `mb`.
+      If successful, `ec` is set such that `!ec` is `true`, and `n` is the
+      number of bytes read. If an error occurred, `ec` is set such that `!!ec`
+      is `true`, and `n` is 0. If all data has been read from the stream, and
+      the stream performed an orderly shutdown, `ec` is
+      `stream_errc::eof` and `n` is 0.\n
       \n
-      The implementation shall maintain one or more copies of `mb` until such
-      time as the read operation no longer requires access to the memory
-      specified by the buffers in the sequence. The program must ensure the
-      memory is valid until:\n
-      \n
-      [mdash] the last copy of `mb` is destroyed, or\n
-      \n
-      [mdash] the handler for the asynchronous read operation is invoked,\n
-      \n
-      whichever comes first.\n
-      \n
-      If the total size of all buffers in the sequence `mb` is `0`, the
-      asynchronous read operation shall complete immediately and pass `0` as
-      the argument to the handler that specifies the number of bytes read.
+      If `buffer_size(mb) == 0`, the operation completes immediately. `ec` is
+      set such that `!ec` is `true`, and `n` is 0.
     ]
   ]
 ]

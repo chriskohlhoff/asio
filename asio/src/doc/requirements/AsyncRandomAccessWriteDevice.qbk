@@ -17,10 +17,9 @@ asio.reference.WriteHandler write handler] requirements.
 [table Buffer-oriented asynchronous random-access write device requirements
   [[operation] [type] [semantics, pre/post-conditions]]
   [
-    [`a.get_io_service();`]
-    [`io_service&`]
-    [Returns the `io_service` object through which the `async_write_some_at`
-    handler `h` will be invoked.]
+    [`a.get_executor()`]
+    [A type satisfying the [link asio.reference.Executor1 Executor requirements].]
+    [Returns the associated I/O executor.]
   ]
   [
     [`a.async_write_some_at(o, cb, h);`]

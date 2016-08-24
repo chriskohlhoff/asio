@@ -93,8 +93,6 @@ asio.reference.async_read_until async_read_until()] free functions.
 [heading See Also]
 
 [link asio.reference.posix__stream_descriptor posix::stream_descriptor],
-[link asio.reference.posix__basic_stream_descriptor posix::basic_stream_descriptor],
-[link asio.reference.posix__stream_descriptor_service posix::stream_descriptor_service],
 [link asio.examples.cpp03_examples.chat Chat example (C++03)],
 [link asio.examples.cpp11_examples.chat Chat example (C++11)].
 
@@ -127,7 +125,7 @@ as follows:
   }
 
 User-defined services can also be made fork-aware by overriding the
-`io_context::service::fork_service()` virtual function.
+`io_context::service::notify_fork()` virtual function.
 
 Note that any file descriptors accessible via Asio's public API (e.g. the
 descriptors underlying `basic_socket<>`, `posix::stream_descriptor`, etc.) are
@@ -138,7 +136,7 @@ as required.
 
 [link asio.reference.io_context.notify_fork io_context::notify_fork()],
 [link asio.reference.io_context.fork_event io_context::fork_event],
-[link asio.reference.execution_context__service.fork_service io_context::service::fork_service()],
+[link asio.reference.execution_context__service.notify_fork io_context::service::notify_fork()],
 [link asio.examples.cpp03_examples.fork Fork examples].
 
 [endsect]

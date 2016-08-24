@@ -7,27 +7,34 @@
 
 [section:Service Service requirements]
 
-A class is a service if it is publicly derived from another service, or if it
-is a class derived from `io_service::service` and contains a
-publicly-accessible declaration as follows:
+A class is a ['service] if it is publicly and unambiguously derived from
+`execution_context::service`, or if it is publicly and unambiguously derived
+from another service. For a service `S`, `S::key_type` shall be valid and
+denote a type (C++Std [temp.deduct]), `is_base_of_v<typename S::key_type, S>`
+shall be `true`, and `S` shall satisfy the `Destructible` requirements (C++Std
+[destructible]).
 
-  static io_service::id id;
+The first parameter of all service constructors shall be an lvalue reference to
+`execution_context`. This parameter denotes the `execution_context` object that
+represents a set of services, of which the service object will be a member.
+[inline_note These constructors may be called by the `make_service` function.]
 
-All services define a one-argument constructor that takes a reference to the
-`io_service` object that owns the service. This constructor is /explicit/,
-preventing its participation in automatic conversions. For example:
+A service shall provide an explicit constructor with a single parameter of
+lvalue reference to `execution_context`. [inline_note This constructor may be
+called by the `use_service` function.]
 
-  class my_service : public io_service::service
+  class my_service : public execution_context::service
   {
   public:
-    static io_service::id id;
-    explicit my_service(io_service& ios);
+    typedef my_service key_type;
+    explicit my_service(execution_context& ctx);
+    my_service(execution_context& ctx, int some_value);
   private:
-    virtual void shutdown_service();
+    virtual void shutdown() noexcept override;
     ...
   };
 
-A service's `shutdown_service` member function must cause all copies of
-user-defined handler objects that are held by the service to be destroyed.
+A service's `shutdown` member function shall destroy all copies of user-defined
+function objects that are held by the service.
 
 [endsect]

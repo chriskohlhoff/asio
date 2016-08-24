@@ -37,9 +37,7 @@ pipes and console streams are not).
 
 [heading See Also]
 
-[link asio.reference.windows__stream_handle windows::stream_handle],
-[link asio.reference.windows__basic_stream_handle windows::basic_stream_handle],
-[link asio.reference.windows__stream_handle_service windows::stream_handle_service].
+[link asio.reference.windows__stream_handle windows::stream_handle].
 
 [heading Notes]
 
@@ -76,9 +74,7 @@ all data has been transferred.
 
 [heading See Also]
 
-[link asio.reference.windows__random_access_handle windows::random_access_handle],
-[link asio.reference.windows__basic_random_access_handle windows::basic_random_access_handle],
-[link asio.reference.windows__random_access_handle_service windows::random_access_handle_service].
+[link asio.reference.windows__random_access_handle windows::random_access_handle].
 
 [heading Notes]
 
@@ -117,9 +113,7 @@ the kernel object is signalled.
 
 [heading See Also]
 
-[link asio.reference.windows__object_handle windows::object_handle],
-[link asio.reference.windows__basic_object_handle windows::basic_object_handle],
-[link asio.reference.windows__object_handle_service windows::object_handle_service].
+[link asio.reference.windows__object_handle windows::object_handle].
 
 [heading Notes]
 

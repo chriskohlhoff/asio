@@ -7,11 +7,10 @@
 
 [section:Protocol Protocol requirements]
 
-A protocol must meet the requirements of `CopyConstructible` types (C++ Std,
-20.1.3), and the requirements of `Assignable` types (C++ Std, 23.1).
-
-In the table below, `X` denotes a protocol class, and `a` denotes a value of
-`X`.
+A type `X` meets the `Protocol` requirements if it satisfies the requirements
+of `Destructible` (C++Std [destructible]), `CopyConstructible` (C++Std
+[copyconstructible]), and `CopyAssignable` (C++Std [copyassignable]), as well
+as the additional requirements listed below.
 
 [table Protocol requirements
   [[expression] [return type] [assertion/note\npre/post-conditions]]
@@ -20,6 +19,12 @@ In the table below, `X` denotes a protocol class, and `a` denotes a value of
     [type meeting [link asio.reference.Endpoint endpoint] requirements]
     []
   ]
+]
+
+In the table below, `a` denotes a (possibly const) value of type `X`.
+
+[table Protocol requirements for extensible implementations
+  [[expression] [return type] [assertion/note\npre/post-conditions]]
   [
     [`a.family()`]
     [`int`]

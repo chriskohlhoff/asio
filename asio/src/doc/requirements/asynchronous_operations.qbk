@@ -7,211 +7,275 @@
 
 [section:asynchronous_operations Requirements on asynchronous operations]
 
-In Asio, an asynchronous operation is initiated by a function that is
-named with the prefix `async_`. These functions will be referred to as
-['initiating functions].
+This section uses the names `Alloc1`, `Alloc2`, `alloc1`, `alloc2`, `Args`,
+`CompletionHandler`, `completion_handler`, `Executor1`, `Executor2`, `ex1`,
+`ex2`, `f`, [^['i]], [^['N]], `Signature`, `token`, [^T[sub ['i]]], [^t[sub
+['i]]], `work1`, and `work2` as placeholders for specifying the requirements
+below.
 
-All initiating functions in Asio take a function object meeting [link
-asio.reference.Handler handler] requirements as the final parameter.
-These handlers accept as their first parameter an lvalue of type `const
-error_code`.
+[section General asynchronous operation concepts]
 
-Implementations of asynchronous operations in Asio may call the
-application programming interface (API) provided by the operating system. If
-such an operating system API call results in an error, the handler will be
-invoked with a `const error_code` lvalue that evaluates to true. Otherwise the
-handler will be invoked with a `const error_code` lvalue that evaluates to
-false.
+An ['initiating function] is a function which may be called to start an
+asynchronous operation. A ['completion handler] is a function object that will
+be invoked, at most once, with the result of the asynchronous operation.
 
-Unless otherwise noted, when the behaviour of an asynchronous operation is
-defined "as if" implemented by a __POSIX__ function, the handler will be
-invoked with a value of type `error_code` that corresponds to the failure
-condition described by __POSIX__ for that function, if any. Otherwise the
-handler will be invoked with an implementation-defined `error_code` value that
-reflects the operating system error.
+The lifecycle of an asynchronous operation is comprised of the following events
+and phases:
 
-Asynchronous operations will not fail with an error condition that indicates
-interruption by a signal (__POSIX__ `EINTR`). Asynchronous operations will not
-fail with any error condition associated with non-blocking operations
-(__POSIX__ `EWOULDBLOCK`, `EAGAIN` or `EINPROGRESS`; __Windows__
-`WSAEWOULDBLOCK` or `WSAEINPROGRESS`).
+[mdash] Event 1: The asynchronous operation is started by a call to the
+initiating function.
 
-All asynchronous operations have an associated `io_service` object. Where the
-initiating function is a member function, the associated `io_service` is that
-returned by the `get_io_service()` member function on the same object. Where the
-initiating function is not a member function, the associated `io_service` is
-that returned by the `get_io_service()` member function of the first argument to
-the initiating function.
+[mdash] Phase 1: The asynchronous operation is now ['outstanding].
 
-Arguments to initiating functions will be treated as follows:
+[mdash] Event 2: The externally observable side effects of the asynchronous
+operation, if any, are fully established. The completion handler is submitted
+to an executor.
 
-[mdash] If the parameter is declared as a const reference or by-value, the
-program is not required to guarantee the validity of the argument after the
-initiating function completes. The implementation may make copies of the
-argument, and all copies will be destroyed no later than immediately after
-invocation of the handler.
+[mdash] Phase 2: The asynchronous operation is now ['completed].
 
-[mdash] If the parameter is declared as a non-const reference, const pointer or
-non-const pointer, the program must guarantee the validity of the argument
-until the handler is invoked.
-
-The library implementation is only permitted to make calls to an initiating
-function's arguments' copy constructors or destructors from a thread that
-satisfies one of the following conditions:
-
-[mdash] The thread is executing any member function of the associated
-`io_service` object.
-
-[mdash] The thread is executing the destructor of the associated `io_service`
-object.
-
-[mdash] The thread is executing one of the `io_service` service access
-functions `use_service`, `add_service` or `has_service`, where the first
-argument is the associated `io_service` object.
-
-[mdash] The thread is executing any member function, constructor or destructor
-of an object of a class defined in this clause, where the object's
-`get_io_service()` member function returns the associated `io_service` object.
-
-[mdash] The thread is executing any function defined in this clause, where any
-argument to the function has an `get_io_service()` member function that returns
-the associated `io_service` object.
-
-[blurb Asio may use one or more hidden threads to emulate asynchronous
-functionality. The above requirements are intended to prevent these hidden
-threads from making calls to program code. This means that a program can, for
-example, use thread-unsafe reference counting in handler objects, provided the
-program ensures that all calls to an `io_service` and related objects occur
-from the one thread.]
-
-The `io_service` object associated with an asynchronous operation will have
-unfinished work, as if by maintaining the existence of one or more objects of
-class `io_service::work` constructed using the `io_service`, until immediately
-after the handler for the asynchronous operation has been invoked.
-
-When an asynchronous operation is complete, the handler for the operation will
-be invoked as if by:
-
-# Constructing a bound completion handler `bch` for the handler, as described
-  below.
-
-# Calling `ios.post(bch)` to schedule the handler for deferred invocation,
-  where `ios` is the associated `io_service`.
-
-This implies that the handler must not be called directly from within
-the initiating function, even if the asynchronous operation completes
-immediately.
-
-A bound completion handler is a handler object that contains a copy of a
-user-supplied handler, where the user-supplied handler accepts one or more
-arguments. The bound completion handler does not accept any arguments, and
-contains values to be passed as arguments to the user-supplied handler. The
-bound completion handler forwards the `asio_handler_allocate()`,
-`asio_handler_deallocate()`, and `asio_handler_invoke()` calls to the
-corresponding functions for the user-supplied handler. A bound completion
-handler meets the requirements for a [link
-asio.reference.CompletionHandler completion handler].
-
-For example, a bound completion handler for a `ReadHandler` may be implemented
-as follows:
-
-  template<class ReadHandler>
-  struct bound_read_handler
-  {
-    bound_read_handler(ReadHandler handler, const error_code& ec, size_t s)
-      : handler_(handler), ec_(ec), s_(s)
-    {
-    }
-
-    void operator()()
-    {
-      handler_(ec_, s_);
-    }
-
-    ReadHandler handler_;
-    const error_code ec_;
-    const size_t s_;
-  };
-
-  template<class ReadHandler>
-  void* asio_handler_allocate(size_t size,
-                              bound_read_handler<ReadHandler>* this_handler)
-  {
-    using asio::asio_handler_allocate;
-    return asio_handler_allocate(size, &this_handler->handler_);
-  }
-
-  template<class ReadHandler>
-  void asio_handler_deallocate(void* pointer, std::size_t size,
-                               bound_read_handler<ReadHandler>* this_handler)
-  {
-    using asio::asio_handler_deallocate;
-    asio_handler_deallocate(pointer, size, &this_handler->handler_);
-  }
-
-  template<class F, class ReadHandler>
-  void asio_handler_invoke(const F& f,
-                           bound_read_handler<ReadHandler>* this_handler)
-  {
-    using asio::asio_handler_invoke;
-    asio_handler_invoke(f, &this_handler->handler_);
-  }
-
-If the thread that initiates an asynchronous operation terminates before the
-associated handler is invoked, the behaviour is implementation-defined.
-Specifically, on __Windows__ versions prior to Vista, unfinished operations are
-cancelled when the initiating thread exits.
-
-The handler argument to an initiating function defines a handler identity. That
-is, the original handler argument and any copies of the handler argument will
-be considered equivalent. If the implementation needs to allocate storage for
-an asynchronous operation, the implementation will perform
-`asio_handler_allocate(size, &h)`, where `size` is the required size in bytes,
-and `h` is the handler. The implementation will perform
-`asio_handler_deallocate(p, size, &h)`, where `p` is a pointer to the storage,
-to deallocate the storage prior to the invocation of the handler via
-`asio_handler_invoke`. Multiple storage blocks may be allocated for a single
+[mdash] Event 3: The completion handler is called with the result of the
 asynchronous operation.
 
-[heading Return type of an initiating function]
+In this library, all functions with the prefix `async_` are initiating
+functions.
 
-By default, initiating functions return `void`. This is always the case when
-the handler is a function pointer, C++11 lambda, or a function object produced
-by `boost::bind` or `std::bind`.
+[endsect]
 
-For other types, the return type may be customised via a two-step process:
+[section:completion_token Completion tokens and handlers]
 
-# A specialisation of the [link asio.reference.handler_type `handler_type`]
-template, which is used to determine the true handler type based on the
-asynchronous operation's handler's signature.
+Initiating functions:
 
-# A specialisation of the [link asio.reference.async_result `async_result`]
-template, which is used both to determine the return type and to extract the
-return value from the handler.
+[mdash] are function templates with template parameter `CompletionToken`;
 
-These two templates have been specialised to provide support for [link
-asio.overview.core.spawn stackful coroutines] and the C++11 `std::future`
-class.
+[mdash] accept, as the final parameter, a ['completion token] object `token`
+of type `CompletionToken`;
 
-As an example, consider what happens when enabling `std::future` support by
-using the `asio::use_future` special value, as in:
+[mdash] specify a ['completion signature], which is a call signature (C++Std
+[func.def]) `Signature` that determines the arguments to the completion
+handler.
 
-  std::future<std::size_t> length =
-    my_socket.async_read_some(my_buffer, asio::use_future);
+An initiating function determines the type `CompletionHandler` of its
+completion handler function object by performing `typename
+async_result<decay_t<CompletionToken>, Signature>::completion_handler_type`.
+The completion handler object `completion_handler` is initialized with
+`forward<CompletionToken>(token)`. [inline_note No other requirements are
+placed on the type `CompletionToken`.]
 
-When a handler signature has the form:
+The type `CompletionHandler` must satisfy the requirements of `Destructible`
+(C++Std [destructible]) and `MoveConstructible` (C++Std
+[moveconstructible]), and be callable with the specified call signature.
 
-  void handler(error_code ec, result_type result);
+In this library, all initiating functions specify a ['Completion signature]
+element that defines the call signature `Signature`. The ['Completion
+signature] elements in this Technical Specification have named parameters, and
+the results of an asynchronous operation are specified in terms of these names.
 
-the initiating function returns a `std::future` templated on `result_type`. In
-the above `async_read_some` example, this is `std::size_t`. If the asynchronous
-operation fails, the `error_code` is converted into a `system_error` exception
-and passed back to the caller through the future.
+[endsect]
 
-Where a handler signature has the form:
+[section Automatic deduction of initiating function return type]
 
-  void handler(error_code ec);
+The return type of an initiating function is `typename
+async_result<decay_t<CompletionToken>, Signature>::return_type`.
 
-the initiating function instead returns `std::future<void>`.
+For the sake of exposition, this library sometimes annotates functions with a
+return type ['[^DEDUCED]]. For every function declaration that returns
+['[^DEDUCED]], the meaning is equivalent to specifying the return type as
+`typename async_result<decay_t<CompletionToken>, Signature>::return_type`.
+
+[endsect]
+
+[section Production of initiating function return value]
+
+An initiating function produces its return type as follows:
+
+[mdash] constructing an object `result` of type
+`async_result<decay_t<CompletionToken>, Signature>`, initialized as
+`result(completion_handler)`; and
+
+[mdash] using `result.get()` as the operand of the return statement.
+
+\[['Example:] Given an asynchronous operation with ['Completion signature]
+`void(R1 r1, R2 r2)`, an initiating function meeting these requirements may be
+implemented as follows:
+
+  template<class CompletionToken>
+  auto async_xyz(T1 t1, T2 t2, CompletionToken&& token)
+  {
+    typename async_result<decay_t<CompletionToken>, void(R1, R2)>::completion_handler_type
+      completion_handler(forward<CompletionToken>(token));
+
+    async_result<decay_t<CompletionToken>, void(R1, R2)> result(completion_handler);
+
+    // initiate the operation and cause completion_handler to be invoked with
+    // the result
+
+    return result.get();
+  }
+
+For convenience, initiating functions may be implemented using the
+`async_completion` template:
+
+  template<class CompletionToken>
+  auto async_xyz(T1 t1, T2 t2, CompletionToken&& token)
+  {
+    async_completion<CompletionToken, void(R1, R2)> init(token);
+
+    // initiate the operation and cause init.completion_handler to be invoked
+    // with the result
+
+    return init.result.get();
+  }
+
+'''&mdash;'''['end example]\]
+
+[endsect]
+
+[section Lifetime of initiating function arguments]
+
+Unless otherwise specified, the lifetime of arguments to initiating functions
+shall be treated as follows:
+
+[mdash] If the parameter has a pointer type or has a type of lvalue reference
+to non-const, the implementation may assume the validity of the pointee or
+referent, respectively, until the completion handler is invoked. [inline_note
+In other words, the program must guarantee the validity of the argument until
+the completion handler is invoked.]
+
+[mdash] Otherwise, the implementation must not assume the validity of the
+argument after the initiating function completes. [inline_note In other words,
+the program is not required to guarantee the validity of the argument after the
+initiating function completes.] The implementation may make copies of the
+argument, and all copies shall be destroyed no later than immediately after
+invocation of the completion handler.
+
+[endsect]
+
+[section Non-blocking requirements on initiating functions]
+
+An initiating function shall not block (C++Std [defns.block]) the calling
+thread pending completion of the outstanding operation.
+
+[std_note Initiating functions may still block the calling thread for other
+reasons. For example, an initiating function may lock a mutex in order to
+synchronize access to shared data.]
+
+[endsect]
+
+[section Associated executor]
+
+Certain objects that participate in asynchronous operations have an
+['associated executor]. These are obtained as specified below.
+
+[endsect]
+
+[section I/O executor]
+
+An asynchronous operation has an associated executor satisfying the [link
+asio.reference.Executor1 `Executor`] requirements. If not otherwise specified by
+the asynchronous operation, this associated executor is an object of type
+`system_executor`.
+
+All asynchronous operations in this library have an associated executor object
+that is determined as follows:
+
+[mdash] If the initiating function is a member function, the associated
+executor is that returned by the `get_executor` member function on the same
+object.
+
+[mdash] If the initiating function is not a member function, the associated
+executor is that returned by the `get_executor` member function of the first
+argument to the initiating function.
+
+Let `Executor1` be the type of the associated executor. Let `ex1` be a value of
+type `Executor1`, representing the associated executor object obtained as
+described above.
+
+[endsect]
+
+[section Completion handler executor]
+
+A completion handler object of type `CompletionHandler` has an associated
+executor of type `Executor2` satisfying the [link asio.reference.Executor1
+Executor requirements]. The type `Executor2` is
+`associated_executor_t<CompletionHandler, Executor1>`. Let `ex2` be a value of
+type `Executor2` obtained by performing
+`get_associated_executor(completion_handler, ex1)`.
+
+[endsect]
+
+[section Outstanding work]
+
+Until the asynchronous operation has completed, the asynchronous operation
+shall maintain:
+
+[mdash] an object `work1` of type `executor_work_guard<Executor1>`, initialized
+as `work1(ex1)`, and where `work1.owns_work() == true`; and
+
+[mdash] an object `work2` of type `executor_work_guard<Executor2>`, initialized
+as `work2(ex2)`, and where `work2.owns_work() == true`.
+
+[endsect]
+
+[section Allocation of intermediate storage]
+
+Asynchronous operations may allocate memory. [inline_note Such as a data
+structure to store copies of the `completion_handler` object and the initiating
+function's arguments.]
+
+Let `Alloc1` be a type, satisfying the [link asio.reference.ProtoAllocator
+`ProtoAllocator`] requirements, that represents the asynchronous operation's
+default allocation strategy. [inline_note Typically `std::allocator<void>`.]
+Let `alloc1` be a value of type `Alloc1`.
+
+A completion handler object of type `CompletionHandler` has an associated
+allocator object `alloc2` of type `Alloc2` satisfying the [link
+asio.reference.ProtoAllocator `ProtoAllocator`] requirements. The type `Alloc2`
+is `associated_allocator_t<CompletionHandler, Alloc1>`. Let `alloc2` be a value
+of type `Alloc2` obtained by performing
+`get_associated_allocator(completion_handler, alloc1)`.
+
+The asynchronous operations defined in this library:
+
+[mdash] If required, allocate memory using only the completion handler's
+associated allocator.
+
+[mdash] Prior to completion handler execution, deallocate any memory allocated
+using the completion handler's associated allocator.
+
+[std_note The implementation may perform operating system or underlying API
+calls that perform memory allocations not using the associated allocator.
+Invocations of the allocator functions may not introduce data races (See C++Std
+\[res.on.data.races\]).]
+
+[endsect]
+
+[section Execution of completion handler on completion of asynchronous operation]
+
+Let `Args...` be the argument types of the completion signature `Signature` and
+let [^['N]] be `sizeof...(Args)`. Let [^['i]] be in the range [half_open_range
+`0`,[^['N]]]. Let [^T[sub ['i]]] be the [^['i]]th type in `Args...` and let
+[^t[sub ['i]]] be the [^['i]]th completion handler argument associated with
+[^T[sub ['i]]].
+
+Let `f` be a function object, callable as `f()`, that invokes
+`completion_handler` as if by [^completion_handler(forward<T[sub ['0]]>(t[sub
+['0]]), ..., forward<T[sub ['N-1]]>(t[sub ['N-1]]))].
+
+If an asynchonous operation completes immediately (that is, within the thread
+of execution calling the initiating function, and before the initiating
+function returns), the completion handler shall be submitted for execution as
+if by performing `ex2.post(std::move(f), alloc2)`. Otherwise, the completion
+handler shall be submitted for execution as if by performing
+`ex2.dispatch(std::move(f), alloc2)`.
+
+[endsect]
+
+[section Completion handlers and exceptions]
+
+Completion handlers are permitted to throw exceptions. The effect of any
+exception propagated from the execution of a completion handler is determined
+by the executor which is executing the completion handler.
+
+[endsect]
 
 [endsect]

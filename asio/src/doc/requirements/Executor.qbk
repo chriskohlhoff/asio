@@ -74,7 +74,7 @@ a (possibly const) value of type `A` meeting the `Allocator` requirements
   [
     [`x1.context()`]
     [`execution_context&`, or `E&` where `E` is a type that satifisfies the
-     [link requirements.execution_context `ExecutionContext`] requirements.]
+     [link asio.reference.ExecutionContext `ExecutionContext`] requirements.]
     [Shall not exit via an exception.\n
      \n
      The comparison operators and member functions defined in these

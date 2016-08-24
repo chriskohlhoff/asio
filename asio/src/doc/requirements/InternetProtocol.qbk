@@ -7,12 +7,12 @@
 
 [section:InternetProtocol Internet protocol requirements]
 
-An internet protocol must meet the requirements for a [link
-asio.reference.Protocol protocol] as well as the additional
-requirements listed below.
+A type `X` meets the `InternetProtocol` requirements if it satisfies the
+requirements of [link asio.reference.AcceptableProtocol `AcceptableProtocol`],
+as well as the additional requirements listed below.
 
-In the table below, `X` denotes an internet protocol class, `a` denotes a value
-of type `X`, and `b` denotes a value of type `X`.
+In the table below, `a` denotes a (possibly const) value of type `X`, and `b`
+denotes a (possibly const) value of type `X`.
 
 [table InternetProtocol requirements
   [[expression] [return type] [assertion/note\npre/post-conditions]]
@@ -34,7 +34,8 @@ of type `X`, and `b` denotes a value of type `X`.
   [
     [`a == b`]
     [convertible to `bool`]
-    [Returns whether two protocol objects are equal.]
+    [Returns `true` if `a` and `b` represent the same IP protocol version,
+     otherwise `false`.]
   ]
   [
     [`a != b`]

@@ -7,47 +7,40 @@
 
 [section:AsyncWriteStream Buffer-oriented asynchronous write stream requirements]
 
-In the table below, `a` denotes an asynchronous write stream object, `cb`
-denotes an object satisfying [link asio.reference.ConstBufferSequence
-constant buffer sequence] requirements, and `h` denotes an object satisfying
-[link asio.reference.WriteHandler write handler] requirements.
+A type `X` meets the `AsyncWriteStream` requirements if it satisfies the
+requirements listed below.
 
-[table Buffer-oriented asynchronous write stream requirements
+In the table below, `a` denotes a value of type `X`, `cb` denotes a (possibly
+const) value satisfying the [link asio.reference.ConstBufferSequence
+`ConstBufferSequence`] requirements, and `t` is a completion token.
+
+[table AsyncWriteStream requirements
   [[operation] [type] [semantics, pre/post-conditions]]
   [
-    [`a.get_io_service();`]
-    [`io_service&`]
-    [Returns the `io_service` object through which the `async_write_some`
-    handler `h` will be invoked.]
+    [`a.get_executor()`]
+    [A type satisfying the [link asio.reference.Executor1 Executor requirements].]
+    [Returns the associated I/O executor.]
   ]
   [
-    [`a.async_write_some(cb, h);`]
-    [`void`]
+    [`a.async_write_some(cb,t)`]
     [
-      Initiates an asynchronous operation to write one or more bytes of data to
-      the stream `a`. The operation is performed via the `io_service` object
-      `a.get_io_service()` and behaves according to [link
-      asio.reference.asynchronous_operations asynchronous operation]
-      requirements.\n
+      The return type is determined according to the requirements for an
+      [link asio.reference.asynchronous_operations asynchronous operation].
+    ]
+    [
+      Meets the requirements for a [link asio.reference.read_write_operations
+      write operation] and an [link asio.reference.asynchronous_operations
+      asynchronous operation] with completion signature `void(error_code ec,
+      size_t n)`.\n
       \n
-      The constant buffer sequence `cb` specifies memory where the data to be
-      written is located. The `async_write_some` operation shall always write a
-      buffer in the sequence completely before proceeding to the next.\n
+      If `buffer_size(cb) > 0`, initiates an asynchronous operation to write
+      one or more bytes of data to the stream `a` from the buffer sequence
+      `cb`. If successful, `ec` is set such that `!ec` is `true`, and `n` is
+      the number of bytes written. If an error occurred, `ec` is set such that
+      `!!ec` is `true`, and `n` is 0.\n
       \n
-      The implementation shall maintain one or more copies of `cb` until such
-      time as the write operation no longer requires access to the memory
-      specified by the buffers in the sequence. The program must ensure the
-      memory is valid until:\n
-      \n
-      [mdash] the last copy of `cb` is destroyed, or\n
-      \n
-      [mdash] the handler for the asynchronous write operation is invoked,\n
-      \n
-      whichever comes first.\n
-      \n
-      If the total size of all buffers in the sequence `cb` is `0`, the
-      asynchronous write operation shall complete immediately and pass `0` as
-      the argument to the handler that specifies the number of bytes written.
+      If `buffer_size(cb) == 0`, the operation completes immediately. `ec` is
+      set such that `!ec` is `true`, and `n` is 0.
     ]
   ]
 ]

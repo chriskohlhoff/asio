@@ -47,7 +47,6 @@ or as an absolute time to allow composition of timers:
 
 [link asio.reference.basic_deadline_timer basic_deadline_timer],
 [link asio.reference.deadline_timer deadline_timer],
-[link asio.reference.deadline_timer_service deadline_timer_service],
 [link asio.tutorial.tuttimer1 timer tutorials].
 
 [endsect]

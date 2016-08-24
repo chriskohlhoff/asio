@@ -45,7 +45,6 @@
             <member><link linkend="asio.reference.thread">thread</link></member>
             <member><link linkend="asio.reference.thread_pool">thread_pool</link></member>
             <member><link linkend="asio.reference.thread_pool__executor_type">thread_pool::executor_type</link></member>
-            <member><link linkend="asio.reference.use_future_t">use_future_t</link></member>
             <member><link linkend="asio.reference.yield_context">yield_context</link></member>
           </simplelist>
         </entry>
@@ -63,8 +62,7 @@
             <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
             <member><link linkend="asio.reference.get_associated_executor">get_associated_executor</link></member>
             <member><link linkend="asio.reference.has_service">has_service</link></member>
-            <member><link linkend="asio.reference.make_work">make_work</link></member>
-            <member><link linkend="asio.reference.package">package</link></member>
+            <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="asio.reference.post">post</link></member>
             <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.use_service">use_service</link></member>
@@ -76,11 +74,10 @@
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="asio.reference.basic_io_object">basic_io_object</link></member>
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
-            <member><link linkend="asio.reference.executor_work">executor_work</link></member>
-            <member><link linkend="asio.reference.executor_wrapper">executor_wrapper</link></member>
-            <member><link linkend="asio.reference.packaged_handler">packaged_handler</link></member>
-            <member><link linkend="asio.reference.packaged_token">packaged_token</link></member>
+            <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
+            <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>
+            <member><link linkend="asio.reference.use_future_t">use_future_t</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Special Values</bridgehead>
           <simplelist type="vert" columns="1">
@@ -110,7 +107,7 @@
             <member><link linkend="asio.reference.associated_allocator">associated_allocator</link></member>
             <member><link linkend="asio.reference.associated_executor">associated_executor</link></member>
             <member><link linkend="asio.reference.async_result">async_result</link></member>
-            <member><link linkend="asio.reference.handler_type">handler_type</link></member>
+            <member><link linkend="asio.reference.handler_type">handler_type </link> (deprecated)</member>
             <member><link linkend="asio.reference.is_executor">is_executor</link></member>
             <member><link linkend="asio.reference.uses_executor">uses_executor</link></member>
           </simplelist>
@@ -118,6 +115,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.asynchronous_operations">Asynchronous operations</link></member>
             <member><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></member>
+            <member><link linkend="asio.reference.ExecutionContext">ExecutionContext</link></member>
             <member><link linkend="asio.reference.Executor1">Executor</link></member>
             <member><link linkend="asio.reference.Handler">Handler</link></member>
             <member><link linkend="asio.reference.Service">Service</link></member>
@@ -144,9 +142,9 @@
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.const_buffer">const_buffer</link></member>
-            <member><link linkend="asio.reference.const_buffers_1">const_buffers_1</link></member>
             <member><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></member>
-            <member><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1</link></member>
+            <member><link linkend="asio.reference.const_buffers_1">const_buffers_1 </link> (deprecated)</member>
+            <member><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1 </link> (deprecated)</member>
             <member><link linkend="asio.reference.null_buffers">null_buffers</link> (deprecated)</member>
             <member><link linkend="asio.reference.streambuf">streambuf</link></member>
           </simplelist>
@@ -170,7 +168,7 @@
             <member><link linkend="asio.reference.async_write">async_write</link></member>
             <member><link linkend="asio.reference.async_write_at">async_write_at</link></member>
             <member><link linkend="asio.reference.buffer">buffer</link></member>
-            <member><link linkend="asio.reference.buffer_cast">buffer_cast</link></member>
+            <member><link linkend="asio.reference.buffer_cast">buffer_cast </link> (deprecated)</member>
             <member><link linkend="asio.reference.buffer_copy">buffer_copy</link></member>
             <member><link linkend="asio.reference.buffer_size">buffer_size</link></member>
             <member><link linkend="asio.reference.buffers_begin">buffers_begin</link></member>
@@ -199,10 +197,12 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.read_write_operations">Read and write operations</link></member>
             <member><link linkend="asio.reference.AsyncRandomAccessReadDevice">AsyncRandomAccessReadDevice</link></member>
             <member><link linkend="asio.reference.AsyncRandomAccessWriteDevice">AsyncRandomAccessWriteDevice</link></member>
             <member><link linkend="asio.reference.AsyncReadStream">AsyncReadStream</link></member>
             <member><link linkend="asio.reference.AsyncWriteStream">AsyncWriteStream</link></member>
+            <member><link linkend="asio.reference.CompletionCondition">CompletionCondition</link></member>
             <member><link linkend="asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
             <member><link linkend="asio.reference.DynamicBufferSequence">DynamicBufferSequence</link></member>
             <member><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
@@ -335,15 +335,21 @@
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.synchronous_socket_operations">Synchronous socket operations</link></member>
+            <member><link linkend="asio.reference.asynchronous_socket_operations">Asynchronous socket operations</link></member>
             <member><link linkend="asio.reference.AcceptableProtocol">AcceptableProtocol</link></member>
             <member><link linkend="asio.reference.AcceptHandler">AcceptHandler</link></member>
-            <member><link linkend="asio.reference.ComposedConnectHandler">ComposedConnectHandler</link></member>
+            <member><link linkend="asio.reference.ConnectCondition">ConnectCondition</link></member>
             <member><link linkend="asio.reference.ConnectHandler">ConnectHandler</link></member>
             <member><link linkend="asio.reference.Endpoint">Endpoint</link></member>
+            <member><link linkend="asio.reference.EndpointSequence">EndpointSequence</link></member>
             <member><link linkend="asio.reference.GettableSocketOption">GettableSocketOption</link></member>
             <member><link linkend="asio.reference.InternetProtocol">InternetProtocol</link></member>
             <member><link linkend="asio.reference.IoControlCommand">IoControlCommand</link></member>
+            <member><link linkend="asio.reference.IteratorConnectHandler">IteratorConnectHandler</link></member>
+            <member><link linkend="asio.reference.MoveAcceptHandler">MoveAcceptHandler</link></member>
             <member><link linkend="asio.reference.Protocol">Protocol</link></member>
+            <member><link linkend="asio.reference.RangeConnectHandler">RangeConnectHandler</link></member>
             <member><link linkend="asio.reference.ResolveHandler">ResolveHandler</link></member>
             <member><link linkend="asio.reference.SettableSocketOption">SettableSocketOption</link></member>
           </simplelist>
@@ -378,16 +384,22 @@
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.deadline_timer">deadline_timer</link></member>
+            <member><link linkend="asio.reference.high_resolution_timer">high_resolution_timer</link></member>
+            <member><link linkend="asio.reference.steady_timer">steady_timer</link></member>
+            <member><link linkend="asio.reference.system_timer">system_timer</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
+            <member><link linkend="asio.reference.basic_waitable_timer">basic_waitable_timer</link></member>
             <member><link linkend="asio.reference.time_traits_lt__ptime__gt_">time_traits</link></member>
+            <member><link linkend="asio.reference.wait_traits">wait_traits</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.TimeTraits">TimeTraits</link></member>
             <member><link linkend="asio.reference.WaitHandler">WaitHandler</link></member>
+            <member><link linkend="asio.reference.WaitTraits">WaitTraits</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -475,12 +487,12 @@
             <member><link linkend="asio.reference.posix__descriptor_base">posix::descriptor_base</link></member>
             <member><link linkend="asio.reference.posix__stream_descriptor">posix::stream_descriptor</link></member>
           </simplelist>
+        </entry>
+        <entry valign="top">
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.local__connect_pair">local::connect_pair</link></member>
           </simplelist>
-        </entry>
-        <entry valign="top">
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.local__basic_endpoint">local::basic_endpoint</link></member>

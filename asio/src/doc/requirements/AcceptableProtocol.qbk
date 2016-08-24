@@ -7,18 +7,18 @@
 
 [section:AcceptableProtocol Acceptable protocol requirements]
 
-An acceptable protocol must meet the requirements for a [link
-asio.reference.Protocol protocol] as well as the additional requirements listed
-below.
-
-In the table below, `X` denotes an acceptable protocol class.
+A type `X` meets the `AcceptableProtocol` requirements if it satisfies the
+requirements of [link asio.reference.Protocol `Protocol`] as well as the
+additional requirements listed below.
 
 [table AcceptableProtocol requirements
   [[expression] [return type] [assertion/note\npre/post-conditions]]
   [
     [`X::socket`]
-    [`
-    [The type of a socket for the protocol.]
+    [A type that satisfies the requirements of `Destructible` (C++Std
+     \[destructible\]) and `MoveConstructible` (C++Std \[moveconstructible\]),
+     and that is publicly and unambiguously derived from `basic_socket<X>`.]
+    []
   ]
 ]
 

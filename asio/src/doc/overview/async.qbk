@@ -30,8 +30,8 @@ read or write on a socket.]
 [mdash] Asynchronous Operation Processor
 
 [:Executes asynchronous operations and queues events on a completion event
-queue when operations complete. From a high-level point of view, services like
-`stream_socket_service` are asynchronous operation processors.]
+queue when operations complete. From a high-level point of view, internal
+services like `reactive_socket_service` are asynchronous operation processors.]
 
 [mdash] Completion Event Queue
 
@@ -59,7 +59,7 @@ event. This abstraction is represented by the `io_context` class.]
 [:Application-specific code that starts asynchronous operations. The initiator
 interacts with an asynchronous operation processor via a high-level interface
 such as `basic_stream_socket`, which in turn delegates to a service like
-`stream_socket_service`.]
+`reactive_socket_service`.]
 
 [heading Implementation Using Reactor]
 
