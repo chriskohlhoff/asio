@@ -27,11 +27,12 @@ namespace detail {
 
 class buffer_sequence_adapter_base
 {
-protected:
 #if defined(ASIO_WINDOWS_RUNTIME)
+public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 1 };
 
+protected:
   typedef Windows::Storage::Streams::IBuffer^ native_buffer_type;
 
   ASIO_DECL static void init_native_buffer(
@@ -42,9 +43,11 @@ protected:
       native_buffer_type& buf,
       const asio::const_buffer& buffer);
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
 
+protected:
   typedef WSABUF native_buffer_type;
 
   static void init_native_buffer(WSABUF& buf,
@@ -61,9 +64,11 @@ protected:
     buf.len = static_cast<ULONG>(buffer.size());
   }
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+public:
   // The maximum number of buffers to support in a single operation.
   enum { max_buffers = 64 < max_iov_len ? 64 : max_iov_len };
 
+protected:
   typedef iovec native_buffer_type;
 
   static void init_iov_base(void*& base, void* addr)

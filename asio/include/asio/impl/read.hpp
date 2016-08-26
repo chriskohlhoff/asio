@@ -47,18 +47,15 @@ namespace detail
     ec = asio::error_code();
     asio::detail::consuming_buffers<mutable_buffer,
         MutableBufferSequence, MutableBufferIterator> tmp(buffers);
-    std::size_t total_transferred = 0;
-    tmp.prepare(detail::adapt_completion_condition_result(
-          completion_condition(ec, total_transferred)));
-    while (tmp.begin() != tmp.end())
+    while (!tmp.empty())
     {
-      std::size_t bytes_transferred = s.read_some(tmp, ec);
-      tmp.consume(bytes_transferred);
-      total_transferred += bytes_transferred;
-      tmp.prepare(detail::adapt_completion_condition_result(
-            completion_condition(ec, total_transferred)));
+      if (std::size_t max_size = detail::adapt_completion_condition_result(
+            completion_condition(ec, tmp.total_consumed())))
+        tmp.consume(s.read_some(tmp.prepare(max_size), ec));
+      else
+        break;
     }
-    return total_transferred;
+    return tmp.total_consumed();;
   }
 } // namespace detail
 
@@ -239,7 +236,6 @@ namespace detail
         stream_(stream),
         buffers_(buffers),
         start_(0),
-        total_transferred_(0),
         handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
     {
     }
@@ -250,7 +246,6 @@ namespace detail
         stream_(other.stream_),
         buffers_(other.buffers_),
         start_(other.start_),
-        total_transferred_(other.total_transferred_),
         handler_(other.handler_)
     {
     }
@@ -260,7 +255,6 @@ namespace detail
         stream_(other.stream_),
         buffers_(other.buffers_),
         start_(other.start_),
-        total_transferred_(other.total_transferred_),
         handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
     {
     }
@@ -269,24 +263,23 @@ namespace detail
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
     {
+      std::size_t max_size;
       switch (start_ = start)
       {
         case 1:
-        buffers_.prepare(this->check_for_completion(ec, total_transferred_));
-        for (;;)
+        max_size = this->check_for_completion(ec, buffers_.total_consumed());
+        do
         {
-          stream_.async_read_some(buffers_,
+          stream_.async_read_some(buffers_.prepare(max_size),
               ASIO_MOVE_CAST(read_op)(*this));
           return; default:
-          total_transferred_ += bytes_transferred;
           buffers_.consume(bytes_transferred);
-          buffers_.prepare(this->check_for_completion(ec, total_transferred_));
-          if ((!ec && bytes_transferred == 0)
-              || buffers_.begin() == buffers_.end())
+          if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
-        }
+          max_size = this->check_for_completion(ec, buffers_.total_consumed());
+        } while (max_size > 0);
 
-        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
+        handler_(ec, buffers_.total_consumed());
       }
     }
 
@@ -295,335 +288,8 @@ namespace detail
     asio::detail::consuming_buffers<mutable_buffer,
         MutableBufferSequence, MutableBufferIterator> buffers_;
     int start_;
-    std::size_t total_transferred_;
     ReadHandler handler_;
   };
-
-  template <typename AsyncReadStream,
-      typename CompletionCondition, typename ReadHandler>
-  class read_op<AsyncReadStream, asio::mutable_buffer,
-      asio::mutable_buffer*, CompletionCondition, ReadHandler>
-    : detail::base_from_completion_cond<CompletionCondition>
-  {
-  public:
-    read_op(AsyncReadStream& stream,
-        const asio::mutable_buffer& buffers,
-        CompletionCondition completion_condition, ReadHandler& handler)
-      : detail::base_from_completion_cond<
-          CompletionCondition>(completion_condition),
-        stream_(stream),
-        buffer_(buffers),
-        start_(0),
-        total_transferred_(0),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
-    {
-    }
-
-#if defined(ASIO_HAS_MOVE)
-    read_op(const read_op& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffer_(other.buffer_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(other.handler_)
-    {
-    }
-
-    read_op(read_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffer_(other.buffer_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
-    {
-    }
-#endif // defined(ASIO_HAS_MOVE)
-
-    void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, int start = 0)
-    {
-      std::size_t n = 0;
-      switch (start_ = start)
-      {
-        case 1:
-        n = this->check_for_completion(ec, total_transferred_);
-        for (;;)
-        {
-          stream_.async_read_some(
-              asio::buffer(buffer_ + total_transferred_, n),
-              ASIO_MOVE_CAST(read_op)(*this));
-          return; default:
-          total_transferred_ += bytes_transferred;
-          if ((!ec && bytes_transferred == 0)
-              || (n = this->check_for_completion(ec, total_transferred_)) == 0
-              || total_transferred_ == buffer_.size())
-            break;
-        }
-
-        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
-      }
-    }
-
-  //private:
-    AsyncReadStream& stream_;
-    asio::mutable_buffer buffer_;
-    int start_;
-    std::size_t total_transferred_;
-    ReadHandler handler_;
-  };
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-  template <typename AsyncReadStream,
-      typename CompletionCondition, typename ReadHandler>
-  class read_op<AsyncReadStream, asio::mutable_buffers_1,
-      asio::mutable_buffer*, CompletionCondition, ReadHandler>
-    : detail::base_from_completion_cond<CompletionCondition>
-  {
-  public:
-    read_op(AsyncReadStream& stream,
-        const asio::mutable_buffers_1& buffers,
-        CompletionCondition completion_condition, ReadHandler& handler)
-      : detail::base_from_completion_cond<
-          CompletionCondition>(completion_condition),
-        stream_(stream),
-        buffer_(buffers),
-        start_(0),
-        total_transferred_(0),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
-    {
-    }
-
-#if defined(ASIO_HAS_MOVE)
-    read_op(const read_op& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffer_(other.buffer_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(other.handler_)
-    {
-    }
-
-    read_op(read_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffer_(other.buffer_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
-    {
-    }
-#endif // defined(ASIO_HAS_MOVE)
-
-    void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, int start = 0)
-    {
-      std::size_t n = 0;
-      switch (start_ = start)
-      {
-        case 1:
-        n = this->check_for_completion(ec, total_transferred_);
-        for (;;)
-        {
-          stream_.async_read_some(
-              asio::buffer(buffer_ + total_transferred_, n),
-              ASIO_MOVE_CAST(read_op)(*this));
-          return; default:
-          total_transferred_ += bytes_transferred;
-          if ((!ec && bytes_transferred == 0)
-              || (n = this->check_for_completion(ec, total_transferred_)) == 0
-              || total_transferred_ == buffer_.size())
-            break;
-        }
-
-        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
-      }
-    }
-
-  //private:
-    AsyncReadStream& stream_;
-    asio::mutable_buffer buffer_;
-    int start_;
-    std::size_t total_transferred_;
-    ReadHandler handler_;
-  };
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-  template <typename AsyncReadStream, typename Elem,
-      typename CompletionCondition, typename ReadHandler>
-  class read_op<AsyncReadStream, boost::array<Elem, 2>,
-      typename boost::array<Elem, 2>::const_iterator,
-      CompletionCondition, ReadHandler>
-    : detail::base_from_completion_cond<CompletionCondition>
-  {
-  public:
-    read_op(AsyncReadStream& stream, const boost::array<Elem, 2>& buffers,
-        CompletionCondition completion_condition, ReadHandler& handler)
-      : detail::base_from_completion_cond<
-          CompletionCondition>(completion_condition),
-        stream_(stream),
-        buffers_(buffers),
-        start_(0),
-        total_transferred_(0),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
-    {
-    }
-
-#if defined(ASIO_HAS_MOVE)
-    read_op(const read_op& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(other.handler_)
-    {
-    }
-
-    read_op(read_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
-    {
-    }
-#endif // defined(ASIO_HAS_MOVE)
-
-    void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, int start = 0)
-    {
-      typename asio::detail::dependent_type<Elem,
-          boost::array<asio::mutable_buffer, 2> >::type bufs = {{
-        asio::mutable_buffer(buffers_[0]),
-        asio::mutable_buffer(buffers_[1]) }};
-      std::size_t buffer_size0 = bufs[0].size();
-      std::size_t buffer_size1 = bufs[1].size();
-      std::size_t n = 0;
-      switch (start_ = start)
-      {
-        case 1:
-        n = this->check_for_completion(ec, total_transferred_);
-        for (;;)
-        {
-          bufs[0] = asio::buffer(bufs[0] + total_transferred_, n);
-          bufs[1] = asio::buffer(
-              bufs[1] + (total_transferred_ < buffer_size0
-                ? 0 : total_transferred_ - buffer_size0),
-              n - bufs[0].size());
-          stream_.async_read_some(bufs, ASIO_MOVE_CAST(read_op)(*this));
-          return; default:
-          total_transferred_ += bytes_transferred;
-          if ((!ec && bytes_transferred == 0)
-              || (n = this->check_for_completion(ec, total_transferred_)) == 0
-              || total_transferred_ == buffer_size0 + buffer_size1)
-            break;
-        }
-
-        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
-      }
-    }
-
-  //private:
-    AsyncReadStream& stream_;
-    boost::array<Elem, 2> buffers_;
-    int start_;
-    std::size_t total_transferred_;
-    ReadHandler handler_;
-  };
-
-#if defined(ASIO_HAS_STD_ARRAY)
-
-  template <typename AsyncReadStream, typename Elem,
-      typename CompletionCondition, typename ReadHandler>
-  class read_op<AsyncReadStream, std::array<Elem, 2>,
-      typename std::array<Elem, 2>::const_iterator,
-      CompletionCondition, ReadHandler>
-    : detail::base_from_completion_cond<CompletionCondition>
-  {
-  public:
-    read_op(AsyncReadStream& stream, const std::array<Elem, 2>& buffers,
-        CompletionCondition completion_condition, ReadHandler& handler)
-      : detail::base_from_completion_cond<
-          CompletionCondition>(completion_condition),
-        stream_(stream),
-        buffers_(buffers),
-        start_(0),
-        total_transferred_(0),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(handler))
-    {
-    }
-
-#if defined(ASIO_HAS_MOVE)
-    read_op(const read_op& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(other.handler_)
-    {
-    }
-
-    read_op(read_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        start_(other.start_),
-        total_transferred_(other.total_transferred_),
-        handler_(ASIO_MOVE_CAST(ReadHandler)(other.handler_))
-    {
-    }
-#endif // defined(ASIO_HAS_MOVE)
-
-    void operator()(const asio::error_code& ec,
-        std::size_t bytes_transferred, int start = 0)
-    {
-      typename asio::detail::dependent_type<Elem,
-          std::array<asio::mutable_buffer, 2> >::type bufs = {{
-        asio::mutable_buffer(buffers_[0]),
-        asio::mutable_buffer(buffers_[1]) }};
-      std::size_t buffer_size0 = bufs[0].size();
-      std::size_t buffer_size1 = bufs[1].size();
-      std::size_t n = 0;
-      switch (start_ = start)
-      {
-        case 1:
-        n = this->check_for_completion(ec, total_transferred_);
-        for (;;)
-        {
-          bufs[0] = asio::buffer(bufs[0] + total_transferred_, n);
-          bufs[1] = asio::buffer(
-              bufs[1] + (total_transferred_ < buffer_size0
-                ? 0 : total_transferred_ - buffer_size0),
-              n - bufs[0].size());
-          stream_.async_read_some(bufs, ASIO_MOVE_CAST(read_op)(*this));
-          return; default:
-          total_transferred_ += bytes_transferred;
-          if ((!ec && bytes_transferred == 0)
-              || (n = this->check_for_completion(ec, total_transferred_)) == 0
-              || total_transferred_ == buffer_size0 + buffer_size1)
-            break;
-        }
-
-        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
-      }
-    }
-
-  //private:
-    AsyncReadStream& stream_;
-    std::array<Elem, 2> buffers_;
-    int start_;
-    std::size_t total_transferred_;
-    ReadHandler handler_;
-  };
-
-#endif // defined(ASIO_HAS_STD_ARRAY)
 
   template <typename AsyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition,
