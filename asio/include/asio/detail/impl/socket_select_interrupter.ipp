@@ -71,7 +71,8 @@ void socket_select_interrupter::open_descriptors()
   // Some broken firewalls on Windows will intermittently cause getsockname to
   // return 0.0.0.0 when the socket is actually bound to 127.0.0.1. We
   // explicitly specify the target address here to work around this problem.
-  addr.sin_addr.s_addr = socket_ops::host_to_network_long(INADDR_LOOPBACK);
+  if (addr.sin_addr.s_addr == socket_ops::host_to_network_long(INADDR_ANY))
+    addr.sin_addr.s_addr = socket_ops::host_to_network_long(INADDR_LOOPBACK);
 
   if (socket_ops::listen(acceptor.get(),
         SOMAXCONN, ec) == socket_error_retval)
