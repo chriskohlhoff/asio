@@ -7,6 +7,9 @@
 *.manifest
 *.pdb
 *.tds
+associated_allocator
+associated_executor
+async_result
 basic_datagram_socket
 basic_deadline_timer
 basic_raw_socket
@@ -17,6 +20,7 @@ basic_socket_acceptor
 basic_stream_socket
 basic_streambuf
 basic_waitable_timer
+bind_executor
 buffer
 buffered_read_stream
 buffered_stream
@@ -28,14 +32,21 @@ coroutine
 datagram_socket_service
 deadline_timer
 deadline_timer_service
+defer
+dispatch
 error
 error_handler
+execution_context
+executor
+executor_work_guard
 high_resolution_timer
 io_context
 io_service
 is_read_buffered
 is_write_buffered
+packaged_task
 placeholders
+post
 raw_socket_service
 read
 read_at
@@ -56,6 +67,7 @@ system_timer
 thread
 time_traits
 use_future
+uses_executor
 wait_traits
 waitable_timer_service
 write

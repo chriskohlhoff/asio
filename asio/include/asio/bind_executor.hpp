@@ -18,8 +18,10 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
+#include "asio/associated_executor.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/async_result.hpp"
+#include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/uses_executor.hpp"
 
