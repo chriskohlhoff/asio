@@ -98,17 +98,10 @@ public:
 #if defined(__sun) || defined(__QNX__) || defined(__SYMBIAN32__)
     using namespace std;
     return strerror(value);
-#elif defined(__MACH__) && defined(__APPLE__) \
-  || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) \
-  || defined(_AIX) || defined(__hpux) || defined(__osf__) \
-  || defined(__ANDROID__)
-    char buf[256] = "";
-    using namespace std;
-    strerror_r(value, buf, sizeof(buf));
-    return buf;
 #else
     char buf[256] = "";
-    return strerror_r(value, buf, sizeof(buf));
+    using namespace std;
+    return strerror_result(strerror_r(value, buf, sizeof(buf)), buf);
 #endif
 #endif // defined(ASIO_WINDOWS_DESKTOP) || defined(__CYGWIN__)
   }
@@ -191,6 +184,11 @@ public:
       return std::make_error_condition(ev, *this);
   }
 #endif // defined(ASIO_HAS_STD_ERROR_CODE)
+
+private:
+  // Helper function to adapt the result from glibc's variant of strerror_r.
+  static const char* strerror_result(int, const char* s) { return s; }
+  static const char* strerror_result(const char* s, const char*) { return s; }
 };
 
 } // namespace detail
