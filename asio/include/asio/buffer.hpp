@@ -134,6 +134,15 @@ public:
     return size_;
   }
 
+  /// Move the start of the buffer by the specified number of bytes.
+  mutable_buffer& operator+=(std::size_t n) ASIO_NOEXCEPT
+  {
+    std::size_t offset = n < size_ ? n : size_;
+    data_ = static_cast<char*>(data_) + offset;
+    size_ -= offset;
+    return *this;
+  }
+
 private:
   void* data_;
   std::size_t size_;
@@ -267,6 +276,15 @@ public:
   std::size_t size() const ASIO_NOEXCEPT
   {
     return size_;
+  }
+
+  /// Move the start of the buffer by the specified number of bytes.
+  const_buffer& operator+=(std::size_t n) ASIO_NOEXCEPT
+  {
+    std::size_t offset = n < size_ ? n : size_;
+    data_ = static_cast<const char*>(data_) + offset;
+    size_ -= offset;
+    return *this;
   }
 
 private:

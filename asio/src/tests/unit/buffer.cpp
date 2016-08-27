@@ -78,6 +78,7 @@ void test()
 
     // mutable_buffer operators.
 
+    mb1 += 128;
     mb1 = mb2 + 128;
     mb1 = 128 + mb2;
 
@@ -114,6 +115,7 @@ void test()
 
     // const_buffer operators.
 
+    cb1 += 128;
     cb1 = cb2 + 128;
     cb1 = 128 + cb2;
 
