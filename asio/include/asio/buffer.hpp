@@ -633,12 +633,11 @@ inline PointerToPodType buffer_cast(const const_buffer& b) ASIO_NOEXCEPT
  * @relates mutable_buffer
  */
 inline mutable_buffer operator+(const mutable_buffer& b,
-    std::size_t start) ASIO_NOEXCEPT
+    std::size_t n) ASIO_NOEXCEPT
 {
-  if (start > b.size())
-    return mutable_buffer();
-  char* new_data = static_cast<char*>(b.data()) + start;
-  std::size_t new_size = b.size() - start;
+  std::size_t offset = n < b.size() ? n : b.size();
+  char* new_data = static_cast<char*>(b.data()) + offset;
+  std::size_t new_size = b.size() - offset;
   return mutable_buffer(new_data, new_size
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       , b.get_debug_check()
@@ -650,10 +649,10 @@ inline mutable_buffer operator+(const mutable_buffer& b,
 /**
  * @relates mutable_buffer
  */
-inline mutable_buffer operator+(std::size_t start,
+inline mutable_buffer operator+(std::size_t n,
     const mutable_buffer& b) ASIO_NOEXCEPT
 {
-  return b + start;
+  return b + n;
 }
 
 /// Create a new non-modifiable buffer that is offset from the start of another.
@@ -661,12 +660,11 @@ inline mutable_buffer operator+(std::size_t start,
  * @relates const_buffer
  */
 inline const_buffer operator+(const const_buffer& b,
-    std::size_t start) ASIO_NOEXCEPT
+    std::size_t n) ASIO_NOEXCEPT
 {
-  if (start > b.size())
-    return const_buffer();
-  const char* new_data = static_cast<const char*>(b.data()) + start;
-  std::size_t new_size = b.size() - start;
+  std::size_t offset = n < b.size() ? n : b.size();
+  const char* new_data = static_cast<const char*>(b.data()) + offset;
+  std::size_t new_size = b.size() - offset;
   return const_buffer(new_data, new_size
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
       , b.get_debug_check()
@@ -678,10 +676,10 @@ inline const_buffer operator+(const const_buffer& b,
 /**
  * @relates const_buffer
  */
-inline const_buffer operator+(std::size_t start,
+inline const_buffer operator+(std::size_t n,
     const const_buffer& b) ASIO_NOEXCEPT
 {
-  return b + start;
+  return b + n;
 }
 
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
