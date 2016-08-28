@@ -40,7 +40,9 @@ engine::engine(SSL_CTX* context)
     asio::detail::throw_error(ec, "engine");
   }
 
+#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
   accept_mutex().init();
+#endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
   ::SSL_set_mode(ssl_, SSL_MODE_ENABLE_PARTIAL_WRITE);
   ::SSL_set_mode(ssl_, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
@@ -215,11 +217,13 @@ const asio::error_code& engine::map_error_code(
   return ec;
 }
 
+#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
 asio::detail::static_mutex& engine::accept_mutex()
 {
   static asio::detail::static_mutex mutex = ASIO_STATIC_MUTEX_INIT;
   return mutex;
 }
+#endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
 engine::want engine::perform(int (engine::* op)(void*, std::size_t),
     void* data, std::size_t length, asio::error_code& ec,
@@ -278,7 +282,9 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
 
 int engine::do_accept(void*, std::size_t)
 {
+#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
   asio::detail::static_mutex::scoped_lock lock(accept_mutex());
+#endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
   return ::SSL_accept(ssl_);
 }
 
