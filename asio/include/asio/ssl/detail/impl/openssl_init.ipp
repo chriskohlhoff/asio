@@ -44,8 +44,10 @@ public:
     for (size_t i = 0; i < mutexes_.size(); ++i)
       mutexes_[i].reset(new asio::detail::mutex);
     ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
-    ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
 #endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
+    ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
+#endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
 #if !defined(SSL_OP_NO_COMPRESSION) \
   && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
@@ -62,8 +64,10 @@ public:
 #endif // !defined(SSL_OP_NO_COMPRESSION)
        // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
     ::CRYPTO_set_id_callback(0);
+#endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     ::CRYPTO_set_locking_callback(0);
     ::ERR_free_strings();
     ::EVP_cleanup();
@@ -94,38 +98,33 @@ public:
        // && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
 
 private:
+#if (OPENSSL_VERSION_NUMBER < 0x10000000L)
   static unsigned long openssl_id_func()
   {
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
     return ::GetCurrentThreadId();
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-    void* id = instance()->thread_id_;
-    if (id == 0)
-      instance()->thread_id_ = id = &id; // Ugh.
+    void* id = &errno;
     ASIO_ASSERT(sizeof(unsigned long) >= sizeof(void*));
     return reinterpret_cast<unsigned long>(id);
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   }
+#endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
   static void openssl_locking_func(int mode, int n, 
     const char* /*file*/, int /*line*/)
   {
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     if (mode & CRYPTO_LOCK)
       instance()->mutexes_[n]->lock();
     else
       instance()->mutexes_[n]->unlock();
-#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
   }
 
   // Mutexes to be used in locking callbacks.
   std::vector<asio::detail::shared_ptr<
         asio::detail::mutex> > mutexes_;
-
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
-  // The thread identifiers to be used by openssl.
-  asio::detail::tss_ptr<void> thread_id_;
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
 
 #if !defined(SSL_OP_NO_COMPRESSION) \
   && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
