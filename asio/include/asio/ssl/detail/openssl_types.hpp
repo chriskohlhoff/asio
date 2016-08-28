@@ -21,7 +21,9 @@
 #if !defined(OPENSSL_NO_ENGINE)
 # include <openssl/engine.h>
 #endif // !defined(OPENSSL_NO_ENGINE)
+#include <openssl/dh.h>
 #include <openssl/err.h>
+#include <openssl/rsa.h>
 #include <openssl/x509v3.h>
 #include "asio/detail/socket_types.hpp"
 
