@@ -1240,7 +1240,9 @@
 
 <xsl:text>[indexterm2 </xsl:text>
 <xsl:text>asio.indexterm.</xsl:text>
-<xsl:number level="multiple" count="*"/>
+<xsl:value-of select="$class-id"/>
+<xsl:text>.</xsl:text>
+<xsl:value-of select="$id"/>
 <xsl:text>..</xsl:text>
 <xsl:value-of select="$escaped-name"/>
 <xsl:text>..</xsl:text>
@@ -1300,7 +1302,9 @@
 <xsl:if test="$overload-count = 1">
   <xsl:text>[indexterm2 </xsl:text>
   <xsl:text>asio.indexterm.</xsl:text>
-  <xsl:number level="multiple" count="*"/>
+  <xsl:value-of select="$class-id"/>
+  <xsl:text>.</xsl:text>
+  <xsl:value-of select="$id"/>
   <xsl:text>..</xsl:text>
   <xsl:value-of select="$escaped-name"/>
   <xsl:text>..</xsl:text>
@@ -1323,6 +1327,7 @@
     <xsl:when test="@kind='enum'">
       <xsl:call-template name="enum" mode="class-detail">
         <xsl:with-param name="enum-name" select="$class-name"/>
+        <xsl:with-param name="id" select="concat($class-id, '.', $id)"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
@@ -1395,13 +1400,16 @@
 
 <xsl:template name="enum">
 <xsl:param name="enum-name"/>
+<xsl:param name="id"/>
   enum <xsl:value-of select="name"/><xsl:text>
 </xsl:text><xsl:if test="count(enumvalue) &gt; 0">
 <xsl:value-of select="$newline"/>
 <xsl:for-each select="enumvalue">
   <xsl:text>[indexterm2 </xsl:text>
   <xsl:text>asio.indexterm.</xsl:text>
-  <xsl:number level="multiple" count="*"/>
+  <xsl:value-of select="$id"/>
+  <xsl:text>.</xsl:text>
+  <xsl:value-of select="name"/>
   <xsl:text>..</xsl:text>
   <xsl:value-of select="name"/>
   <xsl:text>..</xsl:text>
@@ -1666,7 +1674,7 @@
 
 <xsl:text>[indexterm1 </xsl:text>
 <xsl:text>asio.indexterm.</xsl:text>
-<xsl:number level="multiple" count="*"/>
+<xsl:value-of select="$id"/>
 <xsl:text>..</xsl:text>
 <xsl:value-of select="$name"/>
 <xsl:text>] </xsl:text>
@@ -1722,7 +1730,7 @@
 <xsl:if test="$overload-count = 1">
   <xsl:text>[indexterm1 </xsl:text>
   <xsl:text>asio.indexterm.</xsl:text>
-  <xsl:number level="multiple" count="*"/>
+  <xsl:value-of select="$id"/>
   <xsl:text>..</xsl:text>
   <xsl:value-of select="$name"/>
   <xsl:text>] </xsl:text>
@@ -1743,6 +1751,7 @@
     <xsl:when test="@kind='enum'">
       <xsl:call-template name="enum">
         <xsl:with-param name="enum-name" select="$name"/>
+        <xsl:with-param name="id" select="$id"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="@kind='function'">
