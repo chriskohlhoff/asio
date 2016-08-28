@@ -75,7 +75,15 @@ target operating system. A program may test for the macro
 
 Asio includes classes added to permit synchronous and asynchronous read and
 write operations to be performed on POSIX file descriptors, such as pipes,
-standard input and output, and various devices (but /not/ regular files).
+standard input and output, and various devices.
+
+These classes also provide limited support for regular files. This support
+assumes that the underlying read and write operations provided by the operating
+system never fail with `EAGAIN` or `EWOULDBLOCK`. (This assumption normally
+holds for buffered file I/O.)  Synchronous and asynchronous read and write
+operations on file descriptors will succeed but the I/O will always be
+performed immediately. Wait operations, and operations involving
+`asio::null_buffers`, are not portably supported.
 
 For example, to perform read and write operations on standard input
 and output, the following objects may be created:
