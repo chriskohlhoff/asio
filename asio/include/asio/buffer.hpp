@@ -1557,7 +1557,7 @@ public:
    */
   const_buffers_type data() const ASIO_NOEXCEPT
   {
-    return asio::buffer(string_, size_);
+    return const_buffers_type(asio::buffer(string_, size_));
   }
 
   /// Get a list of buffers that represents the output sequence, with the given
@@ -1708,7 +1708,7 @@ public:
    */
   const_buffers_type data() const ASIO_NOEXCEPT
   {
-    return asio::buffer(vector_, size_);
+    return const_buffers_type(asio::buffer(vector_, size_));
   }
 
   /// Get a list of buffers that represents the output sequence, with the given
