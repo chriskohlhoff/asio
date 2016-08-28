@@ -115,10 +115,6 @@ private:
   ASIO_DECL static int verify_callback_function(
       int preverified, X509_STORE_CTX* ctx);
 
-  // The SSL_accept function may not be thread safe. This mutex is used to
-  // protect all calls to the SSL_accept function.
-  ASIO_DECL static asio::detail::static_mutex& accept_mutex();
-
   // Perform one operation. Returns >= 0 on success or error, want_read if the
   // operation needs more input, or want_write if it needs to write some output
   // before the operation can complete.
