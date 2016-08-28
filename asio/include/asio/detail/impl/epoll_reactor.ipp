@@ -168,7 +168,18 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
+  {
+    if (errno == EPERM)
+    {
+      // This file descriptor type is not supported by epoll. However, if it is
+      // a regular file then operations on it will not block. We will allow
+      // this descriptor to be used and fail later if an operation on it would
+      // otherwise require a trip through the reactor.
+      descriptor_data->registered_events_ = 0;
+      return 0;
+    }
     return errno;
+  }
 
   return 0;
 }
@@ -243,6 +254,13 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
         return;
       }
 
+      if (descriptor_data->registered_events_ == 0)
+      {
+        op->ec_ = asio::error::operation_not_supported;
+        scheduler_.post_immediate_completion(op, is_continuation);
+        return;
+      }
+
       if (op_type == write_op)
       {
         if ((descriptor_data->registered_events_ & EPOLLOUT) == 0)
@@ -263,6 +281,12 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
           }
         }
       }
+    }
+    else if (descriptor_data->registered_events_ == 0)
+    {
+      op->ec_ = asio::error::operation_not_supported;
+      scheduler_.post_immediate_completion(op, is_continuation);
+      return;
     }
     else
     {
@@ -321,7 +345,7 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
       // The descriptor will be automatically removed from the epoll set when
       // it is closed.
     }
-    else
+    else if (descriptor_data->registered_events_ != 0)
     {
       epoll_event ev = { 0, { 0 } };
       epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
