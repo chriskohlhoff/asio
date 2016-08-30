@@ -169,7 +169,7 @@ public:
     this->get_service().bind(this->get_implementation(), endpoint, ec);
     asio::detail::throw_error(ec, "bind");
     this->get_service().listen(this->get_implementation(),
-        socket_base::max_connections, ec);
+        socket_base::max_listen_connections, ec);
     asio::detail::throw_error(ec, "listen");
   }
 
@@ -485,7 +485,7 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  void listen(int backlog = socket_base::max_connections)
+  void listen(int backlog = socket_base::max_listen_connections)
   {
     asio::error_code ec;
     this->get_service().listen(this->get_implementation(), backlog, ec);
@@ -507,7 +507,7 @@ public:
    * asio::ip::tcp::acceptor acceptor(io_context);
    * ...
    * asio::error_code ec;
-   * acceptor.listen(asio::socket_base::max_connections, ec);
+   * acceptor.listen(asio::socket_base::max_listen_connections, ec);
    * if (ec)
    * {
    *   // An error occurred.

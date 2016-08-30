@@ -4943,6 +4943,11 @@ Provides datagram-oriented socket functionality.
 
   [
     [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -7995,6 +8000,11 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
 
   [
     [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -8049,10 +8059,27 @@ The [link asio.reference.basic_socket `basic_socket`] class template provides fu
 ['Inherited from socket_base.]
 
 [indexterm2 asio.indexterm.basic_datagram_socket.max_connections..max_connections..basic_datagram_socket] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections basic_datagram_socket::max_listen_connections]
+
+
+['Inherited from socket_base.]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.max_listen_connections..max_listen_connections..basic_datagram_socket] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
@@ -12571,6 +12598,11 @@ Provides raw-oriented socket functionality.
 
   [
     [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -15623,6 +15655,11 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
 
   [
     [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -15677,10 +15714,27 @@ The [link asio.reference.basic_socket `basic_socket`] class template provides fu
 ['Inherited from socket_base.]
 
 [indexterm2 asio.indexterm.basic_raw_socket.max_connections..max_connections..basic_raw_socket] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections basic_raw_socket::max_listen_connections]
+
+
+['Inherited from socket_base.]
+
+[indexterm2 asio.indexterm.basic_raw_socket.max_listen_connections..max_listen_connections..basic_raw_socket] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
@@ -18509,6 +18563,11 @@ Provides sequenced packet socket functionality.
 
   [
     [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -21230,6 +21289,11 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
 
   [
     [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -21284,10 +21348,27 @@ The [link asio.reference.basic_socket `basic_socket`] class template provides fu
 ['Inherited from socket_base.]
 
 [indexterm2 asio.indexterm.basic_seq_packet_socket.max_connections..max_connections..basic_seq_packet_socket] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections basic_seq_packet_socket::max_listen_connections]
+
+
+['Inherited from socket_base.]
+
+[indexterm2 asio.indexterm.basic_seq_packet_socket.max_listen_connections..max_listen_connections..basic_seq_packet_socket] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
@@ -23679,6 +23760,11 @@ Provides socket functionality.
 
   [
     [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -26113,6 +26199,11 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
 
   [
     [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -26167,10 +26258,27 @@ The [link asio.reference.basic_socket `basic_socket`] class template provides fu
 ['Inherited from socket_base.]
 
 [indexterm2 asio.indexterm.basic_socket.max_connections..max_connections..basic_socket] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections basic_socket::max_listen_connections]
+
+
+['Inherited from socket_base.]
+
+[indexterm2 asio.indexterm.basic_socket.max_listen_connections..max_listen_connections..basic_socket] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
@@ -28137,6 +28245,11 @@ Provides the ability to accept new connections.
 
   [
     [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -30878,7 +30991,7 @@ Place the acceptor into the state where it will listen for new connections.
 
 
   void ``[link asio.reference.basic_socket_acceptor.listen.overload1 listen]``(
-      int backlog = socket_base::max_connections);
+      int backlog = socket_base::max_listen_connections);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.listen.overload1 more...]]``
 
   void ``[link asio.reference.basic_socket_acceptor.listen.overload2 listen]``(
@@ -30894,7 +31007,7 @@ Place the acceptor into the state where it will listen for new connections.
 
 
   void listen(
-      int backlog = socket_base::max_connections);
+      int backlog = socket_base::max_listen_connections);
 
 
 This function puts the socket acceptor into the state where it may accept new connections.
@@ -30959,7 +31072,7 @@ This function puts the socket acceptor into the state where it may accept new co
    asio::ip::tcp::acceptor acceptor(io_context);
    ...
    asio::error_code ec;
-   acceptor.listen(asio::socket_base::max_connections, ec);
+   acceptor.listen(asio::socket_base::max_listen_connections, ec);
    if (ec)
    {
      // An error occurred.
@@ -31094,10 +31207,27 @@ An object that represents the local endpoint of the acceptor. Returns a default-
 ['Inherited from socket_base.]
 
 [indexterm2 asio.indexterm.basic_socket_acceptor.max_connections..max_connections..basic_socket_acceptor] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections basic_socket_acceptor::max_listen_connections]
+
+
+['Inherited from socket_base.]
+
+[indexterm2 asio.indexterm.basic_socket_acceptor.max_listen_connections..max_listen_connections..basic_socket_acceptor] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
@@ -33998,6 +34128,11 @@ Provides stream-oriented socket functionality.
 
   [
     [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -36921,6 +37056,11 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
 
   [
     [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -36975,10 +37115,27 @@ The [link asio.reference.basic_socket `basic_socket`] class template provides fu
 ['Inherited from socket_base.]
 
 [indexterm2 asio.indexterm.basic_stream_socket.max_connections..max_connections..basic_stream_socket] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections basic_stream_socket::max_listen_connections]
+
+
+['Inherited from socket_base.]
+
+[indexterm2 asio.indexterm.basic_stream_socket.max_listen_connections..max_listen_connections..basic_stream_socket] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
@@ -57345,6 +57502,11 @@ The generic socket type.
 
   [
     [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -58162,6 +58324,11 @@ The generic socket type.
 
   [
     [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -58956,6 +59123,11 @@ The generic socket type.
 
   [
     [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -59838,6 +60010,11 @@ The generic socket type.
 
   [
     [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -77570,6 +77747,11 @@ The ICMP socket type.
 
   [
     [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -79800,6 +79982,11 @@ The TCP acceptor type.
 
   [
     [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -80831,6 +81018,11 @@ The TCP socket type.
 
   [
     [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -81817,6 +82009,11 @@ The UDP socket type.
 
   [
     [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -83618,6 +83815,11 @@ The UNIX domain socket type.
 
   [
     [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -84063,6 +84265,11 @@ The UNIX domain acceptor type.
 
   [
     [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -84797,6 +85004,11 @@ The UNIX domain socket type.
 
   [
     [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -96800,6 +97012,11 @@ The [link asio.reference.socket_base `socket_base`] class is used as a base for 
 
   [
     [[link asio.reference.socket_base.max_connections [*max_connections]]]
+    [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
+  ]
+
+  [
+    [[link asio.reference.socket_base.max_listen_connections [*max_listen_connections]]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
@@ -97182,10 +97399,24 @@ Getting the current option value:
 [section:max_connections socket_base::max_connections]
 
 [indexterm2 asio.indexterm.socket_base.max_connections..max_connections..socket_base] 
-The maximum length of the queue of pending incoming connections. 
+(Deprecated: Use max\_listen\_connections.) The maximum length of the queue of pending incoming connections. 
 
 
   static const int max_connections = implementation_defined;
+
+
+
+[endsect]
+
+
+
+[section:max_listen_connections socket_base::max_listen_connections]
+
+[indexterm2 asio.indexterm.socket_base.max_listen_connections..max_listen_connections..socket_base] 
+The maximum length of the queue of pending incoming connections. 
+
+
+  static const int max_listen_connections = implementation_defined;
 
 
 
