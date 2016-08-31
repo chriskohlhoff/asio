@@ -307,8 +307,216 @@ void test()
 
 //------------------------------------------------------------------------------
 
+namespace buffer_copy_runtime {
+
+using namespace asio;
+using namespace std;
+
+void test()
+{
+  char dest_data[256];
+  char source_data[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mutable_buffer mb1 = asio::buffer(dest_data);
+  mutable_buffer mb2 = asio::buffer(source_data);
+  std::size_t n = buffer_copy(mb1, mb2);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  const_buffer cb1 = asio::buffer(source_data);
+  n = buffer_copy(mb1, cb1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+#if !defined(ASIO_NO_DEPRECATED)
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  mutable_buffers_1 mbc1 = asio::buffer(source_data);
+  n = buffer_copy(mb1, mbc1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  const_buffers_1 cbc1 = const_buffers_1(asio::buffer(source_data));
+  n = buffer_copy(mb1, cbc1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  mb1 = asio::buffer(source_data);
+  n = buffer_copy(mbc1, mb1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  cb1 = asio::buffer(source_data);
+  n = buffer_copy(mbc1, cb1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  mutable_buffers_1 mbc2 = asio::buffer(source_data);
+  n = buffer_copy(mbc1, mbc2);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  cbc1 = const_buffers_1(asio::buffer(source_data));
+  n = buffer_copy(mbc1, cbc1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  std::vector<mutable_buffer> mv1;
+  mv1.push_back(asio::buffer(source_data, 5));
+  mv1.push_back(asio::buffer(source_data) + 5);
+  n = buffer_copy(mb1, mv1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  std::vector<const_buffer> cv1;
+  cv1.push_back(asio::buffer(source_data, 6));
+  cv1.push_back(asio::buffer(source_data) + 6);
+  n = buffer_copy(mb1, cv1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mv1.clear();
+  mv1.push_back(asio::buffer(dest_data, 7));
+  mv1.push_back(asio::buffer(dest_data) + 7);
+  cb1 = asio::buffer(source_data);
+  n = buffer_copy(mv1, cb1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mv1.clear();
+  mv1.push_back(asio::buffer(dest_data, 7));
+  mv1.push_back(asio::buffer(dest_data) + 7);
+  cv1.clear();
+  cv1.push_back(asio::buffer(source_data, 8));
+  cv1.push_back(asio::buffer(source_data) + 8);
+  n = buffer_copy(mv1, cv1);
+  ASIO_CHECK(n == sizeof(source_data));
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  mb2 = asio::buffer(source_data);
+  n = buffer_copy(mb1, mb2, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  cb1 = asio::buffer(source_data);
+  n = buffer_copy(mb1, cb1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+#if !defined(ASIO_NO_DEPRECATED)
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  mbc1 = asio::buffer(source_data);
+  n = buffer_copy(mb1, mbc1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  cbc1 = const_buffers_1(asio::buffer(source_data));
+  n = buffer_copy(mb1, cbc1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  mb1 = asio::buffer(source_data);
+  n = buffer_copy(mbc1, mb1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  cb1 = asio::buffer(source_data);
+  n = buffer_copy(mbc1, cb1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  mbc2 = asio::buffer(source_data);
+  n = buffer_copy(mbc1, mbc2, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mbc1 = asio::buffer(dest_data);
+  cbc1 = const_buffers_1(asio::buffer(source_data));
+  n = buffer_copy(mbc1, cbc1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+#endif // !defined(ASIO_NO_DEPRECATED)
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  mv1.clear();
+  mv1.push_back(asio::buffer(source_data, 5));
+  mv1.push_back(asio::buffer(source_data) + 5);
+  n = buffer_copy(mb1, mv1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mb1 = asio::buffer(dest_data);
+  cv1.clear();
+  cv1.push_back(asio::buffer(source_data, 6));
+  cv1.push_back(asio::buffer(source_data) + 6);
+  n = buffer_copy(mb1, cv1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mv1.clear();
+  mv1.push_back(asio::buffer(dest_data, 7));
+  mv1.push_back(asio::buffer(dest_data) + 7);
+  cb1 = asio::buffer(source_data);
+  n = buffer_copy(mv1, cb1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+
+  memset(dest_data, 0, sizeof(dest_data));
+  mv1.clear();
+  mv1.push_back(asio::buffer(dest_data, 7));
+  mv1.push_back(asio::buffer(dest_data) + 7);
+  cv1.clear();
+  cv1.push_back(asio::buffer(source_data, 8));
+  cv1.push_back(asio::buffer(source_data) + 8);
+  n = buffer_copy(mv1, cv1, 10);
+  ASIO_CHECK(n == 10);
+  ASIO_CHECK(memcmp(dest_data, source_data, n) == 0);
+}
+
+} // namespace buffer_copy_runtime
+
+//------------------------------------------------------------------------------
+
 ASIO_TEST_SUITE
 (
   "buffer",
   ASIO_COMPILE_TEST_CASE(buffer_compile::test)
+  ASIO_TEST_CASE(buffer_copy_runtime::test)
 )

@@ -515,52 +515,43 @@ inline typename C::const_iterator buffer_sequence_end(const C& c)
 
 /*@}*/
 
-/** @defgroup buffer_size asio::buffer_size
- *
- * @brief The asio::buffer_size function determines the total number of
- * bytes in a buffer or buffer sequence.
- */
-/*@{*/
-
-/// Get the number of bytes in a modifiable buffer.
-inline std::size_t buffer_size(const mutable_buffer& b) ASIO_NOEXCEPT
-{
-  return b.size();
-}
-
-/// Get the number of bytes in a non-modifiable buffer.
-inline std::size_t buffer_size(const const_buffer& b) ASIO_NOEXCEPT
-{
-  return b.size();
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Get the number of bytes in a modifiable buffer.
-inline std::size_t buffer_size(const mutable_buffers_1& b) ASIO_NOEXCEPT
-{
-  return b.size();
-}
-
-
-/// Get the number of bytes in a non-modifiable buffer.
-inline std::size_t buffer_size(const const_buffers_1& b) ASIO_NOEXCEPT
-{
-  return b.size();
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 namespace detail {
 
+// Tag types used to select appropriately optimised overloads.
+struct one_buffer {};
+struct multiple_buffers {};
+
+// Helper trait to detect single buffers.
+template <typename BufferSequence>
+struct buffer_sequence_cardinality :
+  conditional<
+    is_same<BufferSequence, mutable_buffer>::value
+#if !defined(ASIO_NO_DEPRECATED)
+      || is_same<BufferSequence, mutable_buffers_1>::value
+      || is_same<BufferSequence, const_buffers_1>::value
+#endif // !defined(ASIO_NO_DEPRECATED)
+      || is_same<BufferSequence, const_buffer>::value,
+    one_buffer, multiple_buffers>::type {};
+
 template <typename Iterator>
-inline std::size_t buffer_size(Iterator begin, Iterator end)
+inline std::size_t buffer_size(one_buffer,
+    Iterator begin, Iterator) ASIO_NOEXCEPT
+{
+  return const_buffer(*begin).size();
+}
+
+template <typename Iterator>
+inline std::size_t buffer_size(multiple_buffers,
+    Iterator begin, Iterator end) ASIO_NOEXCEPT
 {
   std::size_t total_buffer_size = 0;
 
   Iterator iter = begin;
   for (; iter != end; ++iter)
-    total_buffer_size += iter->size();
+  {
+    const_buffer b(*iter);
+    total_buffer_size += b.size();
+  }
 
   return total_buffer_size;
 }
@@ -568,22 +559,31 @@ inline std::size_t buffer_size(Iterator begin, Iterator end)
 } // namespace detail
 
 /// Get the total number of bytes in a buffer sequence.
-/** 
+/**
+ * The @c buffer_size function determines the total size of all buffers in the
+ * buffer sequence, as if computed as follows:
+ *
+ * @code size_t total_size = 0;
+ * auto i = asio::buffer_sequence_begin(buffers);
+ * auto end = asio::buffer_sequence_end(buffers);
+ * for (; i != end; ++i)
+ * {
+ *   const_buffer b(*i);
+ *   total_size += b.size();
+ * }
+ * return total_size; @endcode
+ *
  * The @c BufferSequence template parameter may meet either of the @c
  * ConstBufferSequence or @c MutableBufferSequence type requirements.
  */
 template <typename BufferSequence>
-inline std::size_t buffer_size(const BufferSequence& b,
-    typename enable_if<
-      is_const_buffer_sequence<BufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
+inline std::size_t buffer_size(const BufferSequence& b) ASIO_NOEXCEPT
 {
   return detail::buffer_size(
+      detail::buffer_sequence_cardinality<BufferSequence>(),
       asio::buffer_sequence_begin(b),
       asio::buffer_sequence_end(b));
 }
-
-/*@}*/
 
 #if !defined(ASIO_NO_DEPRECATED)
 
@@ -787,9 +787,10 @@ private:
  *
  * The @ref buffer_copy function may be used to copy raw bytes between
  * individual buffers and buffer sequences.
- *
- * In particular, when used with the @ref buffer_size, the @ref buffer_copy
- * function can be used to linearise a sequence of buffers. For example:
+*
+ * In particular, when used with the @ref buffer_size function, the @ref
+ * buffer_copy function can be used to linearise a sequence of buffers. For
+ * example:
  *
  * @code vector<const_buffer> buffers = ...;
  *
@@ -1862,27 +1863,10 @@ inline dynamic_vector_buffer<Elem, Allocator> dynamic_buffer(
  */
 /*@{*/
 
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffer& source) ASIO_NOEXCEPT
+namespace detail {
+
+inline std::size_t buffer_copy_1(const mutable_buffer& target,
+    const const_buffer& source)
 {
   using namespace std; // For memcpy.
   std::size_t target_size = target.size();
@@ -1892,438 +1876,72 @@ inline std::size_t buffer_copy(const mutable_buffer& target,
   return n;
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffers_1& source) ASIO_NOEXCEPT
+template <typename TargetIterator, typename SourceIterator>
+inline std::size_t buffer_copy(one_buffer, one_buffer,
+    TargetIterator target_begin, TargetIterator,
+    SourceIterator source_begin, SourceIterator) ASIO_NOEXCEPT
 {
-  return buffer_copy(target, static_cast<const const_buffer&>(source));
+  return (buffer_copy_1)(*target_begin, *source_begin);
 }
 
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffer& source) ASIO_NOEXCEPT
+template <typename TargetIterator, typename SourceIterator>
+inline std::size_t buffer_copy(one_buffer, one_buffer,
+    TargetIterator target_begin, TargetIterator,
+    SourceIterator source_begin, SourceIterator,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
-  return buffer_copy(target, const_buffer(source));
+  return (buffer_copy_1)(*target_begin,
+      asio::buffer(*source_begin, max_bytes_to_copy));
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffers_1& source) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, const_buffer(source));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-namespace detail {
-
-template <typename SourceIterator>
-std::size_t buffer_copy_from_sequence(const mutable_buffer& target,
-    SourceIterator source_begin, SourceIterator source_end) ASIO_NOEXCEPT
+template <typename TargetIterator, typename SourceIterator>
+std::size_t buffer_copy(one_buffer, multiple_buffers,
+    TargetIterator target_begin, TargetIterator,
+    SourceIterator source_begin, SourceIterator source_end,
+    std::size_t max_bytes_to_copy
+      = (std::numeric_limits<std::size_t>::max)()) ASIO_NOEXCEPT
 {
   std::size_t total_bytes_copied = 0;
   SourceIterator source_iter = source_begin;
 
-  for (mutable_buffer target_buffer(target);
+  for (mutable_buffer target_buffer(
+        asio::buffer(*target_begin, max_bytes_to_copy));
       target_buffer.size() && source_iter != source_end; ++source_iter)
   {
     const_buffer source_buffer(*source_iter);
-    std::size_t bytes_copied = buffer_copy(target_buffer, source_buffer);
+    std::size_t bytes_copied = (buffer_copy_1)(target_buffer, source_buffer);
     total_bytes_copied += bytes_copied;
-    target_buffer = target_buffer + bytes_copied;
+    target_buffer += bytes_copied;
   }
 
   return total_bytes_copied;
 }
 
-} // namespace detail
-
-/// Copies bytes from a source buffer sequence to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer sequence representing the memory
- * regions from which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename ConstBufferSequence>
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const ConstBufferSequence& source,
-    typename enable_if<
-      is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return detail::buffer_copy_from_sequence(target,
-      asio::buffer_sequence_begin(source),
-      asio::buffer_sequence_end(source));
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffer& source) ASIO_NOEXCEPT
-{
-  return buffer_copy(static_cast<const mutable_buffer&>(target), source);
-}
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffers_1& source) ASIO_NOEXCEPT
-{
-  return buffer_copy(static_cast<const mutable_buffer&>(target),
-      static_cast<const const_buffer&>(source));
-}
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffer& source) ASIO_NOEXCEPT
-{
-  return buffer_copy(static_cast<const mutable_buffer&>(target),
-      const_buffer(source));
-}
-
-/// Copies bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffers_1& source) ASIO_NOEXCEPT
-{
-  return buffer_copy(static_cast<const mutable_buffer&>(target),
-      const_buffer(source));
-}
-
-/// Copies bytes from a source buffer sequence to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer sequence representing the memory
- * regions from which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename ConstBufferSequence>
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const ConstBufferSequence& source,
-    typename enable_if<
-      is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(static_cast<const mutable_buffer&>(target), source);
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-namespace detail {
-
-template <typename TargetIterator>
-std::size_t buffer_copy_to_sequence(TargetIterator target_begin,
-    TargetIterator target_end, const const_buffer& source) ASIO_NOEXCEPT
+template <typename TargetIterator, typename SourceIterator>
+std::size_t buffer_copy(multiple_buffers, one_buffer,
+    TargetIterator target_begin, TargetIterator target_end,
+    SourceIterator source_begin, SourceIterator,
+    std::size_t max_bytes_to_copy
+      = (std::numeric_limits<std::size_t>::max)()) ASIO_NOEXCEPT
 {
   std::size_t total_bytes_copied = 0;
   TargetIterator target_iter = target_begin;
 
-  for (const_buffer source_buffer(source);
+  for (const_buffer source_buffer(
+        asio::buffer(*source_begin, max_bytes_to_copy));
       source_buffer.size() && target_iter != target_end; ++target_iter)
   {
     mutable_buffer target_buffer(*target_iter);
-    std::size_t bytes_copied = buffer_copy(target_buffer, source_buffer);
+    std::size_t bytes_copied = (buffer_copy_1)(target_buffer, source_buffer);
     total_bytes_copied += bytes_copied;
-    source_buffer = source_buffer + bytes_copied;
+    source_buffer += bytes_copied;
   }
 
   return total_bytes_copied;
 }
 
-} // namespace detail
-
-/// Copies bytes from a source buffer to a target buffer sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const const_buffer& source,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return detail::buffer_copy_to_sequence(
-      asio::buffer_sequence_begin(target),
-      asio::buffer_sequence_end(target), source);
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const const_buffers_1& source,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, static_cast<const const_buffer&>(source));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const mutable_buffer& source,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, const_buffer(source));
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies bytes from a source buffer to a target buffer sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const mutable_buffers_1& source,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, const_buffer(source));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-namespace detail {
-
 template <typename TargetIterator, typename SourceIterator>
-std::size_t buffer_copy_to_sequence_from_sequence(
+std::size_t buffer_copy(multiple_buffers, multiple_buffers,
     TargetIterator target_begin, TargetIterator target_end,
     SourceIterator source_begin, SourceIterator source_end) ASIO_NOEXCEPT
 {
@@ -2343,7 +1961,55 @@ std::size_t buffer_copy_to_sequence_from_sequence(
     const_buffer source_buffer =
       const_buffer(*source_iter) + source_buffer_offset;
 
-    std::size_t bytes_copied = buffer_copy(target_buffer, source_buffer);
+    std::size_t bytes_copied = (buffer_copy_1)(target_buffer, source_buffer);
+    total_bytes_copied += bytes_copied;
+
+    if (bytes_copied == target_buffer.size())
+    {
+      ++target_iter;
+      target_buffer_offset = 0;
+    }
+    else
+      target_buffer_offset += bytes_copied;
+
+    if (bytes_copied == source_buffer.size())
+    {
+      ++source_iter;
+      source_buffer_offset = 0;
+    }
+    else
+      source_buffer_offset += bytes_copied;
+  }
+
+  return total_bytes_copied;
+}
+
+template <typename TargetIterator, typename SourceIterator>
+std::size_t buffer_copy(multiple_buffers, multiple_buffers,
+    TargetIterator target_begin, TargetIterator target_end,
+    SourceIterator source_begin, SourceIterator source_end,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
+{
+  std::size_t total_bytes_copied = 0;
+
+  TargetIterator target_iter = target_begin;
+  std::size_t target_buffer_offset = 0;
+
+  SourceIterator source_iter = source_begin;
+  std::size_t source_buffer_offset = 0;
+
+  while (total_bytes_copied != max_bytes_to_copy
+      && target_iter != target_end && source_iter != source_end)
+  {
+    mutable_buffer target_buffer =
+      mutable_buffer(*target_iter) + target_buffer_offset;
+
+    const_buffer source_buffer =
+      const_buffer(*source_iter) + source_buffer_offset;
+
+    std::size_t bytes_copied = (buffer_copy_1)(
+        target_buffer, asio::buffer(source_buffer,
+          max_bytes_to_copy - total_bytes_copied));
     total_bytes_copied += bytes_copied;
 
     if (bytes_copied == target_buffer.size())
@@ -2389,539 +2055,16 @@ std::size_t buffer_copy_to_sequence_from_sequence(
  */
 template <typename MutableBufferSequence, typename ConstBufferSequence>
 inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const ConstBufferSequence& source,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value &&
-      is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
+    const ConstBufferSequence& source) ASIO_NOEXCEPT
 {
-  return detail::buffer_copy_to_sequence_from_sequence(
+  return detail::buffer_copy(
+      detail::buffer_sequence_cardinality<MutableBufferSequence>(),
+      detail::buffer_sequence_cardinality<ConstBufferSequence>(),
       asio::buffer_sequence_begin(target),
       asio::buffer_sequence_end(target),
       asio::buffer_sequence_begin(source),
       asio::buffer_sequence_end(source));
 }
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffer& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const const_buffers_1& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffer& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const mutable_buffers_1& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer sequence to a target
-/// buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer sequence representing the memory
- * regions from which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename ConstBufferSequence>
-inline std::size_t buffer_copy(const mutable_buffer& target,
-    const ConstBufferSequence& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffer& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const const_buffers_1& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffer& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-/// Copies a limited number of bytes from a source buffer to a target buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const mutable_buffers_1& source,
-    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-/// Copies a limited number of bytes from a source buffer sequence to a target
-/// buffer.
-/**
- * @param target A modifiable buffer representing the memory region to which
- * the bytes will be copied.
- *
- * @param source A non-modifiable buffer sequence representing the memory
- * regions from which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename ConstBufferSequence>
-inline std::size_t buffer_copy(const mutable_buffers_1& target,
-    const ConstBufferSequence& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(buffer(target, max_bytes_to_copy), source);
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer
-/// sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const const_buffer& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, buffer(source, max_bytes_to_copy));
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer
-/// sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A non-modifiable buffer representing the memory region from
- * which the bytes will be copied.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const const_buffers_1& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, buffer(source, max_bytes_to_copy));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer
-/// sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const mutable_buffer& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, buffer(source, max_bytes_to_copy));
-}
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// Copies a limited number of bytes from a source buffer to a target buffer
-/// sequence.
-/**
- * @param target A modifiable buffer sequence representing the memory regions to
- * which the bytes will be copied.
- *
- * @param source A modifiable buffer representing the memory region from which
- * the bytes will be copied. The contents of the source buffer will not be
- * modified.
- *
- * @param max_bytes_to_copy The maximum number of bytes to be copied.
- *
- * @returns The number of bytes copied.
- *
- * @note The number of bytes copied is the lesser of:
- *
- * @li @c buffer_size(target)
- *
- * @li @c buffer_size(source)
- *
- * @li @c max_bytes_to_copy
- *
- * This function is implemented in terms of @c memcpy, and consequently it
- * cannot be used to copy between overlapping memory regions.
- */
-template <typename MutableBufferSequence>
-inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const mutable_buffers_1& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
-{
-  return buffer_copy(target, buffer(source, max_bytes_to_copy));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-namespace detail {
-
-template <typename TargetIterator, typename SourceIterator>
-std::size_t buffer_copy_n_to_sequence_from_sequence(
-    TargetIterator target_begin, TargetIterator target_end,
-    SourceIterator source_begin, SourceIterator source_end,
-    std::size_t max_bytes_to_copy)
-{
-  std::size_t total_bytes_copied = 0;
-
-  TargetIterator target_iter = target_begin;
-  std::size_t target_buffer_offset = 0;
-
-  SourceIterator source_iter = source_begin;
-  std::size_t source_buffer_offset = 0;
-
-  while (total_bytes_copied != max_bytes_to_copy
-      && target_iter != target_end && source_iter != source_end)
-  {
-    mutable_buffer target_buffer =
-      mutable_buffer(*target_iter) + target_buffer_offset;
-
-    const_buffer source_buffer =
-      const_buffer(*source_iter) + source_buffer_offset;
-
-    std::size_t bytes_copied = buffer_copy(target_buffer,
-        source_buffer, max_bytes_to_copy - total_bytes_copied);
-    total_bytes_copied += bytes_copied;
-
-    if (bytes_copied == target_buffer.size())
-    {
-      ++target_iter;
-      target_buffer_offset = 0;
-    }
-    else
-      target_buffer_offset += bytes_copied;
-
-    if (bytes_copied == source_buffer.size())
-    {
-      ++source_iter;
-      source_buffer_offset = 0;
-    }
-    else
-      source_buffer_offset += bytes_copied;
-  }
-
-  return total_bytes_copied;
-}
-
-} // namespace detail
 
 /// Copies a limited number of bytes from a source buffer sequence to a target
 /// buffer sequence.
@@ -2949,13 +2092,12 @@ std::size_t buffer_copy_n_to_sequence_from_sequence(
  */
 template <typename MutableBufferSequence, typename ConstBufferSequence>
 inline std::size_t buffer_copy(const MutableBufferSequence& target,
-    const ConstBufferSequence& source, std::size_t max_bytes_to_copy,
-    typename enable_if<
-      is_mutable_buffer_sequence<MutableBufferSequence>::value &&
-      is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0) ASIO_NOEXCEPT
+    const ConstBufferSequence& source,
+    std::size_t max_bytes_to_copy) ASIO_NOEXCEPT
 {
-  return detail::buffer_copy_n_to_sequence_from_sequence(
+  return detail::buffer_copy(
+      detail::buffer_sequence_cardinality<MutableBufferSequence>(),
+      detail::buffer_sequence_cardinality<ConstBufferSequence>(),
       asio::buffer_sequence_begin(target),
       asio::buffer_sequence_end(target),
       asio::buffer_sequence_begin(source),
