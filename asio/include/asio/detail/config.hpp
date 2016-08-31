@@ -65,7 +65,8 @@
 #if !defined(ASIO_MSVC)
 # if defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
 #  define ASIO_MSVC BOOST_MSVC
-# elif defined(_MSC_VER) && !defined(__MWERKS__) && !defined(__EDG_VERSION__)
+# elif defined(_MSC_VER) && (defined(__INTELLISENSE__) \
+      || (!defined(__MWERKS__) && !defined(__EDG_VERSION__)))
 #  define ASIO_MSVC _MSC_VER
 # endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_MSVC)
 #endif // defined(ASIO_MSVC)
