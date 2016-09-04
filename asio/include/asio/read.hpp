@@ -18,9 +18,12 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/async_result.hpp"
-#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
+
+#if !defined(ASIO_NO_EXTENSIONS)
+# include "asio/basic_streambuf_fwd.hpp"
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -379,6 +382,7 @@ std::size_t read(SyncReadStream& s,
       is_dynamic_buffer_sequence<DynamicBufferSequence>::value
     >::type* = 0);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -522,6 +526,7 @@ std::size_t read(SyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 /**
@@ -807,6 +812,7 @@ async_read(AsyncReadStream& s,
       is_dynamic_buffer_sequence<DynamicBufferSequence>::value
     >::type* = 0);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Start an asynchronous operation to read a certain amount of data from a
@@ -928,6 +934,7 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 

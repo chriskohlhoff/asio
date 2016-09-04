@@ -202,6 +202,7 @@ std::size_t read_until(SyncReadStream& s,
   }
 }
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX)
 
 template <typename SyncReadStream, typename DynamicBufferSequence>
@@ -418,6 +419,7 @@ inline std::size_t read_until(SyncReadStream& s,
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 namespace detail
 {
@@ -914,6 +916,7 @@ async_read_until(AsyncReadStream& s,
   return init.result.get();
 }
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX)
 
 namespace detail
@@ -1484,6 +1487,7 @@ async_read_until(AsyncReadStream& s,
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 } // namespace asio
 

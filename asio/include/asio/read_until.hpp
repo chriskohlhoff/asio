@@ -16,14 +16,16 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
 #include <cstddef>
 #include <string>
 #include "asio/async_result.hpp"
-#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/detail/regex_fwd.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
+
+#if !defined(ASIO_NO_EXTENSIONS)
+# include "asio/basic_streambuf_fwd.hpp"
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -264,6 +266,7 @@ std::size_t read_until(SyncReadStream& s,
     const std::basic_string<char, std::char_traits<char>, Allocator>& delim,
     asio::error_code& ec);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -976,6 +979,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 /**
@@ -1168,6 +1172,7 @@ async_read_until(AsyncReadStream& s,
     const std::string& delim,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -1805,6 +1810,7 @@ async_read_until(AsyncReadStream& s,
     typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 

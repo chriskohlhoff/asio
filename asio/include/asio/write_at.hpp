@@ -18,9 +18,12 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/async_result.hpp"
-#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/error.hpp"
+
+#if !defined(ASIO_NO_EXTENSIONS)
+# include "asio/basic_streambuf_fwd.hpp"
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -224,6 +227,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d,
     uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Write all of the supplied data at the specified offset before returning.
@@ -382,6 +386,7 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
     asio::error_code& ec);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 /**
@@ -536,6 +541,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Start an asynchronous operation to write all of the supplied data at the
@@ -658,6 +664,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 

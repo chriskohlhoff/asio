@@ -166,6 +166,7 @@ inline std::size_t write(SyncWriteStream& s,
   return bytes_transferred;
 }
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 template <typename SyncWriteStream, typename Allocator,
@@ -202,6 +203,7 @@ inline std::size_t write(SyncWriteStream& s,
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 namespace detail
 {
@@ -635,6 +637,7 @@ async_write(AsyncWriteStream& s,
   return init.result.get();
 }
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
@@ -662,6 +665,7 @@ async_write(AsyncWriteStream& s,
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 } // namespace asio
 

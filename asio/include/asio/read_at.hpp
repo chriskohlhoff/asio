@@ -18,9 +18,12 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/async_result.hpp"
-#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/error.hpp"
+
+#if !defined(ASIO_NO_EXTENSIONS)
+# include "asio/basic_streambuf_fwd.hpp"
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -229,6 +232,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
     uint64_t offset, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Attempt to read a certain amount of data at the specified offset before
@@ -384,6 +388,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
     CompletionCondition completion_condition, asio::error_code& ec);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 /**
@@ -535,6 +540,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Start an asynchronous operation to read a certain amount of data at the
@@ -652,6 +658,7 @@ async_read_at(AsyncRandomAccessReadDevice& d,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 

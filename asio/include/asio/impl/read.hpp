@@ -183,6 +183,7 @@ inline std::size_t read(SyncReadStream& s,
   return bytes_transferred;
 }
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 template <typename SyncReadStream, typename Allocator,
@@ -219,6 +220,7 @@ inline std::size_t read(SyncReadStream& s,
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 namespace detail
 {
@@ -678,6 +680,7 @@ async_read(AsyncReadStream& s,
   return init.result.get();
 }
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
@@ -703,6 +706,7 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 } // namespace asio
 

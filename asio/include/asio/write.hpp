@@ -18,9 +18,12 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/async_result.hpp"
-#include "asio/basic_streambuf_fwd.hpp"
 #include "asio/buffer.hpp"
 #include "asio/error.hpp"
+
+#if !defined(ASIO_NO_EXTENSIONS)
+# include "asio/basic_streambuf_fwd.hpp"
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -379,6 +382,7 @@ std::size_t write(SyncWriteStream& s,
       is_dynamic_buffer_sequence<DynamicBufferSequence>::value
     >::type* = 0);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Write all of the supplied data to a stream before returning.
@@ -522,6 +526,7 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 /**
@@ -795,6 +800,7 @@ async_write(AsyncWriteStream& s,
       is_dynamic_buffer_sequence<DynamicBufferSequence>::value
     >::type* = 0);
 
+#if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
 /// Start an asynchronous operation to write all of the supplied data to a
@@ -908,6 +914,7 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(WriteHandler) handler);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
+#endif // !defined(ASIO_NO_EXTENSIONS)
 
 /*@}*/
 
