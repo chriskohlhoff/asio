@@ -22,7 +22,10 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
-#include "asio/raw_socket_service.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/raw_socket_service.hpp"
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 

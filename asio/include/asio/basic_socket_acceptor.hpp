@@ -22,14 +22,15 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
-#include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_base.hpp"
 
 #if defined(ASIO_HAS_MOVE)
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/socket_acceptor_service.hpp"
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
 # if defined(ASIO_WINDOWS_RUNTIME)
 #  include "asio/detail/null_socket_service.hpp"
 #  define ASIO_SVC_T detail::null_socket_service<Protocol>
@@ -40,7 +41,7 @@
 #  include "asio/detail/reactive_socket_service.hpp"
 #  define ASIO_SVC_T detail::reactive_socket_service<Protocol>
 # endif
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 

@@ -18,11 +18,14 @@
 #include "asio/detail/config.hpp"
 #include <cstddef>
 #include "asio/basic_socket.hpp"
-#include "asio/datagram_socket_service.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/datagram_socket_service.hpp"
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 

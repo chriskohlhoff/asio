@@ -22,16 +22,17 @@
 
 #include <cstddef>
 #include "asio/basic_io_object.hpp"
-#include "asio/deadline_timer_service.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/time_traits.hpp"
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/deadline_timer_service.hpp"
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
 # include "asio/detail/deadline_timer_service.hpp"
 # define ASIO_SVC_T detail::deadline_timer_service<TimeTraits>
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 

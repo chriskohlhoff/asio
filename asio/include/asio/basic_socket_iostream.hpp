@@ -22,7 +22,10 @@
 #include <istream>
 #include <ostream>
 #include "asio/basic_socket_streambuf.hpp"
-#include "asio/stream_socket_service.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/stream_socket_service.hpp"
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #if !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 

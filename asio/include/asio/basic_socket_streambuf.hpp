@@ -22,13 +22,19 @@
 #include <streambuf>
 #include "asio/basic_socket.hpp"
 #include "asio/detail/array.hpp"
-#include "asio/detail/deadline_timer_service.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/io_context.hpp"
-#include "asio/stream_socket_service.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/stream_socket_service.hpp"
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/deadline_timer_service.hpp"
+# if defined(ASIO_ENABLE_OLD_SERVICES)
+#  include "asio/deadline_timer_service.hpp"
+# else // defined(ASIO_ENABLE_OLD_SERVICES)
+#  include "asio/detail/deadline_timer_service.hpp"
+# endif // defined(ASIO_ENABLE_OLD_SERVICES)
 #else
 # include "asio/steady_timer.hpp"
 #endif

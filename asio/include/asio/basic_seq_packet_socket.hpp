@@ -21,7 +21,10 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
-#include "asio/seq_packet_socket_service.hpp"
+
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/seq_packet_socket_service.hpp"
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 

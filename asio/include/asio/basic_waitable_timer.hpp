@@ -22,19 +22,20 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/wait_traits.hpp"
-#include "asio/waitable_timer_service.hpp"
 
 #if defined(ASIO_HAS_MOVE)
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
+#if defined(ASIO_ENABLE_OLD_SERVICES)
+# include "asio/waitable_timer_service.hpp"
+#else // defined(ASIO_ENABLE_OLD_SERVICES)
 # include "asio/detail/chrono_time_traits.hpp"
 # include "asio/detail/deadline_timer_service.hpp"
 # define ASIO_SVC_T \
     detail::deadline_timer_service< \
       detail::chrono_time_traits<Clock, WaitTraits> >
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
+#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 #include "asio/detail/push_options.hpp"
 
