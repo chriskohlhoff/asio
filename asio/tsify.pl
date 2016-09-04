@@ -2,6 +2,7 @@
 
 use strict;
 use File::Path;
+# use Switch;
 
 our $output_dir = "tsified";
 
@@ -107,11 +108,134 @@ sub copy_source_file
   open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
 
+  # State for stripping out deprecated, extension, and old services code.
+  my $deprecated_state = 0;
+  my $extension_state = 0;
+  my $old_services_state = 0;
+
   # Copy the content.
   my $lineno = 1;
   while (my $line = <$input>)
   {
     chomp($line);
+
+    # Strip out deprecated code.
+    if ($deprecated_state == 0)
+    {
+      if ($line =~ /#\s*if\s*defined\(ASIO_NO_DEPRECATED\)/)
+      {
+        $deprecated_state = 1;
+        next;
+      }
+      elsif ($line =~ /#\s*if\s*!defined\(ASIO_NO_DEPRECATED\)/)
+      {
+        $deprecated_state = -1;
+        next;
+      }
+    }
+    elsif ($deprecated_state == 1)
+    {
+      if ($line =~ /#\s*else\s*\/\/\s*!*defined\(ASIO_NO_DEPRECATED\)/)
+      {
+        $deprecated_state = -1;
+        next;
+      }
+      elsif ($line =~ /#\s*endif\s*\/\/\s*!*defined\(ASIO_NO_DEPRECATED\)/)
+      {
+        $deprecated_state = 0;
+        next;
+      }
+      else
+      {
+        $line =~ s/^# /#/;
+      }
+    }
+    elsif ($deprecated_state == -1)
+    {
+      if ($line =~ /#\s*else\s*\/\/\s*!*defined\(ASIO_NO_DEPRECATED\)/)
+      {
+        $deprecated_state = 1;
+      }
+      elsif ($line =~ /#\s*endif\s*\/\/\s*!*defined\(ASIO_NO_DEPRECATED\)/)
+      {
+        $deprecated_state = -2;
+      }
+      next;
+    }
+    elsif ($deprecated_state == -2)
+    {
+      $deprecated_state = 0;
+      next if ($line eq "");
+    }
+
+    # Strip out code for extensions.
+    if ($extension_state == 0)
+    {
+      if ($line =~ /#\s*if\s*!defined\(ASIO_NO_EXTENSIONS\)\s*$/)
+      {
+        $extension_state = -1;
+        next;
+      }
+    }
+    elsif ($extension_state == -1)
+    {
+      $extension_state = -2 if ($line =~ /#\s*endif\s*\/\/\s*!defined\(ASIO_NO_EXTENSIONS\)\s*$/);
+      next;
+    }
+    elsif ($extension_state == -2)
+    {
+      $extension_state = 0;
+      next if ($line eq "");
+    }
+
+    # Strip out code for old services.
+    if ($old_services_state == 0)
+    {
+      if ($line =~ /#\s*if\s*defined\(ASIO_ENABLE_OLD_SERVICES\)/)
+      {
+        $old_services_state = -1;
+        next;
+      }
+      elsif ($line =~ /#\s*if\s*!defined\(ASIO_ENABLE_OLD_SERVICES\)/)
+      {
+        $old_services_state = 1;
+        next;
+      }
+    }
+    elsif ($old_services_state == 1)
+    {
+      if ($line =~ /#\s*else\s*\/\/\s*!*defined\(ASIO_ENABLE_OLD_SERVICES\)/)
+      {
+        $old_services_state = -1;
+        next;
+      }
+      elsif ($line =~ /#\s*endif\s*\/\/\s*!*defined\(ASIO_ENABLE_OLD_SERVICES\)/)
+      {
+        $old_services_state = 0;
+        next;
+      }
+      else
+      {
+        $line =~ s/^# /#/;
+      }
+    }
+    elsif ($old_services_state == -1)
+    {
+      if ($line =~ /#\s*else\s*\/\/\s*!*defined\(ASIO_ENABLE_OLD_SERVICES\)/)
+      {
+        $old_services_state = 1;
+      }
+      elsif ($line =~ /#\s*endif\s*\/\/\s*!*defined\(ASIO_ENABLE_OLD_SERVICES\)/)
+      {
+        $old_services_state = -2;
+      }
+      next;
+    }
+    elsif ($old_services_state == -2)
+    {
+      $old_services_state = 0;
+      next if ($line eq "");
+    }
 
     # Unconditional replacements.
     $line =~ s/[\\@]ref boost_bind/std::bind()/g;
@@ -279,8 +403,6 @@ sub copy_source_file
       print_line($output, $line, $from, $lineno);
       print_line($output, "", $from, $lineno);
       print_line($output, "#define NET_TS_STANDALONE 1", $from, $lineno);
-      print_line($output, "#define NET_TS_NO_DEPRECATED 1", $from, $lineno);
-      print_line($output, "#define NET_TS_NO_EXTENSIONS 1", $from, $lineno);
     }
     else
     {
@@ -308,13 +430,20 @@ sub find_include_files
 
   my @excluded_includes = (
       "asio/basic_deadline_timer.hpp",
+      "asio/basic_streambuf.hpp",
+      "asio/basic_streambuf_fwd.hpp",
+      "asio/datagram_socket_service.hpp",
       "asio/deadline_timer.hpp",
       "asio/deadline_timer_service.hpp",
       "asio/io_context_strand.hpp",
       "asio/detail/strand_service.hpp",
       "asio/detail/impl/strand_service.hpp",
       "asio/detail/impl/strand_service.ipp",
-      "asio/time_traits.hpp");
+      "asio/socket_acceptor_service.hpp",
+      "asio/seq_packet_socket_service.hpp",
+      "asio/stream_socket_service.hpp",
+      "asio/time_traits.hpp",
+      "asio/waitable_timer_service.hpp");
 
   my @include_files = ();
   my %known_includes = ();
