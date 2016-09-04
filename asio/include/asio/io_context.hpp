@@ -726,11 +726,9 @@ public:
   /// Get the io_context associated with the work.
   asio::io_context& get_io_context();
 
-#if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use get_io_context().) Get the io_context associated with the
   /// work.
   asio::io_context& get_io_service();
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   // Prevent assignment.
