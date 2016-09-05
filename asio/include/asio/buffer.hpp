@@ -1618,7 +1618,7 @@ public:
   void consume(std::size_t n)
   {
     std::size_t consume_length = (std::min)(n, size_);
-    string_.erase(consume_length);
+    string_.erase(0, consume_length);
     size_ -= consume_length;
   }
 
@@ -1769,7 +1769,7 @@ public:
   void consume(std::size_t n)
   {
     std::size_t consume_length = (std::min)(n, size_);
-    vector_.erase(consume_length);
+    vector_.erase(vector_.begin(), vector_.begin() + consume_length);
     size_ -= consume_length;
   }
 

@@ -297,6 +297,40 @@ void test()
     dynamic_vector_buffer<char, std::allocator<char> >
       db4 = dynamic_buffer(vector_data, 1024);
     (void)db4;
+
+    // dynamic_buffer member functions.
+
+    std::size_t size37 = db1.size();
+    (void)size37;
+    std::size_t size38 = db3.size();
+    (void)size38;
+
+    std::size_t size39 = db1.max_size();
+    (void)size39;
+    std::size_t size40 = db3.max_size();
+    (void)size40;
+
+    dynamic_string_buffer<char, std::string::traits_type,
+      std::string::allocator_type>::const_buffers_type
+        cb5 = db1.data();
+    (void)cb5;
+    dynamic_vector_buffer<char, std::allocator<char> >::const_buffers_type
+      cb6 = db3.data();
+    (void)cb6;
+
+    dynamic_string_buffer<char, std::string::traits_type,
+      std::string::allocator_type>::mutable_buffers_type mb5
+        = db1.prepare(1024);
+    (void)mb5;
+    dynamic_vector_buffer<char, std::allocator<char> >::mutable_buffers_type
+      mb6 = db3.prepare(1024);
+    (void)mb6;
+
+    db1.commit(1024);
+    db3.commit(1024);
+
+    db1.consume(1024);
+    db3.consume(1024);
   }
   catch (std::exception&)
   {
