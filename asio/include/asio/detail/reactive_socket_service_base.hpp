@@ -171,13 +171,13 @@ public:
     switch (w)
     {
     case socket_base::wait_read:
-      socket_ops::poll_read(impl.socket_, impl.state_, ec);
+      socket_ops::poll_read(impl.socket_, impl.state_, -1, ec);
       break;
     case socket_base::wait_write:
-      socket_ops::poll_write(impl.socket_, impl.state_, ec);
+      socket_ops::poll_write(impl.socket_, impl.state_, -1, ec);
       break;
     case socket_base::wait_error:
-      socket_ops::poll_error(impl.socket_, impl.state_, ec);
+      socket_ops::poll_error(impl.socket_, impl.state_, -1, ec);
       break;
     default:
       ec = asio::error::invalid_argument;
@@ -246,7 +246,7 @@ public:
       socket_base::message_flags, asio::error_code& ec)
   {
     // Wait for socket to become ready.
-    socket_ops::poll_write(impl.socket_, impl.state_, ec);
+    socket_ops::poll_write(impl.socket_, impl.state_, -1, ec);
 
     return 0;
   }
@@ -316,7 +316,7 @@ public:
       socket_base::message_flags, asio::error_code& ec)
   {
     // Wait for socket to become ready.
-    socket_ops::poll_read(impl.socket_, impl.state_, ec);
+    socket_ops::poll_read(impl.socket_, impl.state_, -1, ec);
 
     return 0;
   }
@@ -396,7 +396,7 @@ public:
       socket_base::message_flags& out_flags, asio::error_code& ec)
   {
     // Wait for socket to become ready.
-    socket_ops::poll_read(impl.socket_, impl.state_, ec);
+    socket_ops::poll_read(impl.socket_, impl.state_, -1, ec);
 
     // Clear out_flags, since we cannot give it any other sensible value when
     // performing a null_buffers operation.
