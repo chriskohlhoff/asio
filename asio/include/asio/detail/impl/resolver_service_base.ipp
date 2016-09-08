@@ -36,7 +36,7 @@ private:
 resolver_service_base::resolver_service_base(
     asio::io_context& io_context)
   : io_context_impl_(asio::use_service<io_context_impl>(io_context)),
-    work_io_context_(new asio::io_context),
+    work_io_context_(new asio::io_context(-1)),
     work_io_context_impl_(asio::use_service<
         io_context_impl>(*work_io_context_)),
     work_(asio::make_work_guard(*work_io_context_)),
@@ -120,11 +120,20 @@ void resolver_service_base::cancel(
   impl.reset(static_cast<void*>(0), socket_ops::noop_deleter());
 }
 
-void resolver_service_base::start_resolve_op(operation* op)
+void resolver_service_base::start_resolve_op(resolve_op* op)
 {
-  start_work_thread();
-  io_context_impl_.work_started();
-  work_io_context_impl_.post_immediate_completion(op, false);
+  if (ASIO_CONCURRENCY_HINT_IS_LOCKING(SCHEDULER,
+        io_context_impl_.concurrency_hint()))
+  {
+    start_work_thread();
+    io_context_impl_.work_started();
+    work_io_context_impl_.post_immediate_completion(op, false);
+  }
+  else
+  {
+    op->ec_ = asio::error::operation_not_supported;
+    io_context_impl_.post_immediate_completion(op, false);
+  }
 }
 
 void resolver_service_base::start_work_thread()

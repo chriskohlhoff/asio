@@ -20,8 +20,8 @@
 #if defined(ASIO_HAS_EPOLL)
 
 #include "asio/detail/atomic_count.hpp"
+#include "asio/detail/conditionally_enabled_mutex.hpp"
 #include "asio/detail/limits.hpp"
-#include "asio/detail/mutex.hpp"
 #include "asio/detail/object_pool.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_op.hpp"
@@ -40,6 +40,10 @@ namespace detail {
 class epoll_reactor
   : public execution_context_service_base<epoll_reactor>
 {
+private:
+  // The mutex type used by this reactor.
+  typedef conditionally_enabled_mutex mutex;
+
 public:
   enum op_types { read_op = 0, write_op = 1,
     connect_op = 1, except_op = 2, max_ops = 3 };
@@ -60,7 +64,7 @@ public:
     op_queue<reactor_op> op_queue_[max_ops];
     bool shutdown_;
 
-    ASIO_DECL descriptor_state();
+    ASIO_DECL descriptor_state(bool locking);
     void set_ready_events(uint32_t events) { task_result_ = events; }
     ASIO_DECL operation* perform_io(uint32_t events);
     ASIO_DECL static void do_complete(

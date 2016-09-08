@@ -20,8 +20,8 @@
 #include "asio/error_code.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/detail/atomic_count.hpp"
-#include "asio/detail/event.hpp"
-#include "asio/detail/mutex.hpp"
+#include "asio/detail/conditionally_enabled_event.hpp"
+#include "asio/detail/conditionally_enabled_mutex.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor_fwd.hpp"
 #include "asio/detail/scheduler_operation.hpp"
@@ -121,7 +121,19 @@ public:
   // work_started() was previously called for the operations.
   ASIO_DECL void abandon_operations(op_queue<operation>& ops);
 
+  // Get the concurrency hint that was used to initialise the scheduler.
+  int concurrency_hint() const
+  {
+    return concurrency_hint_;
+  }
+
 private:
+  // The mutex type used by this scheduler.
+  typedef conditionally_enabled_mutex mutex;
+
+  // The event type used by this scheduler.
+  typedef conditionally_enabled_event event;
+
   // Structure containing thread-specific data.
   typedef scheduler_thread_info thread_info;
 
@@ -184,6 +196,9 @@ private:
 
   // Flag to indicate that the dispatcher has been shut down.
   bool shutdown_;
+
+  // The concurrency hint used to initialise the scheduler.
+  const int concurrency_hint_;
 };
 
 } // namespace detail

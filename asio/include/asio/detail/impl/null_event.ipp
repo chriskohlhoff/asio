@@ -17,8 +17,6 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_HAS_THREADS)
-
 #if defined(ASIO_WINDOWS_RUNTIME)
 # include <thread>
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -72,7 +70,5 @@ void null_event::do_wait_for_usec(long usec)
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#endif // !defined(ASIO_HAS_THREADS)
 
 #endif // ASIO_DETAIL_IMPL_NULL_EVENT_IPP

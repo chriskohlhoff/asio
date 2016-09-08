@@ -47,6 +47,9 @@ nobase_include_HEADERS = \
 	asio/detail/chrono.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
+	asio/detail/concurrency_hint.hpp \
+	asio/detail/conditionally_enabled_event.hpp \
+	asio/detail/conditionally_enabled_mutex.hpp \
 	asio/detail/config.hpp \
 	asio/detail/consuming_buffers.hpp \
 	asio/detail/cstddef.hpp \
@@ -184,6 +187,7 @@ nobase_include_HEADERS = \
 	asio/detail/regex_fwd.hpp \
 	asio/detail/resolve_endpoint_op.hpp \
 	asio/detail/resolve_op.hpp \
+	asio/detail/resolve_query_op.hpp \
 	asio/detail/resolver_service_base.hpp \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scheduler.hpp \

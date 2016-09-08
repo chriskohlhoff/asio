@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/io_context.hpp"
+#include "asio/detail/concurrency_hint.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/service_registry.hpp"
@@ -33,12 +34,13 @@
 namespace asio {
 
 io_context::io_context()
-  : impl_(add_impl(new impl_type(*this)))
+  : impl_(add_impl(new impl_type(*this, ASIO_CONCURRENCY_HINT_DEFAULT)))
 {
 }
 
 io_context::io_context(int concurrency_hint)
-  : impl_(add_impl(new impl_type(*this, concurrency_hint)))
+  : impl_(add_impl(new impl_type(*this, concurrency_hint == 1
+          ? ASIO_CONCURRENCY_HINT_1 : concurrency_hint)))
 {
 }
 

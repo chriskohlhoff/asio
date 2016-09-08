@@ -16,9 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
-#if !defined(ASIO_HAS_THREADS)
-
 #include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -99,7 +96,5 @@ private:
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/detail/impl/null_event.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
-
-#endif // !defined(ASIO_HAS_THREADS)
 
 #endif // ASIO_DETAIL_NULL_EVENT_HPP

@@ -200,6 +200,12 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& to,
       typename timer_queue<Time_Traits>::per_timer_data& from);
 
+  // Get the concurrency hint that was used to initialise the io_context.
+  int concurrency_hint() const
+  {
+    return concurrency_hint_;
+  }
+
 private:
 #if defined(WINVER) && (WINVER < 0x0500)
   typedef DWORD dword_ptr_t;
@@ -302,6 +308,9 @@ private:
 
   // The operations that are ready to dispatch.
   op_queue<win_iocp_operation> completed_ops_;
+
+  // The concurrency hint used to initialise the io_context.
+  const int concurrency_hint_;
 };
 
 } // namespace detail

@@ -18,10 +18,12 @@
 #include "asio/detail/config.hpp"
 
 #include <cstring>
+#include <stdexcept>
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/detail/static_mutex.hpp"
+#include "asio/detail/throw_exception.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -506,6 +508,22 @@ void signal_set_service::add_service(signal_set_service* service)
   if (state->service_list_ == 0)
     open_descriptors();
 #endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+
+  // If an io_context object is thread-unsafe then it must be the only
+  // io_context used to create signal_set objects.
+  if (state->service_list_ != 0)
+  {
+    if (!ASIO_CONCURRENCY_HINT_IS_LOCKING(SCHEDULER,
+          service->io_context_.concurrency_hint())
+        || !ASIO_CONCURRENCY_HINT_IS_LOCKING(SCHEDULER,
+          state->service_list_->io_context_.concurrency_hint()))
+    {
+      std::logic_error ex(
+          "Thread-unsafe io_context objects require "
+          "exclusive access to signal handling.");
+      asio::detail::throw_exception(ex);
+    }
+  }
 
   // Insert service into linked list of all services.
   service->next_ = state->service_list_;

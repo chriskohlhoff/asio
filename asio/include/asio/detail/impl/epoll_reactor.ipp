@@ -37,11 +37,13 @@ namespace detail {
 epoll_reactor::epoll_reactor(asio::execution_context& ctx)
   : execution_context_service_base<epoll_reactor>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
-    mutex_(),
+    mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
+          SCHEDULER, scheduler_.concurrency_hint())),
     interrupter_(),
     epoll_fd_(do_epoll_create()),
     timer_fd_(do_timerfd_create()),
-    shutdown_(false)
+    shutdown_(false),
+    registered_descriptors_mutex_(mutex_.enabled())
 {
   // Add the interrupter's descriptor to epoll.
   epoll_event ev = { 0, { 0 } };
@@ -582,7 +584,7 @@ int epoll_reactor::do_timerfd_create()
 epoll_reactor::descriptor_state* epoll_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
-  return registered_descriptors_.alloc();
+  return registered_descriptors_.alloc(registered_descriptors_mutex_.enabled());
 }
 
 void epoll_reactor::free_descriptor_state(epoll_reactor::descriptor_state* s)
@@ -674,8 +676,9 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
   operation* first_op_;
 };
 
-epoll_reactor::descriptor_state::descriptor_state()
-  : operation(&epoll_reactor::descriptor_state::do_complete)
+epoll_reactor::descriptor_state::descriptor_state(bool locking)
+  : operation(&epoll_reactor::descriptor_state::do_complete),
+    mutex_(locking)
 {
 }
 

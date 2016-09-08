@@ -21,9 +21,10 @@
 
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ip/basic_resolver_results.hpp"
+#include "asio/detail/concurrency_hint.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/resolve_endpoint_op.hpp"
-#include "asio/detail/resolve_op.hpp"
+#include "asio/detail/resolve_query_op.hpp"
 #include "asio/detail/resolver_service_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -89,7 +90,7 @@ public:
       const query_type& query, Handler& handler)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef resolve_op<Protocol, Handler> op;
+    typedef resolve_query_op<Protocol, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(impl, query, io_context_impl_, handler);
