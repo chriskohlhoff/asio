@@ -36,29 +36,37 @@ template <typename T, typename F, typename... Args>
 inline void promise_invoke_and_set(std::promise<T>& p,
     F& f, ASIO_MOVE_ARG(Args)... args)
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   {
     p.set_value(f(ASIO_MOVE_CAST(Args)(args)...));
   }
+#if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
     p.set_exception(std::current_exception());
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 }
 
 template <typename F, typename... Args>
 inline void promise_invoke_and_set(std::promise<void>& p,
     F& f, ASIO_MOVE_ARG(Args)... args)
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   {
     f(ASIO_MOVE_CAST(Args)(args)...);
     p.set_value();
   }
+#if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
     p.set_exception(std::current_exception());
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -66,29 +74,60 @@ inline void promise_invoke_and_set(std::promise<void>& p,
 template <typename T, typename F>
 inline void promise_invoke_and_set(std::promise<T>& p, F& f)
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   {
     p.set_value(f());
   }
+#if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
     p.set_exception(std::current_exception());
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 }
 
 template <typename F, typename Args>
 inline void promise_invoke_and_set(std::promise<void>& p, F& f)
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   {
     f();
     p.set_value();
+#if !defined(ASIO_NO_EXCEPTIONS)
   }
   catch (...)
   {
     p.set_exception(std::current_exception());
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 }
+
+#if defined(ASIO_NO_EXCEPTIONS)
+
+#define ASIO_PRIVATE_PROMISE_INVOKE_DEF(n) \
+  template <typename T, typename F, ASIO_VARIADIC_TPARAMS(n)> \
+  inline void promise_invoke_and_set(std::promise<T>& p, \
+      F& f, ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    p.set_value(f(ASIO_VARIADIC_MOVE_ARGS(n))); \
+  } \
+  \
+  template <typename F, ASIO_VARIADIC_TPARAMS(n)> \
+  inline void promise_invoke_and_set(std::promise<void>& p, \
+      F& f, ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    f(ASIO_VARIADIC_MOVE_ARGS(n)); \
+    p.set_value(); \
+  } \
+  /**/
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_PROMISE_INVOKE_DEF)
+#undef ASIO_PRIVATE_PROMISE_INVOKE_DEF
+
+#else // defined(ASIO_NO_EXCEPTIONS)
 
 #define ASIO_PRIVATE_PROMISE_INVOKE_DEF(n) \
   template <typename T, typename F, ASIO_VARIADIC_TPARAMS(n)> \
@@ -123,6 +162,8 @@ inline void promise_invoke_and_set(std::promise<void>& p, F& f)
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_PROMISE_INVOKE_DEF)
 #undef ASIO_PRIVATE_PROMISE_INVOKE_DEF
 
+#endif // defined(ASIO_NO_EXCEPTIONS)
+
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 // A function object adapter to invoke a nullary function object and capture
@@ -139,14 +180,18 @@ public:
 
   void operator()()
   {
+#if !defined(ASIO_NO_EXCEPTIONS)
     try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
     {
       f_();
     }
+#if !defined(ASIO_NO_EXCEPTIONS)
     catch (...)
     {
       p_->set_exception(std::current_exception());
     }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   }
 
 private:
