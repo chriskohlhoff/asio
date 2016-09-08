@@ -75,20 +75,30 @@ public:
   template <typename Lock>
   void wait(Lock&)
   {
+    do_wait();
   }
 
   // Timed wait for the event to become signalled.
   template <typename Lock>
-  bool wait_for_usec(Lock& lock, long usec)
+  bool wait_for_usec(Lock&, long usec)
   {
+    do_wait_for_usec(usec);
     return true;
   }
+
+private:
+  ASIO_DECL static void do_wait();
+  ASIO_DECL static void do_wait_for_usec(long usec);
 };
 
 } // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/null_event.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // !defined(ASIO_HAS_THREADS)
 
