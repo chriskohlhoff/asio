@@ -93,7 +93,7 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op*)
+  static status do_perform(reactor_op*)
   {
     signal_state* state = get_signal_state();
 
@@ -103,7 +103,7 @@ public:
       if (signal_number >= 0 && signal_number < max_signal_number)
         signal_set_service::deliver_signal(signal_number);
 
-    return false;
+    return not_done;
   }
 
   static void do_complete(void* /*owner*/, operation* base,

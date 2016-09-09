@@ -45,16 +45,16 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_accept_op_base* o(
         static_cast<reactive_socket_accept_op_base*>(base));
 
     std::size_t addrlen = o->peer_endpoint_ ? o->peer_endpoint_->capacity() : 0;
     socket_type new_socket = invalid_socket;
-    bool result = socket_ops::non_blocking_accept(o->socket_,
-          o->state_, o->peer_endpoint_ ? o->peer_endpoint_->data() : 0,
-          o->peer_endpoint_ ? &addrlen : 0, o->ec_, new_socket);
+    status result = socket_ops::non_blocking_accept(o->socket_,
+        o->state_, o->peer_endpoint_ ? o->peer_endpoint_->data() : 0,
+        o->peer_endpoint_ ? &addrlen : 0, o->ec_, new_socket) ? done : not_done;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_accept", o->ec_));
 

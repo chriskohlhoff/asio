@@ -33,16 +33,17 @@ class reactive_socket_send_op_base : public reactor_op
 {
 public:
   reactive_socket_send_op_base(socket_type socket,
-      const ConstBufferSequence& buffers,
+      socket_ops::state_type state, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, func_type complete_func)
     : reactor_op(&reactive_socket_send_op_base::do_perform, complete_func),
       socket_(socket),
+      state_(state),
       buffers_(buffers),
       flags_(flags)
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_send_op_base* o(
         static_cast<reactive_socket_send_op_base*>(base));
@@ -50,9 +51,14 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(o->buffers_);
 
-    bool result = socket_ops::non_blocking_send(o->socket_,
+    status result = socket_ops::non_blocking_send(o->socket_,
           bufs.buffers(), bufs.count(), o->flags_,
-          o->ec_, o->bytes_transferred_);
+          o->ec_, o->bytes_transferred_) ? done : not_done;
+
+    if (result == done)
+      if ((o->state_ & socket_ops::stream_oriented) != 0)
+        if (o->bytes_transferred_ < bufs.total_size())
+          result = done_and_exhausted;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_send",
           o->ec_, o->bytes_transferred_));
@@ -62,6 +68,7 @@ public:
 
 private:
   socket_type socket_;
+  socket_ops::state_type state_;
   ConstBufferSequence buffers_;
   socket_base::message_flags flags_;
 };
@@ -74,10 +81,10 @@ public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_send_op);
 
   reactive_socket_send_op(socket_type socket,
-      const ConstBufferSequence& buffers,
+      socket_ops::state_type state, const ConstBufferSequence& buffers,
       socket_base::message_flags flags, Handler& handler)
     : reactive_socket_send_op_base<ConstBufferSequence>(socket,
-        buffers, flags, &reactive_socket_send_op::do_complete),
+        state, buffers, flags, &reactive_socket_send_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler))
   {
     handler_work<Handler>::start(handler_);

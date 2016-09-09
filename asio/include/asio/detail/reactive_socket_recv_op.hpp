@@ -43,7 +43,7 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_recv_op_base* o(
         static_cast<reactive_socket_recv_op_base*>(base));
@@ -51,10 +51,15 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(o->buffers_);
 
-    bool result = socket_ops::non_blocking_recv(o->socket_,
+    status result = socket_ops::non_blocking_recv(o->socket_,
         bufs.buffers(), bufs.count(), o->flags_,
         (o->state_ & socket_ops::stream_oriented) != 0,
-        o->ec_, o->bytes_transferred_);
+        o->ec_, o->bytes_transferred_) ? done : not_done;
+
+    if (result == done)
+      if ((o->state_ & socket_ops::stream_oriented) != 0)
+        if (o->bytes_transferred_ < bufs.total_size())
+          result = done_and_exhausted;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_recv",
           o->ec_, o->bytes_transferred_));

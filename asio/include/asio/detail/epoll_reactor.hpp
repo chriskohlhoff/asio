@@ -62,6 +62,7 @@ public:
     int descriptor_;
     uint32_t registered_events_;
     op_queue<reactor_op> op_queue_[max_ops];
+    bool try_speculative_[max_ops];
     bool shutdown_;
 
     ASIO_DECL descriptor_state(bool locking);

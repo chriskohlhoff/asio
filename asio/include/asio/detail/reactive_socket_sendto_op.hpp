@@ -43,7 +43,7 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_sendto_op_base* o(
         static_cast<reactive_socket_sendto_op_base*>(base));
@@ -51,10 +51,10 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(o->buffers_);
 
-    bool result = socket_ops::non_blocking_sendto(o->socket_,
+    status result = socket_ops::non_blocking_sendto(o->socket_,
           bufs.buffers(), bufs.count(), o->flags_,
           o->destination_.data(), o->destination_.size(),
-          o->ec_, o->bytes_transferred_);
+          o->ec_, o->bytes_transferred_) ? done : not_done;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_sendto",
           o->ec_, o->bytes_transferred_));

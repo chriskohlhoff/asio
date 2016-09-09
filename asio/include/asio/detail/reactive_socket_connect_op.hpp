@@ -37,12 +37,13 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_connect_op_base* o(
         static_cast<reactive_socket_connect_op_base*>(base));
 
-    bool result = socket_ops::non_blocking_connect(o->socket_, o->ec_);
+    status result = socket_ops::non_blocking_connect(
+        o->socket_, o->ec_) ? done : not_done;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_connect", o->ec_));
 

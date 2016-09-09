@@ -162,6 +162,8 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
     descriptor_data->reactor_ = this;
     descriptor_data->descriptor_ = descriptor;
     descriptor_data->shutdown_ = false;
+    for (int i = 0; i < max_ops; ++i)
+      descriptor_data->try_speculative_[i] = true;
   }
 
   epoll_event ev = { 0, { 0 } };
@@ -203,6 +205,8 @@ int epoll_reactor::register_internal_descriptor(
     descriptor_data->descriptor_ = descriptor;
     descriptor_data->shutdown_ = false;
     descriptor_data->op_queue_[op_type].push(op);
+    for (int i = 0; i < max_ops; ++i)
+      descriptor_data->try_speculative_[i] = true;
   }
 
   epoll_event ev = { 0, { 0 } };
@@ -249,11 +253,17 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
         && (op_type != read_op
           || descriptor_data->op_queue_[except_op].empty()))
     {
-      if (op->perform())
+      if (descriptor_data->try_speculative_[op_type])
       {
-        descriptor_lock.unlock();
-        scheduler_.post_immediate_completion(op, is_continuation);
-        return;
+        if (reactor_op::status status = op->perform())
+        {
+          if (status == reactor_op::done_and_exhausted)
+            if (descriptor_data->registered_events_ != 0)
+              descriptor_data->try_speculative_[op_type] = false;
+          descriptor_lock.unlock();
+          scheduler_.post_immediate_completion(op, is_continuation);
+          return;
+        }
       }
 
       if (descriptor_data->registered_events_ == 0)
@@ -695,12 +705,18 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
   {
     if (events & (flag[j] | EPOLLERR | EPOLLHUP))
     {
+      try_speculative_[j] = true;
       while (reactor_op* op = op_queue_[j].front())
       {
-        if (op->perform())
+        if (reactor_op::status status = op->perform())
         {
           op_queue_[j].pop();
           io_cleanup.ops_.push(op);
+          if (status == reactor_op::done_and_exhausted)
+          {
+            try_speculative_[j] = false;
+            break;
+          }
         }
         else
           break;

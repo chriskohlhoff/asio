@@ -50,9 +50,9 @@ public:
     handler_work<Handler>::start(handler_);
   }
 
-  static bool do_perform(reactor_op*)
+  static status do_perform(reactor_op*)
   {
-    return true;
+    return done;
   }
 
   static void do_complete(void* owner, operation* base,

@@ -44,15 +44,16 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     descriptor_read_op_base* o(static_cast<descriptor_read_op_base*>(base));
 
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(o->buffers_);
 
-    bool result = descriptor_ops::non_blocking_read(o->descriptor_,
-        bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_);
+    status result = descriptor_ops::non_blocking_read(o->descriptor_,
+        bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_)
+      ? done : not_done;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_read",
           o->ec_, o->bytes_transferred_));

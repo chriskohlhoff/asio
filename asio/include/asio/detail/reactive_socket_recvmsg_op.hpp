@@ -44,7 +44,7 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_recvmsg_op_base* o(
         static_cast<reactive_socket_recvmsg_op_base*>(base));
@@ -52,10 +52,10 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(o->buffers_);
 
-    bool result = socket_ops::non_blocking_recvmsg(o->socket_,
+    status result = socket_ops::non_blocking_recvmsg(o->socket_,
         bufs.buffers(), bufs.count(),
         o->in_flags_, o->out_flags_,
-        o->ec_, o->bytes_transferred_);
+        o->ec_, o->bytes_transferred_) ? done : not_done;
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_recvmsg",
           o->ec_, o->bytes_transferred_));

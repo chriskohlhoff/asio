@@ -265,7 +265,7 @@ public:
     typedef reactive_socket_send_op<ConstBufferSequence, Handler> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.socket_, buffers, flags, handler);
+    p.p = new (p.v) op(impl.socket_, impl.state_, buffers, flags, handler);
 
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_send"));

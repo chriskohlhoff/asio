@@ -122,6 +122,11 @@ public:
     return count_;
   }
 
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
+  }
+
   bool all_empty() const
   {
     return total_buffer_size_ == 0;
@@ -223,6 +228,11 @@ public:
     return 1;
   }
 
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
+  }
+
   bool all_empty() const
   {
     return total_buffer_size_ == 0;
@@ -268,6 +278,11 @@ public:
   std::size_t count() const
   {
     return 1;
+  }
+
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
   }
 
   bool all_empty() const
@@ -319,6 +334,11 @@ public:
     return 1;
   }
 
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
+  }
+
   bool all_empty() const
   {
     return total_buffer_size_ == 0;
@@ -364,6 +384,11 @@ public:
   std::size_t count() const
   {
     return 1;
+  }
+
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
   }
 
   bool all_empty() const
@@ -416,6 +441,11 @@ public:
     return 2;
   }
 
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
+  }
+
   bool all_empty() const
   {
     return total_buffer_size_ == 0;
@@ -466,6 +496,11 @@ public:
   std::size_t count() const
   {
     return 2;
+  }
+
+  std::size_t total_size() const
+  {
+    return total_buffer_size_;
   }
 
   bool all_empty() const

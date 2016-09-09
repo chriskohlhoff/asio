@@ -71,7 +71,7 @@ void epoll_reactor::move_timer(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data& target,
     typename timer_queue<Time_Traits>::per_timer_data& source)
 {
-  asio::detail::mutex::scoped_lock lock(mutex_);
+  mutex::scoped_lock lock(mutex_);
   op_queue<operation> ops;
   queue.cancel_timer(target, ops);
   queue.move_timer(target, source);

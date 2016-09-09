@@ -44,7 +44,7 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     reactive_socket_recvfrom_op_base* o(
         static_cast<reactive_socket_recvfrom_op_base*>(base));
@@ -53,10 +53,10 @@ public:
         MutableBufferSequence> bufs(o->buffers_);
 
     std::size_t addr_len = o->sender_endpoint_.capacity();
-    bool result = socket_ops::non_blocking_recvfrom(o->socket_,
+    status result = socket_ops::non_blocking_recvfrom(o->socket_,
         bufs.buffers(), bufs.count(), o->flags_,
         o->sender_endpoint_.data(), &addr_len,
-        o->ec_, o->bytes_transferred_);
+        o->ec_, o->bytes_transferred_) ? done : not_done;
 
     if (result && !o->ec_)
       o->sender_endpoint_.resize(addr_len);

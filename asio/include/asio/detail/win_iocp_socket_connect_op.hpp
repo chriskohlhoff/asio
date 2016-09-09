@@ -43,12 +43,13 @@ public:
   {
   }
 
-  static bool do_perform(reactor_op* base)
+  static status do_perform(reactor_op* base)
   {
     win_iocp_socket_connect_op_base* o(
         static_cast<win_iocp_socket_connect_op_base*>(base));
 
-    return socket_ops::non_blocking_connect(o->socket_, o->ec_);
+    return socket_ops::non_blocking_connect(
+        o->socket_, o->ec_) ? done : not_done;
   }
 
   socket_type socket_;
