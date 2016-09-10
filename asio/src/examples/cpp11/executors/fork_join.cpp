@@ -192,14 +192,18 @@ public:
   template <class Func, class Alloc>
   void dispatch(Func&& f, const Alloc& a) const
   {
-    auto p(std::allocate_shared<function<Func>>(a, std::move(f), work_count_));
+    auto p(std::allocate_shared<function<Func>>(
+          typename std::allocator_traits<Alloc>::template rebind_alloc<char>(a),
+          std::move(f), work_count_));
     context_.do_dispatch(p, work_count_);
   }
 
   template <class Func, class Alloc>
   void post(Func f, const Alloc& a) const
   {
-    auto p(std::allocate_shared<function<Func>>(a, std::move(f), work_count_));
+    auto p(std::allocate_shared<function<Func>>(
+          typename std::allocator_traits<Alloc>::template rebind_alloc<char>(a),
+          std::move(f), work_count_));
     context_.do_post(p, work_count_);
   }
 

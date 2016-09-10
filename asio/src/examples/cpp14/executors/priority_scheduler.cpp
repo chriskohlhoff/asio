@@ -46,7 +46,10 @@ public:
     template <class Func, class Alloc>
     void post(Func f, const Alloc& a) const
     {
-      auto p(std::allocate_shared<item<Func>>(a, priority_, std::move(f)));
+      auto p(std::allocate_shared<item<Func>>(
+            typename std::allocator_traits<
+              Alloc>::template rebind_alloc<char>(a),
+            priority_, std::move(f)));
       std::lock_guard<std::mutex> lock(context_.mutex_);
       context_.queue_.push(p);
       context_.condition_.notify_one();
