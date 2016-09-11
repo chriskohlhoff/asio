@@ -56,7 +56,7 @@ http_server_http_server_SOURCES = \
 
 if HAVE_BOOST_COROUTINE
 spawn_echo_server_SOURCES = spawn/echo_server.cpp
-spawn_echo_server_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_system
+spawn_echo_server_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_thread -lboost_chrono -lboost_system
 endif
 
 EXTRA_DIST = \
