@@ -105,6 +105,7 @@ context::context(context::method m)
     handle_ = ::SSL_CTX_new(::SSLv3_server_method());
     break;
 #endif // defined(OPENSSL_NO_SSL3)
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
   case context::tlsv1:
     handle_ = ::SSL_CTX_new(::TLSv1_method());
     break;
@@ -114,6 +115,7 @@ context::context(context::method m)
   case context::tlsv1_server:
     handle_ = ::SSL_CTX_new(::TLSv1_server_method());
     break;
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
   case context::sslv23:
     handle_ = ::SSL_CTX_new(::SSLv23_method());
     break;
@@ -123,6 +125,7 @@ context::context(context::method m)
   case context::sslv23_server:
     handle_ = ::SSL_CTX_new(::SSLv23_server_method());
     break;
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
 #if defined(SSL_TXT_TLSV1_1)
   case context::tlsv11:
     handle_ = ::SSL_CTX_new(::TLSv1_1_method());
@@ -159,6 +162,23 @@ context::context(context::method m)
         asio::error::invalid_argument, "context");
     break;
 #endif // defined(SSL_TXT_TLSV1_2) 
+#else // (OPENSSL_VERSION_NUMBER < 0x10100000L)
+  case context::tlsv1:
+  case context::tlsv11:
+  case context::tlsv12:
+    handle_ = ::SSL_CTX_new(::TLS_method());
+    break;
+  case context::tlsv1_client:
+  case context::tlsv11_client:
+  case context::tlsv12_client:
+    handle_ = ::SSL_CTX_new(::TLS_client_method());
+    break;
+  case context::tlsv1_server:
+  case context::tlsv11_server:
+  case context::tlsv12_server:
+    handle_ = ::SSL_CTX_new(::TLS_server_method());
+    break;
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
   default:
     handle_ = ::SSL_CTX_new(0);
     break;
