@@ -41,7 +41,8 @@ public:
       state_(state),
       peer_(peer),
       protocol_(protocol),
-      peer_endpoint_(peer_endpoint)
+      peer_endpoint_(peer_endpoint),
+      addrlen_(peer_endpoint ? peer_endpoint->capacity() : 0)
   {
   }
 
@@ -50,34 +51,38 @@ public:
     reactive_socket_accept_op_base* o(
         static_cast<reactive_socket_accept_op_base*>(base));
 
-    std::size_t addrlen = o->peer_endpoint_ ? o->peer_endpoint_->capacity() : 0;
     socket_type new_socket = invalid_socket;
     status result = socket_ops::non_blocking_accept(o->socket_,
         o->state_, o->peer_endpoint_ ? o->peer_endpoint_->data() : 0,
-        o->peer_endpoint_ ? &addrlen : 0, o->ec_, new_socket) ? done : not_done;
+        o->peer_endpoint_ ? &o->addrlen_ : 0, o->ec_, new_socket)
+    ? done : not_done;
+    o->new_socket_.reset(new_socket);
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_accept", o->ec_));
 
-    // On success, assign new connection to peer socket object.
-    if (new_socket != invalid_socket)
-    {
-      socket_holder new_socket_holder(new_socket);
-      if (o->peer_endpoint_)
-        o->peer_endpoint_->resize(addrlen);
-      o->peer_.assign(o->protocol_, new_socket, o->ec_);
-      if (!o->ec_)
-        new_socket_holder.release();
-    }
-
     return result;
+  }
+
+  void do_assign()
+  {
+    if (new_socket_.get() != invalid_socket)
+    {
+      if (peer_endpoint_)
+        peer_endpoint_->resize(addrlen_);
+      peer_.assign(protocol_, new_socket_.get(), ec_);
+      if (!ec_)
+        new_socket_.release();
+    }
   }
 
 private:
   socket_type socket_;
   socket_ops::state_type state_;
+  socket_holder new_socket_;
   Socket& peer_;
   Protocol protocol_;
   typename Protocol::endpoint* peer_endpoint_;
+  std::size_t addrlen_;
 };
 
 template <typename Socket, typename Protocol, typename Handler>
@@ -105,6 +110,10 @@ public:
     reactive_socket_accept_op* o(static_cast<reactive_socket_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
     handler_work<Handler> w(o->handler_);
+
+    // On success, assign new connection to peer socket object.
+    if (owner)
+      o->do_assign();
 
     ASIO_HANDLER_COMPLETION((*o));
 
@@ -164,6 +173,10 @@ public:
         static_cast<reactive_socket_move_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
     handler_work<Handler> w(o->handler_);
+
+    // On success, assign new connection to peer socket object.
+    if (owner)
+      o->do_assign();
 
     ASIO_HANDLER_COMPLETION((*o));
 
