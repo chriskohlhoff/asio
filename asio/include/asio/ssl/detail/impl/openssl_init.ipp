@@ -78,6 +78,11 @@ public:
 #elif (OPENSSL_VERSION_NUMBER < 0x10100000L)
     ::ERR_remove_thread_state(NULL);
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000L) \
+    && (OPENSSL_VERSION_NUMBER < 0x10100000L)
+    ::SSL_COMP_free_compression_methods();
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+       // && (OPENSSL_VERSION_NUMBER < 0x10100000L)
 #if !defined(OPENSSL_IS_BORINGSSL)
     ::CONF_modules_unload(1);
 #endif // !defined(OPENSSL_IS_BORINGSSL)
