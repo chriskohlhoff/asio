@@ -34,12 +34,13 @@ namespace detail
     typedef typename service_type::implementation_type implementation_type;
 
     template <typename T, typename U>
-    static auto eval(T* t, U* u) -> decltype(t->move_construct(*u, *u), char());
-    static char (&eval(...))[2];
+    static auto asio_service_has_move_eval(T* t, U* u)
+      -> decltype(t->move_construct(*u, *u), char());
+    static char (&asio_service_has_move_eval(...))[2];
 
   public:
     static const bool value =
-      sizeof(service_has_move::eval(
+      sizeof(asio_service_has_move_eval(
         static_cast<service_type*>(0),
         static_cast<implementation_type*>(0))) == 1;
   };
