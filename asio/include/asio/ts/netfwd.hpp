@@ -114,11 +114,11 @@ template <typename Protocol
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
     typename Time = boost::posix_time::ptime,
-    typename TimeTraits = time_traits<Time>
+    typename TimeTraits = time_traits<boost::posix_time::ptime>
     ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Time, TimeTraits>)>
 #else
     typename Time = chrono::steady_clock,
-    typename TimeTraits = wait_traits<Time>
+    typename TimeTraits = wait_traits<chrono::steady_clock>
     ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
 #endif
 class basic_socket_streambuf;
@@ -134,11 +134,11 @@ template <typename Protocol
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
     typename Time = boost::posix_time::ptime,
-    typename TimeTraits = time_traits<Time>
+    typename TimeTraits = time_traits<boost::posix_time::ptime>
     ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Time, TimeTraits>)>
 #else
     typename Time = chrono::steady_clock,
-    typename TimeTraits = wait_traits<Time>
+    typename TimeTraits = wait_traits<chrono::steady_clock>
     ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
 #endif
 class basic_socket_iostream;
