@@ -7,6 +7,28 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.8]
+
+* Added compatibility with OpenSSL 1.1.0.
+
+* Fixed out-of-bounds iterator use in `asio::connect()` when the
+  `connect_condition` returns an end iterator.
+
+* Added a workaround for a move detection problem on MSVC 2015 Update 2.
+
+* Changed a workaround that was previously added for broken Windows firewalls
+  to only bind to 127.0.0.1 if `getsockname` reports 0.0.0.0.
+
+* Added call to `SSL_COMP_free_compression_methods` to fix two memory leaks
+  reported at shutdown, for OpenSSL versions >= 1.0.2 and < 1.1.0.
+
+* Fixed `use_future` compile error encountered on some standard library
+  implementations, by changing `std::allocator<void>` use to a non-void
+  template parameter.
+
+* Enabled use of native `getaddrinfo` by default on Apple OSes, rather than
+  emulation in terms of `getipnodebyname`.
+
 [heading Asio 1.10.7]
 
 * Added support for Windows 8.1 Store apps.
