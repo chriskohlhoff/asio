@@ -2947,6 +2947,10 @@
 /doc/asio/reference/ssl__context/use_tmp_dh.html
 /doc/asio/reference/ssl__context/use_tmp_dh/overload1.html
 /doc/asio/reference/ssl__context/use_tmp_dh/overload2.html
+/doc/asio/reference/ssl__error__get_stream_category.html
+/doc/asio/reference/ssl__error__make_error_code.html
+/doc/asio/reference/ssl__error__stream_category.html
+/doc/asio/reference/ssl__error__stream_errors.html
 /doc/asio/reference/ssl__rfc2818_verification/
 /doc/asio/reference/ssl__rfc2818_verification.html
 /doc/asio/reference/ssl__rfc2818_verification/operator_lp__rp_.html
