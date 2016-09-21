@@ -144,6 +144,15 @@ void test()
     addr1 = ip::make_address_v6("0::0", ec);
     addr1 = ip::make_address_v6(string_value);
     addr1 = ip::make_address_v6(string_value, ec);
+#if defined(ASIO_HAS_STD_STRING_VIEW)
+# if defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::experimental::string_view string_view_value("0::0");
+# else // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::string_view string_view_value("0::0");
+# endif // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    addr1 = ip::make_address_v6(string_view_value);
+    addr1 = ip::make_address_v6(string_view_value, ec);
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
 
     // address_v6 IPv4-mapped conversion.
 #if defined(ASIO_NO_DEPRECATED)

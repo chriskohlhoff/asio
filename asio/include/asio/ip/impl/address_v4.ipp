@@ -187,6 +187,21 @@ address_v4 make_address_v4(
   return make_address_v4(str.c_str(), ec);
 }
 
+#if defined(ASIO_HAS_STD_STRING_VIEW)
+
+address_v4 make_address_v4(string_view str)
+{
+  return make_address_v4(static_cast<std::string>(str));
+}
+
+address_v4 make_address_v4(string_view str,
+    asio::error_code& ec)
+{
+  return make_address_v4(static_cast<std::string>(str), ec);
+}
+
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+
 } // namespace ip
 } // namespace asio
 

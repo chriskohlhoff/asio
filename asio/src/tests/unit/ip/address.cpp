@@ -108,6 +108,15 @@ void test()
     addr1 = ip::make_address("127.0.0.1", ec);
     addr1 = ip::make_address(string_value);
     addr1 = ip::make_address(string_value, ec);
+#if defined(ASIO_HAS_STD_STRING_VIEW)
+# if defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::experimental::string_view string_view_value("127.0.0.1");
+# else // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::string_view string_view_value("127.0.0.1");
+# endif // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    addr1 = ip::make_address(string_view_value);
+    addr1 = ip::make_address(string_view_value, ec);
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
 
     // address I/O.
 

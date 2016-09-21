@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/detail/throw_exception.hpp"
+#include "asio/detail/string_view.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error_code.hpp"
 #include "asio/ip/address_v4.hpp"
@@ -204,6 +205,27 @@ ASIO_DECL address make_address(const std::string& str);
  */
 ASIO_DECL address make_address(
     const std::string& str, asio::error_code& ec);
+
+#if defined(ASIO_HAS_STD_STRING_VIEW) \
+  || defined(GENERATING_DOCUMENTATION)
+
+/// Create an address from an IPv4 address string in dotted decimal form,
+/// or from an IPv6 address in hexadecimal notation.
+/**
+ * @relates address
+ */
+ASIO_DECL address make_address(string_view str);
+
+/// Create an address from an IPv4 address string in dotted decimal form,
+/// or from an IPv6 address in hexadecimal notation.
+/**
+ * @relates address
+ */
+ASIO_DECL address make_address(
+    string_view str, asio::error_code& ec);
+
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+       //  || defined(GENERATING_DOCUMENTATION)
 
 #if !defined(ASIO_NO_IOSTREAM)
 
