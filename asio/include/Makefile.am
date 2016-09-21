@@ -217,6 +217,7 @@ nobase_include_HEADERS = \
 	asio/detail/std_thread.hpp \
 	asio/detail/strand_executor_service.hpp \
 	asio/detail/strand_service.hpp \
+	asio/detail/string_view.hpp \
 	asio/detail/thread_context.hpp \
 	asio/detail/thread_group.hpp \
 	asio/detail/thread.hpp \
