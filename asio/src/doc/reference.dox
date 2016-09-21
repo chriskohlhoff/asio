@@ -212,7 +212,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_SVC_T1=asio::detail::service \
                          ASIO_CONST_BUFFER=const_buffer \
                          ASIO_MUTABLE_BUFFER=mutable_buffer \
-                         ASIO_SYNC_OP_VOID=void
+                         ASIO_SYNC_OP_VOID=void \
+                         ASIO_STRING_VIEW_PARAM=string_view
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

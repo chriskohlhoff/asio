@@ -20,6 +20,7 @@
 #include <string>
 #include "asio/async_result.hpp"
 #include "asio/detail/regex_fwd.hpp"
+#include "asio/detail/string_view.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 
@@ -219,11 +220,10 @@ std::size_t read_until(SyncReadStream& s,
  * This data may be the start of a new line, to be extracted by a subsequent
  * @c read_until operation.
  */
-template <typename SyncReadStream,
-    typename DynamicBuffer, typename Allocator>
+template <typename SyncReadStream, typename DynamicBuffer>
 std::size_t read_until(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    const std::basic_string<char, std::char_traits<char>, Allocator>& delim);
+    ASIO_STRING_VIEW_PARAM delim);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -259,11 +259,10 @@ std::size_t read_until(SyncReadStream& s,
  * typically leave that data in the dynamic buffer sequence for a subsequent
  * read_until operation to examine.
  */
-template <typename SyncReadStream,
-    typename DynamicBuffer, typename Allocator>
+template <typename SyncReadStream, typename DynamicBuffer>
 std::size_t read_until(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    const std::basic_string<char, std::char_traits<char>, Allocator>& delim,
+    ASIO_STRING_VIEW_PARAM delim,
     asio::error_code& ec);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -681,7 +680,8 @@ std::size_t read_until(SyncReadStream& s,
  */
 template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
-    asio::basic_streambuf<Allocator>& b, const std::string& delim);
+    asio::basic_streambuf<Allocator>& b,
+    ASIO_STRING_VIEW_PARAM delim);
 
 /// Read data into a streambuf until it contains a specified delimiter.
 /**
@@ -715,8 +715,8 @@ std::size_t read_until(SyncReadStream& s,
  */
 template <typename SyncReadStream, typename Allocator>
 std::size_t read_until(SyncReadStream& s,
-    asio::basic_streambuf<Allocator>& b, const std::string& delim,
-    asio::error_code& ec);
+    asio::basic_streambuf<Allocator>& b,
+    ASIO_STRING_VIEW_PARAM delim, asio::error_code& ec);
 
 #if defined(ASIO_HAS_BOOST_REGEX) \
   || defined(GENERATING_DOCUMENTATION)
@@ -1169,7 +1169,7 @@ ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    const std::string& delim,
+    ASIO_STRING_VIEW_PARAM delim,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -1579,7 +1579,8 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
-    asio::basic_streambuf<Allocator>& b, const std::string& delim,
+    asio::basic_streambuf<Allocator>& b,
+    ASIO_STRING_VIEW_PARAM delim,
     ASIO_MOVE_ARG(ReadHandler) handler);
 
 #if defined(ASIO_HAS_BOOST_REGEX) \

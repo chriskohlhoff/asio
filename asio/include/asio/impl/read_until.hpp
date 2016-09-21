@@ -99,7 +99,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename DynamicBuffer>
 inline std::size_t read_until(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    const std::string& delim)
+    ASIO_STRING_VIEW_PARAM delim)
 {
   asio::error_code ec;
   std::size_t bytes_transferred = read_until(s,
@@ -146,7 +146,7 @@ namespace detail
 template <typename SyncReadStream, typename DynamicBuffer>
 std::size_t read_until(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    const std::string& delim, asio::error_code& ec)
+    ASIO_STRING_VIEW_PARAM delim, asio::error_code& ec)
 {
   typename decay<DynamicBuffer>::type b(
       ASIO_MOVE_CAST(DynamicBuffer)(buffers));
@@ -369,15 +369,16 @@ inline std::size_t read_until(SyncReadStream& s,
 
 template <typename SyncReadStream, typename Allocator>
 inline std::size_t read_until(SyncReadStream& s,
-    asio::basic_streambuf<Allocator>& b, const std::string& delim)
+    asio::basic_streambuf<Allocator>& b,
+    ASIO_STRING_VIEW_PARAM delim)
 {
   return read_until(s, basic_streambuf_ref<Allocator>(b), delim);
 }
 
 template <typename SyncReadStream, typename Allocator>
 inline std::size_t read_until(SyncReadStream& s,
-    asio::basic_streambuf<Allocator>& b, const std::string& delim,
-    asio::error_code& ec)
+    asio::basic_streambuf<Allocator>& b,
+    ASIO_STRING_VIEW_PARAM delim, asio::error_code& ec)
 {
   return read_until(s, basic_streambuf_ref<Allocator>(b), delim, ec);
 }
@@ -897,7 +898,8 @@ ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
-    const std::string& delim, ASIO_MOVE_ARG(ReadHandler) handler)
+    ASIO_STRING_VIEW_PARAM delim,
+    ASIO_MOVE_ARG(ReadHandler) handler)
 {
   // If you get an error on the following line it means that your handler does
   // not meet the documented type requirements for a ReadHandler.
@@ -911,7 +913,8 @@ async_read_until(AsyncReadStream& s,
       ASIO_HANDLER_TYPE(ReadHandler,
         void (asio::error_code, std::size_t))>(
           s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            delim, init.completion_handler)(asio::error_code(), 0, 1);
+            static_cast<std::string>(delim),
+              init.completion_handler)(asio::error_code(), 0, 1);
 
   return init.result.get();
 }
@@ -1451,7 +1454,8 @@ template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
 inline ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
-    asio::basic_streambuf<Allocator>& b, const std::string& delim,
+    asio::basic_streambuf<Allocator>& b,
+    ASIO_STRING_VIEW_PARAM delim,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
   return async_read_until(s, basic_streambuf_ref<Allocator>(b),
