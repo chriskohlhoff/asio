@@ -18,6 +18,7 @@
 
 #include "asio/detail/config.hpp"
 #include <string>
+#include "asio/detail/string_view.hpp"
 #include "asio/error_code.hpp"
 #include "asio/ip/address_v6_range.hpp"
 
@@ -179,6 +180,27 @@ ASIO_DECL network_v6 make_network_v6(const std::string& str);
  */
 ASIO_DECL network_v6 make_network_v6(
     const std::string& str, asio::error_code& ec);
+
+#if defined(ASIO_HAS_STD_STRING_VIEW) \
+  || defined(GENERATING_DOCUMENTATION)
+
+/// Create an IPv6 network from a string containing IP address and prefix
+/// length.
+/**
+ * @relates network_v6
+ */
+ASIO_DECL network_v6 make_network_v6(string_view str);
+
+/// Create an IPv6 network from a string containing IP address and prefix
+/// length.
+/**
+ * @relates network_v6
+ */
+ASIO_DECL network_v6 make_network_v6(
+    string_view str, asio::error_code& ec);
+
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+       //  || defined(GENERATING_DOCUMENTATION)
 
 #if !defined(ASIO_NO_IOSTREAM)
 

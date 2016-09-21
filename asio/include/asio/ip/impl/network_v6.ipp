@@ -151,6 +151,21 @@ network_v6 make_network_v6(const std::string& str,
       std::atoi(str.substr(pos + 1).c_str()));
 }
 
+#if defined(ASIO_HAS_STD_STRING_VIEW)
+
+network_v6 make_network_v6(string_view str)
+{
+  return make_network_v6(static_cast<std::string>(str));
+}
+
+network_v6 make_network_v6(string_view str,
+    asio::error_code& ec)
+{
+  return make_network_v6(static_cast<std::string>(str), ec);
+}
+
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+
 } // namespace ip
 } // namespace asio
 
