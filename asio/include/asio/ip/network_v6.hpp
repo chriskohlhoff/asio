@@ -157,20 +157,23 @@ inline network_v6 make_network_v6(
  */
 ASIO_DECL network_v6 make_network_v6(const char* str);
 
-/// Create an IPv6 address from an IP address string in dotted decimal form.
+/// Create an IPv6 network from a string containing IP address and prefix
+/// length.
 /**
  * @relates network_v6
  */
 ASIO_DECL network_v6 make_network_v6(
     const char* str, asio::error_code& ec);
 
-/// Create an IPv6 address from an IP address string in dotted decimal form.
+/// Create an IPv6 network from a string containing IP address and prefix
+/// length.
 /**
  * @relates network_v6
  */
 ASIO_DECL network_v6 make_network_v6(const std::string& str);
 
-/// Create an IPv6 address from an IP address string in dotted decimal form.
+/// Create an IPv6 network from a string containing IP address and prefix
+/// length.
 /**
  * @relates network_v6
  */

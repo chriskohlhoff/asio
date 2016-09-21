@@ -183,20 +183,23 @@ inline network_v4 make_network_v4(
  */
 ASIO_DECL network_v4 make_network_v4(const char* str);
 
-/// Create an IPv4 address from an IP address string in dotted decimal form.
+/// Create an IPv4 network from a string containing IP address and prefix
+/// length.
 /**
  * @relates network_v4
  */
 ASIO_DECL network_v4 make_network_v4(
     const char* str, asio::error_code& ec);
 
-/// Create an IPv4 address from an IP address string in dotted decimal form.
+/// Create an IPv4 network from a string containing IP address and prefix
+/// length.
 /**
  * @relates network_v4
  */
 ASIO_DECL network_v4 make_network_v4(const std::string& str);
 
-/// Create an IPv4 address from an IP address string in dotted decimal form.
+/// Create an IPv4 network from a string containing IP address and prefix
+/// length.
 /**
  * @relates network_v4
  */
