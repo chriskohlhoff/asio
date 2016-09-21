@@ -18,6 +18,7 @@
 #include "asio/ip/network_v4.hpp"
 
 #include "../unit_test.hpp"
+#include <sstream>
 
 //------------------------------------------------------------------------------
 
@@ -103,6 +104,16 @@ void test()
     net1 = ip::make_network_v4(string_view_value);
     net1 = ip::make_network_v4(string_view_value, ec);
 #endif // defined(ASIO_HAS_STD_STRING_VIEW)
+
+    // network_v4 I/O.
+
+    std::ostringstream os;
+    os << net1;
+
+#if !defined(BOOST_NO_STD_WSTREAMBUF)
+    std::wostringstream wos;
+    wos << net1;
+#endif // !defined(BOOST_NO_STD_WSTREAMBUF)
   }
   catch (std::exception&)
   {
