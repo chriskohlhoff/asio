@@ -204,7 +204,7 @@
             <member><link linkend="asio.reference.AsyncWriteStream">AsyncWriteStream</link></member>
             <member><link linkend="asio.reference.CompletionCondition">CompletionCondition</link></member>
             <member><link linkend="asio.reference.ConstBufferSequence">ConstBufferSequence</link></member>
-            <member><link linkend="asio.reference.DynamicBufferSequence">DynamicBufferSequence</link></member>
+            <member><link linkend="asio.reference.DynamicBuffer">DynamicBuffer</link></member>
             <member><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
             <member><link linkend="asio.reference.ReadHandler">ReadHandler</link></member>
             <member><link linkend="asio.reference.SyncRandomAccessReadDevice">SyncRandomAccessReadDevice</link></member>

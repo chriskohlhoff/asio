@@ -25,7 +25,7 @@
 [include requirements/ConnectCondition.qbk]
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConstBufferSequence.qbk]
-[include requirements/DynamicBufferSequence.qbk]
+[include requirements/DynamicBuffer.qbk]
 [include requirements/Endpoint.qbk]
 [include requirements/EndpointSequence.qbk]
 [include requirements/ExecutionContext.qbk]
@@ -1374,26 +1374,26 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read.overload3 async_read]``(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload3 more...]]``
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read.overload4 async_read]``(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload4 more...]]``
 
   template<
@@ -1601,13 +1601,13 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1674,15 +1674,15 @@ Start an asynchronous operation to read a certain amount of data from a stream.
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2273,45 +2273,45 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
       
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read_until.overload1 async_read_until]``(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       char delim,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read_until.overload2 async_read_until]``(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::string & delim,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload2 more...]]``
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read_until.overload3 async_read_until]``(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const boost::regex & expr,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload3 more...]]``
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename MatchCondition,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read_until.overload4 async_read_until]``(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       MatchCondition match_condition,
       ReadHandler && handler,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
@@ -2378,11 +2378,11 @@ Start an asynchronous operation to read data into a dynamic buffer sequence unti
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read_until(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       char delim,
       ReadHandler && handler);
 
@@ -2482,11 +2482,11 @@ Start an asynchronous operation to read data into a dynamic buffer sequence unti
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read_until(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::string & delim,
       ReadHandler && handler);
 
@@ -2586,11 +2586,11 @@ Start an asynchronous operation to read data into a dynamic buffer sequence unti
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read_until(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const boost::regex & expr,
       ReadHandler && handler);
 
@@ -2692,12 +2692,12 @@ Start an asynchronous operation to read data into a dynamic buffer sequence unti
 
   template<
       typename ``[link asio.reference.AsyncReadStream AsyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename MatchCondition,
       typename ``[link asio.reference.ReadHandler ReadHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read_until(
       AsyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       MatchCondition match_condition,
       ReadHandler && handler,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
@@ -2729,7 +2729,7 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 ``
 where `iterator` represents the type: 
 ``
-   buffers_iterator<typename DynamicBufferSequence::const_buffers_type>
+   buffers_iterator<typename DynamicBuffer::const_buffers_type>
 ``
 The iterator parameters `begin` and `end` define the range of bytes to be scanned to determine whether there is a match. The `first` member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the `begin` parameter for any subsequent invocation of the match condition. The `second` member of the return value is true if a match has been found, false otherwise.]]
 
@@ -3686,26 +3686,26 @@ Start an asynchronous operation to write a certain amount of data to a stream.
 
   template<
       typename ``[link asio.reference.AsyncWriteStream AsyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_write.overload3 async_write]``(
       AsyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload3 more...]]``
 
   template<
       typename ``[link asio.reference.AsyncWriteStream AsyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_write.overload4 async_write]``(
       AsyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload4 more...]]``
 
   template<
@@ -3900,13 +3900,13 @@ Start an asynchronous operation to write all of the supplied data to a stream.
 
   template<
       typename ``[link asio.reference.AsyncWriteStream AsyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_write(
       AsyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -3959,15 +3959,15 @@ Start an asynchronous operation to write a certain amount of data to a stream.
 
   template<
       typename ``[link asio.reference.AsyncWriteStream AsyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``,
       typename ``[link asio.reference.WriteHandler WriteHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_write(
       AsyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -49938,7 +49938,7 @@ Create a new dynamic buffer that represents the given vector.
 [section:dynamic_string_buffer dynamic_string_buffer]
 
 
-Adapt a basic\_string to the DynamicBufferSequence requirements. 
+Adapt a basic\_string to the DynamicBuffer requirements. 
 
 
   template<
@@ -50437,7 +50437,7 @@ Get the size of the input sequence.
 [section:dynamic_vector_buffer dynamic_vector_buffer]
 
 
-Adapt a vector to the DynamicBufferSequence requirements. 
+Adapt a vector to the DynamicBuffer requirements. 
 
 
   template<
@@ -80586,7 +80586,7 @@ Trait to determine whether a type satisfies the ConstBufferSequence requirements
 [section:is_dynamic_buffer_sequence is_dynamic_buffer_sequence]
 
 
-Trait to determine whether a type satisfies the DynamicBufferSequence requirements. 
+Trait to determine whether a type satisfies the DynamicBuffer requirements. 
 
 
   template<
@@ -88554,44 +88554,44 @@ Attempt to read a certain amount of data from a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read.overload5 read]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      DynamicBuffer && buffers,
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload5 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read.overload6 read]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload6 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link asio.reference.read.overload7 read]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload7 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link asio.reference.read.overload8 read]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload8 more...]]``
 
   template<
@@ -88952,11 +88952,11 @@ Attempt to read a certain amount of data from a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      DynamicBuffer && buffers,
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -89023,12 +89023,12 @@ Attempt to read a certain amount of data from a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -89087,13 +89087,13 @@ Attempt to read a certain amount of data from a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t read(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -89160,14 +89160,14 @@ Attempt to read a certain amount of data from a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t read(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -90179,81 +90179,81 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload1 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       char delim);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload2 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       char delim,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload2 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename Allocator>
   std::size_t ``[link asio.reference.read_until.overload3 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::basic_string< char, std::char_traits< char >, Allocator > & delim);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload3 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename Allocator>
   std::size_t ``[link asio.reference.read_until.overload4 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::basic_string< char, std::char_traits< char >, Allocator > & delim,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload4 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload5 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const boost::regex & expr);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload5 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload6 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const boost::regex & expr,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload6 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename MatchCondition>
   std::size_t ``[link asio.reference.read_until.overload7 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       MatchCondition match_condition,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload7 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename MatchCondition>
   std::size_t ``[link asio.reference.read_until.overload8 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       MatchCondition match_condition,
       asio::error_code & ec,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
@@ -90341,19 +90341,19 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload17 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::string & delim);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload17 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload18 read_until]``(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::string & delim,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload18 more...]]``
@@ -90373,10 +90373,10 @@ Read data into a dynamic buffer sequence until it contains a specified delimiter
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       char delim);
 
 
@@ -90468,10 +90468,10 @@ Read data into a dynamic buffer sequence until it contains a specified delimiter
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       char delim,
       asio::error_code & ec);
 
@@ -90527,11 +90527,11 @@ Read data into a dynamic buffer sequence until it contains a specified delimiter
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::basic_string< char, std::char_traits< char >, Allocator > & delim);
 
 
@@ -90613,11 +90613,11 @@ Read data into a dynamic buffer sequence until it contains a specified delimiter
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename Allocator>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::basic_string< char, std::char_traits< char >, Allocator > & delim,
       asio::error_code & ec);
 
@@ -90673,10 +90673,10 @@ Read data into a dynamic buffer sequence until some part of the data it contains
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const boost::regex & expr);
 
 
@@ -90768,10 +90768,10 @@ Read data into a dynamic buffer sequence until some part of the data it contains
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const boost::regex & expr,
       asio::error_code & ec);
 
@@ -90827,11 +90827,11 @@ Read data into a dynamic buffer sequence until a function object indicates a mat
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename MatchCondition>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       MatchCondition match_condition,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
 
@@ -90862,7 +90862,7 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 ``
 where `iterator` represents the type: 
 ``
-   buffers_iterator<typename DynamicBufferSequence::const_buffers_type>
+   buffers_iterator<typename DynamicBuffer::const_buffers_type>
 ``
 The iterator parameters `begin` and `end` define the range of bytes to be scanned to determine whether there is a match. The `first` member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the `begin` parameter for any subsequent invocation of the match condition. The `second` member of the return value is true if a match has been found, false otherwise.]]
 
@@ -90960,11 +90960,11 @@ Read data into a dynamic buffer sequence until a function object indicates a mat
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename MatchCondition>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       MatchCondition match_condition,
       asio::error_code & ec,
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
@@ -90996,7 +90996,7 @@ This operation is implemented in terms of zero or more calls to the stream's rea
 ``
 where `iterator` represents the type: 
 ``
-   buffers_iterator<DynamicBufferSequence::const_buffers_type>
+   buffers_iterator<DynamicBuffer::const_buffers_type>
 ``
 The iterator parameters `begin` and `end` define the range of bytes to be scanned to determine whether there is a match. The `first` member of the return value is an iterator marking one-past-the-end of the bytes that have been consumed by the match function. This iterator is used to calculate the `begin` parameter for any subsequent invocation of the match condition. The `second` member of the return value is true if a match has been found, false otherwise.]]
 
@@ -91695,10 +91695,10 @@ The default implementation of the `is_match_condition` type trait evaluates to t
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::string & delim);
 
 
@@ -91713,10 +91713,10 @@ The default implementation of the `is_match_condition` type trait evaluates to t
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       const std::string & delim,
       asio::error_code & ec);
 
@@ -110565,44 +110565,44 @@ Write a certain amount of data to a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.write.overload5 write]``(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      DynamicBuffer && buffers,
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload5 more...]]``
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.write.overload6 write]``(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload6 more...]]``
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link asio.reference.write.overload7 write]``(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload7 more...]]``
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t ``[link asio.reference.write.overload8 write]``(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload8 more...]]``
 
   template<
@@ -110963,11 +110963,11 @@ Write all of the supplied data to a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t write(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      DynamicBuffer && buffers,
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -111034,12 +111034,12 @@ Write all of the supplied data to a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t write(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -111098,13 +111098,13 @@ Write a certain amount of data to a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t write(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -111171,14 +111171,14 @@ Write a certain amount of data to a stream before returning.
 
   template<
       typename ``[link asio.reference.SyncWriteStream SyncWriteStream]``,
-      typename ``[link asio.reference.DynamicBufferSequence DynamicBufferSequence]``,
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
       typename ``[link asio.reference.CompletionCondition CompletionCondition]``>
   std::size_t write(
       SyncWriteStream & s,
-      DynamicBufferSequence && buffers,
+      DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBufferSequence >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:

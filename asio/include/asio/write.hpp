@@ -249,11 +249,11 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
  *     s, buffers,
  *     asio::transfer_all()); @endcode
  */
-template <typename SyncWriteStream, typename DynamicBufferSequence>
+template <typename SyncWriteStream, typename DynamicBuffer>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Write all of the supplied data to a stream before returning.
@@ -283,12 +283,12 @@ std::size_t write(SyncWriteStream& s,
  *     s, buffers,
  *     asio::transfer_all(), ec); @endcode
  */
-template <typename SyncWriteStream, typename DynamicBufferSequence>
+template <typename SyncWriteStream, typename DynamicBuffer>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     asio::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Write a certain amount of data to a stream before returning.
@@ -327,13 +327,13 @@ std::size_t write(SyncWriteStream& s,
  *
  * @throws asio::system_error Thrown on failure.
  */
-template <typename SyncWriteStream, typename DynamicBufferSequence,
+template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Write a certain amount of data to a stream before returning.
@@ -373,13 +373,13 @@ std::size_t write(SyncWriteStream& s,
  * @returns The number of bytes written. If an error occurs, returns the total
  * number of bytes successfully transferred prior to the error.
  */
-template <typename SyncWriteStream, typename DynamicBufferSequence,
+template <typename SyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -721,14 +721,14 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * asio::io_context::post().
  */
 template <typename AsyncWriteStream,
-    typename DynamicBufferSequence, typename WriteHandler>
+    typename DynamicBuffer, typename WriteHandler>
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Start an asynchronous operation to write a certain amount of data to a
@@ -788,16 +788,16 @@ async_write(AsyncWriteStream& s,
  * the handler will be performed in a manner equivalent to using
  * asio::io_context::post().
  */
-template <typename AsyncWriteStream, typename DynamicBufferSequence,
+template <typename AsyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition, typename WriteHandler>
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)

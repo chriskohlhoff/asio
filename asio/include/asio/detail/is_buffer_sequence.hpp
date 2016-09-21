@@ -209,7 +209,7 @@ struct is_buffer_sequence<const_buffer, mutable_buffer>
 };
 
 template <typename T>
-struct is_dynamic_buffer_sequence_class
+struct is_dynamic_buffer_class
   : integral_constant<bool,
       sizeof(size_memfn_helper<T>(0)) != 1 &&
       sizeof(max_size_memfn_helper<T>(0)) != 1 &&
@@ -224,9 +224,9 @@ struct is_dynamic_buffer_sequence_class
 };
 
 template <typename T>
-struct is_dynamic_buffer_sequence
+struct is_dynamic_buffer
   : conditional<is_class<T>::value,
-      is_dynamic_buffer_sequence_class<T>,
+      is_dynamic_buffer_class<T>,
       false_type>::type
 {
 };

@@ -369,14 +369,13 @@ struct is_const_buffer_sequence
 {
 };
 
-/// Trait to determine whether a type satisfies the DynamicBufferSequence
-/// requirements.
+/// Trait to determine whether a type satisfies the DynamicBuffer requirements.
 template <typename T>
-struct is_dynamic_buffer_sequence
+struct is_dynamic_buffer
 #if defined(GENERATING_DOCUMENTATION)
   : integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
-  : asio::detail::is_dynamic_buffer_sequence<T>
+  : asio::detail::is_dynamic_buffer<T>
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
@@ -1477,7 +1476,7 @@ inline ASIO_CONST_BUFFER buffer(
 
 /*@}*/
 
-/// Adapt a basic_string to the DynamicBufferSequence requirements.
+/// Adapt a basic_string to the DynamicBuffer requirements.
 /**
  * Requires that <tt>sizeof(Elem) == 1</tt>.
  */
@@ -1628,7 +1627,7 @@ private:
   const std::size_t max_size_;
 };
 
-/// Adapt a vector to the DynamicBufferSequence requirements.
+/// Adapt a vector to the DynamicBuffer requirements.
 /**
  * Requires that <tt>sizeof(Elem) == 1</tt>.
  */

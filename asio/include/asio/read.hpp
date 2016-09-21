@@ -250,11 +250,11 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
  *     s, buffers,
  *     asio::transfer_all()); @endcode
  */
-template <typename SyncReadStream, typename DynamicBufferSequence>
+template <typename SyncReadStream, typename DynamicBuffer>
 std::size_t read(SyncReadStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -283,12 +283,12 @@ std::size_t read(SyncReadStream& s,
  *     s, buffers,
  *     asio::transfer_all(), ec); @endcode
  */
-template <typename SyncReadStream, typename DynamicBufferSequence>
+template <typename SyncReadStream, typename DynamicBuffer>
 std::size_t read(SyncReadStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     asio::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -327,13 +327,13 @@ std::size_t read(SyncReadStream& s,
  *
  * @throws asio::system_error Thrown on failure.
  */
-template <typename SyncReadStream, typename DynamicBufferSequence,
+template <typename SyncReadStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t read(SyncReadStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -373,13 +373,13 @@ std::size_t read(SyncReadStream& s,
  * @returns The number of bytes read. If an error occurs, returns the total
  * number of bytes successfully transferred prior to the error.
  */
-template <typename SyncReadStream, typename DynamicBufferSequence,
+template <typename SyncReadStream, typename DynamicBuffer,
     typename CompletionCondition>
 std::size_t read(SyncReadStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -732,14 +732,14 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  *     handler); @endcode
  */
 template <typename AsyncReadStream,
-    typename DynamicBufferSequence, typename ReadHandler>
+    typename DynamicBuffer, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 /// Start an asynchronous operation to read a certain amount of data from a
@@ -800,16 +800,16 @@ async_read(AsyncReadStream& s,
  * the handler will be performed in a manner equivalent to using
  * asio::io_context::post().
  */
-template <typename AsyncReadStream, typename DynamicBufferSequence,
+template <typename AsyncReadStream, typename DynamicBuffer,
     typename CompletionCondition, typename ReadHandler>
 ASIO_INITFN_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s,
-    ASIO_MOVE_ARG(DynamicBufferSequence) buffers,
+    ASIO_MOVE_ARG(DynamicBuffer) buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<
-      is_dynamic_buffer_sequence<DynamicBufferSequence>::value
+      is_dynamic_buffer<DynamicBuffer>::value
     >::type* = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
