@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <string>
+#include "asio/detail/string_view.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -49,10 +50,10 @@ public:
 
   /// Construct with specified endpoint, host name and service name.
   basic_resolver_entry(const endpoint_type& ep,
-      const std::string& host, const std::string& service)
+      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service)
     : endpoint_(ep),
-      host_name_(host),
-      service_name_(service)
+      host_name_(static_cast<std::string>(host)),
+      service_name_(static_cast<std::string>(service))
   {
   }
 
