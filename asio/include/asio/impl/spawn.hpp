@@ -166,7 +166,9 @@ namespace detail {
 
     return_type get()
     {
-      handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
+      // Must not hold shared_ptr to coro while suspended.
+      handler_.coro_.reset();
+
       if (--ready_ != 0)
         ca_();
       if (!out_ec_ && ec_) throw asio::system_error(ec_);
@@ -201,7 +203,9 @@ namespace detail {
 
     void get()
     {
-      handler_.coro_.reset(); // Must not hold shared_ptr to coro while suspended.
+      // Must not hold shared_ptr to coro while suspended.
+      handler_.coro_.reset();
+
       if (--ready_ != 0)
         ca_();
       if (!out_ec_ && ec_) throw asio::system_error(ec_);

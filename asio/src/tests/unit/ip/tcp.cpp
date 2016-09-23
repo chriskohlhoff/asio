@@ -783,7 +783,8 @@ private:
 struct move_accept_handler
 {
   move_accept_handler() {}
-  void operator()(const asio::error_code&, asio::ip::tcp::socket) {}
+  void operator()(
+      const asio::error_code&, asio::ip::tcp::socket) {}
   move_accept_handler(move_accept_handler&&) {}
 private:
   move_accept_handler(const move_accept_handler&) {}
