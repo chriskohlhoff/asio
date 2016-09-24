@@ -1380,7 +1380,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       DynamicBuffer && buffers,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload3 more...]]``
 
   template<
@@ -1393,7 +1393,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload4 more...]]``
 
   template<
@@ -1607,7 +1607,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       DynamicBuffer && buffers,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1682,7 +1682,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -2289,7 +2289,7 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read_until.overload2 async_read_until]``(
       AsyncReadStream & s,
       DynamicBuffer && buffers,
-      const std::string & delim,
+      string_view delim,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload2 more...]]``
 
@@ -2335,7 +2335,7 @@ Start an asynchronous operation to read data into a dynamic buffer sequence, or 
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.async_read_until.overload6 async_read_until]``(
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
-      const std::string & delim,
+      string_view delim,
       ReadHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.async_read_until.overload6 more...]]``
 
@@ -2487,7 +2487,7 @@ Start an asynchronous operation to read data into a dynamic buffer sequence unti
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read_until(
       AsyncReadStream & s,
       DynamicBuffer && buffers,
-      const std::string & delim,
+      string_view delim,
       ReadHandler && handler);
 
 
@@ -2940,7 +2940,7 @@ Start an asynchronous operation to read data into a streambuf until it contains 
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_read_until(
       AsyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
-      const std::string & delim,
+      string_view delim,
       ReadHandler && handler);
 
 
@@ -3692,7 +3692,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       AsyncWriteStream & s,
       DynamicBuffer && buffers,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload3 more...]]``
 
   template<
@@ -3705,7 +3705,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload4 more...]]``
 
   template<
@@ -3906,7 +3906,7 @@ Start an asynchronous operation to write all of the supplied data to a stream.
       AsyncWriteStream & s,
       DynamicBuffer && buffers,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -3967,7 +3967,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -10619,7 +10619,9 @@ Provides waitable timer functionality.
 
      Constructor to set a particular expiry time as an absolute time. 
 
-     Constructor to set a particular expiry time relative to now. ]
+     Constructor to set a particular expiry time relative to now. 
+
+     Move-construct a basic_deadline_timer from another. ]
   ]
   
   [
@@ -10659,6 +10661,11 @@ Provides waitable timer functionality.
   [
     [[link asio.reference.basic_deadline_timer.get_io_service [*get_io_service]]]
     [(Deprecated: Use get_executor().) Get the io_context associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_deadline_timer.operator_eq_ [*operator=]]]
+    [Move-assign a basic_deadline_timer from another. ]
   ]
   
   [
@@ -10847,7 +10854,15 @@ Constructor to set a particular expiry time relative to now.
   ``  [''''&raquo;''' [link asio.reference.basic_deadline_timer.basic_deadline_timer.overload3 more...]]``
 
 
-[section:overload1 basic_deadline_timer::basic_deadline_timer (1 of 3 overloads)]
+Move-construct a [link asio.reference.basic_deadline_timer `basic_deadline_timer`] from another. 
+
+
+  ``[link asio.reference.basic_deadline_timer.basic_deadline_timer.overload4 basic_deadline_timer]``(
+      basic_deadline_timer && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_deadline_timer.basic_deadline_timer.overload4 more...]]``
+
+
+[section:overload1 basic_deadline_timer::basic_deadline_timer (1 of 4 overloads)]
 
 
 Constructor. 
@@ -10876,7 +10891,7 @@ This constructor creates a timer without setting an expiry time. The `expires_at
 
 
 
-[section:overload2 basic_deadline_timer::basic_deadline_timer (2 of 3 overloads)]
+[section:overload2 basic_deadline_timer::basic_deadline_timer (2 of 4 overloads)]
 
 
 Constructor to set a particular expiry time as an absolute time. 
@@ -10908,7 +10923,7 @@ This constructor creates a timer and sets the expiry time.
 
 
 
-[section:overload3 basic_deadline_timer::basic_deadline_timer (3 of 3 overloads)]
+[section:overload3 basic_deadline_timer::basic_deadline_timer (3 of 4 overloads)]
 
 
 Constructor to set a particular expiry time relative to now. 
@@ -10932,6 +10947,40 @@ This constructor creates a timer and sets the expiry time.
 [[expiry_time][The expiry time to be used for the timer, relative to now. ]]
 
 ]
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_deadline_timer::basic_deadline_timer (4 of 4 overloads)]
+
+
+Move-construct a [link asio.reference.basic_deadline_timer `basic_deadline_timer`] from another. 
+
+
+  basic_deadline_timer(
+      basic_deadline_timer && other);
+
+
+This constructor moves a timer from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_deadline_timer `basic_deadline_timer`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_deadline_timer(io_context&) constructor`. 
 
 
 
@@ -11595,6 +11644,40 @@ This function may be used to obtain the [link asio.reference.io_context `io_cont
 [heading Return Value]
       
 A reference to the [link asio.reference.io_context `io_context`] object that the I/O object will use to dispatch handlers. Ownership is not transferred to the caller. 
+
+
+
+
+[endsect]
+
+
+
+[section:operator_eq_ basic_deadline_timer::operator=]
+
+[indexterm2 asio.indexterm.basic_deadline_timer.operator_eq_..operator=..basic_deadline_timer] 
+Move-assign a [link asio.reference.basic_deadline_timer `basic_deadline_timer`] from another. 
+
+
+  basic_deadline_timer & operator=(
+      basic_deadline_timer && other);
+
+
+This assignment operator moves a timer from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_deadline_timer `basic_deadline_timer`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_deadline_timer(io_context&) constructor`. 
 
 
 
@@ -32454,14 +32537,21 @@ Iostream interface for a socket.
 
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
-      typename Time = chrono::steady_clock,
-      typename ``[link asio.reference.TimeTraits TimeTraits]`` = wait_traits<Time>>
+      typename Clock = chrono::steady_clock,
+      typename ``[link asio.reference.WaitTraits WaitTraits]`` = wait_traits<Clock>>
   class basic_socket_iostream
 
 
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_socket_iostream.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
 
   [
 
@@ -32481,6 +32571,13 @@ Iostream interface for a socket.
 
     [[link asio.reference.basic_socket_iostream.endpoint_type [*endpoint_type]]]
     [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_iostream.protocol_type [*protocol_type]]]
+    [The protocol type. ]
   
   ]
 
@@ -32507,6 +32604,10 @@ Iostream interface for a socket.
   [
     [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
+
+     Construct a basic_socket_iostream from the supplied socket. 
+
+     Move-construct a basic_socket_iostream from another. 
 
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
@@ -32551,6 +32652,11 @@ Iostream interface for a socket.
   ]
   
   [
+    [[link asio.reference.basic_socket_iostream.operator_eq_ [*operator=]]]
+    [Move-assign a basic_socket_iostream from another. ]
+  ]
+  
+  [
     [[link asio.reference.basic_socket_iostream.rdbuf [*rdbuf]]]
     [Return a pointer to the underlying streambuf. ]
   ]
@@ -32578,6 +32684,22 @@ Construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] 
   ``  [''''&raquo;''' [link asio.reference.basic_socket_iostream.basic_socket_iostream.overload1 more...]]``
 
 
+Construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] from the supplied socket. 
+
+
+  explicit ``[link asio.reference.basic_socket_iostream.basic_socket_iostream.overload2 basic_socket_iostream]``(
+      basic_stream_socket< protocol_type > s);
+  ``  [''''&raquo;''' [link asio.reference.basic_socket_iostream.basic_socket_iostream.overload2 more...]]``
+
+
+Move-construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] from another. 
+
+
+  ``[link asio.reference.basic_socket_iostream.basic_socket_iostream.overload3 basic_socket_iostream]``(
+      basic_socket_iostream && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_socket_iostream.basic_socket_iostream.overload3 more...]]``
+
+
 Establish a connection to an endpoint corresponding to a resolver query. 
 
 
@@ -32585,14 +32707,14 @@ Establish a connection to an endpoint corresponding to a resolver query.
       typename T1,
       ... ,
       typename TN>
-  explicit ``[link asio.reference.basic_socket_iostream.basic_socket_iostream.overload2 basic_socket_iostream]``(
+  explicit ``[link asio.reference.basic_socket_iostream.basic_socket_iostream.overload4 basic_socket_iostream]``(
       T1 t1,
       ... ,
       TN tn);
-  ``  [''''&raquo;''' [link asio.reference.basic_socket_iostream.basic_socket_iostream.overload2 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.basic_socket_iostream.basic_socket_iostream.overload4 more...]]``
 
 
-[section:overload1 basic_socket_iostream::basic_socket_iostream (1 of 2 overloads)]
+[section:overload1 basic_socket_iostream::basic_socket_iostream (1 of 4 overloads)]
 
 
 Construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] without establishing a connection. 
@@ -32606,7 +32728,37 @@ Construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] 
 
 
 
-[section:overload2 basic_socket_iostream::basic_socket_iostream (2 of 2 overloads)]
+[section:overload2 basic_socket_iostream::basic_socket_iostream (2 of 4 overloads)]
+
+
+Construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] from the supplied socket. 
+
+
+  basic_socket_iostream(
+      basic_stream_socket< protocol_type > s);
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_socket_iostream::basic_socket_iostream (3 of 4 overloads)]
+
+
+Move-construct a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] from another. 
+
+
+  basic_socket_iostream(
+      basic_socket_iostream && other);
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_socket_iostream::basic_socket_iostream (4 of 4 overloads)]
 
 
 Establish a connection to an endpoint corresponding to a resolver query. 
@@ -32629,6 +32781,27 @@ This constructor automatically establishes a connection based on the supplied re
 
 
 [endsect]
+
+
+[section:clock_type basic_socket_iostream::clock_type]
+
+[indexterm2 asio.indexterm.basic_socket_iostream.clock_type..clock_type..basic_socket_iostream] 
+The clock type. 
+
+
+  typedef Clock clock_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/basic_socket_iostream.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
 
 
 [section:close basic_socket_iostream::close]
@@ -32674,7 +32847,7 @@ This function automatically establishes a connection based on the supplied resol
 The duration type. 
 
 
-  typedef TimeTraits::duration duration;
+  typedef WaitTraits::duration duration;
 
 
 
@@ -32695,7 +32868,7 @@ The duration type.
 (Deprecated: Use duration.) The duration type. 
 
 
-  typedef TimeTraits::duration_type duration_type;
+  typedef WaitTraits::duration_type duration_type;
 
 
 
@@ -32954,13 +33127,49 @@ An absolute time value representing the stream's expiry time.
 
 
 
+[section:operator_eq_ basic_socket_iostream::operator=]
+
+[indexterm2 asio.indexterm.basic_socket_iostream.operator_eq_..operator=..basic_socket_iostream] 
+Move-assign a [link asio.reference.basic_socket_iostream `basic_socket_iostream`] from another. 
+
+
+  basic_socket_iostream & operator=(
+      basic_socket_iostream && other);
+
+
+
+[endsect]
+
+
+
+[section:protocol_type basic_socket_iostream::protocol_type]
+
+[indexterm2 asio.indexterm.basic_socket_iostream.protocol_type..protocol_type..basic_socket_iostream] 
+The protocol type. 
+
+
+  typedef Protocol protocol_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/basic_socket_iostream.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:rdbuf basic_socket_iostream::rdbuf]
 
 [indexterm2 asio.indexterm.basic_socket_iostream.rdbuf..rdbuf..basic_socket_iostream] 
 Return a pointer to the underlying streambuf. 
 
 
-  basic_socket_streambuf< Protocol, Time, TimeTraits > * rdbuf() const;
+  basic_socket_streambuf< Protocol, Clock, WaitTraits > * rdbuf() const;
 
 
 
@@ -32988,7 +33197,7 @@ Get a reference to the underlying socket.
 The time type. 
 
 
-  typedef TimeTraits::time_point time_point;
+  typedef WaitTraits::time_point time_point;
 
 
 
@@ -33009,7 +33218,7 @@ The time type.
 (Deprecated: Use time\_point.) The time type. 
 
 
-  typedef TimeTraits::time_type time_type;
+  typedef WaitTraits::time_type time_type;
 
 
 
@@ -33034,8 +33243,8 @@ Iostream streambuf for a socket.
 
   template<
       typename ``[link asio.reference.Protocol Protocol]``,
-      typename Time = chrono::steady_clock,
-      typename ``[link asio.reference.TimeTraits TimeTraits]`` = wait_traits<Time>>
+      typename Clock = chrono::steady_clock,
+      typename ``[link asio.reference.WaitTraits WaitTraits]`` = wait_traits<Clock>>
   class basic_socket_streambuf :
     basic_socket< Protocol >
 
@@ -33043,6 +33252,13 @@ Iostream streambuf for a socket.
 [heading Types]
 [table
   [[Name][Description]]
+
+  [
+
+    [[link asio.reference.basic_socket_streambuf.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
 
   [
 
@@ -33062,6 +33278,13 @@ Iostream streambuf for a socket.
 
     [[link asio.reference.basic_socket_streambuf.endpoint_type [*endpoint_type]]]
     [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_streambuf.protocol_type [*protocol_type]]]
+    [The protocol type. ]
   
   ]
 
@@ -33087,7 +33310,11 @@ Iostream streambuf for a socket.
 
   [
     [[link asio.reference.basic_socket_streambuf.basic_socket_streambuf [*basic_socket_streambuf]]]
-    [Construct a basic_socket_streambuf without establishing a connection. ]
+    [Construct a basic_socket_streambuf without establishing a connection. 
+
+     Construct a basic_socket_streambuf from the supplied socket. 
+
+     Move-construct a basic_socket_streambuf from another. ]
   ]
   
   [
@@ -33127,6 +33354,11 @@ Iostream streambuf for a socket.
   [
     [[link asio.reference.basic_socket_streambuf.expiry [*expiry]]]
     [Get the stream buffer's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_streambuf.operator_eq_ [*operator=]]]
+    [Move-assign a basic_socket_streambuf from another. ]
   ]
   
   [
@@ -33172,28 +33404,11 @@ Iostream streambuf for a socket.
   
 ]
 
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.basic_socket_streambuf.io_handler [*io_handler]]]
-    []
-  ]
-  
-  [
-    [[link asio.reference.basic_socket_streambuf.timer_handler [*timer_handler]]]
-    []
-  ]
-  
-]
-
 [heading Requirements]
 
 ['Header: ][^asio/basic_socket_streambuf.hpp]
 
 ['Convenience header: ][^asio.hpp]
-
 
 [section:basic_socket_streambuf basic_socket_streambuf::basic_socket_streambuf]
 
@@ -33201,8 +33416,87 @@ Iostream streambuf for a socket.
 Construct a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] without establishing a connection. 
 
 
+  ``[link asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload1 basic_socket_streambuf]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload1 more...]]``
+
+
+Construct a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] from the supplied socket. 
+
+
+  explicit ``[link asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload2 basic_socket_streambuf]``(
+      basic_stream_socket< protocol_type > s);
+  ``  [''''&raquo;''' [link asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload2 more...]]``
+
+
+Move-construct a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] from another. 
+
+
+  ``[link asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload3 basic_socket_streambuf]``(
+      basic_socket_streambuf && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_socket_streambuf.basic_socket_streambuf.overload3 more...]]``
+
+
+[section:overload1 basic_socket_streambuf::basic_socket_streambuf (1 of 3 overloads)]
+
+
+Construct a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] without establishing a connection. 
+
+
   basic_socket_streambuf();
 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_socket_streambuf::basic_socket_streambuf (2 of 3 overloads)]
+
+
+Construct a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] from the supplied socket. 
+
+
+  basic_socket_streambuf(
+      basic_stream_socket< protocol_type > s);
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_socket_streambuf::basic_socket_streambuf (3 of 3 overloads)]
+
+
+Move-construct a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] from another. 
+
+
+  basic_socket_streambuf(
+      basic_socket_streambuf && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:clock_type basic_socket_streambuf::clock_type]
+
+[indexterm2 asio.indexterm.basic_socket_streambuf.clock_type..clock_type..basic_socket_streambuf] 
+The clock type. 
+
+
+  typedef Clock clock_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/basic_socket_streambuf.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -33312,7 +33606,7 @@ This function automatically establishes a connection based on the supplied resol
 The duration type. 
 
 
-  typedef TimeTraits::duration duration;
+  typedef WaitTraits::duration duration;
 
 
 
@@ -33333,7 +33627,7 @@ The duration type.
 (Deprecated: Use duration.) The duration type. 
 
 
-  typedef TimeTraits::duration_type duration_type;
+  typedef WaitTraits::duration_type duration_type;
 
 
 
@@ -33578,18 +33872,15 @@ An absolute time value representing the stream buffer's expiry time.
 
 
 
-[section:io_handler basic_socket_streambuf::io_handler]
+[section:operator_eq_ basic_socket_streambuf::operator=]
 
-[indexterm2 asio.indexterm.basic_socket_streambuf.io_handler..io_handler..basic_socket_streambuf] 
+[indexterm2 asio.indexterm.basic_socket_streambuf.operator_eq_..operator=..basic_socket_streambuf] 
+Move-assign a [link asio.reference.basic_socket_streambuf `basic_socket_streambuf`] from another. 
 
-  friend struct io_handler();
 
+  basic_socket_streambuf & operator=(
+      basic_socket_streambuf && other);
 
-[heading Requirements]
-
-['Header: ][^asio/basic_socket_streambuf.hpp]
-
-['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -33603,6 +33894,27 @@ An absolute time value representing the stream buffer's expiry time.
   int_type overflow(
       int_type c);
 
+
+
+[endsect]
+
+
+
+[section:protocol_type basic_socket_streambuf::protocol_type]
+
+[indexterm2 asio.indexterm.basic_socket_streambuf.protocol_type..protocol_type..basic_socket_streambuf] 
+The protocol type. 
+
+
+  typedef Protocol protocol_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/basic_socket_streambuf.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -33676,7 +33988,7 @@ Get a reference to the underlying socket.
 The time type. 
 
 
-  typedef TimeTraits::time_point time_point;
+  typedef WaitTraits::time_point time_point;
 
 
 
@@ -33697,26 +34009,8 @@ The time type.
 (Deprecated: Use time\_point.) The time type. 
 
 
-  typedef TimeTraits::time_type time_type;
+  typedef WaitTraits::time_type time_type;
 
-
-
-[heading Requirements]
-
-['Header: ][^asio/basic_socket_streambuf.hpp]
-
-['Convenience header: ][^asio.hpp]
-
-
-[endsect]
-
-
-
-[section:timer_handler basic_socket_streambuf::timer_handler]
-
-[indexterm2 asio.indexterm.basic_socket_streambuf.timer_handler..timer_handler..basic_socket_streambuf] 
-
-  friend struct timer_handler();
 
 
 [heading Requirements]
@@ -42487,6 +42781,21 @@ The `asio::buffer` function is used to create a buffer object to represent raw m
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload30 more...]]``
 
+  template<
+      typename Elem,
+      typename Traits>
+  const_buffer ``[link asio.reference.buffer.overload31 buffer]``(
+      basic_string_view< Elem, Traits > data);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload31 more...]]``
+
+  template<
+      typename Elem,
+      typename Traits>
+  const_buffer ``[link asio.reference.buffer.overload32 buffer]``(
+      basic_string_view< Elem, Traits > data,
+      std::size_t max_size_in_bytes);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload32 more...]]``
+
 A buffer object represents a contiguous region of memory as a 2-tuple consisting of a pointer and size in bytes. A tuple of the form `{void*, size_t}` specifies a mutable (modifiable) region of memory. Similarly, a tuple of the form `{const void*, size_t}` specifies a const (non-modifiable) region of memory. These two forms correspond to the classes [link asio.reference.mutable_buffer `mutable_buffer`] and [link asio.reference.const_buffer `const_buffer`], respectively. To mirror C++'s conversion rules, a [link asio.reference.mutable_buffer `mutable_buffer`] is implicitly convertible to a [link asio.reference.const_buffer `const_buffer`], and the opposite conversion is not permitted.
 
 The simplest use case involves reading or writing a single buffer of a specified size:
@@ -42668,7 +42977,7 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
 ['Convenience header: ][^asio.hpp]
 
 
-[section:overload1 buffer (1 of 30 overloads)]
+[section:overload1 buffer (1 of 32 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -42690,7 +42999,7 @@ Create a new modifiable buffer from an existing buffer.
 
 
 
-[section:overload2 buffer (2 of 30 overloads)]
+[section:overload2 buffer (2 of 32 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -42720,7 +43029,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload3 buffer (3 of 30 overloads)]
+[section:overload3 buffer (3 of 32 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -42742,7 +43051,7 @@ Create a new non-modifiable buffer from an existing buffer.
 
 
 
-[section:overload4 buffer (4 of 30 overloads)]
+[section:overload4 buffer (4 of 32 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -42772,7 +43081,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload5 buffer (5 of 30 overloads)]
+[section:overload5 buffer (5 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given memory range. 
@@ -42795,7 +43104,7 @@ Create a new modifiable buffer that represents the given memory range.
 
 
 
-[section:overload6 buffer (6 of 30 overloads)]
+[section:overload6 buffer (6 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given memory range. 
@@ -42818,7 +43127,7 @@ Create a new non-modifiable buffer that represents the given memory range.
 
 
 
-[section:overload7 buffer (7 of 30 overloads)]
+[section:overload7 buffer (7 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -42850,7 +43159,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload8 buffer (8 of 30 overloads)]
+[section:overload8 buffer (8 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -42883,7 +43192,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload9 buffer (9 of 30 overloads)]
+[section:overload9 buffer (9 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -42915,7 +43224,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload10 buffer (10 of 30 overloads)]
+[section:overload10 buffer (10 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -42948,7 +43257,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload11 buffer (11 of 30 overloads)]
+[section:overload11 buffer (11 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -42980,7 +43289,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload12 buffer (12 of 30 overloads)]
+[section:overload12 buffer (12 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43013,7 +43322,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload13 buffer (13 of 30 overloads)]
+[section:overload13 buffer (13 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43045,7 +43354,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload14 buffer (14 of 30 overloads)]
+[section:overload14 buffer (14 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43078,7 +43387,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload15 buffer (15 of 30 overloads)]
+[section:overload15 buffer (15 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43110,7 +43419,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload16 buffer (16 of 30 overloads)]
+[section:overload16 buffer (16 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43143,7 +43452,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload17 buffer (17 of 30 overloads)]
+[section:overload17 buffer (17 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43175,7 +43484,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload18 buffer (18 of 30 overloads)]
+[section:overload18 buffer (18 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -43208,7 +43517,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload19 buffer (19 of 30 overloads)]
+[section:overload19 buffer (19 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43240,7 +43549,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload20 buffer (20 of 30 overloads)]
+[section:overload20 buffer (20 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43273,7 +43582,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload21 buffer (21 of 30 overloads)]
+[section:overload21 buffer (21 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43305,7 +43614,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload22 buffer (22 of 30 overloads)]
+[section:overload22 buffer (22 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -43338,7 +43647,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload23 buffer (23 of 30 overloads)]
+[section:overload23 buffer (23 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -43375,7 +43684,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload24 buffer (24 of 30 overloads)]
+[section:overload24 buffer (24 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -43413,7 +43722,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload25 buffer (25 of 30 overloads)]
+[section:overload25 buffer (25 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -43450,7 +43759,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload26 buffer (26 of 30 overloads)]
+[section:overload26 buffer (26 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -43488,7 +43797,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload27 buffer (27 of 30 overloads)]
+[section:overload27 buffer (27 of 32 overloads)]
 
 
 Create a new modifiable buffer that represents the given string. 
@@ -43519,7 +43828,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload28 buffer (28 of 30 overloads)]
+[section:overload28 buffer (28 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -43558,7 +43867,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload29 buffer (29 of 30 overloads)]
+[section:overload29 buffer (29 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -43589,7 +43898,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload30 buffer (30 of 30 overloads)]
+[section:overload30 buffer (30 of 32 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -43620,6 +43929,64 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 [heading Remarks]
       
 The buffer is invalidated by any non-const operation called on the given string object. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload31 buffer (31 of 32 overloads)]
+
+
+Create a new modifiable buffer that represents the given string\_view. 
+
+
+  template<
+      typename Elem,
+      typename Traits>
+  const_buffer buffer(
+      basic_string_view< Elem, Traits > data);
+
+
+
+[heading Return Value]
+      
+`mutable_buffer(data.size() ? &data[0] : 0, data.size() * sizeof(Elem))`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload32 buffer (32 of 32 overloads)]
+
+
+Create a new non-modifiable buffer that represents the given string. 
+
+
+  template<
+      typename Elem,
+      typename Traits>
+  const_buffer buffer(
+      basic_string_view< Elem, Traits > data,
+      std::size_t max_size_in_bytes);
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to: 
+
+   mutable_buffer(
+       data.size() ? &data[0] : 0,
+       min(data.size() * sizeof(Elem), max_size_in_bytes)); 
+
+
+
 
 
 
@@ -49314,7 +49681,9 @@ Typedef for the typical usage of timer. Uses a UTC clock.
 
      Constructor to set a particular expiry time as an absolute time. 
 
-     Constructor to set a particular expiry time relative to now. ]
+     Constructor to set a particular expiry time relative to now. 
+
+     Move-construct a basic_deadline_timer from another. ]
   ]
   
   [
@@ -49354,6 +49723,11 @@ Typedef for the typical usage of timer. Uses a UTC clock.
   [
     [[link asio.reference.basic_deadline_timer.get_io_service [*get_io_service]]]
     [(Deprecated: Use get_executor().) Get the io_context associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_deadline_timer.operator_eq_ [*operator=]]]
+    [Move-assign a basic_deadline_timer from another. ]
   ]
   
   [
@@ -57799,6 +58173,13 @@ The generic socket iostream type.
 
   [
 
+    [[link asio.reference.basic_socket_iostream.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.basic_socket_iostream.duration [*duration]]]
     [The duration type. ]
   
@@ -57815,6 +58196,13 @@ The generic socket iostream type.
 
     [[link asio.reference.basic_socket_iostream.endpoint_type [*endpoint_type]]]
     [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_iostream.protocol_type [*protocol_type]]]
+    [The protocol type. ]
   
   ]
 
@@ -57841,6 +58229,10 @@ The generic socket iostream type.
   [
     [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
+
+     Construct a basic_socket_iostream from the supplied socket. 
+
+     Move-construct a basic_socket_iostream from another. 
 
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
@@ -57882,6 +58274,11 @@ The generic socket iostream type.
   [
     [[link asio.reference.basic_socket_iostream.expiry [*expiry]]]
     [Get the stream's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_iostream.operator_eq_ [*operator=]]]
+    [Move-assign a basic_socket_iostream from another. ]
   ]
   
   [
@@ -62623,8 +63020,17 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__address.make_address.overload4 more...]]``
 
+  address ``[link asio.reference.ip__address.make_address.overload5 make_address]``(
+      string_view str);
+  ``  [''''&raquo;''' [link asio.reference.ip__address.make_address.overload5 more...]]``
 
-[section:overload1 ip::address::make_address (1 of 4 overloads)]
+  address ``[link asio.reference.ip__address.make_address.overload6 make_address]``(
+      string_view str,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ip__address.make_address.overload6 more...]]``
+
+
+[section:overload1 ip::address::make_address (1 of 6 overloads)]
 
 
 Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. 
@@ -62639,7 +63045,7 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
 
 
 
-[section:overload2 ip::address::make_address (2 of 4 overloads)]
+[section:overload2 ip::address::make_address (2 of 6 overloads)]
 
 
 Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. 
@@ -62655,7 +63061,7 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
 
 
 
-[section:overload3 ip::address::make_address (3 of 4 overloads)]
+[section:overload3 ip::address::make_address (3 of 6 overloads)]
 
 
 Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. 
@@ -62670,7 +63076,7 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
 
 
 
-[section:overload4 ip::address::make_address (4 of 4 overloads)]
+[section:overload4 ip::address::make_address (4 of 6 overloads)]
 
 
 Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. 
@@ -62678,6 +63084,37 @@ Create an address from an IPv4 address string in dotted decimal form, or from an
 
   address make_address(
       const std::string & str,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:overload5 ip::address::make_address (5 of 6 overloads)]
+
+
+Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. 
+
+
+  address make_address(
+      string_view str);
+
+
+
+[endsect]
+
+
+
+[section:overload6 ip::address::make_address (6 of 6 overloads)]
+
+
+Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. 
+
+
+  address make_address(
+      string_view str,
       asio::error_code & ec);
 
 
@@ -63637,17 +64074,26 @@ Create an IPv4 address from an IP address string in dotted decimal form.
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__address_v4.make_address_v4.overload6 more...]]``
 
+  address_v4 ``[link asio.reference.ip__address_v4.make_address_v4.overload7 make_address_v4]``(
+      string_view str);
+  ``  [''''&raquo;''' [link asio.reference.ip__address_v4.make_address_v4.overload7 more...]]``
+
+  address_v4 ``[link asio.reference.ip__address_v4.make_address_v4.overload8 make_address_v4]``(
+      string_view str,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ip__address_v4.make_address_v4.overload8 more...]]``
+
 
 Create an IPv4 address from a IPv4-mapped IPv6 address. 
 
 
-  address_v4 ``[link asio.reference.ip__address_v4.make_address_v4.overload7 make_address_v4]``(
+  address_v4 ``[link asio.reference.ip__address_v4.make_address_v4.overload9 make_address_v4]``(
       v4_mapped_t ,
       const address_v6 & v6_addr);
-  ``  [''''&raquo;''' [link asio.reference.ip__address_v4.make_address_v4.overload7 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ip__address_v4.make_address_v4.overload9 more...]]``
 
 
-[section:overload1 ip::address_v4::make_address_v4 (1 of 7 overloads)]
+[section:overload1 ip::address_v4::make_address_v4 (1 of 9 overloads)]
 
 
 Create an IPv4 address from raw bytes in network order. 
@@ -63662,7 +64108,7 @@ Create an IPv4 address from raw bytes in network order.
 
 
 
-[section:overload2 ip::address_v4::make_address_v4 (2 of 7 overloads)]
+[section:overload2 ip::address_v4::make_address_v4 (2 of 9 overloads)]
 
 
 Create an IPv4 address from an unsigned integer in host byte order. 
@@ -63677,7 +64123,7 @@ Create an IPv4 address from an unsigned integer in host byte order.
 
 
 
-[section:overload3 ip::address_v4::make_address_v4 (3 of 7 overloads)]
+[section:overload3 ip::address_v4::make_address_v4 (3 of 9 overloads)]
 
 
 Create an IPv4 address from an IP address string in dotted decimal form. 
@@ -63692,7 +64138,7 @@ Create an IPv4 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload4 ip::address_v4::make_address_v4 (4 of 7 overloads)]
+[section:overload4 ip::address_v4::make_address_v4 (4 of 9 overloads)]
 
 
 Create an IPv4 address from an IP address string in dotted decimal form. 
@@ -63708,7 +64154,7 @@ Create an IPv4 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload5 ip::address_v4::make_address_v4 (5 of 7 overloads)]
+[section:overload5 ip::address_v4::make_address_v4 (5 of 9 overloads)]
 
 
 Create an IPv4 address from an IP address string in dotted decimal form. 
@@ -63723,7 +64169,7 @@ Create an IPv4 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload6 ip::address_v4::make_address_v4 (6 of 7 overloads)]
+[section:overload6 ip::address_v4::make_address_v4 (6 of 9 overloads)]
 
 
 Create an IPv4 address from an IP address string in dotted decimal form. 
@@ -63739,7 +64185,38 @@ Create an IPv4 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload7 ip::address_v4::make_address_v4 (7 of 7 overloads)]
+[section:overload7 ip::address_v4::make_address_v4 (7 of 9 overloads)]
+
+
+Create an IPv4 address from an IP address string in dotted decimal form. 
+
+
+  address_v4 make_address_v4(
+      string_view str);
+
+
+
+[endsect]
+
+
+
+[section:overload8 ip::address_v4::make_address_v4 (8 of 9 overloads)]
+
+
+Create an IPv4 address from an IP address string in dotted decimal form. 
+
+
+  address_v4 make_address_v4(
+      string_view str,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:overload9 ip::address_v4::make_address_v4 (9 of 9 overloads)]
 
 
 Create an IPv4 address from a IPv4-mapped IPv6 address. 
@@ -65287,17 +65764,26 @@ Createan IPv6 address from an IP address string.
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__address_v6.make_address_v6.overload5 more...]]``
 
+  address_v6 ``[link asio.reference.ip__address_v6.make_address_v6.overload6 make_address_v6]``(
+      string_view str);
+  ``  [''''&raquo;''' [link asio.reference.ip__address_v6.make_address_v6.overload6 more...]]``
+
+  address_v6 ``[link asio.reference.ip__address_v6.make_address_v6.overload7 make_address_v6]``(
+      string_view str,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ip__address_v6.make_address_v6.overload7 more...]]``
+
 
 Create an IPv4-mapped IPv6 address from an IPv4 address. 
 
 
-  address_v6 ``[link asio.reference.ip__address_v6.make_address_v6.overload6 make_address_v6]``(
+  address_v6 ``[link asio.reference.ip__address_v6.make_address_v6.overload8 make_address_v6]``(
       v4_mapped_t ,
       const address_v4 & v4_addr);
-  ``  [''''&raquo;''' [link asio.reference.ip__address_v6.make_address_v6.overload6 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.ip__address_v6.make_address_v6.overload8 more...]]``
 
 
-[section:overload1 ip::address_v6::make_address_v6 (1 of 6 overloads)]
+[section:overload1 ip::address_v6::make_address_v6 (1 of 8 overloads)]
 
 
 Create an IPv6 address from raw bytes and scope ID. 
@@ -65313,7 +65799,7 @@ Create an IPv6 address from raw bytes and scope ID.
 
 
 
-[section:overload2 ip::address_v6::make_address_v6 (2 of 6 overloads)]
+[section:overload2 ip::address_v6::make_address_v6 (2 of 8 overloads)]
 
 
 Create an IPv6 address from an IP address string. 
@@ -65328,7 +65814,7 @@ Create an IPv6 address from an IP address string.
 
 
 
-[section:overload3 ip::address_v6::make_address_v6 (3 of 6 overloads)]
+[section:overload3 ip::address_v6::make_address_v6 (3 of 8 overloads)]
 
 
 Create an IPv6 address from an IP address string. 
@@ -65344,7 +65830,7 @@ Create an IPv6 address from an IP address string.
 
 
 
-[section:overload4 ip::address_v6::make_address_v6 (4 of 6 overloads)]
+[section:overload4 ip::address_v6::make_address_v6 (4 of 8 overloads)]
 
 
 Createan IPv6 address from an IP address string. 
@@ -65359,7 +65845,7 @@ Createan IPv6 address from an IP address string.
 
 
 
-[section:overload5 ip::address_v6::make_address_v6 (5 of 6 overloads)]
+[section:overload5 ip::address_v6::make_address_v6 (5 of 8 overloads)]
 
 
 Create an IPv6 address from an IP address string. 
@@ -65375,7 +65861,38 @@ Create an IPv6 address from an IP address string.
 
 
 
-[section:overload6 ip::address_v6::make_address_v6 (6 of 6 overloads)]
+[section:overload6 ip::address_v6::make_address_v6 (6 of 8 overloads)]
+
+
+Create an IPv6 address from an IP address string. 
+
+
+  address_v6 make_address_v6(
+      string_view str);
+
+
+
+[endsect]
+
+
+
+[section:overload7 ip::address_v6::make_address_v6 (7 of 8 overloads)]
+
+
+Create an IPv6 address from an IP address string. 
+
+
+  address_v6 make_address_v6(
+      string_view str,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:overload8 ip::address_v6::make_address_v6 (8 of 8 overloads)]
 
 
 Create an IPv4-mapped IPv6 address from an IPv4 address. 
@@ -70065,16 +70582,16 @@ Asynchronously perform forward resolution of a query to a list of entries.
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.ip__basic_resolver.async_resolve.overload2 async_resolve]``(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       ResolveHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.async_resolve.overload2 more...]]``
 
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.ip__basic_resolver.async_resolve.overload3 async_resolve]``(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       ResolveHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.async_resolve.overload3 more...]]``
@@ -70083,8 +70600,8 @@ Asynchronously perform forward resolution of a query to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.ip__basic_resolver.async_resolve.overload4 async_resolve]``(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       ResolveHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.async_resolve.overload4 more...]]``
 
@@ -70092,8 +70609,8 @@ Asynchronously perform forward resolution of a query to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.ip__basic_resolver.async_resolve.overload5 async_resolve]``(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       ResolveHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.async_resolve.overload5 more...]]``
@@ -70160,8 +70677,8 @@ Asynchronously perform forward resolution of a query to a list of entries.
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_resolve(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       ResolveHandler && handler);
 
 
@@ -70211,8 +70728,8 @@ Asynchronously perform forward resolution of a query to a list of entries.
   template<
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_resolve(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       ResolveHandler && handler);
 
@@ -70266,8 +70783,8 @@ Asynchronously perform forward resolution of a query to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_resolve(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       ResolveHandler && handler);
 
 
@@ -70320,8 +70837,8 @@ Asynchronously perform forward resolution of a query to a list of entries.
       typename ``[link asio.reference.ResolveHandler ResolveHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_resolve(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       ResolveHandler && handler);
 
@@ -71131,53 +71648,53 @@ Perform forward resolution of a query to a list of entries.
 
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload3 resolve]``(
-      const std::string & host,
-      const std::string & service);
+      string_view host,
+      string_view service);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload3 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload4 resolve]``(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload4 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload5 resolve]``(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload5 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload6 resolve]``(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload6 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload7 resolve]``(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service);
+      string_view host,
+      string_view service);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload7 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload8 resolve]``(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload8 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload9 resolve]``(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload9 more...]]``
 
   results_type ``[link asio.reference.ip__basic_resolver.resolve.overload10 resolve]``(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver.resolve.overload10 more...]]``
@@ -71284,8 +71801,8 @@ Perform forward resolution of a query to a list of entries.
 
 
   results_type resolve(
-      const std::string & host,
-      const std::string & service);
+      string_view host,
+      string_view service);
 
 
 This function is used to resolve host and service names into a list of endpoint entries.
@@ -71336,8 +71853,8 @@ Perform forward resolution of a query to a list of entries.
 
 
   results_type resolve(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       asio::error_code & ec);
 
 
@@ -71381,8 +71898,8 @@ Perform forward resolution of a query to a list of entries.
 
 
   results_type resolve(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags);
 
 
@@ -71436,8 +71953,8 @@ Perform forward resolution of a query to a list of entries.
 
 
   results_type resolve(
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       asio::error_code & ec);
 
@@ -71485,8 +72002,8 @@ Perform forward resolution of a query to a list of entries.
 
   results_type resolve(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service);
+      string_view host,
+      string_view service);
 
 
 This function is used to resolve host and service names into a list of endpoint entries.
@@ -71540,8 +72057,8 @@ Perform forward resolution of a query to a list of entries.
 
   results_type resolve(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       asio::error_code & ec);
 
 
@@ -71588,8 +72105,8 @@ Perform forward resolution of a query to a list of entries.
 
   results_type resolve(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags);
 
 
@@ -71646,8 +72163,8 @@ Perform forward resolution of a query to a list of entries.
 
   results_type resolve(
       const protocol_type & protocol,
-      const std::string & host,
-      const std::string & service,
+      string_view host,
+      string_view service,
       resolver_base::flags resolve_flags,
       asio::error_code & ec);
 
@@ -72162,8 +72679,8 @@ Construct with specified endpoint, host name and service name.
 
   ``[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry.overload2 basic_resolver_entry]``(
       const endpoint_type & ep,
-      const std::string & host,
-      const std::string & service);
+      string_view host,
+      string_view service);
   ``  [''''&raquo;''' [link asio.reference.ip__basic_resolver_entry.basic_resolver_entry.overload2 more...]]``
 
 
@@ -72189,8 +72706,8 @@ Construct with specified endpoint, host name and service name.
 
   basic_resolver_entry(
       const endpoint_type & ep,
-      const std::string & host,
-      const std::string & service);
+      string_view host,
+      string_view service);
 
 
 
@@ -76495,9 +77012,7 @@ Represents an IPv4 network.
 
   [
     [[link asio.reference.ip__network_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from a string containing IP address and prefix length. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. ]
+    [Create an IPv4 network from a string containing IP address and prefix length. ]
   ]
   
 ]
@@ -76614,10 +77129,6 @@ Create an IPv4 network from a string containing IP address and prefix length.
       const char * str);
   ``  [''''&raquo;''' [link asio.reference.ip__network_v4.make_network_v4.overload1 more...]]``
 
-
-Create an IPv4 address from an IP address string in dotted decimal form. 
-
-
   network_v4 ``[link asio.reference.ip__network_v4.make_network_v4.overload2 make_network_v4]``(
       const char * str,
       asio::error_code & ec);
@@ -76632,8 +77143,17 @@ Create an IPv4 address from an IP address string in dotted decimal form.
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__network_v4.make_network_v4.overload4 more...]]``
 
+  network_v4 ``[link asio.reference.ip__network_v4.make_network_v4.overload5 make_network_v4]``(
+      string_view str);
+  ``  [''''&raquo;''' [link asio.reference.ip__network_v4.make_network_v4.overload5 more...]]``
 
-[section:overload1 ip::network_v4::make_network_v4 (1 of 4 overloads)]
+  network_v4 ``[link asio.reference.ip__network_v4.make_network_v4.overload6 make_network_v4]``(
+      string_view str,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ip__network_v4.make_network_v4.overload6 more...]]``
+
+
+[section:overload1 ip::network_v4::make_network_v4 (1 of 6 overloads)]
 
 
 Create an IPv4 network from a string containing IP address and prefix length. 
@@ -76648,10 +77168,10 @@ Create an IPv4 network from a string containing IP address and prefix length.
 
 
 
-[section:overload2 ip::network_v4::make_network_v4 (2 of 4 overloads)]
+[section:overload2 ip::network_v4::make_network_v4 (2 of 6 overloads)]
 
 
-Create an IPv4 address from an IP address string in dotted decimal form. 
+Create an IPv4 network from a string containing IP address and prefix length. 
 
 
   network_v4 make_network_v4(
@@ -76664,10 +77184,10 @@ Create an IPv4 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload3 ip::network_v4::make_network_v4 (3 of 4 overloads)]
+[section:overload3 ip::network_v4::make_network_v4 (3 of 6 overloads)]
 
 
-Create an IPv4 address from an IP address string in dotted decimal form. 
+Create an IPv4 network from a string containing IP address and prefix length. 
 
 
   network_v4 make_network_v4(
@@ -76679,14 +77199,45 @@ Create an IPv4 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload4 ip::network_v4::make_network_v4 (4 of 4 overloads)]
+[section:overload4 ip::network_v4::make_network_v4 (4 of 6 overloads)]
 
 
-Create an IPv4 address from an IP address string in dotted decimal form. 
+Create an IPv4 network from a string containing IP address and prefix length. 
 
 
   network_v4 make_network_v4(
       const std::string & str,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:overload5 ip::network_v4::make_network_v4 (5 of 6 overloads)]
+
+
+Create an IPv4 network from a string containing IP address and prefix length. 
+
+
+  network_v4 make_network_v4(
+      string_view str);
+
+
+
+[endsect]
+
+
+
+[section:overload6 ip::network_v4::make_network_v4 (6 of 6 overloads)]
+
+
+Create an IPv4 network from a string containing IP address and prefix length. 
+
+
+  network_v4 make_network_v4(
+      string_view str,
       asio::error_code & ec);
 
 
@@ -77033,9 +77584,7 @@ Represents an IPv6 network.
 
   [
     [[link asio.reference.ip__network_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from a string containing IP address and prefix length. 
-
-     Create an IPv6 address from an IP address string in dotted decimal form. ]
+    [Create an IPv6 network from a string containing IP address and prefix length. ]
   ]
   
 ]
@@ -77138,10 +77687,6 @@ Create an IPv6 network from a string containing IP address and prefix length.
       const char * str);
   ``  [''''&raquo;''' [link asio.reference.ip__network_v6.make_network_v6.overload1 more...]]``
 
-
-Create an IPv6 address from an IP address string in dotted decimal form. 
-
-
   network_v6 ``[link asio.reference.ip__network_v6.make_network_v6.overload2 make_network_v6]``(
       const char * str,
       asio::error_code & ec);
@@ -77156,8 +77701,17 @@ Create an IPv6 address from an IP address string in dotted decimal form.
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.ip__network_v6.make_network_v6.overload4 more...]]``
 
+  network_v6 ``[link asio.reference.ip__network_v6.make_network_v6.overload5 make_network_v6]``(
+      string_view str);
+  ``  [''''&raquo;''' [link asio.reference.ip__network_v6.make_network_v6.overload5 more...]]``
 
-[section:overload1 ip::network_v6::make_network_v6 (1 of 4 overloads)]
+  network_v6 ``[link asio.reference.ip__network_v6.make_network_v6.overload6 make_network_v6]``(
+      string_view str,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.ip__network_v6.make_network_v6.overload6 more...]]``
+
+
+[section:overload1 ip::network_v6::make_network_v6 (1 of 6 overloads)]
 
 
 Create an IPv6 network from a string containing IP address and prefix length. 
@@ -77172,10 +77726,10 @@ Create an IPv6 network from a string containing IP address and prefix length.
 
 
 
-[section:overload2 ip::network_v6::make_network_v6 (2 of 4 overloads)]
+[section:overload2 ip::network_v6::make_network_v6 (2 of 6 overloads)]
 
 
-Create an IPv6 address from an IP address string in dotted decimal form. 
+Create an IPv6 network from a string containing IP address and prefix length. 
 
 
   network_v6 make_network_v6(
@@ -77188,10 +77742,10 @@ Create an IPv6 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload3 ip::network_v6::make_network_v6 (3 of 4 overloads)]
+[section:overload3 ip::network_v6::make_network_v6 (3 of 6 overloads)]
 
 
-Create an IPv6 address from an IP address string in dotted decimal form. 
+Create an IPv6 network from a string containing IP address and prefix length. 
 
 
   network_v6 make_network_v6(
@@ -77203,14 +77757,45 @@ Create an IPv6 address from an IP address string in dotted decimal form.
 
 
 
-[section:overload4 ip::network_v6::make_network_v6 (4 of 4 overloads)]
+[section:overload4 ip::network_v6::make_network_v6 (4 of 6 overloads)]
 
 
-Create an IPv6 address from an IP address string in dotted decimal form. 
+Create an IPv6 network from a string containing IP address and prefix length. 
 
 
   network_v6 make_network_v6(
       const std::string & str,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:overload5 ip::network_v6::make_network_v6 (5 of 6 overloads)]
+
+
+Create an IPv6 network from a string containing IP address and prefix length. 
+
+
+  network_v6 make_network_v6(
+      string_view str);
+
+
+
+[endsect]
+
+
+
+[section:overload6 ip::network_v6::make_network_v6 (6 of 6 overloads)]
+
+
+Create an IPv6 network from a string containing IP address and prefix length. 
+
+
+  network_v6 make_network_v6(
+      string_view str,
       asio::error_code & ec);
 
 
@@ -78567,6 +79152,13 @@ The TCP iostream type.
 
   [
 
+    [[link asio.reference.basic_socket_iostream.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.basic_socket_iostream.duration [*duration]]]
     [The duration type. ]
   
@@ -78583,6 +79175,13 @@ The TCP iostream type.
 
     [[link asio.reference.basic_socket_iostream.endpoint_type [*endpoint_type]]]
     [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_iostream.protocol_type [*protocol_type]]]
+    [The protocol type. ]
   
   ]
 
@@ -78609,6 +79208,10 @@ The TCP iostream type.
   [
     [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
+
+     Construct a basic_socket_iostream from the supplied socket. 
+
+     Move-construct a basic_socket_iostream from another. 
 
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
@@ -78650,6 +79253,11 @@ The TCP iostream type.
   [
     [[link asio.reference.basic_socket_iostream.expiry [*expiry]]]
     [Get the stream's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_iostream.operator_eq_ [*operator=]]]
+    [Move-assign a basic_socket_iostream from another. ]
   ]
   
   [
@@ -80583,7 +81191,7 @@ Trait to determine whether a type satisfies the ConstBufferSequence requirements
 
 [endsect]
 
-[section:is_dynamic_buffer_sequence is_dynamic_buffer_sequence]
+[section:is_dynamic_buffer is_dynamic_buffer]
 
 
 Trait to determine whether a type satisfies the DynamicBuffer requirements. 
@@ -80591,7 +81199,7 @@ Trait to determine whether a type satisfies the DynamicBuffer requirements.
 
   template<
       typename T>
-  struct is_dynamic_buffer_sequence
+  struct is_dynamic_buffer
 
 
 [heading Requirements]
@@ -82837,6 +83445,13 @@ The UNIX domain iostream type.
 
   [
 
+    [[link asio.reference.basic_socket_iostream.clock_type [*clock_type]]]
+    [The clock type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.basic_socket_iostream.duration [*duration]]]
     [The duration type. ]
   
@@ -82853,6 +83468,13 @@ The UNIX domain iostream type.
 
     [[link asio.reference.basic_socket_iostream.endpoint_type [*endpoint_type]]]
     [The endpoint type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.basic_socket_iostream.protocol_type [*protocol_type]]]
+    [The protocol type. ]
   
   ]
 
@@ -82879,6 +83501,10 @@ The UNIX domain iostream type.
   [
     [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
     [Construct a basic_socket_iostream without establishing a connection. 
+
+     Construct a basic_socket_iostream from the supplied socket. 
+
+     Move-construct a basic_socket_iostream from another. 
 
      Establish a connection to an endpoint corresponding to a resolver query. ]
   ]
@@ -82920,6 +83546,11 @@ The UNIX domain iostream type.
   [
     [[link asio.reference.basic_socket_iostream.expiry [*expiry]]]
     [Get the stream's expiry time as an absolute time. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_socket_iostream.operator_eq_ [*operator=]]]
+    [Move-assign a basic_socket_iostream from another. ]
   ]
   
   [
@@ -88558,7 +89189,7 @@ Attempt to read a certain amount of data from a stream before returning.
   std::size_t ``[link asio.reference.read.overload5 read]``(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload5 more...]]``
 
   template<
@@ -88568,7 +89199,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload6 more...]]``
 
   template<
@@ -88579,7 +89210,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload7 more...]]``
 
   template<
@@ -88591,7 +89222,7 @@ Attempt to read a certain amount of data from a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload8 more...]]``
 
   template<
@@ -88956,7 +89587,7 @@ Attempt to read a certain amount of data from a stream before returning.
   std::size_t read(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -89028,7 +89659,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -89093,7 +89724,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -89167,7 +89798,7 @@ Attempt to read a certain amount of data from a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -90198,22 +90829,20 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
-      typename Allocator>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload3 read_until]``(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      const std::basic_string< char, std::char_traits< char >, Allocator > & delim);
+      string_view delim);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload3 more...]]``
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
-      typename Allocator>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t ``[link asio.reference.read_until.overload4 read_until]``(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      const std::basic_string< char, std::char_traits< char >, Allocator > & delim,
+      string_view delim,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload4 more...]]``
 
@@ -90284,7 +90913,7 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
   std::size_t ``[link asio.reference.read_until.overload11 read_until]``(
       SyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
-      const std::string & delim);
+      string_view delim);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload11 more...]]``
 
   template<
@@ -90293,7 +90922,7 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
   std::size_t ``[link asio.reference.read_until.overload12 read_until]``(
       SyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
-      const std::string & delim,
+      string_view delim,
       asio::error_code & ec);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload12 more...]]``
 
@@ -90339,25 +90968,6 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
       typename enable_if< is_match_condition< MatchCondition >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read_until.overload16 more...]]``
 
-  template<
-      typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
-  std::size_t ``[link asio.reference.read_until.overload17 read_until]``(
-      SyncReadStream & s,
-      DynamicBuffer && buffers,
-      const std::string & delim);
-  ``  [''''&raquo;''' [link asio.reference.read_until.overload17 more...]]``
-
-  template<
-      typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
-  std::size_t ``[link asio.reference.read_until.overload18 read_until]``(
-      SyncReadStream & s,
-      DynamicBuffer && buffers,
-      const std::string & delim,
-      asio::error_code & ec);
-  ``  [''''&raquo;''' [link asio.reference.read_until.overload18 more...]]``
-
 [heading Requirements]
 
 ['Header: ][^asio/read_until.hpp]
@@ -90365,7 +90975,7 @@ Read data into a dynamic buffer sequence, or into a streambuf, until it contains
 ['Convenience header: ][^asio.hpp]
 
 
-[section:overload1 read_until (1 of 18 overloads)]
+[section:overload1 read_until (1 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until it contains a specified delimiter. 
@@ -90460,7 +91070,7 @@ This data may be the start of a new line, to be extracted by a subsequent `read_
 
 
 
-[section:overload2 read_until (2 of 18 overloads)]
+[section:overload2 read_until (2 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until it contains a specified delimiter. 
@@ -90519,7 +91129,7 @@ After a successful read\_until operation, the dynamic buffer sequence may contai
 
 
 
-[section:overload3 read_until (3 of 18 overloads)]
+[section:overload3 read_until (3 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until it contains a specified delimiter. 
@@ -90527,12 +91137,11 @@ Read data into a dynamic buffer sequence until it contains a specified delimiter
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
-      typename Allocator>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      const std::basic_string< char, std::char_traits< char >, Allocator > & delim);
+      string_view delim);
 
 
 This function is used to read data into the specified dynamic buffer sequence until the dynamic buffer sequence's get area contains the specified delimiter. The call will block until one of the following conditions is true:
@@ -90605,7 +91214,7 @@ This data may be the start of a new line, to be extracted by a subsequent `read_
 
 
 
-[section:overload4 read_until (4 of 18 overloads)]
+[section:overload4 read_until (4 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until it contains a specified delimiter. 
@@ -90613,12 +91222,11 @@ Read data into a dynamic buffer sequence until it contains a specified delimiter
 
   template<
       typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``,
-      typename Allocator>
+      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
   std::size_t read_until(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      const std::basic_string< char, std::char_traits< char >, Allocator > & delim,
+      string_view delim,
       asio::error_code & ec);
 
 
@@ -90665,7 +91273,7 @@ After a successful read\_until operation, the dynamic buffer sequence may contai
 
 
 
-[section:overload5 read_until (5 of 18 overloads)]
+[section:overload5 read_until (5 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until some part of the data it contains matches a regular expression. 
@@ -90760,7 +91368,7 @@ This data may be the start of a new line, to be extracted by a subsequent `read_
 
 
 
-[section:overload6 read_until (6 of 18 overloads)]
+[section:overload6 read_until (6 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until some part of the data it contains matches a regular expression. 
@@ -90819,7 +91427,7 @@ After a successful read\_until operation, the dynamic buffer sequence may contai
 
 
 
-[section:overload7 read_until (7 of 18 overloads)]
+[section:overload7 read_until (7 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until a function object indicates a match. 
@@ -90871,7 +91479,7 @@ The iterator parameters `begin` and `end` define the range of bytes to be scanne
 
 [heading Return Value]
       
-The number of bytes in the dynamic\_buffer\_sequence's get area that have been fully consumed by the match function.
+The number of bytes in the dynamic\_buffer's get area that have been fully consumed by the match function.
 
 
 [heading Exceptions]
@@ -90952,7 +91560,7 @@ To read data into a `std::string` until a matching character is found:
 
 
 
-[section:overload8 read_until (8 of 18 overloads)]
+[section:overload8 read_until (8 of 16 overloads)]
 
 
 Read data into a dynamic buffer sequence until a function object indicates a match. 
@@ -91023,7 +91631,7 @@ The default implementation of the `is_match_condition` type trait evaluates to t
 
 
 
-[section:overload9 read_until (9 of 18 overloads)]
+[section:overload9 read_until (9 of 16 overloads)]
 
 
 Read data into a streambuf until it contains a specified delimiter. 
@@ -91118,7 +91726,7 @@ This data may be the start of a new line, to be extracted by a subsequent `read_
 
 
 
-[section:overload10 read_until (10 of 18 overloads)]
+[section:overload10 read_until (10 of 16 overloads)]
 
 
 Read data into a streambuf until it contains a specified delimiter. 
@@ -91177,7 +91785,7 @@ After a successful read\_until operation, the streambuf may contain additional d
 
 
 
-[section:overload11 read_until (11 of 18 overloads)]
+[section:overload11 read_until (11 of 16 overloads)]
 
 
 Read data into a streambuf until it contains a specified delimiter. 
@@ -91189,7 +91797,7 @@ Read data into a streambuf until it contains a specified delimiter.
   std::size_t read_until(
       SyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
-      const std::string & delim);
+      string_view delim);
 
 
 This function is used to read data into the specified streambuf until the streambuf's get area contains the specified delimiter. The call will block until one of the following conditions is true:
@@ -91272,7 +91880,7 @@ This data may be the start of a new line, to be extracted by a subsequent `read_
 
 
 
-[section:overload12 read_until (12 of 18 overloads)]
+[section:overload12 read_until (12 of 16 overloads)]
 
 
 Read data into a streambuf until it contains a specified delimiter. 
@@ -91284,7 +91892,7 @@ Read data into a streambuf until it contains a specified delimiter.
   std::size_t read_until(
       SyncReadStream & s,
       asio::basic_streambuf< Allocator > & b,
-      const std::string & delim,
+      string_view delim,
       asio::error_code & ec);
 
 
@@ -91331,7 +91939,7 @@ After a successful read\_until operation, the streambuf may contain additional d
 
 
 
-[section:overload13 read_until (13 of 18 overloads)]
+[section:overload13 read_until (13 of 16 overloads)]
 
 
 Read data into a streambuf until some part of the data it contains matches a regular expression. 
@@ -91426,7 +92034,7 @@ This data may be the start of a new line, to be extracted by a subsequent `read_
 
 
 
-[section:overload14 read_until (14 of 18 overloads)]
+[section:overload14 read_until (14 of 16 overloads)]
 
 
 Read data into a streambuf until some part of the data it contains matches a regular expression. 
@@ -91485,7 +92093,7 @@ After a successful read\_until operation, the streambuf may contain additional d
 
 
 
-[section:overload15 read_until (15 of 18 overloads)]
+[section:overload15 read_until (15 of 16 overloads)]
 
 
 Read data into a streambuf until a function object indicates a match. 
@@ -91618,7 +92226,7 @@ To read data into a streambuf until a matching character is found:
 
 
 
-[section:overload16 read_until (16 of 18 overloads)]
+[section:overload16 read_until (16 of 16 overloads)]
 
 
 Read data into a streambuf until a function object indicates a match. 
@@ -91682,43 +92290,6 @@ After a successful read\_until operation, the streambuf may contain additional d
 
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects. 
 
-
-
-
-[endsect]
-
-
-
-[section:overload17 read_until (17 of 18 overloads)]
-
-
-
-  template<
-      typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
-  std::size_t read_until(
-      SyncReadStream & s,
-      DynamicBuffer && buffers,
-      const std::string & delim);
-
-
-
-[endsect]
-
-
-
-[section:overload18 read_until (18 of 18 overloads)]
-
-
-
-  template<
-      typename ``[link asio.reference.SyncReadStream SyncReadStream]``,
-      typename ``[link asio.reference.DynamicBuffer DynamicBuffer]``>
-  std::size_t read_until(
-      SyncReadStream & s,
-      DynamicBuffer && buffers,
-      const std::string & delim,
-      asio::error_code & ec);
 
 
 
@@ -110569,7 +111140,7 @@ Write a certain amount of data to a stream before returning.
   std::size_t ``[link asio.reference.write.overload5 write]``(
       SyncWriteStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload5 more...]]``
 
   template<
@@ -110579,7 +111150,7 @@ Write a certain amount of data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload6 more...]]``
 
   template<
@@ -110590,7 +111161,7 @@ Write a certain amount of data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload7 more...]]``
 
   template<
@@ -110602,7 +111173,7 @@ Write a certain amount of data to a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload8 more...]]``
 
   template<
@@ -110967,7 +111538,7 @@ Write all of the supplied data to a stream before returning.
   std::size_t write(
       SyncWriteStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -111039,7 +111610,7 @@ Write all of the supplied data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -111104,7 +111675,7 @@ Write a certain amount of data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -111178,7 +111749,7 @@ Write a certain amount of data to a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer_sequence< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
