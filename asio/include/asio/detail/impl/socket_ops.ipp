@@ -3327,6 +3327,38 @@ asio::error_code getaddrinfo(const char* host,
   return ec = translate_addrinfo_error(error);
 #else
   int error = ::getaddrinfo(host, service, &hints, result);
+  
+#ifdef __APPLE__
+  // fix Apple's broken `getaddrinfo()` 
+  // which always returns port number 0 if input service is numeric
+  if (error == 0) {
+    // if service is numeric, the port number should be corrected manually after `getaddrinfo()` call
+    if (const u_short_type port = host_to_network_short(::std::atoi(service))) {
+      for (const addrinfo* addr=*result; addr != nullptr; addr=addr->ai_next) {
+        ::in_port_t* in_port = nullptr;
+        switch (addr->ai_family) {
+          case AF_INET: {
+            in_port = &(reinterpret_cast<sockaddr_in*>(addr->ai_addr)->sin_port);
+            break;
+          }
+          case AF_INET6: {
+            in_port = &(reinterpret_cast<sockaddr_in6*>(addr->ai_addr)->sin6_port);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+        if (in_port && *in_port == 0) {
+          *in_port = port;
+        }
+      }
+    }
+  }
+
+#endif
+
+  
   return ec = translate_addrinfo_error(error);
 #endif
 }
