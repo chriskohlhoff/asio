@@ -65,7 +65,7 @@ public:
   }
 
   template <typename U, typename Buffer>
-  static asio::const_buffer read(U &stream, Buffer &buffer, asio::error_code &ec, typename std::enable_if< detect_receive<U>::value, bool>::type = 0)
+  static asio::const_buffer read(U &stream, Buffer &buffer, asio::error_code &ec, typename std::enable_if< !detect_read_some<U>::value, bool>::type = 0)
   {
     return asio::buffer(buffer, stream.receive(buffer, 0, ec));
   }
@@ -78,19 +78,19 @@ public:
   }
 
   template <typename U, typename Buffer>
-  static size_t write(U &stream, const Buffer &buffer, asio::error_code &ec, typename std::enable_if< detect_send<U>::value, bool>::type = 0)
+  static size_t write(U &stream, const Buffer &buffer, asio::error_code &ec, typename std::enable_if< !detect_write_some<U>::value, bool>::type = 0)
   {
     return stream.send(buffer, 0, ec);
   }
 
   template <typename U, typename Buffer, typename ReadHandler>
-  static void async_read_some(U &stream, const Buffer &buffer, ReadHandler &rh,  typename std::enable_if< detect_async_read_some<U>::value, bool>::type = 0)
+  static void async_read_some(U &stream, const Buffer &buffer, const ReadHandler &rh, typename std::enable_if< detect_async_read_some<U>::value, bool>::type = 0)
   {
     stream.async_read_some(buffer, rh);
   }
 
   template <typename U, typename Buffer, typename ReadHandler>
-  static void async_read_some(U &stream, const Buffer &buffer, ReadHandler rh, typename std::enable_if< detect_async_receive<U>::value, bool>::type = 0)
+  static void async_read_some(U &stream, const Buffer &buffer, const ReadHandler &rh, typename std::enable_if< !detect_async_read_some<U>::value, bool>::type = 0)
   {
     stream.async_receive(buffer, rh);
   }
@@ -102,7 +102,7 @@ public:
   }
 
   template <typename U, typename Buffer, typename WriteHandler>
-  static void async_write(U &stream, const Buffer &buffer, const WriteHandler &wh, typename std::enable_if< detect_async_send<U>::value, bool>::type = 0)
+  static void async_write(U &stream, const Buffer &buffer, const WriteHandler &wh, typename std::enable_if< !detect_async_write_some<U>::value, bool>::type = 0)
   {
     stream.async_send(buffer, 0, wh);
   }
