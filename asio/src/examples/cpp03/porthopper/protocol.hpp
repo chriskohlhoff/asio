@@ -16,7 +16,7 @@
 #include <cstring>
 #include <iomanip>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 // This request is sent by the client to the server over a TCP connection.
 // The client uses it to perform three functions:
@@ -27,7 +27,7 @@ class control_request
 {
 public:
   // Construct an empty request. Used when receiving.
-  control_request()
+  control_request() : data_(control_request_size, '\0')
   {
   }
 
@@ -53,7 +53,7 @@ public:
   // Get the old port. Returns 0 for start requests.
   unsigned short old_port() const
   {
-    std::istrstream is(data_, encoded_port_size);
+    std::istringstream is(data_);
     unsigned short port = 0;
     is >> std::setw(encoded_port_size) >> std::hex >> port;
     return port;
@@ -62,8 +62,9 @@ public:
   // Get the new port. Returns 0 for stop requests.
   unsigned short new_port() const
   {
-    std::istrstream is(data_ + encoded_port_size, encoded_port_size);
+    std::istringstream is(data_);
     unsigned short port = 0;
+	is.ignore(encoded_port_size);
     is >> std::setw(encoded_port_size) >> std::hex >> port;
     return port;
   }
@@ -80,10 +81,12 @@ private:
   // Construct with specified old and new ports.
   control_request(unsigned short old_port_number,
       unsigned short new_port_number)
+	  : data_(control_request_size, '\0')
   {
-    std::ostrstream os(data_, control_request_size);
+    std::ostringstream os;
     os << std::setw(encoded_port_size) << std::hex << old_port_number;
     os << std::setw(encoded_port_size) << std::hex << new_port_number;
+	data_ = os.str();
   }
 
   // The length in bytes of a control_request and its components.
@@ -94,7 +97,7 @@ private:
   };
 
   // The encoded request data.
-  char data_[control_request_size];
+  std::string data_;
 };
 
 // This frame is sent from the server to subscribed clients over UDP.
@@ -105,23 +108,25 @@ public:
   enum { payload_size = 32 };
 
   // Construct an empty frame. Used when receiving.
-  frame()
+  frame() : data_(frame_size, '\0')
   {
   }
 
   // Construct a frame with specified frame number and payload.
   frame(unsigned long frame_number, const std::string& payload_data)
+    : data_(frame_size, '\0')
   {
-    std::ostrstream os(data_, frame_size);
+    std::ostringstream os;
     os << std::setw(encoded_number_size) << std::hex << frame_number;
     os << std::setw(payload_size)
       << std::setfill(' ') << payload_data.substr(0, payload_size);
+	data_ = os.str();
   }
 
   // Get the frame number.
   unsigned long number() const
   {
-    std::istrstream is(data_, encoded_number_size);
+    std::istringstream is(data_);
     unsigned long frame_number = 0;
     is >> std::setw(encoded_number_size) >> std::hex >> frame_number;
     return frame_number;
@@ -130,7 +135,7 @@ public:
   // Get the payload data.
   const std::string payload() const
   {
-    return std::string(data_ + encoded_number_size, payload_size);
+    return std::string(data_.data() + encoded_number_size, payload_size);
   }
 
   // Obtain buffers for reading from or writing to a socket.
@@ -150,7 +155,7 @@ private:
   };
 
   // The encoded frame data.
-  char data_[frame_size];
+  std::string data_;
 };
 
 #endif // PORTHOPPER_PROTOCOL_HPP

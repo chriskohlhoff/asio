@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+# include <winsock2.h> // need to include this before openssl
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #include <openssl/conf.h>
 #include <openssl/ssl.h>
 #if !defined(OPENSSL_NO_ENGINE)
