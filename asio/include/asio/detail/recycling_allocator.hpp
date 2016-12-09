@@ -29,6 +29,8 @@ template <typename T>
 class recycling_allocator
 {
 public:
+  typedef T value_type;
+
   template <typename U>
   struct rebind
   {
@@ -62,6 +64,8 @@ template <>
 class recycling_allocator<void>
 {
 public:
+  typedef void value_type;
+
   template <typename U>
   struct rebind
   {

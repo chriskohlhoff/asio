@@ -132,7 +132,8 @@ class executor::impl
   : public executor::impl_base
 {
 public:
-  typedef typename Allocator::template rebind<impl>::other allocator_type;
+  typedef typename std::allocator_traits<Allocator>::
+    template rebind_alloc<impl> allocator_type;
 
   static impl_base* create(const Executor& e, Allocator a = Allocator())
   {
