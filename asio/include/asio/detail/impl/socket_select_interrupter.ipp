@@ -159,6 +159,8 @@ bool socket_select_interrupter::reset()
   bool was_interrupted = (bytes_read > 0);
   while (bytes_read == sizeof(data))
     bytes_read = socket_ops::recv(read_descriptor_, &b, 1, 0, ec);
+  if (ec)
+    recreate();
   return was_interrupted;
 }
 
