@@ -20,6 +20,8 @@
 #if !defined(ASIO_HAS_THREADS) \
   || defined(ASIO_DISABLE_FENCED_BLOCK)
 # include "asio/detail/null_fenced_block.hpp"
+#elif defined(ASIO_HAS_STD_ATOMIC)
+# include "asio/detail/std_fenced_block.hpp"
 #elif defined(__MACH__) && defined(__APPLE__)
 # include "asio/detail/macos_fenced_block.hpp"
 #elif defined(__sun)
@@ -48,6 +50,8 @@ namespace detail {
 #if !defined(ASIO_HAS_THREADS) \
   || defined(ASIO_DISABLE_FENCED_BLOCK)
 typedef null_fenced_block fenced_block;
+#elif defined(ASIO_HAS_STD_ATOMIC)
+typedef std_fenced_block fenced_block;
 #elif defined(__MACH__) && defined(__APPLE__)
 typedef macos_fenced_block fenced_block;
 #elif defined(__sun)

@@ -211,6 +211,7 @@ nobase_include_HEADERS = \
 	asio/detail/solaris_fenced_block.hpp \
 	asio/detail/static_mutex.hpp \
 	asio/detail/std_event.hpp \
+	asio/detail/std_fenced_block.hpp \
 	asio/detail/std_global.hpp \
 	asio/detail/std_mutex.hpp \
 	asio/detail/std_static_mutex.hpp \
