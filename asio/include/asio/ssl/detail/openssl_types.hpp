@@ -25,6 +25,8 @@
 #include <openssl/err.h>
 #include <openssl/rsa.h>
 #include <openssl/x509v3.h>
+#include <openssl/rsa.h>
+#include <openssl/dh.h>
 #include "asio/detail/socket_types.hpp"
 
 #endif // ASIO_SSL_DETAIL_OPENSSL_TYPES_HPP
