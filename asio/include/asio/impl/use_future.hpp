@@ -21,6 +21,7 @@
 #include "asio/error_code.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
+#include "asio/detail/memory.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -36,9 +37,9 @@ namespace detail {
     template <typename Alloc>
     promise_handler(use_future_t<Alloc> uf)
       : promise_(std::allocate_shared<std::promise<T> >(
-            typename Alloc::template rebind<char>::other(uf.get_allocator()),
+            ASIO_REBIND_ALLOC(Alloc, char)(uf.get_allocator()),
             std::allocator_arg,
-            typename Alloc::template rebind<char>::other(uf.get_allocator())))
+            ASIO_REBIND_ALLOC(Alloc, char)(uf.get_allocator())))
     {
     }
 
@@ -70,9 +71,9 @@ namespace detail {
     template <typename Alloc>
     promise_handler(use_future_t<Alloc> uf)
       : promise_(std::allocate_shared<std::promise<void> >(
-            typename Alloc::template rebind<char>::other(uf.get_allocator()),
+            ASIO_REBIND_ALLOC(Alloc, char)(uf.get_allocator()),
             std::allocator_arg,
-            typename Alloc::template rebind<char>::other(uf.get_allocator())))
+            ASIO_REBIND_ALLOC(Alloc, char)(uf.get_allocator())))
     {
     }
 
