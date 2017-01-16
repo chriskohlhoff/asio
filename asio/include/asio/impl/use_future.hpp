@@ -277,10 +277,8 @@ protected:
   template <typename Allocator>
   void create_promise(const Allocator& a)
   {
-    p_ = std::allocate_shared<std::promise<T>>(
-        typename Allocator::template rebind<char>::other(a),
-        std::allocator_arg,
-        typename Allocator::template rebind<char>::other(a));
+    ASIO_REBIND_ALLOC(Allocator, char) b(a);
+    p_ = std::allocate_shared<std::promise<T>>(b, std::allocator_arg, b);
   }
 
   shared_ptr<std::promise<T> > p_;

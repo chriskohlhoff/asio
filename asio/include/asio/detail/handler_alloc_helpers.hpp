@@ -59,6 +59,8 @@ template <typename Handler, typename T>
 class hook_allocator
 {
 public:
+  typedef T value_type;
+
   template <typename U>
   struct rebind
   {
@@ -95,6 +97,8 @@ template <typename Handler>
 class hook_allocator<Handler, void>
 {
 public:
+  typedef void value_type;
+
   template <typename U>
   struct rebind
   {
@@ -124,7 +128,9 @@ public:
   { \
     typedef typename ::asio::associated_allocator<Handler, \
       ::asio::detail::hook_allocator<Handler, \
-        void> >::type::template rebind<op>::other allocator_type; \
+        void> >::type associated_allocator_type; \
+    typedef ASIO_REBIND_ALLOC( \
+      associated_allocator_type, op) allocator_type; \
     Handler* h; \
     op* v; \
     op* p; \
@@ -161,7 +167,7 @@ public:
 #define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op, alloc) \
   struct ptr \
   { \
-    typename alloc::template rebind<op>::other a; \
+    ASIO_REBIND_ALLOC(alloc, op) a; \
     void* v; \
     op* p; \
     ~ptr() \

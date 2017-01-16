@@ -570,6 +570,30 @@
 # endif // !defined(ASIO_DISABLE_NULLPTR)
 #endif // !defined(ASIO_HAS_NULLPTR)
 
+// Standard library support for the C++11 allocator additions.
+#if !defined(ASIO_HAS_CXX11_ALLOCATORS)
+# if !defined(ASIO_DISABLE_CXX11_ALLOCATORS)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_CXX11_ALLOCATORS 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_CXX11_ALLOCATORS 1
+#   endif // (__cplusplus >= 201103)
+#  elif defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_CXX11_ALLOCATORS 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_CXX11_ALLOCATORS 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_CXX11_ALLOCATORS)
+#endif // !defined(ASIO_HAS_CXX11_ALLOCATORS)
+
 // Standard library support for the cstdint header.
 #if !defined(ASIO_HAS_CSTDINT)
 # if !defined(ASIO_DISABLE_CSTDINT)

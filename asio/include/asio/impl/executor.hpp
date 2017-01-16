@@ -132,7 +132,7 @@ class executor::impl
   : public executor::impl_base
 {
 public:
-  typedef typename Allocator::template rebind<impl>::other allocator_type;
+  typedef ASIO_REBIND_ALLOC(Allocator, impl) allocator_type;
 
   static impl_base* create(const Executor& e, Allocator a = Allocator())
   {
