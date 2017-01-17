@@ -1273,4 +1273,26 @@
 # define ASIO_SYNC_OP_VOID_RETURN(e) return e
 #endif // defined(ASIO_NO_DEPRECATED)
 
+// Newer gcc, clang need special treatment to suppress unused typedef warnings.
+#if defined(__clang__) && (__clang_major__ >= 7)
+# define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+#elif defined(__GNUC__)
+# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#endif // defined(__GNUC__)
+#if !defined(ASIO_UNUSED_TYPEDEF)
+# define ASIO_UNUSED_TYPEDEF
+#endif // !defined(ASIO_UNUSED_TYPEDEF)
+
+// Some versions of gcc generate spurious warnings about unused variables.
+#if defined(__GNUC__)
+# if (__GNUC__ >= 4)
+#  define ASIO_UNUSED_VARIABLE __attribute__((__unused__))
+# endif // (__GNUC__ >= 4)
+#endif // defined(__GNUC__)
+#if !defined(ASIO_UNUSED_VARIABLE)
+# define ASIO_UNUSED_VARIABLE
+#endif // !defined(ASIO_UNUSED_VARIABLE)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

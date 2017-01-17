@@ -31,7 +31,8 @@ enum ssl_errors
 extern ASIO_DECL
 const asio::error_category& get_ssl_category();
 
-static const asio::error_category& ssl_category
+static const asio::error_category&
+  ssl_category ASIO_UNUSED_VARIABLE
   = asio::error::get_ssl_category();
 
 } // namespace error
@@ -53,7 +54,8 @@ enum stream_errors
 extern ASIO_DECL
 const asio::error_category& get_stream_category();
 
-static const asio::error_category& stream_category
+static const asio::error_category&
+  stream_category ASIO_UNUSED_VARIABLE
   = asio::ssl::error::get_stream_category();
 
 } // namespace error

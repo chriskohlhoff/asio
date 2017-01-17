@@ -53,18 +53,6 @@
 # include "asio/async_result.hpp"
 #endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
-// Newer gcc, clang need special treatment to suppress unused typedef warnings.
-#if defined(__clang__) && (__clang_major__ >= 7)
-# define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
-#elif defined(__GNUC__)
-# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
-#  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
-# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
-#endif // defined(__GNUC__)
-#if !defined(ASIO_UNUSED_TYPEDEF)
-# define ASIO_UNUSED_TYPEDEF
-#endif // !defined(ASIO_UNUSED_TYPEDEF)
-
 namespace asio {
 namespace detail {
 
