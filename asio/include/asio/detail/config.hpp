@@ -995,4 +995,34 @@
         //   || (defined(__MACH__) && defined(__APPLE__))
 #endif // !defined(ASIO_DISABLE_SSIZE_T)
 
+// Newer gcc, clang need special treatment to suppress unused typedef warnings.
+#if defined(__clang__)
+# if defined(__apple_build_version__)
+#  if (__clang_major__ >= 7)
+#   define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+#  endif // (__clang_major__ >= 7)
+# elif ((__clang_major__ == 3) && (__clang_minor__ >= 6)) \
+    || (__clang_major__ > 3)
+#  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+# endif // ((__clang_major__ == 3) && (__clang_minor__ >= 6))
+        //   || (__clang_major__ > 3)
+#elif defined(__GNUC__)
+# if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+# endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
+#endif // defined(__GNUC__)
+#if !defined(ASIO_UNUSED_TYPEDEF)
+# define ASIO_UNUSED_TYPEDEF
+#endif // !defined(ASIO_UNUSED_TYPEDEF)
+
+// Some versions of gcc generate spurious warnings about unused variables.
+#if defined(__GNUC__)
+# if (__GNUC__ >= 4)
+#  define ASIO_UNUSED_VARIABLE __attribute__((__unused__))
+# endif // (__GNUC__ >= 4)
+#endif // defined(__GNUC__)
+#if !defined(ASIO_UNUSED_VARIABLE)
+# define ASIO_UNUSED_VARIABLE
+#endif // !defined(ASIO_UNUSED_VARIABLE)
+
 #endif // ASIO_DETAIL_CONFIG_HPP

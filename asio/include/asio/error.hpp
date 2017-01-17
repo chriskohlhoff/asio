@@ -253,13 +253,17 @@ inline const asio::error_category& get_addrinfo_category()
 extern ASIO_DECL
 const asio::error_category& get_misc_category();
 
-static const asio::error_category& system_category
+static const asio::error_category&
+  system_category ASIO_UNUSED_VARIABLE
   = asio::error::get_system_category();
-static const asio::error_category& netdb_category
+static const asio::error_category&
+  netdb_category ASIO_UNUSED_VARIABLE
   = asio::error::get_netdb_category();
-static const asio::error_category& addrinfo_category
+static const asio::error_category&
+  addrinfo_category ASIO_UNUSED_VARIABLE
   = asio::error::get_addrinfo_category();
-static const asio::error_category& misc_category
+static const asio::error_category&
+  misc_category ASIO_UNUSED_VARIABLE
   = asio::error::get_misc_category();
 
 } // namespace error
