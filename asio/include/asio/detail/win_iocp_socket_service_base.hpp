@@ -528,6 +528,21 @@ protected:
   ASIO_DECL connect_ex_fn get_connect_ex(
       base_implementation_type& impl, int type);
 
+  // The type of an AcceptEx function pointer, as old SDKs may not provide it.
+  typedef BOOL (PASCAL *accept_ex_fn)(SOCKET, SOCKET, void*, DWORD, DWORD,
+      DWORD, DWORD*, OVERLAPPED*);
+
+  // Helper function to get the AcceptEx pointer. If no AcceptEx pointer has
+  // been obtained yet, one is obtained using WSAIoctl and the pointer is
+  // cached. Returns a null pointer if AcceptEx is not available.
+  ASIO_DECL accept_ex_fn get_accept_ex(
+      base_implementation_type& impl, int type);
+
+  // Common implementation between get_connect_ex and get_accept_ex
+  ASIO_DECL void* lookup_extension_pointer(
+      base_implementation_type& impl, int type, void*& cache,
+      GUID& guid);
+
   // Helper function to emulate InterlockedCompareExchangePointer functionality
   // for:
   // - very old Platform SDKs; and
@@ -554,7 +569,10 @@ protected:
   // Pointer to ConnectEx implementation.
   void* connect_ex_;
 
-  // Mutex to protect access to the linked list of implementations. 
+  // Pointer to AcceptEx implementation.
+  void* accept_ex_;
+
+  // Mutex to protect access to the linked list of implementations.
   asio::detail::mutex mutex_;
 
   // The head of a linked list of all implementations.
