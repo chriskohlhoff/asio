@@ -156,6 +156,9 @@ void test()
     socket1.close();
     socket1.close(ec);
 
+    socket1.release();
+    socket1.release(ec);
+
     ip::icmp::socket::native_handle_type native_socket4
       = socket1.native_handle();
     (void)native_socket4;

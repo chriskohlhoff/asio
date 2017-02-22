@@ -116,6 +116,10 @@ public:
   ASIO_DECL asio::error_code close(
       base_implementation_type& impl, asio::error_code& ec);
 
+  // Release ownership of the socket.
+  ASIO_DECL socket_type release(
+      base_implementation_type& impl, asio::error_code& ec);
+
   // Cancel all operations associated with the socket.
   ASIO_DECL asio::error_code cancel(
       base_implementation_type& impl, asio::error_code& ec);
@@ -528,6 +532,15 @@ protected:
   ASIO_DECL connect_ex_fn get_connect_ex(
       base_implementation_type& impl, int type);
 
+  // The type of a NtSetInformationFile function pointer.
+  typedef LONG (NTAPI *nt_set_info_fn)(HANDLE, ULONG_PTR*, void*, ULONG, ULONG);
+
+  // Helper function to get the NtSetInformationFile function pointer. If no
+  // NtSetInformationFile pointer has been obtained yet, one is obtained using
+  // GetProcAddress and the pointer is cached. Returns a null pointer if
+  // NtSetInformationFile is not available.
+  ASIO_DECL nt_set_info_fn get_nt_set_info();
+
   // Helper function to emulate InterlockedCompareExchangePointer functionality
   // for:
   // - very old Platform SDKs; and
@@ -553,6 +566,9 @@ protected:
 
   // Pointer to ConnectEx implementation.
   void* connect_ex_;
+
+  // Pointer to NtSetInformationFile implementation.
+  void* nt_set_info_;
 
   // Mutex to protect access to the linked list of implementations. 
   asio::detail::mutex mutex_;

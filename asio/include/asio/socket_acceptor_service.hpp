@@ -188,6 +188,13 @@ public:
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
+  /// Release ownership of the underlying acceptor.
+  native_handle_type release(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    return service_impl_.release(impl, ec);
+  }
+
   /// Get the native acceptor implementation.
   native_handle_type native_handle(implementation_type& impl)
   {

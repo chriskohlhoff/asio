@@ -449,6 +449,58 @@ public:
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
+  /// Release ownership of the underlying native socket.
+  /**
+   * This function causes all outstanding asynchronous connect, send and receive
+   * operations to finish immediately, and the handlers for cancelled operations
+   * will be passed the asio::error::operation_aborted error. Ownership
+   * of the native socket is then transferred to the caller.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note This function is unsupported on Windows versions prior to Windows
+   * 8.1, and will fail with asio::error::operation_not_supported on
+   * these platforms.
+   */
+#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) \
+  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0603)
+  __declspec(deprecated("This function always fails with "
+        "operation_not_supported when used on Windows versions "
+        "prior to Windows 8.1."))
+#endif
+  native_handle_type release()
+  {
+    asio::error_code ec;
+    native_handle_type s = this->get_service().release(
+        this->get_implementation(), ec);
+    asio::detail::throw_error(ec, "release");
+    return s;
+  }
+
+  /// Release ownership of the underlying native socket.
+  /**
+   * This function causes all outstanding asynchronous connect, send and receive
+   * operations to finish immediately, and the handlers for cancelled operations
+   * will be passed the asio::error::operation_aborted error. Ownership
+   * of the native socket is then transferred to the caller.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   *
+   * @note This function is unsupported on Windows versions prior to Windows
+   * 8.1, and will fail with asio::error::operation_not_supported on
+   * these platforms.
+   */
+#if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400) \
+  && (!defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0603)
+  __declspec(deprecated("This function always fails with "
+        "operation_not_supported when used on Windows versions "
+        "prior to Windows 8.1."))
+#endif
+  native_handle_type release(asio::error_code& ec)
+  {
+    return this->get_service().release(this->get_implementation(), ec);
+  }
+
   /// Get the native socket representation.
   /**
    * This function may be used to obtain the underlying representation of the

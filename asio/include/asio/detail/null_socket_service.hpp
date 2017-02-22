@@ -119,6 +119,14 @@ public:
     return ec;
   }
 
+  // Release ownership of the socket.
+  native_handle_type release(implementation_type&,
+      asio::error_code& ec)
+  {
+    ec = asio::error::operation_not_supported;
+    return 0;
+  }
+
   // Get the native socket representation.
   native_handle_type native_handle(implementation_type&)
   {

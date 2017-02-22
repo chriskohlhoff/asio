@@ -121,6 +121,25 @@ asio::error_code reactive_socket_service_base::close(
   return ec;
 }
 
+socket_type reactive_socket_service_base::release(
+    reactive_socket_service_base::base_implementation_type& impl,
+    asio::error_code& ec)
+{
+  if (!is_open(impl))
+    return invalid_socket;
+
+  cancel(impl, ec);
+  if (ec)
+    return invalid_socket;
+
+  reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
+      (impl.state_ & socket_ops::possible_dup) == 0);
+
+  socket_type tmp = impl.socket_;
+  impl.socket_ = invalid_socket;
+  return tmp;
+}
+
 asio::error_code reactive_socket_service_base::cancel(
     reactive_socket_service_base::base_implementation_type& impl,
     asio::error_code& ec)

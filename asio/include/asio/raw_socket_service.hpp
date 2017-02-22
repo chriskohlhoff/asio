@@ -167,6 +167,13 @@ public:
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
+  /// Release ownership of the underlying socket.
+  native_handle_type release(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    return service_impl_.release(impl, ec);
+  }
+
   /// Get the native socket implementation.
   native_handle_type native_handle(implementation_type& impl)
   {

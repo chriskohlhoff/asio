@@ -304,6 +304,9 @@ void test()
     socket1.close();
     socket1.close(ec);
 
+    socket1.release();
+    socket1.release(ec);
+
     ip::tcp::socket::native_handle_type native_socket4
       = socket1.native_handle();
     (void)native_socket4;
@@ -869,6 +872,9 @@ void test()
 
     acceptor1.close();
     acceptor1.close(ec);
+
+    acceptor1.release();
+    acceptor1.release(ec);
 
     ip::tcp::acceptor::native_handle_type native_acceptor4
       = acceptor1.native_handle();

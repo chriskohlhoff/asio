@@ -93,6 +93,10 @@ public:
   ASIO_DECL asio::error_code close(
       base_implementation_type& impl, asio::error_code& ec);
 
+  // Release ownership of the socket.
+  ASIO_DECL socket_type release(
+      base_implementation_type& impl, asio::error_code& ec);
+
   // Get the native socket representation.
   native_handle_type native_handle(base_implementation_type& impl)
   {

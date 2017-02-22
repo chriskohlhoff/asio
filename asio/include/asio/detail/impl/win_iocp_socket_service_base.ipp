@@ -32,6 +32,7 @@ win_iocp_socket_service_base::win_iocp_socket_service_base(
     iocp_service_(use_service<win_iocp_io_context>(io_context)),
     reactor_(0),
     connect_ex_(0),
+    nt_set_info_(0),
     mutex_(),
     impl_list_(0)
 {
@@ -189,6 +190,39 @@ asio::error_code win_iocp_socket_service_base::close(
 #endif // defined(ASIO_ENABLE_CANCELIO)
 
   return ec;
+}
+
+socket_type win_iocp_socket_service_base::release(
+    win_iocp_socket_service_base::base_implementation_type& impl,
+    asio::error_code& ec)
+{
+  if (!is_open(impl))
+    return invalid_socket;
+
+  cancel(impl, ec);
+  if (ec)
+    return invalid_socket;
+
+  nt_set_info_fn fn = get_nt_set_info();
+  if (fn == 0)
+  {
+    ec = asio::error::operation_not_supported;
+    return invalid_socket;
+  }
+
+  HANDLE sock_as_handle = reinterpret_cast<HANDLE>(impl.socket_);
+  ULONG_PTR iosb[2] = { 0, 0 };
+  void* info[2] = { 0, 0 };
+  if (fn(sock_as_handle, iosb, &info, sizeof(info),
+        61 /* FileReplaceCompletionInformation */))
+  {
+    ec = asio::error::operation_not_supported;
+    return invalid_socket;
+  }
+
+  socket_type tmp = impl.socket_;
+  impl.socket_ = invalid_socket;
+  return tmp;
 }
 
 asio::error_code win_iocp_socket_service_base::cancel(
@@ -702,6 +736,24 @@ win_iocp_socket_service_base::get_connect_ex(
 
   return reinterpret_cast<connect_ex_fn>(ptr == this ? 0 : ptr);
 #endif // defined(ASIO_DISABLE_CONNECTEX)
+}
+
+win_iocp_socket_service_base::nt_set_info_fn
+win_iocp_socket_service_base::get_nt_set_info()
+{
+  void* ptr = interlocked_compare_exchange_pointer(&nt_set_info_, 0, 0);
+  if (!ptr)
+  {
+    if (HMODULE h = GetModuleHandle("NTDLL.DLL"))
+      ptr = GetProcAddress(h, "NtSetInformationFile");
+
+    // On failure, set nt_set_info_ to a special value to indicate that the
+    // NtSetInformationFile function is unavailable. That way we won't bother
+    // trying to look it up again.
+    interlocked_exchange_pointer(&nt_set_info_, ptr ? ptr : this);
+  }
+
+  return reinterpret_cast<nt_set_info_fn>(ptr == this ? 0 : ptr);
 }
 
 void* win_iocp_socket_service_base::interlocked_compare_exchange_pointer(
