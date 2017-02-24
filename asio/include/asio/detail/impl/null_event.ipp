@@ -39,7 +39,7 @@ namespace detail {
 void null_event::do_wait()
 {
 #if defined(ASIO_WINDOWS_RUNTIME)
-  std::this_thread::sleep_until(std::chrono::steady_clock::time_point::max());
+  std::this_thread::sleep_until((std::chrono::steady_clock::time_point::max)());
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   ::Sleep(INFINITE);
 #else
