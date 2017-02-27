@@ -251,10 +251,8 @@ public:
       basic_socket_acceptor<Protocol1 ASIO_SVC_TARG1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
     : basic_io_object<ASIO_SVC_T>(
-        other.get_service().get_io_context())
+        other.get_service(), other.get_implementation())
   {
-    this->get_service().template converting_move_construct<Protocol1>(
-        this->get_implementation(), other.get_implementation());
   }
 
   /// Move-assign a basic_socket_acceptor from an acceptor of another protocol

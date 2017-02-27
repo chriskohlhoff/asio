@@ -177,6 +177,7 @@ public:
   // Move-construct a new socket implementation from another protocol type.
   template <typename Protocol1>
   void converting_move_construct(implementation_type& impl,
+      win_iocp_socket_service<Protocol1>&,
       typename win_iocp_socket_service<
         Protocol1>::implementation_type& other_impl)
   {

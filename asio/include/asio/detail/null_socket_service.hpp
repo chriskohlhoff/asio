@@ -80,6 +80,7 @@ public:
   // Move-construct a new socket implementation from another protocol type.
   template <typename Protocol1>
   void converting_move_construct(implementation_type&,
+      null_socket_service<Protocol1>&,
       typename null_socket_service<Protocol1>::implementation_type&)
   {
   }

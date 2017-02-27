@@ -97,6 +97,7 @@ public:
   // Move-construct a new socket implementation from another protocol type.
   template <typename Protocol1>
   void converting_move_construct(implementation_type& impl,
+      winrt_ssocket_service<Protocol1>&,
       typename winrt_ssocket_service<
         Protocol1>::implementation_type& other_impl)
   {
