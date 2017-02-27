@@ -192,10 +192,9 @@ public:
   template <typename Protocol1, typename SocketService1>
   basic_socket(basic_socket<Protocol1, SocketService1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_io_object<SocketService>(other.get_io_service())
+    : basic_io_object<SocketService>(
+        other.get_service(), other.get_implementation())
   {
-    this->get_service().template converting_move_construct<Protocol1>(
-        this->get_implementation(), other.get_implementation());
   }
 
   /// Move-assign a basic_socket from a socket of another protocol type.
