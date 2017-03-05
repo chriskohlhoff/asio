@@ -119,6 +119,7 @@ check_PROGRAMS += \
 	unit/ssl/context_base \
 	unit/ssl/context_service \
 	unit/ssl/context \
+	unit/ssl/error \
 	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
 	unit/ssl/stream_service \
@@ -219,6 +220,7 @@ TESTS += \
 	unit/ssl/context_base \
 	unit/ssl/context_service \
 	unit/ssl/context \
+	unit/ssl/error \
 	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
 	unit/ssl/stream_service \
@@ -341,6 +343,7 @@ unit_ssl_basic_context_SOURCES = unit/ssl/basic_context.cpp
 unit_ssl_context_base_SOURCES = unit/ssl/context_base.cpp
 unit_ssl_context_service_SOURCES = unit/ssl/context_service.cpp
 unit_ssl_context_SOURCES = unit/ssl/context.cpp
+unit_ssl_error_SOURCES = unit/ssl/error.cpp
 unit_ssl_stream_base_SOURCES = unit/ssl/stream_base.cpp
 unit_ssl_rfc2818_verification_SOURCES = unit/ssl/rfc2818_verification.cpp
 unit_ssl_stream_service_SOURCES = unit/ssl/stream_service.cpp
