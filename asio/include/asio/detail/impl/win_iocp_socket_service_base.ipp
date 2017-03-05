@@ -745,7 +745,7 @@ win_iocp_socket_service_base::get_nt_set_info()
   if (!ptr)
   {
     if (HMODULE h = GetModuleHandle("NTDLL.DLL"))
-      ptr = GetProcAddress(h, "NtSetInformationFile");
+      ptr = reinterpret_cast<void*>(GetProcAddress(h, "NtSetInformationFile"));
 
     // On failure, set nt_set_info_ to a special value to indicate that the
     // NtSetInformationFile function is unavailable. That way we won't bother
