@@ -179,7 +179,8 @@ fi
 AC_ARG_WITH(openssl,
   AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
 [
-  CPPFLAGS="$CPPFLAGS -I${withval}"
+  CPPFLAGS="$CPPFLAGS -I${withval}/include"
+  LIBS="$LIBS -L${withval}/lib"
 ],[])
 
 AC_CHECK_HEADER([openssl/ssl.h],,
