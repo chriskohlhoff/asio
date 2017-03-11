@@ -38,7 +38,7 @@ epoll_reactor::epoll_reactor(asio::execution_context& ctx)
   : execution_context_service_base<epoll_reactor>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
     mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, scheduler_.concurrency_hint())),
+          REACTOR_REGISTRATION, scheduler_.concurrency_hint())),
     interrupter_(),
     epoll_fd_(do_epoll_create()),
     timer_fd_(do_timerfd_create()),
@@ -594,7 +594,8 @@ int epoll_reactor::do_timerfd_create()
 epoll_reactor::descriptor_state* epoll_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
-  return registered_descriptors_.alloc(registered_descriptors_mutex_.enabled());
+  return registered_descriptors_.alloc(ASIO_CONCURRENCY_HINT_IS_LOCKING(
+        REACTOR_IO, scheduler_.concurrency_hint()));
 }
 
 void epoll_reactor::free_descriptor_state(epoll_reactor::descriptor_state* s)

@@ -26,8 +26,12 @@
 // If set, this bit indicates that the scheduler should perform locking.
 #define ASIO_CONCURRENCY_HINT_LOCKING_SCHEDULER 0x1u
 
-// If set, this bit indicates that the reactor should perform locking.
-#define ASIO_CONCURRENCY_HINT_LOCKING_REACTOR 0x2u
+// If set, this bit indicates that the reactor should perform locking when
+// managing descriptor registrations.
+#define ASIO_CONCURRENCY_HINT_LOCKING_REACTOR_REGISTRATION 0x2u
+
+// If set, this bit indicates that the reactor should perform locking for I/O.
+#define ASIO_CONCURRENCY_HINT_LOCKING_REACTOR_IO 0x4u
 
 // Helper macro to determine if we have a special concurrency hint.
 #define ASIO_CONCURRENCY_HINT_IS_SPECIAL(hint) \
@@ -64,13 +68,15 @@
 //   timers), occur in only one thread at a time.
 #define ASIO_CONCURRENCY_HINT_UNSAFE_IO \
   static_cast<int>(ASIO_CONCURRENCY_HINT_ID \
-      | ASIO_CONCURRENCY_HINT_LOCKING_SCHEDULER)
+      | ASIO_CONCURRENCY_HINT_LOCKING_SCHEDULER \
+      | ASIO_CONCURRENCY_HINT_LOCKING_REACTOR_REGISTRATION)
 
 // The special concurrency hint provides full thread safety.
 #define ASIO_CONCURRENCY_HINT_SAFE \
   static_cast<int>(ASIO_CONCURRENCY_HINT_ID \
       | ASIO_CONCURRENCY_HINT_LOCKING_SCHEDULER \
-      | ASIO_CONCURRENCY_HINT_LOCKING_REACTOR)
+      | ASIO_CONCURRENCY_HINT_LOCKING_REACTOR_REGISTRATION \
+      | ASIO_CONCURRENCY_HINT_LOCKING_REACTOR_IO)
 
 // This #define may be overridden at compile time to specify a program-wide
 // default concurrency hint, used by the zero-argument io_context constructor.

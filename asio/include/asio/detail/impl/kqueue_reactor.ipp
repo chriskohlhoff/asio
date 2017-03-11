@@ -43,7 +43,7 @@ kqueue_reactor::kqueue_reactor(asio::execution_context& ctx)
   : execution_context_service_base<kqueue_reactor>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
     mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, scheduler_.concurrency_hint())),
+          REACTOR_REGISTRATION, scheduler_.concurrency_hint())),
     kqueue_fd_(do_kqueue_create()),
     interrupter_(),
     shutdown_(false),
@@ -498,7 +498,8 @@ int kqueue_reactor::do_kqueue_create()
 kqueue_reactor::descriptor_state* kqueue_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
-  return registered_descriptors_.alloc(registered_descriptors_mutex_.enabled());
+  return registered_descriptors_.alloc(ASIO_CONCURRENCY_HINT_IS_LOCKING(
+        REACTOR_IO, scheduler_.concurrency_hint()));
 }
 
 void kqueue_reactor::free_descriptor_state(kqueue_reactor::descriptor_state* s)
