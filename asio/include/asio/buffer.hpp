@@ -682,6 +682,63 @@ inline const_buffer operator+(std::size_t n,
   return b + n;
 }
 
+/// Create a new modifiable buffer that is offset from the start of another.
+/**
+ * @relates mutable_buffers_1
+ */
+inline mutable_buffers_1 operator+(const mutable_buffers_1& b,
+                                std::size_t start) ASIO_NOEXCEPT
+{
+  if (start > b.size())
+    return mutable_buffers_1(NULL, 0);
+  char* new_data = static_cast<char*>(b.data()) + start;
+  std::size_t new_size = b.size() - start;
+  return mutable_buffers_1(new_data, new_size
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+                        , b.get_debug_check()
+#endif // ASIO_ENABLE_BUFFER_DEBUGGING
+                        );
+}
+
+/// Create a new modifiable buffer that is offset from the start of another.
+/**
+ * @relates mutable_buffers_1
+ */
+inline mutable_buffers_1 operator+(std::size_t start,
+                                const mutable_buffers_1& b) ASIO_NOEXCEPT
+{
+  return b + start;
+}
+
+/// Create a new non-modifiable buffer that is offset from the start of another.
+/**
+ * @relates const_buffer
+ */
+inline const_buffers_1 operator+(const const_buffers_1& b,
+                              std::size_t start) ASIO_NOEXCEPT
+{
+  if (start > b.size())
+    return const_buffer(NULL, 0);
+  const char* new_data = static_cast<const char*>(b.data()) + start;
+  std::size_t new_size = b.size() - start;
+  return const_buffers_1(new_data, new_size
+#if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+                      , b.get_debug_check()
+#endif // ASIO_ENABLE_BUFFER_DEBUGGING
+                      );
+}
+
+/// Create a new non-modifiable buffer that is offset from the start of another.
+/**
+ * @relates const_buffers_1
+ */
+inline const_buffers_1 operator+(std::size_t start,
+                              const const_buffers_1& b) ASIO_NOEXCEPT
+{
+  return b + start;
+}
+
+
 #if defined(ASIO_ENABLE_BUFFER_DEBUGGING)
 namespace detail {
 
