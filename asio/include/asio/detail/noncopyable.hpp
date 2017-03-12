@@ -27,6 +27,10 @@ class noncopyable
 protected:
   noncopyable() {}
   ~noncopyable() {}
+#if defined(ASIO_HAS_MOVE)
+  noncopyable(noncopyable&&) = default;
+  noncopyable& operator=(noncopyable&&) = default;
+#endif // defined(ASIO_HAS_MOVE)
 private:
   noncopyable(const noncopyable&);
   const noncopyable& operator=(const noncopyable&);
