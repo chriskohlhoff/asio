@@ -1,10 +1,16 @@
-if STANDALONE
-SUBDIRS = examples/cpp11 tests
-else
-SUBDIRS = examples/cpp03 tests
+if ENABLE_EXAMPLES
+EXAMPLES_CPP03 = examples/cpp03
+EXAMPLES_CPP11 = examples/cpp11
+EXAMPLES_CPP14 = examples/cpp14
 endif
 
-DIST_SUBDIRS = examples/cpp03 examples/cpp11 examples/cpp14 tests
+if STANDALONE
+SUBDIRS = $(EXAMPLES_CPP11) tests
+else
+SUBDIRS = $(EXAMPLES_CPP03) tests
+endif
+
+DIST_SUBDIRS = $(EXAMPLES_CPP03) $(EXAMPLES_CPP11) $(EXAMPLES_CPP14) tests
 
 EXTRA_DIST = \
 	Makefile.mgw \

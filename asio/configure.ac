@@ -161,6 +161,12 @@ AC_ARG_ENABLE(separate-compilation,
   SEPARATE_COMPILATION=yes
 ])
 
+AC_ARG_ENABLE(examples,
+[  --disable-examples  disable the example programs],
+[
+  ENABLE_EXAMPLES=no
+])
+
 AC_ARG_ENABLE(boost-coroutine,
 [  --enable-boost-coroutine  use Boost.Coroutine to implement stackful coroutines],
 [
@@ -257,6 +263,8 @@ fi
 AM_CONDITIONAL(STANDALONE,test x$STANDALONE = xyes)
 
 AM_CONDITIONAL(SEPARATE_COMPILATION,test x$SEPARATE_COMPILATION = xyes)
+
+AM_CONDITIONAL(ENABLE_EXAMPLES,test x$ENABLE_EXAMPLES != xno)
 
 AM_CONDITIONAL(HAVE_BOOST_COROUTINE,test x$HAVE_BOOST_COROUTINE = xyes)
 
