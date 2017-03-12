@@ -20,12 +20,95 @@
 #include "asio/ssl/detail/engine.hpp"
 #include "asio/ssl/detail/stream_core.hpp"
 #include "asio/write.hpp"
+#include "asio/read.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace ssl {
 namespace detail {
+
+#define ASIO_SSL_CREATE_MEMBER_DETECTOR(X)                                        \
+template<typename T> class detect_##X {                                           \
+  struct Fallback { int X; };                                                     \
+  struct Derived : T, Fallback { };                                               \
+                                                                                  \
+  template<typename U, U> struct Check;                                           \
+                                                                                  \
+  typedef char ArrayOfOne[1];                                                     \
+  typedef char ArrayOfTwo[2];                                                     \
+                                                                                  \
+  template<typename U> static ArrayOfOne & func(Check<int Fallback::*, &U::X> *); \
+  template<typename U> static ArrayOfTwo & func(...);                             \
+public:                                                                           \
+  typedef detect_##X type;                                                        \
+  enum { value = sizeof(func<Derived>(0)) == 2 };                                 \
+};
+
+ASIO_SSL_CREATE_MEMBER_DETECTOR(read_some)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(receive)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(write_some)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(send)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_read_some)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_receive)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_write_some)
+ASIO_SSL_CREATE_MEMBER_DETECTOR(async_send)
+
+template <class Readable>
+class io_helper
+{
+public:
+  template <typename U, typename Buffer>
+  static asio::const_buffer read(U &stream, Buffer &buffer, asio::error_code &ec,  typename std::enable_if< detect_read_some<U>::value, bool>::type = 0)
+  {
+    return asio::buffer(buffer, asio::read(stream, buffer, ec));
+  }
+
+  template <typename U, typename Buffer>
+  static asio::const_buffer read(U &stream, Buffer &buffer, asio::error_code &ec, typename std::enable_if< !detect_read_some<U>::value, bool>::type = 0)
+  {
+    return asio::buffer(buffer, stream.receive(buffer, 0, ec));
+  }
+
+
+  template <typename U, typename Buffer>
+  static size_t write(U &stream, const Buffer &buffer, asio::error_code &ec,  typename std::enable_if< detect_write_some<U>::value, bool>::type = 0)
+  {
+    return asio::write(stream, buffer, ec);
+  }
+
+  template <typename U, typename Buffer>
+  static size_t write(U &stream, const Buffer &buffer, asio::error_code &ec, typename std::enable_if< !detect_write_some<U>::value, bool>::type = 0)
+  {
+    return stream.send(buffer, 0, ec);
+  }
+
+  template <typename U, typename Buffer, typename ReadHandler>
+  static void async_read_some(U &stream, const Buffer &buffer, const ReadHandler &rh, typename std::enable_if< detect_async_read_some<U>::value, bool>::type = 0)
+  {
+    stream.async_read_some(buffer, rh);
+  }
+
+  template <typename U, typename Buffer, typename ReadHandler>
+  static void async_read_some(U &stream, const Buffer &buffer, const ReadHandler &rh, typename std::enable_if< !detect_async_read_some<U>::value, bool>::type = 0)
+  {
+    stream.async_receive(buffer, rh);
+  }
+
+  template <typename U, typename Buffer, typename WriteHandler>
+  static void async_write(U &stream, const Buffer &buffer, const WriteHandler &wh, typename std::enable_if< detect_async_write_some<U>::value, bool>::type = 0)
+  {
+    asio::async_write(stream, buffer, wh);
+  }
+
+  template <typename U, typename Buffer, typename WriteHandler>
+  static void async_write(U &stream, const Buffer &buffer, const WriteHandler &wh, typename std::enable_if< !detect_async_write_some<U>::value, bool>::type = 0)
+  {
+    stream.async_send(buffer, 0, wh);
+  }
+};
+
+
 
 template <typename Stream, typename Operation>
 std::size_t io(Stream& next_layer, stream_core& core,
@@ -39,8 +122,7 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // If the input buffer is empty then we need to read some more data from
     // the underlying transport.
     if (core.input_.size() == 0)
-      core.input_ = asio::buffer(core.input_buffer_,
-          next_layer.read_some(core.input_buffer_, ec));
+      core.input_ = io_helper<Stream>::read(next_layer, core.input_buffer_, ec);
 
     // Pass the new input data to the engine.
     core.input_ = core.engine_.put_input(core.input_);
@@ -52,8 +134,8 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // Get output data from the engine and write it to the underlying
     // transport.
-    asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), ec);
+    io_helper<Stream>::write(next_layer,
+      core.engine_.get_output(core.output_buffer_), ec);
 
     // Try the operation again.
     continue;
@@ -62,8 +144,8 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // Get output data from the engine and write it to the underlying
     // transport.
-    asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), ec);
+    io_helper<Stream>::write(next_layer,
+      core.engine_.get_output(core.output_buffer_), ec);
 
     // Operation is complete. Return result to caller.
     core.engine_.map_error_code(ec);
@@ -154,7 +236,7 @@ public:
             core_.pending_read_.expires_at(core_.pos_infin());
 
             // Start reading some data from the underlying transport.
-            next_layer_.async_read_some(
+            io_helper<Stream>::async_read_some(next_layer_,
                 asio::buffer(core_.input_buffer_),
                 ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -181,7 +263,7 @@ public:
             core_.pending_write_.expires_at(core_.pos_infin());
 
             // Start writing all the data to the underlying transport.
-            asio::async_write(next_layer_,
+            io_helper<Stream>::async_write(next_layer_,
                 core_.engine_.get_output(core_.output_buffer_),
                 ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -204,7 +286,8 @@ public:
           // read so the handler runs "as-if" posted using io_context::post().
           if (start)
           {
-            next_layer_.async_read_some(
+            io_helper<Stream>::async_read_some(
+                next_layer_,
                 asio::buffer(core_.input_buffer_, 0),
                 ASIO_MOVE_CAST(io_op)(*this));
 
