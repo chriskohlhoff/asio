@@ -31,15 +31,18 @@ namespace detail {
 posix_event::posix_event()
   : state_(0)
 {
-#if (defined(__MACH__) && defined(__APPLE__))
+#if (defined(__MACH__) && defined(__APPLE__)) \
+      || (defined(__ANDROID__) && (__ANDROID_API__ < 21))
   int error = ::pthread_cond_init(&cond_, 0);
 #else // (defined(__MACH__) && defined(__APPLE__))
+      // || (defined(__ANDROID__) && (__ANDROID_API__ < 21))
   ::pthread_condattr_t attr;
   ::pthread_condattr_init(&attr);
   int error = ::pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
   if (error == 0)
     error = ::pthread_cond_init(&cond_, &attr);
 #endif // (defined(__MACH__) && defined(__APPLE__))
+       // || (defined(__ANDROID__) && (__ANDROID_API__ < 21))
 
   asio::error_code ec(error,
       asio::error::get_system_category());

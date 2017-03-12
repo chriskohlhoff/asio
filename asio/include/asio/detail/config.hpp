@@ -83,6 +83,11 @@
 # endif // (__cplusplus >= 201103)
 #endif // defined(__clang__)
 
+// Android platform detection.
+#if defined(__ANDROID__)
+# include <android/api-level.h>
+#endif // defined(__ANDROID__)
+
 // Support move construction and assignment on compilers known to allow it.
 #if !defined(ASIO_HAS_MOVE)
 # if !defined(ASIO_DISABLE_MOVE)
