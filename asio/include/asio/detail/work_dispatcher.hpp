@@ -52,10 +52,10 @@ public:
 
   void operator()()
   {
-    typename associated_executor<Handler>::type ex(work_.get_executor());
     typename associated_allocator<Handler>::type alloc(
         (get_associated_allocator)(handler_));
-    ex.dispatch(ASIO_MOVE_CAST(Handler)(handler_), alloc);
+    work_.get_executor().dispatch(
+        ASIO_MOVE_CAST(Handler)(handler_), alloc);
     work_.reset();
   }
 

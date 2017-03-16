@@ -52,12 +52,10 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
 
   async_completion<CompletionToken, void()> init(token);
 
-  Executor ex1(ex);
-
   typename associated_allocator<handler>::type alloc(
       (get_associated_allocator)(init.completion_handler));
 
-  ex1.dispatch(detail::work_dispatcher<handler>(
+  ex.dispatch(detail::work_dispatcher<handler>(
         init.completion_handler), alloc);
 
   return init.result.get();
