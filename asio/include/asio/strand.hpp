@@ -148,7 +148,7 @@ public:
   }
 
   /// Obtain the underlying execution context.
-  execution_context& context() ASIO_NOEXCEPT
+  execution_context& context() const ASIO_NOEXCEPT
   {
     return executor_.context();
   }
@@ -157,7 +157,7 @@ public:
   /**
    * The strand delegates this call to its underlying executor.
    */
-  void on_work_started() ASIO_NOEXCEPT
+  void on_work_started() const ASIO_NOEXCEPT
   {
     executor_.on_work_started();
   }
@@ -166,7 +166,7 @@ public:
   /**
    * The strand delegates this call to its underlying executor.
    */
-  void on_work_finished() ASIO_NOEXCEPT
+  void on_work_finished() const ASIO_NOEXCEPT
   {
     executor_.on_work_finished();
   }
@@ -187,7 +187,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const
   {
     detail::strand_executor_service::dispatch(impl_,
         executor_, ASIO_MOVE_CAST(Function)(f), a);
@@ -207,7 +207,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const
   {
     detail::strand_executor_service::post(impl_,
         executor_, ASIO_MOVE_CAST(Function)(f), a);
@@ -227,7 +227,7 @@ public:
    * internal storage needed for function invocation.
    */
   template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a)
+  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const
   {
     detail::strand_executor_service::defer(impl_,
         executor_, ASIO_MOVE_CAST(Function)(f), a);
