@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/recycling_allocator.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/handler_alloc_hook.hpp"
 
@@ -164,18 +165,30 @@ public:
   } \
   /**/
 
-#define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op, alloc) \
+#define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op) \
   struct ptr \
   { \
-    ASIO_REBIND_ALLOC(alloc, op) a; \
+    const Alloc* a; \
     void* v; \
     op* p; \
     ~ptr() \
     { \
       reset(); \
     } \
+    static op* allocate(const Alloc& a) \
+    { \
+      typedef typename ::asio::detail::get_recycling_allocator< \
+        Alloc>::type recycling_allocator_type; \
+      ASIO_REBIND_ALLOC(recycling_allocator_type, op) a1( \
+            ::asio::detail::get_recycling_allocator<Alloc>::get(a)); \
+      return a1.allocate(1); \
+    } \
     void reset() \
     { \
+      typedef typename ::asio::detail::get_recycling_allocator< \
+        Alloc>::type recycling_allocator_type; \
+      ASIO_REBIND_ALLOC(recycling_allocator_type, op) a1( \
+            ::asio::detail::get_recycling_allocator<Alloc>::get(*a)); \
       if (p) \
       { \
         p->~op(); \
@@ -183,7 +196,7 @@ public:
       } \
       if (v) \
       { \
-        a.deallocate(static_cast<op*>(v), 1); \
+        a1.deallocate(static_cast<op*>(v), 1); \
         v = 0; \
       } \
     } \
