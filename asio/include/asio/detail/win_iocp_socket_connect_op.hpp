@@ -85,7 +85,26 @@ public:
     if (owner)
     {
       if (o->connect_ex_)
+      {
+        // Map non-portable errors to their portable counterparts.
+        switch (ec.value())
+        {
+        case ERROR_CONNECTION_REFUSED:
+          ec = asio::error::connection_refused;
+          break;
+        case ERROR_NETWORK_UNREACHABLE:
+          ec = asio::error::network_unreachable;
+          break;
+        case ERROR_HOST_UNREACHABLE:
+          ec = asio::error::host_unreachable;
+          break;
+        case ERROR_SEM_TIMEOUT:
+          ec = asio::error::timed_out;
+          break;
+        }
+
         socket_ops::complete_iocp_connect(o->socket_, ec);
+      }
       else
         ec = o->ec_;
     }
