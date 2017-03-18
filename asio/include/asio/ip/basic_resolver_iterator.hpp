@@ -156,12 +156,7 @@ public:
 protected:
   void increment()
   {
-    if (++index_ == values_->size())
-    {
-      // Reset state to match a default constructed end iterator.
-      values_.reset();
-      index_ = 0;
-    }
+    ++index_;
   }
 
   bool equal(const basic_resolver_iterator& other) const
