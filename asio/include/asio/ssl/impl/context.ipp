@@ -904,8 +904,6 @@ ASIO_SYNC_OP_VOID context::use_tmp_dh_file(
 ASIO_SYNC_OP_VOID context::do_use_tmp_dh(
     BIO* bio, asio::error_code& ec)
 {
-  ::ERR_clear_error();
-
   dh_cleanup dh = { ::PEM_read_bio_DHparams(bio, 0, 0, 0) };
   if (dh.p)
   {
