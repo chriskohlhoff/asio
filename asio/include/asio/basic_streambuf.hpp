@@ -232,8 +232,9 @@ public:
    */
   void commit(std::size_t n)
   {
-    if (pptr() + n > epptr())
-      n = epptr() - pptr();
+    std::size_t max_n = epptr() - pptr();
+    if (n > max_n)
+        n = max_n;
     pbump(static_cast<int>(n));
     setg(eback(), gptr(), pptr());
   }
