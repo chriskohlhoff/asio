@@ -18,42 +18,39 @@
 using asio::ip::tcp;
 
 class session
-  : public std::enable_shared_from_this<session>
 {
 public:
-  session(tcp::socket socket)
+  session(tcp::socket &&socket)
     : socket_(std::move(socket))
   {
   }
 
-  void start()
+  void start(std::unique_ptr<session> &&self)
   {
-    do_read();
+    do_read(std::move(self));
   }
 
 private:
-  void do_read()
+  void do_read(std::unique_ptr<session> &&self)
   {
-    auto self(shared_from_this());
     socket_.async_read_some(asio::buffer(data_, max_length),
-        [this, self](std::error_code ec, std::size_t length)
+        [this, s = std::move(self)](std::error_code ec, std::size_t length) mutable
         {
           if (!ec)
           {
-            do_write(length);
+            do_write(std::move(s), length);
           }
         });
   }
 
-  void do_write(std::size_t length)
+  void do_write(std::unique_ptr<session> &&self, std::size_t length)
   {
-    auto self(shared_from_this());
     asio::async_write(socket_, asio::buffer(data_, length),
-        [this, self](std::error_code ec, std::size_t /*length*/)
+        [this, s = std::move(self)](std::error_code ec, std::size_t /*length*/) mutable
         {
           if (!ec)
           {
-            do_read();
+            do_read(std::move(s));
           }
         });
   }
@@ -81,7 +78,8 @@ private:
         {
           if (!ec)
           {
-            std::make_shared<session>(std::move(socket_))->start();
+            auto s = std::make_unique<session>(std::move(socket_));
+            s->start(std::move(s));
           }
 
           do_accept();
