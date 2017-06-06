@@ -3435,7 +3435,6 @@ asio::error_code getnameinfo(const socket_addr_type* addr,
   using namespace std; // For memcpy.
   sockaddr_storage_type tmp_addr;
   memcpy(&tmp_addr, addr, addrlen);
-  tmp_addr.ss_len = addrlen;
   addr = reinterpret_cast<socket_addr_type*>(&tmp_addr);
   clear_last_error();
   return getnameinfo_emulation(addr, addrlen,
