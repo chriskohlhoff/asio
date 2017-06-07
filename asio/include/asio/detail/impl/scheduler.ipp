@@ -89,7 +89,9 @@ scheduler::scheduler(
   : asio::detail::execution_context_service_base<scheduler>(ctx),
     one_thread_(concurrency_hint == 1
         || !ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, concurrency_hint)),
+          SCHEDULER, concurrency_hint)
+        || !ASIO_CONCURRENCY_HINT_IS_LOCKING(
+          REACTOR_IO, concurrency_hint)),
     mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
           SCHEDULER, concurrency_hint)),
     task_(0),
