@@ -246,7 +246,7 @@ void reactive_socket_service_base::start_accept_op(
     reactor_op* op, bool is_continuation, bool peer_is_open)
 {
   if (!peer_is_open)
-    start_op(impl, reactor::read_op, op, true, is_continuation, false);
+    start_op(impl, reactor::read_op, op, is_continuation, true, false);
   else
   {
     op->ec_ = asio::error::already_open;
