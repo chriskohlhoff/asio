@@ -65,9 +65,9 @@ public:
     ASIO_ASSERT(lock.locked());
     state_ |= 1;
     bool have_waiters = (state_ > 1);
-    lock.unlock();
     if (have_waiters)
       ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+    lock.unlock();
   }
 
   // If there's a waiter, unlock the mutex and signal it.
@@ -78,8 +78,8 @@ public:
     state_ |= 1;
     if (state_ > 1)
     {
-      lock.unlock();
       ::pthread_cond_signal(&cond_); // Ignore EINVAL.
+      lock.unlock();
       return true;
     }
     return false;
