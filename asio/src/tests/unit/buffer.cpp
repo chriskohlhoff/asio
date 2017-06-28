@@ -73,7 +73,7 @@ void test()
 
     mutable_buffer mb1;
     mutable_buffer mb2(void_ptr_data, 1024);
-    mutable_buffer mb3(mb1);
+      mutable_buffer mb3(mb1);    //TODO: unused variable! CK
 
     // mutable_buffer functions.
 
@@ -109,7 +109,7 @@ void test()
 
     const_buffer cb1;
     const_buffer cb2(const_void_ptr_data, 1024);
-    const_buffer cb3(cb1);
+      const_buffer cb3(cb1);  //TODO: unused variable! CK
     const_buffer cb4(mb1);
 
     // const_buffer functions.
