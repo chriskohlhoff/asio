@@ -198,7 +198,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_MOVE_ARG(a)=a \
                          ASIO_DECL= \
                          ASIO_CONSTEXPR=constexpr \
-                         ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced
+                         ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
+                         ASIO_UNUSED_VARIABLE
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
