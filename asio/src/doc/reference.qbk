@@ -10140,7 +10140,9 @@ Base class for all I/O objects.
     [[link asio.reference.basic_io_object.basic_io_object [*basic_io_object]]]
     [Construct a basic_io_object. 
 
-     Move-construct a basic_io_object. ]
+     Move-construct a basic_io_object. 
+
+     Perform a converting move-construction of a basic_io_object. ]
   ]
   
   [
@@ -10213,7 +10215,18 @@ Move-construct a [link asio.reference.basic_io_object `basic_io_object`].
   ``  [''''&raquo;''' [link asio.reference.basic_io_object.basic_io_object.overload2 more...]]``
 
 
-[section:overload1 basic_io_object::basic_io_object (1 of 2 overloads)]
+Perform a converting move-construction of a [link asio.reference.basic_io_object `basic_io_object`]. 
+
+
+  template<
+      typename ``[link asio.reference.IoObjectService1 IoObjectService1]``>
+  ``[link asio.reference.basic_io_object.basic_io_object.overload3 basic_io_object]``(
+      IoObjectService1 & other_service,
+      typename IoObjectService1::implementation_type & other_implementation);
+  ``  [''''&raquo;''' [link asio.reference.basic_io_object.basic_io_object.overload3 more...]]``
+
+
+[section:overload1 basic_io_object::basic_io_object (1 of 3 overloads)]
 
 
 Construct a [link asio.reference.basic_io_object `basic_io_object`]. 
@@ -10235,7 +10248,7 @@ Performs:
 
 
 
-[section:overload2 basic_io_object::basic_io_object (2 of 2 overloads)]
+[section:overload2 basic_io_object::basic_io_object (2 of 3 overloads)]
 
 
 Move-construct a [link asio.reference.basic_io_object `basic_io_object`]. 
@@ -10258,6 +10271,24 @@ Performs:
       
 Available only for services that support movability, 
 
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_io_object::basic_io_object (3 of 3 overloads)]
+
+
+Perform a converting move-construction of a [link asio.reference.basic_io_object `basic_io_object`]. 
+
+
+  template<
+      typename ``[link asio.reference.IoObjectService1 IoObjectService1]``>
+  basic_io_object(
+      IoObjectService1 & other_service,
+      typename IoObjectService1::implementation_type & other_implementation);
 
 
 
@@ -53593,6 +53624,7 @@ Move-construct a new datagram socket implementation from another protocol type.
       typename ``[link asio.reference.Protocol Protocol1]``>
   void converting_move_construct(
       implementation_type & impl,
+      datagram_socket_service< Protocol1 > & other_service,
       typename datagram_socket_service< Protocol1 >::implementation_type & other_impl,
       typename enable_if< is_convertible< Protocol1, Protocol >::value >::type *  = 0);
 
@@ -81162,6 +81194,7 @@ Move-construct a new raw socket implementation from another protocol type.
       typename ``[link asio.reference.Protocol Protocol1]``>
   void converting_move_construct(
       implementation_type & impl,
+      raw_socket_service< Protocol1 > & other_service,
       typename raw_socket_service< Protocol1 >::implementation_type & other_impl,
       typename enable_if< is_convertible< Protocol1, Protocol >::value >::type *  = 0);
 
@@ -84270,6 +84303,7 @@ Move-construct a new sequenced packet socket implementation from another protoco
       typename ``[link asio.reference.Protocol Protocol1]``>
   void converting_move_construct(
       implementation_type & impl,
+      seq_packet_socket_service< Protocol1 > & other_service,
       typename seq_packet_socket_service< Protocol1 >::implementation_type & other_impl,
       typename enable_if< is_convertible< Protocol1, Protocol >::value >::type *  = 0);
 
@@ -87144,6 +87178,7 @@ Move-construct a new socket acceptor implementation from another protocol type.
       typename ``[link asio.reference.Protocol Protocol1]``>
   void converting_move_construct(
       implementation_type & impl,
+      socket_acceptor_service< Protocol1 > & other_service,
       typename socket_acceptor_service< Protocol1 >::implementation_type & other_impl,
       typename enable_if< is_convertible< Protocol1, Protocol >::value >::type *  = 0);
 
@@ -89664,6 +89699,9 @@ Different methods supported by a context.
 [indexterm2 tlsv12..ssl::context]
 [indexterm2 tlsv12_client..ssl::context]
 [indexterm2 tlsv12_server..ssl::context]
+[indexterm2 tls..ssl::context]
+[indexterm2 tls_client..ssl::context]
+[indexterm2 tls_server..ssl::context]
 
 [heading Values]
 [variablelist
@@ -89756,6 +89794,21 @@ Different methods supported by a context.
   [
     [tlsv12_server]
     [TLS version 1.2 server. ]
+  ]
+
+  [
+    [tls]
+    [Generic TLS. ]
+  ]
+
+  [
+    [tls_client]
+    [TLS client. ]
+  ]
+
+  [
+    [tls_server]
+    [TLS server. ]
   ]
 
 ]
@@ -91832,6 +91885,9 @@ Different methods supported by a context.
 [indexterm2 tlsv12..ssl::context_base]
 [indexterm2 tlsv12_client..ssl::context_base]
 [indexterm2 tlsv12_server..ssl::context_base]
+[indexterm2 tls..ssl::context_base]
+[indexterm2 tls_client..ssl::context_base]
+[indexterm2 tls_server..ssl::context_base]
 
 [heading Values]
 [variablelist
@@ -91924,6 +91980,21 @@ Different methods supported by a context.
   [
     [tlsv12_server]
     [TLS version 1.2 server. ]
+  ]
+
+  [
+    [tls]
+    [Generic TLS. ]
+  ]
+
+  [
+    [tls_client]
+    [TLS client. ]
+  ]
+
+  [
+    [tls_server]
+    [TLS server. ]
   ]
 
 ]
@@ -95085,6 +95156,7 @@ Move-construct a new stream socket implementation from another protocol type.
       typename ``[link asio.reference.Protocol Protocol1]``>
   void converting_move_construct(
       implementation_type & impl,
+      stream_socket_service< Protocol1 > & other_service,
       typename stream_socket_service< Protocol1 >::implementation_type & other_impl,
       typename enable_if< is_convertible< Protocol1, Protocol >::value >::type *  = 0);
 
