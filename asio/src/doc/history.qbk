@@ -7,6 +7,37 @@
 
 [section:history Revision History]
 
+[heading Asio 1.10.9]
+
+* Added limited support for using regular file descriptors (where I/O
+  operations should never fail with `EAGAIN` or `EWOULDBLOCK`) with
+  `posix::stream_descriptor`, when using the Linux epoll backend.
+
+* Changed to use `allocator_traits` to rebind allocators in C++11 or later.
+
+* Eliminated a double "construction" issue in the converting move constructors.
+
+* Added new `ssl::context_base` enumerations to enable support for any TLS
+  version, and improved consistency of SSL/TLS version handling across OpenSSL
+  releases.
+
+* Applied more changes to address OpenSSL 1.1 compatibility.
+
+* Fixed a compile error when OpenSSL compression is disabled at compile time.
+
+* Suppressed some spurious unused variable warnings issued by [^gcc].
+
+* Worked around a new clang warning issued for usage of the comma operator.
+
+* Fixed various header ordering problems.
+
+* Changed to refer `std::atomic_thread_fence`, when available, to eliminate a
+  deprecated function warning on newest macOS SDK.
+
+* Added a workaround for broken `getaddrinfo` in Apple's NAT64 environment.
+
+* Fixed an exception safety issue in the internal hash map implementation.
+
 [heading Asio 1.10.8]
 
 * Added compatibility with OpenSSL 1.1.0.
