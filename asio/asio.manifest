@@ -335,6 +335,7 @@
 /doc/asio/reference/basic_io_object/basic_io_object.html
 /doc/asio/reference/basic_io_object/basic_io_object/overload1.html
 /doc/asio/reference/basic_io_object/basic_io_object/overload2.html
+/doc/asio/reference/basic_io_object/basic_io_object/overload3.html
 /doc/asio/reference/basic_io_object/get_implementation/
 /doc/asio/reference/basic_io_object/get_implementation.html
 /doc/asio/reference/basic_io_object/get_implementation/overload1.html
@@ -3688,6 +3689,7 @@
 /include/asio/detail/limits.hpp
 /include/asio/detail/local_free_on_block_exit.hpp
 /include/asio/detail/macos_fenced_block.hpp
+/include/asio/detail/memory.hpp
 /include/asio/detail/mutex.hpp
 /include/asio/detail/noncopyable.hpp
 /include/asio/detail/null_event.hpp
@@ -3753,6 +3755,7 @@
 /include/asio/detail/solaris_fenced_block.hpp
 /include/asio/detail/static_mutex.hpp
 /include/asio/detail/std_event.hpp
+/include/asio/detail/std_fenced_block.hpp
 /include/asio/detail/std_mutex.hpp
 /include/asio/detail/std_static_mutex.hpp
 /include/asio/detail/std_thread.hpp
@@ -4325,6 +4328,7 @@
 /src/tests/unit/ssl/context_base.cpp
 /src/tests/unit/ssl/context.cpp
 /src/tests/unit/ssl/context_service.cpp
+/src/tests/unit/ssl/error.cpp
 /src/tests/unit/ssl/rfc2818_verification.cpp
 /src/tests/unit/ssl/stream_base.cpp
 /src/tests/unit/ssl/stream.cpp
