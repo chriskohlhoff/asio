@@ -90,7 +90,7 @@ private:
     detail::packaged_task<Result(ASIO_VARIADIC_TARGS(n))>, Signature> \
   { \
   public: \
-    typedef packaged_task< \
+    typedef detail::packaged_task< \
       Result(ASIO_VARIADIC_TARGS(n))> \
         completion_handler_type; \
   \
