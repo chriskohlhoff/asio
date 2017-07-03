@@ -21,7 +21,7 @@
 
 #include <codecvt>
 #include <cstdlib>
-#include <future>
+#include "asio/detail/future.hpp"
 #include <locale>
 #include <robuffer.h>
 #include <windows.storage.streams.h>

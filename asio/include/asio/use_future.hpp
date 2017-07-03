@@ -17,8 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_STD_FUTURE) \
-  || defined(GENERATING_DOCUMENTATION)
+#if !defined(ASIO_DISABLE_FUTURE) || defined(GENERATING_DOCUMENTATION)
 
 #include <memory>
 #include "asio/detail/type_traits.hpp"
@@ -39,11 +38,11 @@ class packaged_handler;
 /// Class used to specify that an asynchronous operation should return a future.
 /**
  * The use_future_t class is used to indicate that an asynchronous operation
- * should return a std::future object. A use_future_t object may be passed as a
+ * should return a future object. A use_future_t object may be passed as a
  * handler to an asynchronous operation, typically using the special value @c
  * asio::use_future. For example:
  *
- * @code std::future<std::size_t> my_future
+ * @code future<std::size_t> my_future
  *   = my_socket.async_read_some(my_buffer, asio::use_future); @endcode
  *
  * The initiating function (async_read_some in the above example) returns a
@@ -56,7 +55,7 @@ class use_future_t
 {
 public:
   /// The allocator type. The allocator is used when constructing the
-  /// @c std::promise object for a given asynchronous operation.
+  /// @c promise object for a given asynchronous operation.
   typedef Allocator allocator_type;
 
   /// Construct using default-constructed allocator.
@@ -96,11 +95,11 @@ public:
   /**
    * The @c package function is used to adapt a function object as a packaged
    * task. When this adapter is passed as a completion token to an asynchronous
-   * operation, the result of the function object is retuned via a std::future.
+   * operation, the result of the function object is retuned via a future.
    *
    * @par Example
    *
-   * @code std::future<std::size_t> fut =
+   * @code future<std::size_t> fut =
    *   my_socket.async_read_some(buffer,
    *     use_future([](asio::error_code ec, std::size_t n)
    *       {
@@ -137,7 +136,6 @@ __declspec(selectany) use_future_t<> use_future;
 
 #include "asio/impl/use_future.hpp"
 
-#endif // defined(ASIO_HAS_STD_FUTURE)
-       //   || defined(GENERATING_DOCUMENTATION)
+#endif //!(ASIO_DISABLE_FUTURE) || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_USE_FUTURE_HPP

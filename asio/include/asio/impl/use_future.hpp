@@ -16,7 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <future>
+#include "asio/detail/future.hpp"
 #include <tuple>
 #include "asio/async_result.hpp"
 #include "asio/detail/memory.hpp"
@@ -33,7 +33,7 @@ namespace detail {
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename T, typename F, typename... Args>
-inline void promise_invoke_and_set(std::promise<T>& p,
+inline void promise_invoke_and_set(promise<T>& p,
     F& f, ASIO_MOVE_ARG(Args)... args)
 {
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -51,7 +51,7 @@ inline void promise_invoke_and_set(std::promise<T>& p,
 }
 
 template <typename F, typename... Args>
-inline void promise_invoke_and_set(std::promise<void>& p,
+inline void promise_invoke_and_set(promise<void>& p,
     F& f, ASIO_MOVE_ARG(Args)... args)
 {
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -72,7 +72,7 @@ inline void promise_invoke_and_set(std::promise<void>& p,
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename T, typename F>
-inline void promise_invoke_and_set(std::promise<T>& p, F& f)
+inline void promise_invoke_and_set(promise<T>& p, F& f)
 {
 #if !defined(ASIO_NO_EXCEPTIONS)
   try
@@ -89,7 +89,7 @@ inline void promise_invoke_and_set(std::promise<T>& p, F& f)
 }
 
 template <typename F, typename Args>
-inline void promise_invoke_and_set(std::promise<void>& p, F& f)
+inline void promise_invoke_and_set(promise<void>& p, F& f)
 {
 #if !defined(ASIO_NO_EXCEPTIONS)
   try
@@ -110,14 +110,14 @@ inline void promise_invoke_and_set(std::promise<void>& p, F& f)
 
 #define ASIO_PRIVATE_PROMISE_INVOKE_DEF(n) \
   template <typename T, typename F, ASIO_VARIADIC_TPARAMS(n)> \
-  inline void promise_invoke_and_set(std::promise<T>& p, \
+  inline void promise_invoke_and_set(promise<T>& p, \
       F& f, ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     p.set_value(f(ASIO_VARIADIC_MOVE_ARGS(n))); \
   } \
   \
   template <typename F, ASIO_VARIADIC_TPARAMS(n)> \
-  inline void promise_invoke_and_set(std::promise<void>& p, \
+  inline void promise_invoke_and_set(promise<void>& p, \
       F& f, ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     f(ASIO_VARIADIC_MOVE_ARGS(n)); \
@@ -131,7 +131,7 @@ inline void promise_invoke_and_set(std::promise<void>& p, F& f)
 
 #define ASIO_PRIVATE_PROMISE_INVOKE_DEF(n) \
   template <typename T, typename F, ASIO_VARIADIC_TPARAMS(n)> \
-  inline void promise_invoke_and_set(std::promise<T>& p, \
+  inline void promise_invoke_and_set(promise<T>& p, \
       F& f, ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     try \
@@ -145,7 +145,7 @@ inline void promise_invoke_and_set(std::promise<void>& p, F& f)
   } \
   \
   template <typename F, ASIO_VARIADIC_TPARAMS(n)> \
-  inline void promise_invoke_and_set(std::promise<void>& p, \
+  inline void promise_invoke_and_set(promise<void>& p, \
       F& f, ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     try \
@@ -172,7 +172,7 @@ template <typename T, typename F>
 class promise_invoker
 {
 public:
-  promise_invoker(const shared_ptr<std::promise<T> >& p,
+  promise_invoker(const shared_ptr<promise<T> >& p,
       ASIO_MOVE_ARG(F) f)
     : p_(p), f_(f)
   {
@@ -195,7 +195,7 @@ public:
   }
 
 private:
-  shared_ptr<std::promise<T> > p_;
+  shared_ptr<promise<T> > p_;
   typename decay<F>::type f_;
 };
 
@@ -205,7 +205,7 @@ template <typename T>
 class promise_executor
 {
 public:
-  explicit promise_executor(const shared_ptr<std::promise<T> >& p)
+  explicit promise_executor(const shared_ptr<promise<T> >& p)
     : p_(p)
   {
   }
@@ -251,7 +251,7 @@ public:
   }
 
 private:
-  shared_ptr<std::promise<T> > p_;
+  shared_ptr<promise<T> > p_;
 };
 
 // The base class for all completion handlers that create promises.
@@ -266,7 +266,7 @@ public:
     return executor_type(p_);
   }
 
-  typedef std::future<T> future_type;
+  typedef future<T> future_type;
 
   future_type get_future()
   {
@@ -278,10 +278,10 @@ protected:
   void create_promise(const Allocator& a)
   {
     ASIO_REBIND_ALLOC(Allocator, char) b(a);
-    p_ = std::allocate_shared<std::promise<T>>(b, std::allocator_arg, b);
+    p_ = std::allocate_shared<promise<T>>(b, std::allocator_arg, b);
   }
 
-  shared_ptr<std::promise<T> > p_;
+  shared_ptr<promise<T> > p_;
 };
 
 // For completion signature void().

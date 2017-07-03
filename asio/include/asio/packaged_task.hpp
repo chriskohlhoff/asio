@@ -17,10 +17,10 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_STD_FUTURE) \
-  || defined(GENERATING_DOCUMENTATION)
+#if !defined(ASIO_DISABLE_FUTURE) || defined(GENERATING_DOCUMENTATION)
 
-#include <future>
+#include "asio/detail/future.hpp"
+
 #include "asio/async_result.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
@@ -32,17 +32,17 @@ namespace asio {
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES) \
   || defined(GENERATING_DOCUMENTATION)
 
-/// Partial specialisation of @c async_result for @c std::packaged_task.
+/// Partial specialisation of @c async_result for @c packaged_task.
 template <typename Result, typename... Args, typename Signature>
-class async_result<std::packaged_task<Result(Args...)>, Signature>
+class async_result<detail::packaged_task<Result(Args...)>, Signature>
 {
 public:
   /// The packaged task is the concrete completion handler type.
-  typedef std::packaged_task<Result(Args...)> completion_handler_type;
+  typedef detail::packaged_task<Result(Args...)> completion_handler_type;
 
   /// The return type of the initiating function is the future obtained from
   /// the packaged task.
-  typedef std::future<Result> return_type;
+  typedef detail::future<Result> return_type;
 
   /// The constructor extracts the future from the packaged task.
   explicit async_result(completion_handler_type& h)
@@ -64,10 +64,10 @@ private:
       //   || defined(GENERATING_DOCUMENTATION)
 
 template <typename Result, typename Signature>
-struct async_result<std::packaged_task<Result()>, Signature>
+struct async_result<detail::packaged_task<Result()>, Signature>
 {
-  typedef std::packaged_task<Result()> completion_handler_type;
-  typedef std::future<Result> return_type;
+  typedef detail::packaged_task<Result()> completion_handler_type;
+  typedef detail::future<Result> return_type;
 
   explicit async_result(completion_handler_type& h)
     : future_(h.get_future())
@@ -87,14 +87,14 @@ private:
   template <typename Result, \
     ASIO_VARIADIC_TPARAMS(n), typename Signature> \
   class async_result< \
-    std::packaged_task<Result(ASIO_VARIADIC_TARGS(n))>, Signature> \
+    detail::packaged_task<Result(ASIO_VARIADIC_TARGS(n))>, Signature> \
   { \
   public: \
-    typedef std::packaged_task< \
+    typedef packaged_task< \
       Result(ASIO_VARIADIC_TARGS(n))> \
         completion_handler_type; \
   \
-    typedef std::future<Result> return_type; \
+    typedef detail::future<Result> return_type; \
   \
     explicit async_result(completion_handler_type& h) \
       : future_(h.get_future()) \
@@ -120,7 +120,6 @@ private:
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // defined(ASIO_HAS_STD_FUTURE)
-       //   || defined(GENERATING_DOCUMENTATION)
+#endif // !defined(ASIO_DISABLE_FUTURE) || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_PACKAGED_TASK_HPP
