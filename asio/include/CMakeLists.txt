@@ -319,7 +319,6 @@ set(asio_PUBLIC_HEADERS
   asio/impl/serial_port_base.hpp
   asio/impl/serial_port_base.ipp
   asio/impl/spawn.hpp
-  asio/impl/src.cpp
   asio/impl/src.hpp
   asio/impl/system_executor.hpp
   asio/impl/system_executor.ipp
@@ -473,14 +472,31 @@ set(asio_PUBLIC_HEADERS
   asio/yield.hpp
 )
 
-# Standalone library
 
+option(asio_SEPARATE_COMPILATION "build asio lib too" OFF)
+if(asio_SEPARATE_COMPILATION)
+  set(libasio_SOURCES ../src/asio.cpp)
+  if(OpenSSL_FOUND)
+    set(libasio_SOURCES ${libasio_SOURCES} ../src/asio_ssl.cpp)
+  endif()
+
+  add_definitions(-DASIO_SEPARATE_COMPILATION=1)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  add_library(asio ${libasio_SOURCES} ${asio_PUBLIC_HEADERS})
+endif()
+
+
+# Standalone library
 add_library(standalone INTERFACE)
 
 target_include_directories(standalone INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_compile_definitions(standalone INTERFACE ASIO_STANDALONE ASIO_NO_DEPRECATED)
+if(Boost_FOUND)
+  target_compile_definitions(standalone INTERFACE)
+else()
+  target_compile_definitions(standalone INTERFACE ASIO_STANDALONE ASIO_NO_DEPRECATED)
+endif()
 
 install(TARGETS standalone EXPORT asio-targets)
 
@@ -488,3 +504,4 @@ foreach(header ${asio_PUBLIC_HEADERS})
   get_filename_component(path ${header} PATH)
   install(FILES ${header} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${path})
 endforeach()
+

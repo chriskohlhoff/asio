@@ -100,14 +100,14 @@ private:
   }
 
   // Increment outstanding work.
-  void do_work_started(const std::shared_ptr<std::size_t>& work_count) noexcept
+  void do_work_started(const std::shared_ptr<std::size_t>& work_count) ASIO_NOEXCEPT
   {
     if (++(*work_count) == 1)
       ++use_count_;
   }
 
   // Decrement outstanding work. Notify waiting threads if we run out.
-  void do_work_finished(const std::shared_ptr<std::size_t>& work_count) noexcept
+  void do_work_finished(const std::shared_ptr<std::size_t>& work_count) ASIO_NOEXCEPT
   {
     if (--(*work_count) == 0)
     {
@@ -173,18 +173,18 @@ public:
   {
   }
 
-  fork_join_pool& context() const noexcept
+  fork_join_pool& context() const ASIO_NOEXCEPT
   {
     return context_;
   }
 
-  void on_work_started() const noexcept
+  void on_work_started() const ASIO_NOEXCEPT
   {
     std::lock_guard<std::mutex> lock(context_.mutex_);
     context_.do_work_started(work_count_);
   }
 
-  void on_work_finished() const noexcept
+  void on_work_finished() const ASIO_NOEXCEPT
   {
     std::lock_guard<std::mutex> lock(context_.mutex_);
     context_.do_work_finished(work_count_);
@@ -215,13 +215,13 @@ public:
   }
 
   friend bool operator==(const fork_executor& a,
-      const fork_executor& b) noexcept
+      const fork_executor& b) ASIO_NOEXCEPT
   {
     return a.work_count_ == b.work_count_;
   }
 
   friend bool operator!=(const fork_executor& a,
-      const fork_executor& b) noexcept
+      const fork_executor& b) ASIO_NOEXCEPT
   {
     return a.work_count_ != b.work_count_;
   }

@@ -21,6 +21,18 @@ set(noinst_PROGRAMS
   http/server/http_server
   iostreams/http_client)
 
+
+if(Boost_FOUND)
+  set(noinst_PROGRAMS ${noinst_PROGRAMS}
+    spawn/echo_server
+    spawn/parallel_grep)
+    set(spawn_echo_server_SOURCES spawn/echo_server)
+    #XXX spawn_echo_server_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_thread -lboost_chrono -lboost_system
+    set(spawn_parallel_grep_SOURCES spawn/parallel_grep)
+    #XXX spawn_parallel_grep_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_thread -lboost_chrono -lboost_system
+endif()
+
+
 set(allocation_server_SOURCES allocation/server.cpp)
 set(buffers_reference_counted_SOURCES buffers/reference_counted.cpp)
 set(chat_chat_client_SOURCES chat/chat_client.cpp)
@@ -52,13 +64,12 @@ set(iostreams_http_client_SOURCES iostreams/http_client.cpp)
 foreach(program ${noinst_PROGRAMS})
   string(REPLACE "/" "_" target ${program})
   add_executable(${target_prefix}${target} ${${target}_SOURCES})
-  set_target_properties(${target_prefix}${target} PROPERTIES
-    CXX_STANDARD 11)
-  target_link_libraries(${target_prefix}${target}
-    asio::standalone)
-  if(WIN32)
-    target_link_libraries(${target_prefix}${target} wsock32 ws2_32)
+  set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 11)
+  target_link_libraries(${target_prefix}${target} asio::standalone)
+
+  if(EXTRA_LIBS)
+    target_link_libraries(${target_prefix}${target} ${EXTRA_LIBS})
   endif()
-  # install(TARGETS ${target_prefix}${target}
-    # RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
+
+#TODO: target_compile_features(${target_prefix}executors_priority_scheduler PRIVATE cxx_std_11)

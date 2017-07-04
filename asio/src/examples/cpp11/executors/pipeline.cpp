@@ -55,17 +55,17 @@ private:
   };
 
 public:
-  execution_context& context() const noexcept
+  execution_context& context() const ASIO_NOEXCEPT
   {
     return system_executor().context();
   }
 
-  void on_work_started() const noexcept
+  void on_work_started() const ASIO_NOEXCEPT
   {
     // This executor doesn't count work.
   }
 
-  void on_work_finished() const noexcept
+  void on_work_finished() const ASIO_NOEXCEPT
   {
     // This executor doesn't count work.
   }
@@ -90,13 +90,13 @@ public:
   }
 
   friend bool operator==(const thread_executor&,
-      const thread_executor&) noexcept
+      const thread_executor&) ASIO_NOEXCEPT
   {
     return true;
   }
 
   friend bool operator!=(const thread_executor&,
-      const thread_executor&) noexcept
+      const thread_executor&) ASIO_NOEXCEPT
   {
     return false;
   }
