@@ -147,8 +147,11 @@ network_v6 make_network_v6(const std::string& str,
     return network_v6();
   }
 
-  return network_v6(make_address_v6(str.substr(0, pos)),
-      std::atoi(str.substr(pos + 1).c_str()));
+  const address_v6 addr = make_address_v6(str.substr(0, pos), ec);
+  if (ec)
+    return network_v6();
+
+  return network_v6(addr, std::atoi(str.substr(pos + 1).c_str()));
 }
 
 #if defined(ASIO_HAS_STD_STRING_VIEW)

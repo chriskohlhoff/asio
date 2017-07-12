@@ -178,8 +178,11 @@ network_v4 make_network_v4(const std::string& str,
     return network_v4();
   }
 
-  return network_v4(make_address_v4(str.substr(0, pos)),
-      std::atoi(str.substr(pos + 1).c_str()));
+  const address_v4 addr = make_address_v4(str.substr(0, pos), ec);
+  if (ec)
+    return network_v4();
+
+  return network_v4(addr, std::atoi(str.substr(pos + 1).c_str()));
 }
 
 #if defined(ASIO_HAS_STD_STRING_VIEW)
