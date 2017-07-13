@@ -81,6 +81,11 @@ public:
   /// The UDP resolver type.
   typedef basic_resolver<udp> resolver;
 
+#if !defined(ASIO_NO_IOSTREAM)
+  /// The UDP iostream type.
+  typedef basic_socket_iostream<udp> iostream;
+#endif // !defined(ASIO_NO_IOSTREAM)
+  
   /// Compare two protocols for equality.
   friend bool operator==(const udp& p1, const udp& p2)
   {
