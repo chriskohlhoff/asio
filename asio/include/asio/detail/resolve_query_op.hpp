@@ -84,7 +84,8 @@ public:
     }
     else
     {
-      // The operation has been returned to the main io_context. The completion
+	  handler_work<Handler> w(o->handler_);
+	  // The operation has been returned to the main io_context. The completion
       // handler is ready to be delivered.
 
       // Take ownership of the operation's outstanding work.
@@ -108,13 +109,15 @@ public:
       }
       p.reset();
 
-      if (owner)
-      {
-        fenced_block b(fenced_block::half);
-        ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, "..."));
-        w.complete(handler, handler.handler_);
-        ASIO_HANDLER_INVOCATION_END;
-      }
+	  if (owner)
+	  {
+		  fenced_block b(fenced_block::half);
+		  ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, "..."));
+		  w.complete(handler, handler.handler_);
+		  ASIO_HANDLER_INVOCATION_END;
+	  }
+	  else
+		  OutputDebugString(L"resolver is not the owner");
     }
   }
 
