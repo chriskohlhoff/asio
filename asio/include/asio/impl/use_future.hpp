@@ -174,7 +174,7 @@ class promise_invoker
 public:
   promise_invoker(const shared_ptr<std::promise<T> >& p,
       ASIO_MOVE_ARG(F) f)
-    : p_(p), f_(f)
+    : p_(p), f_(ASIO_MOVE_CAST(F)(f))
   {
   }
 
