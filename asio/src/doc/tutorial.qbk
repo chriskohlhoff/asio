@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -129,7 +129,7 @@ Next: [link asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -229,7 +229,7 @@ Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -357,7 +357,7 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handl
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -518,7 +518,7 @@ Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithr
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -725,7 +725,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``// timer.cpp
   ``''''''``// ~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -909,7 +909,7 @@ Next: [link asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime serv
   ``''''''``// client.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1034,7 +1034,7 @@ Next: [link asio.tutorial.tutdaytime3 Daytime.3 - An asynchronous TCP daytime se
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1284,7 +1284,7 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1468,7 +1468,7 @@ Next: [link asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime serv
   ``''''''``// client.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1578,7 +1578,7 @@ Next: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytime se
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1794,7 +1794,7 @@ Next: [link asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP asynchronou
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -2056,7 +2056,7 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``// server.cpp
   ``''''''``// ~~~~~~~~~~
   ``''''''``//
-  ``''''''``// Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  ``''''''``// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
   ``''''''``//
   ``''''''``// Distributed under the Boost Software License, Version 1.0. (See accompanying
   ``''''''``// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
