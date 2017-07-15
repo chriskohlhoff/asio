@@ -336,7 +336,7 @@ namespace socket_errc {
 namespace resolver_errc {
   // Simulates the proposed resolver_errc scoped enum.
   using error::host_not_found;
-  using error::host_not_found_try_again;
+  const error::netdb_errors try_again = error::host_not_found_try_again;
   using error::service_not_found;
 } // namespace resolver_errc
 } // namespace asio
