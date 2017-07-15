@@ -161,6 +161,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define ASIO_HAS_VARIADIC_TEMPLATES 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_VARIADIC_TEMPLATES)
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
@@ -178,6 +183,11 @@
 #   define ASIO_DELETED = delete
 #  endif // __has_feature(__cxx_deleted_functions__)
 # endif // defined(__clang__)
+# if defined(ASIO_MSVC)
+#  if (_MSC_VER >= 1900)
+#   define ASIO_DELETED = delete
+#  endif // (_MSC_VER >= 1900)
+# endif // defined(ASIO_MSVC)
 # if !defined(ASIO_DELETED)
 #  define ASIO_DELETED
 # endif // !defined(ASIO_DELETED)
@@ -198,6 +208,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define ASIO_HAS_CONSTEXPR 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_CONSTEXPR)
 #endif // !defined(ASIO_HAS_CONSTEXPR)
 #if !defined(ASIO_CONSTEXPR)
@@ -279,6 +294,11 @@
 #    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define ASIO_HAS_ALIAS_TEMPLATES 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_ALIAS_TEMPLATES)
 #endif // !defined(ASIO_HAS_ALIAS_TEMPLATES)
 
@@ -769,6 +789,11 @@
 #    endif // (__cplusplus >= 201402)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1910)
+#    define ASIO_HAS_STD_STRING_VIEW
+#   endif // (_MSC_VER >= 1910)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_STRING_VIEW)
 #endif // !defined(ASIO_HAS_STD_STRING_VIEW)
 

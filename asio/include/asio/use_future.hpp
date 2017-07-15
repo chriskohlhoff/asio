@@ -125,10 +125,10 @@ private:
 /**
  * See the documentation for asio::use_future_t for a usage example.
  */
-#if defined(ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
-constexpr use_future_t<> use_future;
-#elif defined(ASIO_MSVC)
+#if defined(ASIO_MSVC)
 __declspec(selectany) use_future_t<> use_future;
+#elif defined(ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
+constexpr use_future_t<> use_future;
 #endif
 
 } // namespace asio
