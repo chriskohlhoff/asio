@@ -56,11 +56,12 @@ public:
   // Construct to represent the entire list of buffers.
   explicit consuming_buffers(const Buffers& buffers)
     : buffers_(buffers),
-      total_size_(asio::buffer_size(buffers)),
       total_consumed_(0),
       next_elem_(0),
       next_elem_offset_(0)
   {
+    using asio::buffer_size;
+    total_size_ = buffer_size(buffers);
   }
 
   // Determine if we are at the end of the buffers.
