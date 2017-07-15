@@ -12,6 +12,7 @@
 #define HTTP_SERVER2_IO_SERVICE_POOL_HPP
 
 #include <asio.hpp>
+#include <list>
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -45,7 +46,7 @@ private:
   std::vector<io_context_ptr> io_contexts_;
 
   /// The work that keeps the io_contexts running.
-  std::vector<io_context_work> work_;
+  std::list<io_context_work> work_;
 
   /// The next io_context to use for a connection.
   std::size_t next_io_context_;
