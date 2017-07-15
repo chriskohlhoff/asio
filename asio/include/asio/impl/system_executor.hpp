@@ -19,15 +19,15 @@
 #include "asio/detail/global.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
-#include "asio/execution_context.hpp"
+#include "asio/system_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-inline execution_context& system_executor::context() const ASIO_NOEXCEPT
+inline system_context& system_executor::context() const ASIO_NOEXCEPT
 {
-  return detail::global<context_impl>();
+  return detail::global<system_context>();
 }
 
 template <typename Function, typename Allocator>
@@ -44,7 +44,7 @@ void system_executor::post(
 {
   typedef typename decay<Function>::type function_type;
 
-  context_impl& ctx = detail::global<context_impl>();
+  system_context& ctx = detail::global<system_context>();
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
@@ -64,7 +64,7 @@ void system_executor::defer(
 {
   typedef typename decay<Function>::type function_type;
 
-  context_impl& ctx = detail::global<context_impl>();
+  system_context& ctx = detail::global<system_context>();
 
   // Allocate and construct an operation to wrap the function.
   typedef detail::executor_op<function_type, Allocator> op;
