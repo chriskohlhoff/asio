@@ -1310,19 +1310,19 @@ void test()
 
   ip::tcp::iostream ios1;
 
-#if defined(ASIO_HAS_MOVE)
+#if defined(ASIO_HAS_STD_IOSTREAM_MOVE)
   ip::tcp::iostream ios2(std::move(sock));
-#endif // defined(ASIO_HAS_MOVE)
+#endif // defined(ASIO_HAS_STD_IOSTREAM_MOVE)
 
   ip::tcp::iostream ios3("hostname", "service");
 
   // basic_socket_iostream operators.
 
-#if defined(ASIO_HAS_MOVE)
+#if defined(ASIO_HAS_STD_IOSTREAM_MOVE)
   ios1 = ip::tcp::iostream();
 
   ios2 = std::move(ios1);
-#endif // defined(ASIO_HAS_MOVE)
+#endif // defined(ASIO_HAS_STD_IOSTREAM_MOVE)
 
   // basic_socket_iostream members.
 

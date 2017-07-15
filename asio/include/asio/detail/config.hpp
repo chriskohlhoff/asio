@@ -754,6 +754,24 @@
 # endif // !defined(ASIO_DISABLE_STD_STRING_VIEW)
 #endif // !defined(ASIO_HAS_STD_STRING_VIEW)
 
+// Standard library support for iostream move construction and assignment.
+#if !defined(ASIO_HAS_STD_IOSTREAM_MOVE)
+# if !defined(ASIO_DISABLE_STD_IOSTREAM_MOVE)
+#  if defined(__GNUC__)
+#   if (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_IOSTREAM_MOVE 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_IOSTREAM_MOVE 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_IOSTREAM_MOVE)
+#endif // !defined(ASIO_HAS_STD_IOSTREAM_MOVE)
+
 // Windows App target. Windows but with a limited API.
 #if !defined(ASIO_WINDOWS_APP)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)

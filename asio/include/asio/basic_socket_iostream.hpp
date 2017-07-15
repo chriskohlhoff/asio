@@ -215,6 +215,8 @@ public:
     this->setf(std::ios_base::unitbuf);
   }
 
+#if defined(ASIO_HAS_STD_IOSTREAM_MOVE) \
+  || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a basic_socket_iostream from another.
   basic_socket_iostream(basic_socket_iostream&& other)
     : detail::socket_iostream_base<
@@ -236,6 +238,8 @@ public:
         WaitTraits ASIO_SVC_TARG1>::operator=(std::move(other));
     return *this;
   }
+#endif // defined(ASIO_HAS_STD_IOSTREAM_MOVE)
+       //   || defined(GENERATING_DOCUMENTATION)
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
 #if defined(GENERATING_DOCUMENTATION)
