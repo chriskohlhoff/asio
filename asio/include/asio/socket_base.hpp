@@ -432,6 +432,40 @@ public:
       linger;
 #endif
 
+  /// Socket option for putting received out-of-band data inline.
+  /**
+   * Implements the SOL_SOCKET/SO_OOBINLINE socket option.
+   *
+   * @par Examples
+   * Setting the option:
+   * @code
+   * asio::ip::tcp::socket socket(io_context);
+   * ...
+   * asio::socket_base::out_of_band_inline option(true);
+   * socket.set_option(option);
+   * @endcode
+   *
+   * @par
+   * Getting the current option value:
+   * @code
+   * asio::ip::tcp::socket socket(io_context);
+   * ...
+   * asio::socket_base::out_of_band_inline option;
+   * socket.get_option(option);
+   * bool value = option.value();
+   * @endcode
+   *
+   * @par Concepts:
+   * Socket_Option, Boolean_Socket_Option.
+   */
+#if defined(GENERATING_DOCUMENTATION)
+  typedef implementation_defined out_of_band_inline;
+#else
+  typedef asio::detail::socket_option::boolean<
+    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_OOBINLINE)>
+      out_of_band_inline;
+#endif
+
   /// Socket option to report aborted connections on accept.
   /**
    * Implements a custom socket option that determines whether or not an accept
