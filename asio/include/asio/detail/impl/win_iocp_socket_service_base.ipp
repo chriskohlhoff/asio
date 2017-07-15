@@ -45,7 +45,6 @@ void win_iocp_socket_service_base::base_shutdown()
   base_implementation_type* impl = impl_list_;
   while (impl)
   {
-    asio::error_code ignored_ec;
     close_for_destruction(*impl);
     impl = impl->next_;
   }
