@@ -135,6 +135,13 @@ get_associated_executor(const T& t, ExecutionContext& ctx,
     typename ExecutionContext::executor_type>::get(t, ctx.get_executor());
 }
 
+#if defined(ASIO_HAS_ALIAS_TEMPLATES)
+
+template <typename T, typename Executor = system_executor>
+using associated_executor_t = typename associated_executor<T, Executor>::type;
+
+#endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
