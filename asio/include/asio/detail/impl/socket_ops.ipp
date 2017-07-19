@@ -31,6 +31,8 @@
 # include <codecvt>
 # include <locale>
 # include <string>
+#elif ((ASIO_WINDOWS) || defined(__CYGWIN__)) && defined(_UNICODE)
+# include <SvcGuid.h>
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__) \
@@ -2369,7 +2371,7 @@ int inet_pton(int af, const char* src, void* dest,
 }
 
 #if (defined(ASIO_WINDOWS) || defined(__CYGWIN__))
-#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603) // windows 8
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602) // windows 8
 #    if defined(_UNICODE)
 #      define GetHostNameAlt ::GetHostNameW
 #    else
@@ -2379,12 +2381,12 @@ int inet_pton(int af, const char* src, void* dest,
 int GetHostNameAlt(PWSTR hostname, int namelen)
 {
   DWORD dwResult = GetEnvironmentVariableW(L"_CLUSTER_NETWORK_NAME_", hostname, namelen);
-  if (dwResult && dwResult <= namelen)
+  if (dwResult && static_cast<int>(dwResult) <= namelen)
     return 0;
-  else if (dwResult > namelen)
+  else if (static_cast<int>(dwResult) > namelen)
   {
     WSASetLastError(ERROR_INSUFFICIENT_BUFFER);
-    SOCKET_ERROR;
+    return SOCKET_ERROR;
   }
   else if (!dwResult && GetLastError() != ERROR_ENVVAR_NOT_FOUND)
   {
@@ -2430,6 +2432,7 @@ int GetHostNameAlt(PWSTR hostname, int namelen)
       WSASetLastError(GetLastError());
       return SOCKET_ERROR;
     }
+    return 0;
   }
 }
 #  else
@@ -2474,7 +2477,7 @@ int gethostname(ns_char_t* name, int namelen, asio::error_code& ec)
   if (result == 0)
     ec = asio::error_code();
   return result;
-#  endif
+#else
   return error_wrapper(::gethostname(name, namelen), ec);
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 }

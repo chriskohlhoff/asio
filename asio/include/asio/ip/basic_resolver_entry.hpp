@@ -50,7 +50,7 @@ public:
 
   /// Construct with specified endpoint, host name and service name.
   basic_resolver_entry(const endpoint_type& ep,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service)
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service)
     : endpoint_(ep),
       host_name_(static_cast<ns_string>(host)),
       service_name_(static_cast<ns_string>(service))
@@ -77,10 +77,10 @@ public:
 
   /// Get the host name associated with the entry.
   template <class Allocator>
-  std::basic_string<ns_char_t, std::char_traits<ns_char_t>, Allocator> host_name(
+  std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator> host_name(
       const Allocator& alloc = Allocator()) const
   {
-    return std::basic_string<ns_char_t, std::char_traits<ns_char_t>, Allocator>(
+    return std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator>(
         host_name_.c_str(), alloc);
   }
 
@@ -92,10 +92,10 @@ public:
 
   /// Get the service name associated with the entry.
   template <class Allocator>
-  std::basic_string<ns_char_t, std::char_traits<ns_char_t>, Allocator> service_name(
+  std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator> service_name(
       const Allocator& alloc = Allocator()) const
   {
-    return std::basic_string<ns_char_t, std::char_traits<ns_char_t>, Allocator>(
+    return std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator>(
         service_name_.c_str(), alloc);
   }
 

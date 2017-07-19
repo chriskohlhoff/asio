@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <string>
+#include "asio/detail/string_view.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 // Empty.
@@ -413,9 +415,17 @@ const int always_fail_option = 2;
 
 } // namespace detail
 
-#include <string>
-typedef std::basic_string<detail::ns_char_t, std::char_traits<detail::ns_char_t>, std::allocator<ns_char_t>> ns_string;
+typedef std::basic_string<detail::ns_char_t, 
+  std::char_traits<detail::ns_char_t>, 
+  std::allocator<detail::ns_char_t>> ns_string;
 
+#if defined(ASIO_HAS_STD_STRING_VIEW)
+typedef asio::basic_string_view<detail::ns_char_t,
+  std::char_traits<detail::ns_char_t>> ns_string_view;
+# define ASIO_NS_STRING_VIEW_PARAM asio::ns_string_view
+#else // defined(ASIO_HAS_STD_STRING_VIEW)
+# define ASIO_NS_STRING_VIEW_PARAM const std::string&
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

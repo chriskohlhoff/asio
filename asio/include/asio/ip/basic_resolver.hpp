@@ -270,8 +270,8 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  results_type resolve(ASIO_STRING_VIEW_PARAM host,
-      ASIO_STRING_VIEW_PARAM service)
+  results_type resolve(ASIO_NS_STRING_VIEW_PARAM host,
+      ASIO_NS_STRING_VIEW_PARAM service)
   {
     return resolve(host, service, resolver_base::flags());
   }
@@ -309,8 +309,8 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  results_type resolve(ASIO_STRING_VIEW_PARAM host,
-      ASIO_STRING_VIEW_PARAM service, asio::error_code& ec)
+  results_type resolve(ASIO_NS_STRING_VIEW_PARAM host,
+      ASIO_NS_STRING_VIEW_PARAM service, asio::error_code& ec)
   {
     return resolve(host, service, resolver_base::flags(), ec);
   }
@@ -352,8 +352,8 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  results_type resolve(ASIO_STRING_VIEW_PARAM host,
-      ASIO_STRING_VIEW_PARAM service, resolver_base::flags resolve_flags)
+  results_type resolve(ASIO_NS_STRING_VIEW_PARAM host,
+      ASIO_NS_STRING_VIEW_PARAM service, resolver_base::flags resolve_flags)
   {
     asio::error_code ec;
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
@@ -401,8 +401,8 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  results_type resolve(ASIO_STRING_VIEW_PARAM host,
-      ASIO_STRING_VIEW_PARAM service, resolver_base::flags resolve_flags,
+  results_type resolve(ASIO_NS_STRING_VIEW_PARAM host,
+      ASIO_NS_STRING_VIEW_PARAM service, resolver_base::flags resolve_flags,
       asio::error_code& ec)
   {
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
@@ -447,7 +447,7 @@ public:
    * may use additional locations when resolving service names.
    */
   results_type resolve(const protocol_type& protocol,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service)
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service)
   {
     return resolve(protocol, host, service, resolver_base::flags());
   }
@@ -489,7 +489,7 @@ public:
    * may use additional locations when resolving service names.
    */
   results_type resolve(const protocol_type& protocol,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service,
       asio::error_code& ec)
   {
     return resolve(protocol, host, service, resolver_base::flags(), ec);
@@ -536,7 +536,7 @@ public:
    * may use additional locations when resolving service names.
    */
   results_type resolve(const protocol_type& protocol,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags)
   {
     asio::error_code ec;
@@ -590,7 +590,7 @@ public:
    * may use additional locations when resolving service names.
    */
   results_type resolve(const protocol_type& protocol,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags, asio::error_code& ec)
   {
     basic_resolver_query<protocol_type> q(
@@ -694,8 +694,8 @@ public:
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
-  async_resolve(ASIO_STRING_VIEW_PARAM host,
-      ASIO_STRING_VIEW_PARAM service,
+  async_resolve(ASIO_NS_STRING_VIEW_PARAM host,
+      ASIO_NS_STRING_VIEW_PARAM service,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     return async_resolve(host, service, resolver_base::flags(),
@@ -751,8 +751,8 @@ public:
   template <typename ResolveHandler>
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
-  async_resolve(ASIO_STRING_VIEW_PARAM host,
-      ASIO_STRING_VIEW_PARAM service,
+  async_resolve(ASIO_NS_STRING_VIEW_PARAM host,
+      ASIO_NS_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
@@ -827,7 +827,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
     return async_resolve(protocol, host, service, resolver_base::flags(),
@@ -887,7 +887,7 @@ public:
   ASIO_INITFN_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
       ASIO_MOVE_ARG(ResolveHandler) handler)
   {
