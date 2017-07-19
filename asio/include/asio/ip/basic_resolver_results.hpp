@@ -123,13 +123,13 @@ public:
   // Create results from an addrinfo list returned by getaddrinfo.
   static basic_resolver_results create(
       asio::detail::addrinfo_type* address_info,
-      const std::string& host_name, const std::string& service_name)
+      const ns_string& host_name, const ns_string& service_name)
   {
     basic_resolver_results results;
     if (!address_info)
       return results;
 
-    std::string actual_host_name = host_name;
+    ns_string actual_host_name = host_name;
     if (address_info->ai_canonname)
       actual_host_name = address_info->ai_canonname;
 
@@ -157,7 +157,7 @@ public:
 
   // Create results from an endpoint, host name and service name.
   static basic_resolver_results create(const endpoint_type& endpoint,
-      const std::string& host_name, const std::string& service_name)
+      const ns_string& host_name, const ns_string& service_name)
   {
     basic_resolver_results results;
     results.values_.reset(new values_type);
@@ -171,7 +171,7 @@ public:
   template <typename EndpointIterator>
   static basic_resolver_results create(
       EndpointIterator begin, EndpointIterator end,
-      const std::string& host_name, const std::string& service_name)
+      const ns_string& host_name, const ns_string& service_name)
   {
     basic_resolver_results results;
     if (begin != end)

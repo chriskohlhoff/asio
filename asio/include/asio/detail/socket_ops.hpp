@@ -282,36 +282,36 @@ ASIO_DECL const char* inet_ntop(int af, const void* src, char* dest,
 ASIO_DECL int inet_pton(int af, const char* src, void* dest,
     unsigned long* scope_id, asio::error_code& ec);
 
-ASIO_DECL int gethostname(char* name,
+ASIO_DECL int gethostname(ns_char_t* name,
     int namelen, asio::error_code& ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
 
-ASIO_DECL asio::error_code getaddrinfo(const char* host,
-    const char* service, const addrinfo_type& hints,
+ASIO_DECL asio::error_code getaddrinfo(const ns_char_t* host,
+    const ns_char_t* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec);
 
 ASIO_DECL asio::error_code background_getaddrinfo(
-    const weak_cancel_token_type& cancel_token, const char* host,
-    const char* service, const addrinfo_type& hints,
+    const weak_cancel_token_type& cancel_token, const ns_char_t* host,
+    const ns_char_t* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec);
 
 ASIO_DECL void freeaddrinfo(addrinfo_type* ai);
 
 ASIO_DECL asio::error_code getnameinfo(
     const socket_addr_type* addr, std::size_t addrlen,
-    char* host, std::size_t hostlen, char* serv,
+    ns_char_t* host, std::size_t hostlen, ns_char_t* serv,
     std::size_t servlen, int flags, asio::error_code& ec);
 
 ASIO_DECL asio::error_code sync_getnameinfo(
     const socket_addr_type* addr, std::size_t addrlen,
-    char* host, std::size_t hostlen, char* serv,
+    ns_char_t* host, std::size_t hostlen, ns_char_t* serv,
     std::size_t servlen, int sock_type, asio::error_code& ec);
 
 ASIO_DECL asio::error_code background_getnameinfo(
     const weak_cancel_token_type& cancel_token,
     const socket_addr_type* addr, std::size_t addrlen,
-    char* host, std::size_t hostlen, char* serv,
+    ns_char_t* host, std::size_t hostlen, ns_char_t* serv,
     std::size_t servlen, int sock_type, asio::error_code& ec);
 
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
