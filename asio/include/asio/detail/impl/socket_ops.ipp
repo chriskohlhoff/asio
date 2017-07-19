@@ -2378,7 +2378,7 @@ int inet_pton(int af, const char* src, void* dest,
 #      define GetHostNameAlt ::gethostname
 #    endif
 #  elif defined(_UNICODE) //not windows 8 or higher, emulate GetHostNameW
-int GetHostNameAlt(PWSTR hostname, int namelen)
+ASIO_DECL int GetHostNameAlt(PWSTR hostname, int namelen)
 {
   DWORD dwResult = GetEnvironmentVariableW(L"_CLUSTER_NETWORK_NAME_", hostname, namelen);
   if (dwResult && static_cast<int>(dwResult) <= namelen)

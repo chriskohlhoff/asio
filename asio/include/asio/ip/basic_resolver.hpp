@@ -405,8 +405,8 @@ public:
       ASIO_NS_STRING_VIEW_PARAM service, resolver_base::flags resolve_flags,
       asio::error_code& ec)
   {
-    basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
-        static_cast<std::string>(service), resolve_flags);
+    basic_resolver_query<protocol_type> q(static_cast<ns_string>(host),
+        static_cast<ns_string>(service), resolve_flags);
     return this->get_service().resolve(this->get_implementation(), q, ec);
   }
 
@@ -761,8 +761,8 @@ public:
     ASIO_RESOLVE_HANDLER_CHECK(
         ResolveHandler, handler, results_type) type_check;
 
-    basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
-        static_cast<std::string>(service), resolve_flags);
+    basic_resolver_query<protocol_type> q(static_cast<ns_string>(host),
+        static_cast<ns_string>(service), resolve_flags);
 
 #if defined(ASIO_ENABLE_OLD_SERVICES)
     return this->get_service().async_resolve(this->get_implementation(), q,
