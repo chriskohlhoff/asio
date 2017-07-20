@@ -31,6 +31,9 @@ namespace detail {
 using std::future;
 using std::packaged_task;
 using std::promise;
+#define ASIO_CURRENT_EXCEPTION std::current_exception()
+#define ASIO_MAKE_EXCEPTION_PTR(_ex) std::make_exception_ptr(_ex)
+using std::exception_ptr;
 #else // defined(ASIO_HAS_STD_FUTURE)
 #if BOOST_THREAD_VERSION < 3
 #	error BOOST_THREAD_VERSION must be defined to at least 3
@@ -38,6 +41,8 @@ using std::promise;
 using boost::future;
 using boost::packaged_task;
 using boost::promise;
+#define ASIO_CURRENT_EXCEPTION boost::current_exception()
+#define ASIO_MAKE_EXCEPTION_PTR(_ex) _ex
 #endif // defined(ASIO_HAS_STD_FUTURE)
 
 } // namespace detail

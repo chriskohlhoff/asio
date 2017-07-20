@@ -45,7 +45,7 @@ inline void promise_invoke_and_set(promise<T>& p,
 #if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
-    p.set_exception(std::current_exception());
+    p.set_exception();
   }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 }
@@ -64,7 +64,7 @@ inline void promise_invoke_and_set(promise<void>& p,
 #if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
-    p.set_exception(std::current_exception());
+    p.set_exception(ASIO_CURRENT_EXCEPTION);
   }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 }
@@ -83,7 +83,7 @@ inline void promise_invoke_and_set(promise<T>& p, F& f)
 #if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
-    p.set_exception(std::current_exception());
+    p.set_exception(ASIO_CURRENT_EXCEPTION);
   }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 }
@@ -101,7 +101,7 @@ inline void promise_invoke_and_set(promise<void>& p, F& f)
   }
   catch (...)
   {
-    p.set_exception(std::current_exception());
+    p.set_exception(ASIO_CURRENT_EXCEPTION);
   }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 }
@@ -140,7 +140,7 @@ inline void promise_invoke_and_set(promise<void>& p, F& f)
     } \
     catch (...) \
     { \
-      p.set_exception(std::current_exception()); \
+      p.set_exception(ASIO_CURRENT_EXCEPTION); \
     } \
   } \
   \
@@ -155,7 +155,7 @@ inline void promise_invoke_and_set(promise<void>& p, F& f)
     } \
     catch (...) \
     { \
-      p.set_exception(std::current_exception()); \
+      p.set_exception(ASIO_CURRENT_EXCEPTION); \
     } \
   } \
   /**/
@@ -189,7 +189,7 @@ public:
 #if !defined(ASIO_NO_EXCEPTIONS)
     catch (...)
     {
-      p_->set_exception(std::current_exception());
+      p_->set_exception(ASIO_CURRENT_EXCEPTION);
     }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
   }
@@ -275,13 +275,15 @@ public:
 
 protected:
   template <typename Allocator>
-  void create_promise(const Allocator& a)
+  void create_promise(const Allocator& a, asio::error_code *pec)
   {
     ASIO_REBIND_ALLOC(Allocator, char) b(a);
     p_ = std::allocate_shared<promise<T>>(b, std::allocator_arg, b);
+    pec_ = pec;
   }
 
   shared_ptr<promise<T> > p_;
+  asio::error_code *pec_;
 };
 
 // For completion signature void().
@@ -302,14 +304,15 @@ class promise_handler_ec_0
 public:
   void operator()(const asio::error_code& ec)
   {
-    if (ec)
+    if (ec && !pec_)
     {
       this->p_->set_exception(
-          std::make_exception_ptr(
+          ASIO_MAKE_EXCEPTION_PTR(
             asio::system_error(ec)));
     }
     else
     {
+      if (pec_) *pec_ = ec;
       this->p_->set_value();
     }
   }
@@ -356,14 +359,17 @@ public:
   void operator()(const asio::error_code& ec,
       ASIO_MOVE_ARG(Arg) arg)
   {
-    if (ec)
+    if (ec && !pec_)
     {
       this->p_->set_exception(
-          std::make_exception_ptr(
-            asio::system_error(ec)));
+        ASIO_MAKE_EXCEPTION_PTR(
+          asio::system_error(ec)));
     }
     else
+    {
+      if(pec_) *pec_ = ec;
       this->p_->set_value(ASIO_MOVE_CAST(Arg)(arg));
+    }
   }
 };
 
@@ -429,14 +435,15 @@ public:
   void operator()(const asio::error_code& ec,
       ASIO_MOVE_ARG(Args)... args)
   {
-    if (ec)
+    if (ec && !pec_)
     {
       this->p_->set_exception(
-          std::make_exception_ptr(
-            asio::system_error(ec)));
+        ASIO_MAKE_EXCEPTION_PTR(
+          asio::system_error(ec)));
     }
     else
     {
+      if(pec_) *pec_ = ec;
       this->p_->set_value(
           std::forward_as_tuple(
             ASIO_MOVE_CAST(Args)(args)...));
@@ -453,7 +460,7 @@ public:
     if (ec) \
     { \
       this->p_->set_exception( \
-          std::make_exception_ptr( \
+          ASIO_MAKE_EXCEPTION_PTR( \
             asio::system_error(ec))); \
     } \
     else \
@@ -568,7 +575,7 @@ public:
   promise_handler(use_future_t<Allocator> u)
     : allocator_(u.get_allocator())
   {
-    this->create_promise(allocator_);
+    this->create_promise(allocator_, u.get_error_code());
   }
 
   allocator_type get_allocator() const ASIO_NOEXCEPT
@@ -634,6 +641,7 @@ public:
 //private:
   Function function_;
   Allocator allocator_;
+  asio::error_code *pec_;
 };
 
 // Completion handlers produced from the use_future completion token, when
@@ -650,7 +658,7 @@ public:
     : function_(ASIO_MOVE_CAST(Function)(t.function_)),
       allocator_(t.allocator_)
   {
-    this->create_promise(allocator_);
+    this->create_promise(allocator_, t.pec_);
   }
 
   allocator_type get_allocator() const ASIO_NOEXCEPT
@@ -741,7 +749,7 @@ inline detail::packaged_token<typename decay<Function>::type, Allocator>
 use_future_t<Allocator>::operator()(ASIO_MOVE_ARG(Function) f) const
 {
   return detail::packaged_token<typename decay<Function>::type, Allocator>(
-      ASIO_MOVE_CAST(Function)(f), allocator_);
+      ASIO_MOVE_CAST(Function)(f), allocator_, pec_);
 }
 
 #if !defined(GENERATING_DOCUMENTATION)

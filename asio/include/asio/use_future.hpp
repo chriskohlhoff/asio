@@ -59,13 +59,17 @@ public:
   typedef Allocator allocator_type;
 
   /// Construct using default-constructed allocator.
-  ASIO_CONSTEXPR use_future_t()
+  ASIO_CONSTEXPR use_future_t() : pec_{nullptr}
+  {
+  }
+
+  ASIO_CONSTEXPR use_future_t(asio::error_code &ec) : pec_(&ec)
   {
   }
 
   /// Construct using specified allocator.
-  explicit use_future_t(const Allocator& allocator)
-    : allocator_(allocator)
+  explicit use_future_t(const Allocator& allocator, asio::error_code *ec = nullptr)
+    : allocator_(allocator), pec_{ec}
   {
   }
 
@@ -74,7 +78,7 @@ public:
   template <typename OtherAllocator>
   use_future_t<OtherAllocator> operator[](const OtherAllocator& allocator) const
   {
-    return use_future_t<OtherAllocator>(allocator);
+    return use_future_t<OtherAllocator>(allocator, pec_);
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -82,13 +86,24 @@ public:
   template <typename OtherAllocator>
   use_future_t<OtherAllocator> rebind(const OtherAllocator& allocator) const
   {
-    return use_future_t<OtherAllocator>(allocator);
+    return use_future_t<OtherAllocator>(allocator_, pec_);
   }
 
   /// Obtain allocator.
   allocator_type get_allocator() const
   {
     return allocator_;
+  }
+
+  asio::error_code *get_error_code() const
+  {
+    return pec_;
+  }
+
+  //make like yield_context for passing an error code in to retrieve error
+  use_future_t<Allocator> operator[](asio::error_code &ec) const
+  {
+    return use_future_t<Allocator>{allocator_, &ec};
   }
 
   /// Wrap a function object in a packaged task.
@@ -118,6 +133,7 @@ public:
 
 private:
   Allocator allocator_;
+  asio::error_code *pec_;
 };
 
 /// A special value, similar to std::nothrow.
