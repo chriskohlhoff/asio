@@ -202,8 +202,16 @@ typedef in6_addr in6_addr_type;
 typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
+#if _WIN32_WINNT >= 0x0502
 typedef ADDRINFOT addrinfo_type;
 typedef TCHAR ns_char_t;
+#else
+typedef addrinfo addrinfo_type;
+typedef char ns_char_t;
+#define GetAddrInfo getaddrinfo
+#define FreeAddrInfo freeaddrinfo
+#define GetNameInfo getnameinfo
+#endif
 # endif
 typedef ::linger linger_type;
 typedef unsigned long ioctl_arg_type;

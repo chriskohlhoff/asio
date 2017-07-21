@@ -31,7 +31,7 @@
 # include <codecvt>
 # include <locale>
 # include <string>
-#elif ((ASIO_WINDOWS) || defined(__CYGWIN__)) && defined(_UNICODE)
+#elif ((ASIO_WINDOWS) || defined(__CYGWIN__)) && defined(_UNICODE) && (_WIN32_WINNT >= 0x502)
 # include <SvcGuid.h>
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 
@@ -2377,7 +2377,8 @@ int inet_pton(int af, const char* src, void* dest,
 #    else
 #      define GetHostNameAlt ::gethostname
 #    endif
-#  elif defined(_UNICODE) //not windows 8 or higher, emulate GetHostNameW
+#  elif defined(_UNICODE) && (_WIN32_WINNT >= 0x502) 
+//not windows 8 or higher, emulate GetHostNameW
 ASIO_DECL int GetHostNameAlt(PWSTR hostname, int namelen)
 {
   DWORD dwResult = GetEnvironmentVariableW(L"_CLUSTER_NETWORK_NAME_", hostname, namelen);
@@ -2435,10 +2436,10 @@ ASIO_DECL int GetHostNameAlt(PWSTR hostname, int namelen)
     return 0;
   }
 }
-#  else
+#  else //not unicode and older than server 2003
 #    define GetHostNameAlt ::gethostname
-#  endif //defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603) // windows 8
-#endif
+#  endif
+#endif //defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603) // windows 8
 
 int gethostname(ns_char_t* name, int namelen, asio::error_code& ec)
 {
