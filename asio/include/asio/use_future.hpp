@@ -20,8 +20,8 @@
 #if !defined(ASIO_DISABLE_FUTURE) || defined(GENERATING_DOCUMENTATION)
 
 #include <memory>
+#include "asio/error_code.hpp"
 #include "asio/detail/type_traits.hpp"
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
