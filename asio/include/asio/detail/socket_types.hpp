@@ -123,6 +123,7 @@ struct linger_type { u_short_type l_onoff, l_linger; };
 typedef u_long_type ioctl_arg_type;
 typedef int signed_size_type;
 typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 # define ASIO_OS_DEF(c) ASIO_OS_DEF_##c
 # define ASIO_OS_DEF_AF_UNSPEC 0
 # define ASIO_OS_DEF_AF_INET 2
@@ -197,6 +198,7 @@ typedef sockaddr_in6_emulation sockaddr_in6_type;
 typedef sockaddr_storage_emulation sockaddr_storage_type;
 typedef addrinfo_emulation addrinfo_type;
 typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 # else
 typedef in6_addr in6_addr_type;
 typedef ipv6_mreq in6_mreq_type;
@@ -204,10 +206,17 @@ typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
 #if _WIN32_WINNT >= 0x0502
 typedef ADDRINFOT addrinfo_type;
-typedef TCHAR ns_char_t;
+# if defined(_UNICODE)
+typedef wchar_t ns_char_t;
+#   define ASIO_NS_TEXT(_x) L ## _x
+# else
+typedef char ns_char_t;
+#   define ASIO_NS_TEXT(_x) _x
+# endif
 #else
 typedef addrinfo addrinfo_type;
 typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 #define GetAddrInfo getaddrinfo
 #define FreeAddrInfo freeaddrinfo
 #define GetNameInfo getnameinfo
@@ -326,6 +335,7 @@ typedef sockaddr_storage sockaddr_storage_type;
 typedef sockaddr_un sockaddr_un_type;
 typedef addrinfo addrinfo_type;
 typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 typedef ::linger linger_type;
 typedef int ioctl_arg_type;
 typedef uint32_t u_long_type;
@@ -432,7 +442,7 @@ typedef asio::basic_string_view<detail::ns_char_t,
   std::char_traits<detail::ns_char_t>> ns_string_view;
 # define ASIO_NS_STRING_VIEW_PARAM asio::ns_string_view
 #else // defined(ASIO_HAS_STD_STRING_VIEW)
-# define ASIO_NS_STRING_VIEW_PARAM const std::string&
+# define ASIO_NS_STRING_VIEW_PARAM const ns_string&
 #endif // defined(ASIO_HAS_STD_STRING_VIEW)
 } // namespace asio
 

@@ -539,7 +539,7 @@ void test()
 #endif // !defined(ASIO_NO_DEPRECATED)
     asio::error_code ec;
 #if !defined(ASIO_NO_DEPRECATED)
-    ip::icmp::resolver::query q(ip::icmp::v4(), "localhost", "0");
+    ip::icmp::resolver::query q(ip::icmp::v4(), ASIO_NS_TEXT("localhost"), ASIO_NS_TEXT("0"));
 #endif // !defined(ASIO_NO_DEPRECATED)
     ip::icmp::endpoint e(ip::address_v4::loopback(), 0);
 
@@ -580,34 +580,34 @@ void test()
     (void)results2;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    ip::icmp::resolver::results_type results3 = resolver.resolve("", "");
+    ip::icmp::resolver::results_type results3 = resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""));
     (void)results3;
 
-    ip::icmp::resolver::results_type results4 = resolver.resolve("", "", ec);
+    ip::icmp::resolver::results_type results4 = resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ec);
     (void)results4;
 
     ip::icmp::resolver::results_type results5 =
-      resolver.resolve("", "", ip::icmp::resolver::flags());
+      resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags());
     (void)results5;
 
     ip::icmp::resolver::results_type results6 =
-      resolver.resolve("", "", ip::icmp::resolver::flags(), ec);
+      resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags(), ec);
     (void)results6;
 
     ip::icmp::resolver::results_type results7 =
-      resolver.resolve(ip::icmp::v4(), "", "");
+      resolver.resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""));
     (void)results7;
 
     ip::icmp::resolver::results_type results8 =
-      resolver.resolve(ip::icmp::v4(), "", "", ec);
+      resolver.resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ec);
     (void)results8;
 
     ip::icmp::resolver::results_type results9 =
-      resolver.resolve(ip::icmp::v4(), "", "", ip::icmp::resolver::flags());
+      resolver.resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags());
     (void)results9;
 
     ip::icmp::resolver::results_type results10 =
-      resolver.resolve(ip::icmp::v4(), "", "", ip::icmp::resolver::flags(), ec);
+      resolver.resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags(), ec);
     (void)results10;
 
     ip::icmp::resolver::results_type results11 = resolver.resolve(e);
@@ -624,41 +624,41 @@ void test()
     (void)d1;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    resolver.async_resolve("", "", resolve_handler());
-    int i2 = resolver.async_resolve("", "", lazy);
+    resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), resolve_handler());
+    int i2 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), lazy);
     (void)i2;
 #if !defined(ASIO_NO_DEPRECATED)
-    double d2 = resolver.async_resolve("", "", dlazy);
+    double d2 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), dlazy);
     (void)d2;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    resolver.async_resolve("", "",
+    resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""),
         ip::icmp::resolver::flags(), resolve_handler());
-    int i3 = resolver.async_resolve("", "",
+    int i3 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""),
         ip::icmp::resolver::flags(), lazy);
     (void)i3;
 #if !defined(ASIO_NO_DEPRECATED)
-    double d3 = resolver.async_resolve("", "",
+    double d3 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""),
         ip::icmp::resolver::flags(), dlazy);
     (void)d3;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    resolver.async_resolve(ip::icmp::v4(), "", "", resolve_handler());
-    int i4 = resolver.async_resolve(ip::icmp::v4(), "", "", lazy);
+    resolver.async_resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), resolve_handler());
+    int i4 = resolver.async_resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), lazy);
     (void)i4;
 #if !defined(ASIO_NO_DEPRECATED)
-    double d4 = resolver.async_resolve(ip::icmp::v4(), "", "", dlazy);
+    double d4 = resolver.async_resolve(ip::icmp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), dlazy);
     (void)d4;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
     resolver.async_resolve(ip::icmp::v4(),
-        "", "", ip::icmp::resolver::flags(), resolve_handler());
+        ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags(), resolve_handler());
     int i5 = resolver.async_resolve(ip::icmp::v4(),
-        "", "", ip::icmp::resolver::flags(), lazy);
+        ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags(), lazy);
     (void)i5;
 #if !defined(ASIO_NO_DEPRECATED)
     double d5 = resolver.async_resolve(ip::icmp::v4(),
-        "", "", ip::icmp::resolver::flags(), dlazy);
+        ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::icmp::resolver::flags(), dlazy);
     (void)d5;
 #endif // !defined(ASIO_NO_DEPRECATED)
 

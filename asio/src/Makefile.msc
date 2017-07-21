@@ -1,8 +1,8 @@
 !ifndef BOOSTDIR
-BOOSTDIR = ../../boost_1_34_1
+BOOSTDIR = ../../boost_1_64_0
 !endif
 
-COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include
+COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include -std:c++latest
 
 !ifdef WARNINGS
 WARNINGS_CXXFLAGS = -W4 -wd4512 -wd4447
@@ -34,7 +34,7 @@ TRACKING_CXXFLAGS = -DASIO_ENABLE_HANDLER_TRACKING
 ! ifdef STORE
 _WIN32_WINNT=0x0603
 ! else
-_WIN32_WINNT=0x0501
+_WIN32_WINNT=0x0601
 ! endif
 !endif
 

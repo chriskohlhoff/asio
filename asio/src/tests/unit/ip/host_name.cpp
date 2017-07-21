@@ -36,8 +36,8 @@ void test()
   {
     asio::error_code ec;
 
-    std::string host_name = ip::host_name();
-    std::string host_name2 = ip::host_name(ec);
+    asio::ns_string host_name = ip::host_name();
+    asio::ns_string host_name2 = ip::host_name(ec);
   }
   catch (std::exception&)
   {
