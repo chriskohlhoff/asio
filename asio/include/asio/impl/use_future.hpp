@@ -88,7 +88,7 @@ inline void promise_invoke_and_set(promise<T>& p, F& f)
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 }
 
-template <typename F, typename Args>
+template <typename F>
 inline void promise_invoke_and_set(promise<void>& p, F& f)
 {
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -632,9 +632,10 @@ template <typename Function, typename Allocator>
 class packaged_token
 {
 public:
-  packaged_token(Function f, const Allocator& a)
+  packaged_token(Function f, const Allocator& a, asio::error_code *pec)
     : function_(ASIO_MOVE_CAST(Function)(f)),
-      allocator_(a)
+      allocator_(a),
+      pec_(pec)
   {
   }
 
@@ -748,8 +749,8 @@ template <typename Allocator> template <typename Function>
 inline detail::packaged_token<typename decay<Function>::type, Allocator>
 use_future_t<Allocator>::operator()(ASIO_MOVE_ARG(Function) f) const
 {
-  return detail::packaged_token<typename decay<Function>::type, Allocator>(
-      ASIO_MOVE_CAST(Function)(f), allocator_, pec_);
+  return detail::packaged_token<typename decay<Function>::type, Allocator>
+    (ASIO_MOVE_CAST(Function)(f), allocator_, this->pec_);
 }
 
 #if !defined(GENERATING_DOCUMENTATION)
