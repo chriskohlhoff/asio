@@ -45,7 +45,7 @@ inline void promise_invoke_and_set(promise<T>& p,
 #if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
-    p.set_exception();
+    p.set_exception(ASIO_CURRENT_EXCEPTION);
   }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 }
@@ -304,7 +304,7 @@ class promise_handler_ec_0
 public:
   void operator()(const asio::error_code& ec)
   {
-    if (ec && !pec_)
+    if (ec && !this->pec_)
     {
       this->p_->set_exception(
           ASIO_MAKE_EXCEPTION_PTR(
@@ -312,7 +312,7 @@ public:
     }
     else
     {
-      if (pec_) *pec_ = ec;
+      if (this->pec_) *this->pec_ = ec;
       this->p_->set_value();
     }
   }
@@ -323,7 +323,7 @@ class promise_handler_ex_0
   : public promise_creator<void>
 {
 public:
-  void operator()(const std::exception_ptr& ex)
+  void operator()(const exception_ptr& ex)
   {
     if (ex)
     {
@@ -359,7 +359,7 @@ public:
   void operator()(const asio::error_code& ec,
       ASIO_MOVE_ARG(Arg) arg)
   {
-    if (ec && !pec_)
+    if (ec && !this->pec_)
     {
       this->p_->set_exception(
         ASIO_MAKE_EXCEPTION_PTR(
@@ -367,7 +367,7 @@ public:
     }
     else
     {
-      if(pec_) *pec_ = ec;
+      if(this->pec_) *this->pec_ = ec;
       this->p_->set_value(ASIO_MOVE_CAST(Arg)(arg));
     }
   }
@@ -380,7 +380,7 @@ class promise_handler_ex_1
 {
 public:
   template <typename Arg>
-  void operator()(const std::exception_ptr& ex,
+  void operator()(const exception_ptr& ex,
       ASIO_MOVE_ARG(Arg) arg)
   {
     if (ex)
@@ -435,7 +435,7 @@ public:
   void operator()(const asio::error_code& ec,
       ASIO_MOVE_ARG(Args)... args)
   {
-    if (ec && !pec_)
+    if (ec && !this->pec_)
     {
       this->p_->set_exception(
         ASIO_MAKE_EXCEPTION_PTR(
@@ -443,7 +443,7 @@ public:
     }
     else
     {
-      if(pec_) *pec_ = ec;
+      if(this->pec_) *this->pec_ = ec;
       this->p_->set_value(
           std::forward_as_tuple(
             ASIO_MOVE_CAST(Args)(args)...));
@@ -486,7 +486,7 @@ public:
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename... Args>
-  void operator()(const std::exception_ptr& ex,
+  void operator()(const exception_ptr& ex,
       ASIO_MOVE_ARG(Args)... args)
   {
     if (ex)
@@ -503,7 +503,7 @@ public:
 
 #define ASIO_PRIVATE_CALL_OP_DEF(n) \
   template <ASIO_VARIADIC_TPARAMS(n)> \
-  void operator()(const std::exception_ptr& ex, \
+  void operator()(const exception_ptr& ex, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
   {\
     if (ex) \
@@ -535,7 +535,7 @@ class promise_handler_selector<void(asio::error_code)>
   : public promise_handler_ec_0 {};
 
 template <>
-class promise_handler_selector<void(std::exception_ptr)>
+class promise_handler_selector<void(exception_ptr)>
   : public promise_handler_ex_0 {};
 
 template <typename Arg>
@@ -547,7 +547,7 @@ class promise_handler_selector<void(asio::error_code, Arg)>
   : public promise_handler_ec_1<Arg> {};
 
 template <typename Arg>
-class promise_handler_selector<void(std::exception_ptr, Arg)>
+class promise_handler_selector<void(exception_ptr, Arg)>
   : public promise_handler_ex_1<Arg> {};
 
 template <typename... Arg>
@@ -559,7 +559,7 @@ class promise_handler_selector<void(asio::error_code, Arg...)>
   : public promise_handler_ec_n<std::tuple<Arg...> > {};
 
 template <typename... Arg>
-class promise_handler_selector<void(std::exception_ptr, Arg...)>
+class promise_handler_selector<void(exception_ptr, Arg...)>
   : public promise_handler_ex_n<std::tuple<Arg...> > {};
 
 // Completion handlers produced from the use_future completion token, when not
@@ -632,17 +632,15 @@ template <typename Function, typename Allocator>
 class packaged_token
 {
 public:
-  packaged_token(Function f, const Allocator& a, asio::error_code *pec)
+  packaged_token(Function f, const Allocator& a)
     : function_(ASIO_MOVE_CAST(Function)(f)),
-      allocator_(a),
-      pec_(pec)
+      allocator_(a)
   {
   }
 
 //private:
   Function function_;
   Allocator allocator_;
-  asio::error_code *pec_;
 };
 
 // Completion handlers produced from the use_future completion token, when
@@ -659,7 +657,7 @@ public:
     : function_(ASIO_MOVE_CAST(Function)(t.function_)),
       allocator_(t.allocator_)
   {
-    this->create_promise(allocator_, t.pec_);
+    this->create_promise(allocator_, nullptr);
   }
 
   allocator_type get_allocator() const ASIO_NOEXCEPT
@@ -750,7 +748,7 @@ inline detail::packaged_token<typename decay<Function>::type, Allocator>
 use_future_t<Allocator>::operator()(ASIO_MOVE_ARG(Function) f) const
 {
   return detail::packaged_token<typename decay<Function>::type, Allocator>
-    (ASIO_MOVE_CAST(Function)(f), allocator_, this->pec_);
+    (ASIO_MOVE_CAST(Function)(f), allocator_);
 }
 
 #if !defined(GENERATING_DOCUMENTATION)

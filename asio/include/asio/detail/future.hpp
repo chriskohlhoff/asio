@@ -19,7 +19,15 @@
 
 #if defined(ASIO_HAS_STD_FUTURE)
 # include <future>
+# include <exception>
 #else // defined(ASIO_HAS_STD_FUTURE)
+# if defined(BOOST_THREAD_VERSION) && (BOOST_THREAD_VERSION < 3)
+#   error BOOST_THREAD_VERSION must be defined to at least 3
+# else
+#   if !defined(BOOST_THREAD_VERSION)
+#     define BOOST_THREAD_VERSION 3
+#   endif
+# endif
 # define ASIO_USING_BOOST_FUTURE
 # include <boost/thread/future.hpp>
 #endif // defined(ASIO_HAS_STD_FUTURE)
@@ -35,16 +43,13 @@ using std::promise;
 #define ASIO_MAKE_EXCEPTION_PTR(_ex) std::make_exception_ptr(_ex)
 using std::exception_ptr;
 #else // defined(ASIO_HAS_STD_FUTURE)
-#if BOOST_THREAD_VERSION < 3
-#	error BOOST_THREAD_VERSION must be defined to at least 3
-#endif
 using boost::future;
 using boost::packaged_task;
 using boost::promise;
 #define ASIO_CURRENT_EXCEPTION boost::current_exception()
-#define ASIO_MAKE_EXCEPTION_PTR(_ex) _ex
+#define ASIO_MAKE_EXCEPTION_PTR(_ex) boost::copy_exception(_ex)
+using boost::exception_ptr;
 #endif // defined(ASIO_HAS_STD_FUTURE)
-
 } // namespace detail
 } // namespace asio
 
