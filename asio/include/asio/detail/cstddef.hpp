@@ -22,8 +22,10 @@ namespace asio {
 
 #if defined(ASIO_HAS_NULLPTR)
 using std::nullptr_t;
+#define ASIO_NULL nullptr
 #else // defined(ASIO_HAS_NULLPTR)
 struct nullptr_t {};
+#define ASIO_NULL NULL
 #endif // defined(ASIO_HAS_NULLPTR)
 
 } // namespace asio

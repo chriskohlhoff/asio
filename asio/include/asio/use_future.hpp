@@ -22,6 +22,7 @@
 #include <memory>
 #include "asio/error_code.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/detail/cstddef.hpp"
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -59,7 +60,7 @@ public:
   typedef Allocator allocator_type;
 
   /// Construct using default-constructed allocator.
-  ASIO_CONSTEXPR use_future_t() : pec_{nullptr}
+  ASIO_CONSTEXPR use_future_t() : pec_(ASIO_NULL)
   {
   }
 
@@ -68,8 +69,8 @@ public:
   }
 
   /// Construct using specified allocator.
-  explicit use_future_t(const Allocator& allocator, asio::error_code *ec = nullptr)
-    : allocator_(allocator), pec_{ec}
+  explicit use_future_t(const Allocator& allocator, asio::error_code *ec = ASIO_NULL)
+    : allocator_(allocator), pec_(ec)
   {
   }
 
