@@ -53,7 +53,7 @@ public:
   /// Returns the packaged task's future.
   return_type get()
   {
-    return std::move(future_);
+    return ASIO_MOVE_CAST(future_);
   }
 
 private:
@@ -76,7 +76,7 @@ struct async_result<detail::packaged_task<Result()>, Signature>
 
   return_type get()
   {
-    return std::move(future_);
+    return ASIO_MOVE_CAST(future_);
   }
 
 private:
@@ -103,7 +103,7 @@ private:
   \
     return_type get() \
     { \
-      return std::move(future_); \
+      return ASIO_MOVE_CAST(future_); \
     } \
   \
   private: \
