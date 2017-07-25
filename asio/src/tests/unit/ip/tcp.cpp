@@ -1239,7 +1239,7 @@ void test()
   const ns_string host_name;
   const ns_string service_name;
   const std::allocator<char> alloc;
-  const std::allocator<wchar_t> ns_alloc;
+  const std::allocator<ns_string::value_type> ns_alloc;
 
   try
   {
