@@ -34,7 +34,11 @@ int main(int argc, char* argv[])
     // The entire sequence of I/O operations must complete within 60 seconds.
     // If an expiry occurs, the socket is automatically closed and the stream
     // becomes bad.
+#if defined(ASIO_STANDALONE)
+    s.expires_after(asio::chrono::seconds(60));
+#else
     s.expires_after(boost::posix_time::seconds(60));
+#endif
 
     // Establish a connection to the server.
     s.connect(argv[1], "http");
