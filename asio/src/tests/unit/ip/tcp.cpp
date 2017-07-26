@@ -1083,7 +1083,7 @@ void test()
 #endif // !defined(ASIO_NO_DEPRECATED)
     asio::error_code ec;
 #if !defined(ASIO_NO_DEPRECATED)
-    ip::tcp::resolver::query q(ip::tcp::v4(), "localhost", "0");
+    ip::tcp::resolver::query q(ip::tcp::v4(), ASIO_NS_TEXT("localhost"), ASIO_NS_TEXT("0"));
 #endif // !defined(ASIO_NO_DEPRECATED)
     ip::tcp::endpoint e(ip::address_v4::loopback(), 0);
 
@@ -1124,34 +1124,34 @@ void test()
     (void)results2;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    ip::tcp::resolver::results_type results3 = resolver.resolve("", "");
+    ip::tcp::resolver::results_type results3 = resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""));
     (void)results3;
 
-    ip::tcp::resolver::results_type results4 = resolver.resolve("", "", ec);
+    ip::tcp::resolver::results_type results4 = resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ec);
     (void)results4;
 
     ip::tcp::resolver::results_type results5 =
-      resolver.resolve("", "", ip::tcp::resolver::flags());
+      resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags());
     (void)results5;
 
     ip::tcp::resolver::results_type results6 =
-      resolver.resolve("", "", ip::tcp::resolver::flags(), ec);
+      resolver.resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags(), ec);
     (void)results6;
 
     ip::tcp::resolver::results_type results7 =
-      resolver.resolve(ip::tcp::v4(), "", "");
+      resolver.resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""));
     (void)results7;
 
     ip::tcp::resolver::results_type results8 =
-      resolver.resolve(ip::tcp::v4(), "", "", ec);
+      resolver.resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ec);
     (void)results8;
 
     ip::tcp::resolver::results_type results9 =
-      resolver.resolve(ip::tcp::v4(), "", "", ip::tcp::resolver::flags());
+      resolver.resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags());
     (void)results9;
 
     ip::tcp::resolver::results_type results10 =
-      resolver.resolve(ip::tcp::v4(), "", "", ip::tcp::resolver::flags(), ec);
+      resolver.resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags(), ec);
     (void)results10;
 
     ip::tcp::resolver::results_type results11 = resolver.resolve(e);
@@ -1168,41 +1168,41 @@ void test()
     (void)d1;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    resolver.async_resolve("", "", resolve_handler());
-    int i2 = resolver.async_resolve("", "", lazy);
+    resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), resolve_handler());
+    int i2 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), lazy);
     (void)i2;
 #if !defined(ASIO_NO_DEPRECATED)
-    double d2 = resolver.async_resolve("", "", dlazy);
+    double d2 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), dlazy);
     (void)d2;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    resolver.async_resolve("", "",
+    resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""),
         ip::tcp::resolver::flags(), resolve_handler());
-    int i3 = resolver.async_resolve("", "",
+    int i3 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""),
         ip::tcp::resolver::flags(), lazy);
     (void)i3;
 #if !defined(ASIO_NO_DEPRECATED)
-    double d3 = resolver.async_resolve("", "",
+    double d3 = resolver.async_resolve(ASIO_NS_TEXT(""), ASIO_NS_TEXT(""),
         ip::tcp::resolver::flags(), dlazy);
     (void)d3;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-    resolver.async_resolve(ip::tcp::v4(), "", "", resolve_handler());
-    int i4 = resolver.async_resolve(ip::tcp::v4(), "", "", lazy);
+    resolver.async_resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), resolve_handler());
+    int i4 = resolver.async_resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), lazy);
     (void)i4;
 #if !defined(ASIO_NO_DEPRECATED)
-    double d4 = resolver.async_resolve(ip::tcp::v4(), "", "", dlazy);
+    double d4 = resolver.async_resolve(ip::tcp::v4(), ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), dlazy);
     (void)d4;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
     resolver.async_resolve(ip::tcp::v4(),
-        "", "", ip::tcp::resolver::flags(), resolve_handler());
+        ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags(), resolve_handler());
     int i5 = resolver.async_resolve(ip::tcp::v4(),
-        "", "", ip::tcp::resolver::flags(), lazy);
+        ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags(), lazy);
     (void)i5;
 #if !defined(ASIO_NO_DEPRECATED)
     double d5 = resolver.async_resolve(ip::tcp::v4(),
-        "", "", ip::tcp::resolver::flags(), dlazy);
+        ASIO_NS_TEXT(""), ASIO_NS_TEXT(""), ip::tcp::resolver::flags(), dlazy);
     (void)d5;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -1236,9 +1236,10 @@ void test()
   using namespace asio;
   namespace ip = asio::ip;
   const ip::tcp::endpoint endpoint;
-  const std::string host_name;
-  const std::string service_name;
+  const ns_string host_name;
+  const ns_string service_name;
   const std::allocator<char> alloc;
+  const std::allocator<ns_string::value_type> ns_alloc;
 
   try
   {
@@ -1259,16 +1260,16 @@ void test()
     ip::tcp::endpoint e2 = entry1;
     (void)e2;
 
-    std::string s1 = entry1.host_name();
+    ns_string s1 = entry1.host_name();
     (void)s1;
 
-    std::string s2 = entry1.host_name(alloc);
+    ns_string s2 = entry1.host_name(ns_alloc);
     (void)s2;
 
-    std::string s3 = entry1.service_name();
+    ns_string s3 = entry1.service_name();
     (void)s3;
 
-    std::string s4 = entry1.service_name(alloc);
+    ns_string s4 = entry1.service_name(ns_alloc);
     (void)s4;
   }
   catch (std::exception&)
@@ -1314,7 +1315,7 @@ void test()
   ip::tcp::iostream ios2(std::move(sock));
 #endif // defined(ASIO_HAS_STD_IOSTREAM_MOVE)
 
-  ip::tcp::iostream ios3("hostname", "service");
+  ip::tcp::iostream ios3(ASIO_NS_TEXT("hostname"), ASIO_NS_TEXT("service"));
 
   // basic_socket_iostream operators.
 
@@ -1326,7 +1327,7 @@ void test()
 
   // basic_socket_iostream members.
 
-  ios1.connect("hostname", "service");
+  ios1.connect(ASIO_NS_TEXT("hostname"), ASIO_NS_TEXT("service"));
 
   ios1.close();
 

@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <string>
+#include "asio/detail/string_view.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 // Empty.
@@ -120,6 +122,8 @@ struct addrinfo_type { int ai_flags;
 struct linger_type { u_short_type l_onoff, l_linger; };
 typedef u_long_type ioctl_arg_type;
 typedef int signed_size_type;
+typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 # define ASIO_OS_DEF(c) ASIO_OS_DEF_##c
 # define ASIO_OS_DEF_AF_UNSPEC 0
 # define ASIO_OS_DEF_AF_INET 2
@@ -193,12 +197,30 @@ typedef ipv6_mreq_emulation in6_mreq_type;
 typedef sockaddr_in6_emulation sockaddr_in6_type;
 typedef sockaddr_storage_emulation sockaddr_storage_type;
 typedef addrinfo_emulation addrinfo_type;
+typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 # else
 typedef in6_addr in6_addr_type;
 typedef ipv6_mreq in6_mreq_type;
 typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
+#if _WIN32_WINNT >= 0x0502
+typedef ADDRINFOT addrinfo_type;
+# if defined(_UNICODE)
+typedef wchar_t ns_char_t;
+#   define ASIO_NS_TEXT(_x) L ## _x
+# else
+typedef char ns_char_t;
+#   define ASIO_NS_TEXT(_x) _x
+# endif
+#else
 typedef addrinfo addrinfo_type;
+typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
+#define GetAddrInfo getaddrinfo
+#define FreeAddrInfo freeaddrinfo
+#define GetNameInfo getnameinfo
+#endif
 # endif
 typedef ::linger linger_type;
 typedef unsigned long ioctl_arg_type;
@@ -312,6 +334,8 @@ typedef sockaddr_in6 sockaddr_in6_type;
 typedef sockaddr_storage sockaddr_storage_type;
 typedef sockaddr_un sockaddr_un_type;
 typedef addrinfo addrinfo_type;
+typedef char ns_char_t;
+#define ASIO_NS_TEXT(_x) _x
 typedef ::linger linger_type;
 typedef int ioctl_arg_type;
 typedef uint32_t u_long_type;
@@ -408,6 +432,18 @@ const int enable_connection_aborted_option = 1;
 const int always_fail_option = 2;
 
 } // namespace detail
+
+typedef std::basic_string< detail::ns_char_t, 
+  std::char_traits<detail::ns_char_t>, 
+  std::allocator<detail::ns_char_t> > ns_string;
+
+#if defined(ASIO_HAS_STD_STRING_VIEW)
+typedef asio::basic_string_view< detail::ns_char_t,
+  std::char_traits<detail::ns_char_t> > ns_string_view;
+# define ASIO_NS_STRING_VIEW_PARAM asio::ns_string_view
+#else // defined(ASIO_HAS_STD_STRING_VIEW)
+# define ASIO_NS_STRING_VIEW_PARAM const asio::ns_string&
+#endif // defined(ASIO_HAS_STD_STRING_VIEW)
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

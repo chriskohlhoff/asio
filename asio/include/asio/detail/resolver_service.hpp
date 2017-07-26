@@ -106,8 +106,8 @@ public:
   results_type resolve(implementation_type&,
       const endpoint_type& endpoint, asio::error_code& ec)
   {
-    char host_name[NI_MAXHOST];
-    char service_name[NI_MAXSERV];
+    ns_char_t host_name[NI_MAXHOST];
+    ns_char_t service_name[NI_MAXSERV];
     socket_ops::sync_getnameinfo(endpoint.data(), endpoint.size(),
         host_name, NI_MAXHOST, service_name, NI_MAXSERV,
         endpoint.protocol().type(), ec);

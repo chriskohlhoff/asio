@@ -31,6 +31,8 @@
 # include <codecvt>
 # include <locale>
 # include <string>
+#elif ((ASIO_WINDOWS) || defined(__CYGWIN__)) && defined(_UNICODE) && (_WIN32_WINNT >= 0x502)
+# include <SvcGuid.h>
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__) \
@@ -2368,7 +2370,78 @@ int inet_pton(int af, const char* src, void* dest,
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
-int gethostname(char* name, int namelen, asio::error_code& ec)
+#if (defined(ASIO_WINDOWS) || defined(__CYGWIN__))
+#  if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602) // windows 8
+#    if defined(_UNICODE)
+#      define GetHostNameAlt ::GetHostNameW
+#    else
+#      define GetHostNameAlt ::gethostname
+#    endif
+#  elif defined(_UNICODE) && (_WIN32_WINNT >= 0x502) 
+//not windows 8 or higher, emulate GetHostNameW
+ASIO_DECL int GetHostNameAlt(PWSTR hostname, int namelen)
+{
+  DWORD dwResult = GetEnvironmentVariableW(L"_CLUSTER_NETWORK_NAME_", hostname, namelen);
+  if (dwResult && static_cast<int>(dwResult) <= namelen)
+    return 0;
+  else if (static_cast<int>(dwResult) > namelen)
+  {
+    WSASetLastError(ERROR_INSUFFICIENT_BUFFER);
+    return SOCKET_ERROR;
+  }
+  else if (!dwResult && GetLastError() != ERROR_ENVVAR_NOT_FOUND)
+  {
+    WSASetLastError(GetLastError());
+    return SOCKET_ERROR;
+  }
+  else
+  {
+    bool found = false;
+    HANDLE hLookup = 0;
+    WSAQUERYSET lpRestrictions;
+    GUID guid = SVCID_HOSTNAME;
+
+    ZeroMemory(&lpRestrictions, sizeof(WSAQUERYSET));
+    lpRestrictions.dwSize = sizeof(WSAQUERYSET);
+    lpRestrictions.lpServiceClassId = &guid;
+
+    dwResult = WSALookupServiceBegin(&lpRestrictions, LUP_RETURN_NAME, &hLookup);
+    if (dwResult != SOCKET_ERROR)
+    {
+      WSAQUERYSET *pqs = (WSAQUERYSET *)malloc(sizeof(WSAQUERYSET) + namelen);
+      DWORD dwLength = sizeof(WSAQUERYSET) + namelen;
+      if (WSALookupServiceNext(hLookup, 0, &dwLength, pqs) == 0)
+      {
+        wcsncpy_s(hostname, namelen, pqs->lpszServiceInstanceName, _TRUNCATE);
+        found = true;
+      }
+
+      // clean-up
+      free(pqs);
+      WSALookupServiceEnd(hLookup);
+      if (found)
+        return 0;
+    }
+    else
+    {
+      OutputDebugStringA("Error on WSALookupServiceBegin");
+      return SOCKET_ERROR;
+    }
+
+    if (!GetComputerNameW(hostname, (LPDWORD)&namelen))
+    {
+      WSASetLastError(GetLastError());
+      return SOCKET_ERROR;
+    }
+    return 0;
+  }
+}
+#  else //not unicode and older than server 2003
+#    define GetHostNameAlt ::gethostname
+#  endif
+#endif //defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603) // windows 8
+
+int gethostname(ns_char_t* name, int namelen, asio::error_code& ec)
 {
   clear_last_error();
 #if defined(ASIO_WINDOWS_RUNTIME)
@@ -2400,13 +2473,13 @@ int gethostname(char* name, int namelen, asio::error_code& ec)
         asio::system_category());
     return -1;
   }
-#else // defined(ASIO_WINDOWS_RUNTIME)
-  int result = error_wrapper(::gethostname(name, namelen), ec);
-# if defined(ASIO_WINDOWS)
+#elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  int result = error_wrapper(GetHostNameAlt(name, namelen), ec);
   if (result == 0)
     ec = asio::error_code();
-# endif // defined(ASIO_WINDOWS)
   return result;
+#else
+  return error_wrapper(::gethostname(name, namelen), ec);
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 }
 
@@ -3295,8 +3368,8 @@ inline asio::error_code translate_addrinfo_error(int error)
   }
 }
 
-asio::error_code getaddrinfo(const char* host,
-    const char* service, const addrinfo_type& hints,
+asio::error_code getaddrinfo(const ns_char_t* host,
+    const ns_char_t* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec)
 {
   host = (host && *host) ? host : 0;
@@ -3305,7 +3378,7 @@ asio::error_code getaddrinfo(const char* host,
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if defined(ASIO_HAS_GETADDRINFO)
   // Building for Windows XP, Windows Server 2003, or later.
-  int error = ::getaddrinfo(host, service, &hints, result);
+  int error = ::GetAddrInfo(host, service, &hints, result);
   return ec = translate_addrinfo_error(error);
 # else
   // Building for Windows 2000 or earlier.
@@ -3363,8 +3436,8 @@ asio::error_code getaddrinfo(const char* host,
 }
 
 asio::error_code background_getaddrinfo(
-    const weak_cancel_token_type& cancel_token, const char* host,
-    const char* service, const addrinfo_type& hints,
+    const weak_cancel_token_type& cancel_token, const ns_char_t* host,
+    const ns_char_t* service, const addrinfo_type& hints,
     addrinfo_type** result, asio::error_code& ec)
 {
   if (cancel_token.expired())
@@ -3379,7 +3452,7 @@ void freeaddrinfo(addrinfo_type* ai)
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if defined(ASIO_HAS_GETADDRINFO)
   // Building for Windows XP, Windows Server 2003, or later.
-  ::freeaddrinfo(ai);
+  ::FreeAddrInfo(ai);
 # else
   // Building for Windows 2000 or earlier.
   typedef int (WSAAPI *fai_t)(addrinfo_type*);
@@ -3401,14 +3474,14 @@ void freeaddrinfo(addrinfo_type* ai)
 }
 
 asio::error_code getnameinfo(const socket_addr_type* addr,
-    std::size_t addrlen, char* host, std::size_t hostlen,
-    char* serv, std::size_t servlen, int flags, asio::error_code& ec)
+    std::size_t addrlen, ns_char_t* host, std::size_t hostlen,
+    ns_char_t* serv, std::size_t servlen, int flags, asio::error_code& ec)
 {
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # if defined(ASIO_HAS_GETADDRINFO)
   // Building for Windows XP, Windows Server 2003, or later.
   clear_last_error();
-  int error = ::getnameinfo(addr, static_cast<socklen_t>(addrlen),
+  int error = ::GetNameInfo(addr, static_cast<socklen_t>(addrlen),
       host, static_cast<DWORD>(hostlen),
       serv, static_cast<DWORD>(servlen), flags);
   return ec = translate_addrinfo_error(error);
@@ -3448,7 +3521,7 @@ asio::error_code getnameinfo(const socket_addr_type* addr,
 
 asio::error_code sync_getnameinfo(
     const socket_addr_type* addr, std::size_t addrlen,
-    char* host, std::size_t hostlen, char* serv,
+    ns_char_t* host, std::size_t hostlen, ns_char_t* serv,
     std::size_t servlen, int sock_type, asio::error_code& ec)
 {
   // First try resolving with the service name. If that fails try resolving
@@ -3468,7 +3541,7 @@ asio::error_code sync_getnameinfo(
 asio::error_code background_getnameinfo(
     const weak_cancel_token_type& cancel_token,
     const socket_addr_type* addr, std::size_t addrlen,
-    char* host, std::size_t hostlen, char* serv,
+    ns_char_t* host, std::size_t hostlen, ns_char_t* serv,
     std::size_t servlen, int sock_type, asio::error_code& ec)
 {
   if (cancel_token.expired())

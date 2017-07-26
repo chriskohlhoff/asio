@@ -26,24 +26,26 @@
 namespace asio {
 namespace ip {
 
-std::string host_name()
+ns_string host_name()
 {
-  char name[1024];
+  asio::detail::ns_char_t name[256];
   asio::error_code ec;
-  if (asio::detail::socket_ops::gethostname(name, sizeof(name), ec) != 0)
+  if (asio::detail::socket_ops::gethostname(name, 
+    sizeof(name) / sizeof(asio::detail::ns_char_t), ec) != 0)
   {
     asio::detail::throw_error(ec);
-    return std::string();
+    return ns_string();
   }
-  return std::string(name);
+  return ns_string(name);
 }
 
-std::string host_name(asio::error_code& ec)
+ns_string host_name(asio::error_code& ec)
 {
-  char name[1024];
-  if (asio::detail::socket_ops::gethostname(name, sizeof(name), ec) != 0)
-    return std::string();
-  return std::string(name);
+  asio::detail::ns_char_t name[256];
+  if (asio::detail::socket_ops::gethostname(name, 
+    sizeof(name) / sizeof(asio::detail::ns_char_t), ec) != 0)
+    return ns_string();
+  return ns_string(name);
 }
 
 } // namespace ip

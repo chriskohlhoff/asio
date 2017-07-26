@@ -790,7 +790,7 @@
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
 #  if defined(ASIO_MSVC)
-#   if (_MSC_VER >= 1910)
+#   if (_MSC_VER >= 1910) && defined(_HAS_CXX17) && (_HAS_CXX17 == 1)
 #    define ASIO_HAS_STD_STRING_VIEW
 #   endif // (_MSC_VER >= 1910)
 #  endif // defined(ASIO_MSVC)

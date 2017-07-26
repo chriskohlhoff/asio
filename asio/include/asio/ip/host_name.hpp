@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/error_code.hpp"
+#include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -25,10 +26,10 @@ namespace asio {
 namespace ip {
 
 /// Get the current host name.
-ASIO_DECL std::string host_name();
+ASIO_DECL ns_string host_name();
 
 /// Get the current host name.
-ASIO_DECL std::string host_name(asio::error_code& ec);
+ASIO_DECL ns_string host_name(asio::error_code& ec);
 
 } // namespace ip
 } // namespace asio

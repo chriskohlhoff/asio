@@ -59,7 +59,7 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  basic_resolver_query(const std::string& service,
+  basic_resolver_query(const ns_string& service,
       resolver_query_base::flags resolve_flags = passive | address_configured)
     : hints_(),
       host_name_(),
@@ -97,7 +97,7 @@ public:
    * may use additional locations when resolving service names.
    */
   basic_resolver_query(const protocol_type& protocol,
-      const std::string& service,
+      const ns_string& service,
       resolver_query_base::flags resolve_flags = passive | address_configured)
     : hints_(),
       host_name_(),
@@ -144,7 +144,7 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  basic_resolver_query(const std::string& host, const std::string& service,
+  basic_resolver_query(const ns_string& host, const ns_string& service,
       resolver_query_base::flags resolve_flags = address_configured)
     : hints_(),
       host_name_(host),
@@ -196,7 +196,7 @@ public:
    * may use additional locations when resolving service names.
    */
   basic_resolver_query(const protocol_type& protocol,
-      const std::string& host, const std::string& service,
+      const ns_string& host, const ns_string& service,
       resolver_query_base::flags resolve_flags = address_configured)
     : hints_(),
       host_name_(host),
@@ -219,21 +219,21 @@ public:
   }
 
   /// Get the host name associated with the query.
-  std::string host_name() const
+  ns_string host_name() const
   {
     return host_name_;
   }
 
   /// Get the service name associated with the query.
-  std::string service_name() const
+  ns_string service_name() const
   {
     return service_name_;
   }
 
 private:
   asio::detail::addrinfo_type hints_;
-  std::string host_name_;
-  std::string service_name_;
+  ns_string host_name_;
+  ns_string service_name_;
 };
 
 } // namespace ip

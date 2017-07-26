@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/detail/string_view.hpp"
-
+#include "asio/detail/socket_types.hpp"
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -50,10 +50,10 @@ public:
 
   /// Construct with specified endpoint, host name and service name.
   basic_resolver_entry(const endpoint_type& ep,
-      ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service)
+      ASIO_NS_STRING_VIEW_PARAM host, ASIO_NS_STRING_VIEW_PARAM service)
     : endpoint_(ep),
-      host_name_(static_cast<std::string>(host)),
-      service_name_(static_cast<std::string>(service))
+      host_name_(static_cast<ns_string>(host)),
+      service_name_(static_cast<ns_string>(service))
   {
   }
 
@@ -70,39 +70,39 @@ public:
   }
 
   /// Get the host name associated with the entry.
-  std::string host_name() const
+  ns_string host_name() const
   {
     return host_name_;
   }
 
   /// Get the host name associated with the entry.
   template <class Allocator>
-  std::basic_string<char, std::char_traits<char>, Allocator> host_name(
+  std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator> host_name(
       const Allocator& alloc = Allocator()) const
   {
-    return std::basic_string<char, std::char_traits<char>, Allocator>(
+    return std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator>(
         host_name_.c_str(), alloc);
   }
 
   /// Get the service name associated with the entry.
-  std::string service_name() const
+  ns_string service_name() const
   {
     return service_name_;
   }
 
   /// Get the service name associated with the entry.
   template <class Allocator>
-  std::basic_string<char, std::char_traits<char>, Allocator> service_name(
+  std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator> service_name(
       const Allocator& alloc = Allocator()) const
   {
-    return std::basic_string<char, std::char_traits<char>, Allocator>(
+    return std::basic_string<asio::detail::ns_char_t, std::char_traits<asio::detail::ns_char_t>, Allocator>(
         service_name_.c_str(), alloc);
   }
 
 private:
   endpoint_type endpoint_;
-  std::string host_name_;
-  std::string service_name_;
+  ns_string host_name_;
+  ns_string service_name_;
 };
 
 } // namespace ip
