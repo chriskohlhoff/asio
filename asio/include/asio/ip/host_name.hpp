@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <string>
 #include "asio/error_code.hpp"
+#include "asio/detail/socket_types.hpp"
 
 #include "asio/detail/push_options.hpp"
 
