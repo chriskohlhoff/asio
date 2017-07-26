@@ -433,16 +433,16 @@ const int always_fail_option = 2;
 
 } // namespace detail
 
-typedef std::basic_string<detail::ns_char_t, 
+typedef std::basic_string< detail::ns_char_t, 
   std::char_traits<detail::ns_char_t>, 
-  std::allocator<detail::ns_char_t>> ns_string;
+  std::allocator<detail::ns_char_t> > ns_string;
 
 #if defined(ASIO_HAS_STD_STRING_VIEW)
-typedef asio::basic_string_view<detail::ns_char_t,
-  std::char_traits<detail::ns_char_t>> ns_string_view;
+typedef asio::basic_string_view< detail::ns_char_t,
+  std::char_traits<detail::ns_char_t> > ns_string_view;
 # define ASIO_NS_STRING_VIEW_PARAM asio::ns_string_view
 #else // defined(ASIO_HAS_STD_STRING_VIEW)
-# define ASIO_NS_STRING_VIEW_PARAM const ns_string&
+# define ASIO_NS_STRING_VIEW_PARAM const asio::ns_string&
 #endif // defined(ASIO_HAS_STD_STRING_VIEW)
 } // namespace asio
 
