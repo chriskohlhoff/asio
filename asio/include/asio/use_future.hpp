@@ -104,7 +104,7 @@ public:
   //make like yield_context for passing an error code in to retrieve error
   use_future_t<Allocator> operator[](asio::error_code &ec) const
   {
-    return use_future_t<Allocator>{allocator_, &ec};
+    return use_future_t<Allocator>(allocator_, &ec);
   }
 
   /// Wrap a function object in a packaged task.

@@ -278,11 +278,15 @@ protected:
   void create_promise(const Allocator& a, asio::error_code *pec)
   {
     ASIO_REBIND_ALLOC(Allocator, char) b(a);
-    p_ = std::allocate_shared<promise<T>>(b, std::allocator_arg, b);
+#if defined(ASIO_HAS_STD_ALLOCATOR_ARG)
+    p_ = ASIO_ALLOCATE_SHARED< promise<T> >(b, std::allocator_arg, b);
+#else
+    p_ = ASIO_ALLOCATE_SHARED< promise<T> >(b);
+#endif
     pec_ = pec;
   }
 
-  shared_ptr<promise<T> > p_;
+  shared_ptr< promise<T> > p_;
   asio::error_code *pec_;
 };
 
