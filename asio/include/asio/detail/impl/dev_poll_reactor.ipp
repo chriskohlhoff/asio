@@ -67,7 +67,8 @@ void dev_poll_reactor::shutdown()
   scheduler_.abandon_operations(ops);
 } 
 
-void dev_poll_reactor::notify_fork(asio::io_context::fork_event fork_ev)
+void dev_poll_reactor::notify_fork(
+    asio::execution_context::fork_event fork_ev)
 {
   if (fork_ev == asio::execution_context::fork_child)
   {
@@ -240,7 +241,7 @@ void dev_poll_reactor::run(long usec, op_queue<operation>& ops)
 
   // We can return immediately if there's no work to do and the reactor is
   // not supposed to block.
-  if (!block && op_queue_[read_op].empty() && op_queue_[write_op].empty()
+  if (usec == 0 && op_queue_[read_op].empty() && op_queue_[write_op].empty()
       && op_queue_[except_op].empty() && timer_queues_.all_empty())
     return;
 

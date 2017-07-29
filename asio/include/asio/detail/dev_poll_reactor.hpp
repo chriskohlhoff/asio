@@ -139,7 +139,7 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run /dev/poll once until interrupted or events are ready to be dispatched.
-  ASIO_DECL void run(bool block, op_queue<operation>& ops);
+  ASIO_DECL void run(long usec, op_queue<operation>& ops);
 
   // Interrupt the select loop.
   ASIO_DECL void interrupt();
