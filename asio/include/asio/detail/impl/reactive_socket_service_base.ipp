@@ -90,6 +90,8 @@ void reactive_socket_service_base::destroy(
 
     asio::error_code ignored_ec;
     socket_ops::close(impl.socket_, impl.state_, true, ignored_ec);
+
+    reactor_.cleanup_descriptor_data(impl.reactor_data_);
   }
 }
 
@@ -104,9 +106,15 @@ asio::error_code reactive_socket_service_base::close(
 
     reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_,
         (impl.state_ & socket_ops::possible_dup) == 0);
-  }
 
-  socket_ops::close(impl.socket_, impl.state_, false, ec);
+    socket_ops::close(impl.socket_, impl.state_, false, ec);
+
+    reactor_.cleanup_descriptor_data(impl.reactor_data_);
+  }
+  else
+  {
+    ec = asio::error_code();
+  }
 
   // The descriptor is closed by the OS even if close() returns an error.
   //
@@ -135,6 +143,7 @@ socket_type reactive_socket_service_base::release(
         "socket", &impl, impl.socket_, "release"));
 
   reactor_.deregister_descriptor(impl.socket_, impl.reactor_data_, false);
+  reactor_.cleanup_descriptor_data(impl.reactor_data_);
   socket_type sock = impl.socket_;
   construct(impl);
   ec = asio::error_code();

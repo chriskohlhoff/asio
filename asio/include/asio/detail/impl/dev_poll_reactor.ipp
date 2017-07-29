@@ -235,6 +235,11 @@ void dev_poll_reactor::deregister_internal_descriptor(
     op_queue_[i].cancel_operations(descriptor, ops, ec);
 }
 
+void dev_poll_reactor::cleanup_descriptor_data(
+    dev_poll_reactor::per_descriptor_data&)
+{
+}
+
 void dev_poll_reactor::run(long usec, op_queue<operation>& ops)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
