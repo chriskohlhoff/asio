@@ -517,8 +517,15 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops)
       // don't call work_started() here. This still allows the scheduler to
       // stop if the only remaining operations are descriptor operations.
       descriptor_state* descriptor_data = static_cast<descriptor_state*>(ptr);
-      descriptor_data->set_ready_events(events[i].events);
-      ops.push(descriptor_data);
+      if (!ops.is_enqueued(descriptor_data))
+      {
+        descriptor_data->set_ready_events(events[i].events);
+        ops.push(descriptor_data);
+      }
+      else
+      {
+        descriptor_data->add_ready_events(events[i].events);
+      }
     }
   }
 
