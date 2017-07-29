@@ -462,6 +462,7 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops)
       // Ignore.
     }
 # endif // defined(ASIO_HAS_TIMERFD)
+    else
     {
       unsigned event_mask = 0;
       if ((events[i].events & EPOLLIN) != 0)
