@@ -19,8 +19,8 @@
 
 #if defined(ASIO_WINDOWS) && defined(ASIO_WINDOWS_APP)
 
-#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
@@ -40,7 +40,7 @@ public:
   template <typename Function>
   winapp_thread(Function f, unsigned int = 0)
   {
-    std::auto_ptr<func_base> arg(new func<Function>(f));
+    scoped_ptr<func_base> arg(new func<Function>(f));
     DWORD thread_id = 0;
     thread_ = ::CreateThread(0, 0, winapp_thread_function,
         arg.get(), 0, &thread_id);
@@ -108,7 +108,7 @@ private:
 
 inline DWORD WINAPI winapp_thread_function(LPVOID arg)
 {
-  std::auto_ptr<winapp_thread::func_base> func(
+  scoped_ptr<winapp_thread::func_base> func(
       static_cast<winapp_thread::func_base*>(arg));
   func->run();
   return 0;
