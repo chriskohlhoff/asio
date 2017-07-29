@@ -559,8 +559,8 @@ void signal_set_service::remove_service(signal_set_service* service)
     // Disable the pipe readiness notifications.
     int read_descriptor = state->read_descriptor_;
     lock.unlock();
-    service->reactor_.deregister_descriptor(
-        read_descriptor, service->reactor_data_, false);
+    service->reactor_.deregister_internal_descriptor(
+        read_descriptor, service->reactor_data_);
     service->reactor_.cleanup_descriptor_data(service->reactor_data_);
     lock.lock();
 #endif // !defined(ASIO_WINDOWS)
