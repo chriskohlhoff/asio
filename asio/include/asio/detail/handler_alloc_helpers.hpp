@@ -121,17 +121,34 @@ public:
   Handler& handler_;
 };
 
+template <typename Handler, typename Allocator>
+struct get_hook_allocator
+{
+  typedef Allocator type;
+
+  static type get(Handler&, const Allocator& a)
+  {
+    return a;
+  }
+};
+
+template <typename Handler, typename T>
+struct get_hook_allocator<Handler, std::allocator<T> >
+{
+  typedef hook_allocator<Handler, T> type;
+
+  static type get(Handler& handler, const std::allocator<T>&)
+  {
+    return type(handler);
+  }
+};
+
 } // namespace detail
 } // namespace asio
 
 #define ASIO_DEFINE_HANDLER_PTR(op) \
   struct ptr \
   { \
-    typedef typename ::asio::associated_allocator<Handler, \
-      ::asio::detail::hook_allocator<Handler, \
-        void> >::type associated_allocator_type; \
-    typedef ASIO_REBIND_ALLOC( \
-      associated_allocator_type, op) allocator_type; \
     Handler* h; \
     op* v; \
     op* p; \
@@ -141,16 +158,26 @@ public:
     } \
     static op* allocate(Handler& handler) \
     { \
-      allocator_type a(::asio::associated_allocator<Handler, \
-        ::asio::detail::hook_allocator<Handler, void> >::get(handler, \
-          ::asio::detail::hook_allocator<Handler, void>(handler))); \
+      typedef typename ::asio::associated_allocator< \
+        Handler>::type associated_allocator_type; \
+      typedef typename ::asio::detail::get_hook_allocator< \
+        Handler, associated_allocator_type>::type hook_allocator_type; \
+      ASIO_REBIND_ALLOC(hook_allocator_type, op) a( \
+            ::asio::detail::get_hook_allocator< \
+              Handler, associated_allocator_type>::get( \
+                handler, ::asio::get_associated_allocator(handler))); \
       return a.allocate(1); \
     } \
     void reset() \
     { \
-      allocator_type a(::asio::associated_allocator<Handler, \
-        ::asio::detail::hook_allocator<Handler, void> >::get(*h, \
-          ::asio::detail::hook_allocator<Handler, void>(*h))); \
+      typedef typename ::asio::associated_allocator< \
+        Handler>::type associated_allocator_type; \
+      typedef typename ::asio::detail::get_hook_allocator< \
+        Handler, associated_allocator_type>::type hook_allocator_type; \
+      ASIO_REBIND_ALLOC(hook_allocator_type, op) a( \
+            ::asio::detail::get_hook_allocator< \
+              Handler, associated_allocator_type>::get( \
+                *h, ::asio::get_associated_allocator(*h))); \
       if (p) \
       { \
         p->~op(); \
