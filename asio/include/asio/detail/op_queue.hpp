@@ -138,6 +138,12 @@ public:
     return front_ == 0;
   }
 
+  // Test whether an operation is already enqueued.
+  bool is_enqueued(Operation* o) const
+  {
+    return op_queue_access::next(o) != 0 || back_ == o;
+  }
+
 private:
   friend class op_queue_access;
 
