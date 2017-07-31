@@ -661,7 +661,7 @@ public:
     : function_(ASIO_MOVE_CAST(Function)(t.function_)),
       allocator_(t.allocator_)
   {
-    this->create_promise(allocator_, nullptr);
+    this->create_promise(allocator_, ASIO_NULL);
   }
 
   allocator_type get_allocator() const ASIO_NOEXCEPT
