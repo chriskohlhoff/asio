@@ -241,8 +241,6 @@ bool non_blocking_accept(socket_type s,
     if (ec == asio::error::would_block
         || ec == asio::error::try_again)
     {
-      if (state & user_set_non_blocking)
-        return true;
       // Fall through to retry operation.
     }
     else if (ec == asio::error::connection_aborted)
