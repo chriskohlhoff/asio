@@ -64,6 +64,7 @@ public:
     op_queue<reactor_op> op_queue_[max_ops];
     bool try_speculative_[max_ops];
     bool shutdown_;
+    bool added_to_epoll_;
 
     ASIO_DECL descriptor_state(bool locking);
     void set_ready_events(uint32_t events) { task_result_ = events; }
