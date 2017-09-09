@@ -143,91 +143,97 @@ struct get_hook_allocator<Handler, std::allocator<T> >
   }
 };
 
+template<class Op, class Handler>
+struct defined_handler_ptr
+{
+    Handler* h;
+    Op* v;
+    Op* p;
+    ~defined_handler_ptr()
+    {
+      reset();
+    }
+    static Op* allocate(Handler& handler)
+    {
+      typedef typename ::asio::associated_allocator<
+        Handler>::type associated_allocator_type;
+      typedef typename ::asio::detail::get_hook_allocator<
+        Handler, associated_allocator_type>::type hook_allocator_type;
+      ASIO_REBIND_ALLOC(hook_allocator_type, Op) a(
+            ::asio::detail::get_hook_allocator<
+              Handler, associated_allocator_type>::get(
+                handler, ::asio::get_associated_allocator(handler)));
+      return a.allocate(1);
+    }
+    void reset()
+    {
+      if (p)
+      {
+        p->~Op();
+        p = 0;
+      }
+      if (v)
+      {
+        typedef typename ::asio::associated_allocator<
+          Handler>::type associated_allocator_type;
+        typedef typename ::asio::detail::get_hook_allocator<
+          Handler, associated_allocator_type>::type hook_allocator_type;
+        ASIO_REBIND_ALLOC(hook_allocator_type, Op) a(
+              ::asio::detail::get_hook_allocator<
+                Handler, associated_allocator_type>::get(
+                  *h, ::asio::get_associated_allocator(*h)));
+        a.deallocate(static_cast<Op*>(v), 1);
+        v = 0;
+      }
+    }
+};
+
+template<class Op, class Alloc, class Handler>
+struct defined_handler_alloc_ptr
+{
+  const Alloc* a;
+  void* v;
+  Op* p;
+  ~defined_handler_alloc_ptr()
+  {
+    reset();
+  }
+  static Op* allocate(const Alloc& a)
+  {
+    typedef typename ::asio::detail::get_recycling_allocator<
+      Alloc>::type recycling_allocator_type;
+    ASIO_REBIND_ALLOC(recycling_allocator_type, Op) a1(
+          ::asio::detail::get_recycling_allocator<Alloc>::get(a));
+    return a1.allocate(1);
+  }
+  void reset()
+  {
+    if (p)
+    {
+      p->~Op();
+      p = 0;
+    }
+    if (v)
+    {
+      typedef typename ::asio::detail::get_recycling_allocator<
+        Alloc>::type recycling_allocator_type;
+      ASIO_REBIND_ALLOC(recycling_allocator_type, Op) a1(
+            ::asio::detail::get_recycling_allocator<Alloc>::get(*a));
+      a1.deallocate(static_cast<Op*>(v), 1);
+      v = 0;
+    }
+  }
+};
+
 } // namespace detail
 } // namespace asio
 
 #define ASIO_DEFINE_HANDLER_PTR(op) \
-  struct ptr \
-  { \
-    Handler* h; \
-    op* v; \
-    op* p; \
-    ~ptr() \
-    { \
-      reset(); \
-    } \
-    static op* allocate(Handler& handler) \
-    { \
-      typedef typename ::asio::associated_allocator< \
-        Handler>::type associated_allocator_type; \
-      typedef typename ::asio::detail::get_hook_allocator< \
-        Handler, associated_allocator_type>::type hook_allocator_type; \
-      ASIO_REBIND_ALLOC(hook_allocator_type, op) a( \
-            ::asio::detail::get_hook_allocator< \
-              Handler, associated_allocator_type>::get( \
-                handler, ::asio::get_associated_allocator(handler))); \
-      return a.allocate(1); \
-    } \
-    void reset() \
-    { \
-      typedef typename ::asio::associated_allocator< \
-        Handler>::type associated_allocator_type; \
-      typedef typename ::asio::detail::get_hook_allocator< \
-        Handler, associated_allocator_type>::type hook_allocator_type; \
-      ASIO_REBIND_ALLOC(hook_allocator_type, op) a( \
-            ::asio::detail::get_hook_allocator< \
-              Handler, associated_allocator_type>::get( \
-                *h, ::asio::get_associated_allocator(*h))); \
-      if (p) \
-      { \
-        p->~op(); \
-        p = 0; \
-      } \
-      if (v) \
-      { \
-        a.deallocate(static_cast<op*>(v), 1); \
-        v = 0; \
-      } \
-    } \
-  } \
+  typedef ::asio::detail::defined_handler_ptr<op, Handler> ptr \
   /**/
 
 #define ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(op) \
-  struct ptr \
-  { \
-    const Alloc* a; \
-    void* v; \
-    op* p; \
-    ~ptr() \
-    { \
-      reset(); \
-    } \
-    static op* allocate(const Alloc& a) \
-    { \
-      typedef typename ::asio::detail::get_recycling_allocator< \
-        Alloc>::type recycling_allocator_type; \
-      ASIO_REBIND_ALLOC(recycling_allocator_type, op) a1( \
-            ::asio::detail::get_recycling_allocator<Alloc>::get(a)); \
-      return a1.allocate(1); \
-    } \
-    void reset() \
-    { \
-      typedef typename ::asio::detail::get_recycling_allocator< \
-        Alloc>::type recycling_allocator_type; \
-      ASIO_REBIND_ALLOC(recycling_allocator_type, op) a1( \
-            ::asio::detail::get_recycling_allocator<Alloc>::get(*a)); \
-      if (p) \
-      { \
-        p->~op(); \
-        p = 0; \
-      } \
-      if (v) \
-      { \
-        a1.deallocate(static_cast<op*>(v), 1); \
-        v = 0; \
-      } \
-    } \
-  } \
+  typedef ::asio::detail::defined_handler_alloc_ptr<op, Alloc, Handler> ptr \
   /**/
 
 #include "asio/detail/pop_options.hpp"
