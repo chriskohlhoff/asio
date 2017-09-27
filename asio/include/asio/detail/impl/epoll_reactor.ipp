@@ -241,7 +241,9 @@ void epoll_reactor::start_op(int op_type, socket_type descriptor,
 
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
-  if (descriptor_data->shutdown_)
+  if (!descriptor_data)
+    op->ec_ = asio::error::bad_descriptor;
+  if (!descriptor_data || descriptor_data->shutdown_)
   {
     post_immediate_completion(op, is_continuation);
     return;
@@ -326,6 +328,9 @@ void epoll_reactor::cancel_ops(socket_type,
 
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
+  if (!descriptor_data)
+    return;
+    
   op_queue<operation> ops;
   for (int i = 0; i < max_ops; ++i)
   {
@@ -350,7 +355,7 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
 
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
-  if (!descriptor_data->shutdown_)
+  if (descriptor_data && !descriptor_data->shutdown_)
   {
     if (closing)
     {
@@ -395,7 +400,7 @@ void epoll_reactor::deregister_internal_descriptor(socket_type descriptor,
 
   mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
 
-  if (!descriptor_data->shutdown_)
+  if (descriptor_data && !descriptor_data->shutdown_)
   {
     epoll_event ev = { 0, { 0 } };
     epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
