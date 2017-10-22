@@ -1339,7 +1339,7 @@ void test()
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
   (void)sref;
 
-  error_code ec = ios1.error();
+  asio::error_code ec = ios1.error();
   (void)ec;
 
   ip::tcp::iostream::time_point tp = ios1.expiry();
