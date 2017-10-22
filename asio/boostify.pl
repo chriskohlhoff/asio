@@ -154,7 +154,7 @@ sub copy_source_file
     }
 
     # Conditional replacements.
-    if ($line =~ /^( *)namespace asio {/)
+    if ($line =~ /^( *)namespace asio \{/)
     {
       if ($is_qbk)
       {
@@ -242,7 +242,7 @@ sub copy_source_file
     {
       # Line is removed.
     }
-    elsif ($line =~ /asio::thread/)
+    elsif ($line =~ /asio::thread\b/)
     {
       if ($is_test)
       {
@@ -269,7 +269,7 @@ sub copy_source_file
         print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
       }
     }
-    elsif ($line =~ /namespace std {/)
+    elsif ($line =~ /namespace std \{ *$/)
     {
       print_line($output, "namespace boost {", $from, $lineno);
       print_line($output, "namespace system {", $from, $lineno);
@@ -277,6 +277,7 @@ sub copy_source_file
     elsif ($line =~ /std::error_code/)
     {
       $line =~ s/std::error_code/boost::system::error_code/g;
+      $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /} \/\/ namespace std/)
