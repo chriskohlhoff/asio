@@ -213,7 +213,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_CONST_BUFFER=const_buffer \
                          ASIO_MUTABLE_BUFFER=mutable_buffer \
                          ASIO_SYNC_OP_VOID=void \
-                         ASIO_STRING_VIEW_PARAM=string_view
+                         ASIO_STRING_VIEW_PARAM=string_view \
+                         ASIO_UNUSED_VARIABLE=
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
