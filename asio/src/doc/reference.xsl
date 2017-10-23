@@ -1517,6 +1517,9 @@
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'IoObjectService1'">
+          <xsl:value-of select="concat('``[link asio.reference.IoObjectService ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'Iterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
