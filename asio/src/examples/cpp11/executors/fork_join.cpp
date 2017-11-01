@@ -6,6 +6,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <numeric>
 
 using asio::dispatch;
 using asio::execution_context;
