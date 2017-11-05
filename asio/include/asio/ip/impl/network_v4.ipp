@@ -182,7 +182,12 @@ network_v4 make_network_v4(const std::string& str,
   if (ec)
     return network_v4();
 
-  return network_v4(addr, std::atoi(str.substr(pos + 1).c_str()));
+  try {
+    return network_v4(addr, std::atoi(str.substr(pos + 1).c_str()));
+  } catch (const std::out_of_range&) {
+    ec = asio::error::invalid_argument;
+    return network_v4();
+  }
 }
 
 #if defined(ASIO_HAS_STD_STRING_VIEW)

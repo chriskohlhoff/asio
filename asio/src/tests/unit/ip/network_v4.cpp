@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/ip/network_v4.hpp"
 
+#include "asio/error.hpp"
 #include "../unit_test.hpp"
 #include <sstream>
 
@@ -209,6 +210,20 @@ void test()
     msg = ex.what();
   }
   ASIO_CHECK(msg == std::string("prefix length too large"));
+
+  asio::error_code ec;
+  make_network_v4("10.0.0.256/24", ec);
+  ASIO_CHECK(ec == asio::error::invalid_argument);
+  make_network_v4("10.0.0.0/33", ec);
+  ASIO_CHECK(ec == asio::error::invalid_argument);
+  make_network_v4("10.0.0.0/-1", ec);
+  ASIO_CHECK(ec == asio::error::invalid_argument);
+  make_network_v4("10.0.0.0/", ec);
+  ASIO_CHECK(ec == asio::error::invalid_argument);
+  make_network_v4("10.0.0.0", ec);
+  ASIO_CHECK(ec == asio::error::invalid_argument);
+  make_network_v4("10.0.0.0/24", ec);
+  ASIO_CHECK(!ec);
 
   // construct address range from address and prefix length
   ASIO_CHECK(network_v4(make_address_v4("192.168.77.100"), 32).network() == make_address_v4("192.168.77.100"));
