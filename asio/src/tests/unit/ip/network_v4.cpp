@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/ip/network_v4.hpp"
 
+#include "asio/error.hpp"
 #include "../unit_test.hpp"
 #include <sstream>
 
