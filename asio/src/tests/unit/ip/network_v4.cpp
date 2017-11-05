@@ -221,6 +221,8 @@ void test()
   ASIO_CHECK(ec == asio::error::invalid_argument);
   make_network_v4("10.0.0.0", ec);
   ASIO_CHECK(ec == asio::error::invalid_argument);
+  make_network_v4("10.0.0.0/24", ec);
+  ASIO_CHECK(!ec);
 
   // construct address range from address and prefix length
   ASIO_CHECK(network_v4(make_address_v4("192.168.77.100"), 32).network() == make_address_v4("192.168.77.100"));
