@@ -1340,8 +1340,16 @@
 #endif // defined(ASIO_NO_DEPRECATED)
 
 // Newer gcc, clang need special treatment to suppress unused typedef warnings.
-#if defined(__clang__) && (__clang_major__ >= 7)
-# define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+#if defined(__clang__)
+# if defined(__apple_build_version__)
+#  if (__clang_major__ >= 7)
+#   define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+#  endif // (__clang_major__ >= 7)
+# elif ((__clang_major__ == 3) && (__clang_minor__ >= 6)) \
+    || (__clang_major__ > 3)
+#  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
+# endif // ((__clang_major__ == 3) && (__clang_minor__ >= 6))
+        //   || (__clang_major__ > 3)
 #elif defined(__GNUC__)
 # if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 8)) || (__GNUC__ > 4)
 #  define ASIO_UNUSED_TYPEDEF __attribute__((__unused__))
