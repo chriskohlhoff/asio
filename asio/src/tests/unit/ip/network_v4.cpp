@@ -220,6 +220,19 @@ void test()
   ASIO_CHECK(make_network_v4("192.168.77.100/24").network() == make_address_v4("192.168.77.0"));
   ASIO_CHECK(make_network_v4("192.168.77.128/25").network() == make_address_v4("192.168.77.128"));
 
+  // construct network from invalid string
+  asio::error_code ec;
+  make_network_v4("10.0.0.256/24", ec);
+  ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0/33", ec);
+  ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0/-1", ec);
+  ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0/", ec);
+  ASIO_CHECK(!!ec);
+  make_network_v4("10.0.0.0", ec);
+  ASIO_CHECK(!!ec);
+
   // prefix length
   ASIO_CHECK(make_network_v4("193.99.144.80/24").prefix_length() == 24);
   ASIO_CHECK(network_v4(make_address_v4("193.99.144.80"), 24).prefix_length() == 24);
