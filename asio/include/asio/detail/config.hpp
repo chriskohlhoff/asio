@@ -22,6 +22,7 @@
 # define ASIO_DISABLE_BOOST_STATIC_CONSTANT 1
 # define ASIO_DISABLE_BOOST_THROW_EXCEPTION 1
 # define ASIO_DISABLE_BOOST_WORKAROUND 1
+# define ASIO_DISABLE_BOOST_FUTURE 1
 #else // defined(ASIO_STANDALONE)
 # include <boost/config.hpp>
 # include <boost/version.hpp>
@@ -769,6 +770,10 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_FUTURE)
 #endif // !defined(ASIO_HAS_STD_FUTURE)
+
+#if !defined(ASIO_HAS_STD_FUTURE) && defined(ASIO_DISABLE_BOOST_FUTURE)
+#   define ASIO_DISABLE_FUTURE
+#endif
 
 // Standard library support for experimental::string_view.
 #if !defined(ASIO_HAS_STD_STRING_VIEW)

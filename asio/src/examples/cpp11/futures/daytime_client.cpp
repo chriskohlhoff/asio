@@ -9,7 +9,6 @@
 //
 
 #include <array>
-#include <future>
 #include <iostream>
 #include <thread>
 #include <asio/io_context.hpp>
@@ -24,7 +23,7 @@ void get_daytime(asio::io_context& io_context, const char* hostname)
   {
     udp::resolver resolver(io_context);
 
-    std::future<udp::resolver::results_type> endpoints =
+    asio::detail::future<udp::resolver::results_type> endpoints =
       resolver.async_resolve(
           udp::v4(), hostname, "daytime",
           asio::use_future);
@@ -35,7 +34,7 @@ void get_daytime(asio::io_context& io_context, const char* hostname)
     udp::socket socket(io_context, udp::v4());
 
     std::array<char, 1> send_buf  = {{ 0 }};
-    std::future<std::size_t> send_length =
+    asio::detail::future<std::size_t> send_length =
       socket.async_send_to(asio::buffer(send_buf),
           *endpoints.get().begin(), // ... until here. This call may block.
           asio::use_future);
@@ -46,7 +45,7 @@ void get_daytime(asio::io_context& io_context, const char* hostname)
 
     std::array<char, 128> recv_buf;
     udp::endpoint sender_endpoint;
-    std::future<std::size_t> recv_length =
+    asio::detail::future<std::size_t> recv_length =
       socket.async_receive_from(
           asio::buffer(recv_buf),
           sender_endpoint,

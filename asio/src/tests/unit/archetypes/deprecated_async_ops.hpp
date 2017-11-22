@@ -83,12 +83,12 @@ deprecated_async_op_ec_0(asio::io_context& ctx,
 template <typename CompletionToken>
 typename asio::async_result<
   typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr)>::type>::type
+    void(asio::detail::exception_ptr)>::type>::type
 deprecated_async_op_ex_0(asio::io_context& ctx,
     bool ok, ASIO_MOVE_ARG(CompletionToken) token)
 {
   typedef typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr)>::type handler_type;
+    void(asio::detail::exception_ptr)>::type handler_type;
 
   handler_type handler(ASIO_MOVE_CAST(CompletionToken)(token));
 
@@ -97,12 +97,12 @@ deprecated_async_op_ex_0(asio::io_context& ctx,
   if (ok)
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::exception_ptr()));
+          asio::detail::exception_ptr()));
   }
   else
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::make_exception_ptr(std::runtime_error("blah"))));
+          ASIO_MAKE_EXCEPTION_PTR(std::runtime_error("blah"))));
   }
 
   return result.get();
@@ -158,12 +158,12 @@ deprecated_async_op_ec_1(asio::io_context& ctx,
 template <typename CompletionToken>
 typename asio::async_result<
   typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr, int)>::type>::type
+    void(asio::detail::exception_ptr, int)>::type>::type
 deprecated_async_op_ex_1(asio::io_context& ctx,
     bool ok, ASIO_MOVE_ARG(CompletionToken) token)
 {
   typedef typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr, int)>::type handler_type;
+    void(asio::detail::exception_ptr, int)>::type handler_type;
 
   handler_type handler(ASIO_MOVE_CAST(CompletionToken)(token));
 
@@ -172,12 +172,12 @@ deprecated_async_op_ex_1(asio::io_context& ctx,
   if (ok)
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::exception_ptr(), 42));
+          asio::detail::exception_ptr(), 42));
   }
   else
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::make_exception_ptr(std::runtime_error("blah")), 0));
+          ASIO_MAKE_EXCEPTION_PTR(std::runtime_error("blah")), 0));
   }
 
   return result.get();
@@ -235,12 +235,12 @@ deprecated_async_op_ec_2(asio::io_context& ctx,
 template <typename CompletionToken>
 typename asio::async_result<
   typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr, int, double)>::type>::type
+    void(asio::detail::exception_ptr, int, double)>::type>::type
 deprecated_async_op_ex_2(asio::io_context& ctx,
     bool ok, ASIO_MOVE_ARG(CompletionToken) token)
 {
   typedef typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr, int, double)>::type handler_type;
+    void(asio::detail::exception_ptr, int, double)>::type handler_type;
 
   handler_type handler(ASIO_MOVE_CAST(CompletionToken)(token));
 
@@ -249,12 +249,12 @@ deprecated_async_op_ex_2(asio::io_context& ctx,
   if (ok)
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::exception_ptr(), 42, 2.0));
+          asio::detail::exception_ptr(), 42, 2.0));
   }
   else
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::make_exception_ptr(std::runtime_error("blah")), 0, 0.0));
+          ASIO_MAKE_EXCEPTION_PTR(std::runtime_error("blah")), 0, 0.0));
   }
 
   return result.get();
@@ -312,12 +312,12 @@ deprecated_async_op_ec_3(asio::io_context& ctx,
 template <typename CompletionToken>
 typename asio::async_result<
   typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr, int, double, char)>::type>::type
+    void(asio::detail::exception_ptr, int, double, char)>::type>::type
 deprecated_async_op_ex_3(asio::io_context& ctx,
     bool ok, ASIO_MOVE_ARG(CompletionToken) token)
 {
   typedef typename asio::handler_type<CompletionToken,
-    void(std::exception_ptr, int, double, char)>::type handler_type;
+    void(asio::detail::exception_ptr, int, double, char)>::type handler_type;
 
   handler_type handler(ASIO_MOVE_CAST(CompletionToken)(token));
 
@@ -326,12 +326,12 @@ deprecated_async_op_ex_3(asio::io_context& ctx,
   if (ok)
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::exception_ptr(), 42, 2.0, 'a'));
+          asio::detail::exception_ptr(), 42, 2.0, 'a'));
   }
   else
   {
     ctx.post(bindns::bind(ASIO_MOVE_CAST(handler_type)(handler),
-          std::make_exception_ptr(std::runtime_error("blah")),
+          ASIO_MAKE_EXCEPTION_PTR(std::runtime_error("blah")),
           0, 0.0, 'z'));
   }
 

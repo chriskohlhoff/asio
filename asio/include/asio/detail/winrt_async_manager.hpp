@@ -19,7 +19,7 @@
 
 #if defined(ASIO_WINDOWS_RUNTIME)
 
-#include <future>
+#include "asio/detail/future.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/winrt_async_op.hpp"
 #include "asio/error.hpp"
@@ -53,7 +53,7 @@ public:
     if (--outstanding_ops_ > 0)
     {
       // Block until last operation is complete.
-      std::future<void> f = promise_.get_future();
+      future<void> f = promise_.get_future();
       f.wait();
     }
   }
@@ -64,7 +64,7 @@ public:
     using namespace Windows::Foundation;
     using Windows::Foundation::AsyncStatus;
 
-    auto promise = std::make_shared<std::promise<asio::error_code>>();
+    auto promise = std::make_shared<promise<asio::error_code>>();
     auto future = promise->get_future();
 
     action->Completed = ref new AsyncActionCompletedHandler(
@@ -96,7 +96,7 @@ public:
     using namespace Windows::Foundation;
     using Windows::Foundation::AsyncStatus;
 
-    auto promise = std::make_shared<std::promise<asio::error_code>>();
+    auto promise = std::make_shared<promise<asio::error_code>>();
     auto future = promise->get_future();
 
     operation->Completed = ref new AsyncOperationCompletedHandler<TResult>(
@@ -131,7 +131,7 @@ public:
     using namespace Windows::Foundation;
     using Windows::Foundation::AsyncStatus;
 
-    auto promise = std::make_shared<std::promise<asio::error_code>>();
+    auto promise = std::make_shared<promise<asio::error_code>>();
     auto future = promise->get_future();
 
     operation->Completed
@@ -281,7 +281,7 @@ private:
   atomic_count outstanding_ops_;
 
   // Used to keep wait for outstanding operations to complete.
-  std::promise<void> promise_;
+  promise<void> promise_;
 };
 
 } // namespace detail
