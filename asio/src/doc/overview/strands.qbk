@@ -36,7 +36,7 @@ ensure thread safe access for any objects that are shared between the caller
 and the composed operation (in the case of `async_read()` it's the socket,
 which the caller can `close()` to cancel the operation).
 
-This is done by partially specialising the `asio::ssociated_executor<>` trait
+This is done by partially specialising the `asio::associated_executor<>` trait
 for all intermediate handlers. This trait forwards to the corresponding trait
 specialisation for the final handler:
 
