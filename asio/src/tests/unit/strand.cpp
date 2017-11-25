@@ -90,6 +90,26 @@ void sleep_increment(io_context* ioc, int* count)
   ++(*count);
 }
 
+void increment_by_a(int* count, int a)
+{
+  (*count) += a;
+}
+
+void increment_by_a_b(int* count, int a, int b)
+{
+  (*count) += a + b;
+}
+
+void increment_by_a_b_c(int* count, int a, int b, int c)
+{
+  (*count) += a + b + c;
+}
+
+void increment_by_a_b_c_d(int* count, int a, int b, int c, int d)
+{
+  (*count) += a + b + c + d;
+}
+
 void start_sleep_increments(io_context* ioc, io_context::strand* s, int* count)
 {
   // Give all threads a chance to start.
@@ -217,8 +237,87 @@ void strand_test()
   ASIO_CHECK(count == 0);
 }
 
+void strand_wrap_test()
+{
+  io_context ioc;
+  io_context::strand s(ioc);
+  int count = 0;
+
+  s.wrap(bindns::bind(increment, &count))();
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(count == 0);
+
+  ioc.restart();
+  ioc.run();
+
+  // The run() calls will not return until all work has finished.
+  ASIO_CHECK(count == 1);
+
+  count = 0;
+  s.wrap(increment)(&count);
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(count == 0);
+
+  ioc.restart();
+  ioc.run();
+
+  // The run() calls will not return until all work has finished.
+  ASIO_CHECK(count == 1);
+
+  count = 0;
+  s.wrap(increment_by_a)(&count, 1);
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(count == 0);
+
+  ioc.restart();
+  ioc.run();
+
+  // The run() calls will not return until all work has finished.
+  ASIO_CHECK(count == 1);
+
+  count = 0;
+  s.wrap(increment_by_a_b)(&count, 1, 2);
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(count == 0);
+
+  ioc.restart();
+  ioc.run();
+
+  // The run() calls will not return until all work has finished.
+  ASIO_CHECK(count == 3);
+
+  count = 0;
+  s.wrap(increment_by_a_b_c)(&count, 1, 2, 3);
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(count == 0);
+
+  ioc.restart();
+  ioc.run();
+
+  // The run() calls will not return until all work has finished.
+  ASIO_CHECK(count == 6);
+
+  count = 0;
+  s.wrap(increment_by_a_b_c_d)(&count, 1, 2, 3, 4);
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(count == 0);
+
+  ioc.restart();
+  ioc.run();
+
+  // The run() calls will not return until all work has finished.
+  ASIO_CHECK(count == 10);
+}
+
 ASIO_TEST_SUITE
 (
   "strand",
   ASIO_TEST_CASE(strand_test)
+  ASIO_TEST_CASE(strand_wrap_test)
 )
