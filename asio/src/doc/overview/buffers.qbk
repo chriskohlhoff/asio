@@ -70,7 +70,7 @@ operations, such as the send or receive operations of a socket:
   of this function meets the `ConstBufferSequence` requirements.
 
 * The output sequence of the streambuf is accessible via the [link
-  asio.reference.basic_streambuf.data prepare()] member function. The return
+  asio.reference.basic_streambuf.prepare prepare()] member function. The return
   type of this function meets the `MutableBufferSequence` requirements.
 
 * Data is transferred from the front of the output sequence to the back of the
