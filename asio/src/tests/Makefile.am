@@ -102,6 +102,8 @@ check_PROGRAMS = \
 	unit/strand \
 	unit/stream_socket_service \
 	unit/streambuf \
+	unit/system_context \
+	unit/system_executor \
 	unit/system_timer \
 	unit/thread \
 	unit/time_traits \
@@ -231,6 +233,8 @@ TESTS = \
 	unit/strand \
 	unit/stream_socket_service \
 	unit/streambuf \
+	unit/system_context \
+	unit/system_executor \
 	unit/system_timer \
 	unit/thread \
 	unit/time_traits \
@@ -373,6 +377,8 @@ unit_steady_timer_SOURCES = unit/steady_timer.cpp
 unit_strand_SOURCES = unit/strand.cpp
 unit_stream_socket_service_SOURCES = unit/stream_socket_service.cpp
 unit_streambuf_SOURCES = unit/streambuf.cpp
+unit_system_context_SOURCES = unit/system_context.cpp
+unit_system_executor_SOURCES = unit/system_executor.cpp
 unit_system_timer_SOURCES = unit/system_timer.cpp
 unit_thread_SOURCES = unit/thread.cpp
 unit_time_traits_SOURCES = unit/time_traits.cpp

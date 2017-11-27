@@ -171,6 +171,8 @@ UNIT_TEST_EXES = \
 	tests\unit\steady_timer.exe \
 	tests\unit\stream_socket_service.exe \
 	tests\unit\streambuf.exe \
+	tests\unit\system_context.exe \
+	tests\unit\system_executor.exe \
 	tests\unit\system_timer.exe \
 	tests\unit\thread.exe \
 	tests\unit\time_traits.exe \
