@@ -9,8 +9,8 @@
 //
 
 #include "asio.hpp"
-#include <boost/function.hpp>
 #include <iostream>
+#include <memory>
 #include <queue>
 
 using asio::ip::tcp;
@@ -18,17 +18,21 @@ using asio::ip::tcp;
 class handler_priority_queue : asio::execution_context
 {
 public:
-  void add(int priority, boost::function<void()> function)
+  template <typename Function>
+  void add(int priority, Function function)
   {
-    handlers_.push(queued_handler(priority, function));
+    std::unique_ptr<queued_handler_base> handler(
+        new queued_handler<Function>(
+          priority, std::move(function)));
+
+    handlers_.push(std::move(handler));
   }
 
   void execute_all()
   {
     while (!handlers_.empty())
     {
-      queued_handler handler = handlers_.top();
-      handler.execute();
+      handlers_.top()->execute();
       handlers_.pop();
     }
   }
@@ -41,38 +45,38 @@ public:
     {
     }
 
-    handler_priority_queue& context() const
+    handler_priority_queue& context() const noexcept
     {
       return context_;
     }
 
     template <typename Function, typename Allocator>
-    void dispatch(const Function& f, const Allocator&) const
+    void dispatch(Function f, const Allocator&) const
     {
-      context_.add(priority_, f);
+      context_.add(priority_, std::move(f));
     }
 
     template <typename Function, typename Allocator>
-    void post(const Function& f, const Allocator&) const
+    void post(Function f, const Allocator&) const
     {
-      context_.add(priority_, f);
+      context_.add(priority_, std::move(f));
     }
 
     template <typename Function, typename Allocator>
-    void defer(const Function& f, const Allocator&) const
+    void defer(Function f, const Allocator&) const
     {
-      context_.add(priority_, f);
+      context_.add(priority_, std::move(f));
     }
 
-    void on_work_started() const {}
-    void on_work_finished() const {}
+    void on_work_started() const noexcept {}
+    void on_work_finished() const noexcept {}
 
-    bool operator==(const executor& other) const
+    bool operator==(const executor& other) const noexcept
     {
       return &context_ == &other.context_ && priority_ == other.priority_;
     }
 
-    bool operator!=(const executor& other) const
+    bool operator!=(const executor& other) const noexcept
     {
       return !operator==(other);
     }
@@ -86,35 +90,54 @@ public:
   asio::executor_binder<Handler, executor>
   wrap(int priority, Handler handler)
   {
-    return asio::bind_executor(executor(*this, priority), handler);
+    return asio::bind_executor(
+        executor(*this, priority), std::move(handler));
   }
 
 private:
-  class queued_handler
+  class queued_handler_base
   {
   public:
-    queued_handler(int p, boost::function<void()> f)
-      : priority_(p), function_(f)
+    queued_handler_base(int p)
+      : priority_(p)
     {
     }
 
-    void execute()
+    virtual ~queued_handler_base()
     {
-      function_();
     }
 
-    friend bool operator<(const queued_handler& a,
-        const queued_handler& b)
+    virtual void execute() = 0;
+
+    friend bool operator<(const std::unique_ptr<queued_handler_base>& a,
+        const std::unique_ptr<queued_handler_base>& b) noexcept
     {
-      return a.priority_ < b.priority_;
+      return a->priority_ < b->priority_;
     }
 
   private:
     int priority_;
-    boost::function<void()> function_;
   };
 
-  std::priority_queue<queued_handler> handlers_;
+  template <typename Function>
+  class queued_handler : public queued_handler_base
+  {
+  public:
+    queued_handler(int p, Function f)
+      : queued_handler_base(p), function_(std::move(f))
+    {
+    }
+
+    void execute() override
+    {
+      function_();
+    }
+
+  private:
+    Function function_;
+  };
+
+  std::priority_queue<std::unique_ptr<queued_handler_base>> handlers_;
 };
 
 //----------------------------------------------------------------------
@@ -129,10 +152,18 @@ void middle_priority_handler(const asio::error_code& /*ec*/)
   std::cout << "Middle priority handler\n";
 }
 
-void low_priority_handler()
+struct low_priority_handler
 {
-  std::cout << "Low priority handler\n";
-}
+  // Make the handler a move-only type.
+  low_priority_handler() = default;
+  low_priority_handler(const low_priority_handler&) = delete;
+  low_priority_handler(low_priority_handler&&) = default;
+
+  void operator()()
+  {
+    std::cout << "Low priority handler\n";
+  }
+};
 
 int main()
 {
@@ -141,7 +172,7 @@ int main()
   handler_priority_queue pri_queue;
 
   // Post a completion handler to be run immediately.
-  asio::post(io_context, pri_queue.wrap(0, low_priority_handler));
+  asio::post(io_context, pri_queue.wrap(0, low_priority_handler()));
 
   // Start an asynchronous accept that will complete immediately.
   tcp::endpoint endpoint(asio::ip::address_v4::loopback(), 0);
@@ -153,8 +184,8 @@ int main()
   client_socket.connect(acceptor.local_endpoint());
 
   // Set a deadline timer to expire immediately.
-  asio::deadline_timer timer(io_context);
-  timer.expires_at(boost::posix_time::neg_infin);
+  asio::steady_timer timer(io_context);
+  timer.expires_at(asio::steady_timer::clock_type::time_point::min());
   timer.async_wait(pri_queue.wrap(42, middle_priority_handler));
 
   while (io_context.run_one())

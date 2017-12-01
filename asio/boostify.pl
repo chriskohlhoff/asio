@@ -518,6 +518,7 @@ sub copy_examples
       "src/examples/cpp11/executors",
       "src/examples/cpp11/futures",
       "src/examples/cpp11/http/server",
+      "src/examples/cpp11/invocation",
       "src/examples/cpp11/iostreams",
       "src/examples/cpp11/spawn",
       "src/examples/cpp14/executors");

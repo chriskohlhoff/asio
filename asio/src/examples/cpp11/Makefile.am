@@ -28,6 +28,7 @@ noinst_PROGRAMS = \
 	executors/priority_scheduler \
 	futures/daytime_client \
 	http/server/http_server \
+	invocation/prioritised_handlers \
 	iostreams/http_client
 
 if HAVE_BOOST_COROUTINE
@@ -67,6 +68,7 @@ http_server_http_server_SOURCES = \
 	http/server/request_handler.cpp \
 	http/server/request_parser.cpp \
 	http/server/server.cpp
+invocation_prioritised_handlers_SOURCES = invocation/prioritised_handlers.cpp
 iostreams_http_client_SOURCES = iostreams/http_client.cpp
 
 if HAVE_BOOST_COROUTINE
