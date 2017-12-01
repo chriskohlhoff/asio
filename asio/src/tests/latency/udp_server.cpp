@@ -19,9 +19,9 @@
 
 using asio::ip::udp;
 
-#include "yield.hpp"
+#include <asio/yield.hpp>
 
-class udp_server : coroutine
+class udp_server : asio::coroutine
 {
 public:
   udp_server(asio::io_context& io_context,
@@ -90,7 +90,7 @@ private:
   allocator allocator_;
 };
 
-#include "unyield.hpp"
+#include <asio/unyield.hpp>
 
 int main(int argc, char* argv[])
 {

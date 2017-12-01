@@ -268,10 +268,7 @@ TESTS += \
 endif
 
 noinst_HEADERS = \
-	latency/coroutine.hpp \
 	latency/high_res_clock.hpp \
-	latency/unyield.hpp \
-	latency/yield.hpp \
 	unit/unit_test.hpp
 
 AM_CXXFLAGS = -I$(srcdir)/../../include

@@ -20,9 +20,9 @@
 
 using asio::ip::tcp;
 
-#include "yield.hpp"
+#include <asio/yield.hpp>
 
-class tcp_server : coroutine
+class tcp_server : asio::coroutine
 {
 public:
   tcp_server(tcp::acceptor& acceptor, std::size_t buf_size) :
@@ -79,7 +79,7 @@ private:
   tcp::endpoint sender_;
 };
 
-#include "unyield.hpp"
+#include <asio/unyield.hpp>
 
 int main(int argc, char* argv[])
 {
