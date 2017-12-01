@@ -176,6 +176,14 @@ UNIT_TEST_EXES = \
 	tests\unit\system_timer.exe \
 	tests\unit\thread.exe \
 	tests\unit\time_traits.exe \
+	tests\unit\ts\buffer.exe \
+	tests\unit\ts\executor.exe \
+	tests\unit\ts\internet.exe \
+	tests\unit\ts\io_context.exe \
+	tests\unit\ts\net.exe \
+	tests\unit\ts\netfwd.exe \
+	tests\unit\ts\socket.exe \
+	tests\unit\ts\timer.exe \
 	tests\unit\waitable_timer_service.exe \
 	tests\unit\windows\basic_handle.exe \
 	tests\unit\windows\basic_object_handle.exe \
@@ -299,6 +307,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 
 {tests\unit\ssl}.cpp{tests\unit\ssl}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(SSL_CXXFLAGS) $(DEFINES) $< $(SSL_LIBS) $(LIBS) -link -opt:ref
+
+{tests\unit\ts}.cpp{tests\unit\ts}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\windows}.cpp{tests\unit\windows}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
