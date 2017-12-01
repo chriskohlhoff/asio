@@ -18,8 +18,8 @@ concurrently.
 
 Multiple threads may call `io_context::run()` to set up a pool of threads from
 which completion handlers may be invoked. This approach may also be used with
-`io_context::post()` to use a means to perform any computational tasks across a
-thread pool.
+`post()` as a means to perform arbitrary computational tasks across a thread
+pool.
 
 Note that all threads that have joined an `io_context`'s pool are considered
 equivalent, and the `io_context` may distribute work across them in an
@@ -61,6 +61,7 @@ The reasons for this approach include:
 
 [heading See Also]
 
-[link asio.reference.io_context io_context].
+[link asio.reference.io_context io_context],
+[link asio.reference.post post].
 
 [endsect]
