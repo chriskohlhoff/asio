@@ -765,13 +765,7 @@
     <xsl:when test="contains($file, 'include/asio/ssl')">
       <xsl:text>[^asio/ssl.hpp]</xsl:text>
     </xsl:when>
-    <xsl:when test="contains($file, 'include/asio/package')">
-      <xsl:text>None</xsl:text>
-    </xsl:when>
     <xsl:when test="contains($file, 'include/asio/spawn')">
-      <xsl:text>None</xsl:text>
-    </xsl:when>
-    <xsl:when test="contains($file, 'include/asio/use_future')">
       <xsl:text>None</xsl:text>
     </xsl:when>
     <xsl:otherwise>
