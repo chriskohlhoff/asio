@@ -382,6 +382,7 @@ sub copy_include_files
       "include/asio/ssl/impl",
       "include/asio/ssl/old",
       "include/asio/ssl/old/detail",
+      "include/asio/ts",
       "include/asio/windows");
 
   foreach my $dir (@dirs)
@@ -429,6 +430,7 @@ sub copy_unit_tests
       "src/tests/unit/local",
       "src/tests/unit/posix",
       "src/tests/unit/ssl",
+      "src/tests/unit/ts",
       "src/tests/unit/windows");
 
   our $boost_dir;
