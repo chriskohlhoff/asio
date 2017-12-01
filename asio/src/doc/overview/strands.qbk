@@ -36,9 +36,35 @@ ensure thread safe access for any objects that are shared between the caller
 and the composed operation (in the case of `async_read()` it's the socket,
 which the caller can `close()` to cancel the operation).
 
-This is done by partially specialising the `asio::associated_executor<>` trait
-for all intermediate handlers. This trait forwards to the corresponding trait
-specialisation for the final handler:
+To achieve this, all asynchronous operations obtain the handler's associated
+executor by using the `get_associated_executor` function. For example:
+
+  asio::associated_executor_t<Handler> a = asio::get_associated_executor(h);
+
+The associated executor must satisfy the Executor requirements. It will be used
+by the asynchronous operation to submit both intermediate and final handlers
+for execution.
+
+The executor may be customised for a particular handler type by specifying a
+nested type `executor_type` and member function `get_executor()`:
+
+  class my_handler
+  {
+  public:
+    // Custom implementation of Executor type requirements.
+    typedef my_executor executor_type;
+
+    // Return a custom executor implementation.
+    executor_type get_executor() const noexcept
+    {
+      return my_executor();
+    }
+
+    void operator()() { ... }
+  };
+
+In more complex cases, the `associated_executor` template may be partially
+specialised directly:
 
   struct my_handler
   {
@@ -54,7 +80,8 @@ specialisation for the final handler:
       typedef my_executor type;
 
       // Return a custom executor implementation.
-      static type get(const my_handler&, const Executor& = Executor())
+      static type get(const my_handler&,
+          const Executor& = Executor()) noexcept
       {
         return my_executor();
       }
@@ -64,8 +91,8 @@ specialisation for the final handler:
 
 The `asio::bind_executor()` function is a helper to bind a specific executor
 object, such as a strand, to a completion handler. This binding automatically
-specialises the `associated_executor` trait as shown above. For example, to
-bind a strand to a completion handler we would simply write:
+associates an executor as shown above. For example, to bind a strand to a
+completion handler we would simply write:
 
   my_socket.async_read_some(my_buffer,
       asio::bind_executor(my_strand,
@@ -76,6 +103,8 @@ bind a strand to a completion handler we would simply write:
 
 [heading See Also]
 
+[link asio.reference.associated_executor associated_executor],
+[link asio.reference.get_associated_executor get_associated_executor],
 [link asio.reference.bind_executor bind_executor],
 [link asio.reference.strand strand],
 [link asio.reference.io_context__strand io_context::strand],
