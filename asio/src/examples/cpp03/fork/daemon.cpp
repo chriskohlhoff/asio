@@ -39,7 +39,7 @@ private:
 
   void handle_receive(const asio::error_code& ec)
   {
-    if (!ec || ec == asio::error::message_size)
+    if (!ec)
     {
       using namespace std; // For time_t, time and ctime;
       time_t now = time(0);

@@ -119,7 +119,7 @@ private:
 
   void handle_receive(const asio::error_code& error)
   {
-    if (!error || error == asio::error::message_size)
+    if (!error)
     {
       boost::shared_ptr<std::string> message(
           new std::string(make_daytime_string()));

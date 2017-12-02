@@ -35,7 +35,7 @@ private:
         asio::buffer(recv_buffer_), remote_endpoint_,
         [this](std::error_code ec, std::size_t /*n*/)
         {
-          if (!ec || ec == asio::error::message_size)
+          if (!ec)
           {
             using namespace std; // For time_t, time and ctime;
             time_t now = time(0);
