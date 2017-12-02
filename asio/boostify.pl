@@ -518,10 +518,15 @@ sub copy_examples
       "src/examples/cpp11/chat",
       "src/examples/cpp11/echo",
       "src/examples/cpp11/executors",
+      "src/examples/cpp11/fork",
       "src/examples/cpp11/futures",
+      "src/examples/cpp11/handler_tracking",
       "src/examples/cpp11/http/server",
       "src/examples/cpp11/invocation",
       "src/examples/cpp11/iostreams",
+      "src/examples/cpp11/local",
+      "src/examples/cpp11/multicast",
+      "src/examples/cpp11/nonblocking",
       "src/examples/cpp11/spawn",
       "src/examples/cpp14/executors");
 

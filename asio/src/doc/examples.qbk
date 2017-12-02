@@ -313,6 +313,7 @@ coroutines.
 Examples showing how to use UNIX domain (local) sockets.
 
 * [@../src/examples/cpp03/local/connect_pair.cpp]
+* [@../src/examples/cpp03/local/iostream_client.cpp]
 * [@../src/examples/cpp03/local/stream_server.cpp]
 * [@../src/examples/cpp03/local/stream_client.cpp]
 
@@ -370,12 +371,33 @@ and asynchronous operations.
 * [@../src/examples/cpp11/echo/blocking_udp_echo_server.cpp] ([@examples/diffs/echo/blocking_udp_echo_server.cpp.html diff to C++03])
 
 
+[heading Fork]
+
+These POSIX-specific examples show how to use Asio in conjunction with the
+`fork()` system call. The first example illustrates the steps required to start
+a daemon process:
+
+* [@../src/examples/cpp11/fork/daemon.cpp] ([@examples/diffs/fork/daemon.cpp.html diff to C++03])
+
+The second example demonstrates how it is possible to fork a process from
+within a completion handler.
+
+* [@../src/examples/cpp11/fork/process_per_connection.cpp] ([@examples/diffs/fork/process_per_connection.cpp.html diff to C++03])
+
+
 [heading Futures]
 
 This example demonstrates how to use std::future in conjunction with
 Asio's asynchronous operations.
 
 * [@../src/examples/cpp11/futures/daytime_client.cpp]
+
+
+[heading Handler Tracking]
+
+This example shows how to implement custom handler tracking.
+
+* [@../src/examples/cpp11/handler_tracking/custom_tracking.hpp]
 
 
 [heading HTTP Server]
@@ -403,6 +425,23 @@ cancelling all outstanding asynchronous operations.
 * [@../src/examples/cpp11/http/server/server.hpp] ([@examples/diffs/http/server/server.hpp.html diff to C++03])
 
 
+[heading Multicast]
+
+An example showing the use of multicast to transmit packets to a group of
+subscribers.
+
+* [@../src/examples/cpp11/multicast/receiver.cpp] ([@examples/diffs/multicast/receiver.cpp.html diff to C++03])
+* [@../src/examples/cpp11/multicast/sender.cpp] ([@examples/diffs/multicast/sender.cpp.html diff to C++03])
+
+
+[heading Nonblocking]
+
+Example demonstrating reactor-style operations for integrating a third-party
+library that wants to perform the I/O operations itself.
+
+* [@../src/examples/cpp11/nonblocking/third_party_lib.cpp] ([@examples/diffs/nonblocking/third_party_lib.cpp.html diff to C++03])
+
+
 [heading Spawn]
 
 Example of using the asio::spawn() function, a wrapper around the
@@ -411,6 +450,16 @@ library, to implement a chain of asynchronous operations using stackful
 coroutines.
 
 * [@../src/examples/cpp11/spawn/echo_server.cpp] ([@examples/diffs/spawn/echo_server.cpp.html diff to C++03])
+
+
+[heading UNIX Domain Sockets]
+
+Examples showing how to use UNIX domain (local) sockets.
+
+* [@../src/examples/cpp11/local/connect_pair.cpp] ([@examples/diffs/local/connect_pair.cpp.html diff to C++03])
+* [@../src/examples/cpp11/local/iostream_client.cpp] ([@examples/diffs/local/iostream_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/local/stream_server.cpp] ([@examples/diffs/local/stream_server.cpp.html diff to C++03])
+* [@../src/examples/cpp11/local/stream_client.cpp] ([@examples/diffs/local/stream_client.cpp.html diff to C++03])
 
 
 [endsect]

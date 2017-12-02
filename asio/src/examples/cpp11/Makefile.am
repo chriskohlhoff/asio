@@ -29,7 +29,20 @@ noinst_PROGRAMS = \
 	futures/daytime_client \
 	http/server/http_server \
 	invocation/prioritised_handlers \
-	iostreams/http_client
+	iostreams/http_client \
+	multicast/receiver \
+	multicast/sender \
+	nonblocking/third_party_lib
+
+if !WINDOWS_TARGET
+noinst_PROGRAMS += \
+	fork/daemon \
+	fork/process_per_connection \
+	local/connect_pair \
+	local/iostream_client \
+	local/stream_server \
+	local/stream_client
+endif
 
 if HAVE_BOOST_COROUTINE
 noinst_PROGRAMS += \
@@ -70,6 +83,18 @@ http_server_http_server_SOURCES = \
 	http/server/server.cpp
 invocation_prioritised_handlers_SOURCES = invocation/prioritised_handlers.cpp
 iostreams_http_client_SOURCES = iostreams/http_client.cpp
+multicast_receiver_SOURCES = multicast/receiver.cpp
+multicast_sender_SOURCES = multicast/sender.cpp
+nonblocking_third_party_lib_SOURCES = nonblocking/third_party_lib.cpp
+
+if !WINDOWS_TARGET
+fork_daemon_SOURCES = fork/daemon.cpp
+fork_process_per_connection_SOURCES = fork/process_per_connection.cpp
+local_connect_pair_SOURCES = local/connect_pair.cpp
+local_iostream_client_SOURCES = local/iostream_client.cpp
+local_stream_server_SOURCES = local/stream_server.cpp
+local_stream_client_SOURCES = local/stream_client.cpp
+endif
 
 if HAVE_BOOST_COROUTINE
 spawn_echo_server_SOURCES = spawn/echo_server.cpp

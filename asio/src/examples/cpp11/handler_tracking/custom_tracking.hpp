@@ -72,8 +72,8 @@ struct custom_tracking
   }
 
   // Record the creation of a tracked handler.
-  static void creation(asio::execution_context& /*ctx*/, tracked_handler& h,
-      const char* object_type, void* /*object*/,
+  static void creation(asio::execution_context& /*ctx*/,
+      tracked_handler& h, const char* object_type, void* /*object*/,
       std::uintmax_t native_handle, const char* op_name)
   {
     // Generate a unique id for the new handler.
