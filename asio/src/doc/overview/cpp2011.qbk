@@ -79,13 +79,12 @@ or:
   {
   private:
     tcp::acceptor acceptor_;
-    tcp::socket socket_;
     ...
-    void handle_accept(error_code ec)
+    void handle_accept(error_code ec, tcp::socket socket)
     {
       if (!ec)
-        std::make_shared<connection>(std::move(socket_))->go();
-      acceptor_.async_accept(socket_, ...);
+        std::make_shared<connection>(std::move(socket))->go();
+      acceptor_.async_accept(...);
     }
     ...
   };
