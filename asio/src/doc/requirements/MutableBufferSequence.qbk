@@ -41,11 +41,9 @@ denotes an identifier.
          asio::buffer_sequence_end(x),
          asio::buffer_sequence_begin(u),
          asio::buffer_sequence_end(u),
-         [](const typename X::value_type& v1,
-            const typename X::value_type& v2)
+         [](const mutable_buffer& b1,
+            const mutable_buffer& b2)
           {
-            mutable_buffer b1(v1);
-            mutable_buffer b2(v2);
             return b1.data() == b2.data()
                 && b1.size() == b2.size();
           })
