@@ -139,6 +139,7 @@ sub copy_source_file
       $line =~ s/asio\.examples/boost_asio.examples/g;
       $line =~ s/asio\.history/boost_asio.history/g;
       $line =~ s/asio\.index/boost_asio.index/g;
+      $line =~ s/asio\.net_ts/boost_asio.net_ts/g;
       $line =~ s/asio\.overview/boost_asio.overview/g;
       $line =~ s/asio\.reference/boost_asio.reference/g;
       $line =~ s/asio\.tutorial/boost_asio.tutorial/g;
@@ -556,6 +557,7 @@ sub copy_doc
   my @files = (
       "src/doc/asio.qbk",
       "src/doc/examples.qbk",
+      "src/doc/net_ts.qbk",
       "src/doc/reference.xsl",
       "src/doc/tutorial.xsl",
       glob("src/doc/overview/*.qbk"),
