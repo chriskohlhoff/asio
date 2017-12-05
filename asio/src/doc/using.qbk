@@ -9,27 +9,36 @@
 
 [heading Supported Platforms]
 
-The following platforms and compilers have been tested:
+The following platform and compiler combinations are regularly tested:
 
-* Win32 and Win64 using Visual C++ 7.1 and Visual C++ 8.0.
-* Win32 using MinGW.
-* Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
-* Linux (2.4 or 2.6 kernels) using g++ 3.3 or later.
-* Solaris using g++ 3.3 or later.
-* Mac OS X 10.4 using g++ 3.3 or later.
+* Linux using g++ 4.1 or later
+* Linux using clang 3.2 or later
+* FreeBSD using g++ 4.1 or later
+* macOS using Xcode 8 or later
+* Win32 using Visual C++ 9.0 or later
+* Win32 using g++ 4.1 or later (MinGW)
+* Win64 using Visual C++ 9.0 or later
 
 The following platforms may also work:
 
-* AIX 5.3 using XL C/C++ v9.
-* HP-UX 11i v3 using patched aC++ A.06.14.
-* QNX Neutrino 6.3 using g++ 3.3 or later.
-* Solaris using Sun Studio 11 or later.
-* Tru64 v5.1 using Compaq C++ v7.1.
+* AIX
+* Android
+* HP-UX
+* iOS
+* NetBSD
+* OpenBSD
+* QNX Neutrino
+* Solaris
+* Tru64
+* Win32 using Cygwin. (`__USE_W32_SOCKETS` must be defined.)
 
 [heading Dependencies]
 
 The following libraries must be available in order to link programs that use
 Asio:
+
+* Boost.Coroutine (optional) if you use [link asio.reference.spawn
+`spawn()`] to launch coroutines.
 
 * Boost.Regex (optional) if you use any of the [link
 asio.reference.read_until `read_until()`] or [link
@@ -85,7 +94,7 @@ working correctly, run `make check`.
 
 [heading Building the tests and examples with MSVC]
 
-To build using the MSVC 7.1 or MSVC 8.0 command line compiler, perform the
+To build using the MSVC 9.0 (or later) command line compiler, perform the
 following steps in a Command Prompt window:
 
 * If you are using a version of boost other than 1.34.1, or if the boost
@@ -139,9 +148,9 @@ Asio.
       std::string object being written is destroyed before the write operation
       completes).
 
-      When using Microsoft Visual C++, this macro is defined automatically if
-      the compiler's iterator debugging support is enabled, unless
-      `ASIO_DISABLE_BUFFER_DEBUGGING` has been defined.
+      When using Microsoft Visual C++ 11.0 or later, this macro is defined
+      automatically if the compiler's iterator debugging support is enabled,
+      unless `ASIO_DISABLE_BUFFER_DEBUGGING` has been defined.
 
       When using g++, this macro is defined automatically if standard library
       debugging is enabled (`_GLIBCXX_DEBUG` is defined), unless
@@ -178,7 +187,7 @@ Asio.
   [
     [`ASIO_DISABLE_KQUEUE`]
     [
-      Explicitly disables `kqueue` support on Mac OS X and BSD variants,
+      Explicitly disables `kqueue` support on macOS and BSD variants,
       forcing the use of a `select`-based implementation.
     ]
   ]
@@ -223,22 +232,6 @@ Asio.
       support (i.e. [^ws2_32.lib] and [^mswsock.lib], or [^ws2.lib] when
       building for Windows CE). The `ASIO_NO_DEFAULT_LINKED_LIBS` macro
       prevents these libraries from being linked.
-    ]
-  ]
-  [
-    [`ASIO_SOCKET_STREAMBUF_MAX_ARITY`]
-    [
-      Determines the maximum number of arguments that may be passed to the 
-      `basic_socket_streambuf` class template's `connect` member function.
-      Defaults to 5.
-    ]
-  ]
-  [
-    [`ASIO_SOCKET_IOSTREAM_MAX_ARITY`]
-    [
-      Determines the maximum number of arguments that may be passed to the 
-      `basic_socket_iostream` class template's constructor and `connect` member
-      function. Defaults to 5.
     ]
   ]
   [
@@ -297,6 +290,16 @@ Asio.
         `hash_map` objects will initially contain 53 buckets. The number of
         buckets will be increased to 389 and then 1543 as elements are added to
         the map.
+    ]
+  ]
+  [
+    [`ASIO_ENABLE_OLD_SERVICES`]
+    [
+      The service template parameters, and the corresponding classes, are
+      disabled by default. For example, instead of `basic_socket<Protocol,
+      SocketService>` we now have simply `basic_socket<Protocol>`. The old
+      interface can be enabled by defining the `ASIO_ENABLE_OLD_SERVICES`
+      macro.
     ]
   ]
 ]
