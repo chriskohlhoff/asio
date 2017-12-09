@@ -1348,9 +1348,25 @@
 </xsl:text>
 <xsl:if test="count(type/ref) &gt; 0 and not(contains(type, '*'))">
   <xsl:variable name="class-refid">
-    <xsl:for-each select="type/ref[1]">
-      <xsl:value-of select="@refid"/>
-    </xsl:for-each>
+    <xsl:choose>
+      <xsl:when test="type='basic_address_iterator&lt; address_v4 &gt;'">
+        <xsl:text>classasio_1_1ip_1_1basic__address__iterator_3_01address__v4_01_4</xsl:text>
+      </xsl:when>
+      <xsl:when test="type='basic_address_iterator&lt; address_v6 &gt;'">
+        <xsl:text>classasio_1_1ip_1_1basic__address__iterator_3_01address__v6_01_4</xsl:text>
+      </xsl:when>
+      <xsl:when test="type='basic_address_range&lt; address_v4 &gt;'">
+        <xsl:text>classasio_1_1ip_1_1basic__address__range_3_01address__v4_01_4</xsl:text>
+      </xsl:when>
+      <xsl:when test="type='basic_address_range&lt; address_v6 &gt;'">
+        <xsl:text>classasio_1_1ip_1_1basic__address__range_3_01address__v6_01_4</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:for-each select="type/ref[1]">
+          <xsl:value-of select="@refid"/>
+        </xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:variable>
   <xsl:variable name="name" select="name"/>
   <xsl:for-each select="/doxygen/compounddef[@id=$class-refid]">
