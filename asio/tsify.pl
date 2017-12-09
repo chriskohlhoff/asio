@@ -278,7 +278,7 @@ sub copy_source_file
     }
 
     # Conditional replacements.
-    if ($line =~ /^(.* *)namespace asio {/)
+    if ($line =~ /^(.* *)namespace asio \{/)
     {
       print_line($output, $1 . "namespace std {", $from, $lineno);
       print_line($output, $1 . "namespace experimental {", $from, $lineno);
@@ -356,7 +356,7 @@ sub copy_source_file
     {
       # Line is removed.
     }
-    elsif ($line =~ /asio::thread/)
+    elsif ($line =~ /asio::thread\b/)
     {
       if ($is_test)
       {
