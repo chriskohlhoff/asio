@@ -2908,9 +2908,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\n' } 
+   { 'a', 'b', ..., 'c' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -3013,9 +3013,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -3119,9 +3119,9 @@ After the `async_read_until` operation completes successfully, the buffer `b` co
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -3578,7 +3578,7 @@ Partial specialisation of `async_result` for `std::packaged_task`.
 
 ['Header: ][^asio/packaged_task.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [section:async_result async_result< std::packaged_task< Result(Args...)>, Signature >::async_result]
@@ -3610,7 +3610,7 @@ The packaged task is the concrete completion handler type.
 
 ['Header: ][^asio/packaged_task.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -3645,7 +3645,7 @@ The return type of the initiating function is the future obtained from the packa
 
 ['Header: ][^asio/packaged_task.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -53121,8 +53121,18 @@ Class to represent an error code value.
   [[Name][Description]]
 
   [
+    [[link asio.reference.error_code.assign [*assign]]]
+    [Assign a new error value. ]
+  ]
+  
+  [
     [[link asio.reference.error_code.category [*category]]]
     [Get the error category. ]
+  ]
+  
+  [
+    [[link asio.reference.error_code.clear [*clear]]]
+    [Clear the error value to the default. ]
   ]
   
   [
@@ -53184,6 +53194,22 @@ Class to represent an error code value.
 ['Convenience header: ][^asio.hpp]
 
 
+[section:assign error_code::assign]
+
+[indexterm2 asio.indexterm.error_code.assign..assign..error_code] 
+Assign a new error value. 
+
+
+  void assign(
+      int v,
+      const error_category & c);
+
+
+
+[endsect]
+
+
+
 [section:category error_code::category]
 
 [indexterm2 asio.indexterm.error_code.category..category..error_code] 
@@ -53191,6 +53217,20 @@ Get the error category.
 
 
   const error_category & category() const;
+
+
+
+[endsect]
+
+
+
+[section:clear error_code::clear]
+
+[indexterm2 asio.indexterm.error_code.clear..clear..error_code] 
+Clear the error value to the default. 
+
+
+  void clear();
 
 
 
@@ -60467,7 +60507,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 ['Header: ][^asio/high_resolution_timer.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -60780,6 +60820,42 @@ For example:
        // Deal with exception as appropriate.
      }
    }
+
+
+
+
+
+[heading Submitting arbitrary tasks to the io_context]
+  
+
+
+To submit functions to the [link asio.reference.io_context `io_context`], use the [link asio.reference.dispatch `dispatch`] , [link asio.reference.post `post`]  or [link asio.reference.defer `defer`]  free functions.
+
+For example:
+
+
+
+   void my_task()
+   {
+     ...
+   }
+
+   ...
+
+   asio::io_context io_context;
+
+   // Submit a function to the io_context.
+   asio::post(io_context, my_task);
+
+   // Submit a lambda object to the io_context.
+   asio::post(io_context,
+       []()
+       {
+         ...
+       });
+
+   // Run the io_context until it runs out of work.
+   io_context.run(); 
 
 
 
@@ -63612,6 +63688,42 @@ For example:
 
 
 
+[heading Submitting arbitrary tasks to the io_context]
+  
+
+
+To submit functions to the [link asio.reference.io_context `io_context`], use the [link asio.reference.dispatch `dispatch`] , [link asio.reference.post `post`]  or [link asio.reference.defer `defer`]  free functions.
+
+For example:
+
+
+
+   void my_task()
+   {
+     ...
+   }
+
+   ...
+
+   asio::io_context io_context;
+
+   // Submit a function to the io_context.
+   asio::post(io_context, my_task);
+
+   // Submit a lambda object to the io_context.
+   asio::post(io_context,
+       []()
+       {
+         ...
+       });
+
+   // Run the io_context until it runs out of work.
+   io_context.run(); 
+
+
+
+
+
 [heading Stopping the io_context from running out of work]
   
 
@@ -65748,15 +65860,36 @@ An input iterator that can be used for traversing IPv4 addresses.
 
   [
 
-    [[link asio.reference.ip__address_v4.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.difference_type [*difference_type]]]
+    [Distance between two iterators. ]
   
   ]
 
   [
 
-    [[link asio.reference.ip__address_v4.uint_type [*uint_type]]]
-    [The type used to represent an address as an unsigned integer. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.iterator_category [*iterator_category]]]
+    [Denotes that the iterator satisfies the input iterator requirements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.pointer [*pointer]]]
+    [The type of a pointer to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.reference [*reference]]]
+    [The type of a reference to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.value_type [*value_type]]]
+    [The type of the elements pointed to by the iterator. ]
   
   ]
 
@@ -65767,98 +65900,39 @@ An input iterator that can be used for traversing IPv4 addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes. 
-
-     Construct an address from an unsigned integer in host byte order. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.basic_address_iterator [*basic_address_iterator]]]
+    [Construct an iterator that points to the specified address. 
 
      Copy constructor. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.any [*any]]]
-    [Obtain an address object that represents any address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator__star_ [*operator *]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.broadcast [*broadcast]]]
-    [Obtain an address object that represents the broadcast address. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_plus__plus_ [*operator++]]]
+    [Pre-increment operator. 
 
-     (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
+     Post-increment operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_class_a [*is_class_a]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class A address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_class_b [*is_class_b]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class B address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_class_c [*is_class_c]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class C address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.netmask [*netmask]]]
-    [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_string [*to_string]]]
-    [Get the address as a string in dotted decimal format. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_minus__minus_ [*operator--]]]
+    [Pre-decrement operator. 
 
-     (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
+     Post-decrement operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.to_uint [*to_uint]]]
-    [Get the address as an unsigned integer in host byte order. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_arrow_ [*operator->]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
-    [Get the address as an unsigned long in host byte order. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_eq_ [*operator=]]]
+    [Assignment operator. ]
   ]
   
 ]
@@ -65868,69 +65942,18 @@ An input iterator that can be used for traversing IPv4 addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_not__eq_ [*operator!=]]]
     [Compare two addresses for inequality. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_eq__eq_ [*operator==]]]
     [Compare two addresses for equality. ]
   ]
   
-  [
-    [[link asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
 ]
 
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v4.make_address_v4 [*make_address_v4]]]
-    [Create an IPv4 address from raw bytes in network order. 
-
-     Create an IPv4 address from an unsigned integer in host byte order. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. 
-
-     Create an IPv4 address from a IPv4-mapped IPv6 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from an address and prefix length. 
-
-     Create an IPv4 network from an address and netmask. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link asio.reference.ip__address_v4 `ip::address_v4`] class provides the ability to use and manipulate IP version 4 addresses.
+In addition to satisfying the input iterator requirements, this iterator also supports decrement.
 
 
 [heading Thread Safety]
@@ -65968,15 +65991,8 @@ Represents a range of IPv4 addresses.
 
   [
 
-    [[link asio.reference.ip__address_v4.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.ip__address_v4.uint_type [*uint_type]]]
-    [The type used to represent an address as an unsigned integer. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.iterator [*iterator]]]
+    [The type of an iterator that points into the range. ]
   
   ]
 
@@ -65987,170 +66003,45 @@ Represents a range of IPv4 addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]]]
-    [Default constructor. 
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.basic_address_range [*basic_address_range]]]
+    [Construct an empty range. 
 
-     Construct an address from raw bytes. 
-
-     Construct an address from an unsigned integer in host byte order. 
+     Construct an range that represents the given range of addresses. 
 
      Copy constructor. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.any [*any]]]
-    [Obtain an address object that represents any address. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.begin [*begin]]]
+    [Obtain an iterator that points to the start of the range. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.broadcast [*broadcast]]]
-    [Obtain an address object that represents the broadcast address. 
-
-     (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.empty [*empty]]]
+    [Determine whether the range is empty. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.end [*end]]]
+    [Obtain an iterator that points to the end of the range. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.is_class_a [*is_class_a]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class A address. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.find [*find]]]
+    [Find an address in the range. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.is_class_b [*is_class_b]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class B address. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.operator_eq_ [*operator=]]]
+    [Assignment operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.is_class_c [*is_class_c]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class C address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.netmask [*netmask]]]
-    [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_string [*to_string]]]
-    [Get the address as a string in dotted decimal format. 
-
-     (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_uint [*to_uint]]]
-    [Get the address as an unsigned integer in host byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
-    [Get the address as an unsigned long in host byte order. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v4__gt_.size [*size]]]
+    [Return the size of the range. ]
   ]
   
 ]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v4.make_address_v4 [*make_address_v4]]]
-    [Create an IPv4 address from raw bytes in network order. 
-
-     Create an IPv4 address from an unsigned integer in host byte order. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. 
-
-     Create an IPv4 address from a IPv4-mapped IPv6 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from an address and prefix length. 
-
-     Create an IPv4 network from an address and netmask. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link asio.reference.ip__address_v4 `ip::address_v4`] class provides the ability to use and manipulate IP version 4 addresses.
 
 
 [heading Thread Safety]
@@ -67414,8 +67305,36 @@ An input iterator that can be used for traversing IPv6 addresses.
 
   [
 
-    [[link asio.reference.ip__address_v6.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.difference_type [*difference_type]]]
+    [Distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.iterator_category [*iterator_category]]]
+    [Denotes that the iterator satisfies the input iterator requirements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.pointer [*pointer]]]
+    [The type of a pointer to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.reference [*reference]]]
+    [The type of a reference to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.value_type [*value_type]]]
+    [The type of the elements pointed to by the iterator. ]
   
   ]
 
@@ -67426,124 +67345,39 @@ An input iterator that can be used for traversing IPv6 addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes and scope ID. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.basic_address_iterator [*basic_address_iterator]]]
+    [Construct an iterator that points to the specified address. 
 
      Copy constructor. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.any [*any]]]
-    [Obtain an address object that represents any address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator__star_ [*operator *]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_link_local [*is_link_local]]]
-    [Determine whether the address is link local. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_global [*is_multicast_global]]]
-    [Determine whether the address is a global multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_link_local [*is_multicast_link_local]]]
-    [Determine whether the address is a link-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_node_local [*is_multicast_node_local]]]
-    [Determine whether the address is a node-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_org_local [*is_multicast_org_local]]]
-    [Determine whether the address is a org-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_site_local [*is_multicast_site_local]]]
-    [Determine whether the address is a site-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_site_local [*is_site_local]]]
-    [Determine whether the address is site local. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_v4_compatible [*is_v4_compatible]]]
-    [(Deprecated: No replacement.) Determine whether the address is an IPv4-compatible address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_v4_mapped [*is_v4_mapped]]]
-    [Determine whether the address is a mapped IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.scope_id [*scope_id]]]
-    [The scope ID of the address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_string [*to_string]]]
-    [Get the address as a string. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_plus__plus_ [*operator++]]]
+    [Pre-increment operator. 
 
-     (Deprecated: Use other overload.) Get the address as a string. ]
+     Post-increment operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.to_v4 [*to_v4]]]
-    [(Deprecated: Use make_address_v4().) Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_minus__minus_ [*operator--]]]
+    [Pre-decrement operator. 
+
+     Post-decrement operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
-    [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_arrow_ [*operator->]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_eq_ [*operator=]]]
+    [Assignment operator. ]
   ]
   
 ]
@@ -67553,67 +67387,18 @@ An input iterator that can be used for traversing IPv6 addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_not__eq_ [*operator!=]]]
     [Compare two addresses for inequality. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_eq__eq_ [*operator==]]]
     [Compare two addresses for equality. ]
   ]
   
-  [
-    [[link asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
 ]
 
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v6.make_address_v6 [*make_address_v6]]]
-    [Create an IPv6 address from raw bytes and scope ID. 
-
-     Create an IPv6 address from an IP address string. 
-
-     Createan IPv6 address from an IP address string. 
-
-     Create an IPv4-mapped IPv6 address from an IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from an address and prefix length. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link asio.reference.ip__address_v6 `ip::address_v6`] class provides the ability to use and manipulate IP version 6 addresses.
+In addition to satisfying the input iterator requirements, this iterator also supports decrement.
 
 
 [heading Thread Safety]
@@ -67651,8 +67436,8 @@ Represents a range of IPv6 addresses.
 
   [
 
-    [[link asio.reference.ip__address_v6.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.iterator [*iterator]]]
+    [The type of an iterator that points into the range. ]
   
   ]
 
@@ -67663,194 +67448,40 @@ Represents a range of IPv6 addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]]]
-    [Default constructor. 
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.basic_address_range [*basic_address_range]]]
+    [Construct an empty range. 
 
-     Construct an address from raw bytes and scope ID. 
+     Construct an range that represents the given range of addresses. 
 
      Copy constructor. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.any [*any]]]
-    [Obtain an address object that represents any address. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.begin [*begin]]]
+    [Obtain an iterator that points to the start of the range. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.empty [*empty]]]
+    [Determine whether the range is empty. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.is_link_local [*is_link_local]]]
-    [Determine whether the address is link local. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.end [*end]]]
+    [Obtain an iterator that points to the end of the range. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.find [*find]]]
+    [Find an address in the range. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_global [*is_multicast_global]]]
-    [Determine whether the address is a global multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_link_local [*is_multicast_link_local]]]
-    [Determine whether the address is a link-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_node_local [*is_multicast_node_local]]]
-    [Determine whether the address is a node-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_org_local [*is_multicast_org_local]]]
-    [Determine whether the address is a org-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_site_local [*is_multicast_site_local]]]
-    [Determine whether the address is a site-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_site_local [*is_site_local]]]
-    [Determine whether the address is site local. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_v4_compatible [*is_v4_compatible]]]
-    [(Deprecated: No replacement.) Determine whether the address is an IPv4-compatible address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_v4_mapped [*is_v4_mapped]]]
-    [Determine whether the address is a mapped IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.scope_id [*scope_id]]]
-    [The scope ID of the address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_string [*to_string]]]
-    [Get the address as a string. 
-
-     (Deprecated: Use other overload.) Get the address as a string. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_v4 [*to_v4]]]
-    [(Deprecated: Use make_address_v4().) Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
-    [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
+    [[link asio.reference.ip__basic_address_range_lt__address_v6__gt_.operator_eq_ [*operator=]]]
+    [Assignment operator. ]
   ]
   
 ]
-
-[heading Friends]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
-    [Compare two addresses for inequality. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
-    [Compare two addresses for equality. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-]
-
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v6.make_address_v6 [*make_address_v6]]]
-    [Create an IPv6 address from raw bytes and scope ID. 
-
-     Create an IPv6 address from an IP address string. 
-
-     Createan IPv6 address from an IP address string. 
-
-     Create an IPv4-mapped IPv6 address from an IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from an address and prefix length. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link asio.reference.ip__address_v6 `ip::address_v6`] class provides the ability to use and manipulate IP version 6 addresses.
 
 
 [heading Thread Safety]
@@ -69946,15 +69577,36 @@ The type of an iterator that points into the range.
 
   [
 
-    [[link asio.reference.ip__address_v4.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.difference_type [*difference_type]]]
+    [Distance between two iterators. ]
   
   ]
 
   [
 
-    [[link asio.reference.ip__address_v4.uint_type [*uint_type]]]
-    [The type used to represent an address as an unsigned integer. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.iterator_category [*iterator_category]]]
+    [Denotes that the iterator satisfies the input iterator requirements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.pointer [*pointer]]]
+    [The type of a pointer to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.reference [*reference]]]
+    [The type of a reference to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.value_type [*value_type]]]
+    [The type of the elements pointed to by the iterator. ]
   
   ]
 
@@ -69965,98 +69617,39 @@ The type of an iterator that points into the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes. 
-
-     Construct an address from an unsigned integer in host byte order. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.basic_address_iterator [*basic_address_iterator]]]
+    [Construct an iterator that points to the specified address. 
 
      Copy constructor. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.any [*any]]]
-    [Obtain an address object that represents any address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator__star_ [*operator *]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.broadcast [*broadcast]]]
-    [Obtain an address object that represents the broadcast address. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_plus__plus_ [*operator++]]]
+    [Pre-increment operator. 
 
-     (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
+     Post-increment operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_class_a [*is_class_a]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class A address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_class_b [*is_class_b]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class B address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_class_c [*is_class_c]]]
-    [(Deprecated: Use network_v4 class.) Determine whether the address is a class C address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.netmask [*netmask]]]
-    [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.to_string [*to_string]]]
-    [Get the address as a string in dotted decimal format. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_minus__minus_ [*operator--]]]
+    [Pre-decrement operator. 
 
-     (Deprecated: Use other overload.) Get the address as a string in dotted decimal format. ]
+     Post-decrement operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.to_uint [*to_uint]]]
-    [Get the address as an unsigned integer in host byte order. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_arrow_ [*operator->]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.to_ulong [*to_ulong]]]
-    [Get the address as an unsigned long in host byte order. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_eq_ [*operator=]]]
+    [Assignment operator. ]
   ]
   
 ]
@@ -70066,69 +69659,18 @@ The type of an iterator that points into the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.operator_not__eq_ [*operator!=]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_not__eq_ [*operator!=]]]
     [Compare two addresses for inequality. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_eq__eq_ [*operator==]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v4__gt_.operator_eq__eq_ [*operator==]]]
     [Compare two addresses for equality. ]
   ]
   
-  [
-    [[link asio.reference.ip__address_v4.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
 ]
 
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v4.make_address_v4 [*make_address_v4]]]
-    [Create an IPv4 address from raw bytes in network order. 
-
-     Create an IPv4 address from an unsigned integer in host byte order. 
-
-     Create an IPv4 address from an IP address string in dotted decimal form. 
-
-     Create an IPv4 address from a IPv4-mapped IPv6 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.make_network_v4 [*make_network_v4]]]
-    [Create an IPv4 network from an address and prefix length. 
-
-     Create an IPv4 network from an address and netmask. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v4.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link asio.reference.ip__address_v4 `ip::address_v4`] class provides the ability to use and manipulate IP version 4 addresses.
+In addition to satisfying the input iterator requirements, this iterator also supports decrement.
 
 
 [heading Thread Safety]
@@ -70406,8 +69948,36 @@ The type of an iterator that points into the range.
 
   [
 
-    [[link asio.reference.ip__address_v6.bytes_type [*bytes_type]]]
-    [The type used to represent an address as an array of bytes. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.difference_type [*difference_type]]]
+    [Distance between two iterators. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.iterator_category [*iterator_category]]]
+    [Denotes that the iterator satisfies the input iterator requirements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.pointer [*pointer]]]
+    [The type of a pointer to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.reference [*reference]]]
+    [The type of a reference to an element pointed to by the iterator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.value_type [*value_type]]]
+    [The type of the elements pointed to by the iterator. ]
   
   ]
 
@@ -70418,124 +69988,39 @@ The type of an iterator that points into the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]]]
-    [Default constructor. 
-
-     Construct an address from raw bytes and scope ID. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.basic_address_iterator [*basic_address_iterator]]]
+    [Construct an iterator that points to the specified address. 
 
      Copy constructor. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.any [*any]]]
-    [Obtain an address object that represents any address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator__star_ [*operator *]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.from_string [*from_string]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_link_local [*is_link_local]]]
-    [Determine whether the address is link local. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_loopback [*is_loopback]]]
-    [Determine whether the address is a loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast [*is_multicast]]]
-    [Determine whether the address is a multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_global [*is_multicast_global]]]
-    [Determine whether the address is a global multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_link_local [*is_multicast_link_local]]]
-    [Determine whether the address is a link-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_node_local [*is_multicast_node_local]]]
-    [Determine whether the address is a node-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_org_local [*is_multicast_org_local]]]
-    [Determine whether the address is a org-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_multicast_site_local [*is_multicast_site_local]]]
-    [Determine whether the address is a site-local multicast address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_site_local [*is_site_local]]]
-    [Determine whether the address is site local. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_unspecified [*is_unspecified]]]
-    [Determine whether the address is unspecified. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_v4_compatible [*is_v4_compatible]]]
-    [(Deprecated: No replacement.) Determine whether the address is an IPv4-compatible address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.is_v4_mapped [*is_v4_mapped]]]
-    [Determine whether the address is a mapped IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.loopback [*loopback]]]
-    [Obtain an address object that represents the loopback address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_eq_ [*operator=]]]
-    [Assign from another address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.scope_id [*scope_id]]]
-    [The scope ID of the address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_bytes [*to_bytes]]]
-    [Get the address in bytes, in network byte order. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.to_string [*to_string]]]
-    [Get the address as a string. 
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_plus__plus_ [*operator++]]]
+    [Pre-increment operator. 
 
-     (Deprecated: Use other overload.) Get the address as a string. ]
+     Post-increment operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.to_v4 [*to_v4]]]
-    [(Deprecated: Use make_address_v4().) Converts an IPv4-mapped or IPv4-compatible address to an IPv4 address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_minus__minus_ [*operator--]]]
+    [Pre-decrement operator. 
+
+     Post-decrement operator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
-    [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_arrow_ [*operator->]]]
+    [Dereference the iterator. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
-    [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_eq_ [*operator=]]]
+    [Assignment operator. ]
   ]
   
 ]
@@ -70545,67 +70030,18 @@ The type of an iterator that points into the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.operator_not__eq_ [*operator!=]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_not__eq_ [*operator!=]]]
     [Compare two addresses for inequality. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.operator_lt_ [*operator<]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt__eq_ [*operator<=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_eq__eq_ [*operator==]]]
+    [[link asio.reference.ip__basic_address_iterator_lt__address_v6__gt_.operator_eq__eq_ [*operator==]]]
     [Compare two addresses for equality. ]
   ]
   
-  [
-    [[link asio.reference.ip__address_v6.operator_gt_ [*operator>]]]
-    [Compare addresses for ordering. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_gt__eq_ [*operator>=]]]
-    [Compare addresses for ordering. ]
-  ]
-  
 ]
 
-[heading Related Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.ip__address_v6.make_address_v6 [*make_address_v6]]]
-    [Create an IPv6 address from raw bytes and scope ID. 
-
-     Create an IPv6 address from an IP address string. 
-
-     Createan IPv6 address from an IP address string. 
-
-     Create an IPv4-mapped IPv6 address from an IPv4 address. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.make_network_v6 [*make_network_v6]]]
-    [Create an IPv6 network from an address and prefix length. ]
-  ]
-  
-  [
-    [[link asio.reference.ip__address_v6.operator_lt__lt_ [*operator<<]]]
-    [Output an address as a string. 
-
-     Output a network as a string. ]
-  ]
-  
-]
-
-The [link asio.reference.ip__address_v6 `ip::address_v6`] class provides the ability to use and manipulate IP version 6 addresses.
+In addition to satisfying the input iterator requirements, this iterator also supports decrement.
 
 
 [heading Thread Safety]
@@ -92852,9 +92288,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\n' } 
+   { 'a', 'b', ..., 'c' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -93006,9 +92442,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the delimiter, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -93160,9 +92596,9 @@ After the `read_until` operation completes successfully, the buffer `b` contains
    { 'a', 'b', ..., 'c', '\r', '\n', 'd', 'e', ... } 
 
 
-The call to `std::getline` then extracts the data up to and including the match, so that the string `line` contains: 
+The call to `std::getline` then extracts the data up to and including the newline (which is discarded), so that the string `line` contains: 
 
-   { 'a', 'b', ..., 'c', '\r', '\n' } 
+   { 'a', 'b', ..., 'c', '\r' } 
 
 
 The remaining data is left in the buffer `b` as follows: 
@@ -104052,7 +103488,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 ['Header: ][^asio/steady_timer.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -106329,7 +105765,7 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 ['Header: ][^asio/system_timer.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -106580,7 +106016,44 @@ A simple fixed-size thread pool.
   
 ]
 
-The thread pool class is an execution context where functions are permitted to run on one of a fixed number of threads. 
+The thread pool class is an execution context where functions are permitted to run on one of a fixed number of threads.
+
+
+[heading Submitting tasks to the pool]
+  
+
+
+To submit functions to the [link asio.reference.io_context `io_context`], use the [link asio.reference.dispatch `dispatch`] , [link asio.reference.post `post`]  or [link asio.reference.defer `defer`]  free functions.
+
+For example:
+
+
+
+   void my_task()
+   {
+     ...
+   }
+
+   ...
+
+   // Launch the pool with four threads.
+   asio::thread_pool pool(4);
+
+   // Submit a function to the pool.
+   asio::post(pool, my_task);
+
+   // Submit a lambda object to the pool.
+   asio::post(pool,
+       []()
+       {
+         ...
+       });
+
+   // Wait for all tasks in the pool to complete.
+   pool.join(); 
+
+
+
 
 [heading Requirements]
 
@@ -107786,7 +107259,7 @@ See the documentation for [link asio.reference.use_future_t `use_future_t`] for 
 
 ['Header: ][^asio/use_future.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -107865,7 +107338,7 @@ The initiating function (async\_read\_some in the above example) returns a futur
 
 ['Header: ][^asio/use_future.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [section:allocator_type use_future_t::allocator_type]
@@ -107882,7 +107355,7 @@ The allocator type. The allocator is used when constructing the `std::promise` o
 
 ['Header: ][^asio/use_future.hpp]
 
-['Convenience header: ]None
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
