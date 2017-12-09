@@ -100,6 +100,7 @@
             not(contains(compoundname, '::detail')) and
             not(contains(compoundname, '::service::key')) and
             not(contains(compoundname, '_handler')) and
+            not(contains(compoundname, 'std_allocator_void')) and
             not(contains(compoundname, 'thread_function')) and
             not(contains(compoundname, 'context_impl'))">
           <xsl:call-template name="class"/>
@@ -111,6 +112,7 @@
             not(contains(ancestor::*/compoundname, '::service::key')) and
             not(contains(ancestor::*/compoundname, '_helper')) and
             not(contains(name, '_helper')) and
+            not(contains(name, 'std_allocator_void')) and
             not(contains(name, 'thread_function')) and
             not(contains(name, 'io_context_impl'))">
           <xsl:call-template name="namespace-memberdef"/>
