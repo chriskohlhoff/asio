@@ -19,6 +19,7 @@
   * [link asio.overview.core.line_based Line-Based Operations]
   * [link asio.overview.core.allocation Custom Memory Allocation]
   * [link asio.overview.core.handler_tracking Handler Tracking]
+  * [link asio.overview.core.concurrency_hint Concurrency Hints]
   * [link asio.overview.core.coroutine Stackless Coroutines]
   * [link asio.overview.core.spawn Stackful Coroutines]
 * [link asio.overview.networking Networking]
@@ -53,6 +54,7 @@
 * [link asio.overview.core.line_based Line-Based Operations]
 * [link asio.overview.core.allocation Custom Memory Allocation]
 * [link asio.overview.core.handler_tracking Handler Tracking]
+* [link asio.overview.core.concurrency_hint Concurrency Hints]
 * [link asio.overview.core.coroutine Stackless Coroutines]
 * [link asio.overview.core.spawn Stackful Coroutines]
 
@@ -66,6 +68,7 @@
 [include overview/line_based.qbk]
 [include overview/allocation.qbk]
 [include overview/handler_tracking.qbk]
+[include overview/concurrency_hint.qbk]
 [include overview/coroutine.qbk]
 [include overview/spawn.qbk]
 
