@@ -241,8 +241,8 @@ sub copy_source_file
     $line =~ s/[\\@]ref boost_bind/std::bind()/g;
     if ($from =~ /.*\.txt$/)
     {
-      $line =~ s/[\\@]ref async_read/std::experimental::net::async_read()/g;
-      $line =~ s/[\\@]ref async_write/std::experimental::net::async_write()/g;
+      $line =~ s/[\\@]ref async_read/std::experimental::net::v1::async_read()/g;
+      $line =~ s/[\\@]ref async_write/std::experimental::net::v1::async_write()/g;
     }
     if ($line =~ /asio_detail_posix_thread_function/)
     {
@@ -385,12 +385,12 @@ sub copy_source_file
       $line =~ s/asio::error_category/std::error_category/g;
       $line =~ s/asio::system_category/std::system_category/g;
       $line =~ s/asio::system_error/std::system_error/g;
-      $line =~ s/asio::/std::experimental::net::/g;
+      $line =~ s/asio::/std::experimental::net::v1::/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /using namespace asio/)
     {
-      $line =~ s/using namespace asio/using namespace std::experimental::net/g;
+      $line =~ s/using namespace asio/using namespace std::experimental::net::v1/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /[\\@]ref boost_bind/)
