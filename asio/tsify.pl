@@ -113,6 +113,9 @@ sub copy_source_file
   my $extension_state = 0;
   my $old_services_state = 0;
 
+  # State for simplifying namespaces in examples.
+  my $code_snippet_state = 0;
+
   # Copy the content.
   my $lineno = 1;
   while (my $line = <$input>)
@@ -235,6 +238,15 @@ sub copy_source_file
     {
       $old_services_state = 0;
       next if ($line eq "");
+    }
+
+    # Keep track of whether we are in an example.
+    if ($code_snippet_state == 0)
+    {
+      if ($line =~ /\@code/)
+      {
+        $code_snippet_state = 1;
+      }
     }
 
     # Unconditional replacements.
@@ -385,7 +397,8 @@ sub copy_source_file
       $line =~ s/asio::error_category/std::error_category/g;
       $line =~ s/asio::system_category/std::system_category/g;
       $line =~ s/asio::system_error/std::system_error/g;
-      $line =~ s/asio::/std::experimental::net::v1::/g;
+      $line =~ s/asio::/std::experimental::net::v1::/g if $code_snippet_state == 0;
+      $line =~ s/asio::/std::experimental::net::/g if $code_snippet_state == 1;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /using namespace asio/)
@@ -408,6 +421,16 @@ sub copy_source_file
     {
       print_line($output, $line, $from, $lineno);
     }
+
+    # Keep track of whether we are in an example.
+    if ($code_snippet_state == 1)
+    {
+      if ($line =~ /\@endcode/)
+      {
+        $code_snippet_state = 0;
+      }
+    }
+
     ++$lineno;
   }
 
