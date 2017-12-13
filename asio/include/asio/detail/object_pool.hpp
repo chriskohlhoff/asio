@@ -124,6 +124,8 @@ public:
   // Free an object. Moves it to the free list. No destructors are run.
   void free(Object* o)
   {
+    if (o == free_list_)
+      return;
     if (live_list_ == o)
       live_list_ = object_pool_access::next(o);
 
