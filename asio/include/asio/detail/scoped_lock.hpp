@@ -68,8 +68,8 @@ public:
   {
     if (locked_)
     {
-      mutex_.unlock();
       locked_ = false;
+      mutex_.unlock();
     }
   }
 
