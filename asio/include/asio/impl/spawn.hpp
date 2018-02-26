@@ -314,7 +314,7 @@ public:
 
   explicit async_result(
     typename detail::coro_async_result<Handler,
-      void>::completion_handler_type& h)
+      T>::completion_handler_type& h)
     : detail::coro_async_result<Handler, T>(h)
   {
   }
