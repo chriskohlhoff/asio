@@ -1069,6 +1069,7 @@ private:
 #endif // defined(ASIO_HAS_MOVE)
 };
 
+#ifndef __APPLE__
 struct legacy_resolve_handler
 {
   legacy_resolve_handler() {}
@@ -1080,6 +1081,7 @@ private:
   legacy_resolve_handler(const legacy_resolve_handler&);
 #endif // defined(ASIO_HAS_MOVE)
 };
+#endif
 
 void test()
 {
@@ -1172,6 +1174,7 @@ void test()
     ip::tcp::resolver::results_type results12 = resolver.resolve(e, ec);
     (void)results12;
 
+#ifndef __APPLE__
 #if !defined(ASIO_NO_DEPRECATED)
     resolver.async_resolve(q, resolve_handler());
     resolver.async_resolve(q, legacy_resolve_handler());
@@ -1233,6 +1236,8 @@ void test()
     double d6 = resolver.async_resolve(e, dlazy);
     (void)d6;
 #endif // !defined(ASIO_NO_DEPRECATED)
+#endif
+
   }
   catch (std::exception&)
   {
