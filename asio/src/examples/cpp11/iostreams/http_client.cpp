@@ -30,10 +30,12 @@ int main(int argc, char* argv[])
 
     asio::ip::tcp::iostream s;
 
+#ifndef ASIO_HAS_BOOST_DATE_TIME
     // The entire sequence of I/O operations must complete within 60 seconds.
     // If an expiry occurs, the socket is automatically closed and the stream
     // becomes bad.
     s.expires_after(std::chrono::seconds(60));
+#endif
 
     // Establish a connection to the server.
     s.connect(argv[1], "http");
