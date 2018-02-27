@@ -12,20 +12,22 @@ set(ASIO_BUILD_EXAMPLES_CPP14 ON CACHE BOOL "Build asio C++14 examples")
 # Check asio targets
 if(TARGET standalone)
   add_library(asio::standalone ALIAS standalone)
-  set(asio_FOUND TRUE)
+  set(ASIO_FOUND TRUE)
 endif()
 
 # Find asio package
-if(NOT asio_FOUND)
+if(NOT ASIO_FOUND)
   find_package(asio CONFIG REQUIRED)
 endif()
 
 # Installation configuration
 include(GNUInstallDirs)
 
+#NOTE: examples and tutorial needs boost date_time! CK
 if(Boost_FOUND)
-# examples and tutorial needs boost date_time! CK
   add_subdirectory(cpp03)
+else()
+  message(WARNING "examples/cpp03 needs boost::date_time!")
 endif()
 
 # C++11 only examples

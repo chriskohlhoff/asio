@@ -478,8 +478,9 @@ asio/yield.hpp
 )
 
 
-option(asio_SEPARATE_COMPILATION "build asio lib too" OFF)
-if(asio_SEPARATE_COMPILATION)
+option(ASIO_SEPARATE_COMPILATION "build asio lib too" ON)
+
+if(ASIO_SEPARATE_COMPILATION)
   set(libasio_SOURCES ../src/asio.cpp)
   if(OpenSSL_FOUND)
     set(libasio_SOURCES ${libasio_SOURCES} ../src/asio_ssl.cpp)
@@ -497,7 +498,7 @@ add_library(standalone INTERFACE)
 target_include_directories(standalone INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-if(Boost_FOUND)
+if(Boost_FOUND AND NOT ASIO_STANDALONE)
   target_compile_definitions(standalone INTERFACE)
 else()
   target_compile_definitions(standalone INTERFACE ASIO_STANDALONE ASIO_NO_DEPRECATED)
