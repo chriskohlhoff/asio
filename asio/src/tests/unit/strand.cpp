@@ -132,7 +132,6 @@ void io_context_run(io_context* ioc)
   ioc->run();
 }
 
-
 void strand_test()
 {
   io_context ioc;
@@ -238,7 +237,6 @@ void strand_test()
   ASIO_CHECK(count == 0);
 }
 
-#ifndef __APPLE__
 void strand_wrap_test()
 {
   io_context ioc;
@@ -316,15 +314,10 @@ void strand_wrap_test()
   // The run() calls will not return until all work has finished.
   ASIO_CHECK(count == 10);
 }
-#endif
 
 ASIO_TEST_SUITE
 (
   "strand",
   ASIO_TEST_CASE(strand_test)
-
-#ifndef __APPLE__
   ASIO_TEST_CASE(strand_wrap_test)
-#endif
-
 )

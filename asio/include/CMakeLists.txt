@@ -499,9 +499,12 @@ target_include_directories(standalone INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 if(Boost_FOUND AND NOT ASIO_STANDALONE)
-  target_compile_definitions(standalone INTERFACE)
+  target_compile_definitions(standalone INTERFACE BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING)
 else()
-  target_compile_definitions(standalone INTERFACE ASIO_STANDALONE ASIO_NO_DEPRECATED)
+  target_compile_definitions(standalone INTERFACE ASIO_STANDALONE)
+  if (ASIO_NO_DEPRECATED)
+    target_compile_definitions(standalone INTERFACE ASIO_NO_DEPRECATED)
+  endif()
 endif()
 
 install(TARGETS standalone EXPORT asio-targets)

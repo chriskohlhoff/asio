@@ -5,10 +5,9 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 find_program(CCACHE_EXECUTABLE "ccache" HINTS /opt/local/bin)
 if(CCACHE_EXECUTABLE AND NOT CMAKE_TOOLCHAIN_FILE)
   message(STATUS "use ccache")
-  find_program(CMAKE_CXX_CLANG_TIDY "clang-tidy" HINTS /opt/local/bin)
-  if(CMAKE_CXX_CLANG_TIDY)
-    message(STATUS "use clang-tidy")
-    find_program(GXX_EXECUTABLE "clang++" HINTS /opt/local/bin)
+  find_program(CLANGXX_EXECUTABLE "clang++" HINTS /opt/local/bin)
+  if(CLANGXX_EXECUTABLE)
+    set(GXX_EXECUTABLE ${CLANGXX_EXECUTABLE})
   else()
     find_program(GXX_EXECUTABLE "g++" HINTS /opt/local/bin)
     set(CMAKE_COMPILER_IS_GNUCXX yes)
@@ -21,11 +20,13 @@ endif()
 
 
 # ASIO Options
+option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" OFF)
 option(ASIO_STANDALONE "Build asio without boost" ON)
 option(ASIO_BUILD_EXAMPLES "Build asio examples too" OFF)
 option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" ON)
 option(ASIO_DISABLE_KQUEUE "disable kqueue" OFF)
 option(ASIO_DISABLE_EPOLL "disable epoll" OFF)
+option(USE_CLANG_TIDY "use clang-tidy if found" OFF)
 
 
 # ========================================
@@ -71,6 +72,11 @@ if (ASIO_DISABLE_EPOLL)
   add_definitions(-DASIO_DISABLE_EPOLL)
 endif()
 
+if (USE_CLANG_TIDY)
+  message(STATUS "use clang-tidy")
+  find_program(CMAKE_CXX_CLANG_TIDY "clang-tidy" HINTS /opt/local/bin)
+endif()
+
 
 if(NOT ASIO_STANDALONE)
   #######################################################################
@@ -93,7 +99,8 @@ if(NOT ASIO_STANDALONE)
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})
     add_definitions(-DBOOST_ALL_NO_LIB=1
-                    -DASIO_HAS_BOOST_DATE_TIME=1
+                    -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
+                    ###TBD### -DASIO_HAS_BOOST_DATE_TIME=1
     )
     set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} )
   else()
