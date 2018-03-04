@@ -465,8 +465,11 @@
         <entry valign="center" namest="a" nameend="b">
           <bridgehead renderas="sect2">POSIX-specific</bridgehead>
         </entry>
-        <entry valign="center" namest="c" nameend="d">
+        <entry valign="center" namest="c" nameend="c">
           <bridgehead renderas="sect2">Windows-specific</bridgehead>
+        </entry>
+        <entry valign="center" namest="d" nameend="d">
+          <bridgehead renderas="sect2">Experimental</bridgehead>
         </entry>
       </row>
     </thead>
@@ -498,7 +501,7 @@
             <member><link linkend="asio.reference.local__basic_endpoint">local::basic_endpoint</link></member>
           </simplelist>
         </entry>
-        <entry valign="top" namest="c" nameend="d">
+        <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.windows__object_handle">windows::object_handle</link></member>
@@ -506,6 +509,30 @@
             <member><link linkend="asio.reference.windows__overlapped_ptr">windows::overlapped_ptr</link></member>
             <member><link linkend="asio.reference.windows__random_access_handle">windows::random_access_handle</link></member>
             <member><link linkend="asio.reference.windows__stream_handle">windows::stream_handle</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Classes</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.experimental__detached_t">experimental::detached_t</link></member>
+            <member><link linkend="asio.reference.experimental__this_coro__executor_t">experimental::this_coro::executor_t</link></member>
+            <member><link linkend="asio.reference.experimental__this_coro__token_t">experimental::this_coro::token_t</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Class Templates</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.experimental__awaitable">experimental::awaitable</link></member>
+            <member><link linkend="asio.reference.experimental__await_token">experimental::await_token</link></member>
+            <member><link linkend="asio.reference.experimental__redirect_error_t">experimental::redirect_error_t</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Free Functions</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.experimental__co_spawn">experimental::co_spawn</link></member>
+            <member><link linkend="asio.reference.experimental__this_coro__executor">experimental::this_coro::executor</link></member>
+            <member><link linkend="asio.reference.experimental__this_coro__token">experimental::this_coro::token</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Special Values</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.experimental__detached">experimental::detached</link></member>
           </simplelist>
         </entry>
       </row>

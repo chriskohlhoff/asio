@@ -74,6 +74,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio \
+                         ./../../include/asio/experimental \
                          ./../../include/asio/generic \
                          ./../../include/asio/impl \
                          ./../../include/asio/ip \
