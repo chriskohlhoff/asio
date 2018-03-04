@@ -154,7 +154,8 @@ inline executor_work_guard<typename associated_executor<T,
   typename ExecutionContext::executor_type>::type>
 make_work_guard(const T& t, ExecutionContext& ctx,
     typename enable_if<!is_executor<T>::value &&
-      !is_convertible<T&, execution_context&>::value>::type* = 0)
+      !is_convertible<T&, execution_context&>::value &&
+      is_convertible<ExecutionContext&, execution_context&>::value>::type* = 0)
 {
   return executor_work_guard<typename associated_executor<T,
     typename ExecutionContext::executor_type>::type>(
