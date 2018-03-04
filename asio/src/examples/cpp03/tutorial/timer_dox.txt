@@ -26,15 +26,15 @@ Boost.Date_Time header file for manipulating times.
 
 \until posix_time.hpp
 
-All programs that use asio need to have at least one asio::io_service object.
+All programs that use asio need to have at least one asio::io_context object.
 This class provides access to I/O functionality. We declare an object of this
 type first thing in the main function.
 
-\until asio::io_service
+\until asio::io_context
 
 Next we declare an object of type asio::deadline_timer. The core asio classes
 that provide I/O functionality (or as in this case timer functionality) always
-take a reference to an io_service as their first constructor argument. The
+take a reference to an io_context as their first constructor argument. The
 second argument to the constructor sets the timer to expire 5 seconds from now.
 
 \until asio::deadline_timer
@@ -93,23 +93,23 @@ callback handler that was defined above.
 
 \skipline async_wait
 
-Finally, we must call the asio::io_service::run() member function
-on the io_service object.
+Finally, we must call the asio::io_context::run() member function
+on the io_context object.
 
 The asio library provides a guarantee that callback handlers will <b>only</b>
-be called from threads that are currently calling asio::io_service::run().
-Therefore unless the asio::io_service::run() function is called the callback for
+be called from threads that are currently calling asio::io_context::run().
+Therefore unless the asio::io_context::run() function is called the callback for
 the asynchronous wait completion will never be invoked.
 
-The asio::io_service::run() function will also continue to run while there is
+The asio::io_context::run() function will also continue to run while there is
 still "work" to do. In this example, the work is the asynchronous wait on the
 timer, so the call will not return until the timer has expired and the
 callback has completed.
 
-It is important to remember to give the io_service some work to do before
-calling asio::io_service::run(). For example, if we had omitted the above call
-to asio::deadline_timer::async_wait(), the io_service would not have had any
-work to do, and consequently asio::io_service::run() would have returned
+It is important to remember to give the io_context some work to do before
+calling asio::io_context::run(). For example, if we had omitted the above call
+to asio::deadline_timer::async_wait(), the io_context would not have had any
+work to do, and consequently asio::io_context::run() would have returned
 immediately.
 
 \skip run
@@ -155,10 +155,10 @@ sixth time.
 
 As mentioned above, this tutorial program uses a counter to
 stop running when the timer fires for the sixth time. However you will observe
-that there is no explicit call to ask the io_service to stop. Recall that in
-tutorial Timer.2 we learnt that the asio::io_service::run() function completes
+that there is no explicit call to ask the io_context to stop. Recall that in
+tutorial Timer.2 we learnt that the asio::io_context::run() function completes
 when there is no more "work" to do. By not starting a new asynchronous wait on
-the timer when <tt>count</tt> reaches 5, the io_service will run out of work and
+the timer when <tt>count</tt> reaches 5, the io_context will run out of work and
 stop running.
 
 \until ++
@@ -188,7 +188,7 @@ the arguments that match the handler's parameter list. In tutorial Timer.4 you
 will see that this placeholder may be elided if the parameter is not needed by
 the callback handler.
 
-\until asio::io_service
+\until asio::io_context
 
 A new <tt>count</tt> variable is added so that we can stop the
 program when the timer fires for the sixth time.
@@ -239,7 +239,7 @@ class called <tt>printer</tt>.
 \until public
 
 The constructor of this class will take a reference to the
-io_service object and use it when initialising the <tt>timer_</tt> member. The
+io_context object and use it when initialising the <tt>timer_</tt> member. The
 counter used to shut down the program is now also a member of the class.
 
 \until {
@@ -271,7 +271,7 @@ parameters.
 \until };
 
 The <tt>main</tt> function is much simpler than before, as it
-now declares a local <tt>printer</tt> object before running the io_service as
+now declares a local <tt>printer</tt> object before running the io_context as
 normal.
 
 \until }
@@ -292,14 +292,14 @@ Return to \ref tuttimer4
 /**
 \page tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs
 
-This tutorial demonstrates the use of the asio::io_service::strand class to
+This tutorial demonstrates the use of the asio::io_context::strand class to
 synchronise callback handlers in a multithreaded program.
 
 The previous four tutorials avoided the issue of handler synchronisation by
-calling the asio::io_service::run() function from one thread only. As you
+calling the asio::io_context::run() function from one thread only. As you
 already know, the asio library provides a guarantee that callback handlers will
 <b>only</b> be called from threads that are currently calling
-asio::io_service::run(). Consequently, calling asio::io_service::run() from
+asio::io_context::run(). Consequently, calling asio::io_context::run() from
 only one thread ensures that callback handlers cannot run concurrently.
 
 The single threaded approach is usually the best place to start when
@@ -312,7 +312,7 @@ on programs, particularly servers, including:
 </ul>
 
 If you find yourself running into these limitations, an alternative approach
-is to have a pool of threads calling asio::io_service::run(). However, as this
+is to have a pool of threads calling asio::io_context::run(). However, as this
 allows handlers to execute concurrently, we need a method of synchronisation
 when handlers might be accessing a shared, thread-unsafe resource.
 
@@ -329,24 +329,24 @@ tutorial by running two timers in parallel.
 
 In addition to initialising a pair of asio::deadline_timer members, the
 constructor initialises the <tt>strand_</tt> member, an object of type
-asio::io_service::strand.
+asio::io_context::strand.
 
-An asio::io_service::strand is an executor that guarantees that, for those
+An asio::io_context::strand is an executor that guarantees that, for those
 handlers that are dispatched through it, an executing handler will be allowed
 to complete before the next one is started. This is guaranteed irrespective of
-the number of threads that are calling asio::io_service::run(). Of course, the
+the number of threads that are calling asio::io_context::run(). Of course, the
 handlers may still execute concurrently with other handlers that were
-<b>not</b> dispatched through an asio::io_service::strand, or were dispatched
-through a different asio::io_service::strand object.
+<b>not</b> dispatched through an asio::io_context::strand, or were dispatched
+through a different asio::io_context::strand object.
 
 \until {
 
 When initiating the asynchronous operations, each callback handler is "bound"
-to an asio::io_service::strand object. The
-asio::io_service::strand::bind_executor() function returns a new handler that
+to an asio::io_context::strand object. The
+asio::io_context::strand::bind_executor() function returns a new handler that
 automatically dispatches its contained handler through the
-asio::io_service::strand object. By binding the handlers to the same
-asio::io_service::strand, we are ensuring that they cannot execute
+asio::io_context::strand object. By binding the handlers to the same
+asio::io_context::strand, we are ensuring that they cannot execute
 concurrently.
 
 \until }
@@ -359,12 +359,12 @@ tutorial, the shared resources used by the handlers (<tt>print1</tt> and
 
 \until };
 
-The <tt>main</tt> function now causes asio::io_service::run() to
+The <tt>main</tt> function now causes asio::io_context::run() to
 be called from two threads: the main thread and one additional thread. This is
 accomplished using an asio::thread object.
 
 Just as it would with a call from a single thread, concurrent calls to
-asio::io_service::run() will continue to execute while there is "work" left to
+asio::io_context::run() will continue to execute while there is "work" left to
 do. The background thread will not exit until all asynchronous operations have
 completed.
 

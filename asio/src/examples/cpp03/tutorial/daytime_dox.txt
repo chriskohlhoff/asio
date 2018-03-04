@@ -23,10 +23,10 @@ so we need the user to specify the server.
 
 \until }
 
-All programs that use asio need to have at least one asio::io_service
+All programs that use asio need to have at least one asio::io_context
 object.
 
-\until asio::io_service
+\until asio::io_context
 
 We need to turn the server name that was specified as a parameter to the
 application, into a TCP endpoint. To do this we use an
@@ -101,7 +101,7 @@ We define the function <tt>make_daytime_string()</tt> to create the string to
 be sent back to the client. This function will be reused in all of our daytime
 server applications.
 
-\until asio::io_service
+\until asio::io_context
 
 A asio::ip::tcp::acceptor object needs to be created to listen
 for new connections. It is initialised to listen on TCP port 13, for IP version 4.
@@ -149,12 +149,12 @@ Return to \ref tutdaytime2
 \until {
 
 We need to create a server object to accept incoming client connections. The
-asio::io_service object provides I/O services, such as sockets, that the
+asio::io_context object provides I/O services, such as sockets, that the
 server object will use.
 
 \until tcp_server
 
-Run the asio::io_service object so that it will perform asynchronous operations
+Run the asio::io_context object so that it will perform asynchronous operations
 on your behalf.
 
 \until return 0;
@@ -267,7 +267,7 @@ with UDP.
 The start of the application is essentially the same as for the TCP daytime
 client.
 
-\until asio::io_service
+\until asio::io_context
 
 We use an asio::ip::udp::resolver object to find the correct remote endpoint to
 use based on the host and service names. The query is restricted to return only
@@ -317,7 +317,7 @@ with UDP.
 
 \dontinclude daytime5/server.cpp
 \skip int main()
-\until asio::io_service
+\until asio::io_context
 
 Create an asio::ip::udp::socket object to receive requests on UDP port 13.
 
@@ -366,7 +366,7 @@ Return to \ref tutdaytime5
 \until {
 
 Create a server object to accept incoming client requests, and run
-the asio::io_service object.
+the asio::io_context object.
 
 \until return 0;
 \until }
@@ -384,7 +384,7 @@ The constructor initialises a socket to listen on UDP port 13.
 
 The function asio::ip::udp::socket::async_receive_from() will cause the
 application to listen in the background for a new request. When such a request
-is received, the asio::io_service object will invoke the
+is received, the asio::io_context object will invoke the
 <tt>handle_receive()</tt> function with two arguments: a value of type
 asio::error_code indicating whether the operation succeeded or failed, and a
 <tt>size_t</tt> value <tt>bytes_transferred</tt> specifying the number of bytes
@@ -398,7 +398,7 @@ The function <tt>handle_receive()</tt> will service the client request.
 
 The <tt>error</tt> parameter contains the result of the asynchronous operation.
 Since we only provide the 1-byte <tt>recv_buffer_</tt> to contain the client's
-request, the asio::io_service object would return an error if the client sent
+request, the asio::io_context object would return an error if the client sent
 anything larger. We can ignore such an error if it comes up.
 
 \until {
@@ -456,7 +456,7 @@ have just written, into a single server application.
 
 \dontinclude daytime7/server.cpp
 \skip int main()
-\until asio::io_service
+\until asio::io_context
 
 We will begin by creating a server object to accept a TCP client connection.
 
@@ -466,7 +466,7 @@ We also need a server object to accept a UDP client request.
 
 \until udp_server
 
-We have created two lots of work for the asio::io_service object to do.
+We have created two lots of work for the asio::io_context object to do.
 
 \until return 0;
 \until }
