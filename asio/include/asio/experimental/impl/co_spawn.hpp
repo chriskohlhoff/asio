@@ -23,6 +23,8 @@
 #include <tuple>
 #include <utility>
 #include "asio/async_result.hpp"
+#include "asio/detail/thread_context.hpp"
+#include "asio/detail/thread_info_base.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/post.hpp"
@@ -160,6 +162,24 @@ template <typename Executor>
 class awaitee_base
 {
 public:
+#if !defined(ASIO_DISABLE_AWAITEE_RECYCLING)
+  void* operator new(std::size_t size)
+  {
+    return asio::detail::thread_info_base::allocate(
+        asio::detail::thread_info_base::awaitee_tag(),
+        asio::detail::thread_context::thread_call_stack::top(),
+        size);
+  }
+
+  void operator delete(void* pointer, std::size_t size)
+  {
+    asio::detail::thread_info_base::deallocate(
+        asio::detail::thread_info_base::awaitee_tag(),
+        asio::detail::thread_context::thread_call_stack::top(),
+        pointer, size);
+  }
+#endif // !defined(ASIO_DISABLE_AWAITEE_RECYCLING)
+
   auto initial_suspend()
   {
     return std::experimental::suspend_always();
