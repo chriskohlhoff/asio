@@ -101,7 +101,7 @@ public:
 
     std::advance(next, next_elem_);
     std::size_t elem_offset = next_elem_offset_;
-    while (next != end && max_size > 0 && result.count < result.max_buffers)
+    while (next != end && max_size > 0 && (result.count) < result.max_buffers)
     {
       Buffer next_buf = Buffer(*next) + elem_offset;
       result.elems[result.count] = asio::buffer(next_buf, max_size);
