@@ -31394,14 +31394,14 @@ Get an option from the acceptor.
   template<
       typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void ``[link asio.reference.basic_socket_acceptor.get_option.overload1 get_option]``(
-      GettableSocketOption & option);
+      GettableSocketOption & option) const;
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.get_option.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void ``[link asio.reference.basic_socket_acceptor.get_option.overload2 get_option]``(
       GettableSocketOption & option,
-      asio::error_code & ec);
+      asio::error_code & ec) const;
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.get_option.overload2 more...]]``
 
 
@@ -31414,7 +31414,7 @@ Get an option from the acceptor.
   template<
       typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
-      GettableSocketOption & option);
+      GettableSocketOption & option) const;
 
 
 This function is used to get the current value of an option on the acceptor.
@@ -31471,7 +31471,7 @@ Get an option from the acceptor.
       typename ``[link asio.reference.GettableSocketOption GettableSocketOption]``>
   void get_option(
       GettableSocketOption & option,
-      asio::error_code & ec);
+      asio::error_code & ec) const;
 
 
 This function is used to get the current value of an option on the acceptor.
@@ -55955,6 +55955,663 @@ Unless the object has already been reset, or is in a moved-from state, calls `on
 
 [endsect]
 
+
+
+[endsect]
+
+[section:experimental__await_token experimental::await_token]
+
+
+A completion token that represents the currently executing coroutine. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  class await_token
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__await_token.executor_type [*executor_type]]]
+    [The associated executor type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__await_token.await_token [*await_token]]]
+    [Copy constructor. 
+
+     Move constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__await_token.get_executor [*get_executor]]]
+    [Get the associated executor. ]
+  ]
+  
+]
+
+The [link asio.reference.experimental__await_token `experimental::await_token`] class is used to represent the currently executing coroutine. An [link asio.reference.experimental__await_token `experimental::await_token`] may be passed as a handler to an asynchronous operation. For example:
+
+
+
+   awaitable<void> my_coroutine()
+   {
+     await_token token = co_await this_coro::token();
+     ...
+     std::size_t n = co_await my_socket.async_read_some(buffer, token);
+     ...
+   } 
+
+
+
+
+The initiating function (async\_read\_some in the above example) suspends the current coroutine. The coroutine is resumed when the asynchronous operation completes, and the result of the operation is returned. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+[section:await_token experimental::await_token::await_token]
+
+[indexterm2 asio.indexterm.experimental__await_token.await_token..await_token..experimental::await_token] 
+Copy constructor. 
+
+
+  ``[link asio.reference.experimental__await_token.await_token.overload1 await_token]``(
+      const await_token & other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__await_token.await_token.overload1 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link asio.reference.experimental__await_token.await_token.overload2 await_token]``(
+      await_token && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__await_token.await_token.overload2 more...]]``
+
+
+[section:overload1 experimental::await_token::await_token (1 of 2 overloads)]
+
+
+Copy constructor. 
+
+
+  await_token(
+      const await_token & other);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::await_token::await_token (2 of 2 overloads)]
+
+
+Move constructor. 
+
+
+  await_token(
+      await_token && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:executor_type experimental::await_token::executor_type]
+
+[indexterm2 asio.indexterm.experimental__await_token.executor_type..executor_type..experimental::await_token] 
+The associated executor type. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::await_token::get_executor]
+
+[indexterm2 asio.indexterm.experimental__await_token.get_executor..get_executor..experimental::await_token] 
+Get the associated executor. 
+
+
+  executor_type get_executor() const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__awaitable experimental::awaitable]
+
+
+The return type of a coroutine or asynchronous operation. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]`` = strand<executor>>
+  class awaitable
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__awaitable.executor_type [*executor_type]]]
+    [The executor type that will be used for the coroutine. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__awaitable.value_type [*value_type]]]
+    [The type of the awaited value. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__awaitable.awaitable [*awaitable]]]
+    [Move constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__awaitable._awaitable [*~awaitable]]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[section:awaitable experimental::awaitable::awaitable]
+
+[indexterm2 asio.indexterm.experimental__awaitable.awaitable..awaitable..experimental::awaitable] 
+Move constructor. 
+
+
+  awaitable(
+      awaitable && other);
+
+
+
+[endsect]
+
+
+
+[section:executor_type experimental::awaitable::executor_type]
+
+[indexterm2 asio.indexterm.experimental__awaitable.executor_type..executor_type..experimental::awaitable] 
+The executor type that will be used for the coroutine. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+
+[section:value_type experimental::awaitable::value_type]
+
+[indexterm2 asio.indexterm.experimental__awaitable.value_type..value_type..experimental::awaitable] 
+The type of the awaited value. 
+
+
+  typedef T value_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+
+[section:_awaitable experimental::awaitable::~awaitable]
+
+[indexterm2 asio.indexterm.experimental__awaitable._awaitable..~awaitable..experimental::awaitable] 
+Destructor. 
+
+
+  ~awaitable();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__co_spawn experimental::co_spawn]
+
+[indexterm1 asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
+Spawn a new thread of execution. 
+
+    
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<is_executor<Executor>::value>::type>
+  auto ``[link asio.reference.experimental__co_spawn.overload1 co_spawn]``(
+      const Executor & ex,
+      F && f,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload1 more...]]``
+
+  template<
+      typename ExecutionContext,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<      is_convertible<ExecutionContext&, execution_context&>::value>::type>
+  auto ``[link asio.reference.experimental__co_spawn.overload2 co_spawn]``(
+      ExecutionContext & ctx,
+      F && f,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload2 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken>
+  auto ``[link asio.reference.experimental__co_spawn.overload3 co_spawn]``(
+      const await_token< Executor > & parent,
+      F && f,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload3 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[section:overload1 experimental::co_spawn (1 of 3 overloads)]
+
+
+Spawn a new thread of execution. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<is_executor<Executor>::value>::type>
+  auto co_spawn(
+      const Executor & ex,
+      F && f,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::co_spawn (2 of 3 overloads)]
+
+
+Spawn a new thread of execution. 
+
+
+  template<
+      typename ExecutionContext,
+      typename F,
+      typename CompletionToken,
+      typename  = typename enable_if<      is_convertible<ExecutionContext&, execution_context&>::value>::type>
+  auto co_spawn(
+      ExecutionContext & ctx,
+      F && f,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::co_spawn (3 of 3 overloads)]
+
+
+Spawn a new thread of execution. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken>
+  auto co_spawn(
+      const await_token< Executor > & parent,
+      F && f,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:experimental__detached experimental::detached]
+
+[indexterm1 asio.indexterm.experimental__detached..experimental::detached] 
+A special value, similar to std::nothrow. 
+
+
+  constexpr detached_t detached;
+
+
+See the documentation for [link asio.reference.experimental__detached_t `experimental::detached_t`] for a usage example. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/detached.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__detached_t experimental::detached_t]
+
+
+Class used to specify that an asynchronous operation is detached. 
+
+
+  class detached_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__detached_t.detached_t [*detached_t]]]
+    [Constructor. ]
+  ]
+  
+]
+
+The [link asio.reference.experimental__detached_t `experimental::detached_t`] class is used to indicate that an asynchronous operation is detached. That is, there is no completion handler waiting for the operation's result. A [link asio.reference.experimental__detached_t `experimental::detached_t`] object may be passed as a handler to an asynchronous operation, typically using the special value `asio::experimental::detached`. For example:
+
+
+
+   my_socket.async_send(my_buffer, asio::experimental::detached);
+
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/detached.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[section:detached_t experimental::detached_t::detached_t]
+
+[indexterm2 asio.indexterm.experimental__detached_t.detached_t..detached_t..experimental::detached_t] 
+Constructor. 
+
+
+  constexpr detached_t();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:experimental__redirect_error experimental::redirect_error]
+
+[indexterm1 asio.indexterm.experimental__redirect_error..experimental::redirect_error] 
+Create a completion token to capture [link asio.reference.error_code `error_code`] values to a variable. 
+
+
+  template<
+      typename CompletionToken>
+  redirect_error_t< typename decay< CompletionToken >::type > redirect_error(
+      CompletionToken && completion_token,
+      asio::error_code & ec);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/redirect_error.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__redirect_error_t experimental::redirect_error_t]
+
+
+Completion token type used to specify that an error produced by an asynchronous operation is captured to an [link asio.reference.error_code `error_code`] variable. 
+
+
+  template<
+      typename CompletionToken>
+  class redirect_error_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__redirect_error_t.redirect_error_t [*redirect_error_t]]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__redirect_error_t.ec_ [*ec_]]]
+    []
+  ]
+
+  [
+    [[link asio.reference.experimental__redirect_error_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.experimental__redirect_error_t `experimental::redirect_error_t`] class is used to indicate that any [link asio.reference.error_code `error_code`] produced by an asynchronous operation is captured to a specified variable. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/redirect_error.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[section:ec_ experimental::redirect_error_t::ec_]
+
+[indexterm2 asio.indexterm.experimental__redirect_error_t.ec_..ec_..experimental::redirect_error_t] 
+
+  asio::error_code & ec_;
+
+
+
+[endsect]
+
+
+
+[section:redirect_error_t experimental::redirect_error_t::redirect_error_t]
+
+[indexterm2 asio.indexterm.experimental__redirect_error_t.redirect_error_t..redirect_error_t..experimental::redirect_error_t] 
+Constructor. 
+
+
+  template<
+      typename T>
+  redirect_error_t(
+      T && completion_token,
+      asio::error_code & ec);
+
+
+
+[endsect]
+
+
+
+[section:token_ experimental::redirect_error_t::token_]
+
+[indexterm2 asio.indexterm.experimental__redirect_error_t.token_..token_..experimental::redirect_error_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:experimental__this_coro__executor experimental::this_coro::executor]
+
+[indexterm1 asio.indexterm.experimental__this_coro__executor..experimental::this_coro::executor] 
+Awaitable object that returns the executor of the current coroutine. 
+
+
+  constexpr executor_t executor();
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__this_coro__executor_t experimental::this_coro::executor_t]
+
+
+Awaitable type that returns the executor of the current coroutine. 
+
+
+  struct executor_t
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__this_coro__token experimental::this_coro::token]
+
+[indexterm1 asio.indexterm.experimental__this_coro__token..experimental::this_coro::token] 
+Awaitable object that returns a completion token for the current coroutine. 
+
+
+  constexpr token_t token();
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
+
+
+[endsect]
+
+
+[section:experimental__this_coro__token_t experimental::this_coro::token_t]
+
+
+Awaitable type that returns a completion token for the current coroutine. 
+
+
+  struct token_t
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ][^asio/experimental.hpp]
 
 
 [endsect]
@@ -84651,7 +85308,7 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`]  objec
   executor_work_guard< typename associated_executor< T, typename ExecutionContext::executor_type >::type > ``[link asio.reference.make_work_guard.overload5 make_work_guard]``(
       const T & t,
       ExecutionContext & ctx,
-      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value >::type *  = 0);
+      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value &&is_convertible< ExecutionContext &, execution_context & >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.make_work_guard.overload5 more...]]``
 
 [heading Requirements]
@@ -84747,7 +85404,7 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`]  objec
   executor_work_guard< typename associated_executor< T, typename ExecutionContext::executor_type >::type > make_work_guard(
       const T & t,
       ExecutionContext & ctx,
-      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value >::type *  = 0);
+      typename enable_if<!is_executor< T >::value &&!is_convertible< T &, execution_context & >::value &&is_convertible< ExecutionContext &, execution_context & >::value >::type *  = 0);
 
 
 
