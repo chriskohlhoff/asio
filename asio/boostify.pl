@@ -531,7 +531,8 @@ sub copy_examples
       "src/examples/cpp11/multicast",
       "src/examples/cpp11/nonblocking",
       "src/examples/cpp11/spawn",
-      "src/examples/cpp14/executors");
+      "src/examples/cpp14/executors",
+      "src/examples/cpp17/coroutines_ts");
 
   our $boost_dir;
   foreach my $dir (@dirs)
