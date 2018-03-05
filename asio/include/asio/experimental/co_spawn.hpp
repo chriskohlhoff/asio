@@ -148,20 +148,20 @@ public:
   // Support for co_await keyword.
   bool await_ready() const noexcept
   {
-    return false;
+    return awaitee_->ready();
   }
 
   // Support for co_await keyword.
   void await_suspend(detail::coroutine_handle<detail::awaiter<Executor>> h)
   {
-    awaitee_->start(&h.promise(), h);
+    awaitee_->attach_caller(&h.promise(), h);
   }
 
   // Support for co_await keyword.
   template <class U>
   void await_suspend(detail::coroutine_handle<detail::awaitee<U, Executor>> h)
   {
-    awaitee_->start(h.promise().top(), h);
+    awaitee_->attach_caller(h.promise().top(), h);
   }
 
   // Support for co_await keyword.

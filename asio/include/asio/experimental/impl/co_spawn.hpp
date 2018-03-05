@@ -35,36 +35,6 @@ namespace asio {
 namespace experimental {
 namespace detail {
 
-// Helper for returning an awaitable "always ready" value.
-template <typename T>
-class await_ready_value
-{
-public:
-  template <typename... Args>
-  explicit await_ready_value(Args&&... args)
-    : value_(std::forward<Args>(args)...)
-  {
-  }
-
-  bool await_ready() const noexcept
-  {
-    return true;
-  }
-
-  template <typename U, typename Ex>
-  void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) const noexcept
-  {
-  }
-
-  T await_resume()
-  {
-    return std::move(value_);
-  }
-
-private:
-  T value_;
-};
-
 // Promise object for coroutine at top of thread-of-execution "stack".
 template <typename Executor>
 class awaiter
@@ -131,7 +101,12 @@ public:
       coroutine_handle<awaiter>::from_promise(*this).destroy();
   }
 
-  void rethrow_exception()
+  void unhandled_exception()
+  {
+    pending_exception_ = std::current_exception();
+  }
+
+  void rethrow_unhandled_exception()
   {
     if (pending_exception_)
     {
@@ -140,19 +115,9 @@ public:
     }
   }
 
-  void unhandled_exception()
-  {
-    pending_exception_ = std::current_exception();
-  }
-
-  void set_except(std::exception_ptr e)
-  {
-    pending_exception_ = e;
-  }
-
 private:
   std::size_t ref_count_ = 0;
-  std::exception_ptr pending_exception_;
+  std::exception_ptr pending_exception_ = nullptr;
   alignas(Executor) unsigned char executor_[sizeof(Executor)];
   bool has_executor_ = false;
 };
@@ -182,7 +147,7 @@ public:
 
   auto initial_suspend()
   {
-    return std::experimental::suspend_always();
+    return std::experimental::suspend_never();
   }
 
   struct final_suspender
@@ -211,12 +176,21 @@ public:
 
   void set_except(std::exception_ptr e)
   {
-    awaiter_->set_except(e);
+    pending_exception_ = e;
   }
 
   void unhandled_exception()
   {
     set_except(std::current_exception());
+  }
+
+  void rethrow_exception()
+  {
+    if (pending_exception_)
+    {
+      std::exception_ptr ex = std::exchange(pending_exception_, nullptr);
+      std::rethrow_exception(ex);
+    }
   }
 
   awaiter<Executor>* top()
@@ -229,34 +203,94 @@ public:
     return caller_;
   }
 
+  bool ready() const
+  {
+    return ready_;
+  }
+
   void wake_caller()
   {
     if (caller_)
       caller_.resume();
+    else
+      ready_ = true;
   }
 
-  await_ready_value<Executor> await_transform(
-      this_coro::executor_t) const noexcept
+  class awaitable_executor
   {
-    return await_ready_value<Executor>(awaiter_->get_executor());
+  public:
+    explicit awaitable_executor(const awaitee_base* a)
+      : this_(a)
+    {
+    }
+
+    bool await_ready() const noexcept
+    {
+      return this_->awaiter_ != nullptr;
+    }
+
+    template <typename U, typename Ex>
+    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) const noexcept
+    {
+    }
+
+    Executor await_resume()
+    {
+      return this_->awaiter_->get_executor();
+    }
+
+  private:
+    const awaitee_base* this_;
+  };
+
+  awaitable_executor await_transform(this_coro::executor_t) const noexcept
+  {
+    return awaitable_executor(this);
   }
 
-  await_ready_value<await_token<Executor>> await_transform(
-      this_coro::token_t) const noexcept
+  class awaitable_token
   {
-    return await_ready_value<await_token<Executor>>(
-        await_token<Executor>(awaiter_));
+  public:
+    explicit awaitable_token(const awaitee_base* a)
+      : this_(a)
+    {
+    }
+
+    bool await_ready() const noexcept
+    {
+      return this_->awaiter_ != nullptr;
+    }
+
+    template <typename U, typename Ex>
+    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) const noexcept
+    {
+    }
+
+    await_token<Executor> await_resume()
+    {
+      return await_token<Executor>(this_->awaiter_);
+    }
+
+  private:
+    const awaitee_base* this_;
+  };
+
+  awaitable_token await_transform(this_coro::token_t) const noexcept
+  {
+    return awaitable_token(this);
   }
 
   template <typename T>
-  T await_transform(T t) const
+  T await_transform(T&& t) const
   {
-    return t;
+    return std::forward<T>(t);
   }
 
 protected:
   awaiter<Executor>* awaiter_ = nullptr;
   coroutine_handle<void> caller_ = nullptr;
+  std::exception_ptr pending_exception_ = nullptr;
+  bool ready_ = false;
 };
 
 // Promise object for coroutines further down the thread-of-execution "stack".
@@ -295,11 +329,11 @@ public:
   T get()
   {
     this->caller_ = nullptr;
-    this->awaiter_->rethrow_exception();
+    this->rethrow_exception();
     return std::move(*static_cast<T*>(static_cast<void*>(result_)));
   }
 
-  void start(awaiter<Executor>* a, coroutine_handle<void> h)
+  void attach_caller(awaiter<Executor>* a, coroutine_handle<void> h)
   {
     this->awaiter_ = a;
     this->caller_ = h;
@@ -329,10 +363,10 @@ public:
   void get()
   {
     this->caller_ = nullptr;
-    this->awaiter_->rethrow_exception();
+    this->rethrow_exception();
   }
 
-  void start(awaiter<Executor>* a, coroutine_handle<void> h)
+  void attach_caller(awaiter<Executor>* a, coroutine_handle<void> h)
   {
     this->awaiter_ = a;
     this->caller_ = h;
@@ -433,7 +467,7 @@ public:
     typename awaiter<Executor>::ptr ptr(std::move(this->awaiter_));
     this->awaitee_->return_void();
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -454,7 +488,7 @@ public:
     else
       this->awaitee_->return_void();
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -473,7 +507,7 @@ public:
     else
       this->awaitee_->return_void();
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -490,7 +524,7 @@ public:
     typename awaiter<Executor>::ptr ptr(std::move(this->awaiter_));
     this->awaitee_->return_value(std::forward<Arg>(arg));
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -510,7 +544,7 @@ public:
     else
       this->awaitee_->return_value(std::forward<Arg>(arg));
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -530,7 +564,7 @@ public:
     else
       this->awaitee_->return_value(std::forward<Arg>(arg));
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -548,7 +582,7 @@ public:
     this->awaitee_->return_value(
         std::forward_as_tuple(std::forward<Args>(args)...));
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -569,7 +603,7 @@ public:
       this->awaitee_->return_value(
           std::forward_as_tuple(std::forward<Args>(args)...));
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
@@ -590,7 +624,7 @@ public:
       this->awaitee_->return_value(
           std::forward_as_tuple(std::forward<Args>(args)...));
     this->awaitee_->wake_caller();
-    ptr->rethrow_exception();
+    ptr->rethrow_unhandled_exception();
   }
 };
 
