@@ -736,12 +736,24 @@ auto co_spawn(const Executor& ex, F&& f, CompletionToken&& token)
 # pragma warning(disable:4033)
 #endif // defined(_MSC_VER)
 
+#if defined(_MSC_VER)
+template <typename T> T dummy_return()
+{
+  return std::move(*static_cast<T*>(nullptr));
+}
+
+template <>
+inline void dummy_return()
+{
+}
+#endif // defined(_MSC_VER)
+
 template <typename Awaitable>
 inline Awaitable make_dummy_awaitable()
 {
   for (;;) co_await std::experimental::suspend_always();
 #if defined(_MSC_VER)
-  co_return std::move(*static_cast<typename Awaitable::value_type*>(nullptr));
+  co_return dummy_return<typename Awaitable::value_type>();
 #endif // defined(_MSC_VER)
 }
 
