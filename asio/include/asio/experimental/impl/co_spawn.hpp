@@ -281,9 +281,21 @@ public:
   }
 
   template <typename T>
-  T await_transform(T&& t) const
+  awaitable<T, Executor> await_transform(awaitable<T, Executor>& t) const
   {
-    return std::forward<T>(t);
+    return std::move(t);
+  }
+
+  template <typename T>
+  awaitable<T, Executor> await_transform(awaitable<T, Executor>&& t) const
+  {
+    return std::move(t);
+  }
+
+  std::experimental::suspend_always await_transform(
+      std::experimental::suspend_always) const
+  {
+    return std::experimental::suspend_always();
   }
 
 protected:
