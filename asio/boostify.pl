@@ -281,7 +281,7 @@ sub copy_source_file
       $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /} \/\/ namespace std/)
+    elsif ($line =~ /^} \/\/ namespace std/)
     {
       print_line($output, "} // namespace system", $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);

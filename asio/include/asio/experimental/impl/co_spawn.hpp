@@ -484,7 +484,10 @@ public:
   {
     typename awaiter<Executor>::ptr ptr(std::move(this->awaiter_));
     if (ec)
-      this->awaitee_->set_except(std::make_exception_ptr(system_error(ec)));
+    {
+      this->awaitee_->set_except(
+          std::make_exception_ptr(asio::system_error(ec)));
+    }
     else
       this->awaitee_->return_void();
     this->awaitee_->wake_caller();
@@ -540,7 +543,10 @@ public:
   {
     typename awaiter<Executor>::ptr ptr(std::move(this->awaiter_));
     if (ec)
-      this->awaitee_->set_except(std::make_exception_ptr(system_error(ec)));
+    {
+      this->awaitee_->set_except(
+          std::make_exception_ptr(asio::system_error(ec)));
+    }
     else
       this->awaitee_->return_value(std::forward<Arg>(arg));
     this->awaitee_->wake_caller();
@@ -598,10 +604,15 @@ public:
   {
     typename awaiter<Executor>::ptr ptr(std::move(this->awaiter_));
     if (ec)
-      this->awaitee_->set_except(std::make_exception_ptr(system_error(ec)));
+    {
+      this->awaitee_->set_except(
+          std::make_exception_ptr(asio::system_error(ec)));
+    }
     else
+    {
       this->awaitee_->return_value(
           std::forward_as_tuple(std::forward<Args>(args)...));
+    }
     this->awaitee_->wake_caller();
     ptr->rethrow_unhandled_exception();
   }
@@ -621,8 +632,10 @@ public:
     if (ex)
       this->awaitee_->set_except(ex);
     else
+    {
       this->awaitee_->return_value(
           std::forward_as_tuple(std::forward<Args>(args)...));
+    }
     this->awaitee_->wake_caller();
     ptr->rethrow_unhandled_exception();
   }
@@ -799,8 +812,7 @@ private:
 
 } // namespace asio
 
-namespace std {
-namespace experimental {
+namespace std { namespace experimental {
 
 template <typename Executor, typename... Args>
 struct coroutine_traits<
@@ -816,8 +828,7 @@ struct coroutine_traits<
   typedef asio::experimental::detail::awaitee<T, Executor> promise_type;
 };
 
-} // namespace experimental
-} // namespace std
+}} // namespace std::experimental
 
 #include "asio/detail/pop_options.hpp"
 
