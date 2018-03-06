@@ -219,7 +219,7 @@ public:
   class awaitable_executor
   {
   public:
-    explicit awaitable_executor(const awaitee_base* a)
+    explicit awaitable_executor(awaitee_base* a)
       : this_(a)
     {
     }
@@ -230,8 +230,9 @@ public:
     }
 
     template <typename U, typename Ex>
-    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) const noexcept
+    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) noexcept
     {
+      this_->resume_on_attach_ = true;
     }
 
     Executor await_resume()
@@ -240,10 +241,10 @@ public:
     }
 
   private:
-    const awaitee_base* this_;
+    awaitee_base* this_;
   };
 
-  awaitable_executor await_transform(this_coro::executor_t) const noexcept
+  awaitable_executor await_transform(this_coro::executor_t) noexcept
   {
     return awaitable_executor(this);
   }
@@ -251,7 +252,7 @@ public:
   class awaitable_token
   {
   public:
-    explicit awaitable_token(const awaitee_base* a)
+    explicit awaitable_token(awaitee_base* a)
       : this_(a)
     {
     }
@@ -262,8 +263,9 @@ public:
     }
 
     template <typename U, typename Ex>
-    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) const noexcept
+    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) noexcept
     {
+      this_->resume_on_attach_ = true;
     }
 
     await_token<Executor> await_resume()
@@ -272,10 +274,10 @@ public:
     }
 
   private:
-    const awaitee_base* this_;
+    awaitee_base* this_;
   };
 
-  awaitable_token await_transform(this_coro::token_t) const noexcept
+  awaitable_token await_transform(this_coro::token_t) noexcept
   {
     return awaitable_token(this);
   }
@@ -302,6 +304,7 @@ protected:
   awaiter<Executor>* awaiter_ = nullptr;
   coroutine_handle<void> caller_ = nullptr;
   std::exception_ptr pending_exception_ = nullptr;
+  bool resume_on_attach_ = false;
   bool ready_ = false;
 };
 
@@ -349,7 +352,8 @@ public:
   {
     this->awaiter_ = a;
     this->caller_ = h;
-    detail::coroutine_handle<awaitee>::from_promise(*this).resume();
+    if (this->resume_on_attach_)
+      detail::coroutine_handle<awaitee>::from_promise(*this).resume();
   }
 
 private:
@@ -382,7 +386,8 @@ public:
   {
     this->awaiter_ = a;
     this->caller_ = h;
-    detail::coroutine_handle<awaitee>::from_promise(*this).resume();
+    if (this->resume_on_attach_)
+      detail::coroutine_handle<awaitee>::from_promise(*this).resume();
   }
 };
 
