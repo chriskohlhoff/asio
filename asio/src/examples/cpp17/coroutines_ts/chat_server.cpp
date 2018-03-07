@@ -200,7 +200,7 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-    asio::io_context io_context;
+    asio::io_context io_context(1);
 
     for (int i = 1; i < argc; ++i)
     {

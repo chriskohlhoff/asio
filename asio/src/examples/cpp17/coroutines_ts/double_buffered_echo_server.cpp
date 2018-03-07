@@ -26,23 +26,38 @@ template <typename T>
   using awaitable = asio::experimental::awaitable<
     T, asio::io_context::executor_type>;
 
-awaitable<void> echo(tcp::socket socket)
+awaitable<void> echo(tcp::socket s)
 {
-  auto token = co_await this_coro::token();
+ auto token = co_await this_coro::token();
 
-  try
-  {
-    char data[1024];
-    for (;;)
-    {
-      std::size_t n = co_await socket.async_read_some(asio::buffer(data), token);
-      co_await async_write(socket, asio::buffer(data, n), token);
-    }
-  }
-  catch (std::exception& e)
-  {
-    std::printf("echo Exception: %s\n", e.what());
-  }
+ try
+ {
+   char data1[1024];
+   char data2[1024];
+
+   char* p1 = data1;
+   char* p2 = data2;
+
+   // Perform initial read into first buffer.
+   size_t n = co_await s.async_read_some(asio::buffer(p1, 1024), token);
+
+   for (;;)
+   {
+     // Swap received data to other buffer and initiate write operation.
+     std::swap(p1, p2);
+     auto write_result = asio::async_write(s, asio::buffer(p2, n), token);
+
+     // Perform next read while write operation is in progress.
+     n = co_await s.async_read_some(asio::buffer(p1, 1024), token);
+
+     // Wait for write operation to complete before proceeding.
+     co_await write_result;
+   }
+ }
+ catch (std::exception& e)
+ {
+   std::printf("echo Exception: %s\n", e.what());
+ }
 }
 
 awaitable<void> listener()

@@ -26,17 +26,26 @@ template <typename T>
   using awaitable = asio::experimental::awaitable<
     T, asio::io_context::executor_type>;
 
-awaitable<void> echo(tcp::socket socket)
+awaitable<void> echo_once(tcp::socket& socket)
 {
   auto token = co_await this_coro::token();
 
+  char data[128];
+  std::size_t n = co_await socket.async_read_some(asio::buffer(data), token);
+  co_await async_write(socket, asio::buffer(data, n), token);
+}
+
+awaitable<void> echo(tcp::socket socket)
+{
   try
   {
-    char data[1024];
     for (;;)
     {
-      std::size_t n = co_await socket.async_read_some(asio::buffer(data), token);
-      co_await async_write(socket, asio::buffer(data, n), token);
+      // The asynchronous operations to echo a single chunk of data have been
+      // refactored into a separate function. When this function is called, the
+      // operations are still performed in the context of the current
+      // coroutine, and the behaviour is functionally equivalent.
+      co_await echo_once(socket);
     }
   }
   catch (std::exception& e)
