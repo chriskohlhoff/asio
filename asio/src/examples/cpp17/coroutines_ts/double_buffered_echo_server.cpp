@@ -1,6 +1,6 @@
 //
-// echo_server.cpp
-// ~~~~~~~~~~~~~~~
+// double_buffered_echo_server.cpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,7 +14,6 @@
 #include <asio/ip/tcp.hpp>
 #include <asio/signal_set.hpp>
 #include <asio/write.hpp>
-#include <asio/use_future.hpp>
 #include <cstdio>
 
 using asio::ip::tcp;
