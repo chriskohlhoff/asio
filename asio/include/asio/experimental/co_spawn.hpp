@@ -154,14 +154,14 @@ public:
   // Support for co_await keyword.
   void await_suspend(detail::coroutine_handle<detail::awaiter<Executor>> h)
   {
-    awaitee_->attach_caller(&h.promise(), h);
+    awaitee_->attach_caller(h);
   }
 
   // Support for co_await keyword.
   template <class U>
   void await_suspend(detail::coroutine_handle<detail::awaitee<U, Executor>> h)
   {
-    awaitee_->attach_caller(h.promise().top(), h);
+    awaitee_->attach_caller(h);
   }
 
   // Support for co_await keyword.

@@ -230,9 +230,9 @@ public:
     }
 
     template <typename U, typename Ex>
-    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) noexcept
+    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>> h) noexcept
     {
-      this_->resume_on_attach_ = true;
+      this_->resume_on_attach_ = h;
     }
 
     Executor await_resume()
@@ -263,9 +263,9 @@ public:
     }
 
     template <typename U, typename Ex>
-    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>>) noexcept
+    void await_suspend(coroutine_handle<detail::awaitee<U, Ex>> h) noexcept
     {
-      this_->resume_on_attach_ = true;
+      this_->resume_on_attach_ = h;
     }
 
     await_token<Executor> await_resume()
@@ -300,11 +300,39 @@ public:
     return std::experimental::suspend_always();
   }
 
+  void attach_caller(coroutine_handle<awaiter<Executor>> h)
+  {
+    this->caller_ = h;
+    this->attach_callees(&h.promise());
+  }
+
+  template <typename U>
+  void attach_caller(coroutine_handle<awaitee<U, Executor>> h)
+  {
+    this->caller_ = h;
+    if (h.promise().awaiter_)
+      this->attach_callees(h.promise().awaiter_);
+    else
+      h.promise().unattached_callee_ = this;
+  }
+
+  void attach_callees(awaiter<Executor>* a)
+  {
+    for (awaitee_base* curr = this; curr != nullptr;
+        curr = std::exchange(curr->unattached_callee_, nullptr))
+    {
+      curr->awaiter_ = a;
+      if (curr->resume_on_attach_)
+        return std::exchange(curr->resume_on_attach_, nullptr).resume();
+    }
+  }
+
 protected:
   awaiter<Executor>* awaiter_ = nullptr;
   coroutine_handle<void> caller_ = nullptr;
+  awaitee_base<Executor>* unattached_callee_ = nullptr;
   std::exception_ptr pending_exception_ = nullptr;
-  bool resume_on_attach_ = false;
+  coroutine_handle<void> resume_on_attach_ = nullptr;
   bool ready_ = false;
 };
 
@@ -348,14 +376,6 @@ public:
     return std::move(*static_cast<T*>(static_cast<void*>(result_)));
   }
 
-  void attach_caller(awaiter<Executor>* a, coroutine_handle<void> h)
-  {
-    this->awaiter_ = a;
-    this->caller_ = h;
-    if (this->resume_on_attach_)
-      detail::coroutine_handle<awaitee>::from_promise(*this).resume();
-  }
-
 private:
   alignas(T) unsigned char result_[sizeof(T)];
   bool has_result_ = false;
@@ -380,14 +400,6 @@ public:
   {
     this->caller_ = nullptr;
     this->rethrow_exception();
-  }
-
-  void attach_caller(awaiter<Executor>* a, coroutine_handle<void> h)
-  {
-    this->awaiter_ = a;
-    this->caller_ = h;
-    if (this->resume_on_attach_)
-      detail::coroutine_handle<awaitee>::from_promise(*this).resume();
   }
 };
 
