@@ -32,6 +32,10 @@
 #include "asio/detail/wait_op.hpp"
 #include "asio/execution_context.hpp"
 
+#if defined(ASIO_HAS_TIMERFD)
+# include <sys/timerfd.h>
+#endif // defined(ASIO_HAS_TIMERFD)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
