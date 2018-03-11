@@ -67,14 +67,14 @@ context::context(context::method m)
   switch (m)
   {
     // SSL v2.
-#if (OPENSSL_VERSION_NUMBER >= 0x10100000L) || defined(OPENSSL_NO_SSL2)
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)) || defined(OPENSSL_NO_SSL2)
   case context::sslv2:
   case context::sslv2_client:
   case context::sslv2_server:
     asio::detail::throw_error(
         asio::error::invalid_argument, "context");
     break;
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L) || defined(OPENSSL_NO_SSL2)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)) || defined(OPENSSL_NO_SSL2)
   case context::sslv2:
     handle_ = ::SSL_CTX_new(::SSLv2_method());
     break;
@@ -84,7 +84,7 @@ context::context(context::method m)
   case context::sslv2_server:
     handle_ = ::SSL_CTX_new(::SSLv2_server_method());
     break;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L) || defined(OPENSSL_NO_SSL2)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)) || defined(OPENSSL_NO_SSL2)
 
     // SSL v3.
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
@@ -332,7 +332,7 @@ context::context(context::method m)
     if (handle_)
       SSL_CTX_set_min_proto_version(handle_, TLS1_VERSION);
     break;
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
   case context::tls:
     handle_ = ::SSL_CTX_new(::SSLv23_method());
     if (handle_)
@@ -348,7 +348,7 @@ context::context(context::method m)
     if (handle_)
       SSL_CTX_set_options(handle_, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
     break;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
 
   default:
     handle_ = ::SSL_CTX_new(0);
@@ -388,9 +388,9 @@ context::~context()
   {
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
     void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     void* cb_userdata = handle_->default_passwd_callback_userdata;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     if (cb_userdata)
     {
       detail::password_callback_base* callback =
@@ -399,9 +399,9 @@ context::~context()
       delete callback;
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
       ::SSL_CTX_set_default_passwd_cb_userdata(handle_, 0);
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
       handle_->default_passwd_callback_userdata = 0;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     }
 
     if (SSL_CTX_get_app_data(handle_))
@@ -737,10 +737,10 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
     pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
     void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     pem_password_cb* callback = handle_->default_passwd_callback;
     void* cb_userdata = handle_->default_passwd_callback_userdata;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     x509_cleanup cert = {
       ::PEM_read_bio_X509_AUX(bio.p, 0,
           callback,
@@ -769,7 +769,7 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
       ::sk_X509_pop_free(handle_->extra_certs, X509_free);
       handle_->extra_certs = 0;
     }
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10002000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10002000L && !defined(LIBRESSL_VERSION_NUMBER))
 
     while (X509* cacert = ::PEM_read_bio_X509(bio.p, 0,
           callback,
@@ -841,10 +841,10 @@ ASIO_SYNC_OP_VOID context::use_private_key(
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
     pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
     void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     pem_password_cb* callback = handle_->default_passwd_callback;
     void* cb_userdata = handle_->default_passwd_callback_userdata;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
 
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
@@ -908,10 +908,10 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
     pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
     void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
     pem_password_cb* callback = handle_->default_passwd_callback;
     void* cb_userdata = handle_->default_passwd_callback_userdata;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
 
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
@@ -1147,10 +1147,10 @@ ASIO_SYNC_OP_VOID context::do_set_password_callback(
 #if (OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER)
   void* old_callback = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
   ::SSL_CTX_set_default_passwd_cb_userdata(handle_, callback);
-#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
   void* old_callback = handle_->default_passwd_callback_userdata;
   handle_->default_passwd_callback_userdata = callback;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER))
 
   if (old_callback)
     delete static_cast<detail::password_callback_base*>(
