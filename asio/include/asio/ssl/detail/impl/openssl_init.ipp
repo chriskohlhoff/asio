@@ -35,7 +35,7 @@ class openssl_init_base::do_init
 public:
   do_init()
   {
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
     ::SSL_library_init();
     ::SSL_load_error_strings();        
     ::OpenSSL_add_all_algorithms();
@@ -44,7 +44,7 @@ public:
     for (size_t i = 0; i < mutexes_.size(); ++i)
       mutexes_[i].reset(new asio::detail::mutex);
     ::CRYPTO_set_locking_callback(&do_init::openssl_locking_func);
-#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
 #if (OPENSSL_VERSION_NUMBER < 0x10000000L)
     ::CRYPTO_set_id_callback(&do_init::openssl_id_func);
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
@@ -67,15 +67,15 @@ public:
 #if (OPENSSL_VERSION_NUMBER < 0x10000000L)
     ::CRYPTO_set_id_callback(0);
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
     ::CRYPTO_set_locking_callback(0);
     ::ERR_free_strings();
     ::EVP_cleanup();
     ::CRYPTO_cleanup_all_ex_data();
-#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
 #if (OPENSSL_VERSION_NUMBER < 0x10000000L)
     ::ERR_remove_state(0);
-#elif (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#elif (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
     ::ERR_remove_thread_state(NULL);
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 #if (OPENSSL_VERSION_NUMBER >= 0x10002000L) \
@@ -87,10 +87,10 @@ public:
     ::CONF_modules_unload(1);
 #endif // !defined(OPENSSL_IS_BORINGSSL)
 #if !defined(OPENSSL_NO_ENGINE) \
-  && (OPENSSL_VERSION_NUMBER < 0x10100000L)
+  && (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
     ::ENGINE_cleanup();
 #endif // !defined(OPENSSL_NO_ENGINE)
-       // && (OPENSSL_VERSION_NUMBER < 0x10100000L)
+       // && (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
   }
 
 #if !defined(SSL_OP_NO_COMPRESSION) \
@@ -116,7 +116,7 @@ private:
   }
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
   static void openssl_locking_func(int mode, int n, 
     const char* /*file*/, int /*line*/)
   {
@@ -129,7 +129,7 @@ private:
   // Mutexes to be used in locking callbacks.
   std::vector<asio::detail::shared_ptr<
         asio::detail::mutex> > mutexes_;
-#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#endif // (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER))
 
 #if !defined(SSL_OP_NO_COMPRESSION) \
   && (OPENSSL_VERSION_NUMBER >= 0x00908000L)
