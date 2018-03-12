@@ -22,6 +22,7 @@
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
 #include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
@@ -44,12 +45,21 @@ public:
   {
   }
 
+  void operator()()
+  {
+    handler_();
+  }
+
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-  template <typename... Args>
-  void operator()(ASIO_MOVE_ARG(Args)... args)
+  template <typename Arg, typename... Args>
+  typename enable_if<
+    !is_same<typename decay<Arg>::type, asio::error_code>::value
+  >::type
+  operator()(ASIO_MOVE_ARG(Arg) arg, ASIO_MOVE_ARG(Args)... args)
   {
-    handler_(ASIO_MOVE_CAST(Args)(args)...);
+    handler_(ASIO_MOVE_CAST(Arg)(arg),
+        ASIO_MOVE_CAST(Args)(args)...);
   }
 
   template <typename... Args>
@@ -62,9 +72,13 @@ public:
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-  void operator()()
+  template <typename Arg>
+  typename enable_if<
+    !is_same<typename decay<Arg>::type, asio::error_code>::value
+  >::type
+  operator()(ASIO_MOVE_ARG(Arg) arg)
   {
-    handler_();
+    handler_(ASIO_MOVE_CAST(Arg)(arg));
   }
 
   void operator()(const asio::error_code& ec)
@@ -74,10 +88,14 @@ public:
   }
 
 #define ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  void operator()(ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  template <typename Arg, ASIO_VARIADIC_TPARAMS(n)> \
+  typename enable_if< \
+    !is_same<typename decay<Arg>::type, asio::error_code>::value \
+  >::type \
+  operator()(ASIO_MOVE_ARG(Arg) arg, ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    handler_(ASIO_VARIADIC_MOVE_ARGS(n)); \
+    handler_(ASIO_MOVE_CAST(Arg)(arg), \
+        ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
   template <ASIO_VARIADIC_TPARAMS(n)> \
