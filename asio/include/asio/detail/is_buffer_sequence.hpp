@@ -112,7 +112,7 @@ template <typename T>
 char prepare_memfn_helper(
     buffer_sequence_memfns_check<
       void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::data>*);
+      &buffer_sequence_memfns_derived<T>::prepare>*);
 
 template <typename>
 char (&commit_memfn_helper(...))[2];
