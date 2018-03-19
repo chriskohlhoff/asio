@@ -509,23 +509,26 @@ ASIO_SYNC_OP_VOID context::add_certificate_authority(
   bio_cleanup bio = { make_buffer_bio(ca) };
   if (bio.p)
   {
-    x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
-    if (cert.p)
+    if (X509_STORE* store = ::SSL_CTX_get_cert_store(handle_))
     {
-      if (X509_STORE* store = ::SSL_CTX_get_cert_store(handle_))
+      for (;;)
       {
-        if (::X509_STORE_add_cert(store, cert.p) == 1)
+        x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
+        if (!cert.p)
+          break;
+
+        if (::X509_STORE_add_cert(store, cert.p) != 1)
         {
-          ec = asio::error_code();
+          ec = asio::error_code(
+              static_cast<int>(::ERR_get_error()),
+              asio::error::get_ssl_category());
           ASIO_SYNC_OP_VOID_RETURN(ec);
         }
       }
     }
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = asio::error_code();
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
