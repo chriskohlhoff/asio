@@ -323,12 +323,4 @@ int main(int argc, char* argv[])
   std::cout << "sort took ";
   std::cout << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
   std::cout << " microseconds" << std::endl;
-
-#ifdef DEBUG
-  for(size_t i = 0; i < vec.size() - 1; i++)
-  {
-    assert(vec[i] <= vec[i + 1]);
-  }
-#endif
-
 }
