@@ -626,7 +626,7 @@ inline void asio_handler_invoke(const Function& f,
   ex.dispatch(f, std::allocator<void>());
 }
 
-// Helper base class for async_result specialization.
+// Helper base class for async_result specialisation.
 template <typename Signature, typename Allocator>
 class promise_async_result
 {
@@ -740,7 +740,7 @@ inline void asio_handler_invoke(const Function& f,
   ex.dispatch(f, std::allocator<void>());
 }
 
-// Helper base class for async_result specialization.
+// Helper base class for async_result specialisation.
 template <typename Function, typename Allocator, typename Result>
 class packaged_async_result
 {

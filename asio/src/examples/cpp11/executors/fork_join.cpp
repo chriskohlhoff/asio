@@ -6,7 +6,6 @@
 #include <mutex>
 #include <queue>
 #include <thread>
-#include <numeric>
 
 using asio::dispatch;
 using asio::execution_context;
@@ -100,14 +99,14 @@ private:
   }
 
   // Increment outstanding work.
-  void do_work_started(const std::shared_ptr<std::size_t>& work_count) ASIO_NOEXCEPT
+  void do_work_started(const std::shared_ptr<std::size_t>& work_count) noexcept
   {
     if (++(*work_count) == 1)
       ++use_count_;
   }
 
   // Decrement outstanding work. Notify waiting threads if we run out.
-  void do_work_finished(const std::shared_ptr<std::size_t>& work_count) ASIO_NOEXCEPT
+  void do_work_finished(const std::shared_ptr<std::size_t>& work_count) noexcept
   {
     if (--(*work_count) == 0)
     {
@@ -173,18 +172,18 @@ public:
   {
   }
 
-  fork_join_pool& context() const ASIO_NOEXCEPT
+  fork_join_pool& context() const noexcept
   {
     return context_;
   }
 
-  void on_work_started() const ASIO_NOEXCEPT
+  void on_work_started() const noexcept
   {
     std::lock_guard<std::mutex> lock(context_.mutex_);
     context_.do_work_started(work_count_);
   }
 
-  void on_work_finished() const ASIO_NOEXCEPT
+  void on_work_finished() const noexcept
   {
     std::lock_guard<std::mutex> lock(context_.mutex_);
     context_.do_work_finished(work_count_);
@@ -215,13 +214,13 @@ public:
   }
 
   friend bool operator==(const fork_executor& a,
-      const fork_executor& b) ASIO_NOEXCEPT
+      const fork_executor& b) noexcept
   {
     return a.work_count_ == b.work_count_;
   }
 
   friend bool operator!=(const fork_executor& a,
-      const fork_executor& b) ASIO_NOEXCEPT
+      const fork_executor& b) noexcept
   {
     return a.work_count_ != b.work_count_;
   }

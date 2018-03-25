@@ -16,23 +16,23 @@ public:
   class executor_type
   {
   public:
-    executor_type(priority_scheduler& ctx, int pri) ASIO_NOEXCEPT
+    executor_type(priority_scheduler& ctx, int pri) noexcept
       : context_(ctx), priority_(pri)
     {
     }
 
-    priority_scheduler& context() const ASIO_NOEXCEPT
+    priority_scheduler& context() const noexcept
     {
       return context_;
     }
 
-    void on_work_started() const ASIO_NOEXCEPT
+    void on_work_started() const noexcept
     {
       // This executor doesn't count work. Instead, the scheduler simply runs
       // until explicitly stopped.
     }
 
-    void on_work_finished() const ASIO_NOEXCEPT
+    void on_work_finished() const noexcept
     {
       // This executor doesn't count work. Instead, the scheduler simply runs
       // until explicitly stopped.
@@ -63,13 +63,13 @@ public:
     }
 
     friend bool operator==(const executor_type& a,
-        const executor_type& b) ASIO_NOEXCEPT
+        const executor_type& b) noexcept
     {
       return &a.context_ == &b.context_;
     }
 
     friend bool operator!=(const executor_type& a,
-        const executor_type& b) ASIO_NOEXCEPT
+        const executor_type& b) noexcept
     {
       return &a.context_ != &b.context_;
     }
@@ -79,7 +79,7 @@ public:
     int priority_;
   };
 
-  executor_type get_executor(int pri = 0) ASIO_NOEXCEPT
+  executor_type get_executor(int pri = 0) noexcept
   {
     return executor_type(*const_cast<priority_scheduler*>(this), pri);
   }

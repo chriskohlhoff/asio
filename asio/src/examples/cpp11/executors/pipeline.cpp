@@ -11,7 +11,6 @@
 #include <queue>
 #include <thread>
 #include <vector>
-#include <cctype>
 
 using asio::execution_context;
 using asio::executor_binder;
@@ -55,17 +54,17 @@ private:
   };
 
 public:
-  execution_context& context() const ASIO_NOEXCEPT
+  execution_context& context() const noexcept
   {
     return system_executor().context();
   }
 
-  void on_work_started() const ASIO_NOEXCEPT
+  void on_work_started() const noexcept
   {
     // This executor doesn't count work.
   }
 
-  void on_work_finished() const ASIO_NOEXCEPT
+  void on_work_finished() const noexcept
   {
     // This executor doesn't count work.
   }
@@ -90,13 +89,13 @@ public:
   }
 
   friend bool operator==(const thread_executor&,
-      const thread_executor&) ASIO_NOEXCEPT
+      const thread_executor&) noexcept
   {
     return true;
   }
 
   friend bool operator!=(const thread_executor&,
-      const thread_executor&) ASIO_NOEXCEPT
+      const thread_executor&) noexcept
   {
     return false;
   }

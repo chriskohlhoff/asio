@@ -166,7 +166,7 @@ void test()
     ip::multicast::join_group join_group(multicast_address_v4);
     sock_v4.set_option(join_group, ec);
     ASIO_CHECK_MESSAGE(!ec || ec == error::no_such_device,
-                       ec.value() << ", " << ec.message() << ": " << multicast_address_v4);
+                       ec.value() << ", " << ec.message());
 
     if (!ec)
     {
