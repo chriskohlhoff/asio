@@ -351,6 +351,10 @@ namespace detail {
   template <typename Handler, typename Function>
   struct spawn_data : private noncopyable
   {
+    typedef typename decay<Handler>::type handler_type;
+    typedef typename decay<Function>::type function_type;
+    typedef typename basic_yield_context<handler_type>::callee_type callee_type;
+
     spawn_data(ASIO_MOVE_ARG(Handler) handler,
         bool call_handler, ASIO_MOVE_ARG(Function) function)
       : handler_(ASIO_MOVE_CAST(Handler)(handler)),
@@ -359,22 +363,25 @@ namespace detail {
     {
     }
 
-    weak_ptr<typename basic_yield_context<Handler>::callee_type> coro_;
-    Handler handler_;
+    weak_ptr<callee_type> coro_;
+    handler_type handler_;
     bool call_handler_;
-    Function function_;
+    function_type function_;
   };
 
   template <typename Handler, typename Function>
   struct coro_entry_point
   {
-    void operator()(typename basic_yield_context<Handler>::caller_type& ca)
+    typedef typename decay<Handler>::type handler_type;
+    typedef typename basic_yield_context<handler_type>::caller_type caller_type;
+
+    void operator()(caller_type& ca)
     {
       shared_ptr<spawn_data<Handler, Function> > data(data_);
 #if !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2)
       ca(); // Yield until coroutine pointer has been initialised.
 #endif // !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2)
-      const basic_yield_context<Handler> yield(
+      const basic_yield_context<handler_type> yield(
           data->coro_, ca, data->handler_);
 
       (data->function_)(yield);
@@ -388,9 +395,11 @@ namespace detail {
   template <typename Handler, typename Function>
   struct spawn_helper
   {
+    typedef typename decay<Handler>::type handler_type;
+    typedef typename basic_yield_context<handler_type>::callee_type callee_type;
+
     void operator()()
     {
-      typedef typename basic_yield_context<Handler>::callee_type callee_type;
       coro_entry_point<Handler, Function> entry_point = { data_ };
       shared_ptr<callee_type> coro(new callee_type(entry_point, attributes_));
       data_->coro_ = coro;
@@ -448,9 +457,9 @@ void spawn(ASIO_MOVE_ARG(Handler) handler,
   typename associated_allocator<handler_type>::type a(
       (get_associated_allocator)(handler));
 
-  detail::spawn_helper<handler_type, Function> helper;
+  detail::spawn_helper<Handler, Function> helper;
   helper.data_.reset(
-      new detail::spawn_data<handler_type, Function>(
+      new detail::spawn_data<Handler, Function>(
         ASIO_MOVE_CAST(Handler)(handler), true,
         ASIO_MOVE_CAST(Function)(function)));
   helper.attributes_ = attributes;
