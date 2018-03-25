@@ -1,40 +1,53 @@
 # Minimum supported CMake version
-cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.2 FATAL_ERROR)
 
-# use ccache and clang-tidy if found
-find_program(CCACHE_EXECUTABLE "ccache" HINTS /opt/local/bin)
-if(CCACHE_EXECUTABLE AND NOT CMAKE_TOOLCHAIN_FILE)
-  message(STATUS "use ccache")
-  find_program(CLANGXX_EXECUTABLE "clang++" HINTS /opt/local/bin)
-  if(CLANGXX_EXECUTABLE)
-    set(GXX_EXECUTABLE ${CLANGXX_EXECUTABLE})
-  else()
-    find_program(GXX_EXECUTABLE "g++" HINTS /opt/local/bin)
-    set(CMAKE_COMPILER_IS_GNUCXX yes)
+if(CONAN_COMPILER)
+
+  # ========================================
+  project(asio VERSION ${CONAN_PACKAGE_VERSION} LANGUAGES CXX)
+  # ========================================
+
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup(TARGETS)    # this set CONAN_TARGETS
+
+else()
+
+  # use ccache and clang++ if found
+  find_program(CCACHE_EXECUTABLE "ccache" HINTS /opt/local/bin)
+  if(CCACHE_EXECUTABLE AND NOT CMAKE_TOOLCHAIN_FILE)
+    message(STATUS "use ccache")
+    find_program(CLANGXX_EXECUTABLE "clang++" HINTS /opt/local/bin)
+    if(CLANGXX_EXECUTABLE)
+      set(GXX_EXECUTABLE ${CLANGXX_EXECUTABLE})
+    else()
+      find_program(GXX_EXECUTABLE "g++" HINTS /opt/local/bin)
+      set(CMAKE_COMPILER_IS_GNUCXX yes)
+    endif()
+    if(GXX_EXECUTABLE)
+      set(CMAKE_CXX_COMPILER "${CCACHE_EXECUTABLE}" CACHE PATH "ccache" FORCE)
+      set(CMAKE_CXX_COMPILER_ARG1 ${GXX_EXECUTABLE} CACHE PATH "the real c++" FORCE)
+    endif()
   endif()
-  if(GXX_EXECUTABLE)
-    set(CMAKE_CXX_COMPILER "${CCACHE_EXECUTABLE}" CACHE PATH "ccache" FORCE)
-    set(CMAKE_CXX_COMPILER_ARG1 ${GXX_EXECUTABLE} CACHE PATH "the real c++" FORCE)
-  endif()
+
+  # ========================================
+  project(asio VERSION 1.11.0 LANGUAGES CXX)
+  # ========================================
+
 endif()
 
 
+# ========================================
 # ASIO Options
+# ========================================
 option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" OFF)
 option(ASIO_STANDALONE "Build asio without boost" ON)
+option(ASIO_BUILD_TESTS "Build asio unittest too" OFF)
 option(ASIO_BUILD_EXAMPLES "Build asio examples too" OFF)
 option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" ON)
 option(ASIO_DISABLE_KQUEUE "disable kqueue" OFF)
 option(ASIO_DISABLE_EPOLL "disable epoll" OFF)
-option(USE_CLANG_TIDY "use clang-tidy if found" OFF)
+option(ASIO_USE_CLANG_TIDY "use clang-tidy if found" OFF)
 
-
-# ========================================
-project(asio VERSION 1.11.0 LANGUAGES CXX)
-# ========================================
-
-# enable ctest
-enable_testing()
 
 #
 # Where to put all the RUNTIME targets when built.  This variable is used to
@@ -45,15 +58,16 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 
-if(WIN32)
+if(NOT CONAN_COMPILER AND WIN32)
   add_definitions(-D_WIN32_WINNT=0x0501 -D__USE_W32_SOCKETS
     -DASIO_HAS_VARIADIC_TEMPLATES -DASIO_DISABLE_CONSTEXPR)
   set(EXTRA_LIBS wsock32 ws2_32)
 else()
-  set(EXTRA_LIBS)
+  set(EXTRA_LIBS ${CONAN_TARGETS})
 endif()
 
-if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "MINGW.*")
+
+if(NOT CONAN_COMPILER AND ${CMAKE_HOST_SYSTEM_NAME} MATCHES "MINGW.*")
   add_definitions(-D_WIN32_WINNT=0x0501 -D__USE_W32_SOCKETS)
 endif()
 
@@ -72,88 +86,104 @@ if (ASIO_DISABLE_EPOLL)
   add_definitions(-DASIO_DISABLE_EPOLL)
 endif()
 
-if (USE_CLANG_TIDY)
+if (ASIO_USE_CLANG_TIDY)
   message(STATUS "use clang-tidy")
   find_program(CMAKE_CXX_CLANG_TIDY "clang-tidy" HINTS /opt/local/bin)
 endif()
 
-
-if(NOT ASIO_STANDALONE)
-  #######################################################################
-  # use boost if found
-  option(Boost_USE_MULTITHREADED "Set to OFF to use the non-multithreaded" ON)
-  option(Boost_DEBUG "Set to ON to enable debug output from FindBoost." OFF)
-  option(Boost_DETAILED_FAILURE_MSG "Set to ON to get detailed information" ON)
-  # Set Boost_NO_BOOST_CMAKE to ON to disable the search for boost-cmake.
-  set(Boost_NO_BOOST_CMAKE ON)
-  set(BOOST_ROOT "/opt/local" CACHE FILEPATH "path to the boost lib")
-  set(Boost_USE_STATIC_LIBS OFF)
-  if(WIN32)
-    set(Boost_USE_STATIC_RUNTIME OFF)
+if(NOT CONAN_COMPILER)
+  if(CMAKE_COMPILER_IS_GNUCXX OR __COMPILER_CLANG)
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wextra)
   endif()
-  find_package(Boost 1.65 COMPONENTS atomic chrono coroutine context date_time
-    thread system)
+
+
+  if(NOT ASIO_STANDALONE)
+    #######################################################################
+    # use boost if found
+    option(Boost_USE_MULTITHREADED "Set to OFF to use the non-multithreaded" ON)
+    option(Boost_DEBUG "Set to ON to enable debug output from FindBoost." OFF)
+    option(Boost_DETAILED_FAILURE_MSG "Set to ON to get detailed information" ON)
+    # Set Boost_NO_BOOST_CMAKE to ON to disable the search for boost-cmake.
+    set(Boost_NO_BOOST_CMAKE ON)
+    set(BOOST_ROOT "/opt/local" CACHE FILEPATH "path to the boost lib")
+    set(Boost_USE_STATIC_LIBS OFF)
+    if(WIN32)
+      set(Boost_USE_STATIC_RUNTIME OFF)
+    endif()
+    find_package(Boost 1.65 COMPONENTS atomic chrono coroutine context date_time
+      thread system)
+    #######################################################################
+
+    if(Boost_FOUND)
+      include_directories(${Boost_INCLUDE_DIRS})
+      link_directories(${Boost_LIBRARY_DIRS})
+      add_definitions(-DBOOST_ALL_NO_LIB=1
+                      -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
+                      ###TBD### -DASIO_HAS_BOOST_DATE_TIME=1
+      )
+      set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} )
+    endif()
+    #######################################################################
+  endif()
+
+
+  #######################################################################
+  # use openssl if found
+  set(OpenSSL_ROOT_DIR "/opt/local" CACHE FILEPATH "path to the openssl lib")
+  find_package(OpenSSL QUIET NO_MODULE HINTS ${OpenSSL_ROOT_DIR})
   #######################################################################
 
-  if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    link_directories(${Boost_LIBRARY_DIRS})
-    add_definitions(-DBOOST_ALL_NO_LIB=1
-                    -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
-                    ###TBD### -DASIO_HAS_BOOST_DATE_TIME=1
-    )
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} )
+  if(OpenSSL_FOUND)
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${openSSL_LIBRARIES})
+    message(STATUS "HAVE_OPENSSL")
+    add_definitions(-DHAVE_OPENSSL)
+    include_directories(BEFORE ${openSSL_INCLUDE_DIR})
   else()
-    if(CMAKE_COMPILER_IS_GNUCXX OR __COMPILER_CLANG)
-      set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wextra)
+    find_library(OpenSSL_LIBRARY ssl HINTS ${OpenSSL_ROOT_DIR}/lib )
+    find_library(CRYPTO_LIBRARY crypto HINTS ${OpenSSL_ROOT_DIR}/lib )
+    if(OpenSSL_LIBRARY AND CRYPTO_LIBRARY )
+      set(OpenSSL_FOUND ON)
+      message(STATUS "USE CRYPTO_LIBRARY")
+      add_definitions(-DHAVE_OPENSSL)
+      set(EXTRA_LIBS ${EXTRA_LIBS} ${OpenSSL_LIBRARY} ${CRYPTO_LIBRARY})
+      include_directories(BEFORE ${OpenSSL_ROOT_DIR}/include)
     endif()
   endif()
   #######################################################################
-endif()
-
-
-#######################################################################
-# use openssl if found
-set(OpenSSL_ROOT_DIR "/opt/local" CACHE FILEPATH "path to the openssl lib")
-find_package(OpenSSL QUIET NO_MODULE HINTS ${OpenSSL_ROOT_DIR})
-#######################################################################
-
-if(OpenSSL_FOUND)
-  set(EXTRA_LIBS ${EXTRA_LIBS} ${openSSL_LIBRARIES})
-  add_definitions(-DHAVE_OPENSSL)
-  include_directories(BEFORE ${openSSL_INCLUDE_DIR})
 else()
-  find_library(OpenSSL_LIBRARY ssl HINTS ${OpenSSL_ROOT_DIR}/lib )
-  find_library(CRYPTO_LIBRARY crypto HINTS ${OpenSSL_ROOT_DIR}/lib )
-  if(OpenSSL_LIBRARY AND CRYPTO_LIBRARY )
-    set(OpenSSL_FOUND ON)
-    add_definitions(-DHAVE_OPENSSL)
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${OpenSSL_LIBRARY} ${CRYPTO_LIBRARY})
-    include_directories(BEFORE ${OpenSSL_ROOT_DIR}/include)
-  endif()
+  message(STATUS "ASIO USE CONAN_TARGETS")
+  add_definitions(-DHAVE_OPENSSL)
 endif()
-#######################################################################
 
 
 # Installation configuration
 include(GNUInstallDirs)
-if(NOT DEFINED CMAKE_INSTALL_CMAKEDIR)
-  set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/asio)
-endif()
+set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/asio)
 
 # Interface library
 add_subdirectory(include)
 
-# Sources: examples, tests
-add_subdirectory(src)
+
+if($ENV{CONAN_RUN_TESTS})
+  set(ASIO_BUILD_TESTS ON CACHE BOOL "" FORCE)
+  message(STATUS "ASIO CONAN_RUN_TESTS")
+endif()
+
+if(ASIO_BUILD_EXAMPLES OR ASIO_BUILD_TESTS)
+  # enable ctest
+  enable_testing()
+
+  # Sources: examples, tests
+  add_subdirectory(src)
+endif()
 
 
 # Installation
 configure_file(asio-config-version.cmake.in asio-config-version.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/asio-config-version.cmake
-  DESTINATION ${CMAKE_INSTALL_CMAKEDIR})
+  DESTINATION ${ConfigPackageLocation})
 install(EXPORT asio-targets
-  DESTINATION ${CMAKE_INSTALL_CMAKEDIR}
+  DESTINATION ${ConfigPackageLocation}
   NAMESPACE asio::)
-install(FILES asio-config.cmake DESTINATION ${CMAKE_INSTALL_CMAKEDIR})
+install(FILES asio-config.cmake DESTINATION ${ConfigPackageLocation})
 

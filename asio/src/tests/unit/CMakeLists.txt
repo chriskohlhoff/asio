@@ -139,6 +139,7 @@ foreach(program ${noinst_PROGRAMS} ${null_test_PROGRAMS})
   set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 11)
 
   target_link_libraries(${target_prefix}${target} asio::standalone)
+  #NOTE: same as: conan_target_link_libraries(${target_prefix}${target})
   if(EXTRA_LIBS)
     target_link_libraries(${target_prefix}${target} ${EXTRA_LIBS})
   endif()
