@@ -234,6 +234,7 @@ CPP03_EXAMPLE_EXES = \
 	examples\cpp03\socks4\sync_client.exe \
 	examples\cpp03\timeouts\async_tcp_client.exe \
 	examples\cpp03\timeouts\blocking_tcp_client.exe \
+	examples\cpp03\timeouts\blocking_token_tcp_client.exe \
 	examples\cpp03\timeouts\blocking_udp_client.exe \
 	examples\cpp03\timeouts\server.exe \
 	examples\cpp03\timers\tick_count_timer.exe \

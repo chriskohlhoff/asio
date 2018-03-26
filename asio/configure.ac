@@ -17,7 +17,7 @@ AC_ARG_WITH(boost,
   if test "${withval}" = no; then
     STANDALONE="yes"
   else
-    CPPFLAGS="$CPPFLAGS -I${withval} -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
+    CPPFLAGS="$CPPFLAGS -I${withval} -DBOOST_CHRONO_HEADER_ONLY -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
     LIBS="$LIBS -L${withval}/stage/lib"
   fi
 ],
@@ -27,7 +27,7 @@ AC_ARG_WITH(boost,
     BOOSTDIR="`pwd`/${BOOSTDIR}"
     if test -d "${BOOSTDIR}"; then
       echo "using automatically detected boost from ${BOOSTDIR}"
-      CPPFLAGS="$CPPFLAGS -I${BOOSTDIR} -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
+      CPPFLAGS="$CPPFLAGS -I${BOOSTDIR} -DBOOST_CHRONO_HEADER_ONLY -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
       LIBS="$LIBS -L${BOOSTDIR}/stage/lib"
     fi
   fi
