@@ -1069,6 +1069,7 @@ private:
 #endif // defined(ASIO_HAS_MOVE)
 };
 
+#if !defined(ASIO_NO_DEPRECATED)
 struct legacy_resolve_handler
 {
   legacy_resolve_handler() {}
@@ -1080,6 +1081,7 @@ private:
   legacy_resolve_handler(const legacy_resolve_handler&);
 #endif // defined(ASIO_HAS_MOVE)
 };
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 void test()
 {
@@ -1182,7 +1184,9 @@ void test()
 #endif // !defined(ASIO_NO_DEPRECATED)
 
     resolver.async_resolve("", "", resolve_handler());
+#if !defined(ASIO_NO_DEPRECATED)
     resolver.async_resolve("", "", legacy_resolve_handler());
+#endif // !defined(ASIO_NO_DEPRECATED)
     int i2 = resolver.async_resolve("", "", lazy);
     (void)i2;
 #if !defined(ASIO_NO_DEPRECATED)
@@ -1192,8 +1196,10 @@ void test()
 
     resolver.async_resolve("", "",
         ip::tcp::resolver::flags(), resolve_handler());
+#if !defined(ASIO_NO_DEPRECATED)
     resolver.async_resolve("", "",
         ip::tcp::resolver::flags(), legacy_resolve_handler());
+#endif // !defined(ASIO_NO_DEPRECATED)
     int i3 = resolver.async_resolve("", "",
         ip::tcp::resolver::flags(), lazy);
     (void)i3;
@@ -1204,7 +1210,9 @@ void test()
 #endif // !defined(ASIO_NO_DEPRECATED)
 
     resolver.async_resolve(ip::tcp::v4(), "", "", resolve_handler());
+#if !defined(ASIO_NO_DEPRECATED)
     resolver.async_resolve(ip::tcp::v4(), "", "", legacy_resolve_handler());
+#endif // !defined(ASIO_NO_DEPRECATED)
     int i4 = resolver.async_resolve(ip::tcp::v4(), "", "", lazy);
     (void)i4;
 #if !defined(ASIO_NO_DEPRECATED)
@@ -1214,8 +1222,10 @@ void test()
 
     resolver.async_resolve(ip::tcp::v4(),
         "", "", ip::tcp::resolver::flags(), resolve_handler());
+#if !defined(ASIO_NO_DEPRECATED)
     resolver.async_resolve(ip::tcp::v4(),
         "", "", ip::tcp::resolver::flags(), legacy_resolve_handler());
+#endif // !defined(ASIO_NO_DEPRECATED)
     int i5 = resolver.async_resolve(ip::tcp::v4(),
         "", "", ip::tcp::resolver::flags(), lazy);
     (void)i5;
@@ -1226,7 +1236,9 @@ void test()
 #endif // !defined(ASIO_NO_DEPRECATED)
 
     resolver.async_resolve(e, resolve_handler());
+#if !defined(ASIO_NO_DEPRECATED)
     resolver.async_resolve(e, legacy_resolve_handler());
+#endif // !defined(ASIO_NO_DEPRECATED)
     int i6 = resolver.async_resolve(e, lazy);
     (void)i6;
 #if !defined(ASIO_NO_DEPRECATED)

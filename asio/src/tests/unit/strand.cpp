@@ -239,6 +239,7 @@ void strand_test()
 
 void strand_wrap_test()
 {
+#if !defined(ASIO_NO_DEPRECATED)
   io_context ioc;
   io_context::strand s(ioc);
   int count = 0;
@@ -313,6 +314,7 @@ void strand_wrap_test()
 
   // The run() calls will not return until all work has finished.
   ASIO_CHECK(count == 10);
+#endif // !defined(ASIO_NO_DEPRECATED)
 }
 
 ASIO_TEST_SUITE
