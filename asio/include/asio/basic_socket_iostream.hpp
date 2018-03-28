@@ -124,15 +124,18 @@ protected:
 // Forward declaration with defaulted arguments.
 template <typename Protocol
     ASIO_SVC_TPARAM_DEF1(= stream_socket_service<Protocol>),
-#if defined(ASIO_HAS_BOOST_DATE_TIME)
+#if defined(ASIO_HAS_BOOST_DATE_TIME) \
+  && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     typename Clock = boost::posix_time::ptime,
     typename WaitTraits = time_traits<Clock>
     ASIO_SVC_TPARAM1_DEF2(= deadline_timer_service<Clock, WaitTraits>)>
-#else
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+      // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
     typename Clock = chrono::steady_clock,
     typename WaitTraits = wait_traits<Clock>
     ASIO_SVC_TPARAM1_DEF1(= steady_timer::service_type)>
-#endif
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+       // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 class basic_socket_iostream;
 
 #endif // !defined(ASIO_BASIC_SOCKET_IOSTREAM_FWD_DECL)
@@ -154,11 +157,14 @@ class basic_socket_iostream
 private:
   // These typedefs are intended keep this class's implementation independent
   // of whether it's using Boost.DateClock, Boost.Chrono or std::chrono.
-#if defined(ASIO_HAS_BOOST_DATE_TIME)
+#if defined(ASIO_HAS_BOOST_DATE_TIME) \
+  && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
   typedef WaitTraits traits_helper;
-#else
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
+      // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
   typedef detail::chrono_time_traits<Clock, WaitTraits> traits_helper;
-#endif
+#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+       // && defined(ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM)
 
 public:
   /// The protocol type.
