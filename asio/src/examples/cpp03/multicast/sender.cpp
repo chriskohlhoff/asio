@@ -13,7 +13,6 @@
 #include <string>
 #include "asio.hpp"
 #include "boost/bind.hpp"
-#include "boost/date_time/posix_time/posix_time_types.hpp"
 
 const short multicast_port = 30001;
 const int max_message_count = 10;
@@ -42,7 +41,7 @@ public:
   {
     if (!error && message_count_ < max_message_count)
     {
-      timer_.expires_from_now(boost::posix_time::seconds(1));
+      timer_.expires_after(asio::chrono::seconds(1));
       timer_.async_wait(
           boost::bind(&sender::handle_timeout, this,
             asio::placeholders::error));
@@ -67,7 +66,7 @@ public:
 private:
   asio::ip::udp::endpoint endpoint_;
   asio::ip::udp::socket socket_;
-  asio::deadline_timer timer_;
+  asio::steady_timer timer_;
   int message_count_;
   std::string message_;
 };

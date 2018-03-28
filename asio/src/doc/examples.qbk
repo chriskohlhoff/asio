@@ -275,9 +275,8 @@ operations after a period of time.
 
 [heading Timers]
 
-Examples showing how to customise deadline_timer using different time types.
+Example showing how to customise basic_waitable_timer using a different clock type.
 
-* [@../src/examples/cpp03/timers/tick_count_timer.cpp]
 * [@../src/examples/cpp03/timers/time_t_timer.cpp]
 
 

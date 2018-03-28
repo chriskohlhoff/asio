@@ -21,32 +21,27 @@ header file.
 
 \until asio.hpp
 
-Since this example uses timers, we need to include the appropriate
-Boost.Date_Time header file for manipulating times.
-
-\until posix_time.hpp
-
 All programs that use asio need to have at least one asio::io_context object.
 This class provides access to I/O functionality. We declare an object of this
 type first thing in the main function.
 
 \until asio::io_context
 
-Next we declare an object of type asio::deadline_timer. The core asio classes
+Next we declare an object of type asio::steady_timer. The core asio classes
 that provide I/O functionality (or as in this case timer functionality) always
 take a reference to an io_context as their first constructor argument. The
 second argument to the constructor sets the timer to expire 5 seconds from now.
 
-\until asio::deadline_timer
+\until asio::steady_timer
 
 In this simple example we perform a blocking wait on the timer.
-That is, the call to asio::deadline_timer::wait() will not return until the
+That is, the call to asio::steady_timer::wait() will not return until the
 timer has expired, 5 seconds after it was created (i.e. <b>not</b> from when the
 wait starts).
 
-A deadline timer is always in one of two states: "expired" or "not expired". If
-the asio::deadline_timer::wait() function is called on an expired timer, it
-will return immediately.
+A timer is always in one of two states: "expired" or "not expired". If the
+asio::steady_timer::wait() function is called on an expired timer, it will
+return immediately.
 
 \until wait
 
@@ -77,17 +72,17 @@ asynchronous wait on the timer.
 \dontinclude timer2/timer.cpp
 \skip #include
 
-\until posix_time.hpp
+\until asio.hpp
 
 Using asio's asynchronous functionality means having a callback
 function that will be called when an asynchronous operation completes. In this
 program we define a function called <tt>print</tt> to be called when the
 asynchronous wait finishes.
 
-\until asio::deadline_timer 
+\until asio::steady_timer 
 
 Next, instead of doing a blocking wait as in tutorial Timer.1,
-we call the asio::deadline_timer::async_wait() function to perform an
+we call the asio::steady_timer::async_wait() function to perform an
 asynchronous wait. When calling this function we pass the <tt>print</tt>
 callback handler that was defined above.
 
@@ -108,7 +103,7 @@ callback has completed.
 
 It is important to remember to give the io_context some work to do before
 calling asio::io_context::run(). For example, if we had omitted the above call
-to asio::deadline_timer::async_wait(), the io_context would not have had any
+to asio::steady_timer::async_wait(), the io_context would not have had any
 work to do, and consequently asio::io_context::run() would have returned
 immediately.
 
@@ -138,7 +133,7 @@ your handler function.
 \dontinclude timer3/timer.cpp
 \skip #include
 
-\until posix_time.hpp
+\until bind.hpp
 
 To implement a repeating timer using asio you need to change
 the timer's expiry time in your callback function, and to then start a new
@@ -172,7 +167,7 @@ whole-second mark due to any delays in processing the handler.
 
 Then we start a new asynchronous wait on the timer. As you can
 see, the \ref boost_bind function is used to associate the extra parameters
-with your callback handler. The asio::deadline_timer::async_wait() function
+with your callback handler. The asio::steady_timer::async_wait() function
 expects a handler function (or function object) with the signature
 <tt>void(const asio::error_code&)</tt>. Binding the additional parameters
 converts your <tt>print</tt> function into a function object that matches the
@@ -193,10 +188,10 @@ the callback handler.
 A new <tt>count</tt> variable is added so that we can stop the
 program when the timer fires for the sixth time.
 
-\until asio::deadline_timer
+\until asio::steady_timer
 
 As in Step 4, when making the call to
-asio::deadline_timer::async_wait() from <tt>main</tt> we bind the additional
+asio::steady_timer::async_wait() from <tt>main</tt> we bind the additional
 parameters needed for the <tt>print</tt> function.
 
 \until run
@@ -230,7 +225,7 @@ tutorial Timer.3.
 \dontinclude timer4/timer.cpp
 \skip #include
 
-\until posix_time.hpp
+\until bind.hpp
 
 Instead of defining a free function <tt>print</tt> as the
 callback handler, as we did in the earlier tutorial programs, we now define a
@@ -319,7 +314,7 @@ when handlers might be accessing a shared, thread-unsafe resource.
 \dontinclude timer5/timer.cpp
 \skip #include
 
-\until posix_time.hpp
+\until bind.hpp
 
 We start by defining a class called <tt>printer</tt>, similar
 to the class in the previous tutorial. This class will extend the previous
@@ -327,7 +322,7 @@ tutorial by running two timers in parallel.
 
 \until public
 
-In addition to initialising a pair of asio::deadline_timer members, the
+In addition to initialising a pair of asio::steady_timer members, the
 constructor initialises the <tt>strand_</tt> member, an object of type
 asio::io_context::strand.
 

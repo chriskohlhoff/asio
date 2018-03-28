@@ -153,8 +153,8 @@ int main()
   client_socket.connect(acceptor.local_endpoint());
 
   // Set a deadline timer to expire immediately.
-  asio::deadline_timer timer(io_context);
-  timer.expires_at(boost::posix_time::neg_infin);
+  asio::steady_timer timer(io_context);
+  timer.expires_at(asio::steady_timer::time_point::min());
   timer.async_wait(pri_queue.wrap(42, middle_priority_handler));
 
   while (io_context.run_one())

@@ -198,7 +198,7 @@ public:
       sessions_(),
       stats_()
   {
-    stop_timer_.expires_from_now(boost::posix_time::seconds(timeout));
+    stop_timer_.expires_after(asio::chrono::seconds(timeout));
     stop_timer_.async_wait(boost::bind(&client::handle_timeout, this));
 
     for (size_t i = 0; i < session_count; ++i)
@@ -228,7 +228,7 @@ public:
 
 private:
   asio::io_context& io_context_;
-  asio::deadline_timer stop_timer_;
+  asio::steady_timer stop_timer_;
   std::list<session*> sessions_;
   stats stats_;
 };

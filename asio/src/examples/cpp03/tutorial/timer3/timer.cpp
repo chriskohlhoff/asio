@@ -11,17 +11,16 @@
 #include <iostream>
 #include <asio.hpp>
 #include <boost/bind.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 void print(const asio::error_code& /*e*/,
-    asio::deadline_timer* t, int* count)
+    asio::steady_timer* t, int* count)
 {
   if (*count < 5)
   {
     std::cout << *count << std::endl;
     ++(*count);
 
-    t->expires_at(t->expires_at() + boost::posix_time::seconds(1));
+    t->expires_at(t->expiry() + asio::chrono::seconds(1));
     t->async_wait(boost::bind(print,
           asio::placeholders::error, t, count));
   }
@@ -32,7 +31,7 @@ int main()
   asio::io_context io;
 
   int count = 0;
-  asio::deadline_timer t(io, boost::posix_time::seconds(1));
+  asio::steady_timer t(io, asio::chrono::seconds(1));
   t.async_wait(boost::bind(print,
         asio::placeholders::error, &t, &count));
 

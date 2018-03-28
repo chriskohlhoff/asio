@@ -245,8 +245,7 @@ EXTRA_DIST = \
 	ssl/README \
 	ssl/ca.pem \
 	ssl/server.pem \
-	ssl/dh2048.pem \
-	timers/tick_count_timer.cpp
+	ssl/dh2048.pem
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

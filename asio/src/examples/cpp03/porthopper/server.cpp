@@ -22,7 +22,7 @@ using asio::ip::tcp;
 using asio::ip::udp;
 
 typedef boost::shared_ptr<tcp::socket> tcp_socket_ptr;
-typedef boost::shared_ptr<asio::deadline_timer> timer_ptr;
+typedef boost::shared_ptr<asio::steady_timer> timer_ptr;
 typedef boost::shared_ptr<control_request> control_request_ptr;
 
 class server
@@ -43,7 +43,7 @@ public:
           asio::placeholders::error, new_socket));
 
     // Start the timer used to generate outgoing frames.
-    timer_.expires_from_now(boost::posix_time::milliseconds(100));
+    timer_.expires_after(asio::chrono::milliseconds(100));
     timer_.async_wait(boost::bind(&server::handle_timer, this));
   }
 
@@ -75,8 +75,8 @@ public:
     {
       // Delay handling of the control request to simulate network latency.
       timer_ptr delay_timer(
-          new asio::deadline_timer(acceptor_.get_executor().context()));
-      delay_timer->expires_from_now(boost::posix_time::seconds(2));
+          new asio::steady_timer(acceptor_.get_executor().context()));
+      delay_timer->expires_after(asio::chrono::seconds(2));
       delay_timer->async_wait(
           boost::bind(&server::handle_control_request_timer, this,
             socket, request, delay_timer));
@@ -142,7 +142,7 @@ public:
     }
 
     // Wait for next timeout.
-    timer_.expires_from_now(boost::posix_time::milliseconds(100));
+    timer_.expires_after(asio::chrono::milliseconds(100));
     timer_.async_wait(boost::bind(&server::handle_timer, this));
   }
 
@@ -151,7 +151,7 @@ private:
   tcp::acceptor acceptor_;
 
   // The timer used for generating data.
-  asio::deadline_timer timer_;
+  asio::steady_timer timer_;
 
   // The socket used to send data to subscribers.
   udp::socket udp_socket_;

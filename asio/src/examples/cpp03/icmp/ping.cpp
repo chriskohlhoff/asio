@@ -18,8 +18,8 @@
 #include "ipv4_header.hpp"
 
 using asio::ip::icmp;
-using asio::deadline_timer;
-namespace posix_time = boost::posix_time;
+using asio::steady_timer;
+namespace chrono = asio::chrono;
 
 class pinger
 {
@@ -53,12 +53,12 @@ private:
     os << echo_request << body;
 
     // Send the request.
-    time_sent_ = posix_time::microsec_clock::universal_time();
+    time_sent_ = steady_timer::clock_type::now();
     socket_.send_to(request_buffer.data(), destination_);
 
     // Wait up to five seconds for a reply.
     num_replies_ = 0;
-    timer_.expires_at(time_sent_ + posix_time::seconds(5));
+    timer_.expires_at(time_sent_ + chrono::seconds(5));
     timer_.async_wait(boost::bind(&pinger::handle_timeout, this));
   }
 
@@ -68,7 +68,7 @@ private:
       std::cout << "Request timed out" << std::endl;
 
     // Requests must be sent no less than one second apart.
-    timer_.expires_at(time_sent_ + posix_time::seconds(1));
+    timer_.expires_at(time_sent_ + chrono::seconds(1));
     timer_.async_wait(boost::bind(&pinger::start_send, this));
   }
 
@@ -106,12 +106,14 @@ private:
         timer_.cancel();
 
       // Print out some information about the reply packet.
-      posix_time::ptime now = posix_time::microsec_clock::universal_time();
+      chrono::steady_clock::time_point now = chrono::steady_clock::now();
+      chrono::steady_clock::duration elapsed = now - time_sent_;
       std::cout << length - ipv4_hdr.header_length()
         << " bytes from " << ipv4_hdr.source_address()
         << ": icmp_seq=" << icmp_hdr.sequence_number()
         << ", ttl=" << ipv4_hdr.time_to_live()
-        << ", time=" << (now - time_sent_).total_milliseconds() << " ms"
+        << ", time="
+        << chrono::duration_cast<chrono::milliseconds>(elapsed).count()
         << std::endl;
     }
 
@@ -130,9 +132,9 @@ private:
   icmp::resolver resolver_;
   icmp::endpoint destination_;
   icmp::socket socket_;
-  deadline_timer timer_;
+  steady_timer timer_;
   unsigned short sequence_number_;
-  posix_time::ptime time_sent_;
+  chrono::steady_clock::time_point time_sent_;
   asio::streambuf reply_buffer_;
   std::size_t num_replies_;
 };
