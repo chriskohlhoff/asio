@@ -62,7 +62,7 @@ public:
   typedef typename protocol_type::endpoint endpoint_type;
 
   /// The type of a value in the results range.
-  typedef basic_resolver_entry<endpoint_type> value_type;
+  typedef basic_resolver_entry<protocol_type> value_type;
 
   /// The type of a const reference to a value in the range.
   typedef const value_type& const_reference;
