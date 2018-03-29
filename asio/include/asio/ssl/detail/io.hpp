@@ -114,7 +114,7 @@ public:
   io_op(io_op&& other)
     : next_layer_(other.next_layer_),
       core_(other.core_),
-      op_(other.op_),
+      op_(ASIO_MOVE_CAST(Operation)(other.op_)),
       start_(other.start_),
       want_(other.want_),
       ec_(other.ec_),
