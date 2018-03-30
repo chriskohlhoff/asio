@@ -244,7 +244,7 @@ public:
   explicit async_result(
     typename detail::coro_async_result<Handler,
       typename decay<Arg1>::type>::completion_handler_type& h)
-    : detail::coro_async_result<Handler, Arg1>(h)
+    : detail::coro_async_result<Handler, typename decay<Arg1>::type>(h)
   {
   }
 };
@@ -272,7 +272,7 @@ public:
   explicit async_result(
     typename detail::coro_async_result<Handler,
       typename decay<Arg2>::type>::completion_handler_type& h)
-    : detail::coro_async_result<Handler, Arg2>(h)
+    : detail::coro_async_result<Handler, typename decay<Arg2>::type>(h)
   {
   }
 };
