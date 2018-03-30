@@ -207,7 +207,7 @@ ASIO_DECL network_v4 make_network_v4(const std::string& str);
 ASIO_DECL network_v4 make_network_v4(
     const std::string& str, asio::error_code& ec);
 
-#if defined(ASIO_HAS_STD_STRING_VIEW) \
+#if defined(ASIO_HAS_STRING_VIEW) \
   || defined(GENERATING_DOCUMENTATION)
 
 /// Create an IPv4 network from a string containing IP address and prefix
@@ -225,7 +225,7 @@ ASIO_DECL network_v4 make_network_v4(string_view str);
 ASIO_DECL network_v4 make_network_v4(
     string_view str, asio::error_code& ec);
 
-#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(ASIO_HAS_STRING_VIEW)
        //  || defined(GENERATING_DOCUMENTATION)
 
 #if !defined(ASIO_NO_IOSTREAM)

@@ -1475,7 +1475,7 @@ inline ASIO_CONST_BUFFER buffer(
       );
 }
 
-#if defined(ASIO_HAS_STD_STRING_VIEW) \
+#if defined(ASIO_HAS_STRING_VIEW) \
   || defined(GENERATING_DOCUMENTATION)
 
 /// Create a new modifiable buffer that represents the given string_view.
@@ -1520,7 +1520,7 @@ inline ASIO_CONST_BUFFER buffer(
       );
 }
 
-#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(ASIO_HAS_STRING_VIEW)
        //  || defined(GENERATING_DOCUMENTATION)
 
 /*@}*/

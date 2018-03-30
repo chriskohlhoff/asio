@@ -266,7 +266,7 @@ ASIO_DECL address_v6 make_address_v6(const std::string& str);
 ASIO_DECL address_v6 make_address_v6(
     const std::string& str, asio::error_code& ec);
 
-#if defined(ASIO_HAS_STD_STRING_VIEW) \
+#if defined(ASIO_HAS_STRING_VIEW) \
   || defined(GENERATING_DOCUMENTATION)
 
 /// Create an IPv6 address from an IP address string.
@@ -282,7 +282,7 @@ ASIO_DECL address_v6 make_address_v6(string_view str);
 ASIO_DECL address_v6 make_address_v6(
     string_view str, asio::error_code& ec);
 
-#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(ASIO_HAS_STRING_VIEW)
        //  || defined(GENERATING_DOCUMENTATION)
 
 /// Tag type used for distinguishing overloads that deal in IPv4-mapped IPv6

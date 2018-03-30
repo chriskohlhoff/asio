@@ -62,12 +62,10 @@ void test()
     std::vector<mutable_buffer> mutable_buffer_sequence;
     std::vector<const_buffer> const_buffer_sequence;
 #if defined(ASIO_HAS_STD_STRING_VIEW)
-# if defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
-    std::experimental::string_view string_view_data(string_data);
-# else // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
     std::string_view string_view_data(string_data);
-# endif // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
-#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+#elif defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    std::experimental::string_view string_view_data(string_data);
+#endif // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
 
     // mutable_buffer constructors.
 
@@ -204,10 +202,10 @@ void test()
     mb1 = buffer(string_data, 1024);
     cb1 = buffer(const_string_data);
     cb1 = buffer(const_string_data, 1024);
-#if defined(ASIO_HAS_STD_STRING_VIEW)
+#if defined(ASIO_HAS_STRING_VIEW)
     cb1 = buffer(string_view_data);
     cb1 = buffer(string_view_data, 1024);
-#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(ASIO_HAS_STRING_VIEW)
 
     // buffer_copy function overloads.
 

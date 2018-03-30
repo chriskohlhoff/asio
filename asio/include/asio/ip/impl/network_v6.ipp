@@ -161,7 +161,7 @@ network_v6 make_network_v6(const std::string& str,
   return network_v6(addr, static_cast<unsigned short>(prefix_len));
 }
 
-#if defined(ASIO_HAS_STD_STRING_VIEW)
+#if defined(ASIO_HAS_STRING_VIEW)
 
 network_v6 make_network_v6(string_view str)
 {
@@ -174,7 +174,7 @@ network_v6 make_network_v6(string_view str,
   return make_network_v6(static_cast<std::string>(str), ec);
 }
 
-#endif // defined(ASIO_HAS_STD_STRING_VIEW)
+#endif // defined(ASIO_HAS_STRING_VIEW)
 
 } // namespace ip
 } // namespace asio
