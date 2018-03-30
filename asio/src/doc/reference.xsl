@@ -65,6 +65,7 @@
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
 [include requirements/IteratorConnectHandler.qbk]
+[include requirements/LegacyCompletionHandler.qbk]
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MutableBufferSequence.qbk]
 [include requirements/ProtoAllocator.qbk]

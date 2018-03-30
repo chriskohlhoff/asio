@@ -127,7 +127,7 @@ struct handler_type_requirements
 {
 };
 
-#define ASIO_COMPLETION_HANDLER_CHECK( \
+#define ASIO_LEGACY_COMPLETION_HANDLER_CHECK( \
     handler_type, handler) \
   \
   typedef ASIO_HANDLER_TYPE(handler_type, \
@@ -492,7 +492,7 @@ struct handler_type_requirements
 
 #else // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
-#define ASIO_COMPLETION_HANDLER_CHECK( \
+#define ASIO_LEGACY_COMPLETION_HANDLER_CHECK( \
     handler_type, handler) \
   typedef int ASIO_UNUSED_TYPEDEF
 

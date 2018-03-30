@@ -7,8 +7,8 @@
 
 [section:Handler Handlers]
 
-A handler must meet the requirements of `CopyConstructible` types (C++ Std,
-20.1.3).
+A handler must meet the requirements of `MoveConstructible` types (C++Std
+[moveconstructible]).
 
 In the table below, `X` denotes a handler class, `h` denotes a value of `X`,
 `p` denotes a pointer to a block of allocated memory of type `void*`, `s`
