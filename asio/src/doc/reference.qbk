@@ -38,6 +38,7 @@
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
 [include requirements/IteratorConnectHandler.qbk]
+[include requirements/LegacyCompletionHandler.qbk]
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MutableBufferSequence.qbk]
 [include requirements/ProtoAllocator.qbk]
@@ -1380,7 +1381,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       DynamicBuffer && buffers,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload3 more...]]``
 
   template<
@@ -1393,7 +1394,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_read.overload4 more...]]``
 
   template<
@@ -1607,7 +1608,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       AsyncReadStream & s,
       DynamicBuffer && buffers,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -1682,7 +1683,7 @@ Start an asynchronous operation to read a certain amount of data from a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       ReadHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to asynchronously read a certain number of bytes of data from a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -3692,7 +3693,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       AsyncWriteStream & s,
       DynamicBuffer && buffers,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload3 more...]]``
 
   template<
@@ -3705,7 +3706,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.async_write.overload4 more...]]``
 
   template<
@@ -3906,7 +3907,7 @@ Start an asynchronous operation to write all of the supplied data to a stream.
       AsyncWriteStream & s,
       DynamicBuffer && buffers,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -3967,7 +3968,7 @@ Start an asynchronous operation to write a certain amount of data to a stream.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       WriteHandler && handler,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to asynchronously write a certain number of bytes of data to a stream. The function call always returns immediately. The asynchronous operation will continue until one of the following conditions is true:
@@ -61667,9 +61668,9 @@ This function is implemented as follows:
 
 
   template<
-      typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
+      typename ``[link asio.reference.LegacyCompletionHandler LegacyCompletionHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` dispatch(
-      CompletionHandler && handler);
+      LegacyCompletionHandler && handler);
 
 
 This function is used to ask the [link asio.reference.io_context `io_context`] to execute the given handler.
@@ -62148,9 +62149,9 @@ The number of handlers that were executed.
 
 
   template<
-      typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
+      typename ``[link asio.reference.LegacyCompletionHandler LegacyCompletionHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` post(
-      CompletionHandler && handler);
+      LegacyCompletionHandler && handler);
 
 
 This function is used to ask the [link asio.reference.io_context `io_context`] to execute the given handler, but without allowing the [link asio.reference.io_context `io_context`] to call the handler from inside this function.
@@ -63482,9 +63483,9 @@ Request the strand to invoke the given function object.
 
 
   template<
-      typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
+      typename ``[link asio.reference.LegacyCompletionHandler LegacyCompletionHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.io_context__strand.dispatch.overload2 dispatch]``(
-      CompletionHandler && handler);
+      LegacyCompletionHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.io_context__strand.dispatch.overload2 more...]]``
 
 
@@ -63534,9 +63535,9 @@ This function is used to ask the strand to execute the given function object on 
 
 
   template<
-      typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
+      typename ``[link asio.reference.LegacyCompletionHandler LegacyCompletionHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` dispatch(
-      CompletionHandler && handler);
+      LegacyCompletionHandler && handler);
 
 
 This function is used to ask the strand to execute the given handler.
@@ -63712,9 +63713,9 @@ Request the strand to invoke the given function object.
 
 
   template<
-      typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
+      typename ``[link asio.reference.LegacyCompletionHandler LegacyCompletionHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.io_context__strand.post.overload2 post]``(
-      CompletionHandler && handler);
+      LegacyCompletionHandler && handler);
   ``  [''''&raquo;''' [link asio.reference.io_context__strand.post.overload2 more...]]``
 
 
@@ -63764,9 +63765,9 @@ This function is used to ask the executor to execute the given function object. 
 
 
   template<
-      typename ``[link asio.reference.CompletionHandler CompletionHandler]``>
+      typename ``[link asio.reference.LegacyCompletionHandler LegacyCompletionHandler]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` post(
-      CompletionHandler && handler);
+      LegacyCompletionHandler && handler);
 
 
 This function is used to ask the strand to execute the given handler, but without allowing the strand to call the handler from inside this function.
@@ -76702,7 +76703,7 @@ Swap the results range with another.
 The type of a value in the results range. 
 
 
-  typedef basic_resolver_entry< endpoint_type > value_type;
+  typedef basic_resolver_entry< protocol_type > value_type;
 
 
 [heading Types]
@@ -90427,7 +90428,7 @@ Attempt to read a certain amount of data from a stream before returning.
   std::size_t ``[link asio.reference.read.overload5 read]``(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload5 more...]]``
 
   template<
@@ -90437,7 +90438,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload6 more...]]``
 
   template<
@@ -90448,7 +90449,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload7 more...]]``
 
   template<
@@ -90460,7 +90461,7 @@ Attempt to read a certain amount of data from a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.read.overload8 more...]]``
 
   template<
@@ -90825,7 +90826,7 @@ Attempt to read a certain amount of data from a stream before returning.
   std::size_t read(
       SyncReadStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -90897,7 +90898,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -90962,7 +90963,7 @@ Attempt to read a certain amount of data from a stream before returning.
       SyncReadStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -91036,7 +91037,7 @@ Attempt to read a certain amount of data from a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to read a certain number of bytes of data from a stream. The call will block until one of the following conditions is true:
@@ -113214,7 +113215,7 @@ Write a certain amount of data to a stream before returning.
   std::size_t ``[link asio.reference.write.overload5 write]``(
       SyncWriteStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload5 more...]]``
 
   template<
@@ -113224,7 +113225,7 @@ Write a certain amount of data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload6 more...]]``
 
   template<
@@ -113235,7 +113236,7 @@ Write a certain amount of data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload7 more...]]``
 
   template<
@@ -113247,7 +113248,7 @@ Write a certain amount of data to a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.write.overload8 more...]]``
 
   template<
@@ -113612,7 +113613,7 @@ Write all of the supplied data to a stream before returning.
   std::size_t write(
       SyncWriteStream & s,
       DynamicBuffer && buffers,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -113684,7 +113685,7 @@ Write all of the supplied data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -113749,7 +113750,7 @@ Write a certain amount of data to a stream before returning.
       SyncWriteStream & s,
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:
@@ -113823,7 +113824,7 @@ Write a certain amount of data to a stream before returning.
       DynamicBuffer && buffers,
       CompletionCondition completion_condition,
       asio::error_code & ec,
-      typename enable_if< is_dynamic_buffer< DynamicBuffer >::value >::type *  = 0);
+      typename enable_if< is_dynamic_buffer< typename decay< DynamicBuffer >::type >::value >::type *  = 0);
 
 
 This function is used to write a certain number of bytes of data to a stream. The call will block until one of the following conditions is true:

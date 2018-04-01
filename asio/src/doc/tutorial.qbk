@@ -81,13 +81,6 @@ All of the asio classes can be used by simply including the `"asio.hpp"` header 
 
 
 
-Since this example uses timers, we need to include the appropriate Boost.Date\_Time header file for manipulating times.
-
-
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
-
-
-
 All programs that use asio need to have at least one 
 [link asio.reference.io_context io_context] object. This class provides access to I/O functionality. We declare an object of this type first thing in the main function.
 
@@ -99,17 +92,17 @@ All programs that use asio need to have at least one
 
 
 
-Next we declare an object of type asio::deadline\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take a reference to an io\_context as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
+Next we declare an object of type asio::steady\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take a reference to an io\_context as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
 
 
 
-  ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(5));
+  ``''''''``  asio::steady_timer t(io, asio::chrono::seconds(5));
 
 
 
-In this simple example we perform a blocking wait on the timer. That is, the call to [link asio.reference.basic_deadline_timer.wait deadline_timer::wait()] will not return until the timer has expired, 5 seconds after it was created (i.e. not from when the wait starts).
+In this simple example we perform a blocking wait on the timer. That is, the call to [link asio.reference.basic_waitable_timer.wait steady_timer::wait()] will not return until the timer has expired, 5 seconds after it was created (i.e. not from when the wait starts).
 
-A deadline timer is always in one of two states: "expired" or "not expired". If the [link asio.reference.basic_deadline_timer.wait deadline_timer::wait()] function is called on an expired timer, it will return immediately.
+A timer is always in one of two states: "expired" or "not expired". If the [link asio.reference.basic_waitable_timer.wait steady_timer::wait()] function is called on an expired timer, it will return immediately.
 
 
   ``''''''``  t.wait();
@@ -150,13 +143,12 @@ Next: [link asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
 
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
   ``''''''``int main()
   ``''''''``{
   ``''''''``  asio::io_context io;
 
-  ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(5));
+  ``''''''``  asio::steady_timer t(io, asio::chrono::seconds(5));
   ``''''''``  t.wait();
 
   ``''''''``  std::cout << "Hello, world!" << std::endl;
@@ -181,7 +173,6 @@ This tutorial program demonstrates how to use asio's asynchronous callback funct
 
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
 
 
@@ -198,11 +189,11 @@ Using asio's asynchronous functionality means having a callback function that wi
   ``''''''``{
   ``''''''``  asio::io_context io;
 
-  ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(5));
+  ``''''''``  asio::steady_timer t(io, asio::chrono::seconds(5));
 
 
 
-Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] function to perform an asynchronous wait. When calling this function we pass the `print` callback handler that was defined above.
+Next, instead of doing a blocking wait as in tutorial Timer.1, we call the [link asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()] function to perform an asynchronous wait. When calling this function we pass the `print` callback handler that was defined above.
 
 
   ``''''''``  t.async_wait(&print);
@@ -215,7 +206,7 @@ The asio library provides a guarantee that callback handlers will only be called
 
 The [link asio.reference.io_context.run io_context::run()] function will also continue to run while there is still "work" to do. In this example, the work is the asynchronous wait on the timer, so the call will not return until the timer has expired and the callback has completed.
 
-It is important to remember to give the io\_context some work to do before calling [link asio.reference.io_context.run io_context::run()]. For example, if we had omitted the above call to [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()], the io\_context would not have had any work to do, and consequently [link asio.reference.io_context.run io_context::run()] would have returned immediately.
+It is important to remember to give the io\_context some work to do before calling [link asio.reference.io_context.run io_context::run()]. For example, if we had omitted the above call to [link asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()], the io\_context would not have had any work to do, and consequently [link asio.reference.io_context.run io_context::run()] would have returned immediately.
 
 
   ``''''''``  io.run();
@@ -250,7 +241,6 @@ Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
 
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
   ``''''''``void print(const asio::error_code& /*e*/)
   ``''''''``{
@@ -261,7 +251,7 @@ Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
   ``''''''``{
   ``''''''``  asio::io_context io;
 
-  ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(5));
+  ``''''''``  asio::steady_timer t(io, asio::chrono::seconds(5));
   ``''''''``  t.async_wait(&print);
 
   ``''''''``  io.run();
@@ -287,7 +277,6 @@ In this tutorial we will modify the program from tutorial Timer.2 so that the ti
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
   ``''''''``#include <boost/bind.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
 
 
@@ -302,7 +291,7 @@ To implement a repeating timer using asio you need to change the timer's expiry 
 
 
   ``''''''``void print(const asio::error_code& /*e*/,
-  ``''''''``    asio::deadline_timer* t, int* count)
+  ``''''''``    asio::steady_timer* t, int* count)
   ``''''''``{
 
 
@@ -321,11 +310,11 @@ Next we move the expiry time for the timer along by one second from the previous
 
 
 
-  ``''''''``    t->expires_at(t->expires_at() + boost::posix_time::seconds(1));
+  ``''''''``    t->expires_at(t->expiry() + asio::chrono::seconds(1));
 
 
 
-Then we start a new asynchronous wait on the timer. As you can see, the [link asio.tutorial.boost_bind boost::bind]  function is used to associate the extra parameters with your callback handler. The [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] function expects a handler function (or function object) with the signature `void(const asio::error_code&)`. Binding the additional parameters converts your `print` function into a function object that matches the signature correctly.
+Then we start a new asynchronous wait on the timer. As you can see, the [link asio.tutorial.boost_bind boost::bind]  function is used to associate the extra parameters with your callback handler. The [link asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()] function expects a handler function (or function object) with the signature `void(const asio::error_code&)`. Binding the additional parameters converts your `print` function into a function object that matches the signature correctly.
 
 See the [@http://www.boost.org/libs/bind/bind.html Boost.Bind documentation] for more information on how to use [link asio.tutorial.boost_bind boost::bind] .
 
@@ -348,11 +337,11 @@ A new `count` variable is added so that we can stop the program when the timer f
 
 
   ``''''''``  int count = 0;
-  ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(1));
+  ``''''''``  asio::steady_timer t(io, asio::chrono::seconds(1));
 
 
 
-As in Step 4, when making the call to [link asio.reference.basic_deadline_timer.async_wait deadline_timer::async_wait()] from `main` we bind the additional parameters needed for the `print` function.
+As in Step 4, when making the call to [link asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()] from `main` we bind the additional parameters needed for the `print` function.
 
 
   ``''''''``  t.async_wait(boost::bind(print,
@@ -399,17 +388,16 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handl
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
   ``''''''``#include <boost/bind.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
   ``''''''``void print(const asio::error_code& /*e*/,
-  ``''''''``    asio::deadline_timer* t, int* count)
+  ``''''''``    asio::steady_timer* t, int* count)
   ``''''''``{
   ``''''''``  if (*count < 5)
   ``''''''``  {
   ``''''''``    std::cout << *count << std::endl;
   ``''''''``    ++(*count);
 
-  ``''''''``    t->expires_at(t->expires_at() + boost::posix_time::seconds(1));
+  ``''''''``    t->expires_at(t->expiry() + asio::chrono::seconds(1));
   ``''''''``    t->async_wait(boost::bind(print,
   ``''''''``          asio::placeholders::error, t, count));
   ``''''''``  }
@@ -420,7 +408,7 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handl
   ``''''''``  asio::io_context io;
 
   ``''''''``  int count = 0;
-  ``''''''``  asio::deadline_timer t(io, boost::posix_time::seconds(1));
+  ``''''''``  asio::steady_timer t(io, asio::chrono::seconds(1));
   ``''''''``  t.async_wait(boost::bind(print,
   ``''''''``        asio::placeholders::error, &t, &count));
 
@@ -449,7 +437,6 @@ In this tutorial we will see how to use a class member function as a callback ha
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
   ``''''''``#include <boost/bind.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
 
 
@@ -467,7 +454,7 @@ The constructor of this class will take a reference to the io\_context object an
 
 
   ``''''''``  printer(asio::io_context& io)
-  ``''''''``    : timer_(io, boost::posix_time::seconds(1)),
+  ``''''''``    : timer_(io, asio::chrono::seconds(1)),
   ``''''''``      count_(0)
   ``''''''``  {
 
@@ -505,13 +492,13 @@ The `print` member function is very similar to the `print` function from tutoria
   ``''''''``      std::cout << count_ << std::endl;
   ``''''''``      ++count_;
 
-  ``''''''``      timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
+  ``''''''``      timer_.expires_at(timer_.expiry() + asio::chrono::seconds(1));
   ``''''''``      timer_.async_wait(boost::bind(&printer::print, this));
   ``''''''``    }
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::deadline_timer timer_;
+  ``''''''``  asio::steady_timer timer_;
   ``''''''``  int count_;
   ``''''''``};
 
@@ -560,13 +547,12 @@ Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithr
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
   ``''''''``#include <boost/bind.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
   ``''''''``class printer
   ``''''''``{
   ``''''''``public:
   ``''''''``  printer(asio::io_context& io)
-  ``''''''``    : timer_(io, boost::posix_time::seconds(1)),
+  ``''''''``    : timer_(io, asio::chrono::seconds(1)),
   ``''''''``      count_(0)
   ``''''''``  {
   ``''''''``    timer_.async_wait(boost::bind(&printer::print, this));
@@ -584,13 +570,13 @@ Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithr
   ``''''''``      std::cout << count_ << std::endl;
   ``''''''``      ++count_;
 
-  ``''''''``      timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
+  ``''''''``      timer_.expires_at(timer_.expiry() + asio::chrono::seconds(1));
   ``''''''``      timer_.async_wait(boost::bind(&printer::print, this));
   ``''''''``    }
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::deadline_timer timer_;
+  ``''''''``  asio::steady_timer timer_;
   ``''''''``  int count_;
   ``''''''``};
 
@@ -636,7 +622,6 @@ If you find yourself running into these limitations, an alternative approach is 
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
   ``''''''``#include <boost/bind.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
 
 
@@ -650,7 +635,7 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 
 
-In addition to initialising a pair of asio::deadline\_timer members, the constructor initialises the `strand_` member, an object of type 
+In addition to initialising a pair of asio::steady\_timer members, the constructor initialises the `strand_` member, an object of type 
 [link asio.reference.io_context__strand io_context::strand].
 
 An 
@@ -661,8 +646,8 @@ An
 
   ``''''''``  printer(asio::io_context& io)
   ``''''''``    : strand_(io),
-  ``''''''``      timer1_(io, boost::posix_time::seconds(1)),
-  ``''''''``      timer2_(io, boost::posix_time::seconds(1)),
+  ``''''''``      timer1_(io, asio::chrono::seconds(1)),
+  ``''''''``      timer2_(io, asio::chrono::seconds(1)),
   ``''''''``      count_(0)
   ``''''''``  {
 
@@ -699,7 +684,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``      std::cout << "Timer 1: " << count_ << std::endl;
   ``''''''``      ++count_;
 
-  ``''''''``      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
+  ``''''''``      timer1_.expires_at(timer1_.expiry() + asio::chrono::seconds(1));
 
   ``''''''``      timer1_.async_wait(asio::bind_executor(strand_,
   ``''''''``            boost::bind(&printer::print1, this)));
@@ -713,7 +698,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``      std::cout << "Timer 2: " << count_ << std::endl;
   ``''''''``      ++count_;
 
-  ``''''''``      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
+  ``''''''``      timer2_.expires_at(timer2_.expiry() + asio::chrono::seconds(1));
 
   ``''''''``      timer2_.async_wait(asio::bind_executor(strand_,
   ``''''''``            boost::bind(&printer::print2, this)));
@@ -722,8 +707,8 @@ In a multithreaded program, the handlers for asynchronous operations should be s
 
   ``''''''``private:
   ``''''''``  asio::io_context::strand strand_;
-  ``''''''``  asio::deadline_timer timer1_;
-  ``''''''``  asio::deadline_timer timer2_;
+  ``''''''``  asio::steady_timer timer1_;
+  ``''''''``  asio::steady_timer timer2_;
   ``''''''``  int count_;
   ``''''''``};
 
@@ -775,15 +760,14 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
   ``''''''``#include <boost/bind.hpp>
-  ``''''''``#include <boost/date_time/posix_time/posix_time.hpp>
 
   ``''''''``class printer
   ``''''''``{
   ``''''''``public:
   ``''''''``  printer(asio::io_context& io)
   ``''''''``    : strand_(io),
-  ``''''''``      timer1_(io, boost::posix_time::seconds(1)),
-  ``''''''``      timer2_(io, boost::posix_time::seconds(1)),
+  ``''''''``      timer1_(io, asio::chrono::seconds(1)),
+  ``''''''``      timer2_(io, asio::chrono::seconds(1)),
   ``''''''``      count_(0)
   ``''''''``  {
   ``''''''``    timer1_.async_wait(asio::bind_executor(strand_,
@@ -805,7 +789,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``      std::cout << "Timer 1: " << count_ << std::endl;
   ``''''''``      ++count_;
 
-  ``''''''``      timer1_.expires_at(timer1_.expires_at() + boost::posix_time::seconds(1));
+  ``''''''``      timer1_.expires_at(timer1_.expiry() + asio::chrono::seconds(1));
 
   ``''''''``      timer1_.async_wait(asio::bind_executor(strand_,
   ``''''''``            boost::bind(&printer::print1, this)));
@@ -819,7 +803,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``      std::cout << "Timer 2: " << count_ << std::endl;
   ``''''''``      ++count_;
 
-  ``''''''``      timer2_.expires_at(timer2_.expires_at() + boost::posix_time::seconds(1));
+  ``''''''``      timer2_.expires_at(timer2_.expiry() + asio::chrono::seconds(1));
 
   ``''''''``      timer2_.async_wait(asio::bind_executor(strand_,
   ``''''''``            boost::bind(&printer::print2, this)));
@@ -828,8 +812,8 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 
   ``''''''``private:
   ``''''''``  asio::io_context::strand strand_;
-  ``''''''``  asio::deadline_timer timer1_;
-  ``''''''``  asio::deadline_timer timer2_;
+  ``''''''``  asio::steady_timer timer1_;
+  ``''''''``  asio::steady_timer timer2_;
   ``''''''``  int count_;
   ``''''''``};
 
