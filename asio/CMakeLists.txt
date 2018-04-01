@@ -152,7 +152,10 @@ if(NOT CONAN_COMPILER)
   #######################################################################
 else()
   message(STATUS "ASIO USE CONAN_TARGETS")
-  add_definitions(-DHAVE_OPENSSL)
+  if(CONAN_LIBS_OPENSSL)
+    add_definitions(-DHAVE_OPENSSL)
+    message(STATUS "have CONAN_LIBS_OPENSSL")
+  endif()
 endif()
 
 

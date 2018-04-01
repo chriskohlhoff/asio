@@ -4,7 +4,6 @@ import os
 class AsioTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    requires = "asio/1.12.0@demo/testing"
 
     def build(self):
         cmake = CMake(self)
