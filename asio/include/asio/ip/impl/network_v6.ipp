@@ -95,6 +95,7 @@ std::string network_v6::to_string() const
 
 std::string network_v6::to_string(asio::error_code& ec) const
 {
+  using namespace std; // For sprintf.
   ec = asio::error_code();
   char prefix_len[16];
 #if defined(ASIO_HAS_SECURE_RTL)
