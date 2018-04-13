@@ -716,6 +716,13 @@ public:
     return &a.io_context_ != &b.io_context_;
   }
 
+  /// Oneway execution function.
+  template <typename Function>
+  void execute(ASIO_MOVE_ARG(Function) f) const
+  {
+    this->dispatch(ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  }
+
 private:
   friend class io_context;
 

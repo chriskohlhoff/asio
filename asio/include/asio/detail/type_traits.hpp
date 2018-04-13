@@ -23,6 +23,7 @@
 # include <boost/type_traits/add_const.hpp>
 # include <boost/type_traits/conditional.hpp>
 # include <boost/type_traits/decay.hpp>
+# include <boost/type_traits/declval.hpp>
 # include <boost/type_traits/integral_constant.hpp>
 # include <boost/type_traits/is_base_of.hpp>
 # include <boost/type_traits/is_class.hpp>
@@ -42,6 +43,7 @@ namespace asio {
 using std::add_const;
 using std::conditional;
 using std::decay;
+using std::declval;
 using std::enable_if;
 using std::false_type;
 using std::integral_constant;
@@ -67,6 +69,7 @@ template <bool Condition, typename Type = void>
 struct enable_if : boost::enable_if_c<Condition, Type> {};
 using boost::conditional;
 using boost::decay;
+using boost::declval;
 using boost::false_type;
 using boost::integral_constant;
 using boost::is_base_of;
