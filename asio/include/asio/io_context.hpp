@@ -23,6 +23,7 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/error_code.hpp"
+#include "asio/execution.hpp"
 #include "asio/execution_context.hpp"
 
 #if defined(ASIO_HAS_CHRONO)
@@ -185,6 +186,14 @@ private:
 #endif
 
 public:
+  template <typename Blocking, typename Relationship,
+      typename OutstandingWork, typename Allocator>
+  class basic_executor_type;
+
+  template <typename Blocking, typename Relationship,
+      typename OutstandingWork, typename Allocator>
+  friend class basic_executor_type;
+
   class executor_type;
   friend class executor_type;
 
@@ -613,8 +622,172 @@ private:
   impl_type& impl_;
 };
 
+template <typename Blocking, typename Relationship,
+    typename OutstandingWork, typename Allocator>
+class io_context::basic_executor_type
+{
+public:
+  /// Copy construtor.
+  basic_executor_type(const basic_executor_type& other) ASIO_NOEXCEPT;
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move construtor.
+  basic_executor_type(basic_executor_type&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Destructor.
+  ~basic_executor_type();
+
+  /// Assignment operator.
+  basic_executor_type& operator=(
+      const basic_executor_type& other) ASIO_NOEXCEPT;
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move assignment operator.
+  basic_executor_type& operator=(
+      basic_executor_type&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Obtain an executor with the @c blocking.never property.
+  basic_executor_type<execution::blocking_t::never_t,
+      Relationship, OutstandingWork, Allocator>
+  require(execution::blocking_t::never_t) const
+  {
+    return basic_executor_type<execution::blocking_t::never_t, Relationship,
+        OutstandingWork, Allocator>(io_context_, allocator_);
+  }
+
+  /// Obtain an executor with the @c blocking.possibly property.
+  basic_executor_type<execution::blocking_t::possibly_t,
+      Relationship, OutstandingWork, Allocator>
+  require(execution::blocking_t::possibly_t) const
+  {
+    return basic_executor_type<execution::blocking_t::possibly_t, Relationship,
+        OutstandingWork, Allocator>(io_context_, allocator_);
+  }
+
+  /// Obtain an executor with the @c relationship.continuation property.
+  basic_executor_type<Blocking, execution::relationship_t::continuation_t,
+      OutstandingWork, Allocator>
+  require(execution::relationship_t::continuation_t) const
+  {
+    return basic_executor_type<Blocking,
+        execution::relationship_t::continuation_t, OutstandingWork,
+        Allocator>(io_context_, allocator_);
+  }
+
+  /// Obtain an executor with the @c relationship.fork property.
+  basic_executor_type<Blocking, execution::relationship_t::fork_t,
+      OutstandingWork, Allocator>
+  require(execution::relationship_t::fork_t) const
+  {
+    return basic_executor_type<Blocking,
+        execution::relationship_t::fork_t, OutstandingWork,
+        Allocator>(io_context_, allocator_);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.tracked property.
+  basic_executor_type<Blocking, Relationship,
+      execution::outstanding_work_t::tracked_t, Allocator>
+  require(execution::outstanding_work_t::tracked_t) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        execution::outstanding_work_t::tracked_t,
+        Allocator>(io_context_, allocator_);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.untracked property.
+  basic_executor_type<Blocking, Relationship,
+      execution::outstanding_work_t::untracked_t, Allocator>
+  require(execution::outstanding_work_t::untracked_t) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        execution::outstanding_work_t::untracked_t,
+        Allocator>(io_context_, allocator_);
+  }
+
+  /// Query the current value of the @c blocking property.
+  static ASIO_CONSTEXPR execution::blocking_t query(
+      execution::blocking_t) ASIO_NOEXCEPT
+  {
+    return Blocking();
+  }
+
+  /// Query the current value of the @c relationship property.
+  static ASIO_CONSTEXPR execution::relationship_t query(
+      execution::relationship_t) ASIO_NOEXCEPT
+  {
+    return Relationship();
+  }
+
+  /// Query the current value of the @c outstanding_work property.
+  static ASIO_CONSTEXPR execution::outstanding_work_t query(
+      execution::outstanding_work_t) ASIO_NOEXCEPT
+  {
+    return OutstandingWork();
+  }
+
+  /// Determine whether the io_context is running in the current thread.
+  /**
+   * @return @c true if the current thread is running the io_context. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
+
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_context.
+   */
+  friend bool operator==(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.io_context_ == b.io_context_;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_context.
+   */
+  friend bool operator!=(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.io_context_ != b.io_context_;
+  }
+
+  /// Oneway execution function.
+  template <typename Function>
+  void execute(ASIO_MOVE_ARG(Function) f) const;
+
+protected:
+  friend class io_context;
+
+  // Constructor used by io_context::get_executor().
+  explicit basic_executor_type(io_context& i)
+    : io_context_(&i)
+  {
+  }
+
+  // Constructor used by require().
+  basic_executor_type(io_context* i, const Allocator& a)
+    : io_context_(i),
+      allocator_(a)
+  {
+  }
+
+  // The underlying io_context.
+  io_context* io_context_;
+
+  // The allocator used for execution functions.
+  Allocator allocator_;
+};
+
 /// Executor used to submit functions to an io_context.
-class io_context::executor_type
+class io_context::executor_type :
+  public io_context::basic_executor_type<
+    execution::blocking_t::possibly_t,
+    execution::relationship_t::fork_t,
+    execution::outstanding_work_t::untracked_t,
+    std::allocator<void> >
 {
 public:
   /// Obtain the underlying execution context.
@@ -689,48 +862,18 @@ public:
   template <typename Function, typename Allocator>
   void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
 
-  /// Determine whether the io_context is running in the current thread.
-  /**
-   * @return @c true if the current thread is running the io_context. Otherwise
-   * returns @c false.
-   */
-  bool running_in_this_thread() const ASIO_NOEXCEPT;
-
-  /// Compare two executors for equality.
-  /**
-   * Two executors are equal if they refer to the same underlying io_context.
-   */
-  friend bool operator==(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.io_context_ == &b.io_context_;
-  }
-
-  /// Compare two executors for inequality.
-  /**
-   * Two executors are equal if they refer to the same underlying io_context.
-   */
-  friend bool operator!=(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.io_context_ != &b.io_context_;
-  }
-
-  /// Oneway execution function.
-  template <typename Function>
-  void execute(ASIO_MOVE_ARG(Function) f) const
-  {
-    this->dispatch(ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
-  }
-
 private:
   friend class io_context;
 
   // Constructor.
-  explicit executor_type(io_context& i) : io_context_(i) {}
-
-  // The underlying io_context.
-  io_context& io_context_;
+  explicit executor_type(io_context& i)
+    : io_context::basic_executor_type<
+        execution::blocking_t::possibly_t,
+        execution::relationship_t::fork_t,
+        execution::outstanding_work_t::untracked_t,
+        std::allocator<void> >(i)
+  {
+  }
 };
 
 #if !defined(ASIO_NO_DEPRECATED)
