@@ -20,6 +20,8 @@ To show the changes between C++03 and C++11, these examples include a diff
 between the C++03 and C++11 versions.
 [/boostify: non-boost docs end here]
 
+* [link asio.examples.cpp17_examples C++17 Examples]: Selected examples
+illustrating C++17 usage in conjunction with Technical Specifications.
 
 [section:cpp03_examples C++03 Examples]
 
@@ -460,6 +462,24 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@../src/examples/cpp11/local/iostream_client.cpp] ([@examples/diffs/local/iostream_client.cpp.html diff to C++03])
 * [@../src/examples/cpp11/local/stream_server.cpp] ([@examples/diffs/local/stream_server.cpp.html diff to C++03])
 * [@../src/examples/cpp11/local/stream_client.cpp] ([@examples/diffs/local/stream_client.cpp.html diff to C++03])
+
+
+[endsect]
+
+
+[section:cpp17_examples C++17 Examples]
+
+
+[heading Coroutines TS Support]
+
+Examples showing how to implement a chain of asynchronous operations using the
+Coroutines TS.
+
+* [@asio/example/cpp17/coroutines_ts/echo_server.cpp]
+* [@asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp]
+* [@asio/example/cpp17/coroutines_ts/double_buffered_echo_server.cpp]
+* [@asio/example/cpp17/coroutines_ts/chat_server.cpp]
+* [@asio/example/cpp17/coroutines_ts/range_based_for.cpp]
 
 
 [endsect]
