@@ -7,6 +7,83 @@
 
 [section:history Revision History]
 
+[heading Asio 1.12.1]
+
+* Added missing const qualifier to `basic_socket_acceptor::get_option`.
+
+* Worked around a parsing error that occurs with some versions of gcc.
+
+* Fixed broken code samples in tutorial.
+
+* Added new experimental features. (Note that "experimental" features may be
+  changed without notice in subsequent releases.)
+
+  * Added `experimental::detached` completion token.
+
+  * Added `experimental::redirect_error` completion token.
+
+  * Added `experimental::co_spawn` facility for integration with the coroutines
+    technical specification.
+
+* Updated timeout examples to use latest features.
+
+  * Used `asio::steady_timer` rather than `asio::deadline_timer`.
+
+  * Used `asio::dynamic_buffer` rather than `asio::streambuf`.
+
+  * Used timed `asio::io_context::run_for()` function for blocking clients.
+
+  * Added example showing a custom completion token for blocking with timeouts.
+
+* Fixed unit tests to compile when `(BOOST_)ASIO_NO_DEPRECATED` is defined.
+
+* Changed socket iostreams to use chrono by default, to fix compatibility with
+  the Networking TS. Define `(BOOST_)ASIO_USE_BOOST_DATE_TIME_FOR_SOCKET_IOSTREAM`
+  to enable the old Boost.Date_Time interface in `basic_socket_streambuf` and
+  `basic_socket_iostream`.
+
+* Updated examples to use chrono rather than Boost.Date_Time.
+
+* Fixed an incorrect member function detector in the `is_dynamic_buffer` trait.
+
+* Fixed an `async_result` incompatibility with deprecated `handler_type`.
+
+* Added a missing move optimisation in the SSL stream implementation.
+
+* Fixed incorrect `basic_resolver_results::value_type` typedef.
+
+* Fixed a compile error with some OpenSSL versions when `SSL_OP_NO_COMPRESSION`
+  is defined.
+
+* Changed `add_certificate_authority` to process multiple certificates in a bundle.
+
+* Eliminated deprecation warning with MSVC by using `std::invoke_result` rather
+  than `std::result_of`.
+
+* Changed to use `std::string_view` for C++17 or later, and
+  `std::experimental::string_view` for C++14. Define the preprocessor macro
+  `(BOOST_)ASIO_DISABLE_STD_STRING_VIEW` to force the use of
+  std::experimental::string_view (assuming it is available) when compiling in
+  C++17 mode.
+
+* Ensured `DynamicBuffer` template arguments are decayed before using in
+  `enable_if` tests.
+
+* Changed documentation to distinguish legacy completion handlers (which are
+  still required to be CopyConstructible) from new MoveConstructible handlers.
+
+* Suppressed a discarded return value warning in the buffer debugging support.
+
+* Fixed `basic_yield_context` to work with completion signatures containing
+  reference parameters.
+
+* Ensured that stackful coroutines launched using `spawn()` correctly store
+  decayed copies of their function and handler arguments.
+
+* Fixed some compatibility issues with Android.
+
+* Fixed some minor portability issues in examples.
+
 [heading Asio 1.12.0]
 
 * Completed the interface changes to reflect the Networking TS
