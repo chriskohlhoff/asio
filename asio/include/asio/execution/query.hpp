@@ -37,7 +37,8 @@ struct impl
       typename query_static_traits<Executor, Property>::result_type
     >::type
   {
-    return std::forward<Executor>(ex);
+    return decay<Property>::type::template static_query_v<
+      typename decay<Executor>::type>;
   }
 
   template <typename Executor, typename Property>

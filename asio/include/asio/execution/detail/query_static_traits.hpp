@@ -1,6 +1,6 @@
 //
 // execution/detail/query_static_traits.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -33,10 +33,16 @@ struct query_static_traits
 };
 
 template <typename Executor, typename Property>
+auto foo() -> decltype(
+  decay<Property>::type::template static_query_v<
+    typename decay<Executor>::type>);
+
+template <typename Executor, typename Property>
 struct query_static_traits<Executor, Property,
   typename void_type<
-    typename decay<Property>::type::template static_query_v<
-      typename decay<Executor>::type>
+    decltype(
+      decay<Property>::type::template static_query_v<
+        typename decay<Executor>::type>)
   >::type>
 {
   static constexpr bool is_valid = true;
