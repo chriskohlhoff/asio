@@ -16,12 +16,111 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/memory.hpp"
+#include "asio/execution.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
 class system_context;
+
+template <typename Blocking, typename Relationship, typename Allocator>
+class basic_system_executor
+{
+public:
+  /// Default constructor.
+  basic_system_executor() ASIO_NOEXCEPT
+    : allocator_(Allocator())
+  {
+  }
+
+  /// Obtain an executor with the @c blocking.never property.
+  basic_system_executor<execution::blocking_t::never_t,
+      Relationship, Allocator>
+  require(execution::blocking_t::never_t) const
+  {
+    return basic_system_executor<execution::blocking_t::never_t,
+        Relationship, Allocator>(allocator_);
+  }
+
+  /// Obtain an executor with the @c blocking.possibly property.
+  basic_system_executor<execution::blocking_t::possibly_t,
+      Relationship, Allocator>
+  require(execution::blocking_t::possibly_t) const
+  {
+    return basic_system_executor<execution::blocking_t::possibly_t,
+        Relationship, Allocator>(allocator_);
+  }
+
+  /// Obtain an executor with the @c relationship.continuation property.
+  basic_system_executor<Blocking,
+      execution::relationship_t::continuation_t, Allocator>
+  require(execution::relationship_t::continuation_t) const
+  {
+    return basic_system_executor<Blocking,
+        execution::relationship_t::continuation_t, Allocator>(allocator_);
+  }
+
+  /// Obtain an executor with the @c relationship.fork property.
+  basic_system_executor<Blocking,
+      execution::relationship_t::fork_t, Allocator>
+  require(execution::relationship_t::fork_t) const
+  {
+    return basic_system_executor<Blocking,
+        execution::relationship_t::fork_t, Allocator>(allocator_);
+  }
+
+  /// Query the current value of the @c blocking property.
+  static ASIO_CONSTEXPR execution::blocking_t query(
+      execution::blocking_t) ASIO_NOEXCEPT
+  {
+    return Blocking();
+  }
+
+  /// Query the current value of the @c relationship property.
+  static ASIO_CONSTEXPR execution::relationship_t query(
+      execution::relationship_t) ASIO_NOEXCEPT
+  {
+    return Relationship();
+  }
+
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_context.
+   */
+  friend bool operator==(const basic_system_executor& a,
+      const basic_system_executor& b) ASIO_NOEXCEPT
+  {
+    return true;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_context.
+   */
+  friend bool operator!=(const basic_system_executor& a,
+      const basic_system_executor& b) ASIO_NOEXCEPT
+  {
+    return false;
+  }
+
+  /// Oneway execution function.
+  template <typename Function>
+  void execute(ASIO_MOVE_ARG(Function) f) const;
+
+protected:
+  template <typename, typename, typename> friend class basic_system_executor;
+
+  // Constructor used by require().
+  basic_system_executor(const Allocator& a)
+    : allocator_(a)
+  {
+  }
+
+  // The allocator used for execution functions.
+  Allocator allocator_;
+};
 
 /// An executor that uses arbitrary threads.
 /**
@@ -30,7 +129,9 @@ class system_context;
  * schedule the function to run on an unspecified system thread pool, and
  * dispatch() invokes the function immediately.
  */
-class system_executor
+class system_executor : public basic_system_executor<
+    execution::blocking_t::possibly_t,
+    execution::relationship_t::fork_t, std::allocator<void> >
 {
 public:
   /// Obtain the underlying execution context.

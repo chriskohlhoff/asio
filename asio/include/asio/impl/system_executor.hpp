@@ -25,6 +25,37 @@
 
 namespace asio {
 
+template <typename Blocking, typename Relationship, typename Allocator>
+template <typename Function>
+void basic_system_executor<Blocking, Relationship, Allocator>::execute(
+    ASIO_MOVE_ARG(Function) f) const
+{
+  typedef typename decay<Function>::type function_type;
+
+  // Invoke immediately if the blocking.possibly property is enabled.
+  if (is_same<Blocking, execution::blocking_t::possibly_t>::value)
+  {
+    // Make a local, non-const copy of the function.
+    function_type tmp(ASIO_MOVE_CAST(Function)(f));
+    asio_handler_invoke_helpers::invoke(tmp, tmp);
+    return;
+  }
+
+  system_context& ctx = detail::global<system_context>();
+
+  // Allocate and construct an operation to wrap the function.
+  typedef detail::executor_op<function_type, Allocator> op;
+  typename op::ptr p = { detail::addressof(allocator_),
+      op::ptr::allocate(allocator_), 0 };
+  p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), allocator_);
+
+  ASIO_HANDLER_CREATION((ctx, *p.p,
+        "system_context", &this->context(), 0, "execute"));
+
+  ctx.scheduler_.post_immediate_completion(p.p, false);
+  p.v = p.p = 0;
+}
+
 inline system_context& system_executor::context() const ASIO_NOEXCEPT
 {
   return detail::global<system_context>();

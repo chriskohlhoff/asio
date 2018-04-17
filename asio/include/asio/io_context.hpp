@@ -760,6 +760,8 @@ public:
 
 protected:
   friend class io_context;
+  template <typename, typename, typename, typename>
+    friend class basic_executor_type;
 
   // Constructor used by io_context::get_executor().
   explicit basic_executor_type(io_context& i)

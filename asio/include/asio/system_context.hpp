@@ -26,6 +26,9 @@ namespace asio {
 
 class system_executor;
 
+template <typename Blocking, typename Relationship, typename Allocator>
+class basic_system_executor;
+
 /// The executor context for the system executor.
 class system_context : public execution_context
 {
@@ -56,6 +59,7 @@ private:
 
 private:
   friend class system_executor;
+  template <typename, typename, typename> friend class basic_system_executor;
 
   struct thread_function;
 
