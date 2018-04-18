@@ -71,6 +71,24 @@ public:
         execution::relationship_t::fork_t, Allocator>(allocator_);
   }
 
+  /// Obtain an executor with the specified @c allocator property.
+  template <typename OtherAllocator>
+  basic_system_executor<Blocking, Relationship, OtherAllocator>
+  require(execution::allocator_t<OtherAllocator> a) const
+  {
+    return basic_system_executor<Blocking,
+        Relationship, OtherAllocator>(a.value());
+  }
+
+  /// Obtain an executor with the default @c allocator property.
+  template <typename OtherAllocator>
+  basic_system_executor<Blocking, Relationship, std::allocator<void> >
+  require(execution::allocator_t<void>) const
+  {
+    return basic_system_executor<Blocking,
+        Relationship, std::allocator<void> >();
+  }
+
   /// Query the current value of the @c context property.
   static system_context& query(execution::context_t) ASIO_NOEXCEPT;
 
@@ -86,6 +104,20 @@ public:
       execution::relationship_t) ASIO_NOEXCEPT
   {
     return Relationship();
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<Allocator>) ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<void>) ASIO_NOEXCEPT
+  {
+    return allocator_;
   }
 
   /// Compare two executors for equality.

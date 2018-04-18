@@ -706,6 +706,25 @@ public:
         Allocator>(io_context_, allocator_);
   }
 
+  /// Obtain an executor with the specified @c allocator property.
+  template <typename OtherAllocator>
+  basic_executor_type<Blocking, Relationship, OutstandingWork, OtherAllocator>
+  require(execution::allocator_t<OtherAllocator> a) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        OutstandingWork, OtherAllocator>(io_context_, a.value());
+  }
+
+  /// Obtain an executor with the default @c allocator property.
+  template <typename OtherAllocator>
+  basic_executor_type<Blocking, Relationship,
+      OutstandingWork, std::allocator<void> >
+  require(execution::allocator_t<void>) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        OutstandingWork, std::allocator<void> >(io_context_);
+  }
+
   /// Query the current value of the @c context property.
   io_context& query(execution::context_t) ASIO_NOEXCEPT
   {
@@ -731,6 +750,20 @@ public:
       execution::outstanding_work_t) ASIO_NOEXCEPT
   {
     return OutstandingWork();
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<Allocator>) ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<void>) ASIO_NOEXCEPT
+  {
+    return allocator_;
   }
 
   /// Determine whether the io_context is running in the current thread.

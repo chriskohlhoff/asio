@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/execution/allocator.hpp"
 #include "asio/execution/blocking.hpp"
 #include "asio/execution/blocking_adaptation.hpp"
 #include "asio/execution/bulk_guarantee.hpp"
