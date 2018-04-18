@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
-#include "asio/is_executor.hpp"
 #include "asio/system_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -113,8 +112,8 @@ get_associated_executor(const T& t) ASIO_NOEXCEPT
 template <typename T, typename Executor>
 inline typename associated_executor<T, Executor>::type
 get_associated_executor(const T& t, const Executor& ex,
-    typename enable_if<is_executor<
-      Executor>::value>::type* = 0) ASIO_NOEXCEPT
+    typename enable_if<!is_convertible<Executor&,
+      execution_context&>::value>::type* = 0) ASIO_NOEXCEPT
 {
   return associated_executor<T, Executor>::get(t, ex);
 }
