@@ -51,7 +51,7 @@ struct impl
       typename require_member_traits<Executor, Property>::result_type
     >::type
   {
-    return std::forward<Executor>(ex).prefer(std::forward<Property>(p));
+    return std::forward<Executor>(ex).require(std::forward<Property>(p));
   }
 
   template <typename Executor, typename Property>
