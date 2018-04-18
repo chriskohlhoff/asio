@@ -48,9 +48,9 @@ public:
       endpoint_size_(static_cast<int>(endpoint.capacity())),
       cancel_token_(cancel_token),
       buffers_(buffers),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   int& endpoint_size()
@@ -68,7 +68,7 @@ public:
     win_iocp_socket_recvfrom_op* o(
         static_cast<win_iocp_socket_recvfrom_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     ASIO_HANDLER_COMPLETION((*o));
 
@@ -113,6 +113,7 @@ private:
   socket_ops::weak_cancel_token_type cancel_token_;
   MutableBufferSequence buffers_;
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 } // namespace detail

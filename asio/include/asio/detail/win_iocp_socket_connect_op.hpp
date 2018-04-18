@@ -65,9 +65,9 @@ public:
   win_iocp_socket_connect_op(socket_type socket, Handler& handler)
     : win_iocp_socket_connect_op_base(socket,
         &win_iocp_socket_connect_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -80,7 +80,7 @@ public:
     win_iocp_socket_connect_op* o(
         static_cast<win_iocp_socket_connect_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     if (owner)
     {
@@ -115,6 +115,7 @@ public:
 
 private:
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 } // namespace detail

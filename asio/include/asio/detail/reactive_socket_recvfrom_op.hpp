@@ -88,9 +88,9 @@ public:
     : reactive_socket_recvfrom_op_base<MutableBufferSequence, Endpoint>(
         socket, protocol_type, buffers, endpoint, flags,
         &reactive_socket_recvfrom_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -101,7 +101,7 @@ public:
     reactive_socket_recvfrom_op* o(
         static_cast<reactive_socket_recvfrom_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     ASIO_HANDLER_COMPLETION((*o));
 
@@ -128,6 +128,7 @@ public:
 
 private:
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 } // namespace detail

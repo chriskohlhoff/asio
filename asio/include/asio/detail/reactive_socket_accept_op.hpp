@@ -97,9 +97,9 @@ public:
       typename Protocol::endpoint* peer_endpoint, Handler& handler)
     : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
         protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -109,7 +109,7 @@ public:
     // Take ownership of the handler object.
     reactive_socket_accept_op* o(static_cast<reactive_socket_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     // On success, assign new connection to peer socket object.
     if (owner)
@@ -140,6 +140,7 @@ public:
 
 private:
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 #if defined(ASIO_HAS_MOVE)
@@ -159,9 +160,9 @@ public:
       reactive_socket_accept_op_base<typename Protocol::socket, Protocol>(
         socket, state, *this, protocol, peer_endpoint,
         &reactive_socket_move_accept_op::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -172,7 +173,7 @@ public:
     reactive_socket_move_accept_op* o(
         static_cast<reactive_socket_move_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     // On success, assign new connection to peer socket object.
     if (owner)
@@ -205,6 +206,7 @@ public:
 
 private:
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 #endif // defined(ASIO_HAS_MOVE)

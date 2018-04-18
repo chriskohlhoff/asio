@@ -43,9 +43,9 @@ public:
   win_iocp_handle_write_op(const ConstBufferSequence& buffers, Handler& handler)
     : operation(&win_iocp_handle_write_op::do_complete),
       buffers_(buffers),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -54,7 +54,7 @@ public:
     // Take ownership of the operation object.
     win_iocp_handle_write_op* o(static_cast<win_iocp_handle_write_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     ASIO_HANDLER_COMPLETION((*o));
 
@@ -91,6 +91,7 @@ public:
 private:
   ConstBufferSequence buffers_;
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 } // namespace detail

@@ -49,9 +49,9 @@ public:
       query_(query),
       io_context_impl_(ioc),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_),
       addrinfo_(0)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   ~resolve_query_op()
@@ -88,7 +88,7 @@ public:
       // handler is ready to be delivered.
 
       // Take ownership of the operation's outstanding work.
-      handler_work<Handler> w(o->handler_);
+      handler_work<Handler> w(o->handler_, o->work_);
 
       ASIO_HANDLER_COMPLETION((*o));
 
@@ -123,6 +123,7 @@ private:
   query_type query_;
   io_context_impl& io_context_impl_;
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
   asio::detail::addrinfo_type* addrinfo_;
 };
 

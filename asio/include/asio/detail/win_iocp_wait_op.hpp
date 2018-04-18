@@ -45,9 +45,9 @@ public:
     : reactor_op(&win_iocp_wait_op::do_perform,
         &win_iocp_wait_op::do_complete),
       cancel_token_(cancel_token),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static status do_perform(reactor_op*)
@@ -64,7 +64,7 @@ public:
     // Take ownership of the operation object.
     win_iocp_wait_op* o(static_cast<win_iocp_wait_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     ASIO_HANDLER_COMPLETION((*o));
 
@@ -109,6 +109,7 @@ public:
 private:
   socket_ops::weak_cancel_token_type cancel_token_;
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 } // namespace detail

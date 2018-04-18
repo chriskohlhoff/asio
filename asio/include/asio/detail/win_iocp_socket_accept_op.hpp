@@ -177,9 +177,9 @@ public:
       protocol_(protocol),
       peer_endpoint_(peer_endpoint),
       enable_connection_aborted_(enable_connection_aborted),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   socket_holder& new_socket()
@@ -207,7 +207,7 @@ public:
     win_iocp_socket_move_accept_op* o(
         static_cast<win_iocp_socket_move_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     if (owner)
     {
@@ -283,6 +283,7 @@ private:
   unsigned char output_buffer_[(sizeof(sockaddr_storage_type) + 16) * 2];
   bool enable_connection_aborted_;
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 #endif // defined(ASIO_HAS_MOVE)

@@ -50,8 +50,8 @@ public:
       buffers_(buffers),
       out_flags_(out_flags),
       handler_(ASIO_MOVE_CAST(Handler)(handler))
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -64,7 +64,7 @@ public:
     win_iocp_socket_recvmsg_op* o(
         static_cast<win_iocp_socket_recvmsg_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
-    handler_work<Handler> w(o->handler_);
+    handler_work<Handler> w(o->handler_, o->work_);
 
     ASIO_HANDLER_COMPLETION((*o));
 
@@ -106,6 +106,7 @@ private:
   MutableBufferSequence buffers_;
   socket_base::message_flags& out_flags_;
   Handler handler_;
+  handler_work_outstanding<Handler> work_;
 };
 
 } // namespace detail
