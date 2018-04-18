@@ -93,9 +93,12 @@ struct enumeration
     using polymorphic_query_result_type = Derived;
 
     template <typename Executor,
-      typename T = decltype(enumerator::template static_query<Executor>())>
-        static constexpr T static_query_v
-          = enumerator::template static_query<Executor>();
+      typename T = typename enable_if<
+        (enumerator::template static_query<Executor>(), true),
+        decltype(enumerator::template static_query<Executor>())
+      >::type>
+    static constexpr T static_query_v
+      = enumerator::template static_query<Executor>();
 
     static constexpr Derived value()
     {
@@ -141,9 +144,11 @@ struct enumeration
   }
 
   template <typename Executor,
-    typename T = decltype(enumeration::static_query<Executor>())>
-      static constexpr T static_query_v
-        = enumeration::static_query<Executor>();
+    typename T = typename enable_if<
+      (enumeration::static_query<Executor>(), true),
+      decltype(enumeration::static_query<Executor>())
+    >::type>
+  static constexpr T static_query_v = enumeration::static_query<Executor>();
 
   constexpr enumeration()
     : value_(-1)
