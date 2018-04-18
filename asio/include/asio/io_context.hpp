@@ -706,6 +706,12 @@ public:
         Allocator>(io_context_, allocator_);
   }
 
+  /// Query the current value of the @c context property.
+  io_context& query(execution::context_t) ASIO_NOEXCEPT
+  {
+    return io_context_;
+  }
+
   /// Query the current value of the @c blocking property.
   static ASIO_CONSTEXPR execution::blocking_t query(
       execution::blocking_t) ASIO_NOEXCEPT

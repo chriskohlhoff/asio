@@ -26,6 +26,14 @@
 namespace asio {
 
 template <typename Blocking, typename Relationship, typename Allocator>
+inline system_context&
+basic_system_executor<Blocking, Relationship, Allocator>::query(
+    execution::context_t) ASIO_NOEXCEPT
+{
+  return detail::global<system_context>();
+}
+
+template <typename Blocking, typename Relationship, typename Allocator>
 template <typename Function>
 void basic_system_executor<Blocking, Relationship, Allocator>::execute(
     ASIO_MOVE_ARG(Function) f) const
