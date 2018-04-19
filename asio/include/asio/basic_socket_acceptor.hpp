@@ -325,6 +325,19 @@ public:
   {
     return basic_io_object<ASIO_SVC_T>::get_executor();
   }
+
+  /// Get the io_context associated with the object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& context() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::context();
+  }
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
   /// Open the acceptor using the specified protocol.

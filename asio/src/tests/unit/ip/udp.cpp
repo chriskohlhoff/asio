@@ -142,6 +142,9 @@ void test()
     ip::udp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
 
+    io_context& ioc_ref2 = socket1.context();
+    (void)ioc_ref2;
+
     // basic_socket functions.
 
     ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
@@ -665,6 +668,9 @@ void test()
 
     ip::udp::resolver::executor_type ex = resolver.get_executor();
     (void)ex;
+
+    io_context& ioc_ref2 = resolver.context();
+    (void)ioc_ref2;
 
     // basic_resolver functions.
 

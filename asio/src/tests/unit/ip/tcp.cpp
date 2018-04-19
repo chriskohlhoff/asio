@@ -274,6 +274,9 @@ void test()
     ip::tcp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
 
+    io_context& ioc_ref2 = socket1.context();
+    (void)ioc_ref2;
+
     // basic_socket functions.
 
     ip::tcp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
@@ -851,6 +854,9 @@ void test()
     ip::tcp::acceptor::executor_type ex = acceptor1.get_executor();
     (void)ex;
 
+    io_context& ioc_ref2 = acceptor1.context();
+    (void)ioc_ref2;
+
     // basic_socket_acceptor functions.
 
     acceptor1.open(ip::tcp::v4());
@@ -1126,6 +1132,8 @@ void test()
     ip::tcp::resolver::executor_type ex = resolver.get_executor();
     (void)ex;
 
+    io_context& ioc_ref2 = resolver.context();
+    (void)ioc_ref2;
     // basic_resolver functions.
 
     resolver.cancel();

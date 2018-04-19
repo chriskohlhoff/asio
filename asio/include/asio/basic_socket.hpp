@@ -279,6 +279,19 @@ public:
   }
 #endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
+  /// Get the io_context associated with the object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& context() ASIO_NOEXCEPT
+  {
+    return basic_io_object<ASIO_SVC_T>::context();
+  }
+
 #if !defined(ASIO_NO_EXTENSIONS)
   /// Get a reference to the lowest layer.
   /**

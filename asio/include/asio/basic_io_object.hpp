@@ -106,6 +106,19 @@ public:
     return service_.get_io_context().get_executor();
   }
 
+  /// Get the io_context associated with the object.
+  /**
+   * This function may be used to obtain the io_context object that the I/O
+   * object uses to dispatch handlers for asynchronous operations.
+   *
+   * @return A reference to the io_context object that the I/O object will use
+   * to dispatch handlers. Ownership is not transferred to the caller.
+   */
+  asio::io_context& context() ASIO_NOEXCEPT
+  {
+    return service_.get_io_context();
+  }
+
 protected:
   /// Construct a basic_io_object.
   /**
@@ -216,6 +229,11 @@ public:
   executor_type get_executor() ASIO_NOEXCEPT
   {
     return service_->get_io_context().get_executor();
+  }
+
+  asio::io_context& context() ASIO_NOEXCEPT
+  {
+    return service_->get_io_context();
   }
 
 protected:
