@@ -716,7 +716,6 @@ public:
   }
 
   /// Obtain an executor with the default @c allocator property.
-  template <typename OtherAllocator>
   basic_executor_type<Blocking, Relationship,
       OutstandingWork, std::allocator<void> >
   require(execution::allocator_t<void>) const
