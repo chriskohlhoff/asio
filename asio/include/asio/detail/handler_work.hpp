@@ -63,7 +63,7 @@ class handler_work_outstanding<Handler, Executor,
 public:
   explicit handler_work_outstanding(Handler& handler) ASIO_NOEXCEPT
     : executor_(execution::prefer(
-          associated_executor<Handler>::get(handler),
+          (get_associated_executor)(handler),
           execution::outstanding_work.tracked))
   {
   }
@@ -166,9 +166,10 @@ public:
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
-    execution::prefer(executor_,
+    execution::prefer(
+        execution::require(executor_, execution::oneway, execution::single),
         execution::blocking.possibly,
-        execution::allocator(associated_allocator<Handler>::get(handler))
+        execution::allocator((get_associated_allocator)(handler))
       ).execute(ASIO_MOVE_CAST(Function)(function));
   }
 
