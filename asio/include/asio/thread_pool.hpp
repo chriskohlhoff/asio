@@ -19,6 +19,7 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
+#include "asio/execution.hpp"
 #include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -32,7 +33,7 @@ namespace asio {
  *
  * @par Submitting tasks to the pool
  *
- * To submit functions to the io_context, use the @ref asio::dispatch,
+ * To submit functions to the thread pool, use the @ref asio::dispatch,
  * @ref asio::post or @ref asio::defer free functions.
  *
  * For example:
@@ -64,6 +65,10 @@ class thread_pool
   : public execution_context
 {
 public:
+  template <typename Blocking, typename Relationship,
+      typename OutstandingWork, typename Allocator>
+  class basic_executor_type;
+
   class executor_type;
 
   /// Constructs a pool with an automatically determined number of threads.
@@ -81,12 +86,23 @@ public:
   /// Obtains the executor associated with the pool.
   executor_type get_executor() ASIO_NOEXCEPT;
 
+  /// Obtains the executor associated with the pool.
+  executor_type executor() ASIO_NOEXCEPT;
+
   /// Stops the threads.
   /**
    * This function stops the threads as soon as possible. As a result of calling
    * @c stop(), pending function objects may be never be invoked.
    */
   ASIO_DECL void stop();
+
+  /// Attaches the current thread to the pool.
+  /**
+   * This function attaches the current thread to the pool so that it may be
+   * used for executing submitted function objects. Blocks the calling thread
+   * until the pool is stopped or joined and has no outstanding work.
+   */
+  ASIO_DECL void attach();
 
   /// Joins the threads.
   /**
@@ -95,6 +111,14 @@ public:
    * until the pool has no more outstanding work.
    */
   ASIO_DECL void join();
+
+  /// Waits for threads to complete.
+  /**
+   * This function blocks until the threads in the pool have completed. If @c
+   * stop() is not called prior to @c wait(), the @c wait() call will wait
+   * until the pool has no more outstanding work.
+   */
+  ASIO_DECL void wait();
 
 private:
   friend class executor_type;
@@ -107,8 +131,212 @@ private:
   detail::thread_group threads_;
 };
 
+template <typename Blocking, typename Relationship,
+    typename OutstandingWork, typename Allocator>
+class thread_pool::basic_executor_type
+{
+public:
+  /// Copy construtor.
+  basic_executor_type(const basic_executor_type& other) ASIO_NOEXCEPT;
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move construtor.
+  basic_executor_type(basic_executor_type&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Destructor.
+  ~basic_executor_type();
+
+  /// Assignment operator.
+  basic_executor_type& operator=(
+      const basic_executor_type& other) ASIO_NOEXCEPT;
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move assignment operator.
+  basic_executor_type& operator=(
+      basic_executor_type&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Obtain an executor with the @c blocking.never property.
+  basic_executor_type<execution::blocking_t::never_t,
+      Relationship, OutstandingWork, Allocator>
+  require(execution::blocking_t::never_t) const
+  {
+    return basic_executor_type<execution::blocking_t::never_t, Relationship,
+        OutstandingWork, Allocator>(pool_, allocator_);
+  }
+
+  /// Obtain an executor with the @c blocking.possibly property.
+  basic_executor_type<execution::blocking_t::possibly_t,
+      Relationship, OutstandingWork, Allocator>
+  require(execution::blocking_t::possibly_t) const
+  {
+    return basic_executor_type<execution::blocking_t::possibly_t, Relationship,
+        OutstandingWork, Allocator>(pool_, allocator_);
+  }
+
+  /// Obtain an executor with the @c relationship.continuation property.
+  basic_executor_type<Blocking, execution::relationship_t::continuation_t,
+      OutstandingWork, Allocator>
+  require(execution::relationship_t::continuation_t) const
+  {
+    return basic_executor_type<Blocking,
+        execution::relationship_t::continuation_t, OutstandingWork,
+        Allocator>(pool_, allocator_);
+  }
+
+  /// Obtain an executor with the @c relationship.fork property.
+  basic_executor_type<Blocking, execution::relationship_t::fork_t,
+      OutstandingWork, Allocator>
+  require(execution::relationship_t::fork_t) const
+  {
+    return basic_executor_type<Blocking,
+        execution::relationship_t::fork_t, OutstandingWork,
+        Allocator>(pool_, allocator_);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.tracked property.
+  basic_executor_type<Blocking, Relationship,
+      execution::outstanding_work_t::tracked_t, Allocator>
+  require(execution::outstanding_work_t::tracked_t) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        execution::outstanding_work_t::tracked_t,
+        Allocator>(pool_, allocator_);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.untracked property.
+  basic_executor_type<Blocking, Relationship,
+      execution::outstanding_work_t::untracked_t, Allocator>
+  require(execution::outstanding_work_t::untracked_t) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        execution::outstanding_work_t::untracked_t,
+        Allocator>(pool_, allocator_);
+  }
+
+  /// Obtain an executor with the specified @c allocator property.
+  template <typename OtherAllocator>
+  basic_executor_type<Blocking, Relationship, OutstandingWork, OtherAllocator>
+  require(execution::allocator_t<OtherAllocator> a) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        OutstandingWork, OtherAllocator>(pool_, a.value());
+  }
+
+  /// Obtain an executor with the default @c allocator property.
+  basic_executor_type<Blocking, Relationship,
+      OutstandingWork, std::allocator<void> >
+  require(execution::allocator_t<void>) const
+  {
+    return basic_executor_type<Blocking, Relationship,
+        OutstandingWork, std::allocator<void> >(pool_);
+  }
+
+  /// Query the current value of the @c context property.
+  thread_pool& query(execution::context_t) ASIO_NOEXCEPT
+  {
+    return pool_;
+  }
+
+  /// Query the current value of the @c blocking property.
+  static ASIO_CONSTEXPR execution::blocking_t query(
+      execution::blocking_t) ASIO_NOEXCEPT
+  {
+    return Blocking();
+  }
+
+  /// Query the current value of the @c relationship property.
+  static ASIO_CONSTEXPR execution::relationship_t query(
+      execution::relationship_t) ASIO_NOEXCEPT
+  {
+    return Relationship();
+  }
+
+  /// Query the current value of the @c outstanding_work property.
+  static ASIO_CONSTEXPR execution::outstanding_work_t query(
+      execution::outstanding_work_t) ASIO_NOEXCEPT
+  {
+    return OutstandingWork();
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<Allocator>) ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<void>) ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Determine whether the thread pool is running in the current thread.
+  /**
+   * @return @c true if the current thread is running the thread pool. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
+
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying thread pool.
+   */
+  friend bool operator==(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.pool_ == b.pool_;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying thread pool.
+   */
+  friend bool operator!=(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.pool_ != b.pool_;
+  }
+
+  /// Oneway execution function.
+  template <typename Function>
+  void execute(ASIO_MOVE_ARG(Function) f) const;
+
+protected:
+  friend class thread_pool;
+  template <typename, typename, typename, typename>
+    friend class basic_executor_type;
+
+  // Constructor used by thread_pool::get_executor().
+  explicit basic_executor_type(thread_pool& p)
+    : pool_(&p)
+  {
+  }
+
+  // Constructor used by require().
+  basic_executor_type(thread_pool* p, const Allocator& a)
+    : pool_(p),
+      allocator_(a)
+  {
+  }
+
+  // The underlying thread pool.
+  thread_pool* pool_;
+
+  // The allocator used for execution functions.
+  Allocator allocator_;
+};
+
 /// Executor used to submit functions to a thread pool.
-class thread_pool::executor_type
+class thread_pool::executor_type :
+  public thread_pool::basic_executor_type<
+    execution::blocking_t::possibly_t,
+    execution::relationship_t::fork_t,
+    execution::outstanding_work_t::untracked_t,
+    std::allocator<void> >
 {
 public:
   /// Obtain the underlying execution context.
@@ -214,10 +442,14 @@ private:
   friend class thread_pool;
 
   // Constructor.
-  explicit executor_type(thread_pool& p) : pool_(p) {}
-
-  // The underlying thread pool.
-  thread_pool& pool_;
+  explicit executor_type(thread_pool& p)
+    : thread_pool::basic_executor_type<
+        execution::blocking_t::possibly_t,
+        execution::relationship_t::fork_t,
+        execution::outstanding_work_t::untracked_t,
+        std::allocator<void> >(p)
+  {
+  }
 };
 
 } // namespace asio

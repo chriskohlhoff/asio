@@ -118,6 +118,7 @@
 #include "asio/signal_set_service.hpp"
 #include "asio/socket_acceptor_service.hpp"
 #include "asio/socket_base.hpp"
+#include "asio/static_thread_pool.hpp"
 #include "asio/steady_timer.hpp"
 #include "asio/strand.hpp"
 #include "asio/stream_socket_service.hpp"

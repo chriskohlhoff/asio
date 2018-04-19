@@ -63,7 +63,19 @@ void thread_pool::stop()
   scheduler_.stop();
 }
 
+void thread_pool::attach()
+{
+  asio::error_code ec;
+  scheduler_.run(ec);
+}
+
 void thread_pool::join()
+{
+  scheduler_.work_finished();
+  threads_.join();
+}
+
+void thread_pool::wait()
 {
   scheduler_.work_finished();
   threads_.join();
