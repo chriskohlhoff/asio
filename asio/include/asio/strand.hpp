@@ -38,16 +38,14 @@ public:
    */
   strand()
     : executor_(),
-      impl_(use_service<detail::strand_executor_service>(
-            executor_.context()).create_implementation())
+      impl_(strand::create_implementation(executor_))
   {
   }
 
   /// Construct a strand for the specified executor.
   explicit strand(const Executor& e)
     : executor_(e),
-      impl_(use_service<detail::strand_executor_service>(
-            executor_.context()).create_implementation())
+      impl_(strand::create_implementation(executor_))
   {
   }
 
@@ -147,6 +145,30 @@ public:
     return executor_;
   }
 
+  /// Forward a requirement to the underlying executor.
+  template <typename Property, typename Ex = inner_executor_type>
+  auto require(const Property& p) const
+    -> strand<typename decay<
+      decltype(declval<typename conditional<true,
+        Executor, Property>::type>().require(p))>::type>
+  {
+    return strand<typename decay<
+      decltype(declval<typename conditional<true,
+        Executor, Property>::type>().require(p))>::type>(
+          executor_.require(p), impl_);
+  }
+
+  /// Forward a query to the underlying executor.
+  template <typename Property>
+  auto query(const Property& p) const
+    noexcept(noexcept(declval<typename conditional<true,
+          Executor, Property>::type>().query(p)))
+    -> decltype(declval<typename conditional<true,
+        Executor, Property>::type>().query(p))
+  {
+    return executor_.query(p);
+  }
+
   /// Obtain the underlying execution context.
   execution_context& context() const ASIO_NOEXCEPT
   {
@@ -169,6 +191,25 @@ public:
   void on_work_finished() const ASIO_NOEXCEPT
   {
     executor_.on_work_finished();
+  }
+
+  /// Request the strand to invoke the given function object.
+  /**
+   * This function is used to ask the strand to execute the given function
+   * object on its underlying executor. The function object will be executed
+   * according to the properties of the underlying executor.
+   *
+   * @param f The function object to be called. The executor will make
+   * a copy of the handler object as required. The function signature of the
+   * function object must be: @code void function(); @endcode
+   */
+  template <typename Function>
+  auto execute(ASIO_MOVE_ARG(Function) f)
+    -> decltype(declval<typename conditional<true,
+        Executor, Function>::type>().execute(declval<Function>()))
+  {
+    detail::strand_executor_service::execute(impl_,
+        executor_, ASIO_MOVE_CAST(Function)(f));
   }
 
   /// Request the strand to invoke the given function object.
@@ -265,9 +306,38 @@ public:
   }
 
 private:
-  Executor executor_;
+  template <typename> friend class strand;
+
   typedef detail::strand_executor_service::implementation_type
     implementation_type;
+
+  template <typename InnerExecutor>
+  static implementation_type create_implementation(const InnerExecutor& ex,
+      typename enable_if<
+        execution::can_query<InnerExecutor, execution::context_t>::value
+      >::type* = 0)
+  {
+    return use_service<detail::strand_executor_service>(
+        execution::query(ex, execution::context)).create_implementation();
+  }
+
+  template <typename InnerExecutor>
+  static implementation_type create_implementation(const InnerExecutor& ex,
+      typename enable_if<
+        !execution::can_query<InnerExecutor, execution::context_t>::value
+      >::type* = 0)
+  {
+    return use_service<detail::strand_executor_service>(
+        ex.context()).create_implementation();
+  }
+
+  strand(const Executor& ex, const implementation_type& impl)
+    : executor_(ex),
+      impl_(impl)
+  {
+  }
+
+  Executor executor_;
   implementation_type impl_;
 };
 
