@@ -25,7 +25,9 @@
 namespace asio {
 namespace detail {
 
-template <typename Handler>
+template <typename Handler,
+    typename Executor = typename associated_executor<Handler>::type,
+    typename = void>
 class work_dispatcher
 {
 public:
@@ -60,7 +62,35 @@ public:
   }
 
 private:
-  executor_work_guard<typename associated_executor<Handler>::type> work_;
+  executor_work_guard<Executor> work_;
+  Handler handler_;
+};
+
+template <typename Handler, typename Executor>
+class work_dispatcher<Handler, Executor,
+    typename enable_if<!is_executor<Executor>::value>::type>
+{
+public:
+  work_dispatcher(Handler& handler)
+    : executor_(execution::prefer(
+          (get_associated_executor)(handler),
+          execution::outstanding_work.tracked)),
+      handler_(ASIO_MOVE_CAST(Handler)(handler))
+  {
+  }
+
+  void operator()()
+  {
+    execution::prefer(
+        execution::require(executor_, execution::oneway, execution::single),
+        execution::blocking.possibly,
+        execution::allocator((get_associated_allocator)(handler_))
+      ).execute(ASIO_MOVE_CAST(Handler)(handler_));
+  }
+
+private:
+  decltype(execution::prefer(declval<Executor>(),
+        execution::outstanding_work.tracked)) executor_;
   Handler handler_;
 };
 

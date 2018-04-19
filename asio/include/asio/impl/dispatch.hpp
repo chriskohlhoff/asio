@@ -23,6 +23,51 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+namespace detail {
+
+template <typename Executor, typename Allocator, typename Handler>
+inline void dispatch(const Executor& ex,
+    const Allocator& alloc, Handler& handler,
+    typename enable_if<!execution::can_require<Executor,
+      execution::oneway_t, execution::single_t>::value>::type* = 0)
+{
+  ex.dispatch(ASIO_MOVE_CAST(Handler)(handler), alloc);
+}
+
+template <typename Executor, typename Allocator, typename Handler>
+inline void dispatch(const Executor& ex,
+    const Allocator& alloc, Handler& handler,
+    typename enable_if<execution::can_require<Executor,
+      execution::oneway_t, execution::single_t>::value>::type* = 0)
+{
+  execution::prefer(
+      execution::require(ex, execution::oneway, execution::single),
+      execution::blocking.possibly, execution::allocator(alloc)
+    ).execute(ASIO_MOVE_CAST(Handler)(handler));
+}
+
+template <typename Executor, typename Allocator, typename Handler>
+inline void dispatch_work(const Executor& ex,
+    const Allocator& alloc, Handler& handler,
+    typename enable_if<!execution::can_require<Executor,
+      execution::oneway_t, execution::single_t>::value>::type* = 0)
+{
+  ex.dispatch(detail::work_dispatcher<Handler>(handler), alloc);
+}
+
+template <typename Executor, typename Allocator, typename Handler>
+inline void dispatch_work(const Executor& ex,
+    const Allocator& alloc, Handler& handler,
+    typename enable_if<execution::can_require<Executor,
+      execution::oneway_t, execution::single_t>::value>::type* = 0)
+{
+  execution::prefer(
+      execution::require(ex, execution::oneway, execution::single),
+      execution::blocking.possibly, execution::allocator(alloc)
+    ).execute(detail::work_dispatcher<Handler>(handler));
+}
+
+} // namespace detail
 
 template <typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
@@ -38,7 +83,7 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
   typename associated_allocator<handler>::type alloc(
       (get_associated_allocator)(init.completion_handler));
 
-  ex.dispatch(ASIO_MOVE_CAST(handler)(init.completion_handler), alloc);
+  detail::dispatch(ex, alloc, init.completion_handler);
 
   return init.result.get();
 }
@@ -46,7 +91,8 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
 template <typename Executor, typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
     const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
-    typename enable_if<is_executor<Executor>::value>::type*)
+    typename enable_if<!is_convertible<
+      Executor&, execution_context&>::value>::type*)
 {
   typedef ASIO_HANDLER_TYPE(CompletionToken, void()) handler;
 
@@ -55,8 +101,7 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) dispatch(
   typename associated_allocator<handler>::type alloc(
       (get_associated_allocator)(init.completion_handler));
 
-  ex.dispatch(detail::work_dispatcher<handler>(
-        init.completion_handler), alloc);
+  detail::dispatch_work(ex, alloc, init.completion_handler);
 
   return init.result.get();
 }

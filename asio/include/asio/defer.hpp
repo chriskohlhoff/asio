@@ -86,7 +86,8 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
 template <typename Executor, typename CompletionToken>
 ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) defer(
     const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
-    typename enable_if<is_executor<Executor>::value>::type* = 0);
+    typename enable_if<!is_convertible<
+      Executor&, execution_context&>::value>::type* = 0);
 
 /// Submits a completion token or function object for execution.
 /**
