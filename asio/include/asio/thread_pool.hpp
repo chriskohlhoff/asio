@@ -233,6 +233,13 @@ public:
         OutstandingWork, std::allocator<void> >(pool_);
   }
 
+  /// Query the current value of the @c mapping property.
+  static ASIO_CONSTEXPR execution::mapping_t query(
+      execution::mapping_t) ASIO_NOEXCEPT
+  {
+    return execution::mapping.thread;
+  }
+
   /// Query the current value of the @c context property.
   thread_pool& query(execution::context_t) ASIO_NOEXCEPT
   {

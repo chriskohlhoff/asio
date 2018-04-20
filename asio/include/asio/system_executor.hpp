@@ -88,6 +88,13 @@ public:
         Relationship, std::allocator<void> >();
   }
 
+  /// Query the current value of the @c mapping property.
+  static ASIO_CONSTEXPR execution::mapping_t query(
+      execution::mapping_t) ASIO_NOEXCEPT
+  {
+    return execution::mapping.thread;
+  }
+
   /// Query the current value of the @c context property.
   static system_context& query(execution::context_t) ASIO_NOEXCEPT;
 
