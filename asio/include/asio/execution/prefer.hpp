@@ -69,7 +69,7 @@ struct impl
   }
 
   template <typename Executor, typename Property>
-  constexpr auto operator()(Executor&& ex, Property&& p) const
+  constexpr auto operator()(Executor&& ex, Property&&) const
     -> typename enable_if<
       decay<Property>::type::is_preferable
         && !require_static_traits<Executor, Property>::is_valid
