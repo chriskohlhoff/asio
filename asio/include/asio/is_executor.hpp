@@ -22,6 +22,7 @@
 
 namespace asio {
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 /// The is_executor trait detects whether a type T meets the Executor type
 /// requirements.
 /**
@@ -38,6 +39,7 @@ struct is_executor
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 } // namespace asio
 

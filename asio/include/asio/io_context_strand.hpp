@@ -29,6 +29,7 @@
 
 namespace asio {
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 /// Provides serialised handler execution.
 /**
  * The io_context::strand class provides the ability to post and dispatch
@@ -374,6 +375,7 @@ private:
   asio::detail::strand_service& service_;
   mutable asio::detail::strand_service::implementation_type impl_;
 };
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 } // namespace asio
 

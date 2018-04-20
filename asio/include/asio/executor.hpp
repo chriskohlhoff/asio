@@ -39,6 +39,7 @@ public:
     ASIO_NOEXCEPT_OR_NOTHROW;
 };
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 /// Polymorphic wrapper for executors.
 class executor
 {
@@ -326,16 +327,21 @@ private:
   impl_base* impl_;
 #endif // !defined(GENERATING_DOCUMENTATION)
 };
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 } // namespace asio
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 ASIO_USES_ALLOCATOR(asio::executor)
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/impl/executor.hpp"
-#if defined(ASIO_HEADER_ONLY)
-# include "asio/impl/executor.ipp"
-#endif // defined(ASIO_HEADER_ONLY)
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
+# include "asio/impl/executor.hpp"
+# if defined(ASIO_HEADER_ONLY)
+#  include "asio/impl/executor.ipp"
+# endif // defined(ASIO_HEADER_ONLY)
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 #endif // ASIO_EXECUTOR_HPP

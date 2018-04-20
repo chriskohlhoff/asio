@@ -830,6 +830,7 @@ class io_context::executor_type :
     std::allocator<void> >
 {
 public:
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
   /// Obtain the underlying execution context.
   io_context& context() const ASIO_NOEXCEPT;
 
@@ -901,6 +902,7 @@ public:
    */
   template <typename Function, typename Allocator>
   void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 private:
   friend class io_context;

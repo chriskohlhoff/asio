@@ -64,6 +64,7 @@ void basic_system_executor<Blocking, Relationship, Allocator>::execute(
   p.v = p.p = 0;
 }
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 inline system_context& system_executor::context() const ASIO_NOEXCEPT
 {
   return detail::global<system_context>();
@@ -116,6 +117,7 @@ void system_executor::defer(
   ctx.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
 }
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 } // namespace asio
 

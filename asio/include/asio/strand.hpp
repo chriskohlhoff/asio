@@ -146,7 +146,7 @@ public:
   }
 
   /// Forward a requirement to the underlying executor.
-  template <typename Property, typename Ex = inner_executor_type>
+  template <typename Property>
   auto require(const Property& p) const
     -> strand<typename decay<
       decltype(declval<typename conditional<true,
@@ -169,6 +169,7 @@ public:
     return executor_.query(p);
   }
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
   /// Obtain the underlying execution context.
   execution_context& context() const ASIO_NOEXCEPT
   {
@@ -192,6 +193,7 @@ public:
   {
     executor_.on_work_finished();
   }
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
   /// Request the strand to invoke the given function object.
   /**
@@ -212,6 +214,7 @@ public:
         executor_, ASIO_MOVE_CAST(Function)(f));
   }
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
   /// Request the strand to invoke the given function object.
   /**
    * This function is used to ask the strand to execute the given function
@@ -273,6 +276,7 @@ public:
     detail::strand_executor_service::defer(impl_,
         executor_, ASIO_MOVE_CAST(Function)(f), a);
   }
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
   /// Determine whether the strand is running in the current thread.
   /**

@@ -24,6 +24,7 @@
 
 namespace asio {
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 /// An object of type @c executor_work_guard controls ownership of executor work
 /// within a scope.
 template <typename Executor>
@@ -162,6 +163,11 @@ make_work_guard(const T& t, ExecutionContext& ctx,
       associated_executor<T, typename ExecutionContext::executor_type>::get(
         t, ctx.get_executor()));
 }
+#else // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
+// Forward declare since parts of the implementation still need it.
+template <typename Executor>
+class executor_work_guard;
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 } // namespace asio
 

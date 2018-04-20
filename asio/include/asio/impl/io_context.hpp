@@ -324,6 +324,7 @@ void io_context::basic_executor_type<
   p.v = p.p = 0;
 }
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 inline io_context&
 io_context::executor_type::context() const ASIO_NOEXCEPT
 {
@@ -406,6 +407,7 @@ void io_context::executor_type::defer(
   io_context_->impl_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
 }
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 #if !defined(ASIO_NO_DEPRECATED)
 inline io_context::work::work(asio::io_context& io_context)

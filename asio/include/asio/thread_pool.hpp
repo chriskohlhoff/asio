@@ -339,6 +339,7 @@ class thread_pool::executor_type :
     std::allocator<void> >
 {
 public:
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
   /// Obtain the underlying execution context.
   thread_pool& context() const ASIO_NOEXCEPT;
 
@@ -417,6 +418,7 @@ public:
    * returns @c false.
    */
   bool running_in_this_thread() const ASIO_NOEXCEPT;
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
   /// Compare two executors for equality.
   /**

@@ -155,6 +155,7 @@ void thread_pool::basic_executor_type<
   p.v = p.p = 0;
 }
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 inline thread_pool&
 thread_pool::executor_type::context() const ASIO_NOEXCEPT
 {
@@ -243,6 +244,7 @@ thread_pool::executor_type::running_in_this_thread() const ASIO_NOEXCEPT
 {
   return pool_->scheduler_.can_dispatch();
 }
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 } // namespace asio
 

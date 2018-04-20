@@ -20,19 +20,21 @@ noinst_PROGRAMS = \
 	echo/blocking_tcp_echo_server \
 	echo/blocking_udp_echo_client \
 	echo/blocking_udp_echo_server \
-	executors/actor \
-	executors/bank_account_1 \
-	executors/bank_account_2 \
-	executors/fork_join \
-	executors/pipeline \
-	executors/priority_scheduler \
-	futures/daytime_client \
 	http/server/http_server \
-	invocation/prioritised_handlers \
 	iostreams/http_client \
 	multicast/receiver \
 	multicast/sender \
 	nonblocking/third_party_lib
+
+# noinst_PROGRAMS += \
+# 	executors/actor \
+# 	executors/bank_account_1 \
+# 	executors/bank_account_2 \
+# 	executors/fork_join \
+# 	executors/pipeline \
+# 	executors/priority_scheduler \
+# 	futures/daytime_client \
+# 	invocation/prioritised_handlers
 
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
@@ -65,13 +67,13 @@ echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
 echo_blocking_tcp_echo_server_SOURCES = echo/blocking_tcp_echo_server.cpp
 echo_blocking_udp_echo_client_SOURCES = echo/blocking_udp_echo_client.cpp
 echo_blocking_udp_echo_server_SOURCES = echo/blocking_udp_echo_server.cpp
-executors_actor_SOURCES = executors/actor.cpp
-executors_bank_account_1_SOURCES = executors/bank_account_1.cpp
-executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
-executors_fork_join_SOURCES = executors/fork_join.cpp
-executors_pipeline_SOURCES = executors/pipeline.cpp
-executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
-futures_daytime_client_SOURCES = futures/daytime_client.cpp
+# executors_actor_SOURCES = executors/actor.cpp
+# executors_bank_account_1_SOURCES = executors/bank_account_1.cpp
+# executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
+# executors_fork_join_SOURCES = executors/fork_join.cpp
+# executors_pipeline_SOURCES = executors/pipeline.cpp
+# executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
+# futures_daytime_client_SOURCES = futures/daytime_client.cpp
 http_server_http_server_SOURCES = \
 	http/server/connection.cpp \
 	http/server/connection_manager.cpp \
@@ -81,7 +83,7 @@ http_server_http_server_SOURCES = \
 	http/server/request_handler.cpp \
 	http/server/request_parser.cpp \
 	http/server/server.cpp
-invocation_prioritised_handlers_SOURCES = invocation/prioritised_handlers.cpp
+# invocation_prioritised_handlers_SOURCES = invocation/prioritised_handlers.cpp
 iostreams_http_client_SOURCES = iostreams/http_client.cpp
 multicast_receiver_SOURCES = multicast/receiver.cpp
 multicast_sender_SOURCES = multicast/sender.cpp

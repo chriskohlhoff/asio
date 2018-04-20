@@ -168,6 +168,7 @@ class system_executor : public basic_system_executor<
     execution::relationship_t::fork_t, std::allocator<void> >
 {
 public:
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
   /// Obtain the underlying execution context.
   system_context& context() const ASIO_NOEXCEPT;
 
@@ -233,6 +234,7 @@ public:
    */
   template <typename Function, typename Allocator>
   void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
   /// Compare two executors for equality.
   /**

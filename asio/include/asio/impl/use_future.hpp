@@ -210,6 +210,7 @@ public:
   {
   }
 
+#if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
   execution_context& context() const ASIO_NOEXCEPT
   {
     return system_executor().context();
@@ -249,6 +250,7 @@ public:
   {
     return a.p_ != b.p_;
   }
+#endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
 private:
   shared_ptr<std::promise<T> > p_;
