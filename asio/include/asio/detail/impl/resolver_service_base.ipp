@@ -39,9 +39,9 @@ resolver_service_base::resolver_service_base(
     work_io_context_(new asio::io_context(-1)),
     work_io_context_impl_(asio::use_service<
         io_context_impl>(*work_io_context_)),
-    work_(asio::make_work_guard(*work_io_context_)),
     work_thread_(0)
 {
+  work_io_context_impl_.work_started();
 }
 
 resolver_service_base::~resolver_service_base()
@@ -51,9 +51,9 @@ resolver_service_base::~resolver_service_base()
 
 void resolver_service_base::base_shutdown()
 {
-  work_.reset();
   if (work_io_context_.get())
   {
+    work_io_context_impl_.work_finished();
     work_io_context_->stop();
     if (work_thread_.get())
     {

@@ -120,10 +120,6 @@ private:
   // The work io_context implementation used to post completions.
   io_context_impl& work_io_context_impl_;
 
-  // Work for the private io_context to perform.
-  asio::executor_work_guard<
-      asio::io_context::executor_type> work_;
-
   // Thread used for running the work io_context's run loop.
   asio::detail::scoped_ptr<asio::detail::thread> work_thread_;
 };
