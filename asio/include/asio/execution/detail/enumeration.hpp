@@ -29,7 +29,7 @@ namespace detail {
 template <typename Derived, int N, bool Defaulted>
 struct enumeration
 {
-  template <int Value>
+  template <int Value, typename = Derived>
   struct enumerator;
 
   template <typename Enumerator>
@@ -79,7 +79,7 @@ struct enumeration
     }
   };
 
-  template <int Value>
+  template <int Value, typename>
   struct enumerator :
     conditional<
       Defaulted && Value == 0,
