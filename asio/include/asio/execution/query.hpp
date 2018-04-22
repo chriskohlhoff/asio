@@ -31,7 +31,7 @@ namespace query_fn {
 struct impl
 {
   template <typename Executor, typename Property>
-  constexpr auto operator()(Executor&& ex, Property&&) const
+  constexpr auto operator()(Executor&&, Property&&) const
     -> typename enable_if<
       query_static_traits<Executor, Property>::is_valid,
       typename query_static_traits<Executor, Property>::result_type
