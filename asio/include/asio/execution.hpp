@@ -24,6 +24,7 @@
 #include "asio/execution/can_require.hpp"
 #include "asio/execution/context.hpp"
 #include "asio/execution/is_oneway_executor.hpp"
+#include "asio/execution/is_twoway_executor.hpp"
 #include "asio/execution/mapping.hpp"
 #include "asio/execution/oneway.hpp"
 #include "asio/execution/outstanding_work.hpp"
@@ -32,5 +33,6 @@
 #include "asio/execution/relationship.hpp"
 #include "asio/execution/require.hpp"
 #include "asio/execution/single.hpp"
+#include "asio/execution/twoway.hpp"
 
 #endif // ASIO_EXECUTION_HPP
