@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/execution/blocking_adaptation.hpp"
 #include "asio/execution/detail/twoway_adapter.hpp"
+#include "asio/execution/is_oneway_executor.hpp"
 #include "asio/execution/is_twoway_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
