@@ -427,26 +427,6 @@ public:
   bool running_in_this_thread() const ASIO_NOEXCEPT;
 #endif // !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 
-  /// Compare two executors for equality.
-  /**
-   * Two executors are equal if they refer to the same underlying thread pool.
-   */
-  friend bool operator==(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.pool_ == &b.pool_;
-  }
-
-  /// Compare two executors for inequality.
-  /**
-   * Two executors are equal if they refer to the same underlying thread pool.
-   */
-  friend bool operator!=(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.pool_ != &b.pool_;
-  }
-
 private:
   friend class thread_pool;
 
