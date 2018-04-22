@@ -23,6 +23,7 @@
 #include "asio/execution/can_query.hpp"
 #include "asio/execution/can_require.hpp"
 #include "asio/execution/context.hpp"
+#include "asio/execution/executor_future.hpp"
 #include "asio/execution/is_oneway_executor.hpp"
 #include "asio/execution/is_twoway_executor.hpp"
 #include "asio/execution/mapping.hpp"
