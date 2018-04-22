@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/execution/is_oneway_executor.hpp"
+#include "asio/execution/is_twoway_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -37,7 +38,9 @@ struct single_t
   /// Statically determines whether an Executor type provides the @c single
   /// property.
   template <typename Executor>
-  static constexpr bool static_query_v = is_oneway_executor<Executor>::value;
+  static constexpr bool static_query_v
+    = is_oneway_executor<Executor>::value
+      || is_twoway_executor<Executor>::value;
 
   /// Obtain the value associated with the single property. Always @c true.
   static constexpr bool value()
