@@ -16,9 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <future>
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/execution.hpp"
 #include "asio/execution_context.hpp"
 
@@ -311,6 +313,11 @@ public:
   /// Oneway execution function.
   template <typename Function>
   void execute(ASIO_MOVE_ARG(Function) f) const;
+
+  /// Twoway execution function.
+  template <typename Function>
+  std::future<decltype(declval<typename decay<Function>::type>()())>
+  twoway_execute(ASIO_MOVE_ARG(Function) f) const;
 
 protected:
   friend class thread_pool;

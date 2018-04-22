@@ -155,6 +155,21 @@ void thread_pool::basic_executor_type<
   p.v = p.p = 0;
 }
 
+template <typename Blocking, typename Relationship,
+    typename OutstandingWork, typename Allocator>
+template <typename Function>
+std::future<decltype(declval<typename decay<Function>::type>()())>
+thread_pool::basic_executor_type<
+    Blocking, Relationship, OutstandingWork,
+    Allocator>::twoway_execute(ASIO_MOVE_ARG(Function) f) const
+{
+  typedef decltype(declval<typename decay<Function>::type>()()) result_type;
+  std::packaged_task<result_type()> task(ASIO_MOVE_CAST(Function)(f));
+  std::future<result_type> fut = task.get_future();
+  this->execute(std::move(task));
+  return fut;
+}
+
 #if !defined(ASIO_UNIFIED_EXECUTORS_ONLY)
 inline thread_pool&
 thread_pool::executor_type::context() const ASIO_NOEXCEPT
