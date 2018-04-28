@@ -252,7 +252,7 @@ public:
   {
     basic_resolver_results tmp(*this);
     tmp.index_ = 0;
-    return tmp;
+    return std::move(tmp);
   }
 
   /// Obtain an end iterator for the results range.
