@@ -135,7 +135,7 @@ char consume_memfn_helper(
 template <typename, typename>
 char (&buffer_element_type_helper(...))[2];
 
-#if defined(ASIO_HAS_DECL_TYPE)
+#if defined(ASIO_HAS_DECLTYPE)
 
 template <typename T, typename Buffer>
 char buffer_element_type_helper(T* t,
@@ -143,7 +143,7 @@ char buffer_element_type_helper(T* t,
       decltype(*buffer_sequence_begin(*t)),
         Buffer>::value>::type*);
 
-#else // defined(ASIO_HAS_DECL_TYPE)
+#else // defined(ASIO_HAS_DECLTYPE)
 
 template <typename T, typename Buffer>
 char buffer_element_type_helper(
@@ -151,7 +151,7 @@ char buffer_element_type_helper(
     typename enable_if<is_convertible<
       typename T::value_type, Buffer>::value>::type*);
 
-#endif // defined(ASIO_HAS_DECL_TYPE)
+#endif // defined(ASIO_HAS_DECLTYPE)
 
 template <typename>
 char (&const_buffers_type_typedef_helper(...))[2];
