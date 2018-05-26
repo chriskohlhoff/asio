@@ -24,20 +24,20 @@ namespace asio {
 namespace execution {
 
 struct relationship_t :
-  detail::enumeration<relationship_t, 2, false>
+  detail::enumeration<relationship_t, 2>
 {
-  using detail::enumeration<relationship_t, 2, false>::enumeration;
+  using detail::enumeration<relationship_t, 2>::enumeration;
 
-  using continuation_t = enumerator<0>;
-  using fork_t = enumerator<1>;
+  using fork_t = enumerator<0>;
+  using continuation_t = enumerator<1>;
 
-  static constexpr continuation_t continuation{};
   static constexpr fork_t fork{};
+  static constexpr continuation_t continuation{};
 };
 
 constexpr relationship_t relationship{};
-inline constexpr relationship_t::continuation_t relationship_t::continuation;
 inline constexpr relationship_t::fork_t relationship_t::fork;
+inline constexpr relationship_t::continuation_t relationship_t::continuation;
 
 } // namespace execution
 } // namespace asio

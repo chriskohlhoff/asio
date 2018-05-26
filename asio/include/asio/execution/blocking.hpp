@@ -24,9 +24,9 @@ namespace asio {
 namespace execution {
 
 struct blocking_t :
-  detail::enumeration<blocking_t, 3, true>
+  detail::enumeration<blocking_t, 3>
 {
-  using detail::enumeration<blocking_t, 3, true>::enumeration;
+  using detail::enumeration<blocking_t, 3>::enumeration;
 
   using possibly_t = enumerator<0>;
   using always_t = enumerator<1>;

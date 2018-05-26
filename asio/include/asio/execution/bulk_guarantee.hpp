@@ -24,9 +24,9 @@ namespace asio {
 namespace execution {
 
 struct bulk_guarantee_t :
-  detail::enumeration<bulk_guarantee_t, 3, true>
+  detail::enumeration<bulk_guarantee_t, 3>
 {
-  using detail::enumeration<bulk_guarantee_t, 3, true>::enumeration;
+  using detail::enumeration<bulk_guarantee_t, 3>::enumeration;
 
   using unsequenced_t = enumerator<0>;
   using sequenced_t = enumerator<1>;

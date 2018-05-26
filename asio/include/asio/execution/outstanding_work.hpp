@@ -24,20 +24,20 @@ namespace asio {
 namespace execution {
 
 struct outstanding_work_t :
-  detail::enumeration<outstanding_work_t, 2, false>
+  detail::enumeration<outstanding_work_t, 2>
 {
-  using detail::enumeration<outstanding_work_t, 2, false>::enumeration;
+  using detail::enumeration<outstanding_work_t, 2>::enumeration;
 
-  using tracked_t = enumerator<0>;
-  using untracked_t = enumerator<1>;
+  using untracked_t = enumerator<0>;
+  using tracked_t = enumerator<1>;
 
-  static constexpr tracked_t tracked{};
   static constexpr untracked_t untracked{};
+  static constexpr tracked_t tracked{};
 };
 
 constexpr outstanding_work_t outstanding_work{};
-inline constexpr outstanding_work_t::tracked_t outstanding_work_t::tracked;
 inline constexpr outstanding_work_t::untracked_t outstanding_work_t::untracked;
+inline constexpr outstanding_work_t::tracked_t outstanding_work_t::tracked;
 
 } // namespace execution
 } // namespace asio

@@ -24,15 +24,15 @@ namespace asio {
 namespace execution {
 
 struct blocking_adaptation_t :
-  detail::enumeration<blocking_adaptation_t, 2, false>
+  detail::enumeration<blocking_adaptation_t, 2>
 {
-  using detail::enumeration<blocking_adaptation_t, 2, false>::enumeration;
+  using detail::enumeration<blocking_adaptation_t, 2>::enumeration;
 
-  using allowed_t = enumerator<0>;
-  using disallowed_t = enumerator<1>;
+  using disallowed_t = enumerator<0>;
+  using allowed_t = enumerator<1>;
 
-  static constexpr allowed_t allowed{};
   static constexpr disallowed_t disallowed{};
+  static constexpr allowed_t allowed{};
 
   template <typename Executor>
   struct adapter
@@ -112,8 +112,8 @@ struct blocking_adaptation_t :
 };
 
 constexpr blocking_adaptation_t blocking_adaptation{};
-inline constexpr blocking_adaptation_t::allowed_t blocking_adaptation_t::allowed;
 inline constexpr blocking_adaptation_t::disallowed_t blocking_adaptation_t::disallowed;
+inline constexpr blocking_adaptation_t::allowed_t blocking_adaptation_t::allowed;
 
 } // namespace execution
 } // namespace asio

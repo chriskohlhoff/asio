@@ -26,7 +26,7 @@ namespace asio {
 namespace execution {
 namespace detail {
 
-template <typename Derived, int N, bool Defaulted>
+template <typename Derived, int N>
 struct enumeration
 {
   template <int Value, typename = Derived>
@@ -82,7 +82,7 @@ struct enumeration
   template <int Value, typename>
   struct enumerator :
     conditional<
-      Defaulted && Value == 0,
+      Value == 0,
       default_enumerator<enumerator<Value> >,
       non_default_enumerator<enumerator<Value> >
     >::type
