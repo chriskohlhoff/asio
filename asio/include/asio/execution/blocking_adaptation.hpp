@@ -16,7 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/execution/detail/enumeration.hpp"
+#include "asio/execution/detail/enumerator_adapter.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -34,49 +36,22 @@ struct blocking_adaptation_t :
   static constexpr disallowed_t disallowed{};
   static constexpr allowed_t allowed{};
 
+private:
   template <typename Executor>
-  struct adapter
+  class adapter :
+    public detail::enumerator_adapter<adapter,
+      Executor, blocking_adaptation_t, allowed_t>
   {
   public:
-    adapter(Executor ex)
-      : executor_(std::move(ex))
-    {
-    }
-
-    template <typename Property>
-    auto require(const Property& p) const
-      -> adapter<typename decay<
-        decltype(declval<typename conditional<true,
-          Executor, Property>::type>().require(p))>::type>
-    {
-      return adapter<typename decay<
-        decltype(declval<typename conditional<true,
-          Executor, Property>::type>().require(p))>::type>(
-            executor_.require(p));
-    }
-
-    static constexpr blocking_adaptation_t query(
-        const blocking_adaptation_t&) noexcept
-    {
-      return allowed_t{};
-    }
-
-    template <typename Property>
-    auto query(const Property& p) const
-      noexcept(noexcept(declval<typename conditional<true,
-            Executor, Property>::type>().query(p)))
-      -> decltype(declval<typename conditional<true,
-          Executor, Property>::type>().query(p))
-    {
-      return executor_.query(p);
-    }
+    using detail::enumerator_adapter<adapter, Executor,
+      blocking_adaptation_t, allowed_t>::enumerator_adapter;
 
     template <typename Function>
     auto execute(Function&& f) const
       -> decltype(declval<typename conditional<true,
           Executor, Function>::type>().execute(declval<Function>()))
     {
-      return executor_.execute(std::forward<Function>(f));
+      return this->executor_.execute(std::forward<Function>(f));
     }
 
     template <typename Function>
@@ -84,26 +59,11 @@ struct blocking_adaptation_t :
       -> decltype(declval<typename conditional<true,
           Executor, Function>::type>().twoway_execute(declval<Function>()))
     {
-      return executor_.execute(std::forward<Function>(f));
+      return this->executor_.twoway_execute(std::forward<Function>(f));
     }
-
-    friend constexpr bool operator==(
-        const adapter& a, const adapter& b) noexcept
-    {
-      return a.executor_ == b.executor_;
-    }
-
-    friend constexpr bool operator!=(
-        const adapter& a, const adapter& b) noexcept
-    {
-      return a.executor_ != b.executor_;
-    }
-
-  private:
-    template <typename> friend class adapter;
-    Executor executor_;
   };
 
+public:
   template <typename Executor>
   friend adapter<Executor> require(Executor ex, allowed_t)
   {

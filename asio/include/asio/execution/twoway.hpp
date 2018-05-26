@@ -16,8 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <future>
+#include "asio/detail/type_traits.hpp"
 #include "asio/execution/blocking_adaptation.hpp"
-#include "asio/execution/detail/twoway_adapter.hpp"
+#include "asio/execution/detail/adapter.hpp"
 #include "asio/execution/is_oneway_executor.hpp"
 #include "asio/execution/is_twoway_executor.hpp"
 
@@ -48,6 +50,35 @@ struct twoway_t
     return true;
   }
 
+private:
+  template <typename Executor>
+  class adapter : public detail::adapter<adapter, Executor>
+  {
+  public:
+    using detail::adapter<adapter, Executor>::adapter;
+
+    template <typename Function>
+    auto execute(Function&& f) const
+      -> decltype(declval<typename conditional<true,
+          Executor, Function>::type>().execute(declval<Function>()))
+    {
+      return this->executor_.execute(std::forward<Function>(f));
+    }
+
+    template <typename Function>
+    auto twoway_execute(Function f) const
+      -> std::future<typename conditional<true, decltype(f()),
+        decltype(declval<typename conditional<true, Executor,
+          Function>::type>().execute(declval<Function>()))>::type>
+    {
+      std::packaged_task<decltype(f())()> task(std::move(f));
+      std::future<decltype(f())> fut = task.get_future();
+      this->executor_.execute(std::move(task));
+      return fut;
+    }
+  };
+
+public:
   /// Default adapter adapts oneway as twoway.
   template <typename Executor, typename =
       typename enable_if<
@@ -56,9 +87,9 @@ struct twoway_t
           && blocking_adaptation_t::static_query_v<Executor>
             == blocking_adaptation.allowed
       >::type>
-  friend detail::twoway_adapter<Executor> require(Executor ex, twoway_t)
+  friend adapter<Executor> require(Executor ex, twoway_t)
   {
-    return detail::twoway_adapter<Executor>(std::move(ex));
+    return adapter<Executor>(std::move(ex));
   }
 };
 
