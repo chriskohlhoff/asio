@@ -734,7 +734,7 @@ public:
   /// Query the current value of the @c context property.
   io_context& query(execution::context_t) ASIO_NOEXCEPT
   {
-    return io_context_;
+    return *io_context_;
   }
 
   /// Query the current value of the @c blocking property.
