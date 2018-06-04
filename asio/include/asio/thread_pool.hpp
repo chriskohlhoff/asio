@@ -245,7 +245,7 @@ public:
   /// Query the current value of the @c context property.
   thread_pool& query(execution::context_t) ASIO_NOEXCEPT
   {
-    return pool_;
+    return *pool_;
   }
 
   /// Query the current value of the @c blocking property.
