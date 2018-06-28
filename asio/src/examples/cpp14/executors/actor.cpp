@@ -120,7 +120,7 @@ protected:
   template <class Actor, class Message>
   void deregister_handler(void (Actor::* mf)(Message, actor_address))
   {
-    const std::type_info& id = typeid(message_handler<Message>);
+    const std::type_info& id = typeid(Message);
     for (auto iter = handlers_.begin(); iter != handlers_.end(); ++iter)
     {
       if ((*iter)->message_id() == id)
