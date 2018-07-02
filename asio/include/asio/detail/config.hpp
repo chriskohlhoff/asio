@@ -111,6 +111,14 @@
 #    define ASIO_HAS_MOVE 1
 #   endif // (_MSC_VER >= 1700)
 #  endif // defined(ASIO_MSVC)
+#  if defined(__INTEL_CXX11_MODE__)
+#    if defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1500)
+#      define BOOST_ASIO_HAS_MOVE 1
+#    endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1500)
+#    if defined(__ICL) && (__ICL >= 1500)
+#      define BOOST_ASIO_HAS_MOVE 1
+#    endif // defined(__ICL) && (__ICL >= 1500)
+#  endif // defined(__INTEL_CXX11_MODE__)
 # endif // !defined(ASIO_DISABLE_MOVE)
 #endif // !defined(ASIO_HAS_MOVE)
 
