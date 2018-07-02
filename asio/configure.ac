@@ -55,6 +55,28 @@ if test "$STANDALONE" != yes; then
   ],[])
 fi
 
+# Use wolfSSL instead of openSSL, if not defined openSSL is the default.
+# Allows users to run unit tests using wolfSSL.
+AC_ARG_WITH(wolfssl,
+  AC_HELP_STRING([--with-wolfssl=DIR],[location of wolfssl]),
+[
+  CPPFLAGS="$CPPFLAGS -I${withval}/include/wolfssl -lwolfssl -DWOLFSSL_ASIO"
+  LIBS="$LIBS -I${withval}/include/wolfssl -L${withval}/lib"
+  WOLFSSL_USE=no
+],[])
+
+if test x$WOLFSSL_USE == xno; then
+    AC_CHECK_HEADER([wolfssl/options.h],,
+    [
+      WOLFSSL_FOUND=no
+    ],[])
+
+    if test x$WOLFSSL_FOUND != xno; then
+      LIBS="$LIBS -lwolfssl"
+    fi
+    AM_CONDITIONAL(HAVE_OPENSSL,test x$WOLFSSL_FOUND != xno)
+fi
+
 AC_ARG_WITH(openssl,
   AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
 [
@@ -62,23 +84,25 @@ AC_ARG_WITH(openssl,
   LIBS="$LIBS -L${withval}/lib"
 ],[])
 
-AC_CHECK_HEADER([openssl/ssl.h],,
-[
-  OPENSSL_FOUND=no
-],[])
+# Don't use openSSL if wolfSSL is being used.
+if test x$WOLFSSL_USE != xno; then
+    AC_CHECK_HEADER([openssl/ssl.h],,
+    [
+      OPENSSL_FOUND=no
+    ],[])
 
-if test x$OPENSSL_FOUND != xno; then
-  LIBS="$LIBS -lssl -lcrypto"
+    if test x$OPENSSL_FOUND != xno; then
+      LIBS="$LIBS -lssl -lcrypto"
+    fi
+    AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
 fi
-
-AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
 
 WINDOWS=no
 case $host in
   *-*-linux*)
     CXXFLAGS="$CXXFLAGS -pthread"
     LDFLAGS="$LDFLAGS -pthread"
-    LIBS="$LIBS -lrt"
+    LIBS="$LIBS -lboost_system -lboost_timer -lboost_chrono -lrt"
     ;;
   *-*-solaris*)
     if test "$GXX" = yes; then
