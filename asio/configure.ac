@@ -102,7 +102,7 @@ case $host in
   *-*-linux*)
     CXXFLAGS="$CXXFLAGS -pthread"
     LDFLAGS="$LDFLAGS -pthread"
-    LIBS="$LIBS -lboost_system -lboost_timer -lboost_chrono -lrt"
+    LIBS="$LIBS -lrt"
     ;;
   *-*-solaris*)
     if test "$GXX" = yes; then
