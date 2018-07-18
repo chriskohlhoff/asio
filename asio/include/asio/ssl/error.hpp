@@ -15,7 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#if defined(WOLFSSL_ASIO)
+#if defined(ASIO_USE_WOLFSSL)
 #include <wolfssl/options.h>
 #endif
 
@@ -50,7 +50,7 @@ enum stream_errors
   /// The underlying stream closed before the ssl stream gracefully shut down.
   stream_truncated
 #elif (OPENSSL_VERSION_NUMBER < 0x10100000L) && !defined(OPENSSL_IS_BORINGSSL) \
-                                                       && !defined(WOLFSSL_ASIO)
+                                                   && !defined(ASIO_USE_WOLFSSL)
   stream_truncated = ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ)
 #else
   stream_truncated = 1

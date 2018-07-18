@@ -55,13 +55,12 @@ if test "$STANDALONE" != yes; then
   ],[])
 fi
 
-# Use wolfSSL instead of openSSL, if not defined openSSL is the default.
-# Allows users to run unit tests using wolfSSL.
+# Allows use of unit tests with wolfSSL instead of OpenSSL
 AC_ARG_WITH(wolfssl,
   AC_HELP_STRING([--with-wolfssl=DIR],[location of wolfssl]),
 [
-  CPPFLAGS="$CPPFLAGS -I${withval}/include/wolfssl -lwolfssl -DWOLFSSL_ASIO"
-  LIBS="$LIBS -I${withval}/include/wolfssl -L${withval}/lib"
+  CPPFLAGS="$CPPFLAGS -I${withval}/include/wolfssl -DASIO_USE_WOLFSSL"
+  LIBS="$LIBS -L${withval}/lib"
   WOLFSSL_USE=no
 ],[])
 
@@ -84,7 +83,7 @@ AC_ARG_WITH(openssl,
   LIBS="$LIBS -L${withval}/lib"
 ],[])
 
-# Don't use openSSL if wolfSSL is being used.
+# Link OpenSSL libs if wolfSSL is not being used
 if test x$WOLFSSL_USE != xno; then
     AC_CHECK_HEADER([openssl/ssl.h],,
     [
