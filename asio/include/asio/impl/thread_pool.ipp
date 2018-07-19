@@ -44,7 +44,7 @@ thread_pool::thread_pool()
 }
 
 thread_pool::thread_pool(std::size_t num_threads)
-  : scheduler_(use_service<detail::scheduler>(*this))
+  : scheduler_(make_service<detail::scheduler>(*this, (num_threads == 1) ? ASIO_CONCURRENCY_HINT_1 : 0))
 {
   scheduler_.work_started();
 
