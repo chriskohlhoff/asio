@@ -23,37 +23,26 @@
 
 #include <string>
 #include "asio/async_result.hpp"
-#include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/io_object_impl.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/io_context.hpp"
 #include "asio/serial_port_base.hpp"
+#if defined(ASIO_HAS_IOCP)
+# include "asio/detail/win_iocp_serial_port_service.hpp"
+#else
+# include "asio/detail/reactive_serial_port_service.hpp"
+#endif
 
 #if defined(ASIO_HAS_MOVE)
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/basic_serial_port.hpp"
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
-# if defined(ASIO_HAS_IOCP)
-#  include "asio/detail/win_iocp_serial_port_service.hpp"
-#  define ASIO_SVC_T detail::win_iocp_serial_port_service
-# else
-#  include "asio/detail/reactive_serial_port_service.hpp"
-#  define ASIO_SVC_T detail::reactive_serial_port_service
-# endif
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-// Typedef for the typical usage of a serial port.
-typedef basic_serial_port<> serial_port;
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
 /// Provides serial port functionality.
 /**
  * The serial_port class provides a wrapper over serial port functionality.
@@ -63,8 +52,7 @@ typedef basic_serial_port<> serial_port;
  * @e Shared @e objects: Unsafe.
  */
 class serial_port
-  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>,
-    public serial_port_base
+  : public serial_port_base
 {
 public:
   /// The type of the executor associated with the object.
@@ -73,8 +61,12 @@ public:
   /// The native representation of a serial port.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
+#elif defined(ASIO_HAS_IOCP)
+  typedef detail::win_iocp_serial_port_service::native_handle_type
+    native_handle_type;
 #else
-  typedef ASIO_SVC_T::native_handle_type native_handle_type;
+  typedef detail::reactive_serial_port_service::native_handle_type
+    native_handle_type;
 #endif
 
   /// A basic_serial_port is always the lowest layer.
@@ -88,7 +80,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the port.
    */
   explicit serial_port(asio::io_context& io_context)
-    : basic_io_object<ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
   }
 
@@ -105,10 +97,10 @@ public:
    */
   explicit serial_port(asio::io_context& io_context,
       const char* device)
-    : basic_io_object<ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().open(this->get_implementation(), device, ec);
+    impl_.get_service().open(impl_.get_implementation(), device, ec);
     asio::detail::throw_error(ec, "open");
   }
 
@@ -125,10 +117,10 @@ public:
    */
   explicit serial_port(asio::io_context& io_context,
       const std::string& device)
-    : basic_io_object<ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().open(this->get_implementation(), device, ec);
+    impl_.get_service().open(impl_.get_implementation(), device, ec);
     asio::detail::throw_error(ec, "open");
   }
 
@@ -146,10 +138,10 @@ public:
    */
   serial_port(asio::io_context& io_context,
       const native_handle_type& native_serial_port)
-    : basic_io_object<ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().assign(this->get_implementation(),
+    impl_.get_service().assign(impl_.get_implementation(),
         native_serial_port, ec);
     asio::detail::throw_error(ec, "assign");
   }
@@ -166,7 +158,7 @@ public:
    * constructed using the @c serial_port(io_context&) constructor.
    */
   serial_port(serial_port&& other)
-    : basic_io_object<ASIO_SVC_T>(std::move(other))
+    : impl_(std::move(other.impl_))
   {
   }
 
@@ -182,7 +174,7 @@ public:
    */
   serial_port& operator=(serial_port&& other)
   {
-    basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
+    impl_ = std::move(other.impl_);
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -209,7 +201,7 @@ public:
    */
   asio::io_context& get_io_context()
   {
-    return basic_io_object<ASIO_SVC_T>::get_io_context();
+    return impl_.get_io_context();
   }
 
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
@@ -223,14 +215,14 @@ public:
    */
   asio::io_context& get_io_service()
   {
-    return basic_io_object<ASIO_SVC_T>::get_io_service();
+    return impl_.get_io_service();
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
-    return basic_io_object<ASIO_SVC_T>::get_executor();
+    return impl_.get_executor();
   }
 
   /// Get a reference to the lowest layer.
@@ -272,7 +264,7 @@ public:
   void open(const std::string& device)
   {
     asio::error_code ec;
-    this->get_service().open(this->get_implementation(), device, ec);
+    impl_.get_service().open(impl_.get_implementation(), device, ec);
     asio::detail::throw_error(ec, "open");
   }
 
@@ -288,7 +280,7 @@ public:
   ASIO_SYNC_OP_VOID open(const std::string& device,
       asio::error_code& ec)
   {
-    this->get_service().open(this->get_implementation(), device, ec);
+    impl_.get_service().open(impl_.get_implementation(), device, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -303,7 +295,7 @@ public:
   void assign(const native_handle_type& native_serial_port)
   {
     asio::error_code ec;
-    this->get_service().assign(this->get_implementation(),
+    impl_.get_service().assign(impl_.get_implementation(),
         native_serial_port, ec);
     asio::detail::throw_error(ec, "assign");
   }
@@ -319,7 +311,7 @@ public:
   ASIO_SYNC_OP_VOID assign(const native_handle_type& native_serial_port,
       asio::error_code& ec)
   {
-    this->get_service().assign(this->get_implementation(),
+    impl_.get_service().assign(impl_.get_implementation(),
         native_serial_port, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
@@ -327,7 +319,7 @@ public:
   /// Determine whether the serial port is open.
   bool is_open() const
   {
-    return this->get_service().is_open(this->get_implementation());
+    return impl_.get_service().is_open(impl_.get_implementation());
   }
 
   /// Close the serial port.
@@ -341,7 +333,7 @@ public:
   void close()
   {
     asio::error_code ec;
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "close");
   }
 
@@ -355,7 +347,7 @@ public:
    */
   ASIO_SYNC_OP_VOID close(asio::error_code& ec)
   {
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -367,7 +359,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->get_service().native_handle(this->get_implementation());
+    return impl_.get_service().native_handle(impl_.get_implementation());
   }
 
   /// Cancel all asynchronous operations associated with the serial port.
@@ -381,7 +373,7 @@ public:
   void cancel()
   {
     asio::error_code ec;
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
   }
 
@@ -395,7 +387,7 @@ public:
    */
   ASIO_SYNC_OP_VOID cancel(asio::error_code& ec)
   {
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -409,7 +401,7 @@ public:
   void send_break()
   {
     asio::error_code ec;
-    this->get_service().send_break(this->get_implementation(), ec);
+    impl_.get_service().send_break(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "send_break");
   }
 
@@ -422,7 +414,7 @@ public:
    */
   ASIO_SYNC_OP_VOID send_break(asio::error_code& ec)
   {
-    this->get_service().send_break(this->get_implementation(), ec);
+    impl_.get_service().send_break(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -445,7 +437,7 @@ public:
   void set_option(const SettableSerialPortOption& option)
   {
     asio::error_code ec;
-    this->get_service().set_option(this->get_implementation(), option, ec);
+    impl_.get_service().set_option(impl_.get_implementation(), option, ec);
     asio::detail::throw_error(ec, "set_option");
   }
 
@@ -468,7 +460,7 @@ public:
   ASIO_SYNC_OP_VOID set_option(const SettableSerialPortOption& option,
       asio::error_code& ec)
   {
-    this->get_service().set_option(this->get_implementation(), option, ec);
+    impl_.get_service().set_option(impl_.get_implementation(), option, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -492,7 +484,7 @@ public:
   void get_option(GettableSerialPortOption& option)
   {
     asio::error_code ec;
-    this->get_service().get_option(this->get_implementation(), option, ec);
+    impl_.get_service().get_option(impl_.get_implementation(), option, ec);
     asio::detail::throw_error(ec, "get_option");
   }
 
@@ -516,7 +508,7 @@ public:
   ASIO_SYNC_OP_VOID get_option(GettableSerialPortOption& option,
       asio::error_code& ec)
   {
-    this->get_service().get_option(this->get_implementation(), option, ec);
+    impl_.get_service().get_option(impl_.get_implementation(), option, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -551,8 +543,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().write_some(
-        this->get_implementation(), buffers, ec);
+    std::size_t s = impl_.get_service().write_some(
+        impl_.get_implementation(), buffers, ec);
     asio::detail::throw_error(ec, "write_some");
     return s;
   }
@@ -577,8 +569,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
-    return this->get_service().write_some(
-        this->get_implementation(), buffers, ec);
+    return impl_.get_service().write_some(
+        impl_.get_implementation(), buffers, ec);
   }
 
   /// Start an asynchronous write.
@@ -629,8 +621,8 @@ public:
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_write_some(
-        this->get_implementation(), buffers, init.completion_handler);
+    impl_.get_service().async_write_some(
+        impl_.get_implementation(), buffers, init.completion_handler);
 
     return init.result.get();
   }
@@ -667,8 +659,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().read_some(
-        this->get_implementation(), buffers, ec);
+    std::size_t s = impl_.get_service().read_some(
+        impl_.get_implementation(), buffers, ec);
     asio::detail::throw_error(ec, "read_some");
     return s;
   }
@@ -694,8 +686,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
-    return this->get_service().read_some(
-        this->get_implementation(), buffers, ec);
+    return impl_.get_service().read_some(
+        impl_.get_implementation(), buffers, ec);
   }
 
   /// Start an asynchronous read.
@@ -747,21 +739,27 @@ public:
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_read_some(
-        this->get_implementation(), buffers, init.completion_handler);
+    impl_.get_service().async_read_some(
+        impl_.get_implementation(), buffers, init.completion_handler);
 
     return init.result.get();
   }
+
+private:
+  // Disallow copying and assignment.
+  serial_port(const serial_port&) ASIO_DELETED;
+  serial_port& operator=(const serial_port&) ASIO_DELETED;
+
+#if defined(ASIO_HAS_IOCP)
+  detail::io_object_impl<detail::win_iocp_serial_port_service> impl_;
+#else
+  detail::io_object_impl<detail::reactive_serial_port_service> impl_;
+#endif
 };
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#if !defined(ASIO_ENABLE_OLD_SERVICES)
-# undef ASIO_SVC_T
-#endif // !defined(ASIO_ENABLE_OLD_SERVICES)
 
 #endif // defined(ASIO_HAS_SERIAL_PORT)
        //   || defined(GENERATING_DOCUMENTATION)

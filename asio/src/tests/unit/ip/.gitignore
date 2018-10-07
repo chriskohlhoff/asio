@@ -21,7 +21,6 @@ multicast
 network_v4
 network_v6
 resolver_query_base
-resolver_service
 tcp
 udp
 unicast

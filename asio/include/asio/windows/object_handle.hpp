@@ -22,7 +22,7 @@
   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/async_result.hpp"
-#include "asio/basic_io_object.hpp"
+#include "asio/detail/io_object_impl.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/win_object_handle_service.hpp"
 #include "asio/error.hpp"
@@ -32,21 +32,11 @@
 # include <utility>
 #endif // defined(ASIO_HAS_MOVE)
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/windows/basic_object_handle.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
-#define ASIO_SVC_T asio::detail::win_object_handle_service
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace windows {
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-// Typedef for the typical usage of an object handle.
-typedef basic_object_handle<> object_handle;
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
 /// Provides object-oriented handle functionality.
 /**
  * The windows::object_handle class provides asynchronous and blocking
@@ -57,7 +47,6 @@ typedef basic_object_handle<> object_handle;
  * @e Shared @e objects: Unsafe.
  */
 class object_handle
-  : ASIO_SVC_ACCESS basic_io_object<ASIO_SVC_T>
 {
 public:
   /// The type of the executor associated with the object.
@@ -67,7 +56,8 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
 #else
-  typedef ASIO_SVC_T::native_handle_type native_handle_type;
+  typedef asio::detail::win_object_handle_service::native_handle_type
+    native_handle_type;
 #endif
 
   /// An object_handle is always the lowest layer.
@@ -81,7 +71,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the handle.
    */
   explicit object_handle(asio::io_context& io_context)
-    : basic_io_object<ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
   }
 
@@ -99,10 +89,10 @@ public:
    */
   object_handle(asio::io_context& io_context,
       const native_handle_type& native_handle)
-    : basic_io_object<ASIO_SVC_T>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().assign(this->get_implementation(), native_handle, ec);
+    impl_.get_service().assign(impl_.get_implementation(), native_handle, ec);
     asio::detail::throw_error(ec, "assign");
   }
 
@@ -118,7 +108,7 @@ public:
    * constructed using the @c object_handle(io_context&) constructor.
    */
   object_handle(object_handle&& other)
-    : basic_io_object<ASIO_SVC_T>(std::move(other))
+    : impl_(std::move(other.impl_))
   {
   }
 
@@ -134,7 +124,7 @@ public:
    */
   object_handle& operator=(object_handle&& other)
   {
-    basic_io_object<ASIO_SVC_T>::operator=(std::move(other));
+    impl_ = std::move(other.impl_);
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -151,7 +141,7 @@ public:
    */
   asio::io_context& get_io_context()
   {
-    return basic_io_object<ASIO_SVC_T>::get_io_context();
+    return impl_.get_io_context();
   }
 
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
@@ -165,14 +155,14 @@ public:
    */
   asio::io_context& get_io_service()
   {
-    return basic_io_object<ASIO_SVC_T>::get_io_service();
+    return impl_.get_io_service();
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
-    return basic_io_object<ASIO_SVC_T>::get_executor();
+    return impl_.get_executor();
   }
 
   /// Get a reference to the lowest layer.
@@ -214,7 +204,7 @@ public:
   void assign(const native_handle_type& handle)
   {
     asio::error_code ec;
-    this->get_service().assign(this->get_implementation(), handle, ec);
+    impl_.get_service().assign(impl_.get_implementation(), handle, ec);
     asio::detail::throw_error(ec, "assign");
   }
 
@@ -229,14 +219,14 @@ public:
   ASIO_SYNC_OP_VOID assign(const native_handle_type& handle,
       asio::error_code& ec)
   {
-    this->get_service().assign(this->get_implementation(), handle, ec);
+    impl_.get_service().assign(impl_.get_implementation(), handle, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
   /// Determine whether the handle is open.
   bool is_open() const
   {
-    return this->get_service().is_open(this->get_implementation());
+    return impl_.get_service().is_open(impl_.get_implementation());
   }
 
   /// Close the handle.
@@ -250,7 +240,7 @@ public:
   void close()
   {
     asio::error_code ec;
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "close");
   }
 
@@ -264,7 +254,7 @@ public:
    */
   ASIO_SYNC_OP_VOID close(asio::error_code& ec)
   {
-    this->get_service().close(this->get_implementation(), ec);
+    impl_.get_service().close(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -276,7 +266,7 @@ public:
    */
   native_handle_type native_handle()
   {
-    return this->get_service().native_handle(this->get_implementation());
+    return impl_.get_service().native_handle(impl_.get_implementation());
   }
 
   /// Cancel all asynchronous operations associated with the handle.
@@ -290,7 +280,7 @@ public:
   void cancel()
   {
     asio::error_code ec;
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
   }
 
@@ -304,7 +294,7 @@ public:
    */
   ASIO_SYNC_OP_VOID cancel(asio::error_code& ec)
   {
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -319,7 +309,7 @@ public:
   void wait()
   {
     asio::error_code ec;
-    this->get_service().wait(this->get_implementation(), ec);
+    impl_.get_service().wait(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "wait");
   }
 
@@ -333,7 +323,7 @@ public:
    */
   void wait(asio::error_code& ec)
   {
-    this->get_service().wait(this->get_implementation(), ec);
+    impl_.get_service().wait(impl_.get_implementation(), ec);
   }
 
   /// Start an asynchronous wait on the object handle.
@@ -360,20 +350,25 @@ public:
     asio::async_completion<WaitHandler,
       void (asio::error_code)> init(handler);
 
-    this->get_service().async_wait(this->get_implementation(),
+    impl_.get_service().async_wait(impl_.get_implementation(),
         init.completion_handler);
 
     return init.result.get();
   }
+
+private:
+  // Disallow copying and assignment.
+  object_handle(const object_handle&) ASIO_DELETED;
+  object_handle& operator=(const object_handle&) ASIO_DELETED;
+
+  asio::detail::io_object_impl<
+    asio::detail::win_object_handle_service> impl_;
 };
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 } // namespace windows
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#undef ASIO_SVC_T
 
 #endif // defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)
        //   || defined(GENERATING_DOCUMENTATION)

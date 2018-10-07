@@ -23,10 +23,6 @@
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/raw_socket_service.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -40,10 +36,9 @@ namespace asio {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Protocol
-    ASIO_SVC_TPARAM_DEF1(= raw_socket_service<Protocol>)>
+template <typename Protocol>
 class basic_raw_socket
-  : public basic_socket<Protocol ASIO_SVC_TARG>
+  : public basic_socket<Protocol>
 {
 public:
   /// The native representation of a socket.
@@ -51,7 +46,7 @@ public:
   typedef implementation_defined native_handle_type;
 #else
   typedef typename basic_socket<
-    Protocol ASIO_SVC_TARG>::native_handle_type native_handle_type;
+    Protocol>::native_handle_type native_handle_type;
 #endif
 
   /// The protocol type.
@@ -70,7 +65,7 @@ public:
    * socket.
    */
   explicit basic_raw_socket(asio::io_context& io_context)
-    : basic_socket<Protocol ASIO_SVC_TARG>(io_context)
+    : basic_socket<Protocol>(io_context)
   {
   }
 
@@ -88,7 +83,7 @@ public:
    */
   basic_raw_socket(asio::io_context& io_context,
       const protocol_type& protocol)
-    : basic_socket<Protocol ASIO_SVC_TARG>(io_context, protocol)
+    : basic_socket<Protocol>(io_context, protocol)
   {
   }
 
@@ -110,7 +105,7 @@ public:
    */
   basic_raw_socket(asio::io_context& io_context,
       const endpoint_type& endpoint)
-    : basic_socket<Protocol ASIO_SVC_TARG>(io_context, endpoint)
+    : basic_socket<Protocol>(io_context, endpoint)
   {
   }
 
@@ -131,8 +126,7 @@ public:
    */
   basic_raw_socket(asio::io_context& io_context,
       const protocol_type& protocol, const native_handle_type& native_socket)
-    : basic_socket<Protocol ASIO_SVC_TARG>(
-        io_context, protocol, native_socket)
+    : basic_socket<Protocol>(io_context, protocol, native_socket)
   {
   }
 
@@ -148,7 +142,7 @@ public:
    * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
   basic_raw_socket(basic_raw_socket&& other)
-    : basic_socket<Protocol ASIO_SVC_TARG>(std::move(other))
+    : basic_socket<Protocol>(std::move(other))
   {
   }
 
@@ -164,7 +158,7 @@ public:
    */
   basic_raw_socket& operator=(basic_raw_socket&& other)
   {
-    basic_socket<Protocol ASIO_SVC_TARG>::operator=(std::move(other));
+    basic_socket<Protocol>::operator=(std::move(other));
     return *this;
   }
 
@@ -178,10 +172,10 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
-  basic_raw_socket(basic_raw_socket<Protocol1 ASIO_SVC_TARG1>&& other,
+  template <typename Protocol1>
+  basic_raw_socket(basic_raw_socket<Protocol1>&& other,
       typename enable_if<is_convertible<Protocol1, Protocol>::value>::type* = 0)
-    : basic_socket<Protocol ASIO_SVC_TARG>(std::move(other))
+    : basic_socket<Protocol>(std::move(other))
   {
   }
 
@@ -195,12 +189,12 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_raw_socket(io_context&) constructor.
    */
-  template <typename Protocol1 ASIO_SVC_TPARAM1>
+  template <typename Protocol1>
   typename enable_if<is_convertible<Protocol1, Protocol>::value,
       basic_raw_socket>::type& operator=(
-        basic_raw_socket<Protocol1 ASIO_SVC_TARG1>&& other)
+        basic_raw_socket<Protocol1>&& other)
   {
-    basic_socket<Protocol ASIO_SVC_TARG>::operator=(std::move(other));
+    basic_socket<Protocol>::operator=(std::move(other));
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -239,8 +233,8 @@ public:
   std::size_t send(const ConstBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().send(
-        this->get_implementation(), buffers, 0, ec);
+    std::size_t s = this->impl_.get_service().send(
+        this->impl_.get_implementation(), buffers, 0, ec);
     asio::detail::throw_error(ec, "send");
     return s;
   }
@@ -266,8 +260,8 @@ public:
       socket_base::message_flags flags)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().send(
-        this->get_implementation(), buffers, flags, ec);
+    std::size_t s = this->impl_.get_service().send(
+        this->impl_.get_implementation(), buffers, flags, ec);
     asio::detail::throw_error(ec, "send");
     return s;
   }
@@ -292,8 +286,8 @@ public:
   std::size_t send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
-    return this->get_service().send(
-        this->get_implementation(), buffers, flags, ec);
+    return this->impl_.get_service().send(
+        this->impl_.get_implementation(), buffers, flags, ec);
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -341,18 +335,13 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send(this->get_implementation(),
-        buffers, 0, ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send(this->get_implementation(),
+    this->impl_.get_service().async_send(this->impl_.get_implementation(),
         buffers, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -394,18 +383,13 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send(this->get_implementation(),
-        buffers, flags, ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send(this->get_implementation(),
+    this->impl_.get_service().async_send(this->impl_.get_implementation(),
         buffers, flags, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Send raw data to the specified endpoint.
@@ -438,8 +422,8 @@ public:
       const endpoint_type& destination)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().send_to(
-        this->get_implementation(), buffers, destination, 0, ec);
+    std::size_t s = this->impl_.get_service().send_to(
+        this->impl_.get_implementation(), buffers, destination, 0, ec);
     asio::detail::throw_error(ec, "send_to");
     return s;
   }
@@ -465,8 +449,8 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().send_to(
-        this->get_implementation(), buffers, destination, flags, ec);
+    std::size_t s = this->impl_.get_service().send_to(
+        this->impl_.get_implementation(), buffers, destination, flags, ec);
     asio::detail::throw_error(ec, "send_to");
     return s;
   }
@@ -492,7 +476,7 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    return this->get_service().send_to(this->get_implementation(),
+    return this->impl_.get_service().send_to(this->impl_.get_implementation(),
         buffers, destination, flags, ec);
   }
 
@@ -544,18 +528,13 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send_to(this->get_implementation(),
-        buffers, destination, 0, ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send_to(this->get_implementation(),
+    this->impl_.get_service().async_send_to(this->impl_.get_implementation(),
         buffers, destination, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous send.
@@ -596,20 +575,14 @@ public:
     // not meet the documented type requirements for a WriteHandler.
     ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_send_to(
-        this->get_implementation(), buffers, destination, flags,
-        ASIO_MOVE_CAST(WriteHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_send_to(
-        this->get_implementation(), buffers, destination, flags,
+    this->impl_.get_service().async_send_to(
+        this->impl_.get_implementation(), buffers, destination, flags,
         init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Receive some data on a connected socket.
@@ -640,8 +613,8 @@ public:
   std::size_t receive(const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().receive(
-        this->get_implementation(), buffers, 0, ec);
+    std::size_t s = this->impl_.get_service().receive(
+        this->impl_.get_implementation(), buffers, 0, ec);
     asio::detail::throw_error(ec, "receive");
     return s;
   }
@@ -669,8 +642,8 @@ public:
       socket_base::message_flags flags)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().receive(
-        this->get_implementation(), buffers, flags, ec);
+    std::size_t s = this->impl_.get_service().receive(
+        this->impl_.get_implementation(), buffers, flags, ec);
     asio::detail::throw_error(ec, "receive");
     return s;
   }
@@ -697,8 +670,8 @@ public:
   std::size_t receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags, asio::error_code& ec)
   {
-    return this->get_service().receive(
-        this->get_implementation(), buffers, flags, ec);
+    return this->impl_.get_service().receive(
+        this->impl_.get_implementation(), buffers, flags, ec);
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -747,18 +720,13 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive(this->get_implementation(),
-        buffers, 0, ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive(this->get_implementation(),
+    this->impl_.get_service().async_receive(this->impl_.get_implementation(),
         buffers, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -800,18 +768,13 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive(this->get_implementation(),
-        buffers, flags, ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive(this->get_implementation(),
+    this->impl_.get_service().async_receive(this->impl_.get_implementation(),
         buffers, flags, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Receive raw data with the endpoint of the sender.
@@ -845,8 +808,8 @@ public:
       endpoint_type& sender_endpoint)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().receive_from(
-        this->get_implementation(), buffers, sender_endpoint, 0, ec);
+    std::size_t s = this->impl_.get_service().receive_from(
+        this->impl_.get_implementation(), buffers, sender_endpoint, 0, ec);
     asio::detail::throw_error(ec, "receive_from");
     return s;
   }
@@ -872,8 +835,8 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().receive_from(
-        this->get_implementation(), buffers, sender_endpoint, flags, ec);
+    std::size_t s = this->impl_.get_service().receive_from(
+        this->impl_.get_implementation(), buffers, sender_endpoint, flags, ec);
     asio::detail::throw_error(ec, "receive_from");
     return s;
   }
@@ -899,8 +862,8 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    return this->get_service().receive_from(this->get_implementation(),
-        buffers, sender_endpoint, flags, ec);
+    return this->impl_.get_service().receive_from(
+        this->impl_.get_implementation(), buffers, sender_endpoint, flags, ec);
   }
 
   /// Start an asynchronous receive.
@@ -950,20 +913,14 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, 0,
-        ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, 0,
-        init.completion_handler);
+    this->impl_.get_service().async_receive_from(
+        this->impl_.get_implementation(), buffers,
+        sender_endpoint, 0, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 
   /// Start an asynchronous receive.
@@ -1006,20 +963,14 @@ public:
     // not meet the documented type requirements for a ReadHandler.
     ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-    return this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, flags,
-        ASIO_MOVE_CAST(ReadHandler)(handler));
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
     async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_receive_from(
-        this->get_implementation(), buffers, sender_endpoint, flags,
-        init.completion_handler);
+    this->impl_.get_service().async_receive_from(
+        this->impl_.get_implementation(), buffers,
+        sender_endpoint, flags, init.completion_handler);
 
     return init.result.get();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   }
 };
 

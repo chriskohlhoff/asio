@@ -18,24 +18,15 @@
 #include "asio/detail/config.hpp"
 
 #include "asio/async_result.hpp"
-#include "asio/basic_io_object.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/io_object_impl.hpp"
+#include "asio/detail/signal_set_service.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/io_context.hpp"
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/basic_signal_set.hpp"
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/detail/signal_set_service.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
 namespace asio {
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-// Typedef for the typical usage of a signal set.
-typedef basic_signal_set<> signal_set;
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
 /// Provides signal functionality.
 /**
  * The signal_set class provides the ability to perform an asynchronous wait
@@ -97,7 +88,6 @@ typedef basic_signal_set<> signal_set;
  * least one thread.
  */
 class signal_set
-  : ASIO_SVC_ACCESS basic_io_object<detail::signal_set_service>
 {
 public:
   /// The type of the executor associated with the object.
@@ -111,7 +101,7 @@ public:
    * dispatch handlers for any asynchronous operations performed on the set.
    */
   explicit signal_set(asio::io_context& io_context)
-    : basic_io_object<detail::signal_set_service>(io_context)
+    : impl_(io_context)
   {
   }
 
@@ -129,10 +119,10 @@ public:
    * signals.add(signal_number_1); @endcode
    */
   signal_set(asio::io_context& io_context, int signal_number_1)
-    : basic_io_object<detail::signal_set_service>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().add(this->get_implementation(), signal_number_1, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -154,12 +144,12 @@ public:
    */
   signal_set(asio::io_context& io_context, int signal_number_1,
       int signal_number_2)
-    : basic_io_object<detail::signal_set_service>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().add(this->get_implementation(), signal_number_1, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
     asio::detail::throw_error(ec, "add");
-    this->get_service().add(this->get_implementation(), signal_number_2, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number_2, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -184,14 +174,14 @@ public:
    */
   signal_set(asio::io_context& io_context, int signal_number_1,
       int signal_number_2, int signal_number_3)
-    : basic_io_object<detail::signal_set_service>(io_context)
+    : impl_(io_context)
   {
     asio::error_code ec;
-    this->get_service().add(this->get_implementation(), signal_number_1, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
     asio::detail::throw_error(ec, "add");
-    this->get_service().add(this->get_implementation(), signal_number_2, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number_2, ec);
     asio::detail::throw_error(ec, "add");
-    this->get_service().add(this->get_implementation(), signal_number_3, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number_3, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -217,7 +207,7 @@ public:
    */
   asio::io_context& get_io_context()
   {
-    return basic_io_object<detail::signal_set_service>::get_io_context();
+    return impl_.get_io_context();
   }
 
   /// (Deprecated: Use get_executor().) Get the io_context associated with the
@@ -231,14 +221,14 @@ public:
    */
   asio::io_context& get_io_service()
   {
-    return basic_io_object<detail::signal_set_service>::get_io_service();
+    return impl_.get_io_service();
   }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
-    return basic_io_object<detail::signal_set_service>::get_executor();
+    return impl_.get_executor();
   }
 
   /// Add a signal to a signal_set.
@@ -253,7 +243,7 @@ public:
   void add(int signal_number)
   {
     asio::error_code ec;
-    this->get_service().add(this->get_implementation(), signal_number, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number, ec);
     asio::detail::throw_error(ec, "add");
   }
 
@@ -269,7 +259,7 @@ public:
   ASIO_SYNC_OP_VOID add(int signal_number,
       asio::error_code& ec)
   {
-    this->get_service().add(this->get_implementation(), signal_number, ec);
+    impl_.get_service().add(impl_.get_implementation(), signal_number, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -288,7 +278,7 @@ public:
   void remove(int signal_number)
   {
     asio::error_code ec;
-    this->get_service().remove(this->get_implementation(), signal_number, ec);
+    impl_.get_service().remove(impl_.get_implementation(), signal_number, ec);
     asio::detail::throw_error(ec, "remove");
   }
 
@@ -307,7 +297,7 @@ public:
   ASIO_SYNC_OP_VOID remove(int signal_number,
       asio::error_code& ec)
   {
-    this->get_service().remove(this->get_implementation(), signal_number, ec);
+    impl_.get_service().remove(impl_.get_implementation(), signal_number, ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -323,7 +313,7 @@ public:
   void clear()
   {
     asio::error_code ec;
-    this->get_service().clear(this->get_implementation(), ec);
+    impl_.get_service().clear(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "clear");
   }
 
@@ -338,7 +328,7 @@ public:
    */
   ASIO_SYNC_OP_VOID clear(asio::error_code& ec)
   {
-    this->get_service().clear(this->get_implementation(), ec);
+    impl_.get_service().clear(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -366,7 +356,7 @@ public:
   void cancel()
   {
     asio::error_code ec;
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel");
   }
 
@@ -393,7 +383,7 @@ public:
    */
   ASIO_SYNC_OP_VOID cancel(asio::error_code& ec)
   {
-    this->get_service().cancel(this->get_implementation(), ec);
+    impl_.get_service().cancel(impl_.get_implementation(), ec);
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -434,13 +424,19 @@ public:
     async_completion<SignalHandler,
       void (asio::error_code, int)> init(handler);
 
-    this->get_service().async_wait(this->get_implementation(),
+    impl_.get_service().async_wait(impl_.get_implementation(),
         init.completion_handler);
 
     return init.result.get();
   }
+
+private:
+  // Disallow copying and assignment.
+  signal_set(const signal_set&) ASIO_DELETED;
+  signal_set& operator=(const signal_set&) ASIO_DELETED;
+
+  detail::io_object_impl<detail::signal_set_service> impl_;
 };
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 } // namespace asio
 
