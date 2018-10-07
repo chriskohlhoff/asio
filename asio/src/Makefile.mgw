@@ -16,8 +16,6 @@ UNIT_TEST_EXES = \
 	tests/unit/basic_deadline_timer.exe \
 	tests/unit/basic_raw_socket.exe \
 	tests/unit/basic_seq_packet_socket.exe \
-	tests/unit/basic_serial_port.exe \
-	tests/unit/basic_signal_set.exe \
 	tests/unit/basic_socket_acceptor.exe \
 	tests/unit/basic_stream_socket.exe \
 	tests/unit/basic_streambuf.exe \
@@ -30,8 +28,6 @@ UNIT_TEST_EXES = \
 	tests/unit/completion_condition.exe \
 	tests/unit/connect.exe \
 	tests/unit/coroutine.exe \
-	tests/unit/datagram_socket_service.exe \
-	tests/unit/deadline_timer_service.exe \
 	tests/unit/deadline_timer.exe \
 	tests/unit/error.exe \
 	tests/unit/generic/basic_endpoint.exe \
@@ -53,7 +49,6 @@ UNIT_TEST_EXES = \
 	tests/unit/ip/icmp.exe \
 	tests/unit/ip/multicast.exe \
 	tests/unit/ip/resolver_query_base.exe \
-	tests/unit/ip/resolver_service.exe \
 	tests/unit/ip/tcp.exe \
 	tests/unit/ip/udp.exe \
 	tests/unit/ip/unicast.exe \
@@ -61,21 +56,15 @@ UNIT_TEST_EXES = \
 	tests/unit/is_read_buffered.exe \
 	tests/unit/is_write_buffered.exe \
 	tests/unit/placeholders.exe \
-	tests/unit/raw_socket_service.exe \
 	tests/unit/read.exe \
 	tests/unit/read_at.exe \
 	tests/unit/read_until.exe \
-	tests/unit/seq_packet_socket_service.exe \
 	tests/unit/serial_port.exe \
 	tests/unit/serial_port_base.exe \
-	tests/unit/serial_port_service.exe \
 	tests/unit/signal_set.exe \
-	tests/unit/signal_set_service.exe \
-	tests/unit/socket_acceptor_service.exe \
 	tests/unit/socket_base.exe \
 	tests/unit/steady_timer.exe \
 	tests/unit/strand.exe \
-	tests/unit/stream_socket_service.exe \
 	tests/unit/streambuf.exe \
 	tests/unit/system_executor.exe \
 	tests/unit/system_context.exe \
@@ -90,18 +79,10 @@ UNIT_TEST_EXES = \
 	tests/unit/ts/netfwd.exe \
 	tests/unit/ts/socket.exe \
 	tests/unit/ts/timer.exe \
-	tests/unit/waitable_timer_service.exe \
-	tests/unit/windows/basic_handle.exe \
-	tests/unit/windows/basic_object_handle.exe \
-	tests/unit/windows/basic_random_access_handle.exe \
-	tests/unit/windows/basic_stream_handle.exe \
 	tests/unit/windows/object_handle.exe \
-	tests/unit/windows/object_handle_service.exe \
 	tests/unit/windows/overlapped_ptr.exe \
 	tests/unit/windows/random_access_handle.exe \
-	tests/unit/windows/random_access_handle_service.exe \
 	tests/unit/windows/stream_handle.exe \
-	tests/unit/windows/stream_handle_service.exe \
 	tests/unit/write.exe \
 	tests/unit/write_at.exe
 

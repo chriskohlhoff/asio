@@ -1364,11 +1364,7 @@ void test()
 
   (void)static_cast<std::streambuf*>(ios1.rdbuf());
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-  basic_socket<ip::tcp, stream_socket_service<ip::tcp> >& sref = ios1.socket();
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
   basic_socket<ip::tcp>& sref = ios1.socket();
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
   (void)sref;
 
   asio::error_code ec = ios1.error();

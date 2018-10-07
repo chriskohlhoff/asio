@@ -21,17 +21,9 @@
 #if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR) \
   || defined(GENERATING_DOCUMENTATION)
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-# include "asio/posix/basic_stream_descriptor.hpp"
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
-
 namespace asio {
 namespace posix {
 
-#if defined(ASIO_ENABLE_OLD_SERVICES)
-// Typedef for the typical usage of a stream-oriented descriptor.
-typedef basic_stream_descriptor<> stream_descriptor;
-#else // defined(ASIO_ENABLE_OLD_SERVICES)
 /// Provides stream-oriented descriptor functionality.
 /**
  * The posix::stream_descriptor class template provides asynchronous and
@@ -147,8 +139,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().write_some(
-        this->get_implementation(), buffers, ec);
+    std::size_t s = impl_.get_service().write_some(
+        impl_.get_implementation(), buffers, ec);
     asio::detail::throw_error(ec, "write_some");
     return s;
   }
@@ -173,8 +165,8 @@ public:
   std::size_t write_some(const ConstBufferSequence& buffers,
       asio::error_code& ec)
   {
-    return this->get_service().write_some(
-        this->get_implementation(), buffers, ec);
+    return impl_.get_service().write_some(
+        impl_.get_implementation(), buffers, ec);
   }
 
   /// Start an asynchronous write.
@@ -225,8 +217,8 @@ public:
     asio::async_completion<WriteHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_write_some(
-        this->get_implementation(), buffers, init.completion_handler);
+    impl_.get_service().async_write_some(
+        impl_.get_implementation(), buffers, init.completion_handler);
 
     return init.result.get();
   }
@@ -263,8 +255,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers)
   {
     asio::error_code ec;
-    std::size_t s = this->get_service().read_some(
-        this->get_implementation(), buffers, ec);
+    std::size_t s = impl_.get_service().read_some(
+        impl_.get_implementation(), buffers, ec);
     asio::detail::throw_error(ec, "read_some");
     return s;
   }
@@ -290,8 +282,8 @@ public:
   std::size_t read_some(const MutableBufferSequence& buffers,
       asio::error_code& ec)
   {
-    return this->get_service().read_some(
-        this->get_implementation(), buffers, ec);
+    return impl_.get_service().read_some(
+        impl_.get_implementation(), buffers, ec);
   }
 
   /// Start an asynchronous read.
@@ -343,13 +335,12 @@ public:
     asio::async_completion<ReadHandler,
       void (asio::error_code, std::size_t)> init(handler);
 
-    this->get_service().async_read_some(
-        this->get_implementation(), buffers, init.completion_handler);
+    impl_.get_service().async_read_some(
+        impl_.get_implementation(), buffers, init.completion_handler);
 
     return init.result.get();
   }
 };
-#endif // defined(ASIO_ENABLE_OLD_SERVICES)
 
 } // namespace posix
 } // namespace asio

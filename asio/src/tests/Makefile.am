@@ -17,8 +17,6 @@ check_PROGRAMS = \
 	unit/basic_deadline_timer \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
-	unit/basic_serial_port \
-	unit/basic_signal_set \
 	unit/basic_socket_acceptor \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
@@ -32,8 +30,6 @@ check_PROGRAMS = \
 	unit/completion_condition \
 	unit/connect \
 	unit/coroutine \
-	unit/datagram_socket_service \
-	unit/deadline_timer_service \
 	unit/deadline_timer \
 	unit/defer \
 	unit/dispatch \
@@ -66,7 +62,6 @@ check_PROGRAMS = \
 	unit/ip/network_v4 \
 	unit/ip/network_v6 \
 	unit/ip/resolver_query_base \
-	unit/ip/resolver_service \
 	unit/ip/tcp \
 	unit/ip/udp \
 	unit/ip/unicast \
@@ -79,28 +74,19 @@ check_PROGRAMS = \
 	unit/local/stream_protocol \
 	unit/packaged_task \
 	unit/placeholders \
-	unit/posix/basic_descriptor \
-	unit/posix/basic_stream_descriptor \
 	unit/posix/descriptor \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
-	unit/posix/stream_descriptor_service \
 	unit/post \
-	unit/raw_socket_service \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
-	unit/seq_packet_socket_service \
 	unit/serial_port \
 	unit/serial_port_base \
-	unit/serial_port_service \
 	unit/signal_set \
-	unit/signal_set_service \
-	unit/socket_acceptor_service \
 	unit/socket_base \
 	unit/steady_timer \
 	unit/strand \
-	unit/stream_socket_service \
 	unit/streambuf \
 	unit/system_context \
 	unit/system_executor \
@@ -118,19 +104,11 @@ check_PROGRAMS = \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
-	unit/waitable_timer_service \
-	unit/windows/basic_handle \
-	unit/windows/basic_object_handle \
-	unit/windows/basic_random_access_handle \
-	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
-	unit/windows/object_handle_service \
 	unit/windows/overlapped_handle \
 	unit/windows/overlapped_ptr \
 	unit/windows/random_access_handle \
-	unit/windows/random_access_handle_service \
 	unit/windows/stream_handle \
-	unit/windows/stream_handle_service \
 	unit/write \
 	unit/write_at
 
@@ -162,8 +140,6 @@ TESTS = \
 	unit/basic_deadline_timer \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
-	unit/basic_serial_port \
-	unit/basic_signal_set \
 	unit/basic_socket_acceptor \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
@@ -176,8 +152,6 @@ TESTS = \
 	unit/buffers_iterator \
 	unit/completion_condition \
 	unit/connect \
-	unit/datagram_socket_service \
-	unit/deadline_timer_service \
 	unit/deadline_timer \
 	unit/defer \
 	unit/dispatch \
@@ -205,7 +179,6 @@ TESTS = \
 	unit/ip/network_v4 \
 	unit/ip/network_v6 \
 	unit/ip/resolver_query_base \
-	unit/ip/resolver_service \
 	unit/ip/tcp \
 	unit/ip/udp \
 	unit/ip/unicast \
@@ -218,28 +191,19 @@ TESTS = \
 	unit/local/stream_protocol \
 	unit/packaged_task \
 	unit/placeholders \
-	unit/posix/basic_descriptor \
-	unit/posix/basic_stream_descriptor \
 	unit/posix/descriptor\
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
-	unit/posix/stream_descriptor_service \
 	unit/post \
-	unit/raw_socket_service \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
-	unit/seq_packet_socket_service \
 	unit/serial_port \
 	unit/serial_port_base \
-	unit/serial_port_service \
 	unit/signal_set \
-	unit/signal_set_service \
-	unit/socket_acceptor_service \
 	unit/socket_base \
 	unit/steady_timer \
 	unit/strand \
-	unit/stream_socket_service \
 	unit/streambuf \
 	unit/system_context \
 	unit/system_executor \
@@ -257,19 +221,11 @@ TESTS = \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
-	unit/waitable_timer_service \
-	unit/windows/basic_handle \
-	unit/windows/basic_object_handle \
-	unit/windows/basic_random_access_handle \
-	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
-	unit/windows/object_handle_service \
 	unit/windows/overlapped_handle \
 	unit/windows/overlapped_ptr \
 	unit/windows/random_access_handle \
-	unit/windows/random_access_handle_service \
 	unit/windows/stream_handle \
-	unit/windows/stream_handle_service \
 	unit/write \
 	unit/write_at
 
@@ -305,8 +261,6 @@ unit_basic_datagram_socket_SOURCES = unit/basic_datagram_socket.cpp
 unit_basic_deadline_timer_SOURCES = unit/basic_deadline_timer.cpp
 unit_basic_raw_socket_SOURCES = unit/basic_raw_socket.cpp
 unit_basic_seq_packet_socket_SOURCES = unit/basic_seq_packet_socket.cpp
-unit_basic_serial_port_SOURCES = unit/basic_serial_port.cpp
-unit_basic_signal_set_SOURCES = unit/basic_signal_set.cpp
 unit_basic_socket_acceptor_SOURCES = unit/basic_socket_acceptor.cpp
 unit_basic_stream_socket_SOURCES = unit/basic_stream_socket.cpp
 unit_basic_streambuf_SOURCES = unit/basic_streambuf.cpp
@@ -320,8 +274,6 @@ unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
-unit_datagram_socket_service_SOURCES = unit/datagram_socket_service.cpp
-unit_deadline_timer_service_SOURCES = unit/deadline_timer_service.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
@@ -354,7 +306,6 @@ unit_ip_multicast_SOURCES = unit/ip/multicast.cpp
 unit_ip_network_v4_SOURCES = unit/ip/network_v4.cpp
 unit_ip_network_v6_SOURCES = unit/ip/network_v6.cpp
 unit_ip_resolver_query_base_SOURCES = unit/ip/resolver_query_base.cpp
-unit_ip_resolver_service_SOURCES = unit/ip/resolver_service.cpp
 unit_ip_tcp_SOURCES = unit/ip/tcp.cpp
 unit_ip_udp_SOURCES = unit/ip/udp.cpp
 unit_ip_unicast_SOURCES = unit/ip/unicast.cpp
@@ -367,28 +318,19 @@ unit_local_datagram_protocol_SOURCES = unit/local/datagram_protocol.cpp
 unit_local_stream_protocol_SOURCES = unit/local/stream_protocol.cpp
 unit_packaged_task_SOURCES = unit/packaged_task.cpp
 unit_placeholders_SOURCES = unit/placeholders.cpp
-unit_posix_basic_descriptor_SOURCES = unit/posix/basic_descriptor.cpp
-unit_posix_basic_stream_descriptor_SOURCES = unit/posix/basic_stream_descriptor.cpp
 unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
-unit_posix_stream_descriptor_service_SOURCES = unit/posix/stream_descriptor_service.cpp
 unit_post_SOURCES = unit/post.cpp
-unit_raw_socket_service_SOURCES = unit/raw_socket_service.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
-unit_seq_packet_socket_service_SOURCES = unit/seq_packet_socket_service.cpp
 unit_serial_port_SOURCES = unit/serial_port.cpp
 unit_serial_port_base_SOURCES = unit/serial_port_base.cpp
-unit_serial_port_service_SOURCES = unit/serial_port_service.cpp
 unit_signal_set_SOURCES = unit/signal_set.cpp
-unit_signal_set_service_SOURCES = unit/signal_set_service.cpp
-unit_socket_acceptor_service_SOURCES = unit/socket_acceptor_service.cpp
 unit_socket_base_SOURCES = unit/socket_base.cpp
 unit_steady_timer_SOURCES = unit/steady_timer.cpp
 unit_strand_SOURCES = unit/strand.cpp
-unit_stream_socket_service_SOURCES = unit/stream_socket_service.cpp
 unit_streambuf_SOURCES = unit/streambuf.cpp
 unit_system_context_SOURCES = unit/system_context.cpp
 unit_system_executor_SOURCES = unit/system_executor.cpp
@@ -406,19 +348,11 @@ unit_ts_timer_SOURCES = unit/ts/timer.cpp
 unit_use_future_SOURCES = unit/use_future.cpp
 unit_uses_executor_SOURCES = unit/uses_executor.cpp
 unit_wait_traits_SOURCES = unit/wait_traits.cpp
-unit_waitable_timer_service_SOURCES = unit/waitable_timer_service.cpp
-unit_windows_basic_handle_SOURCES = unit/windows/basic_handle.cpp
-unit_windows_basic_object_handle_SOURCES = unit/windows/basic_object_handle.cpp
-unit_windows_basic_random_access_handle_SOURCES = unit/windows/basic_random_access_handle.cpp
-unit_windows_basic_stream_handle_SOURCES = unit/windows/basic_stream_handle.cpp
 unit_windows_object_handle_SOURCES = unit/windows/object_handle.cpp
-unit_windows_object_handle_service_SOURCES = unit/windows/object_handle_service.cpp
 unit_windows_overlapped_handle_SOURCES = unit/windows/overlapped_handle.cpp
 unit_windows_overlapped_ptr_SOURCES = unit/windows/overlapped_ptr.cpp
 unit_windows_random_access_handle_SOURCES = unit/windows/random_access_handle.cpp
-unit_windows_random_access_handle_service_SOURCES = unit/windows/random_access_handle_service.cpp
 unit_windows_stream_handle_SOURCES = unit/windows/stream_handle.cpp
-unit_windows_stream_handle_service_SOURCES = unit/windows/stream_handle_service.cpp
 unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
 
