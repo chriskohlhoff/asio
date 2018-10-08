@@ -28,17 +28,18 @@
 namespace asio {
 namespace detail {
 
-template <typename Handler>
+template <typename Handler, typename IoExecutor>
 class wait_handler : public wait_op
 {
 public:
   ASIO_DEFINE_HANDLER_PTR(wait_handler);
 
-  wait_handler(Handler& h)
+  wait_handler(Handler& h, const IoExecutor& ex)
     : wait_op(&wait_handler::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(h))
+      handler_(ASIO_MOVE_CAST(Handler)(h)),
+      io_executor_(ex)
   {
-    handler_work<Handler>::start(handler_);
+    handler_work<Handler, IoExecutor>::start(handler_, io_executor_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -48,7 +49,7 @@ public:
     // Take ownership of the handler object.
     wait_handler* h(static_cast<wait_handler*>(base));
     ptr p = { asio::detail::addressof(h->handler_), h, h };
-    handler_work<Handler> w(h->handler_);
+    handler_work<Handler, IoExecutor> w(h->handler_, h->io_executor_);
 
     ASIO_HANDLER_COMPLETION((*h));
 
@@ -75,6 +76,7 @@ public:
 
 private:
   Handler handler_;
+  IoExecutor io_executor_;
 };
 
 } // namespace detail

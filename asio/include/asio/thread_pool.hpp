@@ -100,6 +100,9 @@ private:
   friend class executor_type;
   struct thread_function;
 
+  // Helper function to create the underlying scheduler.
+  ASIO_DECL detail::scheduler& add_scheduler(detail::scheduler* s);
+
   // The underlying scheduler.
   detail::scheduler& scheduler_;
 

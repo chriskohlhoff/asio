@@ -15,15 +15,19 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <new>
 #include "asio/detail/config.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/io_context.hpp"
+#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename IoObjectService>
+template <typename IoObjectService,
+    typename Executor = io_context::executor_type>
 class io_object_impl
 {
 public:
@@ -34,11 +38,23 @@ public:
   typedef typename service_type::implementation_type implementation_type;
 
   // The type of the executor associated with the object.
-  typedef asio::io_context::executor_type executor_type;
+  typedef Executor executor_type;
 
-  // Construct an I/O object.
-  explicit io_object_impl(asio::io_context& io_context)
-    : service_(&asio::use_service<IoObjectService>(io_context))
+  // Construct an I/O object using an executor.
+  explicit io_object_impl(const executor_type& ex)
+    : executor_(ex),
+      service_(&asio::use_service<IoObjectService>(ex.context()))
+  {
+    service_->construct(implementation_);
+  }
+
+  // Construct an I/O object using an execution context.
+  template <typename ExecutionContext>
+  explicit io_object_impl(ExecutionContext& context,
+      typename enable_if<is_convertible<
+        ExecutionContext&, execution_context&>::value>::type* = 0)
+    : executor_(context.get_executor()),
+      service_(&asio::use_service<IoObjectService>(context))
   {
     service_->construct(implementation_);
   }
@@ -46,7 +62,8 @@ public:
 #if defined(ASIO_HAS_MOVE)
   // Move-construct an I/O object.
   io_object_impl(io_object_impl&& other)
-    : service_(&other.get_service())
+    : executor_(other.get_executor()),
+      service_(&other.get_service())
   {
     service_->move_construct(implementation_, other.implementation_);
   }
@@ -55,8 +72,9 @@ public:
   template <typename IoObjectService1>
   io_object_impl(IoObjectService1& other_service,
       typename IoObjectService1::implementation_type& other_implementation)
-    : service_(&asio::use_service<IoObjectService>(
-          other_service.get_io_context()))
+    : executor_(other_service.get_io_context().get_executor()), // TODO
+      service_(&asio::use_service<IoObjectService>(
+            other_service.get_io_context()))
   {
     service_->converting_move_construct(implementation_,
         other_service, other_implementation);
@@ -73,9 +91,14 @@ public:
   // Move-assign an I/O object.
   io_object_impl& operator=(io_object_impl&& other)
   {
-    service_->move_assign(implementation_,
-        *other.service_, other.implementation_);
-    service_ = other.service_;
+    if (this != &other)
+    {
+      service_->move_assign(implementation_,
+          *other.service_, other.implementation_);
+      executor_.~executor_type();
+      new (&executor_) executor_type(std::move(other.executor_));
+      service_ = other.service_;
+    }
     return *this;
   }
 #endif // defined(ASIO_HAS_MOVE)
@@ -97,7 +120,7 @@ public:
   // Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
-    return service_->get_io_context().get_executor();
+    return executor_;
   }
 
   // Get the service associated with the I/O object.
@@ -128,6 +151,9 @@ private:
   // Disallow copying and copy assignment.
   io_object_impl(const io_object_impl&);
   io_object_impl& operator=(const io_object_impl&);
+
+  // The associated executor.
+  executor_type executor_;
 
   // The service associated with the I/O object.
   service_type* service_;

@@ -62,7 +62,8 @@ struct time_traits;
 #define ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
 
 template <typename Clock,
-    typename WaitTraits = asio::wait_traits<Clock> >
+    typename WaitTraits = wait_traits<Clock>,
+    typename Executor = executor>
 class basic_waitable_timer;
 
 #endif // !defined(ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)

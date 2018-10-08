@@ -23,6 +23,7 @@
 #include "asio/detail/io_object_impl.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
+#include "asio/executor.hpp"
 #include "asio/wait_traits.hpp"
 
 #if defined(ASIO_HAS_MOVE)
@@ -38,7 +39,8 @@ namespace asio {
 
 // Forward declaration with defaulted arguments.
 template <typename Clock,
-    typename WaitTraits = asio::wait_traits<Clock> >
+    typename WaitTraits = asio::wait_traits<Clock>,
+    typename Executor = asio::executor>
 class basic_waitable_timer;
 
 #endif // !defined(ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
@@ -135,12 +137,12 @@ class basic_waitable_timer;
  * @li If a wait handler is cancelled, the asio::error_code passed to
  * it contains the value asio::error::operation_aborted.
  */
-template <typename Clock, typename WaitTraits>
+template <typename Clock, typename WaitTraits, typename Executor>
 class basic_waitable_timer
 {
 public:
   /// The type of the executor associated with the object.
-  typedef io_context::executor_type executor_type;
+  typedef Executor executor_type;
 
   /// The clock type.
   typedef Clock clock_type;
@@ -160,11 +162,28 @@ public:
    * expires_at() or expires_after() functions must be called to set an expiry
    * time before the timer can be waited on.
    *
-   * @param io_context The io_context object that the timer will use to dispatch
+   * @param ex The executor object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    */
-  explicit basic_waitable_timer(asio::io_context& io_context)
-    : impl_(io_context)
+  explicit basic_waitable_timer(const executor_type& ex)
+    : impl_(ex)
+  {
+  }
+
+  /// Constructor.
+  /**
+   * This constructor creates a timer without setting an expiry time. The
+   * expires_at() or expires_after() functions must be called to set an expiry
+   * time before the timer can be waited on.
+   *
+   * @param context The execution context object that the timer will use to
+   * dispatch handlers for any asynchronous operations performed on the timer.
+   */
+  template <typename ExecutionContext,
+      typename = typename enable_if<is_convertible<
+        ExecutionContext&, execution_context&>::value>::type>
+  explicit basic_waitable_timer(ExecutionContext& context)
+    : impl_(context)
   {
   }
 
@@ -172,15 +191,36 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param io_context The io_context object that the timer will use to dispatch
+   * @param ex The executor object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, expressed
    * as an absolute time.
    */
-  basic_waitable_timer(asio::io_context& io_context,
+  basic_waitable_timer(const executor_type& ex, const time_point& expiry_time)
+    : impl_(ex)
+  {
+    asio::error_code ec;
+    impl_.get_service().expires_at(impl_.get_implementation(), expiry_time, ec);
+    asio::detail::throw_error(ec, "expires_at");
+  }
+
+  /// Constructor to set a particular expiry time as an absolute time.
+  /**
+   * This constructor creates a timer and sets the expiry time.
+   *
+   * @param context The execution context object that the timer will use to
+   * dispatch handlers for any asynchronous operations performed on the timer.
+   *
+   * @param expiry_time The expiry time to be used for the timer, expressed
+   * as an absolute time.
+   */
+  template <typename ExecutionContext,
+      typename = typename enable_if<is_convertible<
+        ExecutionContext&, execution_context&>::value>::type>
+  explicit basic_waitable_timer(ExecutionContext& context,
       const time_point& expiry_time)
-    : impl_(io_context)
+    : impl_(context)
   {
     asio::error_code ec;
     impl_.get_service().expires_at(impl_.get_implementation(), expiry_time, ec);
@@ -191,15 +231,37 @@ public:
   /**
    * This constructor creates a timer and sets the expiry time.
    *
-   * @param io_context The io_context object that the timer will use to dispatch
+   * @param ex The executor object that the timer will use to dispatch
    * handlers for any asynchronous operations performed on the timer.
    *
    * @param expiry_time The expiry time to be used for the timer, relative to
    * now.
    */
-  basic_waitable_timer(asio::io_context& io_context,
+  basic_waitable_timer(const executor_type& ex, const duration& expiry_time)
+    : impl_(ex)
+  {
+    asio::error_code ec;
+    impl_.get_service().expires_after(
+        impl_.get_implementation(), expiry_time, ec);
+    asio::detail::throw_error(ec, "expires_after");
+  }
+
+  /// Constructor to set a particular expiry time relative to now.
+  /**
+   * This constructor creates a timer and sets the expiry time.
+   *
+   * @param ex The executor object that the timer will use to dispatch
+   * handlers for any asynchronous operations performed on the timer.
+   *
+   * @param expiry_time The expiry time to be used for the timer, relative to
+   * now.
+   */
+  template <typename ExecutionContext,
+      typename = typename enable_if<is_convertible<
+        ExecutionContext&, execution_context&>::value>::type>
+  explicit basic_waitable_timer(ExecutionContext& context,
       const duration& expiry_time)
-    : impl_(io_context)
+    : impl_(context)
   {
     asio::error_code ec;
     impl_.get_service().expires_after(
@@ -663,7 +725,7 @@ public:
       void (asio::error_code)> init(handler);
 
     impl_.get_service().async_wait(impl_.get_implementation(),
-        init.completion_handler);
+        init.completion_handler, impl_.get_executor());
 
     return init.result.get();
   }
@@ -676,7 +738,8 @@ private:
 
   detail::io_object_impl<
     detail::deadline_timer_service<
-      detail::chrono_time_traits<Clock, WaitTraits> > > impl_;
+      detail::chrono_time_traits<Clock, WaitTraits> >,
+    executor_type > impl_;
 };
 
 } // namespace asio
