@@ -158,6 +158,8 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\v6_only.exe \
 	tests\unit\is_read_buffered.exe \
 	tests\unit\is_write_buffered.exe \
+	tests\unit\local\basic_endpoint.exe \
+	tests\unit\local\stream_protocol.exe \
 	tests\unit\placeholders.exe \
 	tests\unit\raw_socket_service.exe \
 	tests\unit\read.exe \
@@ -307,6 +309,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ip}.cpp{tests\unit\ip}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{tests\unit\local}.cpp{tests\unit\local}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ssl}.cpp{tests\unit\ssl}.exe:

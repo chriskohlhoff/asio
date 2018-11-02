@@ -39,6 +39,9 @@
 # endif // defined(WINAPI_FAMILY)
 # if !defined(ASIO_WINDOWS_APP)
 #  include <mswsock.h>
+#  if defined(ASIO_HAS_LOCAL_SOCKETS)
+#   include <afunix.h>
+#  endif
 # endif // !defined(ASIO_WINDOWS_APP)
 # if defined(ASIO_WSPIAPI_H_DEFINED)
 #  undef _WSPIAPI_H_
@@ -188,6 +191,9 @@ typedef sockaddr socket_addr_type;
 typedef in_addr in4_addr_type;
 typedef ip_mreq in4_mreq_type;
 typedef sockaddr_in sockaddr_in4_type;
+# if defined(ASIO_HAS_LOCAL_SOCKETS)
+typedef sockaddr_un sockaddr_un_type;
+# endif
 # if defined(ASIO_HAS_OLD_WIN_SDK)
 typedef in6_addr_emulation in6_addr_type;
 typedef ipv6_mreq_emulation in6_mreq_type;

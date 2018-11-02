@@ -17,7 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_LOCAL_SOCKETS) \
+#if (defined(ASIO_HAS_LOCAL_SOCKETS) \
+  && !defined(ASIO_WINDOWS)) \
   || defined(GENERATING_DOCUMENTATION)
 
 #include "asio/basic_socket.hpp"
