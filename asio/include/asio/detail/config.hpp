@@ -784,17 +784,15 @@
 #     define ASIO_HAS_STD_STRING_VIEW 1
 #    endif // __has_include(<string_view>)
 #   endif // (__cplusplus >= 201703)
-#  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  elif defined(__GNUC__)
 #   if (__GNUC__ >= 7)
 #    if (__cplusplus >= 201703)
 #     define ASIO_HAS_STD_STRING_VIEW 1
 #    endif // (__cplusplus >= 201703)
 #   endif // (__GNUC__ >= 7)
-#  endif // defined(__GNUC__)
-#  if defined(ASIO_MSVC)
+#  elif defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1910 && _HAS_CXX17)
-#    define ASIO_HAS_STD_STRING_VIEW
+#    define ASIO_HAS_STD_STRING_VIEW 1
 #   endif // (_MSC_VER >= 1910 && _HAS_CXX17)
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_STRING_VIEW)
