@@ -1120,6 +1120,7 @@
 #   define ASIO_HAS_LOCAL_SOCKETS 1
 #  elif defined(ASIO_WINDOWS) \
   && defined(NTDDI_VERSION) \
+  && defined(NTDDI_WIN10_RS3) \
   && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
 #   define ASIO_HAS_LOCAL_SOCKETS 1
 #  endif // !defined(ASIO_WINDOWS)
