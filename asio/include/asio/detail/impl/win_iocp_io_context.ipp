@@ -62,7 +62,7 @@ struct win_iocp_io_context::timer_thread_function
 };
 
 win_iocp_io_context::win_iocp_io_context(
-    asio::execution_context& ctx, int concurrency_hint)
+    asio::execution_context& ctx, int concurrency_hint, bool own_thread)
   : execution_context_service_base<win_iocp_io_context>(ctx),
     iocp_(),
     outstanding_work_(0),
@@ -83,6 +83,21 @@ win_iocp_io_context::win_iocp_io_context(
     asio::error_code ec(last_error,
         asio::error::get_system_category());
     asio::detail::throw_error(ec, "iocp");
+  }
+
+  if (own_thread)
+  {
+    ++outstanding_work_;
+    thread_ = new asio::detail::thread([this] { asio::error_code ec; run(ec); });
+  }
+}
+
+win_iocp_io_context::~win_iocp_io_context()
+{
+  if (thread_)
+  {
+    thread_->join();
+    delete thread_;
   }
 }
 

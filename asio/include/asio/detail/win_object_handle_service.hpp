@@ -129,14 +129,14 @@ public:
       asio::error_code& ec);
 
   /// Start an asynchronous wait.
-  template <typename Handler>
-  void async_wait(implementation_type& impl, Handler& handler)
+  template <typename Handler, typename IoExecutor>
+  void async_wait(implementation_type& impl, Handler& handler, const IoExecutor& io_ex)
   {
     // Allocate and construct an operation to wrap the handler.
-    typedef wait_handler<Handler> op;
+    typedef wait_handler<Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(handler);
+    p.p = new (p.v) op(handler, io_ex);
 
     ASIO_HANDLER_CREATION((io_context_.context(), *p.p, "object_handle",
           &impl, reinterpret_cast<uintmax_t>(impl.wait_handle_), "async_wait"));

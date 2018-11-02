@@ -48,7 +48,9 @@ public:
   // Constructor. Specifies a concurrency hint that is passed through to the
   // underlying I/O completion port.
   ASIO_DECL win_iocp_io_context(asio::execution_context& ctx,
-      int concurrency_hint = -1);
+      int concurrency_hint = -1, bool own_thread = true);
+
+  ASIO_DECL ~win_iocp_io_context();
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown();
@@ -311,6 +313,9 @@ private:
 
   // The concurrency hint used to initialise the io_context.
   const int concurrency_hint_;
+
+  // The thread that is running the scheduler.
+  asio::detail::thread* thread_;
 };
 
 } // namespace detail

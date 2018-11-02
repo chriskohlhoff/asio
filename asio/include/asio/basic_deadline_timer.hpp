@@ -60,7 +60,7 @@ namespace asio {
  * timer.wait();
  * @endcode
  *
- * @par 
+ * @par
  * Performing an asynchronous wait:
  * @code
  * void handler(const asio::error_code& error)
@@ -591,7 +591,7 @@ public:
       void (asio::error_code)> init(handler);
 
     impl_.get_service().async_wait(impl_.get_implementation(),
-        init.completion_handler);
+        init.completion_handler, get_executor());
 
     return init.result.get();
   }
