@@ -14,9 +14,11 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Check for a new enough Windows SDK to test AF_UNIX support.
+// Technically, the Fall Creator's update added some support, but
+// it was a weird non-standard definition of sockaddr_un.
 #if defined(_WIN32_WINNT)
- #include <SdkDdkVer.h>
- #if defined(NTDDI_WIN10_RS3)
+ #include <sdkddkver.h>
+ #if defined(NTDDI_WIN10_RS4)
   #define ASIO_HAS_LOCAL_SOCKETS
  #endif
 #endif
