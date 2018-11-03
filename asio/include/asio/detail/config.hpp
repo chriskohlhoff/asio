@@ -237,7 +237,7 @@
 // Support noexcept on compilers known to allow it.
 #if !defined(ASIO_NOEXCEPT)
 # if !defined(ASIO_DISABLE_NOEXCEPT)
-#  if (BOOST_VERSION >= 105300)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 105300)
 #   define ASIO_NOEXCEPT BOOST_NOEXCEPT
 #   define ASIO_NOEXCEPT_OR_NOTHROW BOOST_NOEXCEPT_OR_NOTHROW
 #  elif defined(__clang__)
