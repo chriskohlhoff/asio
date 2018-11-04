@@ -240,7 +240,7 @@ context::context(context::method m)
       SSL_CTX_set_max_proto_version(handle_, TLS1_2_VERSION);
     }
     break;
-#elif defined(SSL_TXT_TLSV1_1)
+#elif defined(SSL_TXT_TLSV1_2)
   case context::tlsv12:
     handle_ = ::SSL_CTX_new(::TLSv1_2_method());
     break;
@@ -250,14 +250,14 @@ context::context(context::method m)
   case context::tlsv12_server:
     handle_ = ::SSL_CTX_new(::TLSv1_2_server_method());
     break;
-#else // defined(SSL_TXT_TLSV1_1)
+#else // defined(SSL_TXT_TLSV1_2)
   case context::tlsv12:
   case context::tlsv12_client:
   case context::tlsv12_server:
     asio::detail::throw_error(
         asio::error::invalid_argument, "context");
     break;
-#endif // defined(SSL_TXT_TLSV1_1)
+#endif // defined(SSL_TXT_TLSV1_2)
 
     // TLS v1.3.
 #if (OPENSSL_VERSION_NUMBER >= 0x10101000L) && !defined(LIBRESSL_VERSION_NUMBER)
