@@ -856,9 +856,9 @@
 #if !defined(ASIO_HAS_STD_INVOKE_RESULT)
 # if !defined(ASIO_DISABLE_STD_INVOKE_RESULT)
 #  if defined(ASIO_MSVC)
-#   if (_MSC_VER >= 1910 && _MSVC_LANG >= 201703)
+#   if (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #    define ASIO_HAS_STD_INVOKE_RESULT 1
-#   endif // (_MSC_VER >= 1910 && _MSVC_LANG >= 201703)
+#   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(ASIO_HAS_STD_INVOKE_RESULT)
