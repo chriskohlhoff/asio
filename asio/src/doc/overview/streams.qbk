@@ -27,7 +27,7 @@ type requirements:
 * `SyncWriteStream`, where synchronous write operations are performed using a
   member function called `write_some()`.
 
-* `AsyncWriteStream`, where synchronous write operations are performed using a
+* `AsyncWriteStream`, where asynchronous write operations are performed using a
   member function called `async_write_some()`.
 
 Examples of stream-oriented I/O objects include `ip::tcp::socket`,
