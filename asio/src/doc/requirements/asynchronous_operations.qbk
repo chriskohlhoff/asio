@@ -13,7 +13,7 @@ This section uses the names `Alloc1`, `Alloc2`, `alloc1`, `alloc2`, `Args`,
 ['i]]], `work1`, and `work2` as placeholders for specifying the requirements
 below.
 
-[section General asynchronous operation concepts]
+[heading General asynchronous operation concepts]
 
 An ['initiating function] is a function which may be called to start an
 asynchronous operation. A ['completion handler] is a function object that will
@@ -39,9 +39,7 @@ asynchronous operation.
 In this library, all functions with the prefix `async_` are initiating
 functions.
 
-[endsect]
-
-[section:completion_token Completion tokens and handlers]
+[heading Completion tokens and handlers]
 
 Initiating functions:
 
@@ -70,9 +68,7 @@ element that defines the call signature `Signature`. The ['Completion
 signature] elements in this Technical Specification have named parameters, and
 the results of an asynchronous operation are specified in terms of these names.
 
-[endsect]
-
-[section Automatic deduction of initiating function return type]
+[heading Automatic deduction of initiating function return type]
 
 The return type of an initiating function is `typename
 async_result<decay_t<CompletionToken>, Signature>::return_type`.
@@ -82,9 +78,7 @@ return type ['[^DEDUCED]]. For every function declaration that returns
 ['[^DEDUCED]], the meaning is equivalent to specifying the return type as
 `typename async_result<decay_t<CompletionToken>, Signature>::return_type`.
 
-[endsect]
-
-[section Production of initiating function return value]
+[heading Production of initiating function return value]
 
 An initiating function produces its return type as follows:
 
@@ -128,9 +122,7 @@ For convenience, initiating functions may be implemented using the
 
 '''&mdash;'''['end example]\]
 
-[endsect]
-
-[section Lifetime of initiating function arguments]
+[heading Lifetime of initiating function arguments]
 
 Unless otherwise specified, the lifetime of arguments to initiating functions
 shall be treated as follows:
@@ -148,9 +140,7 @@ initiating function completes.] The implementation may make copies of the
 argument, and all copies shall be destroyed no later than immediately after
 invocation of the completion handler.
 
-[endsect]
-
-[section Non-blocking requirements on initiating functions]
+[heading Non-blocking requirements on initiating functions]
 
 An initiating function shall not block (C++Std [defns.block]) the calling
 thread pending completion of the outstanding operation.
@@ -159,16 +149,12 @@ thread pending completion of the outstanding operation.
 reasons. For example, an initiating function may lock a mutex in order to
 synchronize access to shared data.]
 
-[endsect]
-
-[section Associated executor]
+[heading Associated executor]
 
 Certain objects that participate in asynchronous operations have an
-['associated executor]. These are obtained as specified below.
+['associated executor]. These are obtained as specified in the sections below.
 
-[endsect]
-
-[section I/O executor]
+[heading Associated I/O executor]
 
 An asynchronous operation has an associated executor satisfying the [link
 asio.reference.Executor1 `Executor`] requirements. If not otherwise specified by
@@ -190,9 +176,7 @@ Let `Executor1` be the type of the associated executor. Let `ex1` be a value of
 type `Executor1`, representing the associated executor object obtained as
 described above.
 
-[endsect]
-
-[section Completion handler executor]
+[heading Associated completion handler executor]
 
 A completion handler object of type `CompletionHandler` has an associated
 executor of type `Executor2` satisfying the [link asio.reference.Executor1
@@ -201,9 +185,7 @@ Executor requirements]. The type `Executor2` is
 type `Executor2` obtained by performing
 `get_associated_executor(completion_handler, ex1)`.
 
-[endsect]
-
-[section Outstanding work]
+[heading Outstanding work]
 
 Until the asynchronous operation has completed, the asynchronous operation
 shall maintain:
@@ -214,9 +196,7 @@ as `work1(ex1)`, and where `work1.owns_work() == true`; and
 [mdash] an object `work2` of type `executor_work_guard<Executor2>`, initialized
 as `work2(ex2)`, and where `work2.owns_work() == true`.
 
-[endsect]
-
-[section Allocation of intermediate storage]
+[heading Allocation of intermediate storage]
 
 Asynchronous operations may allocate memory. [inline_note Such as a data
 structure to store copies of the `completion_handler` object and the initiating
@@ -247,9 +227,7 @@ calls that perform memory allocations not using the associated allocator.
 Invocations of the allocator functions may not introduce data races (See C++Std
 \[res.on.data.races\]).]
 
-[endsect]
-
-[section Execution of completion handler on completion of asynchronous operation]
+[heading Execution of completion handler on completion of asynchronous operation]
 
 Let `Args...` be the argument types of the completion signature `Signature` and
 let [^['N]] be `sizeof...(Args)`. Let [^['i]] be in the range [half_open_range
@@ -268,14 +246,10 @@ if by performing `ex2.post(std::move(f), alloc2)`. Otherwise, the completion
 handler shall be submitted for execution as if by performing
 `ex2.dispatch(std::move(f), alloc2)`.
 
-[endsect]
-
-[section Completion handlers and exceptions]
+[heading Completion handlers and exceptions]
 
 Completion handlers are permitted to throw exceptions. The effect of any
 exception propagated from the execution of a completion handler is determined
 by the executor which is executing the completion handler.
-
-[endsect]
 
 [endsect]
