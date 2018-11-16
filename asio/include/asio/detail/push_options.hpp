@@ -23,7 +23,7 @@
 
 // Intel C++
 
-# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
+# if !defined(ASIO_USE_CLIENT_VISIBILITY) && (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
 #  pragma GCC visibility push (default)
 # endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
 
@@ -43,7 +43,7 @@
 #  endif
 # endif
 
-# if !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32)
+# if !defined(ASIO_USE_CLIENT_VISIBILITY) && !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32)
 #  pragma GCC visibility push (default)
 # endif // !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32)
 
@@ -67,7 +67,7 @@
 #  endif
 # endif
 
-# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
+# if !defined(ASIO_USE_CLIENT_VISIBILITY) && (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
 #  pragma GCC visibility push (default)
 # endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
 
