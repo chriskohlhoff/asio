@@ -926,6 +926,7 @@
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
     <xsl:value-of select="$newline"/>
+    <xsl:text>     [hr]</xsl:text>
     <xsl:value-of select="$newline"/>
     <xsl:text>     </xsl:text>
     <xsl:value-of select="briefdescription"/>
@@ -974,6 +975,7 @@
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
     <xsl:value-of select="$newline"/>
+    <xsl:text>     [hr]</xsl:text>
     <xsl:value-of select="$newline"/>
     <xsl:text>     </xsl:text>
     <xsl:value-of select="briefdescription"/>
@@ -1023,6 +1025,7 @@
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
     <xsl:value-of select="$newline"/>
+    <xsl:text>     [hr]</xsl:text>
     <xsl:value-of select="$newline"/>
     <xsl:text>     </xsl:text>
     <xsl:value-of select="briefdescription"/>
@@ -1102,6 +1105,7 @@
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
     <xsl:value-of select="$newline"/>
+    <xsl:text>     [hr]</xsl:text>
     <xsl:value-of select="$newline"/>
     <xsl:text>     </xsl:text>
     <xsl:value-of select="briefdescription"/>
@@ -1692,18 +1696,10 @@
 <xsl:value-of select="$name"/>
 <xsl:text>] </xsl:text>
 
-<xsl:choose>
-  <xsl:when test="count(/doxygen/compounddef[@kind='group' and compoundname=$name]) &gt; 0">
-    <xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
-      <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
-      </xsl:text>
-    </xsl:for-each>
-  </xsl:when>
-  <xsl:otherwise>
-    <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
-    </xsl:text>
-  </xsl:otherwise>
-</xsl:choose>
+<xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
+  <xsl:apply-templates select="briefdescription" mode="markup"/>
+  <xsl:value-of select="$newline"/>
+</xsl:for-each>
 
 <xsl:for-each select="../memberdef[name = $unqualified-name]">
 <xsl:variable name="stripped-type">
@@ -1711,6 +1707,9 @@
    <xsl:with-param name="name" select="type"/>
  </xsl:call-template>
 </xsl:variable>
+<xsl:if test="position() = 1 or not(briefdescription = preceding-sibling::memberdef[1]/briefdescription)">
+  <xsl:apply-templates select="briefdescription" mode="markup"/>
+</xsl:if>
 <xsl:text>
 </xsl:text><xsl:apply-templates select="templateparamlist" mode="class-detail"/>
 <xsl:text>  </xsl:text><xsl:if test="string-length($stripped-type) &gt; 0"><xsl:value-of
