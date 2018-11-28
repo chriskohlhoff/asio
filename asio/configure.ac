@@ -118,6 +118,10 @@ case $host in
     CXXFLAGS="$CXXFLAGS -pthread"
     LDFLAGS="$LDFLAGS -pthread"
     ;;
+  *-*-haiku*)
+    CXXFLAGS="$CXXFLAGS -lnetwork"
+    LDFLAGS="$LDFLAGS -lnetwork"
+
 esac
 
 if test "$GXX" = yes; then
