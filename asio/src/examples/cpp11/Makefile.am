@@ -33,6 +33,7 @@ noinst_PROGRAMS = \
 	multicast/receiver \
 	multicast/sender \
 	nonblocking/third_party_lib \
+	socks4/sync_client \
 	timeouts/async_tcp_client \
 	timeouts/blocking_tcp_client \
 	timeouts/blocking_token_tcp_client \
@@ -98,6 +99,7 @@ iostreams_http_client_SOURCES = iostreams/http_client.cpp
 multicast_receiver_SOURCES = multicast/receiver.cpp
 multicast_sender_SOURCES = multicast/sender.cpp
 nonblocking_third_party_lib_SOURCES = nonblocking/third_party_lib.cpp
+socks4_sync_client_SOURCES = socks4/sync_client.cpp
 timeouts_async_tcp_client_SOURCES = timeouts/async_tcp_client.cpp
 timeouts_blocking_tcp_client_SOURCES = timeouts/blocking_tcp_client.cpp
 timeouts_blocking_token_tcp_client_SOURCES = timeouts/blocking_token_tcp_client.cpp

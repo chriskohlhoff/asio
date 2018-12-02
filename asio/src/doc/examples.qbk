@@ -444,6 +444,15 @@ library that wants to perform the I/O operations itself.
 * [@../src/examples/cpp11/nonblocking/third_party_lib.cpp] ([@examples/diffs/nonblocking/third_party_lib.cpp.html diff to C++03])
 
 
+[heading SOCKS 4]
+
+Example client program implementing the SOCKS 4 protocol for communication via
+a proxy.
+
+* [@../src/examples/cpp11/socks4/sync_client.cpp] ([@examples/diffs/socks4/sync_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/socks4/socks4.hpp] ([@examples/diffs/socks4/socks4.hpp.html diff to C++03])
+
+
 [heading Spawn]
 
 Example of using the asio::spawn() function, a wrapper around the
