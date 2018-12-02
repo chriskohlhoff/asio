@@ -267,7 +267,8 @@ context::context(context::method m)
 #endif // defined(SSL_TXT_TLSV1_2)
 
     // TLS v1.3.
-#if (OPENSSL_VERSION_NUMBER >= 0x10101000L) && !defined(LIBRESSL_VERSION_NUMBER)
+#if (OPENSSL_VERSION_NUMBER >= 0x10101000L) \
+    && !defined(LIBRESSL_VERSION_NUMBER)
   case context::tlsv13:
     handle_ = ::SSL_CTX_new(::TLS_method());
     if (handle_)
@@ -292,14 +293,16 @@ context::context(context::method m)
       SSL_CTX_set_max_proto_version(handle_, TLS1_3_VERSION);
     }
     break;
-#else // (OPENSSL_VERSION_NUMBER >= 0x10101000L) && !defined(LIBRESSL_VERSION_NUMBER)
+#else // (OPENSSL_VERSION_NUMBER >= 0x10101000L)
+      //   && !defined(LIBRESSL_VERSION_NUMBER)
   case context::tlsv13:
   case context::tlsv13_client:
   case context::tlsv13_server:
     asio::detail::throw_error(
         asio::error::invalid_argument, "context");
     break;
-#endif // (OPENSSL_VERSION_NUMBER >= 0x10101000L) && !defined(LIBRESSL_VERSION_NUMBER)
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10101000L)
+       //   && !defined(LIBRESSL_VERSION_NUMBER)
 
     // Any supported SSL/TLS version.
   case context::sslv23:
