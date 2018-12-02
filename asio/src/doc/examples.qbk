@@ -454,6 +454,18 @@ coroutines.
 * [@../src/examples/cpp11/spawn/echo_server.cpp] ([@examples/diffs/spawn/echo_server.cpp.html diff to C++03])
 
 
+[heading Timeouts]
+
+A collection of examples showing how to cancel long running asynchronous
+operations after a period of time.
+
+* [@../src/examples/cpp11/timeouts/async_tcp_client.cpp] ([@examples/diffs/timeouts/async_tcp_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/timeouts/blocking_tcp_client.cpp] ([@examples/diffs/timeouts/blocking_tcp_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/timeouts/blocking_token_tcp_client.cpp] ([@examples/diffs/timeouts/blocking_token_tcp_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/timeouts/blocking_udp_client.cpp] ([@examples/diffs/timeouts/blocking_udp_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/timeouts/server.cpp] ([@examples/diffs/timeouts/server.cpp.html diff to C++03])
+
+
 [heading UNIX Domain Sockets]
 
 Examples showing how to use UNIX domain (local) sockets.

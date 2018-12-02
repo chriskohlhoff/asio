@@ -32,7 +32,12 @@ noinst_PROGRAMS = \
 	iostreams/http_client \
 	multicast/receiver \
 	multicast/sender \
-	nonblocking/third_party_lib
+	nonblocking/third_party_lib \
+	timeouts/async_tcp_client \
+	timeouts/blocking_tcp_client \
+	timeouts/blocking_token_tcp_client \
+	timeouts/blocking_udp_client \
+	timeouts/server
 
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
@@ -86,6 +91,11 @@ iostreams_http_client_SOURCES = iostreams/http_client.cpp
 multicast_receiver_SOURCES = multicast/receiver.cpp
 multicast_sender_SOURCES = multicast/sender.cpp
 nonblocking_third_party_lib_SOURCES = nonblocking/third_party_lib.cpp
+timeouts_async_tcp_client_SOURCES = timeouts/async_tcp_client.cpp
+timeouts_blocking_tcp_client_SOURCES = timeouts/blocking_tcp_client.cpp
+timeouts_blocking_token_tcp_client_SOURCES = timeouts/blocking_token_tcp_client.cpp
+timeouts_blocking_udp_client_SOURCES = timeouts/blocking_udp_client.cpp
+timeouts_server_SOURCES = timeouts/server.cpp
 
 if !WINDOWS_TARGET
 fork_daemon_SOURCES = fork/daemon.cpp
