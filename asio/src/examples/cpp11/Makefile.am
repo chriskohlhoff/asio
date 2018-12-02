@@ -37,7 +37,8 @@ noinst_PROGRAMS = \
 	timeouts/blocking_tcp_client \
 	timeouts/blocking_token_tcp_client \
 	timeouts/blocking_udp_client \
-	timeouts/server
+	timeouts/server \
+	timers/time_t_timer
 
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
@@ -96,6 +97,7 @@ timeouts_blocking_tcp_client_SOURCES = timeouts/blocking_tcp_client.cpp
 timeouts_blocking_token_tcp_client_SOURCES = timeouts/blocking_token_tcp_client.cpp
 timeouts_blocking_udp_client_SOURCES = timeouts/blocking_udp_client.cpp
 timeouts_server_SOURCES = timeouts/server.cpp
+timers_time_t_timer_SOURCES = timers/time_t_timer.cpp
 
 if !WINDOWS_TARGET
 fork_daemon_SOURCES = fork/daemon.cpp

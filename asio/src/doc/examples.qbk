@@ -466,6 +466,13 @@ operations after a period of time.
 * [@../src/examples/cpp11/timeouts/server.cpp] ([@examples/diffs/timeouts/server.cpp.html diff to C++03])
 
 
+[heading Timers]
+
+Example showing how to customise basic_waitable_timer using a different clock type.
+
+* [@../src/examples/cpp11/timers/time_t_timer.cpp] ([@examples/diffs/timers/time_t_timer.cpp.html diff to C++03])
+
+
 [heading UNIX Domain Sockets]
 
 Examples showing how to use UNIX domain (local) sockets.
