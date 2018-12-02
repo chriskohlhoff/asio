@@ -454,6 +454,15 @@ coroutines.
 * [@../src/examples/cpp11/spawn/echo_server.cpp] ([@examples/diffs/spawn/echo_server.cpp.html diff to C++03])
 
 
+[heading SSL]
+
+Example client and server programs showing the use of the [link
+asio.reference.ssl__stream ssl::stream<>] template with asynchronous operations.
+
+* [@../src/examples/cpp11/ssl/client.cpp] ([@examples/diffs/ssl/client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/ssl/server.cpp] ([@examples/diffs/ssl/server.cpp.html diff to C++03])
+
+
 [heading Timeouts]
 
 A collection of examples showing how to cancel long running asynchronous

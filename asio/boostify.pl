@@ -531,6 +531,7 @@ sub copy_examples
       "src/examples/cpp11/multicast",
       "src/examples/cpp11/nonblocking",
       "src/examples/cpp11/spawn",
+      "src/examples/cpp11/ssl",
       "src/examples/cpp11/timeouts",
       "src/examples/cpp11/timers",
       "src/examples/cpp14/executors",

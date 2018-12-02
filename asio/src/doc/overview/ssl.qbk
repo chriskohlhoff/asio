@@ -110,7 +110,8 @@ threaded programs.
 [link asio.reference.ssl__context ssl::context],
 [link asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification],
 [link asio.reference.ssl__stream ssl::stream],
-[link asio.examples.cpp03_examples.ssl SSL example].
+[link asio.examples.cpp03_examples.ssl SSL example (C++03)],
+[link asio.examples.cpp11_examples.ssl SSL example (C++11)].
 
 [heading Notes]
 

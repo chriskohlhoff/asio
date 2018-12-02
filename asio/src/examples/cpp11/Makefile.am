@@ -50,6 +50,12 @@ noinst_PROGRAMS += \
 	local/stream_client
 endif
 
+if HAVE_OPENSSL
+noinst_PROGRAMS += \
+	ssl/client \
+	ssl/server
+endif
+
 if HAVE_BOOST_COROUTINE
 noinst_PROGRAMS += \
   spawn/echo_server \
@@ -106,6 +112,11 @@ local_connect_pair_SOURCES = local/connect_pair.cpp
 local_iostream_client_SOURCES = local/iostream_client.cpp
 local_stream_server_SOURCES = local/stream_server.cpp
 local_stream_client_SOURCES = local/stream_client.cpp
+endif
+
+if HAVE_OPENSSL
+ssl_client_SOURCES = ssl/client.cpp
+ssl_server_SOURCES = ssl/server.cpp
 endif
 
 if HAVE_BOOST_COROUTINE
