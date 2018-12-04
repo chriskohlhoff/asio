@@ -444,6 +444,17 @@ library that wants to perform the I/O operations itself.
 * [@../src/examples/cpp11/nonblocking/third_party_lib.cpp] ([@examples/diffs/nonblocking/third_party_lib.cpp.html diff to C++03])
 
 
+[heading Operations]
+
+Examples showing how to implement composed asynchronous operations as reusable library functions.
+
+* [@../src/examples/cpp11/operations/composed_1.cpp]
+* [@../src/examples/cpp11/operations/composed_2.cpp]
+* [@../src/examples/cpp11/operations/composed_3.cpp]
+* [@../src/examples/cpp11/operations/composed_4.cpp]
+* [@../src/examples/cpp11/operations/composed_5.cpp]
+
+
 [heading SOCKS 4]
 
 Example client program implementing the SOCKS 4 protocol for communication via

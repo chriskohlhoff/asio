@@ -33,6 +33,11 @@ noinst_PROGRAMS = \
 	multicast/receiver \
 	multicast/sender \
 	nonblocking/third_party_lib \
+	operations/composed_1 \
+	operations/composed_2 \
+	operations/composed_3 \
+	operations/composed_4 \
+	operations/composed_5 \
 	socks4/sync_client \
 	timeouts/async_tcp_client \
 	timeouts/blocking_tcp_client \
@@ -99,6 +104,11 @@ iostreams_http_client_SOURCES = iostreams/http_client.cpp
 multicast_receiver_SOURCES = multicast/receiver.cpp
 multicast_sender_SOURCES = multicast/sender.cpp
 nonblocking_third_party_lib_SOURCES = nonblocking/third_party_lib.cpp
+operations_composed_1_SOURCES = operations/composed_1.cpp
+operations_composed_2_SOURCES = operations/composed_2.cpp
+operations_composed_3_SOURCES = operations/composed_3.cpp
+operations_composed_4_SOURCES = operations/composed_4.cpp
+operations_composed_5_SOURCES = operations/composed_5.cpp
 socks4_sync_client_SOURCES = socks4/sync_client.cpp
 timeouts_async_tcp_client_SOURCES = timeouts/async_tcp_client.cpp
 timeouts_blocking_tcp_client_SOURCES = timeouts/blocking_tcp_client.cpp
