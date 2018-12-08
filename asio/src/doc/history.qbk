@@ -7,6 +7,56 @@
 
 [section:history Revision History]
 
+[heading Asio 1.12.2]
+
+* Fixed a problem with the detection of `std::future` availability with
+  libstdc++.
+
+* Fixed compile error in regex overload of `read_until`.
+
+* Fixed a timer heap corruption issue that can occur when moving a cancelled
+  timer.
+
+* Fixed detection of `std::experimental::string_view` and `std::string_view`
+  with newer clang/libc++.
+
+* Fixed MSVC version detection for availability of `std::invoke_result`.
+
+* Fixed the buffer sequence traits to test the new requirements, if `decltype`
+  is available.
+
+* Fixed an MSVC issue when building with exceptions disabled.
+
+* Added SSL context options for TLS v1.3.
+
+* Added a compile-time test for TLS v1 support.
+
+* Fixed the macro used to test for TLS v1.2 support.
+
+* Prevented global objects from being created once per thread on Windows.
+
+* Fixed a crash when using `size()`, `max_size()` or `empty()` on
+  default-constructed resolver results.
+
+* Changed to move the return value in basic_resolver_results::begin() to avoid
+  copying.
+
+* Enabled move support for the Intel Compiler.
+
+* Fixed `std::string_view` detection issue when using clang-cl.
+
+* Fixed the handler tracking operation name for
+  `io_context::executor_type::dispatch`.
+
+* Fixed a buffer overflow that could occur when parsing an address string with
+  a 64-bit scope id.
+
+* Added examples showing how to write composed operations.
+
+* Added C++11 versions of the Timeouts, Timers, SOCKS4 and SSL examples.
+
+* Fixed minor issues in documentation and examples.
+
 [heading Asio 1.12.1]
 
 * Added missing const qualifier to `basic_socket_acceptor::get_option`.
