@@ -69,6 +69,7 @@ noinst_PROGRAMS += \
 endif
 
 noinst_HEADERS = \
+	socks4/socks4.hpp \
 	chat/chat_message.hpp
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
