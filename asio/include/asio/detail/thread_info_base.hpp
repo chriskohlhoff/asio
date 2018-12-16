@@ -38,6 +38,11 @@ public:
     enum { mem_index = 1 };
   };
 
+  struct executor_function_tag
+  {
+    enum { mem_index = 2 };
+  };
+
   thread_info_base()
   {
     for (int i = 0; i < max_mem_index; ++i)
@@ -109,7 +114,7 @@ public:
 
 private:
   enum { chunk_size = 4 };
-  enum { max_mem_index = 2 };
+  enum { max_mem_index = 3 };
   void* reusable_memory_[max_mem_index];
 };
 

@@ -64,6 +64,7 @@ nobase_include_HEADERS = \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
+	asio/detail/executor_function.hpp \
 	asio/detail/executor_op.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
