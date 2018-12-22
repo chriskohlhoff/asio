@@ -317,24 +317,12 @@ inline asio::io_context& io_context::work::get_io_context()
 {
   return static_cast<asio::io_context&>(io_context_impl_.context());
 }
-
-inline asio::io_context& io_context::work::get_io_service()
-{
-  return static_cast<asio::io_context&>(io_context_impl_.context());
-}
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 inline asio::io_context& io_context::service::get_io_context()
 {
   return static_cast<asio::io_context&>(context());
 }
-
-#if !defined(ASIO_NO_DEPRECATED)
-inline asio::io_context& io_context::service::get_io_service()
-{
-  return static_cast<asio::io_context&>(context());
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 } // namespace asio
 

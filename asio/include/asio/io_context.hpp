@@ -768,10 +768,6 @@ public:
   /// Get the io_context associated with the work.
   asio::io_context& get_io_context();
 
-  /// (Deprecated: Use get_io_context().) Get the io_context associated with the
-  /// work.
-  asio::io_context& get_io_service();
-
 private:
   // Prevent assignment.
   void operator=(const work& other);
@@ -788,11 +784,6 @@ class io_context::service
 public:
   /// Get the io_context object that owns the service.
   asio::io_context& get_io_context();
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// Get the io_context object that owns the service.
-  asio::io_context& get_io_service();
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   /// Destroy all user-defined handler objects owned by the service.

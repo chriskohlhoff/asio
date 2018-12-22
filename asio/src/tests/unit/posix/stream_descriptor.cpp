@@ -76,11 +76,6 @@ void test()
 
     // basic_io_object functions.
 
-#if !defined(ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = descriptor1.get_io_context();
-    (void)ioc_ref;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
     posix::stream_descriptor::executor_type ex = descriptor1.get_executor();
     (void)ex;
 

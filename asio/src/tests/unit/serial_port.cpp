@@ -89,14 +89,6 @@ void test()
     serial_port::executor_type ex = port1.get_executor();
     (void)ex;
 
-#if !defined(ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = port1.get_io_context();
-    (void)ioc_ref;
-
-    io_context& ioc_ref2 = port1.get_io_service();
-    (void)ioc_ref2;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
     // basic_serial_port functions.
 
     serial_port::lowest_layer_type& lowest_layer = port1.lowest_layer();

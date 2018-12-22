@@ -266,11 +266,6 @@ void test()
 
     // basic_io_object functions.
 
-#if !defined(ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = socket1.get_io_context();
-    (void)ioc_ref;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
     ip::tcp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
 
@@ -843,11 +838,6 @@ void test()
 
     // basic_io_object functions.
 
-#if !defined(ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = acceptor1.get_io_context();
-    (void)ioc_ref;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
     ip::tcp::acceptor::executor_type ex = acceptor1.get_executor();
     (void)ex;
 
@@ -1117,11 +1107,6 @@ void test()
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
-
-#if !defined(ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = resolver.get_io_context();
-    (void)ioc_ref;
-#endif // !defined(ASIO_NO_DEPRECATED)
 
     ip::tcp::resolver::executor_type ex = resolver.get_executor();
     (void)ex;

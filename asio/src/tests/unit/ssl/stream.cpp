@@ -80,14 +80,6 @@ void test()
     ssl::stream<ip::tcp::socket>::executor_type ex = stream1.get_executor();
     (void)ex;
 
-#if !defined(ASIO_NO_DEPRECATED)
-    io_context& ioc_ref = stream1.get_io_context();
-    (void)ioc_ref;
-
-    io_context& ioc_ref2 = stream1.get_io_service();
-    (void)ioc_ref2;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
     // ssl::stream functions.
 
     SSL* ssl1 = stream1.native_handle();
