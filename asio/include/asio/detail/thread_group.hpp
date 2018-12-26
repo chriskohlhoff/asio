@@ -64,6 +64,12 @@ public:
     }
   }
 
+  // Test whether the group is empty.
+  bool empty() const
+  {
+    return first_ == 0;
+  }
+
 private:
   // Structure used to track a single thread in the group.
   struct item

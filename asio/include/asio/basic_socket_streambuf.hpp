@@ -47,7 +47,7 @@
 //   {
 //     init_buffers();
 //     typedef typename Protocol::resolver resolver_type;
-//     resolver_type resolver(socket().get_executor().context());
+//     resolver_type resolver(socket().get_executor());
 //     connect_to_endpoints(
 //         resolver.resolve(x1, ..., xn, ec_));
 //     return !ec_ ? this : 0;
@@ -60,7 +60,7 @@
   { \
     init_buffers(); \
     typedef typename Protocol::resolver resolver_type; \
-    resolver_type resolver(socket().get_executor().context()); \
+    resolver_type resolver(socket().get_executor()); \
     connect_to_endpoints( \
         resolver.resolve(ASIO_VARIADIC_BYVAL_ARGS(n), ec_)); \
     return !ec_ ? this : 0; \
@@ -283,7 +283,7 @@ public:
   {
     init_buffers();
     typedef typename Protocol::resolver resolver_type;
-    resolver_type resolver(socket().get_executor().context());
+    resolver_type resolver(socket().get_executor());
     connect_to_endpoints(resolver.resolve(x..., ec_));
     return !ec_ ? this : 0;
   }

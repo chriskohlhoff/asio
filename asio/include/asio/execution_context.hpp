@@ -109,13 +109,14 @@ public:
   class id;
   class service;
 
-protected:
+public:
   /// Constructor.
   ASIO_DECL execution_context();
 
   /// Destructor.
   ASIO_DECL ~execution_context();
 
+protected:
   /// Shuts down all services in the context.
   /**
    * This function is implemented as follows:

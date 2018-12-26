@@ -84,7 +84,7 @@ class chat_session
 public:
   chat_session(tcp::socket socket, chat_room& room)
     : socket_(std::move(socket)),
-      timer_(socket_.get_executor().context()),
+      timer_(socket_.get_executor()),
       room_(room)
   {
     timer_.expires_at(std::chrono::steady_clock::time_point::max());

@@ -83,9 +83,9 @@ class connection
 public:
   typedef boost::shared_ptr<connection> pointer;
 
-  static pointer create(asio::io_context& io_context)
+  static pointer create(const asio::executor& ex)
   {
-    return pointer(new connection(io_context));
+    return pointer(new connection(ex));
   }
 
   tcp::socket& socket()
@@ -102,8 +102,8 @@ public:
   }
 
 private:
-  connection(asio::io_context& io_context)
-    : socket_(io_context),
+  connection(const asio::executor& ex)
+    : socket_(ex),
       session_impl_(socket_),
       read_in_progress_(false),
       write_in_progress_(false)
@@ -193,7 +193,7 @@ private:
   void start_accept()
   {
     connection::pointer new_connection =
-      connection::create(acceptor_.get_executor().context());
+      connection::create(acceptor_.get_executor());
 
     acceptor_.async_accept(new_connection->socket(),
         boost::bind(&server::handle_accept, this, new_connection,

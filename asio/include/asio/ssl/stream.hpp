@@ -51,9 +51,9 @@ namespace ssl {
  * @par Example
  * To use the SSL stream template with an ip::tcp::socket, you would write:
  * @code
- * asio::io_context io_context;
+ * asio::io_context my_context;
  * asio::ssl::context ctx(asio::ssl::context::sslv23);
- * asio::ssl::stream<asio:ip::tcp::socket> sock(io_context, ctx);
+ * asio::ssl::stream<asio:ip::tcp::socket> sock(my_context, ctx);
  * @endcode
  *
  * @par Concepts:
@@ -96,16 +96,14 @@ public:
   template <typename Arg>
   stream(Arg&& arg, context& ctx)
     : next_layer_(ASIO_MOVE_CAST(Arg)(arg)),
-      core_(ctx.native_handle(),
-          next_layer_.lowest_layer().get_executor().context())
+      core_(ctx.native_handle(), next_layer_.lowest_layer().get_executor())
   {
   }
 #else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   template <typename Arg>
   stream(Arg& arg, context& ctx)
     : next_layer_(arg),
-      core_(ctx.native_handle(),
-          next_layer_.lowest_layer().get_executor().context())
+      core_(ctx.native_handle(), next_layer_.lowest_layer().get_executor())
   {
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
@@ -142,7 +140,7 @@ public:
    * suitable for passing to functions such as @c SSL_get_verify_result and
    * @c SSL_get_peer_certificate:
    * @code
-   * asio::ssl::stream<asio:ip::tcp::socket> sock(io_context, ctx);
+   * asio::ssl::stream<asio:ip::tcp::socket> sock(my_context, ctx);
    *
    * // ... establish connection and perform handshake ...
    *

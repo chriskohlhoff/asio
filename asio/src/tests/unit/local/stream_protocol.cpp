@@ -60,6 +60,7 @@ void test()
   try
   {
     io_context ioc;
+    const io_context::executor_type ioc_ex = ioc.get_executor();
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
@@ -75,6 +76,12 @@ void test()
     int native_socket1 = ::socket(AF_UNIX, SOCK_STREAM, 0);
     sp::socket socket4(ioc, sp(), native_socket1);
 
+    sp::socket socket5(ioc_ex);
+    sp::socket socket6(ioc_ex, sp());
+    sp::socket socket7(ioc_ex, sp::endpoint(""));
+    int native_socket2 = ::socket(AF_UNIX, SOCK_STREAM, 0);
+    sp::socket socket8(ioc_ex, sp(), native_socket2);
+
     // basic_io_object functions.
 
     sp::socket::executor_type ex = socket1.get_executor();
@@ -88,10 +95,10 @@ void test()
     socket1.open(sp());
     socket1.open(sp(), ec);
 
-    int native_socket2 = ::socket(AF_UNIX, SOCK_STREAM, 0);
-    socket1.assign(sp(), native_socket2);
     int native_socket3 = ::socket(AF_UNIX, SOCK_STREAM, 0);
-    socket1.assign(sp(), native_socket3, ec);
+    socket1.assign(sp(), native_socket3);
+    int native_socket4 = ::socket(AF_UNIX, SOCK_STREAM, 0);
+    socket1.assign(sp(), native_socket4, ec);
 
     bool is_open = socket1.is_open();
     (void)is_open;
@@ -99,8 +106,8 @@ void test()
     socket1.close();
     socket1.close(ec);
 
-    sp::socket::native_handle_type native_socket4 = socket1.native_handle();
-    (void)native_socket4;
+    sp::socket::native_handle_type native_socket5 = socket1.native_handle();
+    (void)native_socket5;
 
     socket1.cancel();
     socket1.cancel(ec);

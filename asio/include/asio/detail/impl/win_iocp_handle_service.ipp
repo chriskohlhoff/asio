@@ -65,10 +65,9 @@ public:
   }
 };
 
-win_iocp_handle_service::win_iocp_handle_service(
-    asio::io_context& io_context)
-  : service_base<win_iocp_handle_service>(io_context),
-    iocp_service_(asio::use_service<win_iocp_io_context>(io_context)),
+win_iocp_handle_service::win_iocp_handle_service(execution_context& context)
+  : execution_context_service_base<win_iocp_handle_service>(context),
+    iocp_service_(asio::use_service<win_iocp_io_context>(context)),
     mutex_(),
     impl_list_(0)
 {

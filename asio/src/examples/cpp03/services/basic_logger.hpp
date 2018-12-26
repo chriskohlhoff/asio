@@ -34,13 +34,13 @@ public:
   /**
    * This constructor creates a logger.
    *
-   * @param io_context The io_context object used to locate the logger service.
+   * @param context The execution context used to locate the logger service.
    *
    * @param identifier An identifier for this logger.
    */
-  explicit basic_logger(asio::io_context& io_context,
+  explicit basic_logger(asio::execution_context& context,
       const std::string& identifier)
-    : service_(asio::use_service<Service>(io_context)),
+    : service_(asio::use_service<Service>(context)),
       impl_(service_.null())
   {
     service_.create(impl_, identifier);

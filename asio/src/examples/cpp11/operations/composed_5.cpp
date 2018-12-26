@@ -179,7 +179,7 @@ auto async_write_messages(tcp::socket& socket,
 
   // Create a steady_timer to be used for the delay between messages.
   std::unique_ptr<asio::steady_timer> delay_timer(
-      new asio::steady_timer(socket.get_executor().context()));
+      new asio::steady_timer(socket.get_executor()));
 
   // Initiate the underlying operations by explicitly calling our intermediate
   // completion handler's function call operator.

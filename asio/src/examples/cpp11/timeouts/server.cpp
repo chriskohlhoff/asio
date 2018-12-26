@@ -329,10 +329,10 @@ private:
   channel& channel_;
   tcp::socket socket_;
   std::string input_buffer_;
-  steady_timer input_deadline_{socket_.get_executor().context()};
+  steady_timer input_deadline_{socket_.get_executor()};
   std::deque<std::string> output_queue_;
-  steady_timer non_empty_output_queue_{socket_.get_executor().context()};
-  steady_timer output_deadline_{socket_.get_executor().context()};
+  steady_timer non_empty_output_queue_{socket_.get_executor()};
+  steady_timer output_deadline_{socket_.get_executor()};
 };
 
 typedef std::shared_ptr<tcp_session> tcp_session_ptr;

@@ -577,9 +577,9 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation of
- * the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
+ * not, the handler will not be invoked from within this function. On
+ * immediate completion, invocation of the handler will be performed in a
+ * manner equivalent to using asio::post().
  *
  * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
@@ -653,9 +653,9 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation of
- * the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
+ * not, the handler will not be invoked from within this function. On
+ * immediate completion, invocation of the handler will be performed in a
+ * manner equivalent to using asio::post().
  *
  * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
@@ -717,9 +717,9 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation of
- * the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
+ * not, the handler will not be invoked from within this function. On
+ * immediate completion, invocation of the handler will be performed in a
+ * manner equivalent to using asio::post().
  */
 template <typename AsyncWriteStream,
     typename DynamicBuffer, typename WriteHandler>
@@ -785,9 +785,9 @@ async_write(AsyncWriteStream& s,
  *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation of
- * the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
+ * not, the handler will not be invoked from within this function. On
+ * immediate completion, invocation of the handler will be performed in a
+ * manner equivalent to using asio::post().
  */
 template <typename AsyncWriteStream, typename DynamicBuffer,
     typename CompletionCondition, typename WriteHandler>
@@ -841,9 +841,9 @@ async_write(AsyncWriteStream& s,
  *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation of
- * the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
+ * not, the handler will not be invoked from within this function. On
+ * immediate completion, invocation of the handler will be performed in a
+ * manner equivalent to using asio::post().
  */
 template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
 ASIO_INITFN_RESULT_TYPE(WriteHandler,
@@ -902,9 +902,9 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  *                                           // of the buffer sizes.
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. Invocation of
- * the handler will be performed in a manner equivalent to using
- * asio::io_context::post().
+ * not, the handler will not be invoked from within this function. On
+ * immediate completion, invocation of the handler will be performed in a
+ * manner equivalent to using asio::post().
  */
 template <typename AsyncWriteStream, typename Allocator,
     typename CompletionCondition, typename WriteHandler>

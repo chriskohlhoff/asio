@@ -7,6 +7,8 @@
 *.manifest
 *.pdb
 *.tds
+basic_descriptor
+basic_stream_descriptor
 descriptor
 descriptor_base
 stream_descriptor

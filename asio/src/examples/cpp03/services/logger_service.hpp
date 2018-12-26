@@ -24,11 +24,11 @@ namespace services {
 
 /// Service implementation for the logger.
 class logger_service
-  : public asio::io_context::service
+  : public asio::execution_context::service
 {
 public:
-  /// The unique service identifier.
-  static asio::io_context::id id;
+  /// The type used to identify this service in the execution context.
+  typedef logger_service key_type;
 
   /// The backend implementation of a logger.
   struct logger_impl
@@ -41,8 +41,8 @@ public:
   typedef logger_impl* impl_type;
 
   /// Constructor creates a thread to run a private io_context.
-  logger_service(asio::io_context& io_context)
-    : asio::io_context::service(io_context),
+  logger_service(asio::execution_context& context)
+    : asio::execution_context::service(context),
       work_io_context_(),
       work_(asio::make_work_guard(work_io_context_)),
       work_thread_(new asio::thread(
@@ -61,7 +61,7 @@ public:
   }
 
   /// Destroy all user-defined handler objects owned by the service.
-  void shutdown_service()
+  void shutdown()
   {
   }
 

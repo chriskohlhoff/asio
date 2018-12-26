@@ -8,6 +8,8 @@ nobase_include_HEADERS = \
 	asio/basic_io_object.hpp \
 	asio/basic_raw_socket.hpp \
 	asio/basic_seq_packet_socket.hpp \
+	asio/basic_serial_port.hpp \
+	asio/basic_signal_set.hpp \
 	asio/basic_socket_acceptor.hpp \
 	asio/basic_socket.hpp \
 	asio/basic_socket_iostream.hpp \
@@ -51,6 +53,7 @@ nobase_include_HEADERS = \
 	asio/detail/cstddef.hpp \
 	asio/detail/cstdint.hpp \
 	asio/detail/date_time_fwd.hpp \
+	asio/detail/deadline_timer_service.hpp \
 	asio/detail/dependent_type.hpp \
 	asio/detail/descriptor_ops.hpp \
 	asio/detail/descriptor_read_op.hpp \
@@ -128,6 +131,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
+	asio/detail/io_object_executor.hpp \
 	asio/detail/io_object_impl.hpp \
 	asio/detail/is_buffer_sequence.hpp \
 	asio/detail/is_executor.hpp \
@@ -390,6 +394,8 @@ nobase_include_HEADERS = \
 	asio/local/stream_protocol.hpp \
 	asio/packaged_task.hpp \
 	asio/placeholders.hpp \
+	asio/posix/basic_descriptor.hpp \
+	asio/posix/basic_stream_descriptor.hpp \
 	asio/posix/descriptor_base.hpp \
 	asio/posix/descriptor.hpp \
 	asio/posix/stream_descriptor.hpp \
@@ -453,6 +459,10 @@ nobase_include_HEADERS = \
 	asio/uses_executor.hpp \
 	asio/version.hpp \
 	asio/wait_traits.hpp \
+	asio/windows/basic_object_handle.hpp \
+	asio/windows/basic_overlapped_handle.hpp \
+	asio/windows/basic_random_access_handle.hpp \
+	asio/windows/basic_stream_handle.hpp \
 	asio/windows/object_handle.hpp \
 	asio/windows/overlapped_handle.hpp \
 	asio/windows/overlapped_ptr.hpp \

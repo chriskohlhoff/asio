@@ -22,13 +22,17 @@
 
 using asio::ip::tcp;
 
+// We will use our sockets only with an io_context.
+using tcp_socket = asio::basic_stream_socket<
+    tcp, asio::io_context::executor_type>;
+
 //----------------------------------------------------------------------
 
 // A custom completion token that makes asynchronous operations behave as
 // though they are blocking calls with a timeout.
 struct close_after
 {
-  close_after(std::chrono::steady_clock::duration t, tcp::socket& s)
+  close_after(std::chrono::steady_clock::duration t, tcp_socket& s)
     : timeout_(t), socket_(s)
   {
   }
@@ -37,7 +41,7 @@ struct close_after
   std::chrono::steady_clock::duration timeout_;
 
   // The socket to be closed if the operation does not complete in time.
-  tcp::socket& socket_;
+  tcp_socket& socket_;
 };
 
 namespace asio {
@@ -124,7 +128,7 @@ public:
 
 private:
   std::chrono::steady_clock::duration timeout_;
-  tcp::socket& socket_;
+  tcp_socket& socket_;
   std::error_code error_;
   T t_;
 };
@@ -148,7 +152,7 @@ int main(int argc, char* argv[])
     // Resolve the host name and service to a list of endpoints.
     auto endpoints = tcp::resolver(io_context).resolve(argv[1], argv[2]);
 
-    tcp::socket socket(io_context);
+    tcp_socket socket(io_context);
 
     // Run an asynchronous connect operation with a timeout.
     asio::async_connect(socket, endpoints,

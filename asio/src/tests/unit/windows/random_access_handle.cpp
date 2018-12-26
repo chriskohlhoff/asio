@@ -47,6 +47,7 @@ void test()
   try
   {
     io_context ioc;
+    const io_context::executor_type ioc_ex = ioc.get_executor();
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     asio::uint64_t offset = 0;
@@ -57,37 +58,45 @@ void test()
 
     win::random_access_handle handle1(ioc);
     HANDLE native_handle1 = INVALID_HANDLE_VALUE;
+#if defined(ASIO_MSVC) && (_MSC_VER < 1910)
+    // Skip this on older MSVC due to mysterious ambiguous overload errors.
+#else
     win::random_access_handle handle2(ioc, native_handle1);
+#endif
+
+    win::random_access_handle handle3(ioc_ex);
+    HANDLE native_handle2 = INVALID_HANDLE_VALUE;
+    win::random_access_handle handle4(ioc_ex, native_handle2);
 
 #if defined(ASIO_HAS_MOVE)
-    win::random_access_handle handle3(std::move(handle2));
+    win::random_access_handle handle5(std::move(handle4));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_random_access_handle operators.
 
 #if defined(ASIO_HAS_MOVE)
     handle1 = win::random_access_handle(ioc);
-    handle1 = std::move(handle2);
+    handle1 = std::move(handle4);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
-    io_context::executor_type ex = handle1.get_executor();
+    windows::random_access_handle::executor_type ex = handle1.get_executor();
     (void)ex;
 
-    // basic_handle functions.
+    // basic_overlapped_handle functions.
 
     win::random_access_handle::lowest_layer_type& lowest_layer
       = handle1.lowest_layer();
     (void)lowest_layer;
 
-    const win::random_access_handle& handle4 = handle1;
+    const win::random_access_handle& handle6 = handle1;
     const win::random_access_handle::lowest_layer_type& lowest_layer2
-      = handle4.lowest_layer();
+      = handle6.lowest_layer();
     (void)lowest_layer2;
 
-    HANDLE native_handle2 = INVALID_HANDLE_VALUE;
-    handle1.assign(native_handle2);
+    HANDLE native_handle3 = INVALID_HANDLE_VALUE;
+    handle1.assign(native_handle3);
 
     bool is_open = handle1.is_open();
     (void)is_open;
@@ -95,9 +104,9 @@ void test()
     handle1.close();
     handle1.close(ec);
 
-    win::random_access_handle::native_handle_type native_handle3
+    win::random_access_handle::native_handle_type native_handle4
       = handle1.native_handle();
-    (void)native_handle3;
+    (void)native_handle4;
 
     handle1.cancel();
     handle1.cancel(ec);

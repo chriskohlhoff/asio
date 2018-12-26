@@ -96,6 +96,7 @@ void system_timer_test()
 #endif // !defined(ASIO_HAS_BOOST_BIND)
 
   asio::io_context ioc;
+  const asio::io_context::executor_type ioc_ex = ioc.get_executor();
   int count = 0;
 
   asio::system_timer::time_point start = now();
@@ -110,7 +111,7 @@ void system_timer_test()
 
   start = now();
 
-  asio::system_timer t2(ioc, seconds(1) + microseconds(500000));
+  asio::system_timer t2(ioc_ex, seconds(1) + microseconds(500000));
   t2.wait();
 
   // The timer must block until after its expiry time.

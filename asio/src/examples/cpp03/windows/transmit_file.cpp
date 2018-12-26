@@ -22,9 +22,15 @@ using asio::ip::tcp;
 using asio::windows::overlapped_ptr;
 using asio::windows::random_access_handle;
 
+typedef asio::basic_stream_socket<tcp,
+    asio::io_context::executor_type> tcp_socket;
+
+typedef asio::basic_socket_acceptor<tcp,
+    asio::io_context::executor_type> tcp_acceptor;
+
 // A wrapper for the TransmitFile overlapped I/O operation.
 template <typename Handler>
-void transmit_file(tcp::socket& socket,
+void transmit_file(tcp_socket& socket,
     random_access_handle& file, Handler handler)
 {
   // Construct an OVERLAPPED-derived object to contain the handler.
@@ -65,7 +71,7 @@ public:
     return pointer(new connection(io_context, filename));
   }
 
-  tcp::socket& socket()
+  tcp_socket& socket()
   {
     return socket_;
   }
@@ -96,10 +102,10 @@ private:
       size_t /*bytes_transferred*/)
   {
     asio::error_code ignored_ec;
-    socket_.shutdown(tcp::socket::shutdown_both, ignored_ec);
+    socket_.shutdown(tcp_socket::shutdown_both, ignored_ec);
   }
 
-  tcp::socket socket_;
+  tcp_socket socket_;
   std::string filename_;
   random_access_handle file_;
 };
@@ -137,7 +143,7 @@ private:
     start_accept();
   }
 
-  tcp::acceptor acceptor_;
+  tcp_acceptor acceptor_;
   std::string filename_;
 };
 

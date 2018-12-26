@@ -7,6 +7,10 @@
 *.manifest
 *.pdb
 *.tds
+basic_object_handle
+basic_overlapped_handle
+basic_random_access_handle
+basic_stream_handle
 object_handle
 overlapped_handle
 overlapped_ptr

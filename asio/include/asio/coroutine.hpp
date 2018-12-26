@@ -205,7 +205,7 @@ class coroutine_ref;
  * {
  *   do
  *   {
- *     socket_.reset(new tcp::socket(io_context_));
+ *     socket_.reset(new tcp::socket(my_context_));
  *     yield acceptor->async_accept(*socket_, *this);
  *     fork server(*this)();
  *   } while (is_parent());
@@ -227,7 +227,7 @@ class coroutine_ref;
  * Note that @c fork doesn't do the actual forking by itself. It is the
  * application's responsibility to create a clone of the coroutine and call it.
  * The clone can be called immediately, as above, or scheduled for delayed
- * execution using something like io_context::post().
+ * execution using something like asio::post().
  *
  * @par Alternate macro names
  *

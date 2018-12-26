@@ -71,7 +71,7 @@ public:
   connection_iter end()
   {
     return connection_iter(acceptor_,
-        tcp::socket(acceptor_.get_executor().context()));
+        tcp::socket(acceptor_.get_executor()));
   }
 };
 

@@ -49,7 +49,7 @@ awaitable<void> listener()
   auto executor = co_await this_coro::executor();
   auto token = co_await this_coro::token();
 
-  tcp::acceptor acceptor(executor.context(), {tcp::v4(), 55555});
+  tcp::acceptor acceptor(executor, {tcp::v4(), 55555});
   for (;;)
   {
     tcp::socket socket = co_await acceptor.async_accept(token);

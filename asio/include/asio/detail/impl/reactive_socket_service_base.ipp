@@ -28,9 +28,8 @@ namespace asio {
 namespace detail {
 
 reactive_socket_service_base::reactive_socket_service_base(
-    asio::io_context& io_context)
-  : io_context_(io_context),
-    reactor_(use_service<reactor>(io_context))
+    execution_context& context)
+  : reactor_(use_service<reactor>(context))
 {
   reactor_.init_task();
 }

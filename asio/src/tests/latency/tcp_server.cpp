@@ -27,7 +27,7 @@ class tcp_server : asio::coroutine
 public:
   tcp_server(tcp::acceptor& acceptor, std::size_t buf_size) :
     acceptor_(acceptor),
-    socket_(acceptor_.get_executor().context()),
+    socket_(acceptor_.get_executor()),
     buffer_(buf_size)
   {
   }

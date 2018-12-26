@@ -114,6 +114,9 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_deadline_timer.exe \
 	tests\unit\basic_raw_socket.exe \
 	tests\unit\basic_seq_packet_socket.exe \
+	tests\unit\basic_serial_port.exe \
+	tests\unit\basic_signal_set.exe \
+	tests\unit\basic_socket.exe \
 	tests\unit\basic_socket_acceptor.exe \
 	tests\unit\basic_stream_socket.exe \
 	tests\unit\basic_streambuf.exe \
@@ -177,7 +180,12 @@ UNIT_TEST_EXES = \
 	tests\unit\ts\netfwd.exe \
 	tests\unit\ts\socket.exe \
 	tests\unit\ts\timer.exe \
+	tests\unit\windows\basic_object_handle.exe \
+	tests\unit\windows\basic_overlapped_handle.exe \
+	tests\unit\windows\basic_random_access_handle.exe \
+	tests\unit\windows\basic_stream_handle.exe \
 	tests\unit\windows\object_handle.exe \
+	tests\unit\windows\overlapped_handle.exe \
 	tests\unit\windows\overlapped_ptr.exe \
 	tests\unit\windows\random_access_handle.exe \
 	tests\unit\windows\stream_handle.exe \

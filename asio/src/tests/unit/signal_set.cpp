@@ -40,6 +40,7 @@ void test()
   try
   {
     io_context ioc;
+    const io_context::executor_type ioc_ex = ioc.get_executor();
     archetypes::lazy_handler lazy;
     asio::error_code ec;
 
@@ -49,6 +50,11 @@ void test()
     signal_set set2(ioc, 1);
     signal_set set3(ioc, 1, 2);
     signal_set set4(ioc, 1, 2, 3);
+
+    signal_set set5(ioc_ex);
+    signal_set set6(ioc_ex, 1);
+    signal_set set7(ioc_ex, 1, 2);
+    signal_set set8(ioc_ex, 1, 2, 3);
 
     // basic_io_object functions.
 

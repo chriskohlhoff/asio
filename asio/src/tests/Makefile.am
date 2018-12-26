@@ -17,6 +17,9 @@ check_PROGRAMS = \
 	unit/basic_deadline_timer \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
+	unit/basic_serial_port \
+	unit/basic_signal_set \
+	unit/basic_socket \
 	unit/basic_socket_acceptor \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
@@ -74,6 +77,8 @@ check_PROGRAMS = \
 	unit/local/stream_protocol \
 	unit/packaged_task \
 	unit/placeholders \
+	unit/posix/basic_descriptor \
+	unit/posix/basic_stream_descriptor \
 	unit/posix/descriptor \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
@@ -104,6 +109,10 @@ check_PROGRAMS = \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
+	unit/windows/basic_object_handle \
+	unit/windows/basic_overlapped_handle \
+	unit/windows/basic_random_access_handle \
+	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
 	unit/windows/overlapped_handle \
 	unit/windows/overlapped_ptr \
@@ -140,6 +149,9 @@ TESTS = \
 	unit/basic_deadline_timer \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
+	unit/basic_serial_port \
+	unit/basic_signal_set \
+	unit/basic_socket \
 	unit/basic_socket_acceptor \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
@@ -191,6 +203,8 @@ TESTS = \
 	unit/local/stream_protocol \
 	unit/packaged_task \
 	unit/placeholders \
+	unit/posix/basic_descriptor\
+	unit/posix/basic_stream_descriptor\
 	unit/posix/descriptor\
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
@@ -221,6 +235,10 @@ TESTS = \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
+	unit/windows/basic_object_handle \
+	unit/windows/basic_overlapped_handle \
+	unit/windows/basic_random_access_handle \
+	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
 	unit/windows/overlapped_handle \
 	unit/windows/overlapped_ptr \
@@ -261,6 +279,9 @@ unit_basic_datagram_socket_SOURCES = unit/basic_datagram_socket.cpp
 unit_basic_deadline_timer_SOURCES = unit/basic_deadline_timer.cpp
 unit_basic_raw_socket_SOURCES = unit/basic_raw_socket.cpp
 unit_basic_seq_packet_socket_SOURCES = unit/basic_seq_packet_socket.cpp
+unit_basic_serial_port_SOURCES = unit/basic_serial_port.cpp
+unit_basic_signal_set_SOURCES = unit/basic_signal_set.cpp
+unit_basic_socket_SOURCES = unit/basic_socket.cpp
 unit_basic_socket_acceptor_SOURCES = unit/basic_socket_acceptor.cpp
 unit_basic_stream_socket_SOURCES = unit/basic_stream_socket.cpp
 unit_basic_streambuf_SOURCES = unit/basic_streambuf.cpp
@@ -318,6 +339,8 @@ unit_local_datagram_protocol_SOURCES = unit/local/datagram_protocol.cpp
 unit_local_stream_protocol_SOURCES = unit/local/stream_protocol.cpp
 unit_packaged_task_SOURCES = unit/packaged_task.cpp
 unit_placeholders_SOURCES = unit/placeholders.cpp
+unit_posix_basic_descriptor_SOURCES = unit/posix/basic_descriptor.cpp
+unit_posix_basic_stream_descriptor_SOURCES = unit/posix/basic_stream_descriptor.cpp
 unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
@@ -348,6 +371,10 @@ unit_ts_timer_SOURCES = unit/ts/timer.cpp
 unit_use_future_SOURCES = unit/use_future.cpp
 unit_uses_executor_SOURCES = unit/uses_executor.cpp
 unit_wait_traits_SOURCES = unit/wait_traits.cpp
+unit_windows_basic_object_handle_SOURCES = unit/windows/basic_object_handle.cpp
+unit_windows_basic_overlapped_handle_SOURCES = unit/windows/basic_overlapped_handle.cpp
+unit_windows_basic_random_access_handle_SOURCES = unit/windows/basic_random_access_handle.cpp
+unit_windows_basic_stream_handle_SOURCES = unit/windows/basic_stream_handle.cpp
 unit_windows_object_handle_SOURCES = unit/windows/object_handle.cpp
 unit_windows_overlapped_handle_SOURCES = unit/windows/overlapped_handle.cpp
 unit_windows_overlapped_ptr_SOURCES = unit/windows/overlapped_ptr.cpp

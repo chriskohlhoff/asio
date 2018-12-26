@@ -14,6 +14,9 @@ basic_datagram_socket
 basic_deadline_timer
 basic_raw_socket
 basic_seq_packet_socket
+basic_serial_port
+basic_signal_set
+basic_socket
 basic_socket_acceptor
 basic_stream_socket
 basic_streambuf

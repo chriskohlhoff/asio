@@ -92,6 +92,7 @@ void test()
   try
   {
     io_context ioc;
+    const io_context::executor_type ioc_ex = ioc.get_executor();
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     socket_base::message_flags in_flags = 0;
@@ -121,8 +122,19 @@ void test()
     ip::udp::socket socket6(ioc, ip::udp::v4(), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
+    ip::udp::socket socket7(ioc_ex);
+    ip::udp::socket socket8(ioc_ex, ip::udp::v4());
+    ip::udp::socket socket9(ioc_ex, ip::udp::v6());
+    ip::udp::socket socket10(ioc_ex, ip::udp::endpoint(ip::udp::v4(), 0));
+    ip::udp::socket socket11(ioc_ex, ip::udp::endpoint(ip::udp::v6(), 0));
+#if !defined(ASIO_WINDOWS_RUNTIME)
+    ip::udp::socket::native_handle_type native_socket2
+      = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    ip::udp::socket socket12(ioc_ex, ip::udp::v4(), native_socket2);
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
+
 #if defined(ASIO_HAS_MOVE)
-    ip::udp::socket socket7(std::move(socket6));
+    ip::udp::socket socket13(std::move(socket6));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
@@ -142,9 +154,9 @@ void test()
     ip::udp::socket::lowest_layer_type& lowest_layer = socket1.lowest_layer();
     (void)lowest_layer;
 
-    const ip::udp::socket& socket8 = socket1;
+    const ip::udp::socket& socket14 = socket1;
     const ip::udp::socket::lowest_layer_type& lowest_layer2
-      = socket8.lowest_layer();
+      = socket14.lowest_layer();
     (void)lowest_layer2;
 
     socket1.open(ip::udp::v4());
@@ -153,12 +165,12 @@ void test()
     socket1.open(ip::udp::v6(), ec);
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
-    ip::udp::socket::native_handle_type native_socket2
-      = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.assign(ip::udp::v4(), native_socket2);
     ip::udp::socket::native_handle_type native_socket3
       = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    socket1.assign(ip::udp::v4(), native_socket3, ec);
+    socket1.assign(ip::udp::v4(), native_socket3);
+    ip::udp::socket::native_handle_type native_socket4
+      = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    socket1.assign(ip::udp::v4(), native_socket4, ec);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
     bool is_open = socket1.is_open();
@@ -170,9 +182,9 @@ void test()
     socket1.release();
     socket1.release(ec);
 
-    ip::udp::socket::native_handle_type native_socket4
+    ip::udp::socket::native_handle_type native_socket5
       = socket1.native_handle();
-    (void)native_socket4;
+    (void)native_socket5;
 
     socket1.cancel();
     socket1.cancel(ec);
@@ -626,6 +638,7 @@ void test()
   try
   {
     io_context ioc;
+    const io_context::executor_type ioc_ex = ioc.get_executor();
     archetypes::lazy_handler lazy;
 #if !defined(ASIO_NO_DEPRECATED)
     archetypes::deprecated_lazy_handler dlazy;
@@ -639,16 +652,17 @@ void test()
     // basic_resolver constructors.
 
     ip::udp::resolver resolver(ioc);
+    ip::udp::resolver resolver2(ioc_ex);
 
 #if defined(ASIO_HAS_MOVE)
-    ip::udp::resolver resolver2(std::move(resolver));
+    ip::udp::resolver resolver3(std::move(resolver));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_resolver operators.
 
 #if defined(ASIO_HAS_MOVE)
     resolver = ip::udp::resolver(ioc);
-    resolver = std::move(resolver2);
+    resolver = std::move(resolver3);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.

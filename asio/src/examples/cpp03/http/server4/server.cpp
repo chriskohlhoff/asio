@@ -45,7 +45,7 @@ void server::operator()(asio::error_code ec, std::size_t length)
       do
       {
         // Create a new socket for the next incoming connection.
-        socket_.reset(new tcp::socket(acceptor_->get_executor().context()));
+        socket_.reset(new tcp::socket(acceptor_->get_executor()));
 
         // Accept a new connection. The "yield" pseudo-keyword saves the current
         // line number and exits the coroutine's "reenter" block. We use the
