@@ -55,7 +55,7 @@ public:
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move constructor.
-  executor_work_guard(executor_work_guard&& other)
+  executor_work_guard(executor_work_guard&& other) ASIO_NOEXCEPT
     : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
       owns_(other.owns_)
   {
