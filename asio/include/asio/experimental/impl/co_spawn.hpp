@@ -818,39 +818,6 @@ private:
   return_type awaitable_;
 };
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-template <typename Executor, typename R, typename... Args>
-struct handler_type<experimental::await_token<Executor>, R(Args...)>
-{
-  typedef experimental::detail::await_handler<
-    Executor, typename decay<Args>::type...> type;
-};
-
-template <typename Executor, typename... Args>
-class async_result<experimental::detail::await_handler<Executor, Args...>>
-{
-public:
-  typedef typename experimental::detail::await_handler<
-    Executor, Args...>::awaitable_type type;
-
-  async_result(experimental::detail::await_handler<Executor, Args...>& h)
-    : awaitable_(experimental::detail::make_dummy_awaitable<type>())
-  {
-    h.attach_awaitee(awaitable_);
-  }
-
-  type get()
-  {
-    return std::move(awaitable_);
-  }
-
-private:
-  type awaitable_;
-};
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 } // namespace asio
 
 namespace std { namespace experimental {

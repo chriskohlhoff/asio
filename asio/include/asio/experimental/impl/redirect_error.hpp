@@ -24,7 +24,6 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
-#include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -232,30 +231,6 @@ struct async_result<experimental::redirect_error_t<CompletionToken>, Signature>
   {
   }
 };
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-template <typename CompletionToken, typename Signature>
-struct handler_type<experimental::redirect_error_t<CompletionToken>, Signature>
-{
-  typedef experimental::detail::redirect_error_handler<
-    typename async_result<CompletionToken,
-      typename experimental::detail::redirect_error_signature<Signature>::type>
-        ::completion_handler_type> type;
-};
-
-template <typename Handler>
-struct async_result<experimental::detail::redirect_error_handler<Handler> >
-  : async_result<Handler>
-{
-  explicit async_result(
-      experimental::detail::redirect_error_handler<Handler>& h)
-    : async_result<Handler>(h.handler_)
-  {
-  }
-};
-
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 template <typename Handler, typename Executor>
 struct associated_executor<

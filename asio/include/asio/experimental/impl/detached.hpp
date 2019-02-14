@@ -18,7 +18,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
 #include "asio/detail/variadic_templates.hpp"
-#include "asio/handler_type.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"

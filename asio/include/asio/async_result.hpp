@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
-#include "asio/handler_type.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -41,30 +40,15 @@ namespace asio {
  * The primary template assumes that the CompletionToken is the completion
  * handler.
  */
-#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
 template <typename CompletionToken, typename Signature>
-#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-template <typename CompletionToken, typename Signature = void>
-#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
 class async_result
 {
 public:
-#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
   /// The concrete completion handler type for the specific signature.
   typedef CompletionToken completion_handler_type;
 
   /// The return type of the initiating function.
   typedef void return_type;
-#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-  // For backward compatibility, determine the concrete completion handler type
-  // by using the legacy handler_type trait.
-  typedef typename handler_type<CompletionToken, Signature>::type
-    completion_handler_type;
-
-  // For backward compatibility, determine the initiating function return type
-  // using the legacy single-parameter version of async_result.
-  typedef typename async_result<completion_handler_type>::type return_type;
-#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
 
   /// Construct an async result from a given handler.
   /**
@@ -73,11 +57,6 @@ public:
    * then returned from the initiating function.
    */
   explicit async_result(completion_handler_type& h)
-#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    // No data members to initialise.
-#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    : legacy_result_(h)
-#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
   {
     (void)h;
   }
@@ -85,55 +64,12 @@ public:
   /// Obtain the value to be returned from the initiating function.
   return_type get()
   {
-#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    // Nothing to do.
-#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-    return legacy_result_.get();
-#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
   }
 
 private:
   async_result(const async_result&) ASIO_DELETED;
   async_result& operator=(const async_result&) ASIO_DELETED;
-
-#if defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-  // No data members.
-#else // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
-  async_result<completion_handler_type> legacy_result_;
-#endif // defined(ASIO_NO_DEPRECATED) || defined(GENERATING_DOCUMENTATION)
 };
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-/// (Deprecated: Use two-parameter version of async_result.) An interface for
-/// customising the behaviour of an initiating function.
-/**
- * This template may be specialised for user-defined handler types.
- */
-template <typename Handler>
-class async_result<Handler>
-{
-public:
-  /// The return type of the initiating function.
-  typedef void type;
-
-  /// Construct an async result from a given handler.
-  /**
-   * When using a specalised async_result, the constructor has an opportunity
-   * to initialise some state associated with the handler, which is then
-   * returned from the initiating function.
-   */
-  explicit async_result(Handler&)
-  {
-  }
-
-  /// Obtain the value to be returned from the initiating function.
-  type get()
-  {
-  }
-};
-
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Helper template to deduce the handler type from a CompletionToken, capture
 /// a local copy of the handler, and then create an async_result for the

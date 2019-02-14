@@ -305,7 +305,6 @@ nobase_include_HEADERS = \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
 	asio/handler_invoke_hook.hpp \
-	asio/handler_type.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
 	asio/impl/buffered_read_stream.hpp \

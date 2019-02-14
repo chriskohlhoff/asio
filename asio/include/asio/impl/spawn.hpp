@@ -277,51 +277,6 @@ public:
   }
 };
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-template <typename Handler, typename ReturnType>
-struct handler_type<basic_yield_context<Handler>, ReturnType()>
-{
-  typedef detail::coro_handler<Handler, void> type;
-};
-
-template <typename Handler, typename ReturnType, typename Arg1>
-struct handler_type<basic_yield_context<Handler>, ReturnType(Arg1)>
-{
-  typedef detail::coro_handler<Handler, typename decay<Arg1>::type> type;
-};
-
-template <typename Handler, typename ReturnType>
-struct handler_type<basic_yield_context<Handler>,
-    ReturnType(asio::error_code)>
-{
-  typedef detail::coro_handler<Handler, void> type;
-};
-
-template <typename Handler, typename ReturnType, typename Arg2>
-struct handler_type<basic_yield_context<Handler>,
-    ReturnType(asio::error_code, Arg2)>
-{
-  typedef detail::coro_handler<Handler, typename decay<Arg2>::type> type;
-};
-
-template <typename Handler, typename T>
-class async_result<detail::coro_handler<Handler, T> >
-  : public detail::coro_async_result<Handler, T>
-{
-public:
-  typedef typename detail::coro_async_result<Handler, T>::return_type type;
-
-  explicit async_result(
-    typename detail::coro_async_result<Handler,
-      T>::completion_handler_type& h)
-    : detail::coro_async_result<Handler, T>(h)
-  {
-  }
-};
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 template <typename Handler, typename T, typename Allocator>
 struct associated_allocator<detail::coro_handler<Handler, T>, Allocator>
 {
