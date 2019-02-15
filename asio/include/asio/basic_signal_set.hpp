@@ -20,6 +20,7 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/io_object_impl.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
@@ -506,23 +507,31 @@ public:
       void (asio::error_code, int))
   async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a SignalHandler.
-    ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
-
-    async_completion<SignalHandler,
-      void (asio::error_code, int)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<SignalHandler, void (asio::error_code, int)>(
+        initiate_async_wait(), handler, this);
   }
 
 private:
   // Disallow copying and assignment.
   basic_signal_set(const basic_signal_set&) ASIO_DELETED;
   basic_signal_set& operator=(const basic_signal_set&) ASIO_DELETED;
+
+  struct initiate_async_wait
+  {
+    template <typename SignalHandler>
+    void operator()(ASIO_MOVE_ARG(SignalHandler) handler,
+        basic_signal_set* self) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a SignalHandler.
+      ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
+
+      detail::non_const_lvalue<SignalHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 
   detail::io_object_impl<detail::signal_set_service, Executor> impl_;
 };

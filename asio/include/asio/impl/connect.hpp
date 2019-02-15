@@ -23,6 +23,7 @@
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/post.hpp"
@@ -446,6 +447,27 @@ namespace detail
         function, this_handler->handler_);
   }
 
+  struct initiate_async_range_connect
+  {
+    template <typename RangeConnectHandler, typename Protocol,
+        typename Executor, typename EndpointSequence, typename ConnectCondition>
+    void operator()(ASIO_MOVE_ARG(RangeConnectHandler) handler,
+        basic_socket<Protocol, Executor>* s, const EndpointSequence& endpoints,
+        const ConnectCondition& connect_condition) const
+    {
+      // If you get an error on the following line it means that your
+      // handler does not meet the documented type requirements for an
+      // RangeConnectHandler.
+      ASIO_RANGE_CONNECT_HANDLER_CHECK(RangeConnectHandler,
+          handler, typename Protocol::endpoint) type_check;
+
+      non_const_lvalue<RangeConnectHandler> handler2(handler);
+      range_connect_op<Protocol, Executor, EndpointSequence, ConnectCondition,
+        typename decay<RangeConnectHandler>::type>(*s, endpoints,
+          connect_condition, handler2.value)(asio::error_code(), 1);
+    }
+  };
+
   template <typename Protocol, typename Executor, typename Iterator,
       typename ConnectCondition, typename IteratorConnectHandler>
   class iterator_connect_op : base_from_connect_condition<ConnectCondition>
@@ -593,6 +615,27 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_iterator_connect
+  {
+    template <typename IteratorConnectHandler, typename Protocol,
+        typename Executor, typename Iterator, typename ConnectCondition>
+    void operator()(ASIO_MOVE_ARG(IteratorConnectHandler) handler,
+        basic_socket<Protocol, Executor>* s, Iterator begin,
+        Iterator end, const ConnectCondition& connect_condition) const
+    {
+      // If you get an error on the following line it means that your
+      // handler does not meet the documented type requirements for an
+      // IteratorConnectHandler.
+      ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
+          IteratorConnectHandler, handler, Iterator) type_check;
+
+      non_const_lvalue<IteratorConnectHandler> handler2(handler);
+      iterator_connect_op<Protocol, Executor, Iterator, ConnectCondition,
+        typename decay<IteratorConnectHandler>::type>(*s, begin, end,
+          connect_condition, handler2.value)(asio::error_code(), 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -689,23 +732,10 @@ async_connect(basic_socket<Protocol, Executor>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a RangeConnectHandler.
-  ASIO_RANGE_CONNECT_HANDLER_CHECK(
-      RangeConnectHandler, handler, typename Protocol::endpoint) type_check;
-
-  async_completion<RangeConnectHandler,
-    void (asio::error_code, typename Protocol::endpoint)>
-      init(handler);
-
-  detail::range_connect_op<Protocol, Executor,
-    EndpointSequence, detail::default_connect_condition,
-      ASIO_HANDLER_TYPE(RangeConnectHandler,
-        void (asio::error_code, typename Protocol::endpoint))>(s,
-          endpoints, detail::default_connect_condition(),
-            init.completion_handler)(asio::error_code(), 1);
-
-  return init.result.get();
+  return async_initiate<RangeConnectHandler,
+    void (asio::error_code, typename Protocol::endpoint)>(
+      detail::initiate_async_range_connect(), handler,
+      &s, endpoints, detail::default_connect_condition());
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -717,21 +747,10 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a IteratorConnectHandler.
-  ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
-      IteratorConnectHandler, handler, Iterator) type_check;
-
-  async_completion<IteratorConnectHandler,
-    void (asio::error_code, Iterator)> init(handler);
-
-  detail::iterator_connect_op<Protocol, Executor, Iterator,
-    detail::default_connect_condition, ASIO_HANDLER_TYPE(
-      IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, Iterator(), detail::default_connect_condition(),
-          init.completion_handler)(asio::error_code(), 1);
-
-  return init.result.get();
+  return async_initiate<IteratorConnectHandler,
+    void (asio::error_code, Iterator)>(
+      detail::initiate_async_iterator_connect(), handler,
+      &s, begin, Iterator(), detail::default_connect_condition());
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -742,21 +761,10 @@ inline ASIO_INITFN_RESULT_TYPE(IteratorConnectHandler,
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin, Iterator end,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a IteratorConnectHandler.
-  ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
-      IteratorConnectHandler, handler, Iterator) type_check;
-
-  async_completion<IteratorConnectHandler,
-    void (asio::error_code, Iterator)> init(handler);
-
-  detail::iterator_connect_op<Protocol, Executor, Iterator,
-    detail::default_connect_condition, ASIO_HANDLER_TYPE(
-      IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, end, detail::default_connect_condition(),
-          init.completion_handler)(asio::error_code(), 1);
-
-  return init.result.get();
+  return async_initiate<IteratorConnectHandler,
+    void (asio::error_code, Iterator)>(
+      detail::initiate_async_iterator_connect(), handler,
+      &s, begin, end, detail::default_connect_condition());
 }
 
 template <typename Protocol, typename Executor, typename EndpointSequence,
@@ -769,22 +777,10 @@ async_connect(basic_socket<Protocol, Executor>& s,
     typename enable_if<is_endpoint_sequence<
         EndpointSequence>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a RangeConnectHandler.
-  ASIO_RANGE_CONNECT_HANDLER_CHECK(
-      RangeConnectHandler, handler, typename Protocol::endpoint) type_check;
-
-  async_completion<RangeConnectHandler,
-    void (asio::error_code, typename Protocol::endpoint)>
-      init(handler);
-
-  detail::range_connect_op<Protocol, Executor, EndpointSequence,
-    ConnectCondition, ASIO_HANDLER_TYPE(RangeConnectHandler,
-      void (asio::error_code, typename Protocol::endpoint))>(s,
-        endpoints, connect_condition, init.completion_handler)(
-          asio::error_code(), 1);
-
-  return init.result.get();
+  return async_initiate<RangeConnectHandler,
+    void (asio::error_code, typename Protocol::endpoint)>(
+      detail::initiate_async_range_connect(),
+      handler, &s, endpoints, connect_condition);
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -797,21 +793,10 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler,
     typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a IteratorConnectHandler.
-  ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
-      IteratorConnectHandler, handler, Iterator) type_check;
-
-  async_completion<IteratorConnectHandler,
-    void (asio::error_code, Iterator)> init(handler);
-
-  detail::iterator_connect_op<Protocol, Executor,
-    Iterator, ConnectCondition, ASIO_HANDLER_TYPE(
-      IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, Iterator(), connect_condition, init.completion_handler)(
-          asio::error_code(), 1);
-
-  return init.result.get();
+  return async_initiate<IteratorConnectHandler,
+    void (asio::error_code, Iterator)>(
+      detail::initiate_async_iterator_connect(),
+      handler, &s, begin, Iterator(), connect_condition);
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -823,21 +808,10 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     Iterator end, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a IteratorConnectHandler.
-  ASIO_ITERATOR_CONNECT_HANDLER_CHECK(
-      IteratorConnectHandler, handler, Iterator) type_check;
-
-  async_completion<IteratorConnectHandler,
-    void (asio::error_code, Iterator)> init(handler);
-
-  detail::iterator_connect_op<Protocol, Executor,
-    Iterator, ConnectCondition, ASIO_HANDLER_TYPE(
-      IteratorConnectHandler, void (asio::error_code, Iterator))>(s,
-        begin, end, connect_condition, init.completion_handler)(
-          asio::error_code(), 1);
-
-  return init.result.get();
+  return async_initiate<IteratorConnectHandler,
+    void (asio::error_code, Iterator)>(
+      detail::initiate_async_iterator_connect(),
+      handler, &s, begin, end, connect_condition);
 }
 
 } // namespace asio

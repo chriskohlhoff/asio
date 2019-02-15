@@ -103,7 +103,8 @@
             not(contains(compoundname, '_handler')) and
             not(contains(compoundname, 'std_allocator_void')) and
             not(contains(compoundname, 'thread_function')) and
-            not(contains(compoundname, 'context_impl'))">
+            not(contains(compoundname, 'context_impl')) and
+            not(contains(compoundname, 'initiate_'))">
           <xsl:call-template name="class"/>
         </xsl:if>
       </xsl:when>
@@ -112,10 +113,12 @@
             not(contains(ancestor::*/compoundname, '::detail')) and
             not(contains(ancestor::*/compoundname, '::service::key')) and
             not(contains(ancestor::*/compoundname, '_helper')) and
+            not(contains(ancestor::*/compoundname, 'initiate_')) and
             not(contains(name, '_helper')) and
             not(contains(name, 'std_allocator_void')) and
             not(contains(name, 'thread_function')) and
-            not(contains(name, 'io_context_impl'))">
+            not(contains(name, 'io_context_impl')) and
+            not(contains(name, 'initiate_'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
       </xsl:otherwise>
@@ -850,7 +853,7 @@
   [[Name][Description]]
 <xsl:for-each select="
     sectiondef[@kind='public-type']/memberdef |
-    innerclass[@prot='public' and not(contains(., '_handler')) and not(contains(., 'thread_function'))]" mode="class-table">
+    innerclass[@prot='public' and not(contains(., '_handler')) and not(contains(., 'thread_function')) and not(contains(., 'initiate_'))]" mode="class-table">
   <xsl:sort select="concat(name, (.)[not(name)])"/>
   [
 <xsl:choose>

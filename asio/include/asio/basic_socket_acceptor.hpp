@@ -19,6 +19,7 @@
 #include "asio/basic_socket.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/io_object_impl.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
@@ -1214,17 +1215,8 @@ public:
       void (asio::error_code))
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WaitHandler.
-    ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
-
-    async_completion<WaitHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(), w,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WaitHandler, void (asio::error_code)>(
+        initiate_async_wait(), handler, this, w);
   }
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -1340,18 +1332,9 @@ public:
         is_convertible<Protocol, Protocol1>::value
       >::type* = 0)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a AcceptHandler.
-    ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-
-    async_completion<AcceptHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_accept(
-        impl_.get_implementation(), peer, static_cast<endpoint_type*>(0),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<AcceptHandler, void (asio::error_code)>(
+        initiate_async_accept(), handler, this,
+        &peer, static_cast<endpoint_type*>(0));
   }
 
   /// Accept a new connection and obtain the endpoint of the peer
@@ -1456,18 +1439,8 @@ public:
   async_accept(basic_socket<protocol_type, Executor1>& peer,
       endpoint_type& peer_endpoint, ASIO_MOVE_ARG(AcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a AcceptHandler.
-    ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
-
-    async_completion<AcceptHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_accept(
-        impl_.get_implementation(), peer, &peer_endpoint,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<AcceptHandler, void (asio::error_code)>(
+        initiate_async_accept(), handler, this, &peer, &peer_endpoint);
   }
 #endif // !defined(ASIO_NO_EXTENSIONS)
 
@@ -1576,20 +1549,11 @@ public:
       void (asio::error_code, typename Protocol::socket))
   async_accept(ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a MoveAcceptHandler.
-    ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
-        handler, typename Protocol::socket) type_check;
-
-    async_completion<MoveAcceptHandler,
-      void (asio::error_code,
-        typename Protocol::socket)> init(handler);
-
-    impl_.get_service().async_move_accept(impl_.get_implementation(),
+    return async_initiate<MoveAcceptHandler,
+      void (asio::error_code, typename Protocol::socket)>(
+        initiate_async_move_accept(), handler, this,
         impl_.get_executor(), static_cast<endpoint_type*>(0),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+        static_cast<typename Protocol::socket*>(0));
   }
 
   /// Accept a new connection.
@@ -1805,22 +1769,14 @@ public:
         is_executor<Executor1>::value
       >::type* = 0)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a MoveAcceptHandler.
-    ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
-        handler, typename Protocol::socket::template rebind_executor<
-          Executor1>::other) type_check;
+    typedef typename Protocol::socket::template rebind_executor<
+      Executor1>::other other_socket_type;
 
-    async_completion<MoveAcceptHandler,
-      void (asio::error_code,
-        typename Protocol::socket::template rebind_executor<
-          Executor1>::other)> init(handler);
-
-    impl_.get_service().async_move_accept(
-        impl_.get_implementation(), ex, static_cast<endpoint_type*>(0),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<MoveAcceptHandler,
+      void (asio::error_code, other_socket_type)>(
+        initiate_async_move_accept(), handler, this,
+        ex, static_cast<endpoint_type*>(0),
+        static_cast<other_socket_type*>(0));
   }
 
   /// Start an asynchronous accept.
@@ -1877,22 +1833,14 @@ public:
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a MoveAcceptHandler.
-    ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
-        handler, typename Protocol::socket::template rebind_executor<
-          typename ExecutionContext::executor_type>::other) type_check;
+    typedef typename Protocol::socket::template rebind_executor<
+      typename ExecutionContext::executor_type>::other other_socket_type;
 
-    async_completion<MoveAcceptHandler,
-      void (asio::error_code,
-        typename Protocol::socket::template rebind_executor<
-          typename ExecutionContext::executor_type>::other)> init(handler);
-
-    impl_.get_service().async_move_accept(impl_.get_implementation(),
+    return async_initiate<MoveAcceptHandler,
+      void (asio::error_code, other_socket_type)>(
+        initiate_async_move_accept(), handler, this,
         context.get_executor(), static_cast<endpoint_type*>(0),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+        static_cast<other_socket_type*>(0));
   }
 
   /// Accept a new connection.
@@ -2017,20 +1965,11 @@ public:
   async_accept(endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a MoveAcceptHandler.
-    ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
-        handler, typename Protocol::socket) type_check;
-
-    async_completion<MoveAcceptHandler,
-      void (asio::error_code,
-        typename Protocol::socket)> init(handler);
-
-    impl_.get_service().async_move_accept(
-        impl_.get_implementation(), impl_.get_executor(), &peer_endpoint,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<MoveAcceptHandler,
+      void (asio::error_code, typename Protocol::socket)>(
+        initiate_async_move_accept(), handler, this,
+        impl_.get_executor(), &peer_endpoint,
+        static_cast<typename Protocol::socket*>(0));
   }
 
   /// Accept a new connection.
@@ -2278,22 +2217,14 @@ public:
         is_executor<Executor1>::value
       >::type* = 0)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a MoveAcceptHandler.
-    ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
-        handler, typename Protocol::socket::template rebind_executor<
-          Executor1>::other) type_check;
+    typedef typename Protocol::socket::template rebind_executor<
+      Executor1>::other other_socket_type;
 
-    async_completion<MoveAcceptHandler,
-      void (asio::error_code,
-        typename Protocol::socket::template rebind_executor<
-          Executor1>::other)> init(handler);
-
-    impl_.get_service().async_move_accept(
-        impl_.get_implementation(), ex, &peer_endpoint,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<MoveAcceptHandler,
+      void (asio::error_code, other_socket_type)>(
+        initiate_async_move_accept(), handler, this,
+        ex, &peer_endpoint,
+        static_cast<other_socket_type*>(0));
   }
 
   /// Start an asynchronous accept.
@@ -2357,22 +2288,14 @@ public:
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a MoveAcceptHandler.
-    ASIO_MOVE_ACCEPT_HANDLER_CHECK(MoveAcceptHandler,
-        handler, typename Protocol::socket::template rebind_executor<
-          typename ExecutionContext::executor_type>::other) type_check;
+    typedef typename Protocol::socket::template rebind_executor<
+      typename ExecutionContext::executor_type>::other other_socket_type;
 
-    async_completion<MoveAcceptHandler,
-      void (asio::error_code,
-        typename Protocol::socket::template rebind_executor<
-          typename ExecutionContext::executor_type>::other)> init(handler);
-
-    impl_.get_service().async_move_accept(impl_.get_implementation(),
+    return async_initiate<MoveAcceptHandler,
+      void (asio::error_code, other_socket_type)>(
+        initiate_async_move_accept(), handler, this,
         context.get_executor(), &peer_endpoint,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+        static_cast<other_socket_type*>(0));
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
@@ -2381,6 +2304,60 @@ private:
   basic_socket_acceptor(const basic_socket_acceptor&) ASIO_DELETED;
   basic_socket_acceptor& operator=(
       const basic_socket_acceptor&) ASIO_DELETED;
+
+  struct initiate_async_wait
+  {
+    template <typename WaitHandler>
+    void operator()(ASIO_MOVE_ARG(WaitHandler) handler,
+        basic_socket_acceptor* self, wait_type w) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WaitHandler.
+      ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+      detail::non_const_lvalue<WaitHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), w, handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
+
+  struct initiate_async_accept
+  {
+    template <typename AcceptHandler, typename Protocol1, typename Executor1>
+    void operator()(ASIO_MOVE_ARG(AcceptHandler) handler,
+        basic_socket_acceptor* self, basic_socket<Protocol1, Executor1>* peer,
+        endpoint_type* peer_endpoint) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a AcceptHandler.
+      ASIO_ACCEPT_HANDLER_CHECK(AcceptHandler, handler) type_check;
+
+      detail::non_const_lvalue<AcceptHandler> handler2(handler);
+      self->impl_.get_service().async_accept(
+          self->impl_.get_implementation(), *peer, peer_endpoint,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
+
+  struct initiate_async_move_accept
+  {
+    template <typename MoveAcceptHandler, typename Executor1, typename Socket>
+    void operator()(ASIO_MOVE_ARG(MoveAcceptHandler) handler,
+        basic_socket_acceptor* self, const Executor1& peer_ex,
+        endpoint_type* peer_endpoint, Socket*) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a MoveAcceptHandler.
+      ASIO_MOVE_ACCEPT_HANDLER_CHECK(
+          MoveAcceptHandler, handler, Socket) type_check;
+
+      detail::non_const_lvalue<MoveAcceptHandler> handler2(handler);
+      self->impl_.get_service().async_move_accept(
+          self->impl_.get_implementation(), peer_ex, peer_endpoint,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
 
 #if defined(ASIO_WINDOWS_RUNTIME)
   detail::io_object_impl<

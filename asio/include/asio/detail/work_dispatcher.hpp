@@ -29,9 +29,10 @@ template <typename Handler>
 class work_dispatcher
 {
 public:
-  work_dispatcher(Handler& handler)
+  template <typename CompletionHandler>
+  explicit work_dispatcher(ASIO_MOVE_ARG(CompletionHandler) handler)
     : work_((get_associated_executor)(handler)),
-      handler_(ASIO_MOVE_CAST(Handler)(handler))
+      handler_(ASIO_MOVE_CAST(CompletionHandler)(handler))
   {
   }
 

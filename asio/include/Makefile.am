@@ -142,6 +142,7 @@ nobase_include_HEADERS = \
 	asio/detail/macos_fenced_block.hpp \
 	asio/detail/memory.hpp \
 	asio/detail/mutex.hpp \
+	asio/detail/non_const_lvalue.hpp \
 	asio/detail/noncopyable.hpp \
 	asio/detail/null_event.hpp \
 	asio/detail/null_fenced_block.hpp \

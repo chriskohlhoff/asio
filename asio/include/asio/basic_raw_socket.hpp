@@ -19,6 +19,7 @@
 #include <cstddef>
 #include "asio/basic_socket.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
@@ -444,18 +445,10 @@ public:
   async_send(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    async_completion<WriteHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_send(this->impl_.get_implementation(),
-        buffers, 0, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_send(), handler, this,
+        buffers, socket_base::message_flags(0));
   }
 
   /// Start an asynchronous send on a connected socket.
@@ -493,18 +486,9 @@ public:
       socket_base::message_flags flags,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    async_completion<WriteHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_send(this->impl_.get_implementation(),
-        buffers, flags, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_send(), handler, this, buffers, flags);
   }
 
   /// Send raw data to the specified endpoint.
@@ -639,18 +623,10 @@ public:
       const endpoint_type& destination,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    async_completion<WriteHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_send_to(this->impl_.get_implementation(),
-        buffers, destination, 0, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_send_to(), handler, this, buffers,
+        destination, socket_base::message_flags(0));
   }
 
   /// Start an asynchronous send.
@@ -687,18 +663,9 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    async_completion<WriteHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_send_to(
-        this->impl_.get_implementation(), buffers, destination, flags,
-        init.completion_handler, this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_send_to(), handler, this, buffers, destination, flags);
   }
 
   /// Receive some data on a connected socket.
@@ -832,18 +799,10 @@ public:
   async_receive(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    async_completion<ReadHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_receive(this->impl_.get_implementation(),
-        buffers, 0, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_receive(), handler, this,
+        buffers, socket_base::message_flags(0));
   }
 
   /// Start an asynchronous receive on a connected socket.
@@ -881,18 +840,9 @@ public:
       socket_base::message_flags flags,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    async_completion<ReadHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_receive(this->impl_.get_implementation(),
-        buffers, flags, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_receive(), handler, this, buffers, flags);
   }
 
   /// Receive raw data with the endpoint of the sender.
@@ -1027,19 +977,10 @@ public:
       endpoint_type& sender_endpoint,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    async_completion<ReadHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_receive_from(
-        this->impl_.get_implementation(), buffers,
-        sender_endpoint, 0, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_receive_from(), handler, this, buffers,
+        &sender_endpoint, socket_base::message_flags(0));
   }
 
   /// Start an asynchronous receive.
@@ -1078,20 +1019,85 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    async_completion<ReadHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_receive_from(
-        this->impl_.get_implementation(), buffers,
-        sender_endpoint, flags, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_receive_from(), handler,
+        this, buffers, &sender_endpoint, flags);
   }
+
+private:
+  struct initiate_async_send
+  {
+    template <typename WriteHandler, typename ConstBufferSequence>
+    void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
+        basic_raw_socket* self, const ConstBufferSequence& buffers,
+        socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      detail::non_const_lvalue<WriteHandler> handler2(handler);
+      self->impl_.get_service().async_send(
+          self->impl_.get_implementation(), buffers, flags,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
+
+  struct initiate_async_send_to
+  {
+    template <typename WriteHandler, typename ConstBufferSequence>
+    void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
+        basic_raw_socket* self, const ConstBufferSequence& buffers,
+        const endpoint_type& destination,
+        socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      detail::non_const_lvalue<WriteHandler> handler2(handler);
+      self->impl_.get_service().async_send_to(
+          self->impl_.get_implementation(), buffers, destination, flags,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
+
+  struct initiate_async_receive
+  {
+    template <typename ReadHandler, typename MutableBufferSequence>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        basic_raw_socket* self, const MutableBufferSequence& buffers,
+        socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      detail::non_const_lvalue<ReadHandler> handler2(handler);
+      self->impl_.get_service().async_receive(
+          self->impl_.get_implementation(), buffers, flags,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
+
+  struct initiate_async_receive_from
+  {
+    template <typename ReadHandler, typename MutableBufferSequence>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        basic_raw_socket* self, const MutableBufferSequence& buffers,
+        endpoint_type* sender_endpoint, socket_base::message_flags flags) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      detail::non_const_lvalue<ReadHandler> handler2(handler);
+      self->impl_.get_service().async_receive_from(
+          self->impl_.get_implementation(), buffers, *sender_endpoint, flags,
+          handler2.value, self->impl_.get_implementation_executor());
+    }
+  };
 };
 
 } // namespace asio

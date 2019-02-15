@@ -21,6 +21,7 @@
 #include "asio/detail/deadline_timer_service.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/io_object_impl.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 #include "asio/executor.hpp"
@@ -695,17 +696,8 @@ public:
       void (asio::error_code))
   async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WaitHandler.
-    ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
-
-    async_completion<WaitHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WaitHandler, void (asio::error_code)>(
+        initiate_async_wait(), handler, this);
   }
 
 private:
@@ -713,6 +705,23 @@ private:
   basic_waitable_timer(const basic_waitable_timer&) ASIO_DELETED;
   basic_waitable_timer& operator=(
       const basic_waitable_timer&) ASIO_DELETED;
+
+  struct initiate_async_wait
+  {
+    template <typename WaitHandler>
+    void operator()(ASIO_MOVE_ARG(WaitHandler) handler,
+        basic_waitable_timer* self) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WaitHandler.
+      ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+      detail::non_const_lvalue<WaitHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 
   detail::io_object_impl<
     detail::deadline_timer_service<

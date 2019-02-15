@@ -19,6 +19,7 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/io_object_impl.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
@@ -944,37 +945,15 @@ public:
   async_connect(const endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(ConnectHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ConnectHandler.
-    ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
-
+    asio::error_code open_ec;
     if (!is_open())
     {
-      asio::error_code ec;
       const protocol_type protocol = peer_endpoint.protocol();
-      impl_.get_service().open(impl_.get_implementation(), protocol, ec);
-      if (ec)
-      {
-        async_completion<ConnectHandler,
-          void (asio::error_code)> init(handler);
-
-        asio::post(impl_.get_executor(),
-            asio::detail::bind_handler(
-              ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(
-                ConnectHandler, void (asio::error_code)))(
-                  init.completion_handler), ec));
-
-        return init.result.get();
-      }
+      impl_.get_service().open(impl_.get_implementation(), protocol, open_ec);
     }
 
-    async_completion<ConnectHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_connect(impl_.get_implementation(), peer_endpoint,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ConnectHandler, void (asio::error_code)>(
+        initiate_async_connect(), handler, this, peer_endpoint, open_ec);
   }
 
   /// Set an option on the socket.
@@ -1795,17 +1774,8 @@ public:
       void (asio::error_code))
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WaitHandler.
-    ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
-
-    async_completion<WaitHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(), w,
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WaitHandler, void (asio::error_code)>(
+        initiate_async_wait(), handler, this, w);
   }
 
 protected:
@@ -1833,6 +1803,50 @@ private:
   // Disallow copying and assignment.
   basic_socket(const basic_socket&) ASIO_DELETED;
   basic_socket& operator=(const basic_socket&) ASIO_DELETED;
+
+  struct initiate_async_connect
+  {
+    template <typename ConnectHandler>
+    void operator()(ASIO_MOVE_ARG(ConnectHandler) handler,
+        basic_socket* self, const endpoint_type& peer_endpoint,
+        const asio::error_code& open_ec) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ConnectHandler.
+      ASIO_CONNECT_HANDLER_CHECK(ConnectHandler, handler) type_check;
+
+      if (open_ec)
+      {
+          asio::post(self->impl_.get_executor(),
+              asio::detail::bind_handler(
+                ASIO_MOVE_CAST(ConnectHandler)(handler), open_ec));
+      }
+      else
+      {
+        detail::non_const_lvalue<ConnectHandler> handler2(handler);
+        self->impl_.get_service().async_connect(
+            self->impl_.get_implementation(), peer_endpoint,
+            handler2.value, self->impl_.get_implementation_executor());
+      }
+    }
+  };
+
+  struct initiate_async_wait
+  {
+    template <typename WaitHandler>
+    void operator()(ASIO_MOVE_ARG(WaitHandler) handler,
+        basic_socket* self, wait_type w) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WaitHandler.
+      ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+      detail::non_const_lvalue<WaitHandler> handler2(handler);
+      self->impl_.get_service().async_wait(
+          self->impl_.get_implementation(), w, handler2.value,
+          self->impl_.get_implementation_executor());
+    }
+  };
 };
 
 } // namespace asio

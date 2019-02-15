@@ -594,6 +594,11 @@ public:
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
+#if !defined(ASIO_NO_DEPRECATED)
+  struct initiate_dispatch;
+  struct initiate_post;
+#endif // !defined(ASIO_NO_DEPRECATED)
+
   // Helper function to add the implementation.
   ASIO_DECL impl_type& add_impl(impl_type* impl);
 

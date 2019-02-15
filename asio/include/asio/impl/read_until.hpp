@@ -29,6 +29,7 @@
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/limits.hpp"
+#include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -599,6 +600,26 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_delim
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        char delim) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_delim_op<AsyncReadStream,
+        typename decay<DynamicBuffer>::type, typename decay<ReadHandler>::type>(
+          *s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          delim, handler2.value)(asio::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -649,21 +670,10 @@ async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer) buffers,
     char delim, ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (asio::error_code, std::size_t)> init(handler);
-
-  detail::read_until_delim_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      ASIO_HANDLER_TYPE(ReadHandler,
-        void (asio::error_code, std::size_t))>(
-          s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            delim, init.completion_handler)(asio::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (asio::error_code, std::size_t)>(
+      detail::initiate_async_read_until_delim(), handler,
+      &s, ASIO_MOVE_CAST(DynamicBuffer)(buffers), delim);
 }
 
 namespace detail
@@ -852,6 +862,26 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_delim_string
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        const std::string& delim) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_delim_string_op<AsyncReadStream,
+        typename decay<DynamicBuffer>::type, typename decay<ReadHandler>::type>(
+          *s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          delim, handler2.value)(asio::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -903,22 +933,11 @@ async_read_until(AsyncReadStream& s,
     ASIO_STRING_VIEW_PARAM delim,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (asio::error_code, std::size_t)> init(handler);
-
-  detail::read_until_delim_string_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      ASIO_HANDLER_TYPE(ReadHandler,
-        void (asio::error_code, std::size_t))>(
-          s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            static_cast<std::string>(delim),
-              init.completion_handler)(asio::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (asio::error_code, std::size_t)>(
+      detail::initiate_async_read_until_delim_string(),
+      handler, &s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+      static_cast<std::string>(delim));
 }
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -1113,6 +1132,26 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_expr
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer, typename RegEx>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        const RegEx& expr) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_expr_op<AsyncReadStream, typename decay<DynamicBuffer>::type,
+        RegEx, typename decay<ReadHandler>::type>(
+          *s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          expr, handler2.value)(asio::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -1164,21 +1203,10 @@ async_read_until(AsyncReadStream& s,
     const boost::regex& expr,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (asio::error_code, std::size_t)> init(handler);
-
-  detail::read_until_expr_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      boost::regex, ASIO_HANDLER_TYPE(ReadHandler,
-        void (asio::error_code, std::size_t))>(
-          s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            expr, init.completion_handler)(asio::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (asio::error_code, std::size_t)>(
+      detail::initiate_async_read_until_expr(), handler,
+      &s, ASIO_MOVE_CAST(DynamicBuffer)(buffers), expr);
 }
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
@@ -1370,6 +1398,26 @@ namespace detail
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
   }
+
+  struct initiate_async_read_until_match
+  {
+    template <typename ReadHandler, typename AsyncReadStream,
+        typename DynamicBuffer, typename MatchCondition>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        AsyncReadStream* s, ASIO_MOVE_ARG(DynamicBuffer) buffers,
+        MatchCondition match_condition) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      non_const_lvalue<ReadHandler> handler2(handler);
+      read_until_match_op<AsyncReadStream, typename decay<DynamicBuffer>::type,
+        MatchCondition, typename decay<ReadHandler>::type>(
+          *s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+          match_condition, handler2.value)(asio::error_code(), 0, 1);
+    }
+  };
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -1421,22 +1469,10 @@ async_read_until(AsyncReadStream& s,
     MatchCondition match_condition, ASIO_MOVE_ARG(ReadHandler) handler,
     typename enable_if<is_match_condition<MatchCondition>::value>::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-  async_completion<ReadHandler,
-    void (asio::error_code, std::size_t)> init(handler);
-
-  detail::read_until_match_op<AsyncReadStream,
-    typename decay<DynamicBuffer>::type,
-      MatchCondition, ASIO_HANDLER_TYPE(ReadHandler,
-        void (asio::error_code, std::size_t))>(
-          s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            match_condition, init.completion_handler)(
-              asio::error_code(), 0, 1);
-
-  return init.result.get();
+  return async_initiate<ReadHandler,
+    void (asio::error_code, std::size_t)>(
+      detail::initiate_async_read_until_match(), handler,
+      &s, ASIO_MOVE_CAST(DynamicBuffer)(buffers), match_condition);
 }
 
 #if !defined(ASIO_NO_IOSTREAM)
