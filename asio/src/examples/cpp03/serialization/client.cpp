@@ -25,7 +25,7 @@ public:
   /// Constructor starts the asynchronous connect operation.
   client(asio::io_context& io_context,
       const std::string& host, const std::string& service)
-    : connection_(io_context)
+    : connection_(io_context.get_executor())
   {
     // Resolve the host name into an IP address.
     asio::ip::tcp::resolver resolver(io_context);

@@ -35,8 +35,8 @@ class connection
 {
 public:
   /// Constructor.
-  connection(asio::io_context& io_context)
-    : socket_(io_context)
+  connection(const asio::executor& ex)
+    : socket_(ex)
   {
   }
 
