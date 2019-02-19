@@ -437,7 +437,7 @@ public:
       ASIO_MOVE_ARG(HandshakeHandler) handler)
   {
     return async_initiate<HandshakeHandler,
-      void (asio::error_code, std::size_t)>(
+      void (asio::error_code)>(
         initiate_async_handshake(), handler, this, type);
   }
 
@@ -518,7 +518,7 @@ public:
   async_shutdown(ASIO_MOVE_ARG(ShutdownHandler) handler)
   {
     return async_initiate<ShutdownHandler,
-      void (asio::error_code, std::size_t)>(
+      void (asio::error_code)>(
         initiate_async_shutdown(), handler, this);
   }
 
