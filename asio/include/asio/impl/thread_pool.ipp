@@ -45,7 +45,7 @@ thread_pool::thread_pool()
 
 thread_pool::thread_pool(std::size_t num_threads)
   : scheduler_(add_scheduler(new detail::scheduler(*this, num_threads == 1
-          ? ASIO_CONCURRENCY_HINT_1 : num_threads, false)))
+          ? ASIO_CONCURRENCY_HINT_1 : static_cast<int>(num_threads), false)))
 {
   scheduler_.work_started();
 
