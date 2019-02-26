@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <asio/experimental/co_spawn.hpp>
-#include <asio/experimental/detached.hpp>
+#include <asio/co_spawn.hpp>
+#include <asio/detached.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/signal_set.hpp>
@@ -17,10 +17,10 @@
 #include <cstdio>
 
 using asio::ip::tcp;
-using asio::experimental::awaitable;
-using asio::experimental::co_spawn;
-using asio::experimental::detached;
-namespace this_coro = asio::experimental::this_coro;
+using asio::awaitable;
+using asio::co_spawn;
+using asio::detached;
+using asio::use_awaitable;
 
 class connection_iter
 {
@@ -39,8 +39,7 @@ public:
 
   awaitable<void> operator++()
   {
-    auto token = co_await this_coro::token();
-    socket_ = co_await acceptor_->async_accept(token);
+    socket_ = co_await acceptor_->async_accept(use_awaitable);
   }
 
   bool operator==(const connection_iter&) const noexcept
@@ -63,8 +62,7 @@ public:
 
   awaitable<connection_iter> begin()
   {
-    auto token = co_await this_coro::token();
-    tcp::socket s = co_await acceptor_.async_accept(token);
+    tcp::socket s = co_await acceptor_.async_accept(use_awaitable);
     co_return connection_iter(acceptor_, std::move(s));
   }
 
@@ -77,11 +75,9 @@ public:
 
 awaitable<void> listener(tcp::acceptor acceptor)
 {
-  auto token = co_await this_coro::token();
-
   for co_await (tcp::socket s : connections(acceptor))
   {
-    co_await asio::async_write(s, asio::buffer("hello\r\n", 7), token);
+    co_await asio::async_write(s, asio::buffer("hello\r\n", 7), use_awaitable);
   }
 }
 

@@ -10,6 +10,7 @@
 associated_allocator
 associated_executor
 async_result
+awaitable
 basic_datagram_socket
 basic_deadline_timer
 basic_raw_socket
@@ -27,11 +28,13 @@ buffered_read_stream
 buffered_stream
 buffered_write_stream
 buffers_iterator
+co_spawn
 completion_condition
 connect
 coroutine
 deadline_timer
 defer
+detached
 dispatch
 error
 error_handler
@@ -49,6 +52,7 @@ post
 read
 read_at
 read_until
+redirect_error
 serial_port
 serial_port_base
 signal_set
@@ -59,8 +63,10 @@ streambuf
 system_context
 system_executor
 system_timer
+this_coro
 thread
 time_traits
+use_awaitable
 use_future
 uses_executor
 wait_traits

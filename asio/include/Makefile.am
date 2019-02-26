@@ -3,6 +3,7 @@ nobase_include_HEADERS = \
 	asio/associated_allocator.hpp \
 	asio/associated_executor.hpp \
 	asio/async_result.hpp \
+	asio/awaitable.hpp \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_io_object.hpp \
@@ -27,11 +28,13 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream.hpp \
 	asio/buffer.hpp \
 	asio/buffers_iterator.hpp \
+	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
 	asio/connect.hpp \
 	asio/coroutine.hpp \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \
+	asio/detached.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
@@ -289,13 +292,6 @@ nobase_include_HEADERS = \
 	asio/execution_context.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
-	asio/experimental/co_spawn.hpp \
-	asio/experimental/detached.hpp \
-	asio/experimental.hpp \
-	asio/experimental/impl/co_spawn.hpp \
-	asio/experimental/impl/detached.hpp \
-	asio/experimental/impl/redirect_error.hpp \
-	asio/experimental/redirect_error.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
@@ -308,10 +304,13 @@ nobase_include_HEADERS = \
 	asio/handler_invoke_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/impl/awaitable.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
+	asio/impl/co_spawn.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/defer.hpp \
+	asio/impl/detached.hpp \
 	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
@@ -326,6 +325,7 @@ nobase_include_HEADERS = \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
 	asio/impl/read_until.hpp \
+	asio/impl/redirect_error.hpp \
 	asio/impl/serial_port_base.hpp \
 	asio/impl/serial_port_base.ipp \
 	asio/impl/spawn.hpp \
@@ -336,6 +336,7 @@ nobase_include_HEADERS = \
 	asio/impl/system_executor.hpp \
 	asio/impl/thread_pool.hpp \
 	asio/impl/thread_pool.ipp \
+	asio/impl/use_awaitable.hpp \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
@@ -403,6 +404,7 @@ nobase_include_HEADERS = \
 	asio/read_at.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
+	asio/redirect_error.hpp \
 	asio/serial_port_base.hpp \
 	asio/serial_port.hpp \
 	asio/signal_set.hpp \
@@ -443,6 +445,7 @@ nobase_include_HEADERS = \
 	asio/system_error.hpp \
 	asio/system_executor.hpp \
 	asio/system_timer.hpp \
+	asio/this_coro.hpp \
 	asio/thread.hpp \
 	asio/thread_pool.hpp \
 	asio/time_traits.hpp \
@@ -455,6 +458,7 @@ nobase_include_HEADERS = \
 	asio/ts/socket.hpp \
 	asio/ts/timer.hpp \
 	asio/unyield.hpp \
+	asio/use_awaitable.hpp \
 	asio/use_future.hpp \
 	asio/uses_executor.hpp \
 	asio/version.hpp \

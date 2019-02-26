@@ -33,7 +33,7 @@ public:
     enum { mem_index = 0 };
   };
 
-  struct awaitee_tag
+  struct awaitable_frame_tag
   {
     enum { mem_index = 1 };
   };

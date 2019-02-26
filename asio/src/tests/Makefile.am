@@ -13,6 +13,7 @@ check_PROGRAMS = \
 	unit/associated_allocator \
 	unit/associated_executor \
 	unit/async_result \
+	unit/awaitable \
 	unit/basic_datagram_socket \
 	unit/basic_deadline_timer \
 	unit/basic_raw_socket \
@@ -30,11 +31,13 @@ check_PROGRAMS = \
 	unit/buffered_write_stream \
 	unit/buffer \
 	unit/buffers_iterator \
+	unit/co_spawn \
 	unit/completion_condition \
 	unit/connect \
 	unit/coroutine \
 	unit/deadline_timer \
 	unit/defer \
+	unit/detached \
 	unit/dispatch \
 	unit/error \
 	unit/execution_context \
@@ -86,6 +89,7 @@ check_PROGRAMS = \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
+	unit/redirect_error \
 	unit/serial_port \
 	unit/serial_port_base \
 	unit/signal_set \
@@ -96,6 +100,7 @@ check_PROGRAMS = \
 	unit/system_context \
 	unit/system_executor \
 	unit/system_timer \
+	unit/this_coro \
 	unit/thread \
 	unit/time_traits \
 	unit/ts/buffer \
@@ -106,6 +111,7 @@ check_PROGRAMS = \
 	unit/ts/netfwd \
 	unit/ts/socket \
 	unit/ts/timer \
+	unit/use_awaitable \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
@@ -145,6 +151,7 @@ TESTS = \
 	unit/associated_allocator \
 	unit/associated_executor \
 	unit/async_result \
+	unit/awaitable \
 	unit/basic_datagram_socket \
 	unit/basic_deadline_timer \
 	unit/basic_raw_socket \
@@ -162,10 +169,12 @@ TESTS = \
 	unit/buffered_write_stream \
 	unit/buffer \
 	unit/buffers_iterator \
+	unit/co_spawn \
 	unit/completion_condition \
 	unit/connect \
 	unit/deadline_timer \
 	unit/defer \
+	unit/detached \
 	unit/dispatch \
 	unit/error \
 	unit/execution_context \
@@ -212,6 +221,7 @@ TESTS = \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
+	unit/redirect_error \
 	unit/serial_port \
 	unit/serial_port_base \
 	unit/signal_set \
@@ -222,6 +232,7 @@ TESTS = \
 	unit/system_context \
 	unit/system_executor \
 	unit/system_timer \
+	unit/this_coro \
 	unit/thread \
 	unit/time_traits \
 	unit/ts/buffer \
@@ -232,6 +243,7 @@ TESTS = \
 	unit/ts/netfwd \
 	unit/ts/socket \
 	unit/ts/timer \
+	unit/use_awaitable \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
@@ -275,6 +287,7 @@ endif
 unit_associated_allocator_SOURCES = unit/associated_allocator.cpp
 unit_associated_executor_SOURCES = unit/associated_executor.cpp
 unit_async_result_SOURCES = unit/async_result.cpp
+unit_awaitable_SOURCES = unit/awaitable.cpp
 unit_basic_datagram_socket_SOURCES = unit/basic_datagram_socket.cpp
 unit_basic_deadline_timer_SOURCES = unit/basic_deadline_timer.cpp
 unit_basic_raw_socket_SOURCES = unit/basic_raw_socket.cpp
@@ -292,11 +305,13 @@ unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp
 unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
+unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
+unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
 unit_error_SOURCES = unit/error.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
@@ -348,6 +363,7 @@ unit_post_SOURCES = unit/post.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
+unit_redirect_error_SOURCES = unit/redirect_error.cpp
 unit_serial_port_SOURCES = unit/serial_port.cpp
 unit_serial_port_base_SOURCES = unit/serial_port_base.cpp
 unit_signal_set_SOURCES = unit/signal_set.cpp
@@ -358,6 +374,7 @@ unit_streambuf_SOURCES = unit/streambuf.cpp
 unit_system_context_SOURCES = unit/system_context.cpp
 unit_system_executor_SOURCES = unit/system_executor.cpp
 unit_system_timer_SOURCES = unit/system_timer.cpp
+unit_this_coro_SOURCES = unit/this_coro.cpp
 unit_thread_SOURCES = unit/thread.cpp
 unit_time_traits_SOURCES = unit/time_traits.cpp
 unit_ts_buffer_SOURCES = unit/ts/buffer.cpp
@@ -368,6 +385,7 @@ unit_ts_net_SOURCES = unit/ts/net.cpp
 unit_ts_netfwd_SOURCES = unit/ts/netfwd.cpp
 unit_ts_socket_SOURCES = unit/ts/socket.cpp
 unit_ts_timer_SOURCES = unit/ts/timer.cpp
+unit_use_awaitable_SOURCES = unit/use_awaitable.cpp
 unit_use_future_SOURCES = unit/use_future.cpp
 unit_uses_executor_SOURCES = unit/uses_executor.cpp
 unit_wait_traits_SOURCES = unit/wait_traits.cpp
