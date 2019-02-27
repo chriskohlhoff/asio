@@ -101,7 +101,8 @@ public:
   template <typename ExecutionContext>
   explicit basic_serial_port(ExecutionContext& context,
       typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        basic_serial_port
       >::type* = 0)
     : impl_(context)
   {

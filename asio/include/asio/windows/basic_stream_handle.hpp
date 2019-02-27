@@ -79,7 +79,8 @@ public:
   template <typename ExecutionContext>
   explicit basic_stream_handle(ExecutionContext& context,
       typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        basic_stream_handle
       >::type* = 0)
     : basic_overlapped_handle<Executor>(context)
   {
