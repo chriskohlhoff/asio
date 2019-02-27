@@ -129,7 +129,7 @@ public:
       if (::clock_gettime(CLOCK_MONOTONIC, &ts) == 0)
       {
         ts.tv_sec += usec / 1000000;
-        ts.tv_nsec = (usec % 1000000) * 1000;
+        ts.tv_nsec += (usec % 1000000) * 1000;
         ts.tv_sec += ts.tv_nsec / 1000000000;
         ts.tv_nsec = ts.tv_nsec % 1000000000;
         ::pthread_cond_timedwait(&cond_,
