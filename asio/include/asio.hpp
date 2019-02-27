@@ -75,6 +75,8 @@
 #include "asio/ip/address_v6.hpp"
 #include "asio/ip/address_v6_iterator.hpp"
 #include "asio/ip/address_v6_range.hpp"
+#include "asio/ip/network_v4.hpp"
+#include "asio/ip/network_v6.hpp"
 #include "asio/ip/bad_address_cast.hpp"
 #include "asio/ip/basic_endpoint.hpp"
 #include "asio/ip/basic_resolver.hpp"
