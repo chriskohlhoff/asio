@@ -110,6 +110,10 @@ PERFORMANCE_TEST_EXES = \
 	tests\performance\server.exe
 
 UNIT_TEST_EXES = \
+	tests\unit\associated_allocator.exe \
+	tests\unit\associated_executor.exe \
+	tests\unit\async_result.exe \
+	tests\unit\awaitable.exe \
 	tests\unit\basic_datagram_socket.exe \
 	tests\unit\basic_deadline_timer.exe \
 	tests\unit\basic_raw_socket.exe \
@@ -121,16 +125,24 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_stream_socket.exe \
 	tests\unit\basic_streambuf.exe \
 	tests\unit\basic_waitable_timer.exe \
+	tests\unit\bind_executor.exe \
 	tests\unit\buffered_read_stream.exe \
 	tests\unit\buffered_stream.exe \
 	tests\unit\buffered_write_stream.exe \
 	tests\unit\buffer.exe \
 	tests\unit\buffers_iterator.exe \
+	tests\unit\co_spawn.exe \
 	tests\unit\completion_condition.exe \
 	tests\unit\connect.exe \
 	tests\unit\coroutine.exe \
 	tests\unit\deadline_timer.exe \
+	tests\unit\defer.exe \
+	tests\unit\detached.exe \
+	tests\unit\dispatch.exe \
 	tests\unit\error.exe \
+	tests\unit\execution_context.exe \
+	tests\unit\executor.exe \
+	tests\unit\executor_work_guard.exe \
 	tests\unit\generic\basic_endpoint.exe \
 	tests\unit\generic\datagram_protocol.exe \
 	tests\unit\generic\raw_protocol.exe \
@@ -140,7 +152,11 @@ UNIT_TEST_EXES = \
 	tests\unit\io_context.exe \
 	tests\unit\ip\address.exe \
 	tests\unit\ip\address_v4.exe \
+	tests\unit\ip\address_v4_iterator.exe \
+	tests\unit\ip\address_v4_range.exe \
 	tests\unit\ip\address_v6.exe \
+	tests\unit\ip\address_v6_iterator.exe \
+	tests\unit\ip\address_v6_range.exe \
 	tests\unit\ip\basic_endpoint.exe \
 	tests\unit\ip\basic_resolver.exe \
 	tests\unit\ip\basic_resolver_entry.exe \
@@ -149,6 +165,8 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\host_name.exe \
 	tests\unit\ip\icmp.exe \
 	tests\unit\ip\multicast.exe \
+	tests\unit\ip\network_v4.exe \
+	tests\unit\ip\network_v6.exe \
 	tests\unit\ip\resolver_query_base.exe \
 	tests\unit\ip\tcp.exe \
 	tests\unit\ip\udp.exe \
@@ -156,20 +174,24 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\v6_only.exe \
 	tests\unit\is_read_buffered.exe \
 	tests\unit\is_write_buffered.exe \
+	tests\unit\packaged_task.exe \
 	tests\unit\placeholders.exe \
+	tests\unit\post.exe \
 	tests\unit\read.exe \
 	tests\unit\read_at.exe \
 	tests\unit\read_until.exe \
+	tests\unit\redirect_error.exe \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
 	tests\unit\signal_set.exe \
 	tests\unit\socket_base.exe \
-	tests\unit\strand.exe \
 	tests\unit\steady_timer.exe \
+	tests\unit\strand.exe \
 	tests\unit\streambuf.exe \
 	tests\unit\system_context.exe \
 	tests\unit\system_executor.exe \
 	tests\unit\system_timer.exe \
+	tests\unit\this_coro.exe \
 	tests\unit\thread.exe \
 	tests\unit\time_traits.exe \
 	tests\unit\ts\buffer.exe \
@@ -180,6 +202,10 @@ UNIT_TEST_EXES = \
 	tests\unit\ts\netfwd.exe \
 	tests\unit\ts\socket.exe \
 	tests\unit\ts\timer.exe \
+	tests\unit\use_awaitable.exe \
+	tests\unit\use_future.exe \
+	tests\unit\uses_executor.exe \
+	tests\unit\wait_traits.exe \
 	tests\unit\windows\basic_object_handle.exe \
 	tests\unit\windows\basic_overlapped_handle.exe \
 	tests\unit\windows\basic_random_access_handle.exe \
