@@ -50,7 +50,8 @@ public:
 /// Create a completion token to capture error_code values to a variable.
 template <typename CompletionToken>
 inline redirect_error_t<typename decay<CompletionToken>::type> redirect_error(
-    ASIO_MOVE_ARG(CompletionToken) completion_token, asio::error_code& ec)
+    ASIO_MOVE_ARG(CompletionToken) completion_token,
+    asio::error_code& ec)
 {
   return redirect_error_t<typename decay<CompletionToken>::type>(
       ASIO_MOVE_CAST(CompletionToken)(completion_token), ec);
