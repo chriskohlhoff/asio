@@ -1501,6 +1501,9 @@
         <xsl:when test="declname = 'CompletionToken'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'ConstBuffer'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Context_Service'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1538,6 +1541,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'MatchCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'MutableBuffer'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'N'">
