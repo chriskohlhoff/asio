@@ -18,7 +18,7 @@ namespace server3 {
 
 connection::connection(asio::io_context& io_context,
     request_handler& handler)
-  : strand_(io_context),
+  : strand_(asio::make_strand(io_context)),
     socket_(strand_),
     request_handler_(handler)
 {

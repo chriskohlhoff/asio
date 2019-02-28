@@ -24,7 +24,7 @@ class session : public boost::enable_shared_from_this<session>
 {
 public:
   explicit session(asio::io_context& io_context)
-    : strand_(io_context),
+    : strand_(asio::make_strand(io_context)),
       socket_(io_context),
       timer_(io_context)
   {
@@ -76,7 +76,7 @@ private:
     }
   }
 
-  asio::io_context::strand strand_;
+  asio::strand<asio::io_context::executor_type> strand_;
   tcp::socket socket_;
   asio::steady_timer timer_;
 };

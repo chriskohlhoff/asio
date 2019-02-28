@@ -16,7 +16,7 @@ class printer
 {
 public:
   printer(asio::io_context& io)
-    : strand_(io),
+    : strand_(asio::make_strand(io)),
       timer1_(io, asio::chrono::seconds(1)),
       timer2_(io, asio::chrono::seconds(1)),
       count_(0)
@@ -62,7 +62,7 @@ public:
   }
 
 private:
-  asio::io_context::strand strand_;
+  asio::strand<asio::io_context::executor_type> strand_;
   asio::steady_timer timer1_;
   asio::steady_timer timer2_;
   int count_;

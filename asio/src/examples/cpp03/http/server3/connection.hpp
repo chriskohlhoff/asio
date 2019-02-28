@@ -49,7 +49,7 @@ private:
   void handle_write(const asio::error_code& e);
 
   /// Strand to ensure the connection's handlers are not called concurrently.
-  asio::io_context::strand strand_;
+  asio::strand<asio::io_context::executor_type> strand_;
 
   /// Socket for the connection.
   asio::ip::tcp::socket socket_;
