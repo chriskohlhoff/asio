@@ -386,7 +386,7 @@ template <typename MutableBuffer>
 inline const mutable_buffer* buffer_sequence_begin(const MutableBuffer& b,
     typename enable_if<
       is_convertible<const MutableBuffer*, const mutable_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return static_cast<const mutable_buffer*>(detail::addressof(b));
 }
@@ -396,7 +396,7 @@ template <typename ConstBuffer>
 inline const const_buffer* buffer_sequence_begin(const ConstBuffer& b,
     typename enable_if<
       is_convertible<const ConstBuffer*, const const_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return static_cast<const const_buffer*>(detail::addressof(b));
 }
@@ -409,7 +409,7 @@ inline auto buffer_sequence_begin(C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0) -> decltype(c.begin())
+    >::type* = 0) ASIO_NOEXCEPT -> decltype(c.begin())
 {
   return c.begin();
 }
@@ -420,7 +420,7 @@ inline auto buffer_sequence_begin(const C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0) -> decltype(c.begin())
+    >::type* = 0) ASIO_NOEXCEPT -> decltype(c.begin())
 {
   return c.begin();
 }
@@ -432,7 +432,7 @@ inline typename C::iterator buffer_sequence_begin(C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return c.begin();
 }
@@ -442,7 +442,7 @@ inline typename C::const_iterator buffer_sequence_begin(const C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return c.begin();
 }
@@ -463,7 +463,7 @@ template <typename MutableBuffer>
 inline const mutable_buffer* buffer_sequence_end(const MutableBuffer& b,
     typename enable_if<
       is_convertible<const MutableBuffer*, const mutable_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return static_cast<const mutable_buffer*>(detail::addressof(b)) + 1;
 }
@@ -473,7 +473,7 @@ template <typename ConstBuffer>
 inline const const_buffer* buffer_sequence_end(const ConstBuffer& b,
     typename enable_if<
       is_convertible<const ConstBuffer*, const const_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return static_cast<const const_buffer*>(detail::addressof(b)) + 1;
 }
@@ -486,7 +486,7 @@ inline auto buffer_sequence_end(C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0) -> decltype(c.end())
+    >::type* = 0) ASIO_NOEXCEPT -> decltype(c.end())
 {
   return c.end();
 }
@@ -497,7 +497,7 @@ inline auto buffer_sequence_end(const C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0) -> decltype(c.end())
+    >::type* = 0) ASIO_NOEXCEPT -> decltype(c.end())
 {
   return c.end();
 }
@@ -509,7 +509,7 @@ inline typename C::iterator buffer_sequence_end(C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return c.end();
 }
@@ -519,7 +519,7 @@ inline typename C::const_iterator buffer_sequence_end(const C& c,
     typename enable_if<
       !is_convertible<const C*, const mutable_buffer*>::value
         && !is_convertible<const C*, const const_buffer*>::value
-    >::type* = 0)
+    >::type* = 0) ASIO_NOEXCEPT
 {
   return c.end();
 }
