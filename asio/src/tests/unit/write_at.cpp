@@ -118,7 +118,7 @@ public:
 
   template <typename Const_Buffers, typename Handler>
   void async_write_some_at(asio::uint64_t offset,
-      const Const_Buffers& buffers, Handler handler)
+      const Const_Buffers& buffers, ASIO_MOVE_ARG(Handler) handler)
   {
     size_t bytes_transferred = write_some_at(offset, buffers);
     asio::post(get_executor(),

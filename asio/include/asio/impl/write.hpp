@@ -246,7 +246,7 @@ namespace detail
           ASIO_MOVE_CAST(detail::base_from_completion_cond<
             CompletionCondition>)(other)),
         stream_(other.stream_),
-        buffers_(other.buffers_),
+        buffers_(ASIO_MOVE_CAST(buffers_type)(other.buffers_)),
         start_(other.start_),
         handler_(ASIO_MOVE_CAST(WriteHandler)(other.handler_))
     {
@@ -277,9 +277,11 @@ namespace detail
     }
 
   //private:
+    typedef asio::detail::consuming_buffers<const_buffer,
+        ConstBufferSequence, ConstBufferIterator> buffers_type;
+
     AsyncWriteStream& stream_;
-    asio::detail::consuming_buffers<const_buffer,
-        ConstBufferSequence, ConstBufferIterator> buffers_;
+    buffers_type buffers_;
     int start_;
     WriteHandler handler_;
   };
