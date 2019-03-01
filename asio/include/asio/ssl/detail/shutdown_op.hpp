@@ -41,7 +41,17 @@ public:
       const asio::error_code& ec,
       const std::size_t&) const
   {
-    handler(ec);
+    if (ec == asio::error::eof)
+    {
+      // The engine only generates an eof when the shutdown notification has
+      // been received from the peer. This indicates that the shutdown has
+      // completed successfully, and thus need not be passed on to the handler.
+      handler(asio::error_code());
+    }
+    else
+    {
+      handler(ec);
+    }
   }
 };
 
