@@ -69,7 +69,8 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     >::type*)
 {
   return detail::read_buffer_sequence(s, buffers,
-      asio::buffer_sequence_begin(buffers), completion_condition, ec);
+      asio::buffer_sequence_begin(buffers),
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition), ec);
 }
 
 template <typename SyncReadStream, typename MutableBufferSequence>
@@ -103,7 +104,8 @@ inline std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     >::type*)
 {
   asio::error_code ec;
-  std::size_t bytes_transferred = read(s, buffers, completion_condition, ec);
+  std::size_t bytes_transferred = read(s, buffers,
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition), ec);
   asio::detail::throw_error(ec, "read");
   return bytes_transferred;
 }
@@ -179,7 +181,7 @@ inline std::size_t read(SyncReadStream& s,
   asio::error_code ec;
   std::size_t bytes_transferred = read(s,
       ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-      completion_condition, ec);
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition), ec);
   asio::detail::throw_error(ec, "read");
   return bytes_transferred;
 }
@@ -193,7 +195,8 @@ inline std::size_t read(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition, asio::error_code& ec)
 {
-  return read(s, basic_streambuf_ref<Allocator>(b), completion_condition, ec);
+  return read(s, basic_streambuf_ref<Allocator>(b),
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition), ec);
 }
 
 template <typename SyncReadStream, typename Allocator>
@@ -217,7 +220,8 @@ inline std::size_t read(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition)
 {
-  return read(s, basic_streambuf_ref<Allocator>(b), completion_condition);
+  return read(s, basic_streambuf_ref<Allocator>(b),
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)
@@ -233,7 +237,7 @@ namespace detail
   {
   public:
     read_op(AsyncReadStream& stream, const MutableBufferSequence& buffers,
-        CompletionCondition completion_condition, ReadHandler& handler)
+        CompletionCondition& completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
@@ -254,7 +258,9 @@ namespace detail
     }
 
     read_op(read_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
+      : detail::base_from_completion_cond<CompletionCondition>(
+          ASIO_MOVE_CAST(detail::base_from_completion_cond<
+            CompletionCondition>)(other)),
         stream_(other.stream_),
         buffers_(other.buffers_),
         start_(other.start_),
@@ -355,7 +361,7 @@ namespace detail
       typename ReadHandler>
   inline void start_read_buffer_sequence_op(AsyncReadStream& stream,
       const MutableBufferSequence& buffers, const MutableBufferIterator&,
-      CompletionCondition completion_condition, ReadHandler& handler)
+      CompletionCondition& completion_condition, ReadHandler& handler)
   {
     detail::read_op<AsyncReadStream, MutableBufferSequence,
       MutableBufferIterator, CompletionCondition, ReadHandler>(
@@ -369,16 +375,17 @@ namespace detail
         typename MutableBufferSequence, typename CompletionCondition>
     void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
         AsyncReadStream* s, const MutableBufferSequence& buffers,
-        CompletionCondition completion_condition) const
+        ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a ReadHandler.
       ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       non_const_lvalue<ReadHandler> handler2(handler);
+      non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
       start_read_buffer_sequence_op(*s, buffers,
           asio::buffer_sequence_begin(buffers),
-          completion_condition, handler2.value);
+          completion_cond2.value, handler2.value);
     }
   };
 } // namespace detail
@@ -438,8 +445,8 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
 {
   return async_initiate<ReadHandler,
     void (asio::error_code, std::size_t)>(
-      detail::initiate_async_read_buffer_sequence(),
-      handler, &s, buffers, completion_condition);
+      detail::initiate_async_read_buffer_sequence(), handler, &s, buffers,
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
@@ -469,7 +476,7 @@ namespace detail
     template <typename BufferSequence>
     read_dynbuf_op(AsyncReadStream& stream,
         ASIO_MOVE_ARG(BufferSequence) buffers,
-        CompletionCondition completion_condition, ReadHandler& handler)
+        CompletionCondition& completion_condition, ReadHandler& handler)
       : detail::base_from_completion_cond<
           CompletionCondition>(completion_condition),
         stream_(stream),
@@ -492,7 +499,9 @@ namespace detail
     }
 
     read_dynbuf_op(read_dynbuf_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
+      : detail::base_from_completion_cond<CompletionCondition>(
+          ASIO_MOVE_CAST(detail::base_from_completion_cond<
+            CompletionCondition>)(other)),
         stream_(other.stream_),
         buffers_(ASIO_MOVE_CAST(DynamicBuffer)(other.buffers_)),
         start_(other.start_),
@@ -603,17 +612,18 @@ namespace detail
         typename DynamicBuffer, typename CompletionCondition>
     void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
         AsyncReadStream* s, ASIO_MOVE_ARG(DynamicBuffer) buffers,
-        CompletionCondition completion_condition) const
+        ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a ReadHandler.
       ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       non_const_lvalue<ReadHandler> handler2(handler);
+      non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
       read_dynbuf_op<AsyncReadStream, typename decay<DynamicBuffer>::type,
         CompletionCondition, typename decay<ReadHandler>::type>(
           *s, ASIO_MOVE_CAST(DynamicBuffer)(buffers),
-            completion_condition, handler2.value)(
+            completion_cond2.value, handler2.value)(
               asio::error_code(), 0, 1);
     }
   };
@@ -694,7 +704,8 @@ async_read(AsyncReadStream& s,
   return async_initiate<ReadHandler,
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_read_dynbuf(), handler, &s,
-      ASIO_MOVE_CAST(DynamicBuffer)(buffers), completion_condition);
+      ASIO_MOVE_CAST(DynamicBuffer)(buffers),
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -719,7 +730,8 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(ReadHandler) handler)
 {
   return async_read(s, basic_streambuf_ref<Allocator>(b),
-      completion_condition, ASIO_MOVE_CAST(ReadHandler)(handler));
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition),
+      ASIO_MOVE_CAST(ReadHandler)(handler));
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)

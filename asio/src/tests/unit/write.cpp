@@ -337,11 +337,20 @@ bool old_style_transfer_all(const asio::error_code& ec,
   return !!ec;
 }
 
-size_t short_transfer(const asio::error_code& ec,
-    size_t /*bytes_transferred*/)
+struct short_transfer
 {
-  return !!ec ? 0 : 3;
-}
+  short_transfer() {}
+#if defined(ASIO_HAS_MOVE)
+  short_transfer(short_transfer&&) {}
+#else // defined(ASIO_HAS_MOVE)
+  short_transfer(const short_transfer&) {}
+#endif // defined(ASIO_HAS_MOVE)
+  size_t operator()(const asio::error_code& ec,
+      size_t /*bytes_transferred*/)
+  {
+    return !!ec ? 0 : 3;
+  }
+};
 
 void test_3_arg_const_buffer_write()
 {
@@ -508,19 +517,19 @@ void test_3_arg_const_buffer_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
   s.next_write_length(1);
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
   s.next_write_length(10);
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
@@ -690,19 +699,19 @@ void test_3_arg_mutable_buffer_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
 
   s.reset();
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(mutable_write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
 
   s.reset();
   s.next_write_length(1);
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(mutable_write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
 
   s.reset();
   s.next_write_length(10);
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(mutable_write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
 }
@@ -874,19 +883,19 @@ void test_3_arg_vector_buffers_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
   s.next_write_length(1);
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
   s.next_write_length(10);
-  bytes_transferred = asio::write(s, buffers, short_transfer);
+  bytes_transferred = asio::write(s, buffers, short_transfer());
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 }
@@ -1106,7 +1115,7 @@ void test_4_arg_const_buffer_write()
   ASIO_CHECK(!error);
 
   s.reset();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
   ASIO_CHECK(!error);
@@ -1114,7 +1123,7 @@ void test_4_arg_const_buffer_write()
   s.reset();
   s.next_write_length(1);
   error = asio::error_code();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
   ASIO_CHECK(!error);
@@ -1122,7 +1131,7 @@ void test_4_arg_const_buffer_write()
   s.reset();
   s.next_write_length(10);
   error = asio::error_code();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
   ASIO_CHECK(!error);
@@ -1343,7 +1352,7 @@ void test_4_arg_mutable_buffer_write()
   ASIO_CHECK(!error);
 
   s.reset();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(mutable_write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
   ASIO_CHECK(!error);
@@ -1351,7 +1360,7 @@ void test_4_arg_mutable_buffer_write()
   s.reset();
   s.next_write_length(1);
   error = asio::error_code();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(mutable_write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
   ASIO_CHECK(!error);
@@ -1359,7 +1368,7 @@ void test_4_arg_mutable_buffer_write()
   s.reset();
   s.next_write_length(10);
   error = asio::error_code();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(mutable_write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
   ASIO_CHECK(!error);
@@ -1582,7 +1591,7 @@ void test_4_arg_vector_buffers_write()
   ASIO_CHECK(!error);
 
   s.reset();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
   ASIO_CHECK(!error);
@@ -1590,7 +1599,7 @@ void test_4_arg_vector_buffers_write()
   s.reset();
   s.next_write_length(1);
   error = asio::error_code();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
   ASIO_CHECK(!error);
@@ -1598,7 +1607,7 @@ void test_4_arg_vector_buffers_write()
   s.reset();
   s.next_write_length(10);
   error = asio::error_code();
-  bytes_transferred = asio::write(s, buffers, short_transfer, error);
+  bytes_transferred = asio::write(s, buffers, short_transfer(), error);
   ASIO_CHECK(bytes_transferred == sizeof(write_data));
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
   ASIO_CHECK(!error);
@@ -2232,7 +2241,7 @@ void test_4_arg_const_buffer_async_write()
 
   s.reset();
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -2243,7 +2252,7 @@ void test_4_arg_const_buffer_async_write()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -2254,7 +2263,7 @@ void test_4_arg_const_buffer_async_write()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -2263,7 +2272,7 @@ void test_4_arg_const_buffer_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
-  int i = asio::async_write(s, buffers, short_transfer,
+  int i = asio::async_write(s, buffers, short_transfer(),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
   ioc.restart();
@@ -2544,7 +2553,7 @@ void test_4_arg_mutable_buffer_async_write()
 
   s.reset();
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(mutable_write_data), &called));
   ioc.restart();
@@ -2555,7 +2564,7 @@ void test_4_arg_mutable_buffer_async_write()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(mutable_write_data), &called));
   ioc.restart();
@@ -2566,7 +2575,7 @@ void test_4_arg_mutable_buffer_async_write()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(mutable_write_data), &called));
   ioc.restart();
@@ -2575,7 +2584,7 @@ void test_4_arg_mutable_buffer_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(mutable_write_data)));
 
   s.reset();
-  int i = asio::async_write(s, buffers, short_transfer,
+  int i = asio::async_write(s, buffers, short_transfer(),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
   ioc.restart();
@@ -2858,7 +2867,7 @@ void test_4_arg_boost_array_buffers_async_write()
 
   s.reset();
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -2869,7 +2878,7 @@ void test_4_arg_boost_array_buffers_async_write()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -2880,7 +2889,7 @@ void test_4_arg_boost_array_buffers_async_write()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -2889,7 +2898,7 @@ void test_4_arg_boost_array_buffers_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
-  int i = asio::async_write(s, buffers, short_transfer,
+  int i = asio::async_write(s, buffers, short_transfer(),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
   ioc.restart();
@@ -3173,7 +3182,7 @@ void test_4_arg_std_array_buffers_async_write()
 
   s.reset();
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3184,7 +3193,7 @@ void test_4_arg_std_array_buffers_async_write()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3195,7 +3204,7 @@ void test_4_arg_std_array_buffers_async_write()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3204,7 +3213,7 @@ void test_4_arg_std_array_buffers_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
-  int i = asio::async_write(s, buffers, short_transfer,
+  int i = asio::async_write(s, buffers, short_transfer(),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
   ioc.restart();
@@ -3488,7 +3497,7 @@ void test_4_arg_vector_buffers_async_write()
 
   s.reset();
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3499,7 +3508,7 @@ void test_4_arg_vector_buffers_async_write()
   s.reset();
   s.next_write_length(1);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3510,7 +3519,7 @@ void test_4_arg_vector_buffers_async_write()
   s.reset();
   s.next_write_length(10);
   called = false;
-  asio::async_write(s, buffers, short_transfer,
+  asio::async_write(s, buffers, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3519,7 +3528,7 @@ void test_4_arg_vector_buffers_async_write()
   ASIO_CHECK(s.check_buffers(buffers, sizeof(write_data)));
 
   s.reset();
-  int i = asio::async_write(s, buffers, short_transfer,
+  int i = asio::async_write(s, buffers, short_transfer(),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
   ioc.restart();
@@ -3851,7 +3860,7 @@ void test_4_arg_streambuf_async_write()
   sb.consume(sb.size());
   sb.sputn(write_data, sizeof(write_data));
   called = false;
-  asio::async_write(s, sb, short_transfer,
+  asio::async_write(s, sb, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3864,7 +3873,7 @@ void test_4_arg_streambuf_async_write()
   sb.sputn(write_data, sizeof(write_data));
   s.next_write_length(1);
   called = false;
-  asio::async_write(s, sb, short_transfer,
+  asio::async_write(s, sb, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3877,7 +3886,7 @@ void test_4_arg_streambuf_async_write()
   sb.sputn(write_data, sizeof(write_data));
   s.next_write_length(10);
   called = false;
-  asio::async_write(s, sb, short_transfer,
+  asio::async_write(s, sb, short_transfer(),
       bindns::bind(async_write_handler,
         _1, _2, sizeof(write_data), &called));
   ioc.restart();
@@ -3888,7 +3897,7 @@ void test_4_arg_streambuf_async_write()
   s.reset();
   sb.consume(sb.size());
   sb.sputn(write_data, sizeof(write_data));
-  int i = asio::async_write(s, sb, short_transfer,
+  int i = asio::async_write(s, sb, short_transfer(),
       archetypes::lazy_handler());
   ASIO_CHECK(i == 42);
   ioc.restart();

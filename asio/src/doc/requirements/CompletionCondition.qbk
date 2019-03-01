@@ -15,7 +15,7 @@ completed transferring data.
 
 A type `X` meets the `CompletionCondition` requirements if it satisfies the
 requirements of `Destructible` (C++Std [destructible]) and
-`CopyConstructible` (C++Std [copyconstructible]), as well as the additional
+`MoveConstructible` (C++Std [moveconstructible]), as well as the additional
 requirements listed below.
 
 In the table below, `x` denotes a value of type `X`, `ec` denotes a (possibly
