@@ -240,14 +240,16 @@ engine::want engine::perform(int (engine::* op)(void*, std::size_t),
   {
     ec = asio::error_code(sys_error,
         asio::error::get_ssl_category());
-    return want_nothing;
+    return pending_output_after > pending_output_before
+      ? want_output : want_nothing;
   }
 
   if (ssl_error == SSL_ERROR_SYSCALL)
   {
     ec = asio::error_code(sys_error,
         asio::error::get_system_category());
-    return want_nothing;
+    return pending_output_after > pending_output_before
+      ? want_output : want_nothing;
   }
 
   if (result > 0 && bytes_transferred)
