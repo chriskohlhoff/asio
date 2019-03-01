@@ -226,6 +226,8 @@ public:
 
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Executor, typename R, typename... Args>
 class async_result<use_awaitable_t<Executor>, R(Args...)>
 {
@@ -264,6 +266,8 @@ public:
 #endif // defined(_MSC_VER)
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 
