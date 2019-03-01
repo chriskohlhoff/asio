@@ -318,7 +318,8 @@ public:
    *
    * @param resolve_flags A set of flags that determine how name resolution
    * should be performed. The default flags are suitable for communication with
-   * remote hosts.
+   * remote hosts. See the @ref resolver_base documentation for the set of
+   * available flags.
    *
    * @returns A range object representing the list of endpoint entries. A
    * successful call to this function is guaranteed to return a non-empty
@@ -367,7 +368,8 @@ public:
    *
    * @param resolve_flags A set of flags that determine how name resolution
    * should be performed. The default flags are suitable for communication with
-   * remote hosts.
+   * remote hosts. See the @ref resolver_base documentation for the set of
+   * available flags.
    *
    * @param ec Set to indicate what error occurred, if any.
    *
@@ -501,7 +503,8 @@ public:
    *
    * @param resolve_flags A set of flags that determine how name resolution
    * should be performed. The default flags are suitable for communication with
-   * remote hosts.
+   * remote hosts. See the @ref resolver_base documentation for the set of
+   * available flags.
    *
    * @returns A range object representing the list of endpoint entries. A
    * successful call to this function is guaranteed to return a non-empty
@@ -555,7 +558,8 @@ public:
    *
    * @param resolve_flags A set of flags that determine how name resolution
    * should be performed. The default flags are suitable for communication with
-   * remote hosts.
+   * remote hosts. See the @ref resolver_base documentation for the set of
+   * available flags.
    *
    * @param ec Set to indicate what error occurred, if any.
    *
@@ -691,7 +695,8 @@ public:
    *
    * @param resolve_flags A set of flags that determine how name resolution
    * should be performed. The default flags are suitable for communication with
-   * remote hosts.
+   * remote hosts. See the @ref resolver_base documentation for the set of
+   * available flags.
    *
    * @param handler The handler to be called when the resolve operation
    * completes. Copies will be made of the handler as required. The function
@@ -812,7 +817,8 @@ public:
    *
    * @param resolve_flags A set of flags that determine how name resolution
    * should be performed. The default flags are suitable for communication with
-   * remote hosts.
+   * remote hosts. See the @ref resolver_base documentation for the set of
+   * available flags.
    *
    * @param handler The handler to be called when the resolve operation
    * completes. Copies will be made of the handler as required. The function
