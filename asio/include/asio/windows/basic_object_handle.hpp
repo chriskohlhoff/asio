@@ -101,9 +101,9 @@ public:
    * This constructor creates an object handle object to hold an existing native
    * handle.
    *
-   * @param context An execution context which provides the I/O executor that
-   * the object handle will use, by default, to dispatch handlers for any
-   * asynchronous operations performed on the object handle.
+   * @param ex The I/O executor that the object handle will use, by default, to
+   * dispatch handlers for any asynchronous operations performed on the
+   * object handle.
    *
    * @param native_handle The new underlying handle implementation.
    *
