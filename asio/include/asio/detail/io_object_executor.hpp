@@ -31,10 +31,43 @@ template <typename Executor>
 class io_object_executor
 {
 public:
-  io_object_executor(const Executor& ex, bool native_implementation)
+  io_object_executor(const Executor& ex,
+      bool native_implementation) ASIO_NOEXCEPT
     : executor_(ex),
       has_native_impl_(native_implementation)
   {
+  }
+
+  io_object_executor(const io_object_executor& other) ASIO_NOEXCEPT
+    : executor_(other.executor_),
+      has_native_impl_(other.has_native_impl_)
+  {
+  }
+
+  template <typename Executor1>
+  io_object_executor(
+      const io_object_executor<Executor1>& other) ASIO_NOEXCEPT
+    : executor_(other.inner_executor()),
+      has_native_impl_(other.has_native_implementation())
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  io_object_executor(io_object_executor&& other) ASIO_NOEXCEPT
+    : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
+      has_native_impl_(other.has_native_impl_)
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  const Executor& inner_executor() const ASIO_NOEXCEPT
+  {
+    return executor_;
+  }
+
+  bool has_native_implementation() const ASIO_NOEXCEPT
+  {
+    return has_native_impl_;
   }
 
   execution_context& context() const ASIO_NOEXCEPT
