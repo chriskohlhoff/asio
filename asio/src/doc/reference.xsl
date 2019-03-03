@@ -1530,6 +1530,9 @@
         <xsl:when test="declname = 'Executor'">
           <xsl:value-of select="concat('``[link asio.reference.Executor1 ', declname, ']``')"/>
         </xsl:when>
+        <xsl:when test="declname = 'Executor2'">
+          <xsl:value-of select="concat('``[link asio.reference.Executor1 ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'F'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1538,6 +1541,9 @@
         </xsl:when>
         <xsl:when test="declname = 'IoObjectService1'">
           <xsl:value-of select="concat('``[link asio.reference.IoObjectService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Initiation'">
+          <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Iterator'">
           <xsl:value-of select="declname"/>
@@ -1574,6 +1580,9 @@
         </xsl:when>
         <xsl:when test="declname = 'Protocol1'">
           <xsl:value-of select="concat('``[link asio.reference.Protocol ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'RawCompletionToken'">
+          <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'RawSocketService1'">
           <xsl:value-of select="concat('``[link asio.reference.RawSocketService ', declname, ']``')"/>

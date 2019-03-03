@@ -142,8 +142,7 @@ below shows the new Networking TS interfaces and the facilities they replace:
   [
     [[link asio.reference.async_result `async_result`] with `CompletionToken`
     and `Signature` template parameters]
-    [[link asio.reference.handler_type `handler_type`] and single parameter
-    [link asio.reference.async_result_lt__Handler__gt_ `async_result`]]
+    [`handler_type` and single parameter `async_result`]
     [The `async_result` trait is now the single point of customisation for
     asynchronous operation completion handlers and return type.]
   ]
