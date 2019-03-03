@@ -319,6 +319,7 @@ void test()
     std::size_t size40 = db3.max_size();
     (void)size40;
 
+#if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
     dynamic_string_buffer<char, std::string::traits_type,
       std::string::allocator_type>::const_buffers_type
         cb5 = db1.data();
@@ -337,9 +338,35 @@ void test()
 
     db1.commit(1024);
     db3.commit(1024);
+#endif // !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
-    db1.consume(1024);
-    db3.consume(1024);
+    dynamic_string_buffer<char, std::string::traits_type,
+      std::string::allocator_type>::mutable_buffers_type
+        mb7 = db1.data(0, 1);
+    (void)mb7;
+    dynamic_vector_buffer<char, std::allocator<char> >::mutable_buffers_type
+      mb8 = db3.data(0, 1);
+    (void)mb8;
+
+    dynamic_string_buffer<char, std::string::traits_type,
+      std::string::allocator_type>::const_buffers_type
+        cb7 = static_cast<const dynamic_string_buffer<char,
+          std::string::traits_type,
+            std::string::allocator_type>&>(db1).data(0, 1);
+    (void)cb7;
+    dynamic_vector_buffer<char, std::allocator<char> >::const_buffers_type
+      cb8 = static_cast<const dynamic_vector_buffer<char,
+        std::allocator<char> >&>(db3).data(0, 1);
+    (void)cb8;
+
+    db1.grow(1024);
+    db3.grow(1024);
+
+    db1.shrink(1024);
+    db3.shrink(1024);
+
+    db1.consume(0);
+    db3.consume(0);
   }
   catch (std::exception&)
   {

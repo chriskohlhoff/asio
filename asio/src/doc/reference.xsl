@@ -53,6 +53,8 @@
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConstBufferSequence.qbk]
 [include requirements/DynamicBuffer.qbk]
+[include requirements/DynamicBuffer_v1.qbk]
+[include requirements/DynamicBuffer_v2.qbk]
 [include requirements/Endpoint.qbk]
 [include requirements/EndpointSequence.qbk]
 [include requirements/ExecutionContext.qbk]
