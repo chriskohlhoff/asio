@@ -284,7 +284,7 @@ public:
    * will occur.
    *
    * @note Following the move, the moved-from object is in the same state as if
-   * constructed using the @c ,asic_stream_socket(const executor_type&)
+   * constructed using the @c basic_stream_socket(const executor_type&)
    * constructor.
    */
   template <typename Protocol1, typename Executor1>
