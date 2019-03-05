@@ -33,36 +33,46 @@ using asio::ip::tcp;
 // requirements are met by delegating responsibility to the underlying
 // operation.
 
-// In addition to determining the mechanism by which an asynchronous operation
-// delivers its result, a completion token also determines the time when the
-// operation commences. For example, when the completion token is a simple
-// callback the operation commences before the initiating function returns.
-// However, if the completion token's delivery mechanism uses a future, we
-// might instead want to defer initiation of the operation until the returned
-// future object is waited upon.
-//
-// To enable this, when implementing an asynchronous operation we must package
-// the initiation step as a function object.
-struct async_write_message_initiation
+template <typename CompletionToken>
+auto async_write_message(tcp::socket& socket,
+    const char* message, CompletionToken&& token)
+  // The return type of the initiating function is deduced from the combination
+  // of CompletionToken type and the completion handler's signature. When the
+  // completion token is a simple callback, the return type is always void.
+  // In this example, when the completion token is asio::yield_context
+  // (used for stackful coroutines) the return type would be also be void, as
+  // there is no non-error argument to the completion handler. When the
+  // completion token is asio::use_future it would be std::future<void>.
+  //
+  // In C++14 we can omit the return type as it is automatically deduced from
+  // the return type of asio::async_initiate.
 {
-  // The initiation function object's call operator is passed the concrete
-  // completion handler produced by the completion token. This completion
-  // handler matches the asynchronous operation's completion handler signature,
-  // which in this example is:
+  // In addition to determining the mechanism by which an asynchronous
+  // operation delivers its result, a completion token also determines the time
+  // when the operation commences. For example, when the completion token is a
+  // simple callback the operation commences before the initiating function
+  // returns. However, if the completion token's delivery mechanism uses a
+  // future, we might instead want to defer initiation of the operation until
+  // the returned future object is waited upon.
+  //
+  // To enable this, when implementing an asynchronous operation we must
+  // package the initiation step as a function object. The initiation function
+  // object's call operator is passed the concrete completion handler produced
+  // by the completion token. This completion handler matches the asynchronous
+  // operation's completion handler signature, which in this example is:
   //
   //   void(std::error_code error)
   //
   // The initiation function object also receives any additional arguments
   // required to start the operation. (Note: We could have instead passed these
-  // arguments as members in the initiaton function object. However, we should
-  // prefer to propagate them as function call arguments as this allows the
-  // completion token to optimise how they are passed. For example, a lazy
-  // future which defers initiation would need to make a decay-copy of the
-  // arguments, but when using a simple callback the arguments can be trivially
-  // forwarded straight through.)
-  template <typename CompletionHandler>
-  void operator()(CompletionHandler&& completion_handler,
-      tcp::socket& socket, const char* message) const
+  // arguments in the lambda capture set. However, we should prefer to
+  // propagate them as function call arguments as this allows the completion
+  // token to optimise how they are passed. For example, a lazy future which
+  // defers initiation would need to make a decay-copy of the arguments, but
+  // when using a simple callback the arguments can be trivially forwarded
+  // straight through.)
+  auto initiation = [](auto&& completion_handler,
+      tcp::socket& socket, const char* message)
   {
     // The async_write operation has a completion handler signature of:
     //
@@ -87,25 +97,10 @@ struct async_write_message_initiation
     asio::async_write(socket,
         asio::buffer(message, std::strlen(message)),
         asio::bind_executor(executor,
-          std::bind(std::forward<CompletionHandler>(
-            completion_handler), std::placeholders::_1)));
-  }
-};
+          std::bind(std::forward<decltype(completion_handler)>(
+              completion_handler), std::placeholders::_1)));
+  };
 
-template <typename CompletionToken>
-auto async_write_message(tcp::socket& socket,
-    const char* message, CompletionToken&& token)
-  // The return type of the initiating function is deduced from the combination
-  // of CompletionToken type and the completion handler's signature. When the
-  // completion token is a simple callback, the return type is always void.
-  // In this example, when the completion token is asio::yield_context
-  // (used for stackful coroutines) the return type would be also be void, as
-  // there is no non-error argument to the completion handler. When the
-  // completion token is asio::use_future it would be std::future<void>.
-  -> typename asio::async_result<
-    typename std::decay<CompletionToken>::type,
-    void(std::error_code)>::return_type
-{
   // The asio::async_initiate function takes:
   //
   // - our initiation function object,
@@ -123,8 +118,7 @@ auto async_write_message(tcp::socket& socket,
   // to prevent incorrect decay-copies of these objects.
   return asio::async_initiate<
     CompletionToken, void(std::error_code)>(
-      async_write_message_initiation(),
-      token, std::ref(socket), message);
+      initiation, token, std::ref(socket), message);
 }
 
 //------------------------------------------------------------------------------

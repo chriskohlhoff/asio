@@ -30,6 +30,7 @@ nobase_include_HEADERS = \
 	asio/buffers_iterator.hpp \
 	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
+	asio/compose.hpp \
 	asio/connect.hpp \
 	asio/coroutine.hpp \
 	asio/deadline_timer.hpp \
@@ -308,6 +309,7 @@ nobase_include_HEADERS = \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/co_spawn.hpp \
+	asio/impl/compose.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/defer.hpp \
 	asio/impl/detached.hpp \

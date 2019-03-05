@@ -133,6 +133,7 @@ UNIT_TEST_EXES = \
 	tests\unit\buffers_iterator.exe \
 	tests\unit\co_spawn.exe \
 	tests\unit\completion_condition.exe \
+	tests\unit\compose.exe \
 	tests\unit\connect.exe \
 	tests\unit\coroutine.exe \
 	tests\unit\deadline_timer.exe \
@@ -419,6 +420,12 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {examples\cpp11\executors}.cpp{examples\cpp11\executors}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{examples\cpp11\operations}.cpp{examples\cpp11\operations}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{examples\cpp14\operations}.cpp{examples\cpp14\operations}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 examples\cpp03\http\server\http_server.exe: \

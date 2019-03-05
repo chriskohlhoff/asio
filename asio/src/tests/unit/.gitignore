@@ -30,6 +30,7 @@ buffered_write_stream
 buffers_iterator
 co_spawn
 completion_condition
+compose
 connect
 coroutine
 deadline_timer

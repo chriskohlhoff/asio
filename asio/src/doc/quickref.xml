@@ -58,6 +58,7 @@
             <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></member>
             <member><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link></member>
             <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
+            <member><link linkend="asio.reference.async_compose">async_compose</link></member>
             <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
             <member><link linkend="asio.reference.co_spawn">co_spawn</link></member>
             <member><link linkend="asio.reference.dispatch">dispatch</link></member>

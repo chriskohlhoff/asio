@@ -38,6 +38,9 @@ noinst_PROGRAMS = \
 	operations/composed_3 \
 	operations/composed_4 \
 	operations/composed_5 \
+	operations/composed_6 \
+	operations/composed_7 \
+	operations/composed_8 \
 	socks4/sync_client \
 	timeouts/async_tcp_client \
 	timeouts/blocking_tcp_client \
@@ -110,6 +113,9 @@ operations_composed_2_SOURCES = operations/composed_2.cpp
 operations_composed_3_SOURCES = operations/composed_3.cpp
 operations_composed_4_SOURCES = operations/composed_4.cpp
 operations_composed_5_SOURCES = operations/composed_5.cpp
+operations_composed_6_SOURCES = operations/composed_6.cpp
+operations_composed_7_SOURCES = operations/composed_7.cpp
+operations_composed_8_SOURCES = operations/composed_8.cpp
 socks4_sync_client_SOURCES = socks4/sync_client.cpp
 timeouts_async_tcp_client_SOURCES = timeouts/async_tcp_client.cpp
 timeouts_blocking_tcp_client_SOURCES = timeouts/blocking_tcp_client.cpp

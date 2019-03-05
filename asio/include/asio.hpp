@@ -44,6 +44,7 @@
 #include "asio/buffers_iterator.hpp"
 #include "asio/co_spawn.hpp"
 #include "asio/completion_condition.hpp"
+#include "asio/compose.hpp"
 #include "asio/connect.hpp"
 #include "asio/coroutine.hpp"
 #include "asio/deadline_timer.hpp"

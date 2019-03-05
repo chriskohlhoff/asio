@@ -24,7 +24,15 @@ noinst_PROGRAMS = \
 	executors/fork_join \
 	executors/pipeline \
 	executors/priority_scheduler \
-	iostreams/http_client
+	iostreams/http_client \
+	operations/composed_1 \
+	operations/composed_2 \
+	operations/composed_3 \
+	operations/composed_4 \
+	operations/composed_5 \
+	operations/composed_6 \
+	operations/composed_7 \
+	operations/composed_8
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
@@ -43,6 +51,14 @@ executors_fork_join_SOURCES = executors/fork_join.cpp
 executors_pipeline_SOURCES = executors/pipeline.cpp
 executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
 iostreams_http_client_SOURCES = iostreams/http_client.cpp
+operations_composed_1_SOURCES = operations/composed_1.cpp
+operations_composed_2_SOURCES = operations/composed_2.cpp
+operations_composed_3_SOURCES = operations/composed_3.cpp
+operations_composed_4_SOURCES = operations/composed_4.cpp
+operations_composed_5_SOURCES = operations/composed_5.cpp
+operations_composed_6_SOURCES = operations/composed_6.cpp
+operations_composed_7_SOURCES = operations/composed_7.cpp
+operations_composed_8_SOURCES = operations/composed_8.cpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

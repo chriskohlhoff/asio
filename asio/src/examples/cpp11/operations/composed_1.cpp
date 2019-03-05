@@ -26,6 +26,7 @@ using asio::ip::tcp;
 // simply repackage an existing operation. The asynchronous operation
 // requirements are met by delegating responsibility to the underlying
 // operation.
+
 template <typename CompletionToken>
 auto async_write_message(tcp::socket& socket,
     const char* message, CompletionToken&& token)

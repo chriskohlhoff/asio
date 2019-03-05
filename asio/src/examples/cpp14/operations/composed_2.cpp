@@ -38,9 +38,9 @@ auto async_write_message(tcp::socket& socket,
   // when the completion token is asio::yield_context (used for stackful
   // coroutines) the return type would be std::size_t, and when the completion
   // token is asio::use_future it would be std::future<std::size_t>.
-  -> typename asio::async_result<
-    typename std::decay<CompletionToken>::type,
-    void(std::error_code, std::size_t)>::return_type
+  //
+  // In C++14 we can omit the return type as it is automatically deduced from
+  // the return type of our underlying asynchronous operation
 {
   // As the return type of the initiating function is deduced solely from the
   // CompletionToken and completion signature, we know that two different

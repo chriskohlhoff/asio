@@ -58,6 +58,20 @@
 # define ASIO_VARIADIC_BYVAL_ARGS_4 x1, x2, x3, x4
 # define ASIO_VARIADIC_BYVAL_ARGS_5 x1, x2, x3, x4, x5
 
+# define ASIO_VARIADIC_CONSTREF_PARAMS(n) \
+  ASIO_VARIADIC_CONSTREF_PARAMS_##n
+
+# define ASIO_VARIADIC_CONSTREF_PARAMS_1 \
+  const T1& x1
+# define ASIO_VARIADIC_CONSTREF_PARAMS_2 \
+  const T1& x1, const T2& x2
+# define ASIO_VARIADIC_CONSTREF_PARAMS_3 \
+  const T1& x1, const T2& x2, const T3& x3
+# define ASIO_VARIADIC_CONSTREF_PARAMS_4 \
+  const T1& x1, const T2& x2, const T3& x3, const T4& x4
+# define ASIO_VARIADIC_CONSTREF_PARAMS_5 \
+  const T1& x1, const T2& x2, const T3& x3, const T4& x4, const T5& x5
+
 # define ASIO_VARIADIC_MOVE_PARAMS(n) \
   ASIO_VARIADIC_MOVE_PARAMS_##n
 

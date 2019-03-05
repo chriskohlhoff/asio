@@ -33,6 +33,7 @@ check_PROGRAMS = \
 	unit/buffers_iterator \
 	unit/co_spawn \
 	unit/completion_condition \
+	unit/compose \
 	unit/connect \
 	unit/coroutine \
 	unit/deadline_timer \
@@ -172,6 +173,7 @@ TESTS = \
 	unit/buffers_iterator \
 	unit/co_spawn \
 	unit/completion_condition \
+	unit/compose \
 	unit/connect \
 	unit/deadline_timer \
 	unit/defer \
@@ -309,6 +311,7 @@ unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
 unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
+unit_compose_SOURCES = unit/compose.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp

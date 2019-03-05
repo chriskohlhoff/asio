@@ -454,6 +454,9 @@ Examples showing how to implement composed asynchronous operations as reusable l
 * [@../src/examples/cpp11/operations/composed_3.cpp]
 * [@../src/examples/cpp11/operations/composed_4.cpp]
 * [@../src/examples/cpp11/operations/composed_5.cpp]
+* [@../src/examples/cpp11/operations/composed_6.cpp]
+* [@../src/examples/cpp11/operations/composed_7.cpp]
+* [@../src/examples/cpp11/operations/composed_8.cpp]
 
 
 [heading SOCKS 4]
