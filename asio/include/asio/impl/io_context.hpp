@@ -160,7 +160,7 @@ struct io_context::initiate_dispatch
       p.p = new (p.v) op(handler2.value);
 
       ASIO_HANDLER_CREATION((*self, *p.p,
-            "io_context", this, 0, "dispatch"));
+            "io_context", self, 0, "dispatch"));
 
       self->impl_.do_dispatch(p.p);
       p.v = p.p = 0;
@@ -200,7 +200,7 @@ struct io_context::initiate_post
     p.p = new (p.v) op(handler2.value);
 
     ASIO_HANDLER_CREATION((*self, *p.p,
-          "io_context", this, 0, "post"));
+          "io_context", self, 0, "post"));
 
     self->impl_.post_immediate_completion(p.p, is_continuation);
     p.v = p.p = 0;
