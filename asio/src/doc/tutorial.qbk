@@ -598,7 +598,7 @@ Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 [section:tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
 
 This tutorial demonstrates the use of the 
-[link asio.reference.io_context__strand io_context::strand] class to synchronise callback handlers in a multithreaded program.
+[link asio.reference.strand strand] class template to synchronise callback handlers in a multithreaded program.
 
 The previous four tutorials avoided the issue of handler synchronisation by calling the [link asio.reference.io_context.run io_context::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_context.run io_context::run()]. Consequently, calling [link asio.reference.io_context.run io_context::run()] from only one thread ensures that callback handlers cannot run concurrently.
 
@@ -635,17 +635,16 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 
 
-In addition to initialising a pair of asio::steady\_timer members, the constructor initialises the `strand_` member, an object of type 
-[link asio.reference.io_context__strand io_context::strand].
+In addition to initialising a pair of asio::steady\_timer members, the constructor initialises the `strand_` member, an object of type asio::strand<asio::io\_context::executor\_type>.
 
-An 
-[link asio.reference.io_context__strand io_context::strand] is an executor that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
-[link asio.reference.io_context__strand io_context::strand], or were dispatched through a different 
-[link asio.reference.io_context__strand io_context::strand] object.
+The 
+[link asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
+[link asio.reference.strand strand], or were dispatched through a different 
+[link asio.reference.strand strand] object.
 
 
   ``''''''``  printer(asio::io_context& io)
-  ``''''''``    : strand_(io),
+  ``''''''``    : strand_(asio::make_strand(io)),
   ``''''''``      timer1_(io, asio::chrono::seconds(1)),
   ``''''''``      timer2_(io, asio::chrono::seconds(1)),
   ``''''''``      count_(0)
@@ -653,10 +652,9 @@ An
 
 
 
-When initiating the asynchronous operations, each callback handler is "bound" to an 
-[link asio.reference.io_context__strand io_context::strand] object. The asio::io\_context::strand::bind\_executor() function returns a new handler that automatically dispatches its contained handler through the 
-[link asio.reference.io_context__strand io_context::strand] object. By binding the handlers to the same 
-[link asio.reference.io_context__strand io_context::strand], we are ensuring that they cannot execute concurrently.
+When initiating the asynchronous operations, each callback handler is "bound" to an asio::strand<asio::io\_context::executor\_type> object. The asio::bind\_executor() function returns a new handler that automatically dispatches its contained handler through the 
+[link asio.reference.strand strand] object. By binding the handlers to the same 
+[link asio.reference.strand strand], we are ensuring that they cannot execute concurrently.
 
 
   ``''''''``    timer1_.async_wait(asio::bind_executor(strand_,
@@ -706,7 +704,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::io_context::strand strand_;
+  ``''''''``  asio::strand<asio::io_context::executor_type> strand_;
   ``''''''``  asio::steady_timer timer1_;
   ``''''''``  asio::steady_timer timer2_;
   ``''''''``  int count_;
@@ -765,7 +763,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``{
   ``''''''``public:
   ``''''''``  printer(asio::io_context& io)
-  ``''''''``    : strand_(io),
+  ``''''''``    : strand_(asio::make_strand(io)),
   ``''''''``      timer1_(io, asio::chrono::seconds(1)),
   ``''''''``      timer2_(io, asio::chrono::seconds(1)),
   ``''''''``      count_(0)
@@ -811,7 +809,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``  }
 
   ``''''''``private:
-  ``''''''``  asio::io_context::strand strand_;
+  ``''''''``  asio::strand<asio::io_context::executor_type> strand_;
   ``''''''``  asio::steady_timer timer1_;
   ``''''''``  asio::steady_timer timer2_;
   ``''''''``  int count_;
@@ -1201,7 +1199,8 @@ The constructor initialises an acceptor to listen on TCP port 13.
 
 
   ``''''''``  tcp_server(asio::io_context& io_context)
-  ``''''''``    : acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
+  ``''''''``    : io_context_(io_context),
+  ``''''''``      acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
   ``''''''``  {
   ``''''''``    start_accept();
   ``''''''``  }
@@ -1216,7 +1215,7 @@ The function `start_accept()` creates a socket and initiates an asynchronous acc
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
+  ``''''''``      tcp_connection::create(io_context_);
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -1418,7 +1417,8 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``{
   ``''''''``public:
   ``''''''``  tcp_server(asio::io_context& io_context)
-  ``''''''``    : acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
+  ``''''''``    : io_context_(io_context),
+  ``''''''``      acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
   ``''''''``  {
   ``''''''``    start_accept();
   ``''''''``  }
@@ -1427,7 +1427,7 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
+  ``''''''``      tcp_connection::create(io_context_);
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -1445,6 +1445,7 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``    start_accept();
   ``''''''``  }
 
+  ``''''''``  asio::io_context& io_context_;
   ``''''''``  tcp::acceptor acceptor_;
   ``''''''``};
 
@@ -2075,7 +2076,8 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
   ``''''''``{
   ``''''''``public:
   ``''''''``  tcp_server(asio::io_context& io_context)
-  ``''''''``    : acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
+  ``''''''``    : io_context_(io_context),
+  ``''''''``      acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
   ``''''''``  {
   ``''''''``    start_accept();
   ``''''''``  }
@@ -2084,7 +2086,7 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
+  ``''''''``      tcp_connection::create(io_context_);
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -2102,6 +2104,7 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
   ``''''''``    start_accept();
   ``''''''``  }
 
+  ``''''''``  asio::io_context& io_context_;
   ``''''''``  tcp::acceptor acceptor_;
   ``''''''``};
 
@@ -2237,7 +2240,8 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``{
   ``''''''``public:
   ``''''''``  tcp_server(asio::io_context& io_context)
-  ``''''''``    : acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
+  ``''''''``    : io_context_(io_context),
+  ``''''''``      acceptor_(io_context, tcp::endpoint(tcp::v4(), 13))
   ``''''''``  {
   ``''''''``    start_accept();
   ``''''''``  }
@@ -2246,7 +2250,7 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``  void start_accept()
   ``''''''``  {
   ``''''''``    tcp_connection::pointer new_connection =
-  ``''''''``      tcp_connection::create(acceptor_.get_executor().context());
+  ``''''''``      tcp_connection::create(io_context_);
 
   ``''''''``    acceptor_.async_accept(new_connection->socket(),
   ``''''''``        boost::bind(&tcp_server::handle_accept, this, new_connection,
@@ -2264,6 +2268,7 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``    start_accept();
   ``''''''``  }
 
+  ``''''''``  asio::io_context& io_context_;
   ``''''''``  tcp::acceptor acceptor_;
   ``''''''``};
 
