@@ -11,6 +11,20 @@
 #ifndef ASIO_DETAIL_CONFIG_HPP
 #define ASIO_DETAIL_CONFIG_HPP
 
+// boostify: non-boost code starts here
+#if !defined(ASIO_STANDALONE)
+# if !defined(ASIO_ENABLE_BOOST)
+#  if (__cplusplus >= 201103)
+#   define ASIO_STANDALONE 1
+#  elif defined(_MSC_VER) && defined(_MSVC_LANG)
+#   if (_MSC_VER >= 1900) && (_MSVC_LANG >= 201103)
+#    define ASIO_STANDALONE 1
+#   endif // (_MSC_VER >= 1900) && (_MSVC_LANG >= 201103)
+#  endif // defined(_MSC_VER) && defined(_MSVC_LANG)
+# endif // !defined(ASIO_ENABLE_BOOST)
+#endif // !defined(ASIO_STANDALONE)
+
+// boostify: non-boost code ends here
 #if defined(ASIO_STANDALONE)
 # define ASIO_DISABLE_BOOST_ARRAY 1
 # define ASIO_DISABLE_BOOST_ASSERT 1
