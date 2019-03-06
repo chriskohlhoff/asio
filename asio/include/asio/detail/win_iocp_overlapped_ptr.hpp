@@ -80,7 +80,7 @@ public:
     const bool native = is_same<Executor, io_context::executor_type>::value;
     win_iocp_io_context* iocp_service = this->get_iocp_service(ex);
 
-    typedef win_iocp_overlapped_op<Handler, io_object_executor<Executor>> op;
+    typedef win_iocp_overlapped_op<Handler, io_object_executor<Executor> > op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
     p.p = new (p.v) op(handler, io_object_executor<Executor>(ex, native));
