@@ -519,6 +519,26 @@ Examples showing how to use UNIX domain (local) sockets.
 [endsect]
 
 
+[section:cpp14_examples C++14 Examples]
+
+
+[heading Operations]
+
+Examples showing how to implement composed asynchronous operations as reusable library functions.
+
+* [@../src/examples/cpp14/operations/composed_1.cpp]
+* [@../src/examples/cpp14/operations/composed_2.cpp]
+* [@../src/examples/cpp14/operations/composed_3.cpp]
+* [@../src/examples/cpp14/operations/composed_4.cpp]
+* [@../src/examples/cpp14/operations/composed_5.cpp]
+* [@../src/examples/cpp14/operations/composed_6.cpp]
+* [@../src/examples/cpp14/operations/composed_7.cpp]
+* [@../src/examples/cpp14/operations/composed_8.cpp]
+
+
+[endsect]
+
+
 [section:cpp17_examples C++17 Examples]
 
 
