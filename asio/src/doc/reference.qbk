@@ -58529,6 +58529,8 @@ Submits a completion token or function object for execution.
 
 This function submits an object for execution using the object's associated executor. The function object is queued for execution, and is never called from the current thread prior to returning from `defer()`.
 
+The use of `defer()`, rather than [link asio.reference.post `post`] , indicates the caller's preference that the executor defer the queueing of the function object. This may allow the executor to optimise queueing for cases when the function object represents a continuation of the current call context.
+
 This function has the following effects:
 
 
@@ -58572,6 +58574,8 @@ Submits a completion token or function object for execution.
 
 
 This function submits an object for execution using the specified executor. The function object is queued for execution, and is never called from the current thread prior to returning from `defer()`.
+
+The use of `defer()`, rather than [link asio.reference.post `post`] , indicates the caller's preference that the executor defer the queueing of the function object. This may allow the executor to optimise queueing for cases when the function object represents a continuation of the current call context.
 
 This function has the following effects:
 
@@ -58756,7 +58760,7 @@ Submits a completion token or function object for execution.
       CompletionToken && token);
 
 
-This function submits an object for execution using the object's associated executor. The function object is queued for execution, and is never called from the current thread prior to returning from `dispatch()`.
+This function submits an object for execution using the object's associated executor. The function object may be called from the current thread prior to returning from `dispatch()`. Otherwise, it is queued for execution.
 
 This function has the following effects:
 
@@ -58800,7 +58804,7 @@ Submits a completion token or function object for execution.
       typename enable_if< is_executor< Executor >::value >::type *  = 0);
 
 
-This function submits an object for execution using the specified executor. The function object is queued for execution, and is never called from the current thread prior to returning from `dispatch()`.
+This function submits an object for execution using the specified executor. The function object may be called from the current thread prior to returning from `dispatch()`. Otherwise, it is queued for execution.
 
 This function has the following effects:
 
@@ -98100,6 +98104,8 @@ Submits a completion token or function object for execution.
 
 This function submits an object for execution using the object's associated executor. The function object is queued for execution, and is never called from the current thread prior to returning from `post()`.
 
+The use of `post()`, rather than [link asio.reference.defer `defer`] , indicates the caller's preference that the function object be eagerly queued for execution.
+
 This function has the following effects:
 
 
@@ -98143,6 +98149,8 @@ Submits a completion token or function object for execution.
 
 
 This function submits an object for execution using the specified executor. The function object is queued for execution, and is never called from the current thread prior to returning from `post()`.
+
+The use of `post()`, rather than [link asio.reference.defer `defer`] , indicates the caller's preference that the function object be eagerly queued for execution.
 
 This function has the following effects:
 
