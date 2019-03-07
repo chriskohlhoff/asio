@@ -22,15 +22,7 @@ AC_ARG_WITH(boost,
   fi
 ],
 [
-  BOOSTDIR=`ls -1d ../boost_*_*_*/ 2>/dev/null | sort -t "_" -k 2nr -k 3nr -k 4nr | head -n 1 | sed -e 's/\/$//'`
-  if test "${BOOSTDIR}" != ""; then
-    BOOSTDIR="`pwd`/${BOOSTDIR}"
-    if test -d "${BOOSTDIR}"; then
-      echo "using automatically detected boost from ${BOOSTDIR}"
-      CPPFLAGS="$CPPFLAGS -I${BOOSTDIR} -DASIO_ENABLE_BOOST -DBOOST_CHRONO_HEADER_ONLY -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
-      LIBS="$LIBS -L${BOOSTDIR}/stage/lib"
-    fi
-  fi
+  STANDALONE="yes"
 ])
 
 AC_ARG_ENABLE(separate-compilation,
