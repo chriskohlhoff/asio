@@ -226,10 +226,14 @@ void test()
     socket1.native_non_blocking(false, ec);
 
     ip::icmp::endpoint endpoint1 = socket1.local_endpoint();
+    (void)endpoint1;
     ip::icmp::endpoint endpoint2 = socket1.local_endpoint(ec);
+    (void)endpoint2;
 
     ip::icmp::endpoint endpoint3 = socket1.remote_endpoint();
+    (void)endpoint3;
     ip::icmp::endpoint endpoint4 = socket1.remote_endpoint(ec);
+    (void)endpoint4;
 
     socket1.shutdown(socket_base::shutdown_both);
     socket1.shutdown(socket_base::shutdown_both, ec);
