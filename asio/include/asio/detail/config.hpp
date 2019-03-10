@@ -298,9 +298,9 @@
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
 #  if defined(ASIO_MSVC)
-#   if (_MSC_VER >= 1700)
+#   if (_MSC_VER >= 1800)
 #    define ASIO_HAS_DECLTYPE 1
-#   endif // (_MSC_VER >= 1700)
+#   endif // (_MSC_VER >= 1800)
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_DECLTYPE)
 #endif // !defined(ASIO_HAS_DECLTYPE)
