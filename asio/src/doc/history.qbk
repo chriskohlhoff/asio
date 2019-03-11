@@ -7,6 +7,217 @@
 
 [section:history Revision History]
 
+[heading Asio 1.13.0]
+
+* Added custom I/O executor support to I/O objects.
+
+  * All I/O objects now have an additional `Executor` template parameter. This
+    template parameter defaults to the `asio::executor` type (the polymorphic
+    executor wrapper) but can be used to specify a user-defined executor
+    type.
+
+  * I/O objects' constructors and functions that previously took an
+    `asio::io_context&` now accept either an `Executor` or a reference to a
+    concrete `ExecutionContext` (such as `asio::io_context` or
+    `asio::thread_pool`).
+
+  * Note: One potential source of breakage in existing user code is when reusing an
+    I/O object's `io_context` for constructing another I/O object, as in:
+    ``
+    asio::steady_timer my_timer(my_socket.get_executor().context());
+    ``[br]
+    To fix this, either construct the second I/O object using the first I/O
+    object's executor:[br]
+    ``
+    asio::steady_timer my_timer(my_socket.get_executor());
+    ``[br]
+    or otherwise explicitly pass the `io_context`:[br]
+    ``
+    asio::steady_timer my_timer(my_io_context);
+    ``[br]
+
+  * The previously deprecated `get_io_context` and `get_io_service`
+    member functions have now been removed.
+
+  * The previously deprecated service template parameters, and the
+    corresponding classes, have now been removed.
+
+* Added a new `async_result` form with an `initiate` static member function.
+
+  * The `async_result` template now supports a new form:
+    ``
+    template <typename CompletionToken, typename Signature>
+    struct async_result
+    {
+      typedef /* ... */ return_type;
+
+      template <typename Initiation,
+          typename RawCompletionToken,
+          typename... Args>
+      static return_type initiate(
+          Initiation&& initiation,
+          RawCompletionToken&& token,
+          Args&&... args);
+    };
+    ``[br]
+
+  * The `initiate` member function must: (a) transform the token into a
+    completion handler object `handler`; (b) cause the invocation of the
+    function object `initiation` as if by calling
+    `std::forward<Initiation>(initiation)(std::move(handler),
+    std::forward<Args>(args)...)`. Note that the invocation of `initiation`
+    may be deferred (e.g. lazily evaluated), in which case `initiation` and
+    `args` must be decay-copied and moved as required.
+
+  * A helper function template `async_initiate` has also been added as a
+    wrapper for the invocation of `async_result<>::initiate`. For backward
+    compatibility, this function supports both the old and new `async_result`
+    forms.
+
+  * The composed operations examples have been updated to use `async_initiate`.
+
+  * The previously deprecated `handler_type` trait and single-argument form of
+    `async_result` have now been removed.
+
+* Updated the Coroutines TS support and promoted it to the `asio` namespace.
+
+  * The `awaitable<>`, `co_spawn`, `this_coro`, `detached`, and
+    `redirect_error` facilities have been moved from the `asio::experimental`
+    namespace to namespace `asio`. As part of this change, the
+    `this_coro::token()` awaitable has been superseded by the
+    `asio::use_awaitable` completion token.
+
+  * Please note that the `use_awaitable` and `redirect_error` completion tokens
+    work only with asynchronous operations that use the new form of
+    `async_result` with member function `initiate`. Furthermore, when using
+    `use_awaitable`, please be aware that the asynchronous operation is not
+    initiated until `co_await` is applied to the `awaitable<>`.
+
+* Added a new `DynamicBuffer_v2` concept which is CopyConstructible.
+
+  * This change adds a new set of type requirements for dynamic buffers,
+    `DynamicBuffer_v2`, which supports copy construction. These new type
+    requirements enable dynamic buffers to be used as arguments to
+    user-defined composed operations, where the same dynamic buffer object
+    is used repeatedly for multiple underlying operations. For example:[br]
+    ``
+      template <typename DynamicBuffer>
+      void echo_line(tcp::socket& sock, DynamicBuffer buf)
+      {
+        n = asio::read_until(sock, buf, '\n');
+        asio::write(sock, buf, asio::transfer_exactly(n));
+      }
+    ``[br]
+
+  * The original `DynamicBuffer` type requirements have been renamed to
+    `DynamicBuffer_v1`. These requirements continue to be compatible with the
+    Networking TS.
+
+  * New type traits `is_dynamic_buffer_v1` and `is_dynamic_buffer_v2` have been
+    added to test for conformance to `DynamicBuffer_v1` and `DynamicBuffer_v2`
+    respectively. The existing `is_dynamic_buffer` trait has been retained and
+    delegates to `is_dynamic_buffer_v1` (unless `ASIO_NO_DYNAMIC_BUFFER_V1` is
+    explicitly defined, in which case it delegates to `is_dynamic_buffer_v2`).
+
+  * For convenience, the `dynamic_string_buffer` and `dynamic_vector_buffer`
+    classes conform to both `DynamicBuffer_v1` and `DynamicBuffer_v2`
+    requirements.
+
+  * When `ASIO_NO_DYNAMIC_BUFFER_V1` is defined, all support for
+    `DynamicBuffer_v1` types and functions is #ifdef-ed out. Support for using
+    `basic_streambuf` with the `read`, `async_read`, `read_until`,
+    `async_read_until`, `write`, and `async_write` functions is also disabled
+    as a consequence.
+
+  * Note: This change should have no impact on existing source code that simply
+    uses dynamic buffers in conjunction with Asio's composed operations.
+
+* Added a new `async_compose` function that simplifies the implementation of
+  user-defined asynchronous operations.
+
+* Added a `make_strand` function, which creates a `strand` with a deduced
+  `Executor` template argument.
+
+* Relaxed the completion condition type requirements to only require
+  move-constructibility rather than copy-constructibility.
+
+* Added a constructor for `local::basic_endpoint` that takes a `string_view`.
+
+* Added the noexcept qualifier to various member functions of the
+  `ip::address`, `ip::address_v4`, `ip::address_v6`, `ip::basic_endpoint`, and
+  `executor_work_guard` classes.
+
+* Added the noexcept qualifier to the `buffer_sequence_begin` and
+  `buffer_sequence_end` functions.
+
+* Added a new `ASIO_DISABLE_VISIBILITY` configuration `#define` that allows
+  visibility pragmas to be disabled. (Note: If symbols are hidden, extra care
+  must be taken to ensure that Asio types are not passed across shared
+  library API boundaries.)
+
+* Changed compile-time feature detection to define `ASIO_STANDALONE`
+  automatically if C++11 or later is detected.
+
+  * Users should define `ASIO_ENABLE_BOOST` to explicitly disable standalone
+    mode when compiling with C++11 or later.
+
+  * The `configure` script now defaults to a standalone build unless Boost is
+    specified or detected.
+
+* Enabled recycling of the memory used to type-erase a function object with the
+  polymorphic executor.
+
+* Changed receive operations to return the correct number of bytes transferred
+  when truncation (`error::message_size`) occurs on a datagram-oriented socket.
+
+* Fixed multicast behaviour on QNX by automatically applying `SO_REUSEPORT`
+  when the `reuse_address` option is set.
+
+* Added inclusion of `unistd.h` when targeting Haiku OS, to fix feature detection.
+
+* Added the `network_v[46].hpp` headers to the top-level convenience header.
+
+* Fixed calculation of absolute timeout when the backend uses
+  `pthread_cond_timedwait`.
+
+* Changed the range-based asynchronous connect operation to deduce the
+  `EndpointSequence` iterator type rather than assume the presence of a
+  `const_iterator` typedef.
+
+* Fixed `buffer_sequence_begin` and `buffer_sequence_end` to prevent implicit
+  conversion. This change addresses an issue where a call to
+  `buffer_sequence_begin` or `buffer_sequence_end` could trigger an implicit
+  conversion to `const_buffer` or `mutable_buffer`. Whenever this implicit
+  conversion occurred, the return value of `buffer_sequence_begin` or
+  `buffer_sequence_end` would point to a temporary object.
+
+* Ensured SSL handshake errors are propagated to the peer before the local
+  operation completes.
+
+* Suppressed the `eof` error on SSL shutdown as it actually indicates success.
+
+* Added a fallback error code for when we OpenSSL produces an
+  `SSL_ERROR_SYSCALL` result without an associated error.
+
+* Changed composed asynchronous read and write operations to move, rather than
+  copy, the buffer sequence objects when the composed operation implementation
+  is moved.
+
+* Changed to use `<atomic>` when targeting apple/clang/libc++ with recent Xcode
+  versions, even for C++03. This fixes a warning about the deprecation of
+  `OSMemoryBarrier`.
+
+* Fixed compile errors that occur when using the composed read and write
+  operations with MSVC 11.0, by disabling `decltype` support for that compiler.
+
+* Increased the default value of `_WIN32_WINNT` to `0x0601` (Windows 7).
+
+* Fixed `dispatch` documentation to note that it may call the supplied function
+  object in the current thread.
+
+* Updated `post` and `defer` documentation to clarify the the distinction
+  between them.
+
 [heading Asio 1.12.2]
 
 * Fixed a problem with the detection of `std::future` availability with
