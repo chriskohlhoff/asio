@@ -292,16 +292,6 @@ Asio.
         the map.
     ]
   ]
-  [
-    [`ASIO_ENABLE_OLD_SERVICES`]
-    [
-      The service template parameters, and the corresponding classes, are
-      disabled by default. For example, instead of `basic_socket<Protocol,
-      SocketService>` we now have simply `basic_socket<Protocol>`. The old
-      interface can be enabled by defining the `ASIO_ENABLE_OLD_SERVICES`
-      macro.
-    ]
-  ]
 ]
 
 [heading Mailing List]
