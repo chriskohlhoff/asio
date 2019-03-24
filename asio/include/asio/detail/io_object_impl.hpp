@@ -93,9 +93,7 @@ public:
   // Move-construct an I/O object.
   io_object_impl(io_object_impl&& other)
     : service_(&other.get_service()),
-      implementation_executor_(
-        ASIO_MOVE_CAST(implementation_executor_type)(
-          other.implementation_executor_))
+      implementation_executor_(other.get_implementation_executor())
   {
     service_->move_construct(implementation_, other.implementation_);
   }
