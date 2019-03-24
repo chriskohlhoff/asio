@@ -729,6 +729,17 @@ struct move_accept_handler
 private:
   move_accept_handler(const move_accept_handler&) {}
 };
+
+struct move_accept_ioc_handler
+{
+  move_accept_ioc_handler() {}
+  void operator()(const asio::error_code&,
+      asio::basic_stream_socket<asio::ip::tcp,
+        asio::io_context::executor_type>) {}
+  move_accept_ioc_handler(move_accept_handler&&) {}
+private:
+  move_accept_ioc_handler(const move_accept_handler&) {}
+};
 #endif // defined(ASIO_HAS_MOVE)
 
 void test()
@@ -913,8 +924,12 @@ void test()
 #if defined(ASIO_HAS_MOVE)
     acceptor1.async_accept(move_accept_handler());
     acceptor1.async_accept(ioc, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, move_accept_ioc_handler());
     acceptor1.async_accept(peer_endpoint, move_accept_handler());
     acceptor1.async_accept(ioc, peer_endpoint, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, peer_endpoint, move_accept_handler());
+    acceptor1.async_accept(ioc_ex, peer_endpoint, move_accept_ioc_handler());
 #endif // defined(ASIO_HAS_MOVE)
   }
   catch (std::exception&)
