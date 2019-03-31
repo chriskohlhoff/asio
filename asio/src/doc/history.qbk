@@ -7,6 +7,21 @@
 
 [section:history Revision History]
 
+[heading Asio 1.14.0]
+
+* Improved I/O object performance by adding runtime detection of native I/O
+  executors when using the polymorphic executor wrapper.
+
+* Changed I/O object move constructors so that the executor is copied, not
+  moved. This ensures that the moved-from I/O object is left in the same state
+  as if constructed with a valid executor but without a resource.
+
+* On Windows, fixed an issue where global object destructors were not being
+  run.
+
+* Fixed move-based `async_accept` between sockets with different executor
+  types.
+
 [heading Asio 1.13.0]
 
 * Added custom I/O executor support to I/O objects.
