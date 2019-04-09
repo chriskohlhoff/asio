@@ -10,7 +10,6 @@ AC_LANG(C++)
 AC_PROG_RANLIB
 
 AC_DEFINE(_REENTRANT, [1], [Define this])
-
 AC_ARG_WITH(boost,
   AC_HELP_STRING([--with-boost=DIR],[location of boost distribution]),
 [
@@ -47,23 +46,47 @@ if test "$STANDALONE" != yes; then
   ],[])
 fi
 
-AC_ARG_WITH(openssl,
-  AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
+# Setup for wolfSSL.
+AC_ARG_WITH(wolfssl,
+  AC_HELP_STRING([--with-wolfssl=DIR],[location of wolfssl]),
 [
-  CPPFLAGS="$CPPFLAGS -I${withval}/include"
+  CPPFLAGS="$CPPFLAGS -I${withval}/include/wolfssl -DASIO_USE_WOLFSSL"
   LIBS="$LIBS -L${withval}/lib"
+  WOLFSSL_USE=no
 ],[])
 
-AC_CHECK_HEADER([openssl/ssl.h],,
-[
-  OPENSSL_FOUND=no
-],[])
+if test x$WOLFSSL_USE == xno; then
+    AC_CHECK_HEADER([wolfssl/options.h],,
+    [
+      WOLFSSL_FOUND=no
+    ],[])
 
-if test x$OPENSSL_FOUND != xno; then
-  LIBS="$LIBS -lssl -lcrypto"
+    if test x$WOLFSSL_FOUND != xno; then
+      LIBS="$LIBS -lwolfssl"
+    fi
+    AM_CONDITIONAL(HAVE_OPENSSL,test x$WOLFSSL_FOUND != xno)
 fi
 
-AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
+# Setup for OpenSSL.
+if test x$WOLFSSL_USE != xno; then
+    AC_ARG_WITH(openssl,
+      AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
+    [
+      CPPFLAGS="$CPPFLAGS -I${withval}/include"
+      LIBS="$LIBS -L${withval}/lib"
+    ],[])
+
+    AC_CHECK_HEADER([openssl/ssl.h],,
+    [
+      OPENSSL_FOUND=no
+    ],[])
+
+    if test x$OPENSSL_FOUND != xno; then
+      LIBS="$LIBS -lssl -lcrypto"
+    fi
+
+    AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
+fi
 
 WINDOWS=no
 case $host in
