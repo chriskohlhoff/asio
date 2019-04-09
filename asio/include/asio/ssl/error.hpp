@@ -54,7 +54,9 @@ enum stream_errors
   /// call.
   unexpected_result
 #else // defined(GENERATING_DOCUMENTATION)
-# if (OPENSSL_VERSION_NUMBER < 0x10100000L) && !defined(OPENSSL_IS_BORINGSSL)
+# if (OPENSSL_VERSION_NUMBER < 0x10100000L) \
+    && !defined(OPENSSL_IS_BORINGSSL) \
+    && !defined(ASIO_USE_WOLFSSL)
   stream_truncated = ERR_PACK(ERR_LIB_SSL, 0, SSL_R_SHORT_READ),
 # else
   stream_truncated = 1,

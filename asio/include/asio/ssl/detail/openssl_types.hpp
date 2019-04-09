@@ -17,6 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/socket_types.hpp"
+#if defined(ASIO_USE_WOLFSSL)
+# include <wolfssl/options.h>
+#endif // defined(ASIO_USE_WOLFSSL)
 #include <openssl/conf.h>
 #include <openssl/ssl.h>
 #if !defined(OPENSSL_NO_ENGINE)
