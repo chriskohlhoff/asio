@@ -680,7 +680,7 @@ public:
    *
    * @note Calls @c SSL_CTX_set_tmp_ecdh.
    */
-  ASIO_DECL void use_tmp_ecdh(const std::string& certificate);
+  ASIO_DECL void use_tmp_ecdh_file(const std::string& certificate);
 
   /// Use the specified certificate to obtain temporary Diffie-Hellman parameters
   /// for Elliptic Curve Diffie-Hellman.
@@ -695,7 +695,7 @@ public:
    *
    * @note Calls @c SSL_CTX_set_tmp_ecdh.
    */
-  ASIO_DECL ASIO_SYNC_OP_VOID use_tmp_ecdh(
+  ASIO_DECL ASIO_SYNC_OP_VOID use_tmp_ecdh_file(
 		  const std::string& certificate, asio::error_code& ec);
 
   /// Set the password callback.
@@ -767,7 +767,7 @@ private:
   ASIO_DECL ASIO_SYNC_OP_VOID do_use_tmp_dh(
       BIO* bio, asio::error_code& ec);
 
-  // Helper function to set the temprorary ECC Diffie-Hellman parameters from a BIO.
+  // Helper function to set the temporary ECC Diffie-Hellman parameters from a BIO.
   ASIO_DECL ASIO_SYNC_OP_VOID do_use_tmp_ecdh(
   		  BIO* bio, asio::error_code& ec);
 
