@@ -1139,10 +1139,10 @@ ASIO_SYNC_OP_VOID context::do_use_tmp_ecdh(
     evp_pkey_cleanup pkey = { ::X509_get_pubkey(x509.p) };
     if(pkey.p)
     {
-      int type = EVP_PKEY_type(pkey.p->type);
-      if(type == EVP_PKEY_EC)
+      ec_key_cleanup tmp = { ::EVP_PKEY_get1_EC_KEY(pkey.p) };
+      if(tmp.p)
       {
-        const EC_GROUP *group = EC_KEY_get0_group(pkey.p->pkey.ec);
+        const EC_GROUP *group = EC_KEY_get0_group(tmp.p);
         nid = EC_GROUP_get_curve_name(group);
       }
     }
