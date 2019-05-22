@@ -225,9 +225,17 @@ struct redirect_error_signature<R(const asio::error_code&)>
 template <typename CompletionToken, typename Signature>
 struct async_result<redirect_error_t<CompletionToken>, Signature>
 {
-  typedef typename async_result<CompletionToken,
+private:
+  typedef async_result<CompletionToken,
     typename detail::redirect_error_signature<Signature>::type>
-      ::return_type return_type;
+      inner_async_result;
+
+public:
+  typedef typename inner_async_result::return_type return_type;
+
+  typedef detail::redirect_error_handler<
+    typename inner_async_result::completion_handler_type>
+      completion_handler_type;
 
   template <typename Initiation>
   struct init_wrapper
