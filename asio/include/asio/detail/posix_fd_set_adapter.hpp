@@ -62,14 +62,12 @@ public:
 
   void set(reactor_op_queue<socket_type>& operations, op_queue<operation>& ops)
   {
-    reactor_op_queue<socket_type>::iterator i = operations.begin();
-    while (i != operations.end())
+    for (reactor_op_queue<socket_type>::iterator i = operations.begin(); i != operations.end(); ++i)
     {
-      reactor_op_queue<socket_type>::iterator op_iter = i++;
-      if (!set(op_iter->first))
+      if (!set(i->first))
       {
-        asio::error_code ec(error::fd_set_failure);
-        operations.cancel_operations(op_iter, ops, ec);
+        boost::system::error_code ec(error::fd_set_failure);
+        operations.cancel_operations(i, ops, ec);
       }
     }
   }
@@ -92,12 +90,10 @@ public:
   void perform(reactor_op_queue<socket_type>& operations,
       op_queue<operation>& ops) const
   {
-    reactor_op_queue<socket_type>::iterator i = operations.begin();
-    while (i != operations.end())
+    for (reactor_op_queue<socket_type>::iterator i = operations.begin(); i != operations.end(); ++i)
     {
-      reactor_op_queue<socket_type>::iterator op_iter = i++;
-      if (is_set(op_iter->first))
-        operations.perform_operations(op_iter, ops);
+      if (is_set(i->first))
+        operations.perform_operations(i, ops);
     }
   }
 
