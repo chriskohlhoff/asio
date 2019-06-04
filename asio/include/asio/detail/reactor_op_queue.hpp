@@ -146,12 +146,10 @@ public:
   // Get all operations owned by the queue.
   void get_all_operations(op_queue<operation>& ops)
   {
-    iterator i = operations_.begin();
-    while (i != operations_.end())
+    for (iterator i = operations_.begin(); i != operations_.end(); ++i)
     {
-      iterator op_iter = i++;
-      ops.push(op_iter->second);
-      operations_.erase(op_iter);
+      ops.push(i->second);
+      operations_.erase(i);
     }
   }
 
