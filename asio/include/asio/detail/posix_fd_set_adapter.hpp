@@ -66,7 +66,7 @@ public:
     {
       if (!set(i->first))
       {
-        boost::system::error_code ec(error::fd_set_failure);
+        asio::error_code ec(error::fd_set_failure);
         operations.cancel_operations(i, ops, ec);
       }
     }
