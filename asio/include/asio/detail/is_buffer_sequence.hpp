@@ -214,8 +214,8 @@ char mutable_buffers_type_typedef_helper(
 template <typename T, typename Buffer>
 struct is_buffer_sequence_class
   : integral_constant<bool,
-      sizeof(buffer_sequence_begin_helper<T>(0)) != 1 &&
-      sizeof(buffer_sequence_end_helper<T>(0)) != 1 &&
+      sizeof(buffer_sequence_begin_helper<T>(0, 0)) != 1 &&
+      sizeof(buffer_sequence_end_helper<T>(0, 0)) != 1 &&
       sizeof(buffer_sequence_element_type_helper<T, Buffer>(0, 0)) == 1>
 {
 };
