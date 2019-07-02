@@ -8,13 +8,16 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <vector>
 #include "asio/buffer.hpp"
 #include "unit_test.hpp"
 
 #ifdef ASIO_HAS_DECLTYPE
 # define ASIO_HAS_DECLTYPE_MSG "ASIO_HAS_DECLTYPE is defined"
+# define ASIO_HAS_DECLTYPE_FLAG true
 #else
 # define ASIO_HAS_DECLTYPE_MSG "ASIO_HAS_DECLTYPE is not defined"
+# define ASIO_HAS_DECLTYPE_FLAG false
 #endif
 
 using namespace asio;
@@ -50,6 +53,33 @@ struct X1
   const mutable_buffer* end() const;
 };
 
+struct B2
+{
+  typedef mutable_buffer value_type;
+  typedef void const_iterator; // (!)
+
+  const mutable_buffer* begin() const;
+  const mutable_buffer* end() const;
+};
+
+struct B3
+{
+  typedef mutable_buffer value_type;
+  typedef const mutable_buffer* const_iterator;
+
+  int begin; // (!)
+  const mutable_buffer* end() const;
+};
+
+struct C1
+{
+  typedef mutable_buffer value_type;
+  typedef const mutable_buffer* const_iterator;
+
+  const mutable_buffer* begin() const;
+  int end() const; // (!)
+};
+
 void run()
 {
   ASIO_TEST_IOSTREAM << ASIO_HAS_DECLTYPE_MSG << std::endl;
@@ -57,6 +87,27 @@ void run()
   ASIO_CHECK(!is_mutable_buffer_sequence<A1>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<B1>::value);
   ASIO_CHECK( is_mutable_buffer_sequence<X1>::value);
+  ASIO_CHECK( is_mutable_buffer_sequence<B2>::value == ASIO_HAS_DECLTYPE_FLAG);
+  ASIO_CHECK(!is_mutable_buffer_sequence<B3>::value);
+  ASIO_CHECK(!is_mutable_buffer_sequence<C1>::value);
+
+  ASIO_CHECK(!is_mutable_buffer_sequence<void>::value);
+  ASIO_CHECK(!is_const_buffer_sequence<void>::value);
+
+  ASIO_CHECK(!is_mutable_buffer_sequence<int>::value);
+  ASIO_CHECK(!is_const_buffer_sequence<int>::value);
+
+  ASIO_CHECK( is_mutable_buffer_sequence<mutable_buffer>::value);
+  ASIO_CHECK( is_const_buffer_sequence<mutable_buffer>::value);
+
+  ASIO_CHECK(!is_mutable_buffer_sequence<const_buffer>::value);
+  ASIO_CHECK( is_const_buffer_sequence<const_buffer>::value);
+
+  ASIO_CHECK( is_mutable_buffer_sequence<std::vector<mutable_buffer> >::value);
+  ASIO_CHECK( is_const_buffer_sequence<std::vector<mutable_buffer> >::value);
+
+  ASIO_CHECK(!is_mutable_buffer_sequence<std::vector<const_buffer> >::value);
+  ASIO_CHECK( is_const_buffer_sequence<std::vector<const_buffer> >::value);
 }
 
 } // namespace
