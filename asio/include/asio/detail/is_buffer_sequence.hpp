@@ -53,18 +53,21 @@ struct buffer_sequence_memfns_check
 {
 };
 
-template <typename>
-char (&buffer_sequence_begin_helper(...))[2];
-
 #if defined(ASIO_HAS_DECLTYPE)
 
+template <typename>
+char buffer_sequence_begin_helper(...);
+
 template <typename T>
-char buffer_sequence_begin_helper(T* t,
+char (&buffer_sequence_begin_helper(T* t,
     typename enable_if<!is_same<
       decltype(asio::buffer_sequence_begin(*t)),
-        void>::value>::type*);
+        void>::value>::type*))[2];
 
 #else // defined(ASIO_HAS_DECLTYPE)
+
+template <typename>
+char (&buffer_sequence_begin_helper(...))[2];
 
 template <typename T>
 char buffer_sequence_begin_helper(T* t,
@@ -74,18 +77,21 @@ char buffer_sequence_begin_helper(T* t,
 
 #endif // defined(ASIO_HAS_DECLTYPE)
 
-template <typename>
-char (&buffer_sequence_end_helper(...))[2];
-
 #if defined(ASIO_HAS_DECLTYPE)
 
+template <typename>
+char buffer_sequence_end_helper(...);
+
 template <typename T>
-char buffer_sequence_end_helper(T* t,
+char (&buffer_sequence_end_helper(T* t,
     typename enable_if<!is_same<
       decltype(asio::buffer_sequence_end(*t)),
-        void>::value>::type*);
+        void>::value>::type*))[2];
 
 #else // defined(ASIO_HAS_DECLTYPE)
+
+template <typename>
+char (&buffer_sequence_end_helper(...))[2];
 
 template <typename T>
 char buffer_sequence_end_helper(T* t,

@@ -41,12 +41,22 @@ struct B1
   // no "end" member function
 };
 
+struct X1
+{
+  typedef mutable_buffer value_type;
+  typedef const mutable_buffer* const_iterator;
+
+  const mutable_buffer* begin() const;
+  const mutable_buffer* end() const;
+};
+
 void run()
 {
   ASIO_TEST_IOSTREAM << ASIO_HAS_DECLTYPE_MSG << std::endl;
 
   ASIO_CHECK(!is_mutable_buffer_sequence<A1>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<B1>::value);
+  ASIO_CHECK( is_mutable_buffer_sequence<X1>::value);
 }
 
 } // namespace
