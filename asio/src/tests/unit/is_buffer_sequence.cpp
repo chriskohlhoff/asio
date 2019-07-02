@@ -8,10 +8,14 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-//#define ASIO_DISABLE_DECLTYPE
-
 #include "asio/buffer.hpp"
 #include "unit_test.hpp"
+
+#ifdef ASIO_HAS_DECLTYPE
+# define ASIO_HAS_DECLTYPE_MSG "ASIO_HAS_DECLTYPE is defined"
+#else
+# define ASIO_HAS_DECLTYPE_MSG "ASIO_HAS_DECLTYPE is not defined"
+#endif
 
 using namespace asio;
 
@@ -39,6 +43,8 @@ struct B1
 
 void run()
 {
+  ASIO_TEST_IOSTREAM << ASIO_HAS_DECLTYPE_MSG << std::endl;
+
   ASIO_CHECK(!is_mutable_buffer_sequence<A1>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<B1>::value);
 }
