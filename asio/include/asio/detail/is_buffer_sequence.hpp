@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2019 Alexander Karzhenkov
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +18,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/detail/sfinae_helpers.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -29,8 +31,6 @@ namespace detail {
 
 struct buffer_sequence_memfns_base
 {
-  void begin();
-  void end();
   void size();
   void max_size();
   void capacity();
@@ -52,48 +52,6 @@ template <typename T, T>
 struct buffer_sequence_memfns_check
 {
 };
-
-template <typename>
-char (&buffer_sequence_begin_helper(...))[2];
-
-#if defined(ASIO_HAS_DECLTYPE)
-
-template <typename T>
-char buffer_sequence_begin_helper(T* t,
-    typename enable_if<!is_same<
-      decltype(asio::buffer_sequence_begin(*t)),
-        void>::value>::type*);
-
-#else // defined(ASIO_HAS_DECLTYPE)
-
-template <typename T>
-char buffer_sequence_begin_helper(T* t,
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::begin>*);
-
-#endif // defined(ASIO_HAS_DECLTYPE)
-
-template <typename>
-char (&buffer_sequence_end_helper(...))[2];
-
-#if defined(ASIO_HAS_DECLTYPE)
-
-template <typename T>
-char buffer_sequence_end_helper(T* t,
-    typename enable_if<!is_same<
-      decltype(asio::buffer_sequence_end(*t)),
-        void>::value>::type*);
-
-#else // defined(ASIO_HAS_DECLTYPE)
-
-template <typename T>
-char buffer_sequence_end_helper(T* t,
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::end>*);
-
-#endif // defined(ASIO_HAS_DECLTYPE)
 
 template <typename>
 char (&size_memfn_helper(...))[2];
@@ -176,27 +134,6 @@ char shrink_memfn_helper(
       void (buffer_sequence_memfns_base::*)(),
       &buffer_sequence_memfns_derived<T>::shrink>*);
 
-template <typename, typename>
-char (&buffer_sequence_element_type_helper(...))[2];
-
-#if defined(ASIO_HAS_DECLTYPE)
-
-template <typename T, typename Buffer>
-char buffer_sequence_element_type_helper(T* t,
-    typename enable_if<is_convertible<
-      decltype(*asio::buffer_sequence_begin(*t)),
-        Buffer>::value>::type*);
-
-#else // defined(ASIO_HAS_DECLTYPE)
-
-template <typename T, typename Buffer>
-char buffer_sequence_element_type_helper(
-    typename T::const_iterator*,
-    typename enable_if<is_convertible<
-      typename T::value_type, Buffer>::value>::type*);
-
-#endif // defined(ASIO_HAS_DECLTYPE)
-
 template <typename>
 char (&const_buffers_type_typedef_helper(...))[2];
 
@@ -211,20 +148,42 @@ template <typename T>
 char mutable_buffers_type_typedef_helper(
     typename T::mutable_buffers_type*);
 
-template <typename T, typename Buffer>
-struct is_buffer_sequence_class
-  : integral_constant<bool,
-      sizeof(buffer_sequence_begin_helper<T>(0)) != 1 &&
-      sizeof(buffer_sequence_end_helper<T>(0)) != 1 &&
-      sizeof(buffer_sequence_element_type_helper<T, Buffer>(0, 0)) == 1>
+template <typename Buffer>
+struct is_buffer_sequence_class : sfinae_check_base
 {
+  template <typename T>
+  static result<sizeof(
+
+    // Basic checks
+
+    is_convertible_to<Buffer>(*buffer_sequence_begin(declval<T&>())),
+    is_convertible_to<Buffer>(*buffer_sequence_end(declval<T&>())),
+
+#if 1
+
+    // Check additional details of the inspected type
+
+    // Perhaps the additional checks make sense when using C++98.
+    // It would be better to implement them by the means
+    // of 'buffer_sequence_begin' and 'buffer_sequence_end'.
+    // Explicit specializations of 'is_buffer_sequence'
+    // for 'mutable_buffer' and 'const_buffer' would not be needed.
+
+    is_convertible_to<Buffer>(*declval<T>().begin()),
+    is_convertible_to<Buffer>(*declval<T>().end()),
+
+    is_convertible_to<Buffer>(declval<typename T::value_type>()),
+
+    check<typename T::const_iterator>(),
+
+#endif
+
+  0)> detector(int);
 };
 
 template <typename T, typename Buffer>
 struct is_buffer_sequence
-  : conditional<is_class<T>::value,
-      is_buffer_sequence_class<T, Buffer>,
-      false_type>::type
+  : sfinae_result<is_buffer_sequence_class<Buffer>, T>
 {
 };
 
