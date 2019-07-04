@@ -55,6 +55,15 @@ struct sfinae_check_base
 
   template <typename T>
   static void check();
+
+  template <bool C>
+  static typename enable_if<C>::type
+  check();
+
+  template <typename A, typename B>
+  static typename enable_if<is_same<A, B>::value>::type
+  is_same_as(B);
+
 };
 
 } // namespace detail

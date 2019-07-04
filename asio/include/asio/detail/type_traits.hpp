@@ -31,6 +31,7 @@
 # include <boost/type_traits/is_convertible.hpp>
 # include <boost/type_traits/is_function.hpp>
 # include <boost/type_traits/is_same.hpp>
+# include <boost/type_traits/remove_const.hpp>
 # include <boost/type_traits/remove_pointer.hpp>
 # include <boost/type_traits/remove_reference.hpp>
 # include <boost/utility/enable_if.hpp>
@@ -53,6 +54,7 @@ using std::is_const;
 using std::is_convertible;
 using std::is_function;
 using std::is_same;
+using std::remove_const;
 using std::remove_pointer;
 using std::remove_reference;
 #if defined(ASIO_HAS_STD_INVOKE_RESULT)
@@ -78,6 +80,7 @@ using boost::is_const;
 using boost::is_convertible;
 using boost::is_function;
 using boost::is_same;
+using boost::remove_const;
 using boost::remove_pointer;
 using boost::remove_reference;
 using boost::result_of;
