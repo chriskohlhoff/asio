@@ -99,9 +99,10 @@ struct is_dynamic_buffer_class_v1 : sfinae_check_base
   template <typename T>
   static result<sizeof(
 
-    declval<T>().size(),
-    declval<T>().max_size(),
-    declval<T>().capacity(),
+    is_same_as<std::size_t>(declval<T>().size()),
+    is_same_as<std::size_t>(declval<T>().max_size()),
+    is_same_as<std::size_t>(declval<T>().capacity()),
+
     declval<T>().consume(arg),
     declval<T>().commit(arg),
 
@@ -134,9 +135,10 @@ struct is_dynamic_buffer_class_v2 : sfinae_check_base
   template <typename T>
   static result<sizeof(
 
-    declval<T>().size(),
-    declval<T>().max_size(),
-    declval<T>().capacity(),
+    is_same_as<std::size_t>(declval<T>().size()),
+    is_same_as<std::size_t>(declval<T>().max_size()),
+    is_same_as<std::size_t>(declval<T>().capacity()),
+
     declval<T>().consume(arg),
     declval<T>().grow(arg),
     declval<T>().shrink(arg),
