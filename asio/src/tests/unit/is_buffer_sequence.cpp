@@ -22,7 +22,7 @@
 
 using namespace asio;
 
-namespace {
+namespace case1 {
 
 struct A1
 {
@@ -110,10 +110,27 @@ void run()
   ASIO_CHECK( is_const_buffer_sequence<std::vector<const_buffer> >::value);
 }
 
-} // namespace
+} // namespace case1
+
+namespace case2 {
+ 
+template <typename T>
+struct S : dynamic_vector_buffer<char, std::allocator<char> >
+{
+  T size() const;
+};
+
+void run()
+{
+  ASIO_CHECK( is_dynamic_buffer<S<std::size_t> >::value);
+  ASIO_CHECK(!is_dynamic_buffer<S<void> >::value);
+}
+
+} // 
 
 ASIO_TEST_SUITE
 (
   "is_buffer_sequence",
-  ASIO_TEST_CASE(run)
+  ASIO_TEST_CASE(case1::run)
+  ASIO_TEST_CASE(case2::run)
 )
