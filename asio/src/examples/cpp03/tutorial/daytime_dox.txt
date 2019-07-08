@@ -326,7 +326,7 @@ Create an asio::ip::udp::socket object to receive requests on UDP port 13.
 Wait for a client to initiate contact with us. The remote_endpoint object will
 be populated by asio::ip::udp::socket::receive_from().
 
-\until throw
+\until receive_from
 
 Determine what we are going to send back to the client.
 
