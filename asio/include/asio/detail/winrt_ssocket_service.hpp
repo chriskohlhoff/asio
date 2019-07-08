@@ -178,6 +178,14 @@ public:
     return endpoint;
   }
 
+  // Disable sends or receives on the socket.
+  asio::error_code shutdown(implementation_type&,
+      socket_base::shutdown_type, asio::error_code& ec)
+  {
+    ec = asio::error::operation_not_supported;
+    return ec;
+  }
+
   // Set a socket option.
   template <typename Option>
   asio::error_code set_option(implementation_type& impl,
