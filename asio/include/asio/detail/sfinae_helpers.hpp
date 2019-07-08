@@ -46,7 +46,7 @@ struct sfinae_result<C, void> : false_type
 
 struct sfinae_check_base
 {
-  template <int N> struct result { };
+  template <int> struct result { };
 
   template <typename To, typename From>
   static typename enable_if<

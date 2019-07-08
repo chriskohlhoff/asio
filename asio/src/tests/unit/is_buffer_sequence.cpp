@@ -126,7 +126,7 @@ void run()
   ASIO_CHECK(!is_dynamic_buffer<S<void> >::value);
 }
 
-} // 
+} // namespace case2
 
 ASIO_TEST_SUITE
 (
