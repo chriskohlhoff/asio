@@ -112,6 +112,13 @@ public:
       // When using a native implementation, I/O completion handlers are
       // already dispatched according to the execution context's executor's
       // rules. We can call the function directly.
+#if defined(ASIO_HAS_MOVE)
+      if (is_same<F, typename decay<F>::type>::value)
+      {
+        asio_handler_invoke_helpers::invoke(f, f);
+        return;
+      }
+#endif // defined(ASIO_HAS_MOVE)
       typename decay<F>::type function(ASIO_MOVE_CAST(F)(f));
       asio_handler_invoke_helpers::invoke(function, function);
     }
