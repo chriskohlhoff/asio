@@ -74,6 +74,8 @@ check_PROGRAMS = \
 	unit/ip/udp \
 	unit/ip/unicast \
 	unit/ip/v6_only \
+	unit/is_buffer_sequence \
+	unit/is_buffer_sequence_no_decltype \
 	unit/is_read_buffered \
 	unit/is_write_buffered \
 	unit/local/basic_endpoint \
@@ -208,6 +210,8 @@ TESTS = \
 	unit/ip/udp \
 	unit/ip/unicast \
 	unit/ip/v6_only \
+	unit/is_buffer_sequence \
+	unit/is_buffer_sequence_no_decltype \
 	unit/is_read_buffered \
 	unit/is_write_buffered \
 	unit/local/basic_endpoint \
@@ -352,6 +356,8 @@ unit_ip_tcp_SOURCES = unit/ip/tcp.cpp
 unit_ip_udp_SOURCES = unit/ip/udp.cpp
 unit_ip_unicast_SOURCES = unit/ip/unicast.cpp
 unit_ip_v6_only_SOURCES = unit/ip/v6_only.cpp
+unit_is_buffer_sequence_SOURCES = unit/is_buffer_sequence.cpp
+unit_is_buffer_sequence_no_decltype_SOURCES = unit/is_buffer_sequence_no_decltype.cpp
 unit_is_read_buffered_SOURCES = unit/is_read_buffered.cpp
 unit_is_write_buffered_SOURCES = unit/is_write_buffered.cpp
 unit_local_basic_endpoint_SOURCES = unit/local/basic_endpoint.cpp

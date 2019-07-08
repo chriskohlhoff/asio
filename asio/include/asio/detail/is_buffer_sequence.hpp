@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2019 Alexander Karzhenkov
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +18,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/detail/sfinae_helpers.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -27,204 +29,42 @@ class const_buffer;
 
 namespace detail {
 
-struct buffer_sequence_memfns_base
+template <typename Buffer>
+struct is_buffer_sequence_class : sfinae_check_base
 {
-  void begin();
-  void end();
-  void size();
-  void max_size();
-  void capacity();
-  void data();
-  void prepare();
-  void commit();
-  void consume();
-  void grow();
-  void shrink();
-};
+  template <typename T>
+  static result<sizeof(
 
-template <typename T>
-struct buffer_sequence_memfns_derived
-  : T, buffer_sequence_memfns_base
-{
-};
+    // Basic checks
 
-template <typename T, T>
-struct buffer_sequence_memfns_check
-{
-};
+    is_convertible_to<Buffer>(*buffer_sequence_begin(declval<T&>())),
+    is_convertible_to<Buffer>(*buffer_sequence_end(declval<T&>())),
 
-template <typename>
-char (&buffer_sequence_begin_helper(...))[2];
+#if 1
 
-#if defined(ASIO_HAS_DECLTYPE)
+    // Check additional details of the inspected type
 
-template <typename T>
-char buffer_sequence_begin_helper(T* t,
-    typename enable_if<!is_same<
-      decltype(asio::buffer_sequence_begin(*t)),
-        void>::value>::type*);
+    // Perhaps the additional checks make sense when using C++98.
+    // It would be better to implement them by the means
+    // of 'buffer_sequence_begin' and 'buffer_sequence_end'.
+    // Explicit specializations of 'is_buffer_sequence'
+    // for 'mutable_buffer' and 'const_buffer' would not be needed.
 
-#else // defined(ASIO_HAS_DECLTYPE)
+    is_convertible_to<Buffer>(*declval<T>().begin()),
+    is_convertible_to<Buffer>(*declval<T>().end()),
 
-template <typename T>
-char buffer_sequence_begin_helper(T* t,
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::begin>*);
+    is_convertible_to<Buffer>(declval<typename T::value_type>()),
 
-#endif // defined(ASIO_HAS_DECLTYPE)
+    check<typename T::const_iterator>(),
 
-template <typename>
-char (&buffer_sequence_end_helper(...))[2];
+#endif
 
-#if defined(ASIO_HAS_DECLTYPE)
-
-template <typename T>
-char buffer_sequence_end_helper(T* t,
-    typename enable_if<!is_same<
-      decltype(asio::buffer_sequence_end(*t)),
-        void>::value>::type*);
-
-#else // defined(ASIO_HAS_DECLTYPE)
-
-template <typename T>
-char buffer_sequence_end_helper(T* t,
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::end>*);
-
-#endif // defined(ASIO_HAS_DECLTYPE)
-
-template <typename>
-char (&size_memfn_helper(...))[2];
-
-template <typename T>
-char size_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::size>*);
-
-template <typename>
-char (&max_size_memfn_helper(...))[2];
-
-template <typename T>
-char max_size_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::max_size>*);
-
-template <typename>
-char (&capacity_memfn_helper(...))[2];
-
-template <typename T>
-char capacity_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::capacity>*);
-
-template <typename>
-char (&data_memfn_helper(...))[2];
-
-template <typename T>
-char data_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::data>*);
-
-template <typename>
-char (&prepare_memfn_helper(...))[2];
-
-template <typename T>
-char prepare_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::prepare>*);
-
-template <typename>
-char (&commit_memfn_helper(...))[2];
-
-template <typename T>
-char commit_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::commit>*);
-
-template <typename>
-char (&consume_memfn_helper(...))[2];
-
-template <typename T>
-char consume_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::consume>*);
-
-template <typename>
-char (&grow_memfn_helper(...))[2];
-
-template <typename T>
-char grow_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::grow>*);
-
-template <typename>
-char (&shrink_memfn_helper(...))[2];
-
-template <typename T>
-char shrink_memfn_helper(
-    buffer_sequence_memfns_check<
-      void (buffer_sequence_memfns_base::*)(),
-      &buffer_sequence_memfns_derived<T>::shrink>*);
-
-template <typename, typename>
-char (&buffer_sequence_element_type_helper(...))[2];
-
-#if defined(ASIO_HAS_DECLTYPE)
-
-template <typename T, typename Buffer>
-char buffer_sequence_element_type_helper(T* t,
-    typename enable_if<is_convertible<
-      decltype(*asio::buffer_sequence_begin(*t)),
-        Buffer>::value>::type*);
-
-#else // defined(ASIO_HAS_DECLTYPE)
-
-template <typename T, typename Buffer>
-char buffer_sequence_element_type_helper(
-    typename T::const_iterator*,
-    typename enable_if<is_convertible<
-      typename T::value_type, Buffer>::value>::type*);
-
-#endif // defined(ASIO_HAS_DECLTYPE)
-
-template <typename>
-char (&const_buffers_type_typedef_helper(...))[2];
-
-template <typename T>
-char const_buffers_type_typedef_helper(
-    typename T::const_buffers_type*);
-
-template <typename>
-char (&mutable_buffers_type_typedef_helper(...))[2];
-
-template <typename T>
-char mutable_buffers_type_typedef_helper(
-    typename T::mutable_buffers_type*);
-
-template <typename T, typename Buffer>
-struct is_buffer_sequence_class
-  : integral_constant<bool,
-      sizeof(buffer_sequence_begin_helper<T>(0)) != 1 &&
-      sizeof(buffer_sequence_end_helper<T>(0)) != 1 &&
-      sizeof(buffer_sequence_element_type_helper<T, Buffer>(0, 0)) == 1>
-{
+  0)> detector(int);
 };
 
 template <typename T, typename Buffer>
 struct is_buffer_sequence
-  : conditional<is_class<T>::value,
-      is_buffer_sequence_class<T, Buffer>,
-      false_type>::type
+  : sfinae_result<is_buffer_sequence_class<Buffer>, T>
 {
 };
 
@@ -252,49 +92,76 @@ struct is_buffer_sequence<const_buffer, mutable_buffer>
 {
 };
 
-template <typename T>
-struct is_dynamic_buffer_class_v1
-  : integral_constant<bool,
-      sizeof(size_memfn_helper<T>(0)) != 1 &&
-      sizeof(max_size_memfn_helper<T>(0)) != 1 &&
-      sizeof(capacity_memfn_helper<T>(0)) != 1 &&
-      sizeof(data_memfn_helper<T>(0)) != 1 &&
-      sizeof(consume_memfn_helper<T>(0)) != 1 &&
-      sizeof(prepare_memfn_helper<T>(0)) != 1 &&
-      sizeof(commit_memfn_helper<T>(0)) != 1 &&
-      sizeof(const_buffers_type_typedef_helper<T>(0)) == 1 &&
-      sizeof(mutable_buffers_type_typedef_helper<T>(0)) == 1>
+struct is_dynamic_buffer_class_v1 : sfinae_check_base
 {
+  static const std::size_t arg = 0;
+
+  template <typename T>
+  static result<sizeof(
+
+    is_same_as<std::size_t>(declval<T>().size()),
+    is_same_as<std::size_t>(declval<T>().max_size()),
+    is_same_as<std::size_t>(declval<T>().capacity()),
+
+    declval<T>().consume(arg),
+    declval<T>().commit(arg),
+
+    is_same_as<typename T::const_buffers_type>(
+      declval<T>().data()),
+
+    is_same_as<typename T::mutable_buffers_type>(
+      declval<T>().prepare(arg)),
+
+    check<is_buffer_sequence<
+      typename T::const_buffers_type, const_buffer>::value>(),
+
+    check<is_buffer_sequence<
+      typename T::mutable_buffers_type, mutable_buffer>::value>(),
+
+  0)> detector(int);
 };
 
 template <typename T>
 struct is_dynamic_buffer_v1
-  : conditional<is_class<T>::value,
-      is_dynamic_buffer_class_v1<T>,
-      false_type>::type
+  : sfinae_result<is_dynamic_buffer_class_v1,
+      typename remove_const<T>::type>
 {
 };
 
-template <typename T>
-struct is_dynamic_buffer_class_v2
-  : integral_constant<bool,
-      sizeof(size_memfn_helper<T>(0)) != 1 &&
-      sizeof(max_size_memfn_helper<T>(0)) != 1 &&
-      sizeof(capacity_memfn_helper<T>(0)) != 1 &&
-      sizeof(data_memfn_helper<T>(0)) != 1 &&
-      sizeof(consume_memfn_helper<T>(0)) != 1 &&
-      sizeof(grow_memfn_helper<T>(0)) != 1 &&
-      sizeof(shrink_memfn_helper<T>(0)) != 1 &&
-      sizeof(const_buffers_type_typedef_helper<T>(0)) == 1 &&
-      sizeof(mutable_buffers_type_typedef_helper<T>(0)) == 1>
+struct is_dynamic_buffer_class_v2 : sfinae_check_base
 {
+  static const std::size_t arg = 0;
+
+  template <typename T>
+  static result<sizeof(
+
+    is_same_as<std::size_t>(declval<T>().size()),
+    is_same_as<std::size_t>(declval<T>().max_size()),
+    is_same_as<std::size_t>(declval<T>().capacity()),
+
+    declval<T>().consume(arg),
+    declval<T>().grow(arg),
+    declval<T>().shrink(arg),
+
+    is_same_as<typename T::mutable_buffers_type>(
+      declval<T>().data(arg, arg)),
+
+    is_same_as<typename T::const_buffers_type>(
+      declval<const T>().data(arg, arg)),
+
+    check<is_buffer_sequence<
+      typename T::const_buffers_type, const_buffer>::value>(),
+
+    check<is_buffer_sequence<
+      typename T::mutable_buffers_type, mutable_buffer>::value>(),
+
+  0)> detector(int);
 };
 
 template <typename T>
 struct is_dynamic_buffer_v2
-  : conditional<is_class<T>::value,
-      is_dynamic_buffer_class_v2<T>,
-      false_type>::type
+  : sfinae_result<is_dynamic_buffer_class_v2,
+      typename remove_const<T>::type>
 {
 };
 
