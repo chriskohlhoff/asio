@@ -371,7 +371,7 @@ namespace detail
             return;
           }
 
-          default:
+          /* fall-through */ default:
 
           if (iter == end)
             break;
@@ -541,7 +541,7 @@ namespace detail
             return;
           }
 
-          default:
+          /* fall-through */ default:
 
           if (iter_ == end_)
             break;
