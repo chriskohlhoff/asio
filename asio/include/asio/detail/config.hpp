@@ -1447,11 +1447,11 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_CO_AWAIT)
 # if defined(__clang__)
-#  if (__cpp_coroutines >= 201703)
+#  if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
 #   if __has_include(<experimental/coroutine>)
 #    define ASIO_HAS_CO_AWAIT 1
 #   endif // __has_include(<experimental/coroutine>)
-#  endif // (__cpp_coroutines >= 201703)
+#  endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
 # endif // defined(__clang__)
 #endif // !defined(ASIO_HAS_CO_AWAIT)
 
