@@ -357,7 +357,7 @@
 
 // Compliant C++11 compilers put noexcept specifiers on error_category members.
 #if !defined(ASIO_ERROR_CATEGORY_NOEXCEPT)
-# if (BOOST_VERSION >= 105300)
+# if defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 105300)
 #  define ASIO_ERROR_CATEGORY_NOEXCEPT BOOST_NOEXCEPT
 # elif defined(__clang__)
 #  if __has_feature(__cxx_noexcept__)
@@ -524,9 +524,9 @@
 // Boost support for chrono.
 #if !defined(ASIO_HAS_BOOST_CHRONO)
 # if !defined(ASIO_DISABLE_BOOST_CHRONO)
-#  if (BOOST_VERSION >= 104700)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 104700)
 #   define ASIO_HAS_BOOST_CHRONO 1
-#  endif // (BOOST_VERSION >= 104700)
+#  endif // defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 104700)
 # endif // !defined(ASIO_DISABLE_BOOST_CHRONO)
 #endif // !defined(ASIO_HAS_BOOST_CHRONO)
 
