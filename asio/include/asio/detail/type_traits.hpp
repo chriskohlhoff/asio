@@ -19,7 +19,7 @@
 
 #if defined(ASIO_HAS_STD_TYPE_TRAITS)
 # include <type_traits>
-#else // defined(ASIO_HAS_TYPE_TRAITS)
+#else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 # include <boost/type_traits/add_const.hpp>
 # include <boost/type_traits/conditional.hpp>
 # include <boost/type_traits/decay.hpp>
@@ -35,7 +35,7 @@
 # include <boost/utility/declval.hpp>
 # include <boost/utility/enable_if.hpp>
 # include <boost/utility/result_of.hpp>
-#endif // defined(ASIO_HAS_TYPE_TRAITS)
+#endif // defined(ASIO_HAS_STD_TYPE_TRAITS)
 
 namespace asio {
 
