@@ -7,6 +7,38 @@
 
 [section:history Revision History]
 
+[heading Asio 1.14.1]
+
+* Improved performance slightly by eliminating a redundant move construction
+  when completed handlers are dispatched.
+
+* Eliminated a compiler warning by annotating a `case` fall-through in
+  the free function `connect()` implementation.
+
+* Fixed the `is_*_buffer_sequence` detection traits for user-defined sequence
+  types.
+
+* Fixed some Windows-specific warnings about an incompatible pointer cast when
+  obtaining the `CancelIoEx` entry point.
+
+* Changed to automatically set the defaults when opening a serial port on
+  Windows.
+
+* Changed the serial port `get_option()` member function to be const.
+
+* Fixed a name hiding issue with the WinRT stream-oriented socket backend's
+  `shutdown` function.
+
+* Applied a minor fix to the documentation for `is_dynamic_buffer`.
+
+* Added some support for Haiku OS.
+
+* Added wolfSSL compatability.
+
+* Changed to require C++17 or later for coroutines TS support with clang.
+
+* Fixed a doxygen generation problem in the tutorial.
+
 [heading Asio 1.14.0]
 
 * Improved I/O object performance by adding runtime detection of native I/O
