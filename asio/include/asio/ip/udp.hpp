@@ -22,6 +22,7 @@
 #include "asio/ip/basic_resolver.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/basic_socket_iostream.hpp"
 
 #include "asio/detail/push_options.hpp"
 
