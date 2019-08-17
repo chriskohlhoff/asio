@@ -1,5 +1,5 @@
 # Minimum supported CMake version
-cmake_minimum_required(VERSION 3.1.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 if(CONAN_COMPILER)
 
@@ -30,7 +30,7 @@ else()
   endif()
 
   # ========================================
-  project(asio VERSION 1.12.0 LANGUAGES CXX)
+  project(asio VERSION 1.13.0 LANGUAGES CXX)
   # ========================================
 
 endif()
@@ -39,14 +39,14 @@ endif()
 # ========================================
 # ASIO Options
 # ========================================
-option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" OFF)
+option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" ON)
 option(ASIO_STANDALONE "Build asio without boost" ON)
 option(ASIO_BUILD_TESTS "Build asio unittest too" OFF)
 option(ASIO_BUILD_EXAMPLES "Build asio examples too" OFF)
 option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" ON)
 option(ASIO_DISABLE_KQUEUE "disable kqueue" OFF)
 option(ASIO_DISABLE_EPOLL "disable epoll" OFF)
-option(ASIO_USE_CLANG_TIDY "use clang-tidy if found" OFF)
+option(ASIO_USE_CLANG_TIDY "use clang-tidy if found" ON)
 
 
 #
@@ -71,29 +71,31 @@ if(NOT CONAN_COMPILER AND ${CMAKE_HOST_SYSTEM_NAME} MATCHES "MINGW.*")
   add_definitions(-D_WIN32_WINNT=0x0501 -D__USE_W32_SOCKETS)
 endif()
 
-if (ASIO_ENABLE_HANDLER_TRACKING)
+if(ASIO_ENABLE_HANDLER_TRACKING)
   message(STATUS "enable handler tracking")
   add_definitions(-DASIO_ENABLE_HANDLER_TRACKING)
 endif()
 
-if (ASIO_DISABLE_KQUEUE)
+if(ASIO_DISABLE_KQUEUE)
   message(STATUS "disble queue")
   add_definitions(-DASIO_DISABLE_KQUEUE)
 endif()
 
-if (ASIO_DISABLE_EPOLL)
+if(ASIO_DISABLE_EPOLL)
   message(STATUS "disable epoll")
   add_definitions(-DASIO_DISABLE_EPOLL)
 endif()
 
-if (ASIO_USE_CLANG_TIDY)
+if(ASIO_USE_CLANG_TIDY)
   message(STATUS "use clang-tidy")
   find_program(CMAKE_CXX_CLANG_TIDY "clang-tidy" HINTS /opt/local/bin)
+else()
+  unset(CMAKE_CXX_CLANG_TIDY CACHE)
 endif()
 
 if(NOT CONAN_COMPILER)
   if(CMAKE_COMPILER_IS_GNUCXX OR __COMPILER_CLANG)
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wextra)
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wpedantic -std=c++17")
   endif()
 
 
@@ -119,9 +121,8 @@ if(NOT CONAN_COMPILER)
       link_directories(${Boost_LIBRARY_DIRS})
       add_definitions(-DBOOST_ALL_NO_LIB=1
                       -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
-                      ###TBD### -DASIO_HAS_BOOST_DATE_TIME=1
-      )
-      set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} )
+                     )
+      set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
     endif()
     #######################################################################
   endif()
@@ -139,9 +140,9 @@ if(NOT CONAN_COMPILER)
     add_definitions(-DHAVE_OPENSSL)
     include_directories(BEFORE ${openSSL_INCLUDE_DIR})
   else()
-    find_library(OpenSSL_LIBRARY ssl HINTS ${OpenSSL_ROOT_DIR}/lib )
-    find_library(CRYPTO_LIBRARY crypto HINTS ${OpenSSL_ROOT_DIR}/lib )
-    if(OpenSSL_LIBRARY AND CRYPTO_LIBRARY )
+    find_library(OpenSSL_LIBRARY ssl HINTS ${OpenSSL_ROOT_DIR}/lib)
+    find_library(CRYPTO_LIBRARY crypto HINTS ${OpenSSL_ROOT_DIR}/lib)
+    if(OpenSSL_LIBRARY AND CRYPTO_LIBRARY)
       set(OpenSSL_FOUND ON)
       message(STATUS "USE CRYPTO_LIBRARY")
       add_definitions(-DHAVE_OPENSSL)

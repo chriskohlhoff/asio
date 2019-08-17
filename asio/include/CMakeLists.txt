@@ -1,10 +1,12 @@
 # List of public headers
 # find . -name "*.*pp" | sed -e 's/^\.\///' | sed -e 's/^.*\/src.cpp$/#NO! &/' | sort > header-sorted.txt
 set(asio_PUBLIC_HEADERS
+#NO! asio/impl/src.cpp
 asio.hpp
 asio/associated_allocator.hpp
 asio/associated_executor.hpp
 asio/async_result.hpp
+asio/awaitable.hpp
 asio/basic_datagram_socket.hpp
 asio/basic_deadline_timer.hpp
 asio/basic_io_object.hpp
@@ -29,13 +31,14 @@ asio/buffered_stream_fwd.hpp
 asio/buffered_write_stream.hpp
 asio/buffered_write_stream_fwd.hpp
 asio/buffers_iterator.hpp
+asio/co_spawn.hpp
 asio/completion_condition.hpp
+asio/compose.hpp
 asio/connect.hpp
 asio/coroutine.hpp
-asio/datagram_socket_service.hpp
 asio/deadline_timer.hpp
-asio/deadline_timer_service.hpp
 asio/defer.hpp
+asio/detached.hpp
 asio/detail/array.hpp
 asio/detail/array_fwd.hpp
 asio/detail/assert.hpp
@@ -66,10 +69,12 @@ asio/detail/dev_poll_reactor.hpp
 asio/detail/epoll_reactor.hpp
 asio/detail/event.hpp
 asio/detail/eventfd_select_interrupter.hpp
+asio/detail/executor_function.hpp
 asio/detail/executor_op.hpp
 asio/detail/fd_set_adapter.hpp
 asio/detail/fenced_block.hpp
 asio/detail/functional.hpp
+asio/detail/future.hpp
 asio/detail/gcc_arm_fenced_block.hpp
 asio/detail/gcc_hppa_fenced_block.hpp
 asio/detail/gcc_sync_fenced_block.hpp
@@ -133,6 +138,8 @@ asio/detail/impl/winrt_timer_scheduler.hpp
 asio/detail/impl/winrt_timer_scheduler.ipp
 asio/detail/impl/winsock_init.ipp
 asio/detail/io_control.hpp
+asio/detail/io_object_executor.hpp
+asio/detail/io_object_impl.hpp
 asio/detail/is_buffer_sequence.hpp
 asio/detail/is_executor.hpp
 asio/detail/keyword_tss_ptr.hpp
@@ -142,6 +149,7 @@ asio/detail/local_free_on_block_exit.hpp
 asio/detail/macos_fenced_block.hpp
 asio/detail/memory.hpp
 asio/detail/mutex.hpp
+asio/detail/non_const_lvalue.hpp
 asio/detail/noncopyable.hpp
 asio/detail/null_event.hpp
 asio/detail/null_fenced_block.hpp
@@ -298,12 +306,15 @@ asio/generic/stream_protocol.hpp
 asio/handler_alloc_hook.hpp
 asio/handler_continuation_hook.hpp
 asio/handler_invoke_hook.hpp
-asio/handler_type.hpp
 asio/high_resolution_timer.hpp
+asio/impl/awaitable.hpp
 asio/impl/buffered_read_stream.hpp
 asio/impl/buffered_write_stream.hpp
+asio/impl/co_spawn.hpp
+asio/impl/compose.hpp
 asio/impl/connect.hpp
 asio/impl/defer.hpp
+asio/impl/detached.hpp
 asio/impl/dispatch.hpp
 asio/impl/error.ipp
 asio/impl/error_code.ipp
@@ -318,16 +329,17 @@ asio/impl/post.hpp
 asio/impl/read.hpp
 asio/impl/read_at.hpp
 asio/impl/read_until.hpp
+asio/impl/redirect_error.hpp
 asio/impl/serial_port_base.hpp
 asio/impl/serial_port_base.ipp
 asio/impl/spawn.hpp
-#NO! asio/impl/src.cpp
 asio/impl/src.hpp
 asio/impl/system_context.hpp
 asio/impl/system_context.ipp
 asio/impl/system_executor.hpp
 asio/impl/thread_pool.hpp
 asio/impl/thread_pool.ipp
+asio/impl/use_awaitable.hpp
 asio/impl/use_future.hpp
 asio/impl/write.hpp
 asio/impl/write_at.hpp
@@ -371,7 +383,6 @@ asio/ip/network_v4.hpp
 asio/ip/network_v6.hpp
 asio/ip/resolver_base.hpp
 asio/ip/resolver_query_base.hpp
-asio/ip/resolver_service.hpp
 asio/ip/tcp.hpp
 asio/ip/udp.hpp
 asio/ip/unicast.hpp
@@ -392,19 +403,14 @@ asio/posix/basic_stream_descriptor.hpp
 asio/posix/descriptor.hpp
 asio/posix/descriptor_base.hpp
 asio/posix/stream_descriptor.hpp
-asio/posix/stream_descriptor_service.hpp
 asio/post.hpp
-asio/raw_socket_service.hpp
 asio/read.hpp
 asio/read_at.hpp
 asio/read_until.hpp
-asio/seq_packet_socket_service.hpp
+asio/redirect_error.hpp
 asio/serial_port.hpp
 asio/serial_port_base.hpp
-asio/serial_port_service.hpp
 asio/signal_set.hpp
-asio/signal_set_service.hpp
-asio/socket_acceptor_service.hpp
 asio/socket_base.hpp
 asio/spawn.hpp
 asio/ssl.hpp
@@ -437,12 +443,12 @@ asio/ssl/verify_context.hpp
 asio/ssl/verify_mode.hpp
 asio/steady_timer.hpp
 asio/strand.hpp
-asio/stream_socket_service.hpp
 asio/streambuf.hpp
 asio/system_context.hpp
 asio/system_error.hpp
 asio/system_executor.hpp
 asio/system_timer.hpp
+asio/this_coro.hpp
 asio/thread.hpp
 asio/thread_pool.hpp
 asio/time_traits.hpp
@@ -455,23 +461,20 @@ asio/ts/netfwd.hpp
 asio/ts/socket.hpp
 asio/ts/timer.hpp
 asio/unyield.hpp
+asio/use_awaitable.hpp
 asio/use_future.hpp
 asio/uses_executor.hpp
 asio/version.hpp
 asio/wait_traits.hpp
-asio/waitable_timer_service.hpp
-asio/windows/basic_handle.hpp
 asio/windows/basic_object_handle.hpp
+asio/windows/basic_overlapped_handle.hpp
 asio/windows/basic_random_access_handle.hpp
 asio/windows/basic_stream_handle.hpp
 asio/windows/object_handle.hpp
-asio/windows/object_handle_service.hpp
 asio/windows/overlapped_handle.hpp
 asio/windows/overlapped_ptr.hpp
 asio/windows/random_access_handle.hpp
-asio/windows/random_access_handle_service.hpp
 asio/windows/stream_handle.hpp
-asio/windows/stream_handle_service.hpp
 asio/write.hpp
 asio/write_at.hpp
 asio/yield.hpp
@@ -502,7 +505,7 @@ if(Boost_FOUND AND NOT ASIO_STANDALONE)
   target_compile_definitions(standalone INTERFACE BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING)
 else()
   target_compile_definitions(standalone INTERFACE ASIO_STANDALONE)
-  if (ASIO_NO_DEPRECATED)
+  if(ASIO_NO_DEPRECATED)
     target_compile_definitions(standalone INTERFACE ASIO_NO_DEPRECATED)
   endif()
 endif()
