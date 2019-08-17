@@ -1,0 +1,873 @@
+[1/3] Building CXX object include/CMakeFiles/asio.dir/__/src/asio_ssl.cpp.o
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:55:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder1(binder1&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:153:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder2(binder2&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:258:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder3(binder3&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:372:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder4(binder4&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:496:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder5(binder5&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:596:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  move_binder1(move_binder1&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:656:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  move_binder2(move_binder2&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/call_stack.hpp:118:25: warning: initialization of 'top_' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+call_stack<Key, Value>::top_;
+                        ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/tss_ptr.hpp:38:7: note: possibly throwing constructor declared here
+class tss_ptr
+      ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/service_registry.hpp:58:31: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline void service_registry::init_key(
+                              ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/posix_thread.hpp:83:18: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+    virtual void run()
+    ~~~~~~~~~~~~~^
+                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/posix_tss_ptr.hpp:57:3: warning: operator=() should return 'posix_tss_ptr&' [cppcoreguidelines-c-copy-assignment-signature]
+  void operator=(T* value)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/scheduler.hpp:51:13: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL ~scheduler();
+            ^           ~
+                         override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/scheduler.hpp:54:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/socket_types.hpp:87:11: warning: inclusion of deprecated C++ header 'limits.h'; consider using 'climits' instead [modernize-deprecated-headers]
+# include <limits.h>
+          ^~~~~~~~~~
+          <climits>
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/thread_info_base.hpp:48:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_mem_index; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : reusable_memory_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/thread_info_base.hpp:54:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_mem_index; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : reusable_memory_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/tss_ptr.hpp:50:3: warning: operator=() should return 'tss_ptr&' [misc-unconventional-assign-operator]
+  void operator=(T* value)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/wrapped_handler.hpp:66:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  wrapped_handler(wrapped_handler&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/wrapped_handler.hpp:181:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  rewrapped_handler(rewrapped_handler&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:257:3: warning: initialization of 'system_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  system_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:226:36: note: possibly throwing function declared here
+inline const asio::error_category& get_system_category()
+                                   ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:260:3: warning: initialization of 'netdb_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  netdb_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:234:29: note: possibly throwing function declared here
+const asio::error_category& get_netdb_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:263:3: warning: initialization of 'addrinfo_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  addrinfo_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:237:29: note: possibly throwing function declared here
+const asio::error_category& get_addrinfo_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:266:3: warning: initialization of 'misc_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  misc_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:254:29: note: possibly throwing function declared here
+const asio::error_category& get_misc_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:208:19: warning: redundant 'use_service' declaration [readability-redundant-declaration]
+  friend Service& use_service(execution_context& e);
+  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:33:38: note: previously declared here
+template <typename Service> Service& use_service(execution_context&);
+                                     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:225:19: warning: redundant 'use_service' declaration [readability-redundant-declaration]
+  friend Service& use_service(io_context& ioc);
+  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:34:38: note: previously declared here
+template <typename Service> Service& use_service(io_context&);
+                                     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:285:15: warning: redundant 'add_service' declaration [readability-redundant-declaration]
+  friend void add_service(execution_context& e, Service* svc);
+  ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:35:34: note: previously declared here
+template <typename Service> void add_service(execution_context&, Service*);
+                                 ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:298:15: warning: redundant 'has_service' declaration [readability-redundant-declaration]
+  friend bool has_service(execution_context& e);
+  ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:36:34: note: previously declared here
+template <typename Service> bool has_service(execution_context&);
+                                 ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/handler_continuation_hook.hpp:45:13: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline bool asio_handler_is_continuation(...)
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/handler_invoke_hook.hpp:66:13: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline void asio_handler_invoke(Function& function, ...)
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/handler_invoke_hook.hpp:73:13: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline void asio_handler_invoke(const Function& function, ...)
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:608:19: warning: redundant 'use_service' declaration [readability-redundant-declaration]
+  friend Service& use_service(io_context& ioc);
+                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:225:19: note: previously declared here
+  friend Service& use_service(io_context& ioc);
+                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:795:26: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual void shutdown();
+            ~~~~~~~~~~~~~^         ~
+                                    override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:809:26: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual void notify_fork(
+            ~~~~~~~~~~~~~^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:831:21: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual ~service();
+            ~~~~~~~~^         ~
+                               override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/bad_address_cast.hpp:39:11: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  virtual ~bad_address_cast() ASIO_NOEXCEPT_OR_NOTHROW {}
+  ~~~~~~~~^
+                                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/bad_address_cast.hpp:42:23: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  virtual const char* what() const ASIO_NOEXCEPT_OR_NOTHROW
+  ~~~~~~~~~~~~~~      ^
+                                                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/context.hpp:58:13: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  ASIO_DECL context(context&& other);
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/context.hpp:71:22: warning: move assignment operators should be marked noexcept [performance-noexcept-move-constructor]
+  ASIO_DECL context& operator=(context&& other);
+                     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/detail/impl/openssl_init.ipp:44:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (size_t i = 0; i < mutexes_.size(); ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & mutexe : mutexes_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/detail/impl/openssl_init.ipp:45:19: warning: use std::make_shared instead [modernize-make-shared]
+      mutexes_[i].reset(new asio::detail::mutex);
+                 ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  = std::make_shared<asio::detail::mutex>
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/detail/openssl_init.hpp:89:46: warning: initialization of 'instance_' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+openssl_init<Do_Init> openssl_init<Do_Init>::instance_;
+                                             ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/detail/openssl_init.hpp:58:3: note: possibly throwing constructor declared here
+  openssl_init()
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/detail/password_callback.hpp:50:23: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  virtual std::string call(std::size_t size,
+  ~~~~~~~~~~~         ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/detail/verify_callback.hpp:47:16: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  virtual bool call(bool preverified, verify_context& ctx)
+  ~~~~~~~~~~~~~^
+                                                           override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/error.hpp:36:3: warning: initialization of 'ssl_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  ssl_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/error.hpp:33:29: note: possibly throwing function declared here
+const asio::error_category& get_ssl_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/error.hpp:71:3: warning: initialization of 'stream_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  stream_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/error.hpp:68:29: note: possibly throwing function declared here
+const asio::error_category& get_stream_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/impl/context.ipp:370:10: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+context::context(context&& other)
+         ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/impl/context.ipp:376:19: warning: move assignment operators should be marked noexcept [performance-noexcept-move-constructor]
+context& context::operator=(context&& other)
+                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/impl/error.ipp:31:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
+              ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/impl/error.ipp:36:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  std::string message(int value) const
+              ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ssl/rfc2818_verification.hpp:67:33: warning: pass by value and use std::move [modernize-pass-by-value]
+  explicit rfc2818_verification(const std::string& host)
+                                ^~~~~~~~~~~~~~~~~~
+                                std::string 
+/opt/local/include/openssl/asn1.h:62:11: warning: inclusion of deprecated C++ header 'time.h'; consider using 'ctime' instead [modernize-deprecated-headers]
+# include <time.h>
+          ^~~~~~~~
+          <ctime>
+/opt/local/include/openssl/asn1.h:985:34: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+void *ASN1_d2i_fp(void *(*xnew) (void), d2i_of_void *d2i, FILE *in, void **x);
+                                 ^~~~~
+/opt/local/include/openssl/asn1.h:1013:35: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+void *ASN1_d2i_bio(void *(*xnew) (void), d2i_of_void *d2i, BIO *in, void **x);
+                                  ^~~~~
+/opt/local/include/openssl/bio.h:65:12: warning: inclusion of deprecated C++ header 'stdio.h'; consider using 'cstdio' instead [modernize-deprecated-headers]
+#  include <stdio.h>
+           ^~~~~~~~~
+           <cstdio>
+/opt/local/include/openssl/bio.h:67:11: warning: inclusion of deprecated C++ header 'stdarg.h'; consider using 'cstdarg' instead [modernize-deprecated-headers]
+# include <stdarg.h>
+          ^~~~~~~~~~
+          <cstdarg>
+/opt/local/include/openssl/bn.h:128:11: warning: inclusion of deprecated C++ header 'limits.h'; consider using 'climits' instead [modernize-deprecated-headers]
+# include <limits.h>
+          ^~~~~~~~~~
+          <climits>
+/opt/local/include/openssl/bn.h:131:12: warning: inclusion of deprecated C++ header 'stdio.h'; consider using 'cstdio' instead [modernize-deprecated-headers]
+#  include <stdio.h>            /* FILE */
+           ^~~~~~~~~
+           <cstdio>
+/opt/local/include/openssl/buffer.h:68:11: warning: inclusion of deprecated C++ header 'stddef.h'; consider using 'cstddef' instead [modernize-deprecated-headers]
+# include <stddef.h>
+          ^~~~~~~~~~
+          <cstddef>
+/opt/local/include/openssl/comp.h:31:19: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    long (*ctrl) (void);
+                  ^~~~~
+/opt/local/include/openssl/comp.h:32:28: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    long (*callback_ctrl) (void);
+                           ^~~~~
+/opt/local/include/openssl/crypto.h:120:11: warning: inclusion of deprecated C++ header 'stdlib.h'; consider using 'cstdlib' instead [modernize-deprecated-headers]
+# include <stdlib.h>
+          ^~~~~~~~~~
+          <cstdlib>
+/opt/local/include/openssl/crypto.h:125:12: warning: inclusion of deprecated C++ header 'stdio.h'; consider using 'cstdio' instead [modernize-deprecated-headers]
+#  include <stdio.h>
+           ^~~~~~~~~
+           <cstdio>
+/opt/local/include/openssl/crypto.h:462:52: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+void CRYPTO_set_id_callback(unsigned long (*func) (void));
+                                                   ^~~~~
+/opt/local/include/openssl/crypto.h:513:48: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+                                   long (*go) (void));
+                                               ^~~~~
+/opt/local/include/openssl/engine.h:331:37: warning: redundant void argument list in typedef [modernize-redundant-void-arg]
+typedef int (*ENGINE_GEN_FUNC_PTR) (void);
+                                    ^~~~~
+/opt/local/include/openssl/engine.h:336:49: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+                                     void (*f) (void));
+                                                ^~~~~
+/opt/local/include/openssl/engine.h:498:65: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+int ENGINE_ctrl(ENGINE *e, int cmd, long i, void *p, void (*f) (void));
+                                                                ^~~~~
+/opt/local/include/openssl/engine.h:515:49: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+                    long i, void *p, void (*f) (void), int cmd_optional);
+                                                ^~~~~
+/opt/local/include/openssl/err.h:118:12: warning: inclusion of deprecated C++ header 'stdio.h'; consider using 'cstdio' instead [modernize-deprecated-headers]
+#  include <stdio.h>
+           ^~~~~~~~~
+           <cstdio>
+/opt/local/include/openssl/err.h:119:12: warning: inclusion of deprecated C++ header 'stdlib.h'; consider using 'cstdlib' instead [modernize-deprecated-headers]
+#  include <stdlib.h>
+           ^~~~~~~~~~
+           <cstdlib>
+/opt/local/include/openssl/err.h:140:11: warning: inclusion of deprecated C++ header 'errno.h'; consider using 'cerrno' instead [modernize-deprecated-headers]
+# include <errno.h>
+          ^~~~~~~~~
+          <cerrno>
+/opt/local/include/openssl/lhash.h:68:12: warning: inclusion of deprecated C++ header 'stdio.h'; consider using 'cstdio' instead [modernize-deprecated-headers]
+#  include <stdio.h>
+           ^~~~~~~~~
+           <cstdio>
+/opt/local/include/openssl/pqueue.h:63:11: warning: inclusion of deprecated C++ header 'stdio.h'; consider using 'cstdio' instead [modernize-deprecated-headers]
+# include <stdio.h>
+          ^~~~~~~~~
+          <cstdio>
+/opt/local/include/openssl/pqueue.h:64:11: warning: inclusion of deprecated C++ header 'stdlib.h'; consider using 'cstdlib' instead [modernize-deprecated-headers]
+# include <stdlib.h>
+          ^~~~~~~~~~
+          <cstdlib>
+/opt/local/include/openssl/pqueue.h:65:11: warning: inclusion of deprecated C++ header 'string.h'; consider using 'cstring' instead [modernize-deprecated-headers]
+# include <string.h>
+          ^~~~~~~~~~
+          <cstring>
+/opt/local/include/openssl/rand.h:62:11: warning: inclusion of deprecated C++ header 'stdlib.h'; consider using 'cstdlib' instead [modernize-deprecated-headers]
+# include <stdlib.h>
+          ^~~~~~~~~~
+          <cstdlib>
+/opt/local/include/openssl/rand.h:84:22: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    void (*cleanup) (void);
+                     ^~~~~
+/opt/local/include/openssl/rand.h:87:20: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    int (*status) (void);
+                   ^~~~~
+/opt/local/include/openssl/sha.h:63:11: warning: inclusion of deprecated C++ header 'stddef.h'; consider using 'cstddef' instead [modernize-deprecated-headers]
+# include <stddef.h>
+          ^~~~~~~~~~
+          <cstddef>
+/opt/local/include/openssl/ssl.h:462:25: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    int (*num_ciphers) (void);
+                        ^~~~~
+/opt/local/include/openssl/ssl.h:465:26: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    long (*get_timeout) (void);
+                         ^~~~~
+/opt/local/include/openssl/ssl.h:467:25: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    int (*ssl_version) (void);
+                        ^~~~~
+/opt/local/include/openssl/ssl.h:468:63: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+    long (*ssl_callback_ctrl) (SSL *s, int cb_id, void (*fp) (void));
+                                                              ^~~~~
+/opt/local/include/openssl/ssl.h:469:71: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+    long (*ssl_ctx_callback_ctrl) (SSL_CTX *s, int cb_id, void (*fp) (void));
+                                                                      ^~~~~
+/opt/local/include/openssl/ssl.h:2338:45: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+long SSL_callback_ctrl(SSL *, int, void (*)(void));
+                                            ^~~~~
+/opt/local/include/openssl/ssl.h:2340:53: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+long SSL_CTX_callback_ctrl(SSL_CTX *, int, void (*)(void));
+                                                    ^~~~~
+/opt/local/include/openssl/tls1.h:309:46: warning: parameter 'type' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls]
+const char *SSL_get_servername(const SSL *s, const int type);
+                                             ^~~~~~~~~~
+/opt/local/include/openssl/ui.h:224:58: warning: redundant void argument list in variable declaration [modernize-redundant-void-arg]
+int UI_ctrl(UI *ui, int cmd, long i, void *p, void (*f) (void));
+                                                         ^~~~~
+/opt/local/include/openssl/x509.h:139:17: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    int (*a2i) (void);
+                ^~~~~
+/opt/local/include/openssl/x509.h:140:17: warning: redundant void argument list in field declaration [modernize-redundant-void-arg]
+    int (*i2a) (void);
+                ^~~~~
+/opt/local/include/openssl/x509v3.h:83:33: warning: redundant void argument list in typedef [modernize-redundant-void-arg]
+typedef void *(*X509V3_EXT_NEW)(void);
+                                ^~~~~
+[2/3] Building CXX object include/CMakeFiles/asio.dir/__/src/asio.cpp.o
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:55:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder1(binder1&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:153:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder2(binder2&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:258:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder3(binder3&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:372:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder4(binder4&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:496:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  binder5(binder5&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:596:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  move_binder1(move_binder1&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/bind_handler.hpp:656:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  move_binder2(move_binder2&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/call_stack.hpp:118:25: warning: initialization of 'top_' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+call_stack<Key, Value>::top_;
+                        ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/tss_ptr.hpp:38:7: note: possibly throwing constructor declared here
+class tss_ptr
+      ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/handler_tracking.ipp:322:24: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+void handler_tracking::write_line(const char* format, ...)
+                       ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/kqueue_reactor.ipp:48:5: warning: initializer for member 'interrupter_' is redundant [readability-redundant-member-init]
+    interrupter_(),
+    ^~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/kqueue_reactor.ipp:78:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_ops; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : state->op_queue_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/kqueue_reactor.ipp:270:3: warning: use range-based for loop instead [modernize-loop-convert]
+  for (int i = 0; i < max_ops; ++i)
+  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      (auto & i : descriptor_data->op_queue_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/kqueue_reactor.ipp:311:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_ops; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : descriptor_data->op_queue_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/kqueue_reactor.ipp:361:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_ops; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : descriptor_data->op_queue_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/service_registry.hpp:58:31: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline void service_registry::init_key(
+                              ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/signal_set_service.ipp:144:3: warning: use range-based for loop instead [modernize-loop-convert]
+  for (int i = 0; i < max_signal_number; ++i)
+  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      (auto & registration : registrations_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/signal_set_service.ipp:161:3: warning: use range-based for loop instead [modernize-loop-convert]
+  for (int i = 0; i < max_signal_number; ++i)
+  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      (auto reg : registrations_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/socket_ops.ipp:2379:21: warning: 'atoi' used to convert a string to an integer value, but function will not report conversion errors; consider using 'strtol' instead [cert-err34-c]
+        *scope_id = atoi(if_name + 1);
+                    ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/socket_ops.ipp:3349:47: warning: 'atoi' used to convert a string to an integer value, but function will not report conversion errors; consider using 'strtol' instead [cert-err34-c]
+    u_short_type port = host_to_network_short(atoi(service));
+                                              ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/strand_executor_service.hpp:33:11: warning: pass by value and use std::move [modernize-pass-by-value]
+  invoker(const implementation_type& impl, Executor& ex)
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+          implementation_type 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/strand_executor_service.hpp:46:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  invoker(invoker&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/strand_service.ipp:58:3: warning: use range-based for loop instead [modernize-loop-convert]
+  for (std::size_t i = 0; i < num_implementations; ++i)
+  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      (auto & implementation : implementations_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/kqueue_reactor.hpp:88:13: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL ~kqueue_reactor();
+            ^                ~
+                              override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/kqueue_reactor.hpp:91:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/kqueue_reactor.hpp:94:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void notify_fork(
+                 ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/posix_signal_blocker.hpp:24:10: warning: inclusion of deprecated C++ header 'signal.h'; consider using 'csignal' instead [modernize-deprecated-headers]
+#include <signal.h>
+         ^~~~~~~~~~
+         <csignal>
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/posix_thread.hpp:83:18: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+    virtual void run()
+    ~~~~~~~~~~~~~^
+                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/posix_tss_ptr.hpp:57:3: warning: operator=() should return 'posix_tss_ptr&' [misc-unconventional-assign-operator]
+  void operator=(T* value)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/reactive_descriptor_service.hpp:81:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/reactive_serial_port_service.hpp:50:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/scheduler.hpp:51:13: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL ~scheduler();
+            ^           ~
+                         override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/scheduler.hpp:54:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/service_registry.hpp:81:15: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+  static void init_key(execution_context::service::key& key, ...);
+              ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/signal_set_service.hpp:21:10: warning: inclusion of deprecated C++ header 'signal.h'; consider using 'csignal' instead [modernize-deprecated-headers]
+#include <signal.h>
+         ^~~~~~~~~~
+         <csignal>
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/signal_set_service.hpp:121:13: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL ~signal_set_service();
+            ^                    ~
+                                  override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/signal_set_service.hpp:124:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/signal_set_service.hpp:127:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void notify_fork(
+                 ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/socket_types.hpp:87:11: warning: inclusion of deprecated C++ header 'limits.h'; consider using 'climits' instead [modernize-deprecated-headers]
+# include <limits.h>
+          ^~~~~~~~~~
+          <climits>
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/strand_executor_service.hpp:80:22: warning: function 'asio::detail::strand_executor_service::strand_executor_service' has a definition with different parameter names [readability-inconsistent-declaration-parameter-name]
+  ASIO_DECL explicit strand_executor_service(execution_context& context);
+                     ^                                          ~~~~~~~~
+                                                                ctx
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/impl/strand_executor_service.ipp:26:26: note: the definition seen here
+strand_executor_service::strand_executor_service(execution_context& ctx)
+                         ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/strand_executor_service.hpp:80:22: note: differing parameters are named here: ('context'), in definition: ('ctx')
+  ASIO_DECL explicit strand_executor_service(execution_context& context);
+                     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/strand_executor_service.hpp:83:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/strand_service.hpp:81:18: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  ASIO_DECL void shutdown();
+                 ^         ~
+                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/thread_info_base.hpp:48:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_mem_index; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : reusable_memory_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/thread_info_base.hpp:54:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (int i = 0; i < max_mem_index; ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (auto & i : reusable_memory_)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/tss_ptr.hpp:50:3: warning: operator=() should return 'tss_ptr&' [misc-unconventional-assign-operator]
+  void operator=(T* value)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/wrapped_handler.hpp:66:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  wrapped_handler(wrapped_handler&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/detail/wrapped_handler.hpp:181:3: warning: move constructors should be marked noexcept [performance-noexcept-move-constructor]
+  rewrapped_handler(rewrapped_handler&& other)
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:257:3: warning: initialization of 'system_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  system_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:226:36: note: possibly throwing function declared here
+inline const asio::error_category& get_system_category()
+                                   ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:260:3: warning: initialization of 'netdb_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  netdb_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:234:29: note: possibly throwing function declared here
+const asio::error_category& get_netdb_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:263:3: warning: initialization of 'addrinfo_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  addrinfo_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:237:29: note: possibly throwing function declared here
+const asio::error_category& get_addrinfo_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:266:3: warning: initialization of 'misc_category' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+  misc_category ASIO_UNUSED_VARIABLE
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/error.hpp:254:29: note: possibly throwing function declared here
+const asio::error_category& get_misc_category();
+                            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:208:19: warning: redundant 'use_service' declaration [readability-redundant-declaration]
+  friend Service& use_service(execution_context& e);
+  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:33:38: note: previously declared here
+template <typename Service> Service& use_service(execution_context&);
+                                     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:225:19: warning: redundant 'use_service' declaration [readability-redundant-declaration]
+  friend Service& use_service(io_context& ioc);
+  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:34:38: note: previously declared here
+template <typename Service> Service& use_service(io_context&);
+                                     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:285:15: warning: redundant 'add_service' declaration [readability-redundant-declaration]
+  friend void add_service(execution_context& e, Service* svc);
+  ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:35:34: note: previously declared here
+template <typename Service> void add_service(execution_context&, Service*);
+                                 ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:298:15: warning: redundant 'has_service' declaration [readability-redundant-declaration]
+  friend bool has_service(execution_context& e);
+  ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:36:34: note: previously declared here
+template <typename Service> bool has_service(execution_context&);
+                                 ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:400:56: warning: initialization of 'id' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+service_id<Type> execution_context_service_base<Type>::id;
+                                                       ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:379:7: note: possibly throwing constructor declared here
+class service_id
+      ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/executor.hpp:38:33: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual const char* what() const
+            ~~~~~~~~~~~~~~      ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/handler_continuation_hook.hpp:45:13: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline bool asio_handler_is_continuation(...)
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/handler_invoke_hook.hpp:66:13: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline void asio_handler_invoke(Function& function, ...)
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/handler_invoke_hook.hpp:73:13: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+inline void asio_handler_invoke(const Function& function, ...)
+            ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error.ipp:34:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
+              ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error.ipp:39:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  std::string message(int value) const
+              ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error.ipp:66:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
+              ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error.ipp:71:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  std::string message(int value) const
+              ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error.ipp:96:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
+              ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error.ipp:101:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  std::string message(int value) const
+              ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error_code.ipp:40:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const char* name() const ASIO_ERROR_CATEGORY_NOEXCEPT
+              ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/error_code.ipp:45:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  std::string message(int value) const
+              ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:149:14: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  impl_base* clone() const ASIO_NOEXCEPT
+             ^
+                                         override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:155:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void destroy() ASIO_NOEXCEPT
+       ^
+                               override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:166:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void on_work_started() ASIO_NOEXCEPT
+       ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:171:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void on_work_finished() ASIO_NOEXCEPT
+       ^
+                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:176:22: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  execution_context& context() ASIO_NOEXCEPT
+                     ^
+                                             override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:181:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void dispatch(ASIO_MOVE_ARG(function) f)
+       ^
+                                           override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:186:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void post(ASIO_MOVE_ARG(function) f)
+       ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:191:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void defer(ASIO_MOVE_ARG(function) f)
+       ^
+                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:196:23: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  type_id_result_type target_type() const ASIO_NOEXCEPT
+                      ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:201:9: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void* target() ASIO_NOEXCEPT
+        ^
+                               override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:206:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const void* target() const ASIO_NOEXCEPT
+              ^
+                                           override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:211:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  bool equals(const impl_base* e) const ASIO_NOEXCEPT
+       ^
+                                                      override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:266:14: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  impl_base* clone() const ASIO_NOEXCEPT
+             ^
+                                         override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:271:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void destroy() ASIO_NOEXCEPT
+       ^
+                               override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:275:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void on_work_started() ASIO_NOEXCEPT
+       ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:280:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void on_work_finished() ASIO_NOEXCEPT
+       ^
+                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:285:22: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  execution_context& context() ASIO_NOEXCEPT
+                     ^
+                                             override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:290:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void dispatch(ASIO_MOVE_ARG(function) f)
+       ^
+                                           override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:295:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void post(ASIO_MOVE_ARG(function) f)
+       ^
+                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:300:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void defer(ASIO_MOVE_ARG(function) f)
+       ^
+                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:305:23: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  type_id_result_type target_type() const ASIO_NOEXCEPT
+                      ^
+                                                        override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:310:9: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  void* target() ASIO_NOEXCEPT
+        ^
+                               override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:315:15: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  const void* target() const ASIO_NOEXCEPT
+              ^
+                                           override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/executor.hpp:320:8: warning: annotate this function with 'override' or (rarely) 'final' [modernize-use-override]
+  bool equals(const impl_base* e) const ASIO_NOEXCEPT
+       ^
+                                                      override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/handler_alloc_hook.ipp:27:7: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+void* asio_handler_allocate(std::size_t size, ...)
+      ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/impl/handler_alloc_hook.ipp:37:6: warning: do not define a C-style variadic function; consider using a function parameter pack or currying instead [cert-dcl50-cpp]
+void asio_handler_deallocate(void* pointer, std::size_t size, ...)
+     ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:608:19: warning: redundant 'use_service' declaration [readability-redundant-declaration]
+  friend Service& use_service(io_context& ioc);
+                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/execution_context.hpp:225:19: note: previously declared here
+  friend Service& use_service(io_context& ioc);
+                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:795:26: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual void shutdown();
+            ~~~~~~~~~~~~~^         ~
+                                    override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:809:26: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual void notify_fork(
+            ~~~~~~~~~~~~~^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/io_context.hpp:831:21: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  ASIO_DECL virtual ~service();
+            ~~~~~~~~^         ~
+                               override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4_iterator.hpp:56:26: warning: pass by value and use std::move [modernize-pass-by-value]
+  basic_address_iterator(const address_v4& addr) ASIO_NOEXCEPT
+                         ^~~~~~~~~~~~~~~~~
+                         address_v4 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4_iterator.hpp:114:3: warning: overloaded 'operator++' returns a non-constant object instead of a constant object type [cert-dcl21-cpp]
+  basic_address_iterator operator++(int) ASIO_NOEXCEPT
+  ^~~~~~~~~~~~~~~~~~~~~~
+  const 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4_iterator.hpp:129:3: warning: overloaded 'operator--' returns a non-constant object instead of a constant object type [cert-dcl21-cpp]
+  basic_address_iterator operator--(int)
+  ^~~~~~~~~~~~~~~~~~~~~~
+  const 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4_range.hpp:48:32: warning: pass by value and use std::move [modernize-pass-by-value]
+  explicit basic_address_range(const iterator& first,
+                               ^~~~~~~~~~~~~~~
+                               iterator 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4_range.hpp:49:7: warning: pass by value and use std::move [modernize-pass-by-value]
+      const iterator& last) ASIO_NOEXCEPT
+      ^~~~~~~~~~~~~~~
+      iterator 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v6_iterator.hpp:57:26: warning: pass by value and use std::move [modernize-pass-by-value]
+  basic_address_iterator(const address_v6& addr) ASIO_NOEXCEPT
+                         ^~~~~~~~~~~~~~~~~
+                         address_v6 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v6_iterator.hpp:125:3: warning: overloaded 'operator++' returns a non-constant object instead of a constant object type [cert-dcl21-cpp]
+  basic_address_iterator operator++(int) ASIO_NOEXCEPT
+  ^~~~~~~~~~~~~~~~~~~~~~
+  const 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v6_iterator.hpp:150:3: warning: overloaded 'operator--' returns a non-constant object instead of a constant object type [cert-dcl21-cpp]
+  basic_address_iterator operator--(int)
+  ^~~~~~~~~~~~~~~~~~~~~~
+  const 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v6_range.hpp:49:32: warning: pass by value and use std::move [modernize-pass-by-value]
+  explicit basic_address_range(const iterator& first,
+                               ^~~~~~~~~~~~~~~
+                               iterator 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v6_range.hpp:50:7: warning: pass by value and use std::move [modernize-pass-by-value]
+      const iterator& last) ASIO_NOEXCEPT
+      ^~~~~~~~~~~~~~~
+      iterator 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/bad_address_cast.hpp:39:11: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  virtual ~bad_address_cast() ASIO_NOEXCEPT_OR_NOTHROW {}
+  ~~~~~~~~^
+                                                       override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/bad_address_cast.hpp:42:23: warning: prefer using 'override' or (rarely) 'final' instead of 'virtual' [modernize-use-override]
+  virtual const char* what() const ASIO_NOEXCEPT_OR_NOTHROW
+  ~~~~~~~~~~~~~~      ^
+                                                            override
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:34:5: warning: initializer for member 'ipv4_address_' is redundant [readability-redundant-member-init]
+    ipv4_address_(),
+    ^~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:35:5: warning: initializer for member 'ipv6_address_' is redundant [readability-redundant-member-init]
+    ipv6_address_()
+    ^~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:40:5: warning: pass by value and use std::move [modernize-pass-by-value]
+    const asio::ip::address_v4& ipv4_address) ASIO_NOEXCEPT
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    asio::ip::address_v4 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:43:5: warning: initializer for member 'ipv6_address_' is redundant [readability-redundant-member-init]
+    ipv6_address_()
+    ^~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:48:5: warning: pass by value and use std::move [modernize-pass-by-value]
+    const asio::ip::address_v6& ipv6_address) ASIO_NOEXCEPT
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    asio::ip::address_v6 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:50:5: warning: initializer for member 'ipv4_address_' is redundant [readability-redundant-member-init]
+    ipv4_address_(),
+    ^~~~~~~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/address.ipp:65:5: warning: move constructor initializes class member by calling a copy constructor [cert-oop11-cpp]
+    ipv4_address_(other.ipv4_address_),
+    ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4.hpp:75:3: note: copy constructor being called
+  address_v4(const address_v4& other) ASIO_NOEXCEPT
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/address_v4.hpp:82:3: note: candidate move constructor here
+  address_v4(address_v4&& other) ASIO_NOEXCEPT
+  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.hpp:42:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (std::string::iterator i = s.begin(); i != s.end(); ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (char & i : s)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.ipp:34:24: warning: pass by value and use std::move [modernize-pass-by-value]
+network_v4::network_v4(const address_v4& addr, unsigned short prefix_len)
+                       ^~~~~~~~~~~~~~~~~
+                       address_v4 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.ipp:45:24: warning: pass by value and use std::move [modernize-pass-by-value]
+network_v4::network_v4(const address_v4& addr, const address_v4& mask)
+                       ^~~~~~~~~~~~~~~~~
+                       address_v4 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.ipp:51:3: warning: use range-based for loop instead [modernize-loop-convert]
+  for (std::size_t i = 0; i < mask_bytes.size(); ++i)
+  ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      (unsigned char mask_byte : mask_bytes)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.ipp:161:50: warning: 'find_first_of' called with a string literal consisting of a single character; consider using the more effective overload accepting a character [performance-faster-string-find]
+  std::string::size_type pos = str.find_first_of("/");
+                                                 ^~~~
+                                                 '/'
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.ipp:186:26: warning: 'atoi' used to convert a string to an integer value, but function will not report conversion errors; consider using 'strtol' instead [cert-err34-c]
+  const int prefix_len = std::atoi(str.substr(pos + 1).c_str());
+                         ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v6.hpp:41:5: warning: use range-based for loop instead [modernize-loop-convert]
+    for (std::string::iterator i = s.begin(); i != s.end(); ++i)
+    ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (char & i : s)
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v6.ipp:34:24: warning: pass by value and use std::move [modernize-pass-by-value]
+network_v6::network_v6(const address_v6& addr, unsigned short prefix_len)
+                       ^~~~~~~~~~~~~~~~~
+                       address_v6 
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v6.ipp:130:50: warning: 'find_first_of' called with a string literal consisting of a single character; consider using the more effective overload accepting a character [performance-faster-string-find]
+  std::string::size_type pos = str.find_first_of("/");
+                                                 ^~~~
+                                                 '/'
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v6.ipp:155:26: warning: 'atoi' used to convert a string to an integer value, but function will not report conversion errors; consider using 'strtol' instead [cert-err34-c]
+  const int prefix_len = std::atoi(str.substr(pos + 1).c_str());
+                         ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/network_v4.hpp:44:7: warning: initializer for member 'address_' is redundant [readability-redundant-member-init]
+    : address_(),
+      ^~~~~~~~~~~
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/network_v4.hpp:246:35: warning: function 'asio::ip::operator<<' has a definition with different parameter names [readability-inconsistent-declaration-parameter-name]
+std::basic_ostream<Elem, Traits>& operator<<(
+                                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v4.hpp:29:35: note: the definition seen here
+std::basic_ostream<Elem, Traits>& operator<<(
+                                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/network_v4.hpp:246:35: note: differing parameters are named here: ('net'), in definition: ('addr')
+std::basic_ostream<Elem, Traits>& operator<<(
+                                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/network_v6.hpp:220:35: warning: function 'asio::ip::operator<<' has a definition with different parameter names [readability-inconsistent-declaration-parameter-name]
+std::basic_ostream<Elem, Traits>& operator<<(
+                                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/impl/network_v6.hpp:28:35: note: the definition seen here
+std::basic_ostream<Elem, Traits>& operator<<(
+                                  ^
+/Users/clausklein/Workspace/cpp/asio/asio/include/asio/ip/network_v6.hpp:220:35: note: differing parameters are named here: ('net'), in definition: ('addr')
+std::basic_ostream<Elem, Traits>& operator<<(
+                                  ^
+[3/3] Linking CXX static library lib/libasio.a
