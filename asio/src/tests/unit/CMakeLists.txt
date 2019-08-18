@@ -2,34 +2,54 @@ set(target_prefix asio_unit_)
 
 add_library(asio::standalone ALIAS standalone)
 
-set(null_test_PROGRAMS
+set(test_PROGRAMS
   associated_allocator
   associated_executor
   async_result
+  awaitable
   basic_datagram_socket
   basic_deadline_timer
   basic_raw_socket
   basic_seq_packet_socket
   basic_serial_port
   basic_signal_set
+  basic_socket
   basic_socket_acceptor
   basic_stream_socket
   basic_streambuf
   basic_waitable_timer
   bind_executor
+  buffered_read_stream
+  buffered_stream
+  buffered_write_stream
+  buffer
+  buffers_iterator
+  co_spawn
   completion_condition
+  compose
   connect
-  datagram_socket_service
+  coroutine
   deadline_timer
-  deadline_timer_service
   defer
+  detached
   dispatch
+  error
   execution_context
   executor
   executor_work_guard
+  generic/basic_endpoint
+  generic/datagram_protocol
+  generic/raw_protocol
+  generic/seq_packet_protocol
+  generic/stream_protocol
   high_resolution_timer
+  io_context
+  io_context_strand
+  ip/address
+  ip/address_v4
   ip/address_v4_iterator
   ip/address_v4_range
+  ip/address_v6
   ip/address_v6_iterator
   ip/address_v6_range
   ip/basic_endpoint
@@ -37,82 +57,65 @@ set(null_test_PROGRAMS
   ip/basic_resolver_entry
   ip/basic_resolver_iterator
   ip/basic_resolver_query
-  ip/resolver_query_base
-  ip/resolver_service
-  local/basic_endpoint
-  packaged_task
-  placeholders
-  posix/basic_descriptor
-  posix/basic_stream_descriptor
-  posix/descriptor
-  posix/descriptor_base
-  posix/stream_descriptor_service
-  post
-  raw_socket_service
-  seq_packet_socket_service
-  serial_port_service
-  signal_set_service
-  socket_acceptor_service
-  steady_timer
-  stream_socket_service
-  thread
-  time_traits
-  uses_executor
-  wait_traits
-  waitable_timer_service
-  windows/basic_handle
-  windows/basic_object_handle
-  windows/basic_random_access_handle
-  windows/basic_stream_handle
-  windows/object_handle_service
-  windows/overlapped_handle
-  windows/random_access_handle_service
-  windows/stream_handle_service
-)
-
-set(noinst_PROGRAMS
-  buffer
-  buffered_read_stream
-  buffered_stream
-  buffered_write_stream
-  buffers_iterator
-  coroutine
-  error
-  generic/datagram_protocol
-  generic/raw_protocol
-  generic/seq_packet_protocol
-  generic/stream_protocol
-  io_context
-  ip/address
-  ip/address_v4
-  ip/address_v6
   ip/host_name
   ip/icmp
   ip/multicast
   ip/network_v4
   ip/network_v6
+  ip/resolver_query_base
   ip/tcp
   ip/udp
   ip/unicast
   ip/v6_only
   is_read_buffered
   is_write_buffered
+  local/basic_endpoint
   local/connect_pair
   local/datagram_protocol
   local/stream_protocol
+  packaged_task
+  placeholders
+  posix/basic_descriptor
+  posix/basic_stream_descriptor
+  posix/descriptor
+  posix/descriptor_base
   posix/stream_descriptor
+  post
   read
   read_at
   read_until
+  redirect_error
   serial_port
   serial_port_base
   signal_set
   socket_base
+  steady_timer
   strand
   streambuf
+  system_context
+  system_executor
   system_timer
+  this_coro
+  thread
+  time_traits
+  ts/buffer
+  ts/executor
+  ts/internet
+  ts/io_context
+  ts/net
+  ts/netfwd
+  ts/socket
+  ts/timer
+  use_awaitable
   use_future
+  uses_executor
+  wait_traits
+  windows/basic_object_handle
+  windows/basic_overlapped_handle
+  windows/basic_random_access_handle
+  windows/basic_stream_handle
   windows/object_handle
+  windows/overlapped_handle
   windows/overlapped_ptr
   windows/random_access_handle
   windows/stream_handle
@@ -120,61 +123,38 @@ set(noinst_PROGRAMS
   write_at
 )
 
+
+set(test_header
+  ../latency/high_res_clock.hpp
+  unit_test.hpp
+)
+
+
 if(OpenSSL_FOUND)
-  set(null_test_PROGRAMS ${null_test_PROGRAMS}
-    ssl/context
+  set(more_test_PROGRAMS
     ssl/context_base
+    ssl/context
     ssl/error
     ssl/rfc2818_verification
     ssl/stream_base
-  )
-  set(noinst_PROGRAMS ${noinst_PROGRAMS}
     ssl/stream
   )
 endif()
 
-foreach(program ${noinst_PROGRAMS} ${null_test_PROGRAMS})
+
+### enable_testing() with ctest
+foreach(program ${test_PROGRAMS} ${more_test_PROGRAMS})
   string(REPLACE "/" "_" target ${program})
-  add_executable(${target_prefix}${target} ${program}.cpp unit_test.hpp)
-  set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 11)
+  add_executable(${target_prefix}${target} ${program}.cpp ${test_header})
+  set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 17)
 
   target_link_libraries(${target_prefix}${target} asio::standalone)
   #NOTE: same as: conan_target_link_libraries(${target_prefix}${target})
   if(EXTRA_LIBS)
     target_link_libraries(${target_prefix}${target} ${EXTRA_LIBS})
   endif()
-endforeach()
 
-if(MSVC)
-  target_compile_features(${target_prefix}use_future PRIVATE
-    cxx_std_11  # OK
-    cxx_contextual_conversions  # OK
-    cxx_final   # OK
-    cxx_override    # OK
-    cxx_variadic_templates  # OK
-    #FIXME: missing features at MS VS12 2013:
-    cxx_aggregate_default_initializers
-    cxx_attribute_deprecated
-    cxx_binary_literals
-    cxx_constexpr
-    cxx_decltype_auto
-    cxx_decltype_incomplete_return_types
-    cxx_defaulted_move_initializers
-    cxx_digit_separators
-    cxx_generic_lambdas
-    cxx_lambda_init_captures
-    cxx_noexcept
-    cxx_relaxed_constexpr
-    cxx_return_type_deduction
-    cxx_variable_templates
-  )
-endif()
-
-### enable_testing() with ctest
-foreach(program ${noinst_PROGRAMS})
-  string(REPLACE "/" "_" target ${program})
-  add_test(NAME ${target_prefix}${target}
-    COMMAND "${target_prefix}${target}"
+  add_test(NAME ${target_prefix}${target} COMMAND "${target_prefix}${target}"
   )
 endforeach()
 
