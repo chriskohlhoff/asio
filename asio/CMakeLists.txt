@@ -44,15 +44,21 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 ###########################################################
-option(COMPILER_WarningsAreErrors "To be pedantic! ;-)" OFF)
-if(COMPILER_WarningsAreErrors)
-  if(MSVC)
-    # warning level 4 and all warnings as errors
-    add_compile_options(/W4 /WX)
-  else()
-    # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+option(ASIO_STANDALONE "Build asio without boost" ON)
+###########################################################
+if(ASIO_STANDALONE)
+  option(COMPILER_WARNINGS_ARE_ERRORS "To be pedantic! ;-)" OFF)
+  if(COMPILER_WarningsAreErrors)
+    if(MSVC)
+      # warning level 4 and all warnings as errors
+      add_compile_options(/W4 /WX)
+    else()
+      # lots of warnings and all warnings as errors
+      add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+    endif()
   endif()
+else()
+  unset(COMPILER_WARNINGS_ARE_ERRORS CACHE)
 endif()
 ###########################################################
 
@@ -61,7 +67,6 @@ endif()
 # ASIO Options
 #==========================================================
 option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" ON)
-option(ASIO_STANDALONE "Build asio without boost" ON)
 option(ASIO_BUILD_TESTS "Build asio unittest too" OFF)
 option(ASIO_BUILD_EXAMPLES "Build asio examples too" OFF)
 option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" ON)

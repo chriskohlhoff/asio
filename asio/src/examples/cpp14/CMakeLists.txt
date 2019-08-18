@@ -1,23 +1,25 @@
 set(target_prefix asio_cpp14_)
 
 set(noinst_PROGRAMS
-  echo/async_tcp_echo_server
-  echo/async_udp_echo_server
-  echo/blocking_tcp_echo_client
-  echo/blocking_tcp_echo_server
-  echo/blocking_udp_echo_client
-  echo/blocking_udp_echo_server
-  executors/actor
-  executors/async_1
-  executors/async_2
-  executors/bank_account_1
-  executors/bank_account_2
-  executors/fork_join
-  executors/pipeline
-  executors/priority_scheduler
-  iostreams/http_client)
+  echo/async_tcp_echo_server.cpp
+  echo/async_udp_echo_server.cpp
+  echo/blocking_tcp_echo_client.cpp
+  echo/blocking_tcp_echo_server.cpp
+  echo/blocking_udp_echo_client.cpp
+  echo/blocking_udp_echo_server.cpp
+  executors/actor.cpp
+  executors/async_1.cpp
+  executors/async_2.cpp
+  executors/bank_account_1.cpp
+  executors/bank_account_2.cpp
+  executors/fork_join.cpp
+  executors/pipeline.cpp
+  executors/priority_scheduler.cpp
+  iostreams/http_client.cpp
+)
 
-foreach(program ${noinst_PROGRAMS})
+foreach(source ${noinst_PROGRAMS})
+  string(REGEX REPLACE "\.cpp$" "" program ${source})
   string(REPLACE "/" "_" target ${program})
   add_executable(${target_prefix}${target} ${program}.cpp)
   set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 14)
@@ -31,4 +33,3 @@ foreach(program ${noinst_PROGRAMS})
   #  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
 
-#TODO: target_compile_features(${target_prefix}executors_priority_scheduler PRIVATE cxx_std_14)

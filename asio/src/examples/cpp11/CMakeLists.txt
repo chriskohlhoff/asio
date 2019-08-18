@@ -1,35 +1,35 @@
 set(target_prefix asio_cpp11_)
 
 set(noinst_PROGRAMS
-  allocation/server
-  buffers/reference_counted
-  chat/chat_client
-  chat/chat_server
-  echo/async_tcp_echo_server
-  echo/async_udp_echo_server
-  echo/blocking_tcp_echo_client
-  echo/blocking_tcp_echo_server
-  echo/blocking_udp_echo_client
-  echo/blocking_udp_echo_server
-  executors/actor
-  executors/bank_account_1
-  executors/bank_account_2
-  executors/fork_join
-  executors/pipeline
-  executors/priority_scheduler
-  futures/daytime_client
-  http/server/http_server
-  iostreams/http_client)
+  allocation/server.cpp
+  buffers/reference_counted.cpp
+  chat/chat_client.cpp
+  chat/chat_server.cpp
+  echo/async_tcp_echo_server.cpp
+  echo/async_udp_echo_server.cpp
+  echo/blocking_tcp_echo_client.cpp
+  echo/blocking_tcp_echo_server.cpp
+  echo/blocking_udp_echo_client.cpp
+  echo/blocking_udp_echo_server.cpp
+  executors/actor.cpp
+  executors/bank_account_1.cpp
+  executors/bank_account_2.cpp
+  executors/fork_join.cpp
+  executors/pipeline.cpp
+  executors/priority_scheduler.cpp
+  futures/daytime_client.cpp
+  http/server/http_server.cpp
+  iostreams/http_client.cpp
+)
 
 
 if(Boost_FOUND)
   set(noinst_PROGRAMS ${noinst_PROGRAMS}
-    spawn/echo_server
-    spawn/parallel_grep)
-    set(spawn_echo_server_SOURCES spawn/echo_server)
-    #XXX spawn_echo_server_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_thread -lboost_chrono -lboost_system
-    set(spawn_parallel_grep_SOURCES spawn/parallel_grep)
-    #XXX spawn_parallel_grep_LDADD = $(LDADD) -lboost_coroutine -lboost_context -lboost_thread -lboost_chrono -lboost_system
+    spawn/echo_server.cpp
+    spawn/parallel_grep.cpp
+  )
+  set(spawn_echo_server_SOURCES spawn/echo_server.cpp)
+  set(spawn_parallel_grep_SOURCES spawn/parallel_grep.cpp)
 endif()
 
 
@@ -58,10 +58,12 @@ set(http_server_http_server_SOURCES
   http/server/reply.cpp
   http/server/request_handler.cpp
   http/server/request_parser.cpp
-  http/server/server.cpp)
+  http/server/server.cpp
+)
 set(iostreams_http_client_SOURCES iostreams/http_client.cpp)
 
-foreach(program ${noinst_PROGRAMS})
+foreach(source ${noinst_PROGRAMS})
+  string(REGEX REPLACE "\.cpp$" "" program ${source})
   string(REPLACE "/" "_" target ${program})
   add_executable(${target_prefix}${target} ${${target}_SOURCES})
   set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 11)
@@ -71,5 +73,3 @@ foreach(program ${noinst_PROGRAMS})
     target_link_libraries(${target_prefix}${target} ${EXTRA_LIBS})
   endif()
 endforeach()
-
-#TODO: target_compile_features(${target_prefix}executors_priority_scheduler PRIVATE cxx_std_11)

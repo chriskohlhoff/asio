@@ -1,13 +1,16 @@
 # Minimum supported CMake version
-cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 # =================================================
-project(asio_examples VERSION 1.11.0 LANGUAGES CXX)
+project(asio_examples VERSION 1.13.0 LANGUAGES CXX)
 # =================================================
 
 # Options
 set(ASIO_BUILD_EXAMPLES_CPP11 ON CACHE BOOL "Build asio C++11 examples")
 set(ASIO_BUILD_EXAMPLES_CPP14 ON CACHE BOOL "Build asio C++14 examples")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  set(ASIO_BUILD_EXAMPLES_CPP17 ON CACHE BOOL "Build asio C++17 examples")
+endif()
 
 # Check asio targets
 if(TARGET standalone)
@@ -23,11 +26,10 @@ endif()
 # Installation configuration
 include(GNUInstallDirs)
 
-#NOTE: examples and tutorial needs boost date_time! CK
 if(Boost_FOUND)
   add_subdirectory(cpp03)
 else()
-  message(WARNING "examples/cpp03 needs boost::date_time!")
+  message(WARNING "examples/cpp03 needs boost!")
 endif()
 
 # C++11 only examples
@@ -38,4 +40,10 @@ endif()
 # C++14 only examples
 if(ASIO_BUILD_EXAMPLES_CPP14)
   add_subdirectory(cpp14)
+endif()
+
+# C++17 only examples
+#NOTE: the examples needs COROUTINE! CK
+if(ASIO_BUILD_EXAMPLES_CPP17)
+  add_subdirectory(cpp17)
 endif()
