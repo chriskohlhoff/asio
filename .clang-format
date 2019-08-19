@@ -1,0 +1,83 @@
+---
+# We'll use defaults from the Mozilla style,
+# with 2 columns indentation.
+BasedOnStyle: Mozilla
+#TBD ContinuationIndentWidth: 4
+#TBD IndentPPDirectives: AfterHash
+IndentCaseLabels: false
+UseTab: Never
+---
+Language: Cpp
+# AccessModifierOffset: -4
+### see BinPack... too
+#XXX not yet possible with clang-format V7.0.1! CK
+#XXX AllowAllArgumentsOnNextLine: true
+#XXX AllowAllConstructorInitializersOnNextLine: true
+#XXX AllowShortLambdasOnASingleLine: None
+#
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+#TBD AllowShortFunctionsOnASingleLine: None
+# AllowShortFunctionsOnASingleLine: Inline
+AllowShortFunctionsOnASingleLine: All
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+#
+### Force pointers NOT to the type for C++.
+# DerivePointerAlignment: false
+# PointerAlignment: Right
+#NO! SpaceBeforeCpp11BracedList: true
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+#
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: true
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+#
+### BinPack... args will all be on the same line
+BinPackArguments: true
+BinPackParameters: true
+#
+# from LLVM style:
+###TODO We use only 80 columns!
+ColumnLimit: 80
+#
+#default: AllowAllParametersOfDeclarationOnNextLine: false
+# AlwaysBreakTemplateDeclarations: MultiLine
+#FIXME BreakBeforeInheritanceComma: false
+BreakBeforeInheritanceComma: true
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+# PenaltyReturnTypeOnItsOwnLine: 60
+# SpaceAfterTemplateKeyword: true
+#
+IncludeBlocks:   Regroup
+IncludeCategories:
+  - Regex:           '^("asio.*|<asio.*>)'
+    Priority:        2
+  - Regex: '^<(Poco|gsl|doctest|zmqpp|boost|gtest|gmock|fmt|json|openssl)/'
+    Priority:        3
+  - Regex:           '<[[:alnum:].]+>'
+    Priority:        4
+# all other headers first!
+  - Regex:           '.*'
+    Priority:        1
+IncludeIsMainRegex: '(_test)?$'
+#
+---
