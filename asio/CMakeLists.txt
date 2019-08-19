@@ -148,7 +148,7 @@ if(NOT CONAN_COMPILER)
       add_definitions(-DBOOST_ALL_NO_LIB=1
         -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
       )
-      set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES})
+      list(APPEND EXTRA_LIBS ${Boost_LIBRARIES})
     endif()
     #####################################################################
   endif()
@@ -161,7 +161,7 @@ if(NOT CONAN_COMPILER)
   #######################################################################
 
   if(OpenSSL_FOUND)
-    set(EXTRA_LIBS ${EXTRA_LIBS} ${openSSL_LIBRARIES})
+    list(APPEND EXTRA_LIBS ${openSSL_LIBRARIES})
     message(STATUS "HAVE_OPENSSL")
     add_definitions(-DHAVE_OPENSSL)
     include_directories(BEFORE ${openSSL_INCLUDE_DIR})
@@ -172,7 +172,7 @@ if(NOT CONAN_COMPILER)
       set(OpenSSL_FOUND ON)
       message(STATUS "USE CRYPTO_LIBRARY")
       add_definitions(-DHAVE_OPENSSL)
-      set(EXTRA_LIBS ${EXTRA_LIBS} ${OpenSSL_LIBRARY} ${CRYPTO_LIBRARY})
+      list(APPEND EXTRA_LIBS ${OpenSSL_LIBRARY} ${CRYPTO_LIBRARY})
       include_directories(BEFORE ${OpenSSL_ROOT_DIR}/include)
     endif()
   endif()
@@ -183,6 +183,13 @@ else()
     add_definitions(-DHAVE_OPENSSL)
     message(STATUS "have CONAN_LIBS_OPENSSL")
   endif()
+endif()
+
+
+if(UNIX)
+  find_library(PTHREAD_LIBRARY pthread REQUIRED)
+  message(STATUS "USE ${PTHREAD_LIBRARY}")
+  list(APPEND EXTRA_LIBS ${PTHREAD_LIBRARY})
 endif()
 
 
