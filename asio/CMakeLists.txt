@@ -47,8 +47,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(ASIO_STANDALONE "Build asio without boost" ON)
 ###########################################################
 if(ASIO_STANDALONE)
-  option(COMPILER_WARNINGS_ARE_ERRORS "To be pedantic! ;-)" OFF)
-  if(COMPILER_WarningsAreErrors)
+  option(COMPILER_WARNINGS_ARE_ERRORS "To be pedantic! ;-)" ON)
+  if(COMPILER_WARNINGS_ARE_ERRORS)
     if(MSVC)
       # warning level 4 and all warnings as errors
       add_compile_options(/W4 /WX)
