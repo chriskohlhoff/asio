@@ -721,6 +721,8 @@
 /doc/html/boost_asio/example/cpp11/multicast/
 /doc/html/boost_asio/example/cpp11/multicast/receiver.cpp
 /doc/html/boost_asio/example/cpp11/multicast/sender.cpp
+/doc/html/boost_asio/example/cpp11/nonblocking/
+/doc/html/boost_asio/example/cpp11/nonblocking/third_party_lib.cpp
 /doc/html/boost_asio/example/cpp11/operations/
 /doc/html/boost_asio/example/cpp11/operations/composed_1.cpp
 /doc/html/boost_asio/example/cpp11/operations/composed_2.cpp
@@ -5112,10 +5114,14 @@
 /libs/system/test/single_instance_test.cpp
 /libs/system/test/std_interop_test.cpp
 /libs/system/test/std_mismatch_test.cpp
+/libs/system/test/std_single_instance_1.cpp
+/libs/system/test/std_single_instance_2.cpp
+/libs/system/test/std_single_instance_test.cpp
 /libs/system/test/system_category_test.cpp
 /libs/system/test/system_error_test.cpp
 /libs/system/test/throws_assign_fail.cpp
 /libs/system/test/throw_test.cpp
+/libs/system/test/warnings_test.cpp
 /libs/system/test/win32_hresult_test.cpp
 /libs/system/.travis.yml
 /README.txt
