@@ -53,7 +53,7 @@ namespace asio {
  * @li Returns <tt>result.get()</tt>.
  */
 template <typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     ASIO_MOVE_ARG(CompletionToken) token);
 
 /// Submits a completion token or function object for execution.
@@ -90,7 +90,7 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
  * @li Returns <tt>result.get()</tt>.
  */
 template <typename Executor, typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_executor<Executor>::value>::type* = 0);
 
@@ -99,7 +99,7 @@ ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
  * @returns <tt>post(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
  */
 template <typename ExecutionContext, typename CompletionToken>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, void()) post(
+ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     ExecutionContext& ctx, ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type* = 0);

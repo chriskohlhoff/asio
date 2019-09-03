@@ -373,7 +373,7 @@ struct associated_executor<
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename CompletionCondition, typename WriteHandler>
-inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
+inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, const ConstBufferSequence& buffers,
@@ -388,7 +388,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     typename WriteHandler>
-inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
+inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, const ConstBufferSequence& buffers,
@@ -541,7 +541,7 @@ struct associated_executor<
 
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     typename CompletionCondition, typename WriteHandler>
-inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
+inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, asio::basic_streambuf<Allocator>& b,
@@ -556,7 +556,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     typename WriteHandler>
-inline ASIO_INITFN_RESULT_TYPE(WriteHandler,
+inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, asio::basic_streambuf<Allocator>& b,

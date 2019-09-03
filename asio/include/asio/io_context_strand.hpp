@@ -182,7 +182,7 @@ public:
    * @code void handler(); @endcode
    */
   template <typename LegacyCompletionHandler>
-  ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+  ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
   dispatch(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
     return async_initiate<LegacyCompletionHandler, void ()>(
@@ -229,7 +229,7 @@ public:
    * @code void handler(); @endcode
    */
   template <typename LegacyCompletionHandler>
-  ASIO_INITFN_RESULT_TYPE(LegacyCompletionHandler, void ())
+  ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
   post(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
   {
     return async_initiate<LegacyCompletionHandler, void ()>(

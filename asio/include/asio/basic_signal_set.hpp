@@ -503,7 +503,7 @@ public:
    * manner equivalent to using asio::post().
    */
   template <typename SignalHandler>
-  ASIO_INITFN_RESULT_TYPE(SignalHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(SignalHandler,
       void (asio::error_code, int))
   async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
   {
