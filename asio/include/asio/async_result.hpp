@@ -23,6 +23,66 @@
 
 namespace asio {
 
+#if defined(ASIO_HAS_CONCEPTS) \
+  && defined(ASIO_HAS_VARIADIC_TEMPLATES) \
+  && defined(ASIO_HAS_DECLTYPE)
+
+namespace detail {
+
+template <typename T>
+struct is_completion_signature : false_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...)> : true_type
+{
+};
+
+template <typename T, typename... Args>
+ASIO_CONCEPT callable_with = requires(T t, Args&&... args)
+{
+  t(static_cast<Args&&>(args)...);
+};
+
+template <typename T, typename Signature>
+struct is_completion_handler_for : false_type
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...)>
+  : integral_constant<bool, (callable_with<T, Args...>)>
+{
+};
+
+} // namespace detail
+
+template <typename T>
+ASIO_CONCEPT completion_signature =
+  detail::is_completion_signature<T>::value;
+
+#define ASIO_COMPLETION_SIGNATURE \
+  ::asio::completion_signature
+
+template <typename T, completion_signature Signature>
+ASIO_CONCEPT completion_handler_for =
+  detail::is_completion_handler_for<T, Signature>::value;
+
+#define ASIO_COMPLETION_HANDLER_FOR(s) \
+  ::asio::completion_handler_for<s>
+
+#else // defined(ASIO_HAS_CONCEPTS)
+      //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
+      //   && defined(ASIO_HAS_DECLTYPE)
+
+#define ASIO_COMPLETION_SIGNATURE typename
+#define ASIO_COMPLETION_HANDLER_FOR(s) typename
+
+#endif // defined(ASIO_HAS_CONCEPTS)
+       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
+       //   && defined(ASIO_HAS_DECLTYPE)
+
 /// An interface for customising the behaviour of an initiating function.
 /**
  * The async_result traits class is used for determining:
@@ -41,7 +101,7 @@ namespace asio {
  * The primary template assumes that the CompletionToken is the completion
  * handler.
  */
-template <typename CompletionToken, typename Signature>
+template <typename CompletionToken, ASIO_COMPLETION_SIGNATURE Signature>
 class async_result
 {
 public:
@@ -67,12 +127,21 @@ public:
   {
   }
 
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES) \
-  || defined(GENERATING_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 
   /// Initiate the asynchronous operation that will produce the result, and
   /// obtain the value to be returned from the initiating function.
   template <typename Initiation, typename RawCompletionToken, typename... Args>
+  static return_type initiate(
+      ASIO_MOVE_ARG(Initiation) initiation,
+      ASIO_MOVE_ARG(RawCompletionToken) token,
+      ASIO_MOVE_ARG(Args)... args);
+
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+  template <typename Initiation,
+      ASIO_COMPLETION_HANDLER_FOR(Signature) RawCompletionToken,
+      typename... Args>
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token,
@@ -84,9 +153,9 @@ public:
   }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-      //   || defined(GENERATING_DOCUMENTATION)
 
-  template <typename Initiation, typename RawCompletionToken>
+  template <typename Initiation,
+      ASIO_COMPLETION_HANDLER_FOR(Signature) RawCompletionToken>
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token)
@@ -96,7 +165,8 @@ public:
   }
 
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
-  template <typename Initiation, typename RawCompletionToken, \
+  template <typename Initiation, \
+      ASIO_COMPLETION_HANDLER_FOR(Signature) RawCompletionToken, \
       ASIO_VARIADIC_TPARAMS(n)> \
   static return_type initiate( \
       ASIO_MOVE_ARG(Initiation) initiation, \
@@ -112,7 +182,6 @@ public:
 #undef ASIO_PRIVATE_INITIATE_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-       //   || defined(GENERATING_DOCUMENTATION)
 
 private:
   async_result(const async_result&) ASIO_DELETED;
@@ -122,7 +191,7 @@ private:
 /// Helper template to deduce the handler type from a CompletionToken, capture
 /// a local copy of the handler, and then create an async_result for the
 /// handler.
-template <typename CompletionToken, typename Signature>
+template <typename CompletionToken, ASIO_COMPLETION_SIGNATURE Signature>
 struct async_completion
 {
   /// The real handler type to be used for the asynchronous operation.
@@ -256,7 +325,8 @@ struct async_result_has_initiate_memfn
 
 #if defined(GENERATING_DOCUMENTATION)
 
-template <typename CompletionToken, typename Signature,
+template <typename CompletionToken,
+    completion_signature Signature,
     typename Initiation, typename... Args>
 void_or_deduced async_initiate(
     ASIO_MOVE_ARG(Initiation) initiation,
@@ -265,7 +335,8 @@ void_or_deduced async_initiate(
 
 #elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-template <typename CompletionToken, typename Signature,
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Signature,
     typename Initiation, typename... Args>
 inline typename enable_if<
     detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
@@ -284,7 +355,8 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_CAST(Args)(args)...);
 }
 
-template <typename CompletionToken, typename Signature,
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Signature,
     typename Initiation, typename... Args>
 inline typename enable_if<
     !detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
@@ -305,7 +377,9 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-template <typename CompletionToken, typename Signature, typename Initiation>
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Signature,
+    typename Initiation>
 inline typename enable_if<
     detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
     ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature,
@@ -320,7 +394,9 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_CAST(CompletionToken)(token));
 }
 
-template <typename CompletionToken, typename Signature, typename Initiation>
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Signature,
+    typename Initiation>
 inline typename enable_if<
     !detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
     ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type
@@ -337,7 +413,8 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 }
 
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
-  template <typename CompletionToken, typename Signature, \
+  template <typename CompletionToken, \
+      ASIO_COMPLETION_SIGNATURE Signature, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
   inline typename enable_if< \
       detail::async_result_has_initiate_memfn< \
@@ -357,7 +434,8 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
-  template <typename CompletionToken, typename Signature, \
+  template <typename CompletionToken, \
+      ASIO_COMPLETION_SIGNATURE Signature, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
   inline typename enable_if< \
       !detail::async_result_has_initiate_memfn< \
@@ -381,6 +459,42 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 #undef ASIO_PRIVATE_INITIATE_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+#if defined(ASIO_HAS_CONCEPTS) \
+  && defined(ASIO_HAS_VARIADIC_TEMPLATES) \
+  && defined(ASIO_HAS_DECLTYPE)
+
+namespace detail {
+
+template <typename Signature>
+struct initiation_archetype
+{
+  template <completion_handler_for<Signature> CompletionHandler>
+  void operator()(CompletionHandler&&) const
+  {
+  }
+};
+
+} // namespace detail
+
+template <typename T, completion_signature Signature>
+ASIO_CONCEPT completion_token_for = requires(T&& t)
+{
+  async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
+};
+
+#define ASIO_COMPLETION_TOKEN_FOR(s) \
+  ::asio::completion_token_for<s>
+
+#else // defined(ASIO_HAS_CONCEPTS)
+      //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
+      //   && defined(ASIO_HAS_DECLTYPE)
+
+#define ASIO_COMPLETION_TOKEN_FOR(s) typename
+
+#endif // defined(ASIO_HAS_CONCEPTS)
+       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
+       //   && defined(ASIO_HAS_DECLTYPE)
 
 } // namespace asio
 

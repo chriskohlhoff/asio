@@ -341,6 +341,16 @@
 # endif // !defined(ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
 #endif // !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
+// Support concepts on compilers known to allow them.
+#if !defined(ASIO_HAS_CONCEPTS)
+# if !defined(ASIO_DISABLE_CONCEPTS)
+#  if __cpp_concepts
+#   define ASIO_HAS_CONCEPTS 1
+#   define ASIO_CONCEPT concept bool
+#  endif // __cpp_concepts
+# endif // !defined(ASIO_DISABLE_CONCEPTS)
+#endif // !defined(ASIO_HAS_CONCEPTS)
+
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)
