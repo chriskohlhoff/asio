@@ -32,6 +32,7 @@
 # include <boost/type_traits/is_same.hpp>
 # include <boost/type_traits/remove_pointer.hpp>
 # include <boost/type_traits/remove_reference.hpp>
+# include <boost/utility/declval.hpp>
 # include <boost/utility/enable_if.hpp>
 # include <boost/utility/result_of.hpp>
 #endif // defined(ASIO_HAS_TYPE_TRAITS)
@@ -42,6 +43,7 @@ namespace asio {
 using std::add_const;
 using std::conditional;
 using std::decay;
+using std::declval;
 using std::enable_if;
 using std::false_type;
 using std::integral_constant;
@@ -67,6 +69,7 @@ template <bool Condition, typename Type = void>
 struct enable_if : boost::enable_if_c<Condition, Type> {};
 using boost::conditional;
 using boost::decay;
+using boost::declval;
 using boost::false_type;
 using boost::integral_constant;
 using boost::is_base_of;

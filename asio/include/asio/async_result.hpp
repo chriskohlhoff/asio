@@ -232,12 +232,34 @@ struct async_result_has_initiate_memfn
     typename ::asio::decay<ct>::type, sig>::completion_handler_type
 #endif
 
+#if defined(GENERATION_DOCUMENTATION)
+# define ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
+  auto
+#elif defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
+# define ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
+  auto
+#else
+# define ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
+  ASIO_INITFN_RESULT_TYPE(ct, sig)
+#endif
+
+#if defined(GENERATION_DOCUMENTATION)
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
+  void_or_deduced
+#elif defined(ASIO_HAS_DECLTYPE)
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
+  decltype expr
+#else
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
+  ASIO_INITFN_RESULT_TYPE(ct, sig)
+#endif
+
 #if defined(GENERATING_DOCUMENTATION)
 
 template <typename CompletionToken, typename Signature,
     typename Initiation, typename... Args>
-ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)
-async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
+void_or_deduced async_initiate(
+    ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken),
     ASIO_MOVE_ARG(Args)... args);
 
@@ -247,7 +269,11 @@ template <typename CompletionToken, typename Signature,
     typename Initiation, typename... Args>
 inline typename enable_if<
     detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
-    ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type
+    ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature,
+      (async_result<typename decay<CompletionToken>::type,
+        Signature>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
+          declval<ASIO_MOVE_ARG(CompletionToken)>(),
+          declval<ASIO_MOVE_ARG(Args)>()...)))>::type
 async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token,
     ASIO_MOVE_ARG(Args)... args)
@@ -282,7 +308,10 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 template <typename CompletionToken, typename Signature, typename Initiation>
 inline typename enable_if<
     detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
-    ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type
+    ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature,
+      (async_result<typename decay<CompletionToken>::type,
+        Signature>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
+          declval<ASIO_MOVE_ARG(CompletionToken)>())))>::type
 async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
 {
@@ -313,7 +342,11 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
   inline typename enable_if< \
       detail::async_result_has_initiate_memfn< \
         CompletionToken, Signature>::value, \
-      ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type \
+      ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature, \
+        (async_result<typename decay<CompletionToken>::type, \
+          Signature>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(), \
+            declval<ASIO_MOVE_ARG(CompletionToken)>(), \
+            ASIO_VARIADIC_MOVE_DECLVAL(n))))>::type \
   async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
