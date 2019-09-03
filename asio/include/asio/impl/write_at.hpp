@@ -371,8 +371,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncRandomAccessWriteDevice,
+    typename ConstBufferSequence, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -387,7 +389,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
-    typename WriteHandler>
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -539,8 +542,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessWriteDevice, typename Allocator,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncRandomAccessWriteDevice,
+    typename Allocator, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
@@ -555,7 +560,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
-    typename WriteHandler>
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,

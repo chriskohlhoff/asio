@@ -480,8 +480,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncWriteStream, typename ConstBufferSequence,
-  typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename ConstBufferSequence, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
@@ -498,7 +500,8 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
-    typename WriteHandler>
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
@@ -692,8 +695,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncWriteStream,
-    typename DynamicBuffer_v1, typename WriteHandler>
+template <typename AsyncWriteStream, typename DynamicBuffer_v1,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
@@ -709,8 +713,10 @@ async_write(AsyncWriteStream& s,
       transfer_all(), ASIO_MOVE_CAST(WriteHandler)(handler));
 }
 
-template <typename AsyncWriteStream, typename DynamicBuffer_v1,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename DynamicBuffer_v1, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
@@ -732,7 +738,9 @@ async_write(AsyncWriteStream& s,
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
 
-template <typename AsyncWriteStream, typename Allocator, typename WriteHandler>
+template <typename AsyncWriteStream, typename Allocator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
@@ -743,8 +751,10 @@ async_write(AsyncWriteStream& s,
       ASIO_MOVE_CAST(WriteHandler)(handler));
 }
 
-template <typename AsyncWriteStream, typename Allocator,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename Allocator, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s,
@@ -938,8 +948,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncWriteStream,
-    typename DynamicBuffer_v2, typename WriteHandler>
+template <typename AsyncWriteStream, typename DynamicBuffer_v2,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
@@ -953,8 +964,10 @@ async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
       transfer_all(), ASIO_MOVE_CAST(WriteHandler)(handler));
 }
 
-template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename WriteHandler>
+template <typename AsyncWriteStream,
+    typename DynamicBuffer_v2, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) WriteHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,

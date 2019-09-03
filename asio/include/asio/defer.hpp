@@ -54,7 +54,7 @@ namespace asio {
  *
  * @li Returns <tt>result.get()</tt>.
  */
-template <typename CompletionToken>
+template <ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
     ASIO_MOVE_ARG(CompletionToken) token);
 
@@ -93,7 +93,8 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
  *
  * @li Returns <tt>result.get()</tt>.
  */
-template <typename Executor, typename CompletionToken>
+template <typename Executor,
+    ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
     const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_executor<Executor>::value>::type* = 0);
@@ -102,7 +103,8 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
 /**
  * @returns <tt>defer(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
  */
-template <typename ExecutionContext, typename CompletionToken>
+template <typename ExecutionContext,
+    ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
     ExecutionContext& ctx, ASIO_MOVE_ARG(CompletionToken) token,
     typename enable_if<is_convertible<

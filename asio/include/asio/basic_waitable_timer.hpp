@@ -691,7 +691,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    */
-  template <typename WaitHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        WaitHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
   async_wait(ASIO_MOVE_ARG(WaitHandler) handler)

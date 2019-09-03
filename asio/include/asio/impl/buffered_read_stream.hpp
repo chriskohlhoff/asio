@@ -193,7 +193,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
-template <typename ReadHandler>
+template <
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 buffered_read_stream<Stream>::async_fill(
@@ -407,7 +409,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename Stream>
-template <typename MutableBufferSequence, typename ReadHandler>
+template <typename MutableBufferSequence,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 buffered_read_stream<Stream>::async_read_some(

@@ -265,7 +265,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) WriteHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_write_some_at(uint64_t offset,
@@ -393,7 +395,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) ReadHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_read_some_at(uint64_t offset,

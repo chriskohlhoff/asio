@@ -939,7 +939,9 @@ public:
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
    */
-  template <typename ConnectHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        ConnectHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ConnectHandler,
       void (asio::error_code))
   async_connect(const endpoint_type& peer_endpoint,
@@ -1769,7 +1771,9 @@ public:
    * socket.async_wait(asio::ip::tcp::socket::wait_read, wait_handler);
    * @endcode
    */
-  template <typename WaitHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        WaitHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
