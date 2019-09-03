@@ -615,7 +615,7 @@ public:
    * @endcode
    */
   template <typename WaitHandler>
-  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
   {

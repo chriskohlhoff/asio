@@ -1211,7 +1211,7 @@ public:
    * @endcode
    */
   template <typename WaitHandler>
-  ASIO_INITFN_RESULT_TYPE(WaitHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
   {
@@ -1324,7 +1324,7 @@ public:
    * @endcode
    */
   template <typename Protocol1, typename Executor1, typename AcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(AcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<Protocol1, Executor1>& peer,
       ASIO_MOVE_ARG(AcceptHandler) handler,
@@ -1434,7 +1434,7 @@ public:
    * manner equivalent to using asio::post().
    */
   template <typename Executor1, typename AcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(AcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<protocol_type, Executor1>& peer,
       endpoint_type& peer_endpoint, ASIO_MOVE_ARG(AcceptHandler) handler)
@@ -1545,7 +1545,7 @@ public:
    * @endcode
    */
   template <typename MoveAcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(ASIO_MOVE_ARG(MoveAcceptHandler) handler)
   {
@@ -1759,7 +1759,7 @@ public:
    * @endcode
    */
   template <typename Executor1, typename MoveAcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           Executor1>::other))
@@ -1823,7 +1823,7 @@ public:
    * @endcode
    */
   template <typename ExecutionContext, typename MoveAcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other))
@@ -1960,7 +1960,7 @@ public:
    * @endcode
    */
   template <typename MoveAcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler)
@@ -2207,7 +2207,7 @@ public:
    * @endcode
    */
   template <typename Executor1, typename MoveAcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           Executor1>::other))
@@ -2277,7 +2277,7 @@ public:
    * @endcode
    */
   template <typename ExecutionContext, typename MoveAcceptHandler>
-  ASIO_INITFN_RESULT_TYPE(MoveAcceptHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other))

@@ -175,7 +175,7 @@ struct associated_executor<
 
 template <typename Stream>
 template <typename WriteHandler>
-ASIO_INITFN_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 buffered_write_stream<Stream>::async_flush(
     ASIO_MOVE_ARG(WriteHandler) handler)
@@ -396,7 +396,7 @@ struct associated_executor<
 
 template <typename Stream>
 template <typename ConstBufferSequence, typename WriteHandler>
-ASIO_INITFN_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 buffered_write_stream<Stream>::async_write_some(
     const ConstBufferSequence& buffers,

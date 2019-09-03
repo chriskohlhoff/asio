@@ -107,7 +107,7 @@ struct initiate_co_spawn
 } // namespace detail
 
 template <typename Executor, typename F, typename CompletionToken>
-inline ASIO_INITFN_RESULT_TYPE(CompletionToken,
+inline ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
     typename enable_if<
@@ -120,7 +120,7 @@ co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
 }
 
 template <typename ExecutionContext, typename F, typename CompletionToken>
-inline ASIO_INITFN_RESULT_TYPE(CompletionToken,
+inline ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
     typename enable_if<

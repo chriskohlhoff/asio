@@ -761,7 +761,7 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler,
@@ -834,7 +834,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
     typename CompletionCondition, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
@@ -897,7 +897,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  */
 template <typename AsyncReadStream,
     typename DynamicBuffer_v1, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
@@ -967,7 +967,7 @@ async_read(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v1,
     typename CompletionCondition, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
@@ -1030,7 +1030,7 @@ async_read(AsyncReadStream& s,
  *     handler); @endcode
  */
 template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     ASIO_MOVE_ARG(ReadHandler) handler);
@@ -1093,7 +1093,7 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename AsyncReadStream, typename Allocator,
     typename CompletionCondition, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
     CompletionCondition completion_condition,
@@ -1155,7 +1155,7 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename AsyncReadStream,
     typename DynamicBuffer_v2, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
     ASIO_MOVE_ARG(ReadHandler) handler,
@@ -1223,7 +1223,7 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v2,
     typename CompletionCondition, typename ReadHandler>
-ASIO_INITFN_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition,
