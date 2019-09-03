@@ -539,7 +539,8 @@ sub copy_examples
       "src/examples/cpp14/executors",
       "src/examples/cpp14/operations",
       "src/examples/cpp17/coroutines_ts",
-      "src/examples/cpp17/fibers");
+      "src/examples/cpp17/fibers",
+      "src/examples/cpp17/lazy");
 
   our $boost_dir;
   foreach my $dir (@dirs)
