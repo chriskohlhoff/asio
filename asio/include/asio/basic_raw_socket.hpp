@@ -439,7 +439,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) WriteHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
@@ -479,7 +481,9 @@ public:
    * Use the async_send_to function to send data on an unconnected raw
    * socket.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) WriteHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
@@ -616,7 +620,9 @@ public:
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) WriteHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_send_to(const ConstBufferSequence& buffers,
@@ -656,7 +662,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) WriteHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_send_to(const ConstBufferSequence& buffers,
@@ -793,7 +801,9 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) ReadHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
@@ -833,7 +843,9 @@ public:
    * Use the async_receive_from function to receive data on an unconnected
    * raw socket.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) ReadHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
@@ -970,7 +982,9 @@ public:
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) ReadHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_receive_from(const MutableBufferSequence& buffers,
@@ -1012,7 +1026,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) ReadHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_receive_from(const MutableBufferSequence& buffers,

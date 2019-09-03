@@ -1013,8 +1013,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1280,8 +1281,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1555,8 +1557,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1826,8 +1829,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream, typename DynamicBuffer_v1,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v1, typename MatchCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1847,7 +1852,9 @@ async_read_until(AsyncReadStream& s,
 
 #if !defined(ASIO_NO_IOSTREAM)
 
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1858,7 +1865,9 @@ async_read_until(AsyncReadStream& s,
       delim, ASIO_MOVE_CAST(ReadHandler)(handler));
 }
 
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1872,7 +1881,9 @@ async_read_until(AsyncReadStream& s,
 
 #if defined(ASIO_HAS_BOOST_REGEX)
 
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -1885,8 +1896,9 @@ async_read_until(AsyncReadStream& s,
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
 
-template <typename AsyncReadStream, typename Allocator,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator, typename MatchCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 inline ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2148,8 +2160,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2422,7 +2435,9 @@ struct associated_executor<
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+    typename DynamicBuffer_v2,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
@@ -2702,8 +2717,9 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -2978,8 +2994,10 @@ struct associated_executor<
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncReadStream, typename DynamicBuffer_v2,
-    typename MatchCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v2, typename MatchCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,

@@ -612,7 +612,9 @@ public:
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
    */
-  template <typename ResolveHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        results_type)) ResolveHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const query& q,
@@ -666,7 +668,9 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  template <typename ResolveHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        results_type)) ResolveHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(ASIO_STRING_VIEW_PARAM host,
@@ -724,7 +728,9 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  template <typename ResolveHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        results_type)) ResolveHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(ASIO_STRING_VIEW_PARAM host,
@@ -785,7 +791,9 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  template <typename ResolveHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        results_type)) ResolveHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
@@ -846,7 +854,9 @@ public:
    * <tt>c:\\windows\\system32\\drivers\\etc\\services</tt>. Operating systems
    * may use additional locations when resolving service names.
    */
-  template <typename ResolveHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        results_type)) ResolveHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
@@ -929,7 +939,9 @@ public:
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
    */
-  template <typename ResolveHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        results_type)) ResolveHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const endpoint_type& e,

@@ -665,8 +665,9 @@ Iterator connect(basic_socket<Protocol, Executor>& s,
  *   // ...
  * } @endcode
  */
-template <typename Protocol, typename Executor,
-    typename EndpointSequence, typename RangeConnectHandler>
+template <typename Protocol, typename Executor, typename EndpointSequence,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      typename Protocol::endpoint)) RangeConnectHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol, Executor>& s,
@@ -711,8 +712,9 @@ async_connect(basic_socket<Protocol, Executor>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename Executor,
-    typename Iterator, typename IteratorConnectHandler>
+template <typename Protocol, typename Executor, typename Iterator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      Iterator)) IteratorConnectHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
@@ -769,8 +771,9 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
  *   // ...
  * } @endcode
  */
-template <typename Protocol, typename Executor,
-    typename Iterator, typename IteratorConnectHandler>
+template <typename Protocol, typename Executor, typename Iterator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      Iterator)) IteratorConnectHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin, Iterator end,
@@ -871,8 +874,10 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin, Iterator end,
  *   }
  * } @endcode
  */
-template <typename Protocol, typename Executor, typename EndpointSequence,
-    typename ConnectCondition, typename RangeConnectHandler>
+template <typename Protocol, typename Executor,
+    typename EndpointSequence, typename ConnectCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      typename Protocol::endpoint)) RangeConnectHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint))
 async_connect(basic_socket<Protocol, Executor>& s,
@@ -928,8 +933,10 @@ async_connect(basic_socket<Protocol, Executor>& s,
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
  */
-template <typename Protocol, typename Executor, typename Iterator,
-    typename ConnectCondition, typename IteratorConnectHandler>
+template <typename Protocol, typename Executor,
+    typename Iterator, typename ConnectCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      Iterator)) IteratorConnectHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
@@ -1036,8 +1043,10 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
  *   }
  * } @endcode
  */
-template <typename Protocol, typename Executor, typename Iterator,
-    typename ConnectCondition, typename IteratorConnectHandler>
+template <typename Protocol, typename Executor,
+    typename Iterator, typename ConnectCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      Iterator)) IteratorConnectHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,

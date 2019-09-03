@@ -1210,7 +1210,9 @@ public:
    *     wait_handler);
    * @endcode
    */
-  template <typename WaitHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        WaitHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
@@ -1323,7 +1325,9 @@ public:
    * acceptor.async_accept(socket, accept_handler);
    * @endcode
    */
-  template <typename Protocol1, typename Executor1, typename AcceptHandler>
+  template <typename Protocol1, typename Executor1,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        AcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<Protocol1, Executor1>& peer,
@@ -1433,7 +1437,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    */
-  template <typename Executor1, typename AcceptHandler>
+  template <typename Executor1,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        AcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(AcceptHandler,
       void (asio::error_code))
   async_accept(basic_socket<protocol_type, Executor1>& peer,
@@ -1544,7 +1550,9 @@ public:
    * acceptor.async_accept(accept_handler);
    * @endcode
    */
-  template <typename MoveAcceptHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        typename Protocol::socket)) MoveAcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(ASIO_MOVE_ARG(MoveAcceptHandler) handler)
@@ -1758,7 +1766,10 @@ public:
    * acceptor.async_accept(my_context2, accept_handler);
    * @endcode
    */
-  template <typename Executor1, typename MoveAcceptHandler>
+  template <typename Executor1,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        typename Protocol::socket::template rebind_executor<
+          Executor1>::other)) MoveAcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
@@ -1822,7 +1833,10 @@ public:
    * acceptor.async_accept(my_context2, accept_handler);
    * @endcode
    */
-  template <typename ExecutionContext, typename MoveAcceptHandler>
+  template <typename ExecutionContext,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        typename Protocol::socket::template rebind_executor<
+          typename ExecutionContext::executor_type>::other)) MoveAcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
@@ -1959,7 +1973,9 @@ public:
    * acceptor.async_accept(endpoint, accept_handler);
    * @endcode
    */
-  template <typename MoveAcceptHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        typename Protocol::socket)) MoveAcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code, typename Protocol::socket))
   async_accept(endpoint_type& peer_endpoint,
@@ -2206,7 +2222,10 @@ public:
    * acceptor.async_accept(my_context2, endpoint, accept_handler);
    * @endcode
    */
-  template <typename Executor1, typename MoveAcceptHandler>
+  template <typename Executor1,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        typename Protocol::socket::template rebind_executor<
+          Executor1>::other)) MoveAcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
@@ -2276,7 +2295,10 @@ public:
    * acceptor.async_accept(my_context2, endpoint, accept_handler);
    * @endcode
    */
-  template <typename ExecutionContext, typename MoveAcceptHandler>
+  template <typename ExecutionContext,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        typename Protocol::socket::template rebind_executor<
+          typename ExecutionContext::executor_type>::other)) MoveAcceptHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<

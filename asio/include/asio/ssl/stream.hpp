@@ -430,7 +430,9 @@ public:
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
    */
-  template <typename HandshakeHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        HandshakeHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(HandshakeHandler,
       void (asio::error_code))
   async_handshake(handshake_type type,
@@ -462,7 +464,9 @@ public:
    *   std::size_t bytes_transferred // Amount of buffers used in handshake.
    * ); @endcode
    */
-  template <typename ConstBufferSequence, typename BufferedHandshakeHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) BufferedHandshakeHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(BufferedHandshakeHandler,
       void (asio::error_code, std::size_t))
   async_handshake(handshake_type type, const ConstBufferSequence& buffers,
@@ -512,7 +516,9 @@ public:
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
    */
-  template <typename ShutdownHandler>
+  template <
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+        ShutdownHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ShutdownHandler,
       void (asio::error_code))
   async_shutdown(ASIO_MOVE_ARG(ShutdownHandler) handler)
@@ -594,7 +600,9 @@ public:
    * ensure that all data is written before the asynchronous operation
    * completes.
    */
-  template <typename ConstBufferSequence, typename WriteHandler>
+  template <typename ConstBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) WriteHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
       void (asio::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
@@ -677,7 +685,9 @@ public:
    * ensure that the requested amount of data is read before the asynchronous
    * operation completes.
    */
-  template <typename MutableBufferSequence, typename ReadHandler>
+  template <typename MutableBufferSequence,
+      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+        std::size_t)) ReadHandler>
   ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
       void (asio::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,

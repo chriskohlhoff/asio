@@ -760,7 +760,8 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  *     handler); @endcode
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
-    typename ReadHandler>
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
@@ -832,8 +833,10 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
  */
-template <typename AsyncReadStream, typename MutableBufferSequence,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename MutableBufferSequence, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
@@ -895,8 +898,9 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  *     asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v1, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v1,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s,
@@ -965,8 +969,10 @@ async_read(AsyncReadStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  */
-template <typename AsyncReadStream, typename DynamicBuffer_v1,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v1, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s,
@@ -1029,7 +1035,9 @@ async_read(AsyncReadStream& s,
  *     asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename AsyncReadStream, typename Allocator, typename ReadHandler>
+template <typename AsyncReadStream, typename Allocator,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
@@ -1091,8 +1099,10 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  */
-template <typename AsyncReadStream, typename Allocator,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename Allocator, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
@@ -1153,8 +1163,9 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  *     asio::transfer_all(),
  *     handler); @endcode
  */
-template <typename AsyncReadStream,
-    typename DynamicBuffer_v2, typename ReadHandler>
+template <typename AsyncReadStream, typename DynamicBuffer_v2,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
@@ -1221,8 +1232,10 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  */
-template <typename AsyncReadStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename ReadHandler>
+template <typename AsyncReadStream,
+    typename DynamicBuffer_v2, typename CompletionCondition,
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      std::size_t)) ReadHandler>
 ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
