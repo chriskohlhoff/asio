@@ -638,7 +638,7 @@ We start by defining a class called `printer`, similar to the class in the previ
 In addition to initialising a pair of asio::steady\_timer members, the constructor initialises the `strand_` member, an object of type asio::strand<asio::io\_context::executor\_type>.
 
 The 
-[link asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
+[link asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will not be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
 [link asio.reference.strand strand], or were dispatched through a different 
 [link asio.reference.strand strand] object.
 
