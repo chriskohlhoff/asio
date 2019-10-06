@@ -723,6 +723,14 @@ private:
   public:
     typedef Executor executor_type;
 
+    template <typename WaitHandler>
+    struct intermediate_storage
+      : detail::deadline_timer_service<
+          detail::chrono_time_traits<Clock, WaitTraits> >::template
+            async_wait_storage<WaitHandler, executor_type>
+    {
+    };
+
     explicit initiate_async_wait(basic_waitable_timer* self)
       : self_(self)
     {

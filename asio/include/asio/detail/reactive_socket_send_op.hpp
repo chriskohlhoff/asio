@@ -129,6 +129,23 @@ private:
 };
 
 } // namespace detail
+
+template <typename ConstBufferSequence, typename Handler, typename IoExecutor>
+struct intermediate_storage<
+    detail::reactive_socket_send_op<
+      ConstBufferSequence, Handler, IoExecutor> >
+  : intermediate_storage_union<
+      typename aligned_storage<
+        sizeof(detail::reactive_socket_send_op<
+          ConstBufferSequence, Handler, IoExecutor>)
+      >::type,
+      typename intermediate_storage<
+        detail::handler_work<Handler, IoExecutor>
+      >::type
+    >
+{
+};
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

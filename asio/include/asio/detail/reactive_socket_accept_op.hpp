@@ -223,6 +223,45 @@ private:
 #endif // defined(ASIO_HAS_MOVE)
 
 } // namespace detail
+
+template <typename Socket, typename Protocol,
+    typename Handler, typename IoExecutor>
+struct intermediate_storage<
+    detail::reactive_socket_accept_op<
+      Socket, Protocol, Handler, IoExecutor> >
+  : intermediate_storage_union<
+      typename aligned_storage<
+        sizeof(detail::reactive_socket_accept_op<
+          Socket, Protocol, Handler, IoExecutor>)
+      >::type,
+      typename intermediate_storage<
+        detail::handler_work<Handler, IoExecutor>
+      >::type
+    >
+{
+};
+
+#if defined(ASIO_HAS_MOVE)
+
+template <typename Protocol, typename PeerIoExecutor,
+    typename Handler, typename IoExecutor>
+struct intermediate_storage<
+    detail::reactive_socket_move_accept_op<
+      Protocol, PeerIoExecutor, Handler, IoExecutor> >
+  : intermediate_storage_union<
+      typename aligned_storage<
+        sizeof(detail::reactive_socket_move_accept_op<
+          Protocol, PeerIoExecutor, Handler, IoExecutor>)
+      >::type,
+      typename intermediate_storage<
+        detail::handler_work<Handler, IoExecutor>
+      >::type
+    >
+{
+};
+
+#endif // defined(ASIO_HAS_MOVE)
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

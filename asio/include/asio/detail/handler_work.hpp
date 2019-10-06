@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/intermediate_storage.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -106,6 +107,15 @@ private:
 };
 
 } // namespace detail
+
+template <typename Handler, typename IoExecutor, typename HandlerExecutor>
+struct intermediate_storage<
+  detail::handler_work<Handler, IoExecutor, HandlerExecutor> >
+    : intermediate_storage<HandlerExecutor, Handler,
+      typename associated_allocator<Handler>::type>
+{
+};
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

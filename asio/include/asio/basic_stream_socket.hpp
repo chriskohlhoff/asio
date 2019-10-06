@@ -973,10 +973,25 @@ public:
   }
 
 private:
+#if defined(ASIO_WINDOWS_RUNTIME)
+  typedef detail::null_socket_service<Protocol> service_type;
+#elif defined(ASIO_HAS_IOCP)
+  typedef detail::win_iocp_socket_service<Protocol> service_type;
+#else
+  typedef detail::reactive_socket_service<Protocol> service_type;
+#endif
+
   class initiate_async_send
   {
   public:
     typedef Executor executor_type;
+
+    template <typename WriteHandler, typename ConstBufferSequence, typename>
+    struct intermediate_storage
+      : service_type::template async_send_storage<
+          ConstBufferSequence, WriteHandler, executor_type>
+    {
+    };
 
     explicit initiate_async_send(basic_stream_socket* self)
       : self_(self)
@@ -1011,6 +1026,13 @@ private:
   {
   public:
     typedef Executor executor_type;
+
+    template <typename ReadHandler, typename MutableBufferSequence, typename>
+    struct intermediate_storage
+      : service_type::template async_receive_storage<
+          MutableBufferSequence, ReadHandler, executor_type>
+    {
+    };
 
     explicit initiate_async_receive(basic_stream_socket* self)
       : self_(self)

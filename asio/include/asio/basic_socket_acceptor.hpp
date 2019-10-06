@@ -2376,6 +2376,14 @@ private:
   basic_socket_acceptor& operator=(
       const basic_socket_acceptor&) ASIO_DELETED;
 
+#if defined(ASIO_WINDOWS_RUNTIME)
+  typedef detail::null_socket_service<Protocol> service_type;
+#elif defined(ASIO_HAS_IOCP)
+  typedef detail::win_iocp_socket_service<Protocol> service_type;
+#else
+  typedef detail::reactive_socket_service<Protocol> service_type;
+#endif
+
   class initiate_async_wait
   {
   public:
@@ -2413,6 +2421,13 @@ private:
   public:
     typedef Executor executor_type;
 
+    template <typename AcceptHandler, typename Socket, typename>
+    struct intermediate_storage
+      : service_type::template async_accept_storage<
+          Socket, AcceptHandler, executor_type>
+    {
+    };
+
     explicit initiate_async_accept(basic_socket_acceptor* self)
       : self_(self)
     {
@@ -2447,6 +2462,14 @@ private:
   public:
     typedef Executor executor_type;
 
+    template <typename MoveAcceptHandler,
+        typename Executor1, typename, typename>
+    struct intermediate_storage
+      : service_type::template async_move_accept_storage<
+          Executor1, MoveAcceptHandler, executor_type>
+    {
+    };
+
     explicit initiate_async_move_accept(basic_socket_acceptor* self)
       : self_(self)
     {
@@ -2476,16 +2499,7 @@ private:
     basic_socket_acceptor* self_;
   };
 
-#if defined(ASIO_WINDOWS_RUNTIME)
-  detail::io_object_impl<
-    detail::null_socket_service<Protocol>, Executor> impl_;
-#elif defined(ASIO_HAS_IOCP)
-  detail::io_object_impl<
-    detail::win_iocp_socket_service<Protocol>, Executor> impl_;
-#else
-  detail::io_object_impl<
-    detail::reactive_socket_service<Protocol>, Executor> impl_;
-#endif
+  detail::io_object_impl<service_type, Executor> impl_;
 };
 
 } // namespace asio

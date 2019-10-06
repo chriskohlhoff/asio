@@ -342,6 +342,7 @@ nobase_include_HEADERS = \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
+	asio/intermediate_storage.hpp \
 	asio/io_context.hpp \
 	asio/io_context_strand.hpp \
 	asio/io_service.hpp \

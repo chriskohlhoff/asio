@@ -130,6 +130,23 @@ private:
 };
 
 } // namespace detail
+
+template <typename MutableBufferSequence, typename Handler, typename IoExecutor>
+struct intermediate_storage<
+    detail::reactive_socket_recv_op<
+      MutableBufferSequence, Handler, IoExecutor> >
+  : intermediate_storage_union<
+      typename aligned_storage<
+        sizeof(detail::reactive_socket_recv_op<
+          MutableBufferSequence, Handler, IoExecutor>)
+      >::type,
+      typename intermediate_storage<
+        detail::handler_work<Handler, IoExecutor>
+      >::type
+    >
+{
+};
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

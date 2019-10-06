@@ -24,6 +24,7 @@
 #include "asio/detail/service_registry.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/intermediate_storage.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -345,6 +346,14 @@ inline asio::io_context& io_context::service::get_io_context()
 {
   return static_cast<asio::io_context&>(context());
 }
+
+template <typename Function, typename Allocator>
+struct intermediate_storage<io_context::executor_type, Function, Allocator>
+  : aligned_storage<
+      sizeof(detail::executor_op<typename decay<Function>::type,
+        typename decay<Allocator>::type, detail::operation>)>
+{
+};
 
 } // namespace asio
 

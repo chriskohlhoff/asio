@@ -71,53 +71,121 @@ struct is_executor<use_await_t::executor_with_default<InnerExecutor> >
 template <typename R, typename... Args>
 class async_result<use_await_t, R(Args...)>
 {
+private:
+  template <typename Initiation, typename... InitArgs>
+  struct awaitable
+  {
+    template <typename T>
+    class allocator;
+
+    struct handler
+    {
+      typedef allocator<void> allocator_type;
+
+      allocator_type get_allocator() const
+      {
+        return allocator_type(awaitable_);
+      }
+
+      void operator()(Args... results)
+      {
+        std::tuple<Args...> result(std::move(results)...);
+        awaitable_->result_ = &result;
+        awaitable_->owner_.resume();
+      }
+
+      awaitable* awaitable_; // The handler has no ownership of the coroutine.
+    };
+
+    using storage_type = intermediate_storage_t<
+        Initiation, handler, InitArgs...>;
+
+    template <typename T>
+    class allocator
+    {
+    public:
+      typedef T value_type;
+
+      explicit allocator(awaitable* a) noexcept
+        : awaitable_(a)
+      {
+      }
+
+      template <typename U>
+      allocator(const allocator<U>& a) noexcept
+        : awaitable_(a.awaitable_)
+      {
+      }
+
+      T* allocate(std::size_t n)
+      {
+        if constexpr (std::is_same_v<storage_type, void>)
+        {
+          return static_cast<T*>(::operator new(sizeof(T) * n));
+        }
+        else
+        {
+          return static_cast<T*>(static_cast<void*>(&awaitable_->storage_));
+        }
+      }
+
+      void deallocate(T* p, std::size_t)
+      {
+        if constexpr (std::is_same_v<storage_type, void>)
+        {
+          ::operator delete(p);
+        }
+      }
+
+    private:
+      template <typename> friend class allocator;
+      awaitable* awaitable_;
+    };
+
+    bool await_ready() const noexcept
+    {
+      return false;
+    }
+
+    void await_suspend(std::experimental::coroutine_handle<> h) noexcept
+    {
+      owner_ = h;
+      std::apply(
+          [&](auto&&... a)
+          {
+            initiation_(handler{this}, std::forward<decltype(a)>(a)...);
+          },
+          init_args_
+        );
+    }
+
+    std::tuple<Args...> await_resume()
+    {
+      return std::move(*static_cast<std::tuple<Args...>*>(result_));
+    }
+
+    Initiation initiation_;
+    std::tuple<InitArgs...> init_args_;
+    std::experimental::coroutine_handle<> owner_ = nullptr;
+    void* result_ = nullptr;
+    std::conditional_t<
+        std::is_same_v<storage_type, void>,
+        char, storage_type> storage_{};
+  };
+
 public:
   template <typename Initiation, typename... InitArgs>
   static auto initiate(Initiation initiation,
       use_await_t, InitArgs... init_args)
   {
-    struct awaitable
-    {
-      Initiation initiation_;
-      std::tuple<InitArgs...> init_args_;
-      void* result_ = nullptr;
-
-      bool await_ready() const noexcept
-      {
-        return false;
-      }
-
-      void await_suspend(std::experimental::coroutine_handle<> h) noexcept
-      {
-        std::apply(
-            [&](auto&&... a)
-            {
-              initiation_(
-                  [this, h](Args... results) mutable
-                  {
-                    std::tuple<Args...> result(std::move(results)...);
-                    result_ = &result;
-                    h.resume();
-                  },
-                  std::forward<decltype(a)>(a)...
-                );
-            },
-            init_args_
-          );
-      }
-
-      std::tuple<Args...> await_resume()
-      {
-        return std::move(*static_cast<std::tuple<Args...>*>(result_));
-      }
-    };
-
-    return awaitable{std::move(initiation),
+    return awaitable<Initiation, InitArgs...>{
+        std::move(initiation),
         std::forward_as_tuple(std::move(init_args)...)};
   }
 };
 
-/// A completion token object that indicates that an Awaitable should be returned.
+/// A completion token object that indicates that an Awaitable should be
+/// returned.
 #if defined(ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
 constexpr use_await_t use_await;
 #elif defined(ASIO_MSVC)

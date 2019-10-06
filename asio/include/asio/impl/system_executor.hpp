@@ -19,6 +19,7 @@
 #include "asio/detail/global.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/intermediate_storage.hpp"
 #include "asio/system_context.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -77,6 +78,14 @@ void system_executor::defer(
   ctx.scheduler_.post_immediate_completion(p.p, true);
   p.v = p.p = 0;
 }
+
+template <typename Function, typename Allocator>
+struct intermediate_storage<system_executor, Function, Allocator>
+  : aligned_storage<
+      sizeof(detail::executor_op<typename decay<Function>::type,
+        typename decay<Allocator>::type>)>
+{
+};
 
 } // namespace asio
 

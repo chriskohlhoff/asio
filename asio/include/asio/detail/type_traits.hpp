@@ -21,6 +21,7 @@
 # include <type_traits>
 #else // defined(ASIO_HAS_TYPE_TRAITS)
 # include <boost/type_traits/add_const.hpp>
+# include <boost/type_traits/aligned_storage.hpp>
 # include <boost/type_traits/conditional.hpp>
 # include <boost/type_traits/decay.hpp>
 # include <boost/type_traits/integral_constant.hpp>
@@ -41,6 +42,7 @@ namespace asio {
 
 #if defined(ASIO_HAS_STD_TYPE_TRAITS)
 using std::add_const;
+using std::aligned_storage;
 using std::conditional;
 using std::decay;
 using std::declval;
@@ -65,6 +67,7 @@ using std::result_of;
 using std::true_type;
 #else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 using boost::add_const;
+using boost::aligned_storage;
 template <bool Condition, typename Type = void>
 struct enable_if : boost::enable_if_c<Condition, Type> {};
 using boost::conditional;

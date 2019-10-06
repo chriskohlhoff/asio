@@ -412,6 +412,15 @@ public:
     return ec;
   }
 
+  // Storage required for an asynchronous accept.
+  template <typename Socket, typename Handler, typename IoExecutor>
+  struct async_accept_storage
+    : intermediate_storage<
+        reactive_socket_accept_op<
+          Socket, Protocol, Handler, IoExecutor> >
+  {
+  };
+
   // Start an asynchronous accept. The peer and peer_endpoint objects must be
   // valid until the accept's handler is invoked.
   template <typename Socket, typename Handler, typename IoExecutor>
@@ -436,6 +445,15 @@ public:
   }
 
 #if defined(ASIO_HAS_MOVE)
+  // Storage required for an asynchronous move accept.
+  template <typename PeerIoExecutor, typename Handler, typename IoExecutor>
+  struct async_move_accept_storage
+    : intermediate_storage<
+        reactive_socket_move_accept_op<
+          Protocol, PeerIoExecutor, Handler, IoExecutor> >
+  {
+  };
+
   // Start an asynchronous accept. The peer_endpoint object must be valid until
   // the accept's handler is invoked.
   template <typename PeerIoExecutor, typename Handler, typename IoExecutor>

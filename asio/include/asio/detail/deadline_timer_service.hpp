@@ -225,6 +225,13 @@ public:
     }
   }
 
+  // Storage required for an asynchronous wait.
+  template <typename Handler, typename IoExecutor>
+  struct async_wait_storage
+    : intermediate_storage<wait_handler<Handler, IoExecutor> >
+  {
+  };
+
   // Start an asynchronous wait on the timer.
   template <typename Handler, typename IoExecutor>
   void async_wait(implementation_type& impl,

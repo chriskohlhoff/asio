@@ -254,6 +254,16 @@ public:
     return 0;
   }
 
+  // Storage required for an asynchronous send.
+  template <typename ConstBufferSequence,
+      typename Handler, typename IoExecutor>
+  struct async_send_storage
+    : intermediate_storage<
+        reactive_socket_send_op<
+          ConstBufferSequence, Handler, IoExecutor> >
+  {
+  };
+
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
   template <typename ConstBufferSequence, typename Handler, typename IoExecutor>
@@ -325,6 +335,16 @@ public:
 
     return 0;
   }
+
+  // Storage required for an asynchronous receive.
+  template <typename MutableBufferSequence,
+      typename Handler, typename IoExecutor>
+  struct async_receive_storage
+    : intermediate_storage<
+        reactive_socket_recv_op<
+          MutableBufferSequence, Handler, IoExecutor> >
+  {
+  };
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.

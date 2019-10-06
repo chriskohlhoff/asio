@@ -77,6 +77,42 @@ private:
 
 } // namespace detail
 
+template <typename CompletionHandler>
+struct intermediate_storage<detail::initiate_post, CompletionHandler>
+{
+  typedef typename intermediate_storage<
+    typename associated_executor<
+      typename decay<CompletionHandler>::type
+    >::type,
+    CompletionHandler,
+    typename associated_allocator<
+      typename decay<CompletionHandler>::type
+    >::type
+  >::type type;
+};
+
+template <typename Executor, typename CompletionHandler>
+struct intermediate_storage<
+    detail::initiate_post_with_executor<Executor>, CompletionHandler>
+{
+ typedef typename intermediate_storage_union<
+   typename intermediate_storage<
+     Executor,
+     detail::work_dispatcher<
+       typename decay<CompletionHandler>::type
+     >,
+     typename associated_allocator<
+       typename decay<CompletionHandler>::type
+     >::type
+   >::type,
+   typename intermediate_storage<
+     detail::work_dispatcher<
+       typename decay<CompletionHandler>::type
+     >
+   >::type
+ >::type type;
+};
+
 template <ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) post(
     ASIO_MOVE_ARG(CompletionToken) token)
