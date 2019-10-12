@@ -132,6 +132,14 @@ public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
 
+  /// Rebinds the timer type to another executor.
+  template <typename Executor1>
+  struct rebind_executor
+  {
+    /// The timer type when rebound to the specified executor.
+    typedef basic_deadline_timer<Time, TimeTraits, Executor1> other;
+  };
+
   /// The time traits type.
   typedef TimeTraits traits_type;
 

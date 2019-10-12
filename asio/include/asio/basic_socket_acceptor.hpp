@@ -80,6 +80,14 @@ public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
 
+  /// Rebinds the acceptor type to another executor.
+  template <typename Executor1>
+  struct rebind_executor
+  {
+    /// The socket type when rebound to the specified executor.
+    typedef basic_socket_acceptor<Protocol, Executor1> other;
+  };
+
   /// The native representation of an acceptor.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
