@@ -630,7 +630,7 @@ public:
   async_wait(wait_type w, ASIO_MOVE_ARG(WaitHandler) handler)
   {
     return async_initiate<WaitHandler, void (asio::error_code)>(
-        initiate_async_wait(), handler, this, w);
+        initiate_async_wait(this), handler, w);
   }
 
 protected:
@@ -651,21 +651,36 @@ private:
   basic_descriptor(const basic_descriptor&) ASIO_DELETED;
   basic_descriptor& operator=(const basic_descriptor&) ASIO_DELETED;
 
-  struct initiate_async_wait
+  class initiate_async_wait
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_wait(basic_descriptor* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WaitHandler>
-    void operator()(ASIO_MOVE_ARG(WaitHandler) handler,
-        basic_descriptor* self, wait_type w) const
+    void operator()(ASIO_MOVE_ARG(WaitHandler) handler, wait_type w) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a WaitHandler.
       ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
-      self->impl_.get_service().async_wait(
-          self->impl_.get_implementation(), w, handler2.value,
-          self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_wait(
+          self_->impl_.get_implementation(), w, handler2.value,
+          self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_descriptor* self_;
   };
 };
 

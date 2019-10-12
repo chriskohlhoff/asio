@@ -305,13 +305,27 @@ namespace detail
           asio::error_code(), 0, 1);
   }
 
-  struct initiate_async_write_at_buffer_sequence
+  template <typename AsyncRandomAccessWriteDevice>
+  class initiate_async_write_at_buffer_sequence
   {
-    template <typename WriteHandler, typename AsyncRandomAccessWriteDevice,
-        typename ConstBufferSequence, typename CompletionCondition>
+  public:
+    typedef typename AsyncRandomAccessWriteDevice::executor_type executor_type;
+
+    explicit initiate_async_write_at_buffer_sequence(
+        AsyncRandomAccessWriteDevice& device)
+      : device_(device)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return device_.get_executor();
+    }
+
+    template <typename WriteHandler, typename ConstBufferSequence,
+        typename CompletionCondition>
     void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
-        AsyncRandomAccessWriteDevice* d, uint64_t offset,
-        const ConstBufferSequence& buffers,
+        uint64_t offset, const ConstBufferSequence& buffers,
         ASIO_MOVE_ARG(CompletionCondition) completion_cond) const
     {
       // If you get an error on the following line it means that your handler
@@ -320,10 +334,13 @@ namespace detail
 
       non_const_lvalue<WriteHandler> handler2(handler);
       non_const_lvalue<CompletionCondition> completion_cond2(completion_cond);
-      start_write_at_buffer_sequence_op(*d, offset, buffers,
+      start_write_at_buffer_sequence_op(device_, offset, buffers,
           asio::buffer_sequence_begin(buffers),
           completion_cond2.value, handler2.value);
     }
+
+  private:
+    AsyncRandomAccessWriteDevice& device_;
   };
 } // namespace detail
 
@@ -384,8 +401,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 {
   return async_initiate<WriteHandler,
     void (asio::error_code, std::size_t)>(
-      detail::initiate_async_write_at_buffer_sequence(), handler, &d, offset,
-      buffers, ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
+      detail::initiate_async_write_at_buffer_sequence<
+        AsyncRandomAccessWriteDevice>(d),
+      handler, offset, buffers,
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
@@ -399,8 +418,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 {
   return async_initiate<WriteHandler,
     void (asio::error_code, std::size_t)>(
-      detail::initiate_async_write_at_buffer_sequence(),
-      handler, &d, offset, buffers, transfer_all());
+      detail::initiate_async_write_at_buffer_sequence<
+        AsyncRandomAccessWriteDevice>(d),
+      handler, offset, buffers, transfer_all());
 }
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -486,13 +506,27 @@ namespace detail
         function, this_handler->handler_);
   }
 
-  struct initiate_async_write_at_streambuf
+  template <typename AsyncRandomAccessWriteDevice>
+  class initiate_async_write_at_streambuf
   {
-    template <typename WriteHandler, typename AsyncRandomAccessWriteDevice,
+  public:
+    typedef typename AsyncRandomAccessWriteDevice::executor_type executor_type;
+
+    explicit initiate_async_write_at_streambuf(
+        AsyncRandomAccessWriteDevice& device)
+      : device_(device)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return device_.get_executor();
+    }
+
+    template <typename WriteHandler,
         typename Allocator, typename CompletionCondition>
     void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
-        AsyncRandomAccessWriteDevice* d, uint64_t offset,
-        basic_streambuf<Allocator>* b,
+        uint64_t offset, basic_streambuf<Allocator>* b,
         ASIO_MOVE_ARG(CompletionCondition) completion_condition) const
     {
       // If you get an error on the following line it means that your handler
@@ -500,11 +534,14 @@ namespace detail
       ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       non_const_lvalue<WriteHandler> handler2(handler);
-      async_write_at(*d, offset, b->data(),
+      async_write_at(device_, offset, b->data(),
           ASIO_MOVE_CAST(CompletionCondition)(completion_condition),
           write_at_streambuf_op<Allocator, typename decay<WriteHandler>::type>(
             *b, handler2.value));
     }
+
+  private:
+    AsyncRandomAccessWriteDevice& device_;
   };
 } // namespace detail
 
@@ -555,8 +592,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 {
   return async_initiate<WriteHandler,
     void (asio::error_code, std::size_t)>(
-      detail::initiate_async_write_at_streambuf(), handler, &d, offset,
-      &b, ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
+      detail::initiate_async_write_at_streambuf<
+        AsyncRandomAccessWriteDevice>(d),
+      handler, offset, &b,
+      ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
@@ -570,8 +609,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 {
   return async_initiate<WriteHandler,
     void (asio::error_code, std::size_t)>(
-      detail::initiate_async_write_at_streambuf(),
-      handler, &d, offset, &b, transfer_all());
+      detail::initiate_async_write_at_streambuf<
+        AsyncRandomAccessWriteDevice>(d),
+      handler, offset, &b, transfer_all());
 }
 
 #endif // !defined(ASIO_NO_IOSTREAM)

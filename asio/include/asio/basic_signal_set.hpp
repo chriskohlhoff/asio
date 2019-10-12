@@ -518,7 +518,7 @@ public:
   async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
   {
     return async_initiate<SignalHandler, void (asio::error_code, int)>(
-        initiate_async_wait(), handler, this);
+        initiate_async_wait(this), handler);
   }
 
 private:
@@ -526,21 +526,36 @@ private:
   basic_signal_set(const basic_signal_set&) ASIO_DELETED;
   basic_signal_set& operator=(const basic_signal_set&) ASIO_DELETED;
 
-  struct initiate_async_wait
+  class initiate_async_wait
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_wait(basic_signal_set* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename SignalHandler>
-    void operator()(ASIO_MOVE_ARG(SignalHandler) handler,
-        basic_signal_set* self) const
+    void operator()(ASIO_MOVE_ARG(SignalHandler) handler) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a SignalHandler.
       ASIO_SIGNAL_HANDLER_CHECK(SignalHandler, handler) type_check;
 
       detail::non_const_lvalue<SignalHandler> handler2(handler);
-      self->impl_.get_service().async_wait(
-          self->impl_.get_implementation(), handler2.value,
-          self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_wait(
+          self_->impl_.get_implementation(), handler2.value,
+          self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_signal_set* self_;
   };
 
   detail::io_object_impl<detail::signal_set_service, Executor> impl_;

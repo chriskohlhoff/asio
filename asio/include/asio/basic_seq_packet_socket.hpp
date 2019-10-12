@@ -439,7 +439,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_send(), handler, this, buffers, flags);
+        initiate_async_send(this), handler, buffers, flags);
   }
 
   /// Receive some data on the socket.
@@ -610,7 +610,7 @@ public:
   {
     return async_initiate<ReadHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_receive_with_flags(), handler, this,
+        initiate_async_receive_with_flags(this), handler,
         buffers, socket_base::message_flags(0), &out_flags);
   }
 
@@ -668,16 +668,29 @@ public:
   {
     return async_initiate<ReadHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_receive_with_flags(), handler,
-        this, buffers, in_flags, &out_flags);
+        initiate_async_receive_with_flags(this),
+        handler, buffers, in_flags, &out_flags);
   }
 
 private:
-  struct initiate_async_send
+  class initiate_async_send
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_send(basic_seq_packet_socket* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WriteHandler, typename ConstBufferSequence>
     void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
-        basic_seq_packet_socket* self, const ConstBufferSequence& buffers,
+        const ConstBufferSequence& buffers,
         socket_base::message_flags flags) const
     {
       // If you get an error on the following line it means that your handler
@@ -685,17 +698,33 @@ private:
       ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self->impl_.get_service().async_send(
-          self->impl_.get_implementation(), buffers, flags,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_send(
+          self_->impl_.get_implementation(), buffers, flags,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_seq_packet_socket* self_;
   };
 
-  struct initiate_async_receive_with_flags
+  class initiate_async_receive_with_flags
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_receive_with_flags(basic_seq_packet_socket* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename ReadHandler, typename MutableBufferSequence>
     void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
-        basic_seq_packet_socket* self, const MutableBufferSequence& buffers,
+        const MutableBufferSequence& buffers,
         socket_base::message_flags in_flags,
         socket_base::message_flags* out_flags) const
     {
@@ -704,10 +733,13 @@ private:
       ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self->impl_.get_service().async_receive_with_flags(
-          self->impl_.get_implementation(), buffers, in_flags, *out_flags,
-          handler2.value, self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_receive_with_flags(
+          self_->impl_.get_implementation(), buffers, in_flags, *out_flags,
+          handler2.value, self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_seq_packet_socket* self_;
   };
 };
 
