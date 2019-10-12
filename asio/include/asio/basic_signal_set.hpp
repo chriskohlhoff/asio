@@ -97,6 +97,14 @@ public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
 
+  /// Rebinds the signal set type to another executor.
+  template <typename Executor1>
+  struct rebind_executor
+  {
+    /// The signal set type when rebound to the specified executor.
+    typedef basic_signal_set<Executor1> other;
+  };
+
   /// Construct a signal set without adding any signals.
   /**
    * This constructor creates a signal set without registering for any signals.

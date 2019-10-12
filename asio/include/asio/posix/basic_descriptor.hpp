@@ -57,6 +57,14 @@ public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
 
+  /// Rebinds the descriptor type to another executor.
+  template <typename Executor1>
+  struct rebind_executor
+  {
+    /// The descriptor type when rebound to the specified executor.
+    typedef basic_descriptor<Executor1> other;
+  };
+
   /// The native representation of a descriptor.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
