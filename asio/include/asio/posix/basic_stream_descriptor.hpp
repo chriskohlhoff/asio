@@ -274,7 +274,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_write_some(), handler, this, buffers);
+        initiate_async_write_some(this), handler, buffers);
   }
 
   /// Read some data from the descriptor.
@@ -386,15 +386,27 @@ public:
   {
     return async_initiate<ReadHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_read_some(), handler, this, buffers);
+        initiate_async_read_some(this), handler, buffers);
   }
 
 private:
-  struct initiate_async_write_some
+  class initiate_async_write_some
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_write_some(basic_stream_descriptor* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WriteHandler, typename ConstBufferSequence>
     void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
-        basic_stream_descriptor* self,
         const ConstBufferSequence& buffers) const
     {
       // If you get an error on the following line it means that your handler
@@ -402,17 +414,32 @@ private:
       ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
-      self->impl_.get_service().async_write_some(
-          self->impl_.get_implementation(), buffers, handler2.value,
-          self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_write_some(
+          self_->impl_.get_implementation(), buffers, handler2.value,
+          self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_stream_descriptor* self_;
   };
 
-  struct initiate_async_read_some
+  class initiate_async_read_some
   {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_read_some(basic_stream_descriptor* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename ReadHandler, typename MutableBufferSequence>
     void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
-        basic_stream_descriptor* self,
         const MutableBufferSequence& buffers) const
     {
       // If you get an error on the following line it means that your handler
@@ -420,10 +447,13 @@ private:
       ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
-      self->impl_.get_service().async_read_some(
-          self->impl_.get_implementation(), buffers, handler2.value,
-          self->impl_.get_implementation_executor());
+      self_->impl_.get_service().async_read_some(
+          self_->impl_.get_implementation(), buffers, handler2.value,
+          self_->impl_.get_implementation_executor());
     }
+
+  private:
+    basic_stream_descriptor* self_;
   };
 };
 

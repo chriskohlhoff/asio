@@ -440,7 +440,7 @@ public:
   {
     return async_initiate<HandshakeHandler,
       void (asio::error_code)>(
-        initiate_async_handshake(), handler, this, type);
+        initiate_async_handshake(this), handler, type);
   }
 
   /// Start an asynchronous SSL handshake.
@@ -474,7 +474,7 @@ public:
   {
     return async_initiate<BufferedHandshakeHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_buffered_handshake(), handler, this, type, buffers);
+        initiate_async_buffered_handshake(this), handler, type, buffers);
   }
 
   /// Shut down SSL on the stream.
@@ -525,7 +525,7 @@ public:
   {
     return async_initiate<ShutdownHandler,
       void (asio::error_code)>(
-        initiate_async_shutdown(), handler, this);
+        initiate_async_shutdown(this), handler);
   }
 
   /// Write some data to the stream.
@@ -610,7 +610,7 @@ public:
   {
     return async_initiate<WriteHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_write_some(), handler, this, buffers);
+        initiate_async_write_some(this), handler, buffers);
   }
 
   /// Read some data from the stream.
@@ -695,32 +695,60 @@ public:
   {
     return async_initiate<ReadHandler,
       void (asio::error_code, std::size_t)>(
-        initiate_async_read_some(), handler, this, buffers);
+        initiate_async_read_some(this), handler, buffers);
   }
 
 private:
-  struct initiate_async_handshake
+  class initiate_async_handshake
   {
+  public:
+    typedef stream::executor_type executor_type;
+
+    explicit initiate_async_handshake(stream* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename HandshakeHandler>
     void operator()(ASIO_MOVE_ARG(HandshakeHandler) handler,
-        stream* self, handshake_type type) const
+        handshake_type type) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a HandshakeHandler.
       ASIO_HANDSHAKE_HANDLER_CHECK(HandshakeHandler, handler) type_check;
 
       asio::detail::non_const_lvalue<HandshakeHandler> handler2(handler);
-      detail::async_io(self->next_layer_, self->core_,
+      detail::async_io(self_->next_layer_, self_->core_,
           detail::handshake_op(type), handler2.value);
     }
+
+  private:
+    stream* self_;
   };
 
-  struct initiate_async_buffered_handshake
+  class initiate_async_buffered_handshake
   {
+  public:
+    typedef stream::executor_type executor_type;
+
+    explicit initiate_async_buffered_handshake(stream* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename BufferedHandshakeHandler, typename ConstBufferSequence>
     void operator()(ASIO_MOVE_ARG(BufferedHandshakeHandler) handler,
-        stream* self, handshake_type type,
-        const ConstBufferSequence& buffers) const
+        handshake_type type, const ConstBufferSequence& buffers) const
     {
       // If you get an error on the following line it means that your
       // handler does not meet the documented type requirements for a
@@ -730,58 +758,108 @@ private:
 
       asio::detail::non_const_lvalue<
           BufferedHandshakeHandler> handler2(handler);
-      detail::async_io(self->next_layer_, self->core_,
+      detail::async_io(self_->next_layer_, self_->core_,
           detail::buffered_handshake_op<ConstBufferSequence>(type, buffers),
           handler2.value);
     }
+
+  private:
+    stream* self_;
   };
 
-  struct initiate_async_shutdown
+  class initiate_async_shutdown
   {
+  public:
+    typedef stream::executor_type executor_type;
+
+    explicit initiate_async_shutdown(stream* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename ShutdownHandler>
-    void operator()(ASIO_MOVE_ARG(ShutdownHandler) handler,
-        stream* self) const
+    void operator()(ASIO_MOVE_ARG(ShutdownHandler) handler) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a ShutdownHandler.
       ASIO_HANDSHAKE_HANDLER_CHECK(ShutdownHandler, handler) type_check;
 
       asio::detail::non_const_lvalue<ShutdownHandler> handler2(handler);
-      detail::async_io(self->next_layer_, self->core_,
+      detail::async_io(self_->next_layer_, self_->core_,
           detail::shutdown_op(), handler2.value);
     }
+
+  private:
+    stream* self_;
   };
 
-  struct initiate_async_write_some
+  class initiate_async_write_some
   {
+  public:
+    typedef stream::executor_type executor_type;
+
+    explicit initiate_async_write_some(stream* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename WriteHandler, typename ConstBufferSequence>
     void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
-        stream* self, const ConstBufferSequence& buffers) const
+        const ConstBufferSequence& buffers) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a WriteHandler.
       ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
 
       asio::detail::non_const_lvalue<WriteHandler> handler2(handler);
-      detail::async_io(self->next_layer_, self->core_,
+      detail::async_io(self_->next_layer_, self_->core_,
           detail::write_op<ConstBufferSequence>(buffers), handler2.value);
     }
+
+  private:
+    stream* self_;
   };
 
-  struct initiate_async_read_some
+  class initiate_async_read_some
   {
+  public:
+    typedef stream::executor_type executor_type;
+
+    explicit initiate_async_read_some(stream* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
     template <typename ReadHandler, typename MutableBufferSequence>
     void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
-        stream* self, const MutableBufferSequence& buffers) const
+        const MutableBufferSequence& buffers) const
     {
       // If you get an error on the following line it means that your handler
       // does not meet the documented type requirements for a ReadHandler.
       ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
 
       asio::detail::non_const_lvalue<ReadHandler> handler2(handler);
-      detail::async_io(self->next_layer_, self->core_,
+      detail::async_io(self_->next_layer_, self_->core_,
           detail::read_op<MutableBufferSequence>(buffers), handler2.value);
     }
+
+  private:
+    stream* self_;
   };
 
   Stream next_layer_;

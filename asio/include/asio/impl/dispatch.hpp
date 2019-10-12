@@ -25,8 +25,9 @@
 namespace asio {
 namespace detail {
 
-struct initiate_dispatch
+class initiate_dispatch
 {
+public:
   template <typename CompletionHandler>
   void operator()(ASIO_MOVE_ARG(CompletionHandler) handler) const
   {
@@ -40,19 +41,38 @@ struct initiate_dispatch
 
     ex.dispatch(ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
   }
+};
 
-  template <typename CompletionHandler, typename Executor>
-  void operator()(ASIO_MOVE_ARG(CompletionHandler) handler,
-      ASIO_MOVE_ARG(Executor) ex) const
+template <typename Executor>
+class initiate_dispatch_with_executor
+{
+public:
+  typedef Executor executor_type;
+
+  explicit initiate_dispatch_with_executor(const Executor& ex)
+    : ex_(ex)
+  {
+  }
+
+  executor_type get_executor() const ASIO_NOEXCEPT
+  {
+    return ex_;
+  }
+
+  template <typename CompletionHandler>
+  void operator()(ASIO_MOVE_ARG(CompletionHandler) handler) const
   {
     typedef typename decay<CompletionHandler>::type DecayedHandler;
 
     typename associated_allocator<DecayedHandler>::type alloc(
         (get_associated_allocator)(handler));
 
-    ex.dispatch(detail::work_dispatcher<DecayedHandler>(
+    ex_.dispatch(detail::work_dispatcher<DecayedHandler>(
           ASIO_MOVE_CAST(CompletionHandler)(handler)), alloc);
   }
+
+private:
+  Executor ex_;
 };
 
 } // namespace detail
@@ -72,7 +92,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) dispatch(
     typename enable_if<is_executor<Executor>::value>::type*)
 {
   return async_initiate<CompletionToken, void()>(
-      detail::initiate_dispatch(), token, ex);
+      detail::initiate_dispatch_with_executor<Executor>(ex), token);
 }
 
 template <typename ExecutionContext,
