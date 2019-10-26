@@ -94,9 +94,12 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
  * @li Returns <tt>result.get()</tt>.
  */
 template <typename Executor,
-    ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
+    ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken
+      ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
-    const Executor& ex, ASIO_MOVE_ARG(CompletionToken) token,
+    const Executor& ex,
+    ASIO_MOVE_ARG(CompletionToken) token
+      ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<is_executor<Executor>::value>::type* = 0);
 
 /// Submits a completion token or function object for execution.
@@ -104,9 +107,14 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
  * @returns <tt>defer(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
  */
 template <typename ExecutionContext,
-    ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
+    ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken
+      ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+        typename ExecutionContext::executor_type)>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
-    ExecutionContext& ctx, ASIO_MOVE_ARG(CompletionToken) token,
+    ExecutionContext& ctx,
+    ASIO_MOVE_ARG(CompletionToken) token
+      ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename ExecutionContext::executor_type),
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type* = 0);
 

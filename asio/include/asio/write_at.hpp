@@ -457,12 +457,16 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  */
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
+      std::size_t)) WriteHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+          typename AsyncRandomAccessWriteDevice::executor_type)>
 ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
     const ConstBufferSequence& buffers,
-    ASIO_MOVE_ARG(WriteHandler) handler);
+    ASIO_MOVE_ARG(WriteHandler) handler
+      ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename AsyncRandomAccessWriteDevice::executor_type));
 
 /// Start an asynchronous operation to write a certain amount of data at the
 /// specified offset.
@@ -538,13 +542,17 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
 template <typename AsyncRandomAccessWriteDevice,
     typename ConstBufferSequence, typename CompletionCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
+      std::size_t)) WriteHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+          typename AsyncRandomAccessWriteDevice::executor_type)>
 ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler);
+    ASIO_MOVE_ARG(WriteHandler) handler
+      ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename AsyncRandomAccessWriteDevice::executor_type));
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -596,11 +604,16 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  */
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
+      std::size_t)) WriteHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+          typename AsyncRandomAccessWriteDevice::executor_type)>
 ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
-async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
-    basic_streambuf<Allocator>& b, ASIO_MOVE_ARG(WriteHandler) handler);
+async_write_at(AsyncRandomAccessWriteDevice& d,
+    uint64_t offset, basic_streambuf<Allocator>& b,
+    ASIO_MOVE_ARG(WriteHandler) handler
+      ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename AsyncRandomAccessWriteDevice::executor_type));
 
 /// Start an asynchronous operation to write a certain amount of data at the
 /// specified offset.
@@ -664,12 +677,16 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
 template <typename AsyncRandomAccessWriteDevice,
     typename Allocator, typename CompletionCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
+      std::size_t)) WriteHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+          typename AsyncRandomAccessWriteDevice::executor_type)>
 ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
     basic_streambuf<Allocator>& b, CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler);
+    ASIO_MOVE_ARG(WriteHandler) handler
+      ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename AsyncRandomAccessWriteDevice::executor_type));
 
 #endif // !defined(ASIO_NO_IOSTREAM)
 #endif // !defined(ASIO_NO_EXTENSIONS)

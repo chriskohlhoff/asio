@@ -511,11 +511,13 @@ public:
    * manner equivalent to using asio::post().
    */
   template <
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      int)) SignalHandler>
+    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code, int))
+      SignalHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(SignalHandler,
       void (asio::error_code, int))
-  async_wait(ASIO_MOVE_ARG(SignalHandler) handler)
+  async_wait(
+      ASIO_MOVE_ARG(SignalHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<SignalHandler, void (asio::error_code, int)>(
         initiate_async_wait(this), handler);

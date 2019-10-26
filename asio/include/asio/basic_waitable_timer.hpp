@@ -701,10 +701,12 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
-        WaitHandler>
+        WaitHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
       void (asio::error_code))
-  async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
+  async_wait(
+      ASIO_MOVE_ARG(WaitHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<WaitHandler, void (asio::error_code)>(
         initiate_async_wait(this), handler);
