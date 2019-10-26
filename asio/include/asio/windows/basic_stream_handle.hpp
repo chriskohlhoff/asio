@@ -274,19 +274,9 @@ public:
   async_write_some(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a WriteHandler.
-    ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
-
-    asio::async_completion<WriteHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_write_some(
-        this->impl_.get_implementation(),
-        buffers, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WriteHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_write_some(this), handler, buffers);
   }
 
   /// Read some data from the handle.
@@ -396,20 +386,77 @@ public:
   async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler)
   {
-    // If you get an error on the following line it means that your handler does
-    // not meet the documented type requirements for a ReadHandler.
-    ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
-    asio::async_completion<ReadHandler,
-      void (asio::error_code, std::size_t)> init(handler);
-
-    this->impl_.get_service().async_read_some(
-        this->impl_.get_implementation(),
-        buffers, init.completion_handler,
-        this->impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<ReadHandler,
+      void (asio::error_code, std::size_t)>(
+        initiate_async_read_some(this), handler, buffers);
   }
+
+private:
+  class initiate_async_write_some
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_write_some(basic_stream_handle* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
+    template <typename WriteHandler, typename ConstBufferSequence>
+    void operator()(ASIO_MOVE_ARG(WriteHandler) handler,
+        const ConstBufferSequence& buffers) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WriteHandler.
+      ASIO_WRITE_HANDLER_CHECK(WriteHandler, handler) type_check;
+
+      detail::non_const_lvalue<WriteHandler> handler2(handler);
+      self_->impl_.get_service().async_write_some(
+          self_->impl_.get_implementation(), buffers, handler2.value,
+          self_->impl_.get_implementation_executor());
+    }
+
+  private:
+    basic_stream_handle* self_;
+  };
+
+  class initiate_async_read_some
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_read_some(basic_stream_handle* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
+    template <typename ReadHandler, typename MutableBufferSequence>
+    void operator()(ASIO_MOVE_ARG(ReadHandler) handler,
+        const MutableBufferSequence& buffers) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a ReadHandler.
+      ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
+
+      detail::non_const_lvalue<ReadHandler> handler2(handler);
+      self_->impl_.get_service().async_read_some(
+          self_->impl_.get_implementation(), buffers, handler2.value,
+          self_->impl_.get_implementation_executor());
+    }
+
+  private:
+    basic_stream_handle* self_;
+  };
 };
 
 } // namespace windows

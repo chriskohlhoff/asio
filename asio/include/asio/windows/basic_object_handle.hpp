@@ -377,19 +377,46 @@ public:
       void (asio::error_code))
   async_wait(ASIO_MOVE_ARG(WaitHandler) handler)
   {
-    asio::async_completion<WaitHandler,
-      void (asio::error_code)> init(handler);
-
-    impl_.get_service().async_wait(impl_.get_implementation(),
-        init.completion_handler, impl_.get_implementation_executor());
-
-    return init.result.get();
+    return async_initiate<WaitHandler, void (asio::error_code)>(
+        initiate_async_wait(this), handler);
   }
 
 private:
   // Disallow copying and assignment.
   basic_object_handle(const basic_object_handle&) ASIO_DELETED;
   basic_object_handle& operator=(const basic_object_handle&) ASIO_DELETED;
+
+  class initiate_async_wait
+  {
+  public:
+    typedef Executor executor_type;
+
+    explicit initiate_async_wait(basic_object_handle* self)
+      : self_(self)
+    {
+    }
+
+    executor_type get_executor() const ASIO_NOEXCEPT
+    {
+      return self_->get_executor();
+    }
+
+    template <typename WaitHandler>
+    void operator()(ASIO_MOVE_ARG(WaitHandler) handler) const
+    {
+      // If you get an error on the following line it means that your handler
+      // does not meet the documented type requirements for a WaitHandler.
+      ASIO_WAIT_HANDLER_CHECK(WaitHandler, handler) type_check;
+
+      detail::non_const_lvalue<WaitHandler> handler2(handler);
+      self_->impl_.get_service().async_wait(
+          self_->impl_.get_implementation(), handler2.value,
+          self_->impl_.get_implementation_executor());
+    }
+
+  private:
+    basic_object_handle* self_;
+  };
 
   asio::detail::io_object_impl<
     asio::detail::win_object_handle_service, Executor> impl_;
