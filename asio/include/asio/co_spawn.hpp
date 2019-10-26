@@ -55,10 +55,13 @@ struct awaitable_signature<awaitable<void, Executor>>
  */
 template <typename Executor, typename F,
     ASIO_COMPLETION_TOKEN_FOR(typename detail::awaitable_signature<
-      typename result_of<F()>::type>::type) CompletionToken>
+      typename result_of<F()>::type>::type) CompletionToken
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
-co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
+co_spawn(const Executor& ex, F&& f,
+    CompletionToken&& token
+      ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<
       is_executor<Executor>::value
     >::type* = 0);
@@ -73,10 +76,15 @@ co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
  */
 template <typename ExecutionContext, typename F,
     ASIO_COMPLETION_TOKEN_FOR(typename detail::awaitable_signature<
-      typename result_of<F()>::type>::type) CompletionToken>
+      typename result_of<F()>::type>::type) CompletionToken
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+          typename ExecutionContext::executor_type)>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
-co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
+co_spawn(ExecutionContext& ctx, F&& f,
+    CompletionToken&& token
+      ASIO_DEFAULT_COMPLETION_TOKEN(
+        typename ExecutionContext::executor_type),
     typename enable_if<
       is_convertible<ExecutionContext&, execution_context&>::value
     >::type* = 0);

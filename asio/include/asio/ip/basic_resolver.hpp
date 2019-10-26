@@ -622,11 +622,13 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const query& q,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ASIO_MOVE_ARG(ResolveHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return asio::async_initiate<ResolveHandler,
       void (asio::error_code, results_type)>(
@@ -678,12 +680,14 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(ASIO_STRING_VIEW_PARAM host,
       ASIO_STRING_VIEW_PARAM service,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ASIO_MOVE_ARG(ResolveHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_resolve(host, service, resolver_base::flags(),
         ASIO_MOVE_CAST(ResolveHandler)(handler));
@@ -738,13 +742,15 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(ASIO_STRING_VIEW_PARAM host,
       ASIO_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ASIO_MOVE_ARG(ResolveHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     basic_resolver_query<protocol_type> q(static_cast<std::string>(host),
         static_cast<std::string>(service), resolve_flags);
@@ -801,12 +807,14 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
       ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ASIO_MOVE_ARG(ResolveHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_resolve(protocol, host, service, resolver_base::flags(),
         ASIO_MOVE_CAST(ResolveHandler)(handler));
@@ -864,13 +872,15 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const protocol_type& protocol,
       ASIO_STRING_VIEW_PARAM host, ASIO_STRING_VIEW_PARAM service,
       resolver_base::flags resolve_flags,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ASIO_MOVE_ARG(ResolveHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     basic_resolver_query<protocol_type> q(
         protocol, static_cast<std::string>(host),
@@ -949,11 +959,13 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveHandler>
+        results_type)) ResolveHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(ResolveHandler,
       void (asio::error_code, results_type))
   async_resolve(const endpoint_type& e,
-      ASIO_MOVE_ARG(ResolveHandler) handler)
+      ASIO_MOVE_ARG(ResolveHandler) handler
+        ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return asio::async_initiate<ResolveHandler,
       void (asio::error_code, results_type)>(
