@@ -23,12 +23,50 @@
 #include <tuple>
 #include <utility>
 #include "asio/async_result.hpp"
+#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 
-struct use_await_t {};
+struct use_await_t
+{
+  template <typename InnerExecutor>
+  struct executor_with_default : InnerExecutor
+  {
+    typedef use_await_t default_completion_token_type;
+
+    executor_with_default(const InnerExecutor& ex) ASIO_NOEXCEPT
+      : InnerExecutor(ex)
+    {
+    }
+  };
+
+  template <typename T>
+  struct as_default_on_t
+  {
+    typedef typename T::template rebind_executor<
+      executor_with_default<typename T::executor_type> >::other type;
+  };
+
+  template <typename T>
+  static typename as_default_on_t<typename decay<T>::type>::type
+  as_default_on(ASIO_MOVE_ARG(T) object)
+  {
+    return typename as_default_on_t<typename decay<T>::type>::type(
+        ASIO_MOVE_CAST(T)(object));
+  }
+};
+
+#if !defined(GENERATING_DOCUMENTATION)
+
+template <typename InnerExecutor>
+struct is_executor<use_await_t::executor_with_default<InnerExecutor> >
+  : is_executor<InnerExecutor>
+{
+};
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename R, typename... Args>
 class async_result<use_await_t, R(Args...)>
