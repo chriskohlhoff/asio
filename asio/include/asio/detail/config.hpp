@@ -1354,9 +1354,9 @@
 #   if (__GNUC__ >= 3)
 #    define ASIO_HAS_HANDLER_HOOKS 1
 #   endif // (__GNUC__ >= 3)
-#  elif !defined(__BORLANDC__)
+#  elif !defined(__BORLANDC__) || defined(__clang__)
 #   define ASIO_HAS_HANDLER_HOOKS 1
-#  endif // !defined(__BORLANDC__)
+#  endif // !defined(__BORLANDC__) || defined(__clang__)
 # endif // !defined(ASIO_DISABLE_HANDLER_HOOKS)
 #endif // !defined(ASIO_HAS_HANDLER_HOOKS)
 

@@ -19,7 +19,7 @@
 # include <stdlib.h> // Needed for lrand48.
 #endif // defined(__sun)
 
-#if defined(__BORLANDC__)
+#if defined(__BORLANDC__) && !defined(__clang__)
 
 // Prevent use of intrinsic for strcmp.
 # include <cstring>
@@ -28,7 +28,7 @@
 // Suppress error about condition always being true.
 # pragma option -w-ccc
 
-#endif // defined(__BORLANDC__)
+#endif // defined(__BORLANDC__) && !defined(__clang__)
 
 #if defined(ASIO_MSVC)
 # pragma warning (disable:4127)
