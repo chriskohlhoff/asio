@@ -40,7 +40,7 @@ void test()
     // address_v6 constructors.
 
     ip::address_v6 addr1;
-    const ip::address_v6::bytes_type const_bytes_value = { { 0 } };
+    const ip::address_v6::bytes_type const_bytes_value = { 0 };
     ip::address_v6 addr2(const_bytes_value);
 
     // address_v6 functions.
@@ -195,8 +195,8 @@ void test()
   ASIO_CHECK(a1.is_unspecified());
   ASIO_CHECK(a1.scope_id() == 0);
 
-  address_v6::bytes_type b1 = {{ 1, 2, 3, 4, 5,
-    6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }};
+  address_v6::bytes_type b1 = { 1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
   address_v6 a2(b1, 12345);
   ASIO_CHECK(a2.to_bytes()[0] == 1);
   ASIO_CHECK(a2.to_bytes()[1] == 2);
@@ -221,31 +221,31 @@ void test()
   ASIO_CHECK(a3.scope_id() == 12345);
 
   address_v6 unspecified_address;
-  address_v6::bytes_type loopback_bytes = {{ 0 }};
+  address_v6::bytes_type loopback_bytes = { 0 };
   loopback_bytes[15] = 1;
   address_v6 loopback_address(loopback_bytes);
-  address_v6::bytes_type link_local_bytes = {{ 0xFE, 0x80, 1 }};
+  address_v6::bytes_type link_local_bytes = { 0xFE, 0x80, 1 };
   address_v6 link_local_address(link_local_bytes);
-  address_v6::bytes_type site_local_bytes = {{ 0xFE, 0xC0, 1 }};
+  address_v6::bytes_type site_local_bytes = { 0xFE, 0xC0, 1 };
   address_v6 site_local_address(site_local_bytes);
-  address_v6::bytes_type v4_mapped_bytes = {{ 0 }};
+  address_v6::bytes_type v4_mapped_bytes = { 0 };
   v4_mapped_bytes[10] = 0xFF, v4_mapped_bytes[11] = 0xFF;
   v4_mapped_bytes[12] = 1, v4_mapped_bytes[13] = 2;
   v4_mapped_bytes[14] = 3, v4_mapped_bytes[15] = 4;
   address_v6 v4_mapped_address(v4_mapped_bytes);
-  address_v6::bytes_type v4_compat_bytes = {{ 0 }};
+  address_v6::bytes_type v4_compat_bytes = { 0 };
   v4_compat_bytes[12] = 1, v4_compat_bytes[13] = 2;
   v4_compat_bytes[14] = 3, v4_compat_bytes[15] = 4;
   address_v6 v4_compat_address(v4_compat_bytes);
-  address_v6::bytes_type mcast_global_bytes = {{ 0xFF, 0x0E, 1 }};
+  address_v6::bytes_type mcast_global_bytes = { 0xFF, 0x0E, 1 };
   address_v6 mcast_global_address(mcast_global_bytes);
-  address_v6::bytes_type mcast_link_local_bytes = {{ 0xFF, 0x02, 1 }};
+  address_v6::bytes_type mcast_link_local_bytes = { 0xFF, 0x02, 1 };
   address_v6 mcast_link_local_address(mcast_link_local_bytes);
-  address_v6::bytes_type mcast_node_local_bytes = {{ 0xFF, 0x01, 1 }};
+  address_v6::bytes_type mcast_node_local_bytes = { 0xFF, 0x01, 1 };
   address_v6 mcast_node_local_address(mcast_node_local_bytes);
-  address_v6::bytes_type mcast_org_local_bytes = {{ 0xFF, 0x08, 1 }};
+  address_v6::bytes_type mcast_org_local_bytes = { 0xFF, 0x08, 1 };
   address_v6 mcast_org_local_address(mcast_org_local_bytes);
-  address_v6::bytes_type mcast_site_local_bytes = {{ 0xFF, 0x05, 1 }};
+  address_v6::bytes_type mcast_site_local_bytes = { 0xFF, 0x05, 1 };
   address_v6 mcast_site_local_address(mcast_site_local_bytes);
 
   ASIO_CHECK(!unspecified_address.is_loopback());
