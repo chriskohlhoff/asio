@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::vector<double> vec(std::atoll(argv[1]));
+  std::vector<double> vec(std::atoll(argv[1]), 0);
   std::iota(vec.begin(), vec.end(), 0);
 
   std::random_device rd;
