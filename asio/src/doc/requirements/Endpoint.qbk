@@ -13,6 +13,9 @@ of `Destructible` (C++Std [destructible]), `DefaultConstructible` (C++Std
 and `CopyAssignable` (C++Std [copyassignable]), as well as the additional
 requirements listed below.
 
+The default constructor and move operations of the type `X` shall not exit via
+an exception.
+
 In the table below, `a` denotes a (possibly const) value of type `X`, and `u`
 denotes an identifier.
 

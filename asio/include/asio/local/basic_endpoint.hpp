@@ -60,7 +60,7 @@ public:
 #endif
 
   /// Default constructor.
-  basic_endpoint()
+  basic_endpoint() ASIO_NOEXCEPT
   {
   }
 
