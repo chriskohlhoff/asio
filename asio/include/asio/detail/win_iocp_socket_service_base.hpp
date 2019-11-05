@@ -95,7 +95,7 @@ public:
 
   // Move-construct a new socket implementation.
   ASIO_DECL void base_move_construct(base_implementation_type& impl,
-      base_implementation_type& other_impl);
+      base_implementation_type& other_impl) ASIO_NOEXCEPT;
 
   // Move-assign from another socket implementation.
   ASIO_DECL void base_move_assign(base_implementation_type& impl,

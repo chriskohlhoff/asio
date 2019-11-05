@@ -294,7 +294,7 @@ public:
    * @note Following the move, the moved-from object is in the same state as if
    * constructed using the @c basic_socket(const executor_type&) constructor.
    */
-  basic_socket(basic_socket&& other)
+  basic_socket(basic_socket&& other) ASIO_NOEXCEPT
     : impl_(std::move(other.impl_))
   {
   }

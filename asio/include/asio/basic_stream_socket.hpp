@@ -253,7 +253,7 @@ public:
    * constructed using the @c basic_stream_socket(const executor_type&)
    * constructor.
    */
-  basic_stream_socket(basic_stream_socket&& other)
+  basic_stream_socket(basic_stream_socket&& other) ASIO_NOEXCEPT
     : basic_socket<Protocol, Executor>(std::move(other))
   {
   }

@@ -144,7 +144,7 @@ public:
 
   // Move-construct a new socket implementation.
   void move_construct(implementation_type& impl,
-      implementation_type& other_impl)
+      implementation_type& other_impl) ASIO_NOEXCEPT
   {
     this->base_move_construct(impl, other_impl);
 
