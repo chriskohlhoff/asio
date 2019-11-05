@@ -12,6 +12,8 @@ of `Destructible` (C++Std [destructible]), `CopyConstructible` (C++Std
 [copyconstructible]), and `CopyAssignable` (C++Std [copyassignable]), as well
 as the additional requirements listed below.
 
+No copy or move operation of the type `X` shall exit via an exception.
+
 [table Protocol requirements
   [[expression] [return type] [assertion/note\npre/post-conditions]]
   [
