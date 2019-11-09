@@ -73,9 +73,6 @@ public:
   ASIO_DECL bool operator()(bool preverified, verify_context& ctx) const;
 
 private:
-  // Helper function to check a host name against a pattern.
-  ASIO_DECL static bool match_pattern(const char* pattern,
-      std::size_t pattern_length, const char* host);
 
   // Helper function to check a host name against an IPv4 address
   // The host name to be checked.
