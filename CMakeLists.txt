@@ -18,5 +18,7 @@ else()
     add_library(${PROJECT_NAME} STATIC asio/src/asio.cpp)
 endif()
 
+set_target_properties(${PROJECT_NAME}
+					  PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_compile_definitions(${PROJECT_NAME} PUBLIC ASIO_STANDALONE ASIO_SEPARATE_COMPILATION)
 target_include_directories(${PROJECT_NAME} PUBLIC asio/include)
