@@ -9,6 +9,7 @@
 //
 
 #include "asio.hpp"
+
 #include <iostream>
 #include <memory>
 #include <queue>
@@ -140,7 +141,9 @@ private:
   std::priority_queue<std::unique_ptr<queued_handler_base>> handlers_;
 };
 
+//
 //----------------------------------------------------------------------
+//
 
 void high_priority_handler(const asio::error_code& /*ec*/,
     tcp::socket /*socket*/)
@@ -165,6 +168,10 @@ struct low_priority_handler
     std::cout << "Low priority handler\n";
   }
 };
+
+//
+//----------------------------------------------------------------------
+//
 
 int main()
 {
@@ -193,8 +200,8 @@ int main()
     // The custom invocation hook adds the handlers to the priority queue
     // rather than executing them from within the poll_one() call.
     while (io_context.poll_one())
-      ;
-
+    {
+    }
     pri_queue.execute_all();
   }
 
