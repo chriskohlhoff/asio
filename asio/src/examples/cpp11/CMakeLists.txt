@@ -17,39 +17,44 @@ set(noinst_PROGRAMS
   executors/fork_join.cpp
   executors/pipeline.cpp
   executors/priority_scheduler.cpp
+  fork/daemon.cpp
+  fork/process_per_connection.cpp
   futures/daytime_client.cpp
-  http/server/http_server.cpp
+  invocation/prioritised_handlers.cpp
   iostreams/http_client.cpp
+  local/connect_pair.cpp
+  local/iostream_client.cpp
+  local/stream_client.cpp
+  local/stream_server.cpp
+  multicast/receiver.cpp
+  multicast/sender.cpp
+  nonblocking/third_party_lib.cpp
+  operations/composed_1.cpp
+  operations/composed_2.cpp
+  operations/composed_3.cpp
+  operations/composed_4.cpp
+  operations/composed_5.cpp
+  operations/composed_6.cpp
+  operations/composed_7.cpp
+  operations/composed_8.cpp
+  socks4/sync_client.cpp
+  ssl/client.cpp
+  ssl/server.cpp
+  timeouts/async_tcp_client.cpp
+  timeouts/blocking_tcp_client.cpp
+  timeouts/blocking_token_tcp_client.cpp
+  timeouts/blocking_udp_client.cpp
+  timeouts/server.cpp
+  timers/time_t_timer.cpp
 )
-
 
 if(Boost_FOUND)
   set(noinst_PROGRAMS ${noinst_PROGRAMS}
     spawn/echo_server.cpp
     spawn/parallel_grep.cpp
   )
-  set(spawn_echo_server_SOURCES spawn/echo_server.cpp)
-  set(spawn_parallel_grep_SOURCES spawn/parallel_grep.cpp)
 endif()
 
-
-set(allocation_server_SOURCES allocation/server.cpp)
-set(buffers_reference_counted_SOURCES buffers/reference_counted.cpp)
-set(chat_chat_client_SOURCES chat/chat_client.cpp)
-set(chat_chat_server_SOURCES chat/chat_server.cpp)
-set(echo_async_tcp_echo_server_SOURCES echo/async_tcp_echo_server.cpp)
-set(echo_async_udp_echo_server_SOURCES echo/async_udp_echo_server.cpp)
-set(echo_blocking_tcp_echo_client_SOURCES echo/blocking_tcp_echo_client.cpp)
-set(echo_blocking_tcp_echo_server_SOURCES echo/blocking_tcp_echo_server.cpp)
-set(echo_blocking_udp_echo_client_SOURCES echo/blocking_udp_echo_client.cpp)
-set(echo_blocking_udp_echo_server_SOURCES echo/blocking_udp_echo_server.cpp)
-set(executors_actor_SOURCES executors/actor.cpp)
-set(executors_bank_account_1_SOURCES executors/bank_account_1.cpp)
-set(executors_bank_account_2_SOURCES executors/bank_account_2.cpp)
-set(executors_fork_join_SOURCES executors/fork_join.cpp)
-set(executors_pipeline_SOURCES executors/pipeline.cpp)
-set(executors_priority_scheduler_SOURCES executors/priority_scheduler.cpp)
-set(futures_daytime_client_SOURCES futures/daytime_client.cpp)
 set(http_server_http_server_SOURCES
   http/server/connection.cpp
   http/server/connection_manager.cpp
@@ -60,12 +65,11 @@ set(http_server_http_server_SOURCES
   http/server/request_parser.cpp
   http/server/server.cpp
 )
-set(iostreams_http_client_SOURCES iostreams/http_client.cpp)
 
 foreach(source ${noinst_PROGRAMS})
-  string(REGEX REPLACE "\.cpp$" "" program ${source})
+  string(REGEX REPLACE "\.cpp$" "" program ${source} )
   string(REPLACE "/" "_" target ${program})
-  add_executable(${target_prefix}${target} ${${target}_SOURCES})
+  add_executable(${target_prefix}${target} ${source} ${${target}_SOURCES})
   set_target_properties(${target_prefix}${target} PROPERTIES CXX_STANDARD 11)
   target_link_libraries(${target_prefix}${target} asio::standalone)
 
