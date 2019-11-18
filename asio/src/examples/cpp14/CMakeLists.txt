@@ -16,6 +16,14 @@ set(noinst_PROGRAMS
   executors/pipeline.cpp
   executors/priority_scheduler.cpp
   iostreams/http_client.cpp
+  operations/composed_1.cpp
+  operations/composed_2.cpp
+  operations/composed_3.cpp
+  operations/composed_4.cpp
+  operations/composed_5.cpp
+  operations/composed_6.cpp
+  operations/composed_7.cpp
+  operations/composed_8.cpp
 )
 
 foreach(source ${noinst_PROGRAMS})
