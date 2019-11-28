@@ -96,6 +96,9 @@ public:
   ASIO_DECL asio::mutable_buffer get_output(
       const asio::mutable_buffer& data);
 
+  // Get 0-copy access to the underlying output buffer that should be written to the transport.
+  ASIO_DECL asio::const_buffer get_output0(asio::error_code& ec);
+
   // Put input data that was read from the transport.
   ASIO_DECL asio::const_buffer put_input(
       const asio::const_buffer& data);

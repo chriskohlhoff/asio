@@ -177,6 +177,21 @@ asio::mutable_buffer engine::get_output(
       length > 0 ? static_cast<std::size_t>(length) : 0);
 }
 
+asio::const_buffer engine::get_output0(asio::error_code& ec) {
+  char* ptr = NULL;
+
+  int res = ::BIO_nread(ext_bio_, &ptr, OSSL_SSIZE_MAX);
+  if (res < 0)
+  {
+    unsigned long sys_error = ::ERR_get_error();
+    ec = asio::error_code(sys_error, asio::error::get_ssl_category());
+
+    return asio::const_buffer();
+  }
+
+  return asio::const_buffer(ptr, res);
+}
+
 asio::const_buffer engine::put_input(
     const asio::const_buffer& data)
 {
