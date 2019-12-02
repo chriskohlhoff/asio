@@ -713,7 +713,7 @@ private:
   class initiate_async_handshake
   {
   public:
-    typedef stream::executor_type executor_type;
+    typedef typename stream::executor_type executor_type;
 
     explicit initiate_async_handshake(stream* self)
       : self_(self)
@@ -745,7 +745,7 @@ private:
   class initiate_async_buffered_handshake
   {
   public:
-    typedef stream::executor_type executor_type;
+    typedef typename stream::executor_type executor_type;
 
     explicit initiate_async_buffered_handshake(stream* self)
       : self_(self)
