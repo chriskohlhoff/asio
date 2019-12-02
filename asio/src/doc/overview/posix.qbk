@@ -15,9 +15,9 @@
 
 [section:local UNIX Domain Sockets]
 
-Asio provides basic support UNIX domain sockets (also known as local sockets).
-The simplest use involves creating a pair of connected sockets. The following
-code:
+Asio provides basic support for UNIX domain sockets (also known as local
+sockets). The simplest use involves creating a pair of connected sockets.
+The following code:
 
   local::stream_protocol::socket socket1(my_io_context);
   local::stream_protocol::socket socket2(my_io_context);

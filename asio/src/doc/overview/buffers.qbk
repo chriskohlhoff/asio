@@ -54,7 +54,7 @@ Finally, multiple buffers can be passed to scatter-gather operations (such as
 [link asio.reference.read read()] or [link asio.reference.write write()]) by
 putting the buffer objects into a container. The `MutableBufferSequence` and
 `ConstBufferSequence` concepts have been defined so that containers such as
-`std::vector`, `std::list`, `std::vector` or `boost::array` can be used.
+`std::vector`, `std::list`, `std::array` or `boost::array` can be used.
 
 [heading Streambuf for Integration with Iostreams]
 

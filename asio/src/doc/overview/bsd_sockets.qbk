@@ -15,10 +15,10 @@ scalable applications. For example, it permits programmers to exert finer
 control over the number of system calls, avoid redundant data copying, minimise
 the use of resources like threads, and so on.
 
-Unsafe and error prone aspects of the BSD socket API not included. For example,
-the use of `int` to represent all sockets lacks type safety. The socket
-representation in Asio uses a distinct type for each protocol, e.g. for TCP one
-would use `ip::tcp::socket`, and for UDP one uses `ip::udp::socket`.
+Unsafe and error prone aspects of the BSD socket API are not included. For
+example, the use of `int` to represent all sockets lacks type safety. The
+socket representation in Asio uses a distinct type for each protocol, e.g. for
+TCP one would use `ip::tcp::socket`, and for UDP one uses `ip::udp::socket`.
 
 The following table shows the mapping between the BSD socket API and Asio:
 
