@@ -122,6 +122,7 @@
             <member><link linkend="asio.reference.associated_allocator">associated_allocator</link></member>
             <member><link linkend="asio.reference.associated_executor">associated_executor</link></member>
             <member><link linkend="asio.reference.async_result">async_result</link></member>
+            <member><link linkend="asio.reference.default_completion_token">default_completion_token</link></member>
             <member><link linkend="asio.reference.is_executor">is_executor</link></member>
             <member><link linkend="asio.reference.uses_executor">uses_executor</link></member>
           </simplelist>

@@ -200,7 +200,13 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_DECL= \
                          ASIO_CONSTEXPR=constexpr \
                          ASIO_NOEXCEPT=noexcept \
+                         ASIO_COMPLETION_SIGNATURE=typename \
+                         ASIO_COMPLETION_HANDLER_FOR(s)=typename \
+                         ASIO_COMPLETION_TOKEN_FOR(s)=typename \
                          ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
+                         ASIO_INITFN_AUTO_RESULT_TYPE(t,a)=void_or_deduced \
+                         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(e)==default_token \
+                         ASIO_DEFAULT_COMPLETION_TOKEN(e)==default_token \
                          ASIO_SVC_TPARAM= \
                          ASIO_SVC_TPARAM_DEF1()= \
                          ASIO_SVC_TPARAM_DEF2()= \

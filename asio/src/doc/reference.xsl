@@ -1647,8 +1647,13 @@
           <xsl:value-of select="concat('``[link asio.reference.', declname, ' ', declname, ']``')"/>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:if test="count(defval) > 0"> = <xsl:value-of
-        select="defval"/></xsl:if><xsl:if test="not(position() = last())">,</xsl:if>
+      <xsl:if test="count(defval) > 0"> = <xsl:choose>
+        <xsl:when test="defval = 'default_token'">
+          <xsl:text>``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``</xsl:text>
+        </xsl:when>
+        <xsl:otherwise><xsl:value-of select="defval"/></xsl:otherwise>
+        </xsl:choose></xsl:if>
+      <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
 
@@ -1669,7 +1674,12 @@
       <xsl:value-of select="declname"/>
     </xsl:otherwise>
   </xsl:choose>
-  <xsl:if test="count(defval) > 0"> = <xsl:value-of select="defval"/></xsl:if>
+  <xsl:if test="count(defval) > 0"> = <xsl:choose>
+    <xsl:when test="defval = 'default_token'">
+      <xsl:text>``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``</xsl:text>
+    </xsl:when>
+    <xsl:otherwise><xsl:value-of select="defval"/></xsl:otherwise>
+  </xsl:choose></xsl:if>
   <xsl:if test="not(position() = last())">,</xsl:if>
 </xsl:template>
 
