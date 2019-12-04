@@ -1548,6 +1548,9 @@
         <xsl:when test="declname = 'Initiation'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'InnerExecutor'">
+          <xsl:value-of select="concat('``[link asio.reference.Executor1 ', declname, ']``')"/>
+        </xsl:when>
         <xsl:when test="declname = 'IoObjectsOrExecutors'">
           <xsl:value-of select="declname"/>
         </xsl:when>
