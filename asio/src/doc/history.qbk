@@ -7,6 +7,116 @@
 
 [section:history Revision History]
 
+[heading Asio 1.16.0]
+
+* Changed the `async_initiate` helper function to automatically deduce its
+  return type. This is enabled for C++11 or later.
+
+* Changed all asynchronous operations to use automatically deduced return
+  types. This allows completion token implementations to incorporate the
+  asynchronous operation initiation into the initiating function's return type,
+  without type erasure. Note that C++14 or later is required to support
+  completion tokens that use per-operation return type deduction. For C++11 or
+  earlier, a completion token's async_result specialisation must still provide
+  the nested typedef `return_type`.
+
+* Introduced three new concepts to support `async_initiate`.
+  * `completion_signature<T>`: Checks if `T` is a signature of the form
+    `R(Args...)`.
+  * `completion_handler_for<T, Signature>`: Checks if `T` is usable as a
+    completion handler with the specified signature.
+  * `completion_token_for<T, Signature>`: Checks if `T` is a completion token
+    that can be used with async_initiate and the specified signature.
+  * For backward compatibility with pre-concepts C++, the macros
+    `(BOOST_)ASIO_COMPLETION_SIGNATURE`, `(BOOST_)ASIO_COMPLETION_HANDLER_FOR`, and
+    `(BOOST_)ASIO_COMPLETION_TOKEN_FOR` are provided. These macros expand to
+    `typename` when concepts are unsupported.
+
+* Added the nested template type `rebind_executor` to all I/O object types, as
+  a way to generically rebind them to use alternative I/O executors. For
+  example:
+  ``
+  using my_socket_type = tcp::socket::rebind_executor<my_executor_type>::other;
+  ``[br]
+
+* Changed the asynchronous operations' initiation function objects to report
+  their associated I/O executor via the nested type `executor_type` and member
+  function `get_executor()`. Note that the presence of `executor_type` and
+  `get_executor()` should be treated as optional, and consequently it may be
+  preferable to access them via the `associated_executor` trait and the
+  `get_associated_executor()` helper function.
+
+* Added the `default_completion_token` trait, so that every I/O executor type
+  now has an associated default completion token type. This trait may be used
+  in asynchronous operation declarations as follows:
+  ``
+  template <
+      typename IoObject,
+      typename CompletionToken =
+        typename default_completion_token<
+          typename IoObject::executor_type
+        >::type
+    >
+  auto async_xyz(
+      IoObject& io_object,
+      CompletionToken&& token =
+        typename default_completion_token<
+          typename IoObject::executor_type
+        >::type{}
+    );
+  ``[br]
+  If not specialised, this trait type is `void`, meaning no default completion
+  token type is available for the given I/O executor.
+
+* Specialised the `default_completion_token` trait for the `use_awaitable`
+  completion token, so that it may be used as shown in the following example:
+  ``
+  auto socket = use_awaitable.as_default_on(tcp::socket(my_context));
+  // ...
+  co_await socket.async_connect(my_endpoint); // Defaults to use_awaitable.
+  ``[br]
+  In this example, the type of the `socket` object is transformed from
+  `tcp::socket` to have an I/O executor with the default completion token set
+  to `use_awaitable`. Alternatively, the socket type may be computed directly:
+  ``
+  using tcp_socket = use_awaitable_t<>::as_default_on_t<tcp::socket>;
+  tcp_socket socket(my_context);
+  // ...
+  co_await socket.async_connect(my_endpoint); // Defaults to use_awaitable.
+  ``[br]
+
+* Added missing `async_initiate` to the Windows-specific I/O objects'
+  asynchronous operations.
+
+* Ensured that the executor type is propagated to newly accepted sockets.
+  When synchronously or asynchronously accepting a new connection, but
+  without specifying an executor or execution context, the accept
+  operation will now correctly propagate the executor type from the
+  acceptor to the socket. For example, if your acceptor type is:
+  ``
+  basic_socket_acceptor<ip::tcp, my_executor_type>
+  ``[br]
+  then your accepted socket type will be:
+  ``
+  basic_stream_socket<ip::tcp, my_executor_type>
+  ``[br]
+
+* Changed to require that `Protocol` copy and move operations never throw.
+
+* Changed to require that `Endpoint` default constructor and move operations
+  never throw.
+
+* Added the `noexcept` qualifier to protocol accessors.
+
+* Added the `noexcept` qualifier to socket move constructors.
+
+* Fixed issues associated with opening serial ports on Windows:
+  * Use the correct constant to initialise the RTS control flag.
+  * Specify a default baud rate (9600).
+
+* Fixed a lost "outstanding work count" that can occur when an asynchronous
+  accept operation is automatically restarted.
+
 [heading Asio 1.14.1]
 
 * Improved performance slightly by eliminating a redundant move construction
