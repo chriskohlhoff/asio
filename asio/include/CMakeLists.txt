@@ -489,9 +489,22 @@ if(ASIO_SEPARATE_COMPILATION)
     set(libasio_SOURCES ${libasio_SOURCES} ../src/asio_ssl.cpp)
   endif()
 
-  add_definitions(-DASIO_SEPARATE_COMPILATION=1)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   add_library(asio ${libasio_SOURCES} ${asio_PUBLIC_HEADERS})
+  target_compile_definitions(asio PUBLIC ASIO_SEPARATE_COMPILATION)
+  if(ASIO_NO_DEPRECATED)
+    target_compile_definitions(asio PUBLIC ASIO_NO_DEPRECATED)
+  endif()
+  target_include_directories(asio INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+  if(OpenSSL_FOUND)
+    target_compile_definitions(asio PUBLIC HAVE_OPENSSL)
+    target_link_libraries(asio INTERFACE OpenSSL::SSL)
+  else()
+    target_link_libraries(asio INTERFACE ${EXTRA_LIBS})
+  endif()
+
+  install(TARGETS asio EXPORT asio-targets DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 
