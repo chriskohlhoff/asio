@@ -490,15 +490,11 @@ if(ASIO_SEPARATE_COMPILATION)
   endif()
 
   add_library(asio ${libasio_SOURCES} ${asio_PUBLIC_HEADERS})
-  target_compile_definitions(asio PUBLIC ASIO_SEPARATE_COMPILATION)
-  if(ASIO_NO_DEPRECATED)
-    target_compile_definitions(asio PUBLIC ASIO_NO_DEPRECATED)
-  endif()
+  target_compile_definitions(asio PUBLIC ASIO_SEPARATE_COMPILATION ${CPPdefinitions})
   target_include_directories(asio INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
   if(OpenSSL_FOUND)
-    target_compile_definitions(asio PUBLIC HAVE_OPENSSL)
     target_link_libraries(asio INTERFACE OpenSSL::SSL)
   else()
     target_link_libraries(asio INTERFACE ${EXTRA_LIBS})
@@ -515,12 +511,9 @@ target_include_directories(standalone INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 if(Boost_FOUND AND NOT ASIO_STANDALONE)
-  target_compile_definitions(standalone INTERFACE BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING)
+  target_compile_definitions(standalone INTERFACE ${CPPdefinitions})
 else()
-  target_compile_definitions(standalone INTERFACE ASIO_STANDALONE)
-  if(ASIO_NO_DEPRECATED)
-    target_compile_definitions(standalone INTERFACE ASIO_NO_DEPRECATED)
-  endif()
+  target_compile_definitions(standalone INTERFACE ASIO_STANDALONE ${CPPdefinitions})
 endif()
 
 install(TARGETS standalone EXPORT asio-targets)

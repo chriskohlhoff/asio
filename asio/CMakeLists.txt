@@ -60,7 +60,7 @@ endif()
 option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" ON)
 option(ASIO_BUILD_TESTS "Build asio unittest too" OFF)
 option(ASIO_BUILD_EXAMPLES "Build asio examples too" OFF)
-option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" OFF)
+option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" ON)
 option(ASIO_DISABLE_KQUEUE "disable kqueue" OFF)
 option(ASIO_DISABLE_EPOLL "disable epoll" OFF)
 option(ASIO_USE_CLANG_TIDY "use clang-tidy if found" OFF)
@@ -75,33 +75,41 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 
+set(CPPdefinitions)
+set(EXTRA_LIBS)
+
 if(NOT CONAN_COMPILER AND WIN32)
-  add_definitions(-D_WIN32_WINNT=0x0501 -D__USE_W32_SOCKETS
-    -DASIO_HAS_VARIADIC_TEMPLATES -DASIO_DISABLE_CONSTEXPR
+  list(APPEND CPPdefinitions _WIN32_WINNT=0x0501 __USE_W32_SOCKETS
+    ASIO_HAS_VARIADIC_TEMPLATES ASIO_DISABLE_CONSTEXPR
   )
   set(EXTRA_LIBS wsock32 ws2_32)
 else()
   set(EXTRA_LIBS ${CONAN_TARGETS})
 endif()
 
-
 if(NOT CONAN_COMPILER AND ${CMAKE_HOST_SYSTEM_NAME} MATCHES "MINGW.*")
-  add_definitions(-D_WIN32_WINNT=0x0501 -D__USE_W32_SOCKETS)
+  list(APPEND CPPdefinitions _WIN32_WINNT=0x0501 __USE_W32_SOCKETS)
+endif()
+
+
+if(ASIO_NO_DEPRECATED)
+  message(STATUS "disenable deprected interfaces")
+  list(APPEND CPPdefinitions ASIO_NO_DEPRECATED)
 endif()
 
 if(ASIO_ENABLE_HANDLER_TRACKING)
   message(STATUS "enable handler tracking")
-  add_definitions(-DASIO_ENABLE_HANDLER_TRACKING)
+  list(APPEND CPPdefinitions ASIO_ENABLE_HANDLER_TRACKING)
 endif()
 
 if(ASIO_DISABLE_KQUEUE)
   message(STATUS "disble queue")
-  add_definitions(-DASIO_DISABLE_KQUEUE)
+  list(APPEND CPPdefinitions ASIO_DISABLE_KQUEUE)
 endif()
 
 if(ASIO_DISABLE_EPOLL)
   message(STATUS "disable epoll")
-  add_definitions(-DASIO_DISABLE_EPOLL)
+  list(APPEND CPPdefinitions ASIO_DISABLE_EPOLL)
 endif()
 
 if(ASIO_USE_CLANG_TIDY)
@@ -136,8 +144,8 @@ if(NOT CONAN_COMPILER)
     if(Boost_FOUND)
       include_directories(${Boost_INCLUDE_DIRS})
       link_directories(${Boost_LIBRARY_DIRS})
-      add_definitions(-DBOOST_ALL_NO_LIB=1
-        -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
+      list(APPEND CPPdefinitions BOOST_ALL_NO_LIB=1
+        BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
       )
       list(APPEND EXTRA_LIBS ${Boost_LIBRARIES})
     endif()
@@ -154,7 +162,7 @@ if(NOT CONAN_COMPILER)
   if(OpenSSL_FOUND)
     list(APPEND EXTRA_LIBS ${openSSL_LIBRARIES})
     message(STATUS "HAVE_OPENSSL")
-    add_definitions(-DHAVE_OPENSSL)
+    list(APPEND CPPdefinitions HAVE_OPENSSL)
     include_directories(BEFORE ${openSSL_INCLUDE_DIR})
   # else()
   #   find_library(OpenSSL_LIBRARY ssl HINTS ${OpenSSL_ROOT_DIR}/lib)
@@ -162,7 +170,7 @@ if(NOT CONAN_COMPILER)
   #   if(OpenSSL_LIBRARY AND CRYPTO_LIBRARY)
   #     set(OpenSSL_FOUND ON)
   #     message(STATUS "USE CRYPTO_LIBRARY")
-  #     add_definitions(-DHAVE_OPENSSL)
+  #     list(APPEND CPPdefinitions HAVE_OPENSSL)
   #     list(APPEND EXTRA_LIBS ${OpenSSL_LIBRARY} ${CRYPTO_LIBRARY})
   #     include_directories(BEFORE ${OpenSSL_ROOT_DIR}/include)
   #   endif()
@@ -171,7 +179,7 @@ if(NOT CONAN_COMPILER)
 else()
   message(STATUS "ASIO USE CONAN_TARGETS")
   if(CONAN_LIBS_OPENSSL)
-    add_definitions(-DHAVE_OPENSSL)
+    list(APPEND CPPdefinitions HAVE_OPENSSL)
     message(STATUS "have CONAN_LIBS_OPENSSL")
   endif()
 endif()
@@ -182,6 +190,8 @@ if(UNIX)
   message(STATUS "USE ${PTHREAD_LIBRARY}")
   list(APPEND EXTRA_LIBS ${PTHREAD_LIBRARY})
 endif()
+
+message(STATUS "CPPdefinitions:${CPPdefinitions}")
 
 
 # Installation configuration
