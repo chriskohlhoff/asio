@@ -29,9 +29,14 @@ endif()
 #----------------------------------------------------------
 # Compiler config
 #----------------------------------------------------------
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+message(STATUS "USING: CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}")
+message(STATUS "USING: CMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}")
+message(STATUS "USING: CMAKE_CXX_EXTENSIONS= ${CMAKE_CXX_EXTENSIONS}")
 
 
 ###########################################################
@@ -60,7 +65,7 @@ endif()
 option(ASIO_NO_DEPRECATED "Build asio without deprecated interfaces" ON)
 option(ASIO_BUILD_TESTS "Build asio unittest too" OFF)
 option(ASIO_BUILD_EXAMPLES "Build asio examples too" OFF)
-option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" ON)
+option(ASIO_ENABLE_HANDLER_TRACKING "enable handler tracking" OFF)
 option(ASIO_DISABLE_KQUEUE "disable kqueue" OFF)
 option(ASIO_DISABLE_EPOLL "disable epoll" OFF)
 option(ASIO_USE_CLANG_TIDY "use clang-tidy if found" OFF)
@@ -93,7 +98,7 @@ endif()
 
 
 if(ASIO_NO_DEPRECATED)
-  message(STATUS "disenable deprected interfaces")
+  message(STATUS "disable deprected interfaces")
   list(APPEND CPPdefinitions ASIO_NO_DEPRECATED)
 endif()
 

@@ -490,6 +490,8 @@ if(ASIO_SEPARATE_COMPILATION)
   endif()
 
   add_library(asio ${libasio_SOURCES} ${asio_PUBLIC_HEADERS})
+  add_library(asio::asio ALIAS asio)
+
   target_compile_definitions(asio PUBLIC ASIO_SEPARATE_COMPILATION ${CPPdefinitions})
   target_include_directories(asio INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -506,6 +508,7 @@ endif()
 
 # Standalone library
 add_library(standalone INTERFACE)
+add_library(asio::standalone ALIAS standalone)
 
 target_include_directories(standalone INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
