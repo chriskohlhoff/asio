@@ -387,6 +387,9 @@
 /doc/asio/reference/basic_deadline_timer/get_executor.html
 /doc/asio/reference/basic_deadline_timer.html
 /doc/asio/reference/basic_deadline_timer/operator_eq_.html
+/doc/asio/reference/basic_deadline_timer__rebind_executor/
+/doc/asio/reference/basic_deadline_timer__rebind_executor.html
+/doc/asio/reference/basic_deadline_timer__rebind_executor/other.html
 /doc/asio/reference/basic_deadline_timer/time_type.html
 /doc/asio/reference/basic_deadline_timer/traits_type.html
 /doc/asio/reference/basic_deadline_timer/wait/
@@ -783,6 +786,9 @@
 /doc/asio/reference/basic_serial_port/read_some.html
 /doc/asio/reference/basic_serial_port/read_some/overload1.html
 /doc/asio/reference/basic_serial_port/read_some/overload2.html
+/doc/asio/reference/basic_serial_port__rebind_executor/
+/doc/asio/reference/basic_serial_port__rebind_executor.html
+/doc/asio/reference/basic_serial_port__rebind_executor/other.html
 /doc/asio/reference/basic_serial_port/send_break/
 /doc/asio/reference/basic_serial_port/send_break.html
 /doc/asio/reference/basic_serial_port/send_break/overload1.html
@@ -823,6 +829,9 @@
 /doc/asio/reference/basic_signal_set/executor_type.html
 /doc/asio/reference/basic_signal_set/get_executor.html
 /doc/asio/reference/basic_signal_set.html
+/doc/asio/reference/basic_signal_set__rebind_executor/
+/doc/asio/reference/basic_signal_set__rebind_executor.html
+/doc/asio/reference/basic_signal_set__rebind_executor/other.html
 /doc/asio/reference/basic_signal_set/remove/
 /doc/asio/reference/basic_signal_set/remove.html
 /doc/asio/reference/basic_signal_set/remove/overload1.html
@@ -944,6 +953,9 @@
 /doc/asio/reference/basic_socket_acceptor/operator_eq_/overload2.html
 /doc/asio/reference/basic_socket_acceptor/out_of_band_inline.html
 /doc/asio/reference/basic_socket_acceptor/protocol_type.html
+/doc/asio/reference/basic_socket_acceptor__rebind_executor/
+/doc/asio/reference/basic_socket_acceptor__rebind_executor.html
+/doc/asio/reference/basic_socket_acceptor__rebind_executor/other.html
 /doc/asio/reference/basic_socket_acceptor/receive_buffer_size.html
 /doc/asio/reference/basic_socket_acceptor/receive_low_watermark.html
 /doc/asio/reference/basic_socket_acceptor/release/
@@ -1394,6 +1406,9 @@
 /doc/asio/reference/basic_waitable_timer/get_executor.html
 /doc/asio/reference/basic_waitable_timer.html
 /doc/asio/reference/basic_waitable_timer/operator_eq_.html
+/doc/asio/reference/basic_waitable_timer__rebind_executor/
+/doc/asio/reference/basic_waitable_timer__rebind_executor.html
+/doc/asio/reference/basic_waitable_timer__rebind_executor/other.html
 /doc/asio/reference/basic_waitable_timer/time_point.html
 /doc/asio/reference/basic_waitable_timer/traits_type.html
 /doc/asio/reference/basic_waitable_timer/wait/
@@ -1702,6 +1717,9 @@
 /doc/asio/reference/co_spawn/overload1.html
 /doc/asio/reference/co_spawn/overload2.html
 /doc/asio/reference/deadline_timer.html
+/doc/asio/reference/default_completion_token/
+/doc/asio/reference/default_completion_token.html
+/doc/asio/reference/default_completion_token/type.html
 /doc/asio/reference/defer/
 /doc/asio/reference/defer.html
 /doc/asio/reference/defer/overload1.html
@@ -2505,6 +2523,9 @@
 /doc/asio/reference/ip__basic_resolver_query/protocol_type.html
 /doc/asio/reference/ip__basic_resolver_query/service_name.html
 /doc/asio/reference/ip__basic_resolver_query/v4_mapped.html
+/doc/asio/reference/ip__basic_resolver__rebind_executor/
+/doc/asio/reference/ip__basic_resolver__rebind_executor.html
+/doc/asio/reference/ip__basic_resolver__rebind_executor/other.html
 /doc/asio/reference/ip__basic_resolver/resolve/
 /doc/asio/reference/ip__basic_resolver/resolve.html
 /doc/asio/reference/ip__basic_resolver/resolve/overload10.html
@@ -2881,6 +2902,9 @@
 /doc/asio/reference/posix__basic_descriptor/non_blocking/overload2.html
 /doc/asio/reference/posix__basic_descriptor/non_blocking/overload3.html
 /doc/asio/reference/posix__basic_descriptor/operator_eq_.html
+/doc/asio/reference/posix__basic_descriptor__rebind_executor/
+/doc/asio/reference/posix__basic_descriptor__rebind_executor.html
+/doc/asio/reference/posix__basic_descriptor__rebind_executor/other.html
 /doc/asio/reference/posix__basic_descriptor/release.html
 /doc/asio/reference/posix__basic_descriptor/wait/
 /doc/asio/reference/posix__basic_descriptor/wait.html
@@ -2942,6 +2966,9 @@
 /doc/asio/reference/posix__basic_stream_descriptor/read_some.html
 /doc/asio/reference/posix__basic_stream_descriptor/read_some/overload1.html
 /doc/asio/reference/posix__basic_stream_descriptor/read_some/overload2.html
+/doc/asio/reference/posix__basic_stream_descriptor__rebind_executor/
+/doc/asio/reference/posix__basic_stream_descriptor__rebind_executor.html
+/doc/asio/reference/posix__basic_stream_descriptor__rebind_executor/other.html
 /doc/asio/reference/posix__basic_stream_descriptor/release.html
 /doc/asio/reference/posix__basic_stream_descriptor/wait/
 /doc/asio/reference/posix__basic_stream_descriptor/wait.html
@@ -3445,6 +3472,11 @@
 /doc/asio/reference/transfer_exactly.html
 /doc/asio/reference/use_awaitable.html
 /doc/asio/reference/use_awaitable_t/
+/doc/asio/reference/use_awaitable_t/as_default_on.html
+/doc/asio/reference/use_awaitable_t__executor_with_default/
+/doc/asio/reference/use_awaitable_t__executor_with_default/default_completion_token_type.html
+/doc/asio/reference/use_awaitable_t__executor_with_default/executor_with_default.html
+/doc/asio/reference/use_awaitable_t__executor_with_default.html
 /doc/asio/reference/use_awaitable_t.html
 /doc/asio/reference/use_awaitable_t/use_awaitable_t.html
 /doc/asio/reference/use_future.html
@@ -3501,6 +3533,9 @@
 /doc/asio/reference/windows__basic_object_handle/native_handle.html
 /doc/asio/reference/windows__basic_object_handle/native_handle_type.html
 /doc/asio/reference/windows__basic_object_handle/operator_eq_.html
+/doc/asio/reference/windows__basic_object_handle__rebind_executor/
+/doc/asio/reference/windows__basic_object_handle__rebind_executor.html
+/doc/asio/reference/windows__basic_object_handle__rebind_executor/other.html
 /doc/asio/reference/windows__basic_object_handle/wait/
 /doc/asio/reference/windows__basic_object_handle/wait.html
 /doc/asio/reference/windows__basic_object_handle/wait/overload1.html
@@ -3539,6 +3574,9 @@
 /doc/asio/reference/windows__basic_overlapped_handle/native_handle.html
 /doc/asio/reference/windows__basic_overlapped_handle/native_handle_type.html
 /doc/asio/reference/windows__basic_overlapped_handle/operator_eq_.html
+/doc/asio/reference/windows__basic_overlapped_handle__rebind_executor/
+/doc/asio/reference/windows__basic_overlapped_handle__rebind_executor.html
+/doc/asio/reference/windows__basic_overlapped_handle__rebind_executor/other.html
 /doc/asio/reference/windows__basic_random_access_handle/
 /doc/asio/reference/windows__basic_random_access_handle/assign/
 /doc/asio/reference/windows__basic_random_access_handle/assign.html
@@ -3578,6 +3616,9 @@
 /doc/asio/reference/windows__basic_random_access_handle/read_some_at.html
 /doc/asio/reference/windows__basic_random_access_handle/read_some_at/overload1.html
 /doc/asio/reference/windows__basic_random_access_handle/read_some_at/overload2.html
+/doc/asio/reference/windows__basic_random_access_handle__rebind_executor/
+/doc/asio/reference/windows__basic_random_access_handle__rebind_executor.html
+/doc/asio/reference/windows__basic_random_access_handle__rebind_executor/other.html
 /doc/asio/reference/windows__basic_random_access_handle/write_some_at/
 /doc/asio/reference/windows__basic_random_access_handle/write_some_at.html
 /doc/asio/reference/windows__basic_random_access_handle/write_some_at/overload1.html
@@ -3621,6 +3662,9 @@
 /doc/asio/reference/windows__basic_stream_handle/read_some.html
 /doc/asio/reference/windows__basic_stream_handle/read_some/overload1.html
 /doc/asio/reference/windows__basic_stream_handle/read_some/overload2.html
+/doc/asio/reference/windows__basic_stream_handle__rebind_executor/
+/doc/asio/reference/windows__basic_stream_handle__rebind_executor.html
+/doc/asio/reference/windows__basic_stream_handle__rebind_executor/other.html
 /doc/asio/reference/windows__basic_stream_handle/write_some/
 /doc/asio/reference/windows__basic_stream_handle/write_some.html
 /doc/asio/reference/windows__basic_stream_handle/write_some/overload1.html
@@ -3718,9 +3762,7 @@
 /doc/asio/tutorial/tuttimer5.html
 /doc/asio/tutorial/tuttimer5/src.html
 /doc/asio/using.html
-/doc/._async_op1.png
 /doc/async_op1.png
-/doc/._async_op2.png
 /doc/async_op2.png
 /doc/blank.png
 /doc/boostbook.css
@@ -3778,7 +3820,6 @@
 /doc/examples/diffs/http/server/server.hpp.html
 /doc/examples/diffs/invocation/
 /doc/examples/diffs/invocation/prioritised_handlers.cpp.html
-/doc/examples/diffs/invocation/test.cpp.html
 /doc/examples/diffs/iostreams/
 /doc/examples/diffs/iostreams/http_client.cpp.html
 /doc/examples/diffs/local/
@@ -3830,10 +3871,8 @@
 /doc/note.png
 /doc/prev_disabled.png
 /doc/prev.png
-/doc/._proactor.png
 /doc/proactor.png
 /doc/standalone_HTML.manifest
-/doc/._sync_op.png
 /doc/sync_op.png
 /doc/tip.png
 /doc/up_disabled.png
