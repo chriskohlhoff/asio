@@ -45,6 +45,18 @@ AC_ARG_ENABLE(boost-coroutine,
   HAVE_BOOST_COROUTINE=yes
 ])
 
+AC_ARG_ENABLE(tests,
+[  --disable-tests  Disable unit tests],
+[
+  TESTS=no
+])
+
+AC_ARG_ENABLE(examples,
+[  --disable-examples  Disable examples],
+[
+  EXAMPLES=no
+])
+
 if test "$STANDALONE" != yes; then
   AC_CHECK_HEADER([boost/noncopyable.hpp],,
   [
@@ -174,6 +186,10 @@ AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 AM_CONDITIONAL(HAVE_CXX11,test x$HAVE_CXX11 = xyes)
 
 AM_CONDITIONAL(HAVE_CXX14,test x$HAVE_CXX14 = xyes)
+
+AM_CONDITIONAL(ENABLE_TESTS,test x$TESTS != xno)
+
+AM_CONDITIONAL(ENABLE_EXAMPLES,test x$EXAMPLES != xno)
 
 AC_OUTPUT([
   Makefile
