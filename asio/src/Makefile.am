@@ -1,3 +1,6 @@
+SUBDIRS =
+
+if ENABLE_EXAMPLES
 if !STANDALONE
 EXAMPLES_CPP03 = examples/cpp03
 endif
@@ -10,7 +13,12 @@ if HAVE_CXX14
 EXAMPLES_CPP14 = examples/cpp14
 endif
 
-SUBDIRS = $(EXAMPLES_CPP03) $(EXAMPLES_CPP11) $(EXAMPLES_CPP14) tests
+SUBDIRS += $(EXAMPLES_CPP03) $(EXAMPLES_CPP11) $(EXAMPLES_CPP14)
+endif
+
+if ENABLE_TESTS
+SUBDIRS += tests
+endif
 
 DIST_SUBDIRS = examples/cpp03 examples/cpp11 examples/cpp14 examples/cpp17 tests
 
