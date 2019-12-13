@@ -38,8 +38,6 @@ set(noinst_PROGRAMS
   operations/composed_7.cpp
   operations/composed_8.cpp
   socks4/sync_client.cpp
-  ssl/client.cpp
-  ssl/server.cpp
   timeouts/async_tcp_client.cpp
   timeouts/blocking_tcp_client.cpp
   timeouts/blocking_token_tcp_client.cpp
@@ -52,6 +50,13 @@ if(Boost_FOUND)
   set(noinst_PROGRAMS ${noinst_PROGRAMS}
     spawn/echo_server.cpp
     spawn/parallel_grep.cpp
+  )
+endif()
+
+if(OpenSSL_FOUND)
+  set(noinst_PROGRAMS ${noinst_PROGRAMS}
+    ssl/client.cpp
+    ssl/server.cpp
   )
 endif()
 
