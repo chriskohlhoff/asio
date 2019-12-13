@@ -12,6 +12,7 @@
 #include <asio/ip/udp.hpp>
 #include <asio/signal_set.hpp>
 #include <array>
+#include <cstring>  // strerror used
 #include <ctime>
 #include <iostream>
 #include <syslog.h>
@@ -107,7 +108,7 @@ int main()
       }
       else
       {
-        syslog(LOG_ERR | LOG_USER, "First fork failed: %m");
+        syslog(LOG_ERR | LOG_USER, "First fork failed: %s", strerror(errno));
         return 1;
       }
     }
@@ -136,7 +137,7 @@ int main()
       }
       else
       {
-        syslog(LOG_ERR | LOG_USER, "Second fork failed: %m");
+        syslog(LOG_ERR | LOG_USER, "Second fork failed: %s", strerror(errno));
         return 1;
       }
     }
@@ -150,7 +151,7 @@ int main()
     // We don't want the daemon to have any standard input.
     if (open("/dev/null", O_RDONLY) < 0)
     {
-      syslog(LOG_ERR | LOG_USER, "Unable to open /dev/null: %m");
+      syslog(LOG_ERR | LOG_USER, "Unable to open /dev/null: %s", strerror(errno));
       return 1;
     }
 
@@ -160,14 +161,14 @@ int main()
     const mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     if (open(output, flags, mode) < 0)
     {
-      syslog(LOG_ERR | LOG_USER, "Unable to open output file %s: %m", output);
+      syslog(LOG_ERR | LOG_USER, "Unable to open output file %s: %s", output, strerror(errno));
       return 1;
     }
 
     // Also send standard error to the same log file.
     if (dup(1) < 0)
     {
-      syslog(LOG_ERR | LOG_USER, "Unable to dup output descriptor: %m");
+      syslog(LOG_ERR | LOG_USER, "Unable to dup output descriptor: %s", strerror(errno));
       return 1;
     }
 
