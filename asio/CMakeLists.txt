@@ -21,7 +21,7 @@ else()
   endif()
 
   # ========================================
-  project(asio VERSION 1.13.0 LANGUAGES CXX)
+  project(asio VERSION 1.14.1 LANGUAGES CXX)
   # ========================================
 
 endif()
@@ -36,7 +36,7 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
 endif()
 message(STATUS "USING: CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}")
 message(STATUS "USING: CMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}")
-message(STATUS "USING: CMAKE_CXX_EXTENSIONS= ${CMAKE_CXX_EXTENSIONS}")
+message(STATUS "USING: CMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}")
 
 
 ###########################################################
