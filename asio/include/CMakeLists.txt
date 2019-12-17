@@ -493,7 +493,7 @@ if(ASIO_SEPARATE_COMPILATION)
   add_library(asio::asio ALIAS asio)
 
   target_compile_definitions(asio PUBLIC ASIO_SEPARATE_COMPILATION ${CPPdefinitions})
-  target_include_directories(asio INTERFACE
+  target_include_directories(asio PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
   if(OpenSSL_FOUND)
