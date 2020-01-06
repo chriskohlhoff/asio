@@ -616,6 +616,12 @@ struct valid_mutable_a
   mutable_buffer* end() { return 0; }
 };
 
+void check_valid_mutable_a()
+{
+  valid_mutable_a x;
+  buffer_sequence_begin(x);
+}
+
 #if defined(ASIO_HAS_DECLTYPE)
 struct valid_mutable_b
 {
