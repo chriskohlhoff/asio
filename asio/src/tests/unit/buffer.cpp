@@ -612,8 +612,8 @@ struct valid_mutable_a
 {
   typedef mutable_buffer* const_iterator;
   typedef mutable_buffer value_type;
-  mutable_buffer* begin() { return 0; }
-  mutable_buffer* end() { return 0; }
+  mutable_buffer* begin() const { return 0; }
+  mutable_buffer* end() const { return 0; }
 };
 
 void check_valid_mutable_a()
