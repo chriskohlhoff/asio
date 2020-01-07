@@ -27,6 +27,21 @@ matrix:
         - MATRIX_EVAL="CC=gcc-6 CXX=g++-6"
       compiler: gcc
     #
+    # Linux / g++-6 / -O2 / standalone / decltype disabled
+    #
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - CXXFLAGS="-Wall -Wextra -O2 -DASIO_DISABLE_DECLTYPE"
+        - CONFIGFLAGS="--with-boost=no"
+        - MATRIX_EVAL="CC=gcc-6 CXX=g++-6"
+      compiler: gcc
+    #
     # Linux / g++-6 / -O0 / standalone / handler tracking
     #
     - os: linux
