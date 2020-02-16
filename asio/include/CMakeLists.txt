@@ -482,6 +482,7 @@ asio/yield.hpp
 
 
 option(ASIO_SEPARATE_COMPILATION "build asio lib too" ON)
+option(BUILD_SHARED_LIBS "build asio as shared lib" ON)
 
 if(ASIO_SEPARATE_COMPILATION)
   set(libasio_SOURCES ../src/asio.cpp)

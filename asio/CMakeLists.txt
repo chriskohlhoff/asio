@@ -223,11 +223,17 @@ endif()
 
 
 # Installation
-configure_file(asio-config-version.cmake.in asio-config-version.cmake @ONLY)
+include(CMakePackageConfigHelpers)
+configure_package_config_file(asio-config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/asio-config.cmake
+  INSTALL_DESTINATION ${ConfigPackageLocation})
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/asio-config-version.cmake
+  VERSION ${asio_VERSION}
+  COMPATIBILITY SameMajorVersion)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/asio-config-version.cmake
   DESTINATION ${ConfigPackageLocation})
 install(EXPORT asio-targets
   DESTINATION ${ConfigPackageLocation}
   NAMESPACE asio::)
-install(FILES asio-config.cmake DESTINATION ${ConfigPackageLocation})
 
