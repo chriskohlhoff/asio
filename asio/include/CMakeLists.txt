@@ -519,6 +519,7 @@ if(Boost_FOUND AND NOT ASIO_STANDALONE)
 else()
   target_compile_definitions(standalone INTERFACE ASIO_STANDALONE ${CPPdefinitions})
 endif()
+target_link_libraries(standalone INTERFACE ${EXTRA_LIBS})
 
 install(TARGETS standalone EXPORT asio-targets)
 

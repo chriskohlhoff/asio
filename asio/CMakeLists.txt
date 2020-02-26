@@ -232,6 +232,7 @@ write_basic_package_version_file(
   VERSION ${asio_VERSION}
   COMPATIBILITY SameMajorVersion)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/asio-config-version.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/asio-config.cmake
   DESTINATION ${ConfigPackageLocation})
 install(EXPORT asio-targets
   DESTINATION ${ConfigPackageLocation}
