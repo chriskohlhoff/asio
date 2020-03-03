@@ -84,6 +84,8 @@ using boost::result_of;
 using boost::true_type;
 #endif // defined(ASIO_HAS_STD_TYPE_TRAITS)
 
+template <typename> struct void_type { typedef void type; };
+
 } // namespace asio
 
 #endif // ASIO_DETAIL_TYPE_TRAITS_HPP

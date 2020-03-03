@@ -223,6 +223,7 @@ AC_OUTPUT([
   include/Makefile
   src/Makefile
   src/tests/Makefile
+  src/tests/properties/Makefile
   src/examples/cpp03/Makefile
   src/examples/cpp11/Makefile
   src/examples/cpp14/Makefile

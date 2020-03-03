@@ -16,6 +16,56 @@
     <colspec colname="d"/>
     <thead>
       <row>
+        <entry valign="center" namest="a" nameend="a">
+          <bridgehead renderas="sect2">Properties</bridgehead>
+        </entry>
+        <entry valign="center" namest="b" nameend="d">
+          <bridgehead renderas="sect2"></bridgehead>
+        </entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Customisation Points</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.prefer">prefer</link></member>
+            <member><link linkend="asio.reference.query">query</link></member>
+            <member><link linkend="asio.reference.require">require</link></member>
+            <member><link linkend="asio.reference.require_concept">require_concept</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Traits</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.can_prefer">can_prefer</link></member>
+            <member><link linkend="asio.reference.can_query">can_query</link></member>
+            <member><link linkend="asio.reference.can_require">can_require</link></member>
+            <member><link linkend="asio.reference.can_require_concept">can_require_concept</link></member>
+            <member><link linkend="asio.reference.is_nothrow_prefer">is_nothrow_prefer</link></member>
+            <member><link linkend="asio.reference.is_nothrow_query">is_nothrow_query</link></member>
+            <member><link linkend="asio.reference.is_nothrow_require">is_nothrow_require</link></member>
+            <member><link linkend="asio.reference.is_nothrow_require_concept">is_nothrow_require_concept</link></member>
+            <member><link linkend="asio.reference.prefer_result_type">prefer_result_type</link></member>
+            <member><link linkend="asio.reference.query_result_type">query_result_type</link></member>
+            <member><link linkend="asio.reference.require_result_type">require_result_type</link></member>
+            <member><link linkend="asio.reference.require_concept_result_type">require_concept_result_type</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
+        </entry>
+        <entry valign="top">
+        </entry>
+        <entry valign="top">
+        </entry>
+      </row>
+    </tbody>
+  </tgroup>
+  <tgroup cols="4">
+    <colspec colname="a"/>
+    <colspec colname="b"/>
+    <colspec colname="c"/>
+    <colspec colname="d"/>
+    <thead>
+      <row>
         <entry valign="center" namest="a" nameend="d">
           <bridgehead renderas="sect2">Core</bridgehead>
         </entry>

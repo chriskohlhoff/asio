@@ -386,6 +386,7 @@ nobase_include_HEADERS = \
 	asio/ip/udp.hpp \
 	asio/ip/unicast.hpp \
 	asio/ip/v6_only.hpp \
+	asio/is_applicable_property.hpp \
 	asio/is_executor.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \
@@ -403,10 +404,14 @@ nobase_include_HEADERS = \
 	asio/posix/descriptor.hpp \
 	asio/posix/stream_descriptor.hpp \
 	asio/post.hpp \
+	asio/prefer.hpp \
+	asio/query.hpp \
 	asio/read_at.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
 	asio/redirect_error.hpp \
+	asio/require.hpp \
+	asio/require_concept.hpp \
 	asio/serial_port_base.hpp \
 	asio/serial_port.hpp \
 	asio/signal_set.hpp \
@@ -453,6 +458,21 @@ nobase_include_HEADERS = \
 	asio/thread.hpp \
 	asio/thread_pool.hpp \
 	asio/time_traits.hpp \
+	asio/traits/equality_comparable.hpp \
+	asio/traits/execute_free.hpp \
+	asio/traits/execute_member.hpp \
+	asio/traits/prefer_free.hpp \
+	asio/traits/prefer_member.hpp \
+	asio/traits/query_free.hpp \
+	asio/traits/query_member.hpp \
+	asio/traits/query_static_constexpr_member.hpp \
+	asio/traits/require_concept_free.hpp \
+	asio/traits/require_concept_member.hpp \
+	asio/traits/require_free.hpp \
+	asio/traits/require_member.hpp \
+	asio/traits/static_query.hpp \
+	asio/traits/static_require.hpp \
+	asio/traits/static_require_concept.hpp \
 	asio/ts/buffer.hpp \
 	asio/ts/executor.hpp \
 	asio/ts/internet.hpp \

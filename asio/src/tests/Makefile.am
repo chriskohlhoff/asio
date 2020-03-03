@@ -9,6 +9,8 @@ endif
 LDADD = libasio.a
 endif
 
+SUBDIRS = properties
+
 check_PROGRAMS = \
 	unit/associated_allocator \
 	unit/associated_executor \
