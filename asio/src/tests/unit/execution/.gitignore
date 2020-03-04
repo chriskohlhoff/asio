@@ -7,4 +7,5 @@
 *.manifest
 *.pdb
 *.tds
+execute
 invocable_archetype

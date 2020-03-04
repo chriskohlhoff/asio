@@ -147,6 +147,7 @@ UNIT_TEST_EXES = \
 	tests\unit\dispatch.exe \
 	tests\unit\error.exe \
 	tests\unit\execution_context.exe \
+	tests\unit\execution\execute.exe \
 	tests\unit\execution\invocable_archetype.exe \
 	tests\unit\executor.exe \
 	tests\unit\executor_work_guard.exe \
@@ -325,6 +326,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fotests\unit\unit_test.obj $(CXXFLAGS) $(DEFINES) -c tests\unit\unit_test.cpp
 
 {tests\unit}.cpp{tests\unit}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{tests\unit\execution}.cpp{tests\unit\execution}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\generic}.cpp{tests\unit\generic}.exe:
