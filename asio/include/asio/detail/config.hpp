@@ -264,6 +264,25 @@
     static const type assignment
 # endif // defined(ASIO_HAS_CONSTEXPR)
 #endif // !defined(ASIO_STATIC_CONSTEXPR)
+#if !defined(ASIO_STATIC_CONSTEXPR_DEFAULT_INIT)
+# if defined(ASIO_HAS_CONSTEXPR)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 8)
+#    define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+      static constexpr const type name{}
+#   else // (__GNUC__ >= 8)
+#    define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+      static const type name
+#   endif // (__GNUC__ >= 8)
+#  else // defined(__GNUC__)
+#   define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+     static constexpr const type name{}
+#  endif // defined(__GNUC__)
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+    static const type name
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_STATIC_CONSTEXPR_DEFAULT_INIT)
 
 // Support noexcept on compilers known to allow it.
 #if !defined(ASIO_HAS_NOEXCEPT)
@@ -453,6 +472,29 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_SFINAE_VARIABLE_TEMPLATES)
 #endif // !defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
+
+// Support SFINAE use of constant expressions on compilers known to allow it.
+#if !defined(ASIO_HAS_CONSTANT_EXPRESSION_SFINAE)
+# if !defined(ASIO_DISABLE_CONSTANT_EXPRESSION_SFINAE)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201402)
+#    define ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
+#   endif // (__cplusplus >= 201703)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 7)
+#    if (__cplusplus >= 201402)
+#     define ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
+#    endif // (__cplusplus >= 201402)
+#   endif // (__GNUC__ >= 7)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1901)
+#    define ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
+#   endif // (_MSC_VER >= 1901)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_CONSTANT_EXPRESSION_SFINAE)
+#endif // !defined(ASIO_HAS_CONSTANT_EXPRESSION_SFINAE)
 
 // Enable workarounds for lack of working expression SFINAE.
 #if !defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)

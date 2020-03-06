@@ -43,6 +43,7 @@ check_PROGRAMS = \
 	unit/detached \
 	unit/dispatch \
 	unit/error \
+	unit/execution/blocking \
 	unit/execution/execute \
 	unit/execution/invocable_archetype \
 	unit/execution_context \
@@ -186,6 +187,7 @@ TESTS = \
 	unit/detached \
 	unit/dispatch \
 	unit/error \
+	unit/execution/blocking \
 	unit/execution/execute \
 	unit/execution/invocable_archetype \
 	unit/execution_context \
@@ -329,6 +331,7 @@ unit_defer_SOURCES = unit/defer.cpp
 unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
 unit_error_SOURCES = unit/error.cpp
+unit_execution_blocking_SOURCES = unit/execution/blocking.cpp
 unit_execution_execute_SOURCES = unit/execution/execute.cpp
 unit_execution_invocable_archetype_SOURCES = unit/execution/invocable_archetype.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp

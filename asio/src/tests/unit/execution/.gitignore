@@ -7,5 +7,6 @@
 *.manifest
 *.pdb
 *.tds
+blocking
 execute
 invocable_archetype

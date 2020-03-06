@@ -147,6 +147,7 @@ UNIT_TEST_EXES = \
 	tests\unit\dispatch.exe \
 	tests\unit\error.exe \
 	tests\unit\execution_context.exe \
+	tests\unit\execution\blocking.exe \
 	tests\unit\execution\execute.exe \
 	tests\unit\execution\invocable_archetype.exe \
 	tests\unit\executor.exe \

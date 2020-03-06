@@ -53,6 +53,7 @@
 #include "asio/dispatch.hpp"
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
+#include "asio/execution/blocking.hpp"
 #include "asio/execution/execute.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/execution/invocable_archetype.hpp"
