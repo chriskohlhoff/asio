@@ -152,6 +152,21 @@ void throw_exception(const T& t)
 #define ASIO_TEST_CASE(test) \
   asio::detail::run_test<&test>(#test);
 
+#define ASIO_TEST_CASE2(test1, test2) \
+  asio::detail::run_test<&test1, test2>(#test1 "," #test2);
+
+#define ASIO_TEST_CASE3(test1, test2, test3) \
+  asio::detail::run_test<&test1, test2, test3>( \
+    #test1 "," #test2 "," #test3);
+
+#define ASIO_TEST_CASE4(test1, test2, test3, test4) \
+  asio::detail::run_test<&test1, test2, test3, test4>( \
+    #test1 "," #test2 "," #test3 "," #test4);
+
+#define ASIO_TEST_CASE5(test1, test2, test3, test4, test5) \
+  asio::detail::run_test<&test1, test2, test3, test4, test5>( \
+    #test1 "," #test2 "," #test3 "," #test4 "," #test5);
+
 #define ASIO_COMPILE_TEST_CASE(test) \
   asio::detail::compile_test<&test>(#test);
 
