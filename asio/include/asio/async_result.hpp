@@ -65,9 +65,10 @@ ASIO_CONCEPT completion_signature =
 #define ASIO_COMPLETION_SIGNATURE \
   ::asio::completion_signature
 
-template <typename T, completion_signature Signature>
+template <typename T, typename Signature>
 ASIO_CONCEPT completion_handler_for =
-  detail::is_completion_handler_for<T, Signature>::value;
+  detail::is_completion_signature<Signature>::value
+    && detail::is_completion_handler_for<T, Signature>::value;
 
 #define ASIO_COMPLETION_HANDLER_FOR(s) \
   ::asio::completion_handler_for<s>
@@ -487,11 +488,14 @@ struct initiation_archetype
 
 } // namespace detail
 
-template <typename T, completion_signature Signature>
-ASIO_CONCEPT completion_token_for = requires(T&& t)
-{
-  async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
-};
+template <typename T, typename Signature>
+ASIO_CONCEPT completion_token_for =
+  detail::is_completion_signature<Signature>::value
+  &&
+  requires(T&& t)
+  {
+    async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
+  };
 
 #define ASIO_COMPLETION_TOKEN_FOR(s) \
   ::asio::completion_token_for<s>
