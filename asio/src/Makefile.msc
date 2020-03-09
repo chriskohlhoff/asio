@@ -150,6 +150,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\blocking.exe \
 	tests\unit\execution\execute.exe \
 	tests\unit\execution\invocable_archetype.exe \
+	tests\unit\execution\outstanding_work.exe \
 	tests\unit\executor.exe \
 	tests\unit\executor_work_guard.exe \
 	tests\unit\generic\basic_endpoint.exe \

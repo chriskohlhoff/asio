@@ -291,9 +291,11 @@ nobase_include_HEADERS = \
 	asio/error_code.hpp \
 	asio/error.hpp \
 	asio/execution_context.hpp \
+	asio/execution/blocking.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/invocable_archetype.hpp \
+	asio/execution/outstanding_work.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
 	asio/generic/basic_endpoint.hpp \
