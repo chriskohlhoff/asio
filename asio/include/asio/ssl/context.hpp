@@ -42,6 +42,9 @@ public:
 
   /// Constructor.
   ASIO_DECL explicit context(method m);
+  
+  /// Constructor from native type
+  ASIO_DECL explicit context(SSL_CTX* ctx);
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a context from another.
