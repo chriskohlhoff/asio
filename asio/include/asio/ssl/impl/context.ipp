@@ -365,6 +365,11 @@ context::context(context::method m)
 
   set_options(no_compression);
 }
+  
+context::context(SSL_CTX* ctx): handle_(ctx) {
+  if (!ctx) asio::detail::throw_error(
+        asio::error::invalid_argument, "context");
+}
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 context::context(context&& other)
