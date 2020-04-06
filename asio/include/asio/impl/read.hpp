@@ -824,10 +824,6 @@ async_read(AsyncReadStream& s,
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
   return async_initiate<ReadHandler,
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_read_dynbuf_v1<AsyncReadStream>(s),
@@ -1125,10 +1121,6 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >::type*)
 {
-  // If you get an error on the following line it means that your handler does
-  // not meet the documented type requirements for a ReadHandler.
-  ASIO_READ_HANDLER_CHECK(ReadHandler, handler) type_check;
-
   return async_initiate<ReadHandler,
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_read_dynbuf_v2<AsyncReadStream>(s),
