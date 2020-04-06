@@ -4,6 +4,10 @@ BOOSTDIR = ../../boost_1_34_1
 
 COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include
 
+!ifdef CXXLATEST
+STD_CXXFLAGS = -std:c++latest
+!endif
+
 !ifdef WARNINGS
 WARNINGS_CXXFLAGS = -W4 -wd4512 -wd4447
 !endif
@@ -81,6 +85,7 @@ STANDALONE_CXXFLAGS = -I$(BOOSTDIR) -DASIO_ENABLE_BOOST
 
 CXXFLAGS = \
 	$(COMMON_CXXFLAGS) \
+	$(STD_CXXFLAGS) \
 	$(WARNINGS_CXXFLAGS) \
 	$(DEBUG_CXXFLAGS) \
 	$(UNICODE_CXXFLAGS) \
