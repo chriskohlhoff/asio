@@ -80,13 +80,14 @@ void select_reactor::shutdown()
   shutdown_ = true;
 #if defined(ASIO_HAS_IOCP)
   stop_thread_ = true;
+  if (thread_)
+    interrupter_.interrupt();
 #endif // defined(ASIO_HAS_IOCP)
   lock.unlock();
 
 #if defined(ASIO_HAS_IOCP)
   if (thread_)
   {
-    interrupter_.interrupt();
     thread_->join();
     delete thread_;
     thread_ = 0;
@@ -239,7 +240,11 @@ void select_reactor::run(long usec, op_queue<operation>& ops)
   // Reset the interrupter.
   if (retval > 0 && fd_sets_[read_op].is_set(interrupter_.read_descriptor()))
   {
-    interrupter_.reset();
+    if (!interrupter_.reset())
+    {
+      lock.lock();
+      interrupter_.recreate();
+    }
     --retval;
   }
 
