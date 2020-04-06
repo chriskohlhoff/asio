@@ -19,6 +19,10 @@
 </xsl:variable>
 
 
+<xsl:variable name="all-compounddefs" select="/doxygen//compounddef"/>
+<xsl:variable name="all-memberdefs" select="/doxygen//memberdef"/>
+
+
 <!--
   Loop over all top-level documentation elements (i.e. classes, functions,
   variables and typedefs at namespace scope). The elements are sorted by name.
@@ -636,7 +640,7 @@
       <xsl:variable name="ref-name">
         <xsl:call-template name="strip-asio-ns">
           <xsl:with-param name="name"
-            select="(/doxygen//compounddef[@id=$dox-ref-id])[1]/compoundname"/>
+            select="(($all-compounddefs)[@id=$dox-ref-id])[1]/compoundname"/>
         </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="ref-id">
@@ -669,7 +673,7 @@
       <xsl:variable name="ref-name">
         <xsl:call-template name="strip-asio-ns">
           <xsl:with-param name="name"
-            select="(/doxygen//compounddef[@id=$dox-ref-id])[1]/compoundname"/>
+            select="(($all-compounddefs)[@id=$dox-ref-id])[1]/compoundname"/>
         </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="ref-id">
@@ -694,7 +698,7 @@
 
 <xsl:template match="ref[@kindref='member']" mode="markup">
   <xsl:variable name="dox-ref-id" select="@refid"/>
-  <xsl:variable name="memberdefs" select="/doxygen//compounddef/sectiondef/memberdef[@id=$dox-ref-id]"/>
+  <xsl:variable name="memberdefs" select="($all-memberdefs)[@id=$dox-ref-id]"/>
   <xsl:choose>
     <xsl:when test="contains(@refid, 'namespaceasio') and count($memberdefs) &gt; 0">
       <xsl:variable name="dox-compound-name" select="($memberdefs)[1]/../../compoundname"/>
@@ -726,7 +730,7 @@
 
 <xsl:template match="ref[@kindref='member']" mode="markup-nested">
   <xsl:variable name="dox-ref-id" select="@refid"/>
-  <xsl:variable name="memberdefs" select="/doxygen//compounddef/sectiondef/memberdef[@id=$dox-ref-id]"/>
+  <xsl:variable name="memberdefs" select="($all-memberdefs)[@id=$dox-ref-id]"/>
   <xsl:choose>
     <xsl:when test="contains(@refid, 'namespaceasio') and count($memberdefs) &gt; 0">
       <xsl:variable name="dox-compound-name" select="($memberdefs)[1]/../../compoundname"/>
@@ -880,7 +884,7 @@
     <xsl:variable name="type-ref-id" select="@refid"/>
     [[link asio.reference.<xsl:value-of select="$type-id"/>
       <xsl:text> </xsl:text>[*<xsl:value-of select="$unqualified-type-name"/>]]]
-    [<xsl:value-of select="(/doxygen//compounddef[@id=$type-ref-id])[1]/briefdescription"/>]
+    [<xsl:value-of select="(($all-compounddefs)[@id=$type-ref-id])[1]/briefdescription"/>]
   </xsl:otherwise>
 </xsl:choose>
   ]
@@ -1288,7 +1292,7 @@
  select="$overload-position"/> of <xsl:value-of select="$overload-count"/> overloads)</xsl:if>]
 
 <xsl:if test="not(starts-with($doxygen-id, ../../@id))">
-<xsl:variable name="inherited-from" select="/doxygen/compounddef[starts-with($doxygen-id, @id)]/compoundname"/>
+<xsl:variable name="inherited-from" select="($all-compounddefs)[starts-with($doxygen-id, @id)]/compoundname"/>
 <xsl:if test="not(contains($inherited-from, '::detail'))">
 ['Inherited from <xsl:call-template name="strip-asio-ns">
 <xsl:with-param name="name" select="$inherited-from"/>
@@ -1381,7 +1385,7 @@
     </xsl:choose>
   </xsl:variable>
   <xsl:variable name="name" select="name"/>
-  <xsl:for-each select="/doxygen/compounddef[@id=$class-refid]">
+  <xsl:for-each select="($all-compounddefs)[@id=$class-refid]">
     <xsl:call-template name="class-tables">
       <xsl:with-param name="class-name">
         <xsl:value-of select="concat($class-name, '::', $name)"/>
@@ -1450,8 +1454,8 @@
   <xsl:value-of select="@id"/>
 </xsl:variable>
 <xsl:choose>
-  <xsl:when test="count(/doxygen//memberdef[@id=$doxygen-id]/templateparamlist) = 1">
-    <xsl:apply-templates select="/doxygen//memberdef[@id=$doxygen-id]/templateparamlist" mode="class-detail"/>
+  <xsl:when test="count(($all-memberdefs)[@id=$doxygen-id]/templateparamlist) = 1">
+    <xsl:apply-templates select="($all-memberdefs)[@id=$doxygen-id]/templateparamlist" mode="class-detail"/>
   </xsl:when>
   <xsl:otherwise>
     <xsl:apply-templates select="templateparamlist" mode="class-detail"/>
@@ -1732,7 +1736,7 @@
 <xsl:value-of select="$name"/>
 <xsl:text>] </xsl:text>
 
-<xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
+<xsl:for-each select="($all-compounddefs)[@kind='group' and compoundname=$name]">
   <xsl:apply-templates select="briefdescription" mode="markup"/>
   <xsl:value-of select="$newline"/>
 </xsl:for-each>
@@ -1759,7 +1763,7 @@
 </xsl:text>
 </xsl:for-each>
 
-<xsl:for-each select="/doxygen/compounddef[@kind='group' and compoundname=$name]">
+<xsl:for-each select="($all-compounddefs)[@kind='group' and compoundname=$name]">
   <xsl:apply-templates select="detaileddescription" mode="markup"/>
 </xsl:for-each>
 
