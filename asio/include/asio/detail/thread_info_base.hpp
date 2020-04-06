@@ -52,8 +52,7 @@ public:
   ~thread_info_base()
   {
     for (int i = 0; i < max_mem_index; ++i)
-      if (reusable_memory_[i])
-        ::operator delete(reusable_memory_[i]);
+      ::operator delete(reusable_memory_[i]);
   }
 
   static void* allocate(thread_info_base* this_thread, std::size_t size)
