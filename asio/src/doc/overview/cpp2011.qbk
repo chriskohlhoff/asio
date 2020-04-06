@@ -111,11 +111,8 @@ of [link asio.overview.cpp2011.move_handlers movable handlers].
 
 [section:move_handlers Movable Handlers]
 
-As an optimisation, user-defined completion handlers may provide move
-constructors, and Asio's implementation will use a handler's move constructor
-in preference to its copy constructor. In certain circumstances, Asio may be
-able to eliminate all calls to a handler's copy constructor. However, handler
-types are still required to be copy constructible.
+With C++11 and later, user-defined completion handlers are only required to be
+move constructible, and are not required to be copy constructible.
 
 When move support is enabled, asynchronous that are documented as follows:
 
@@ -134,8 +131,8 @@ arguments to `async_XYZ()` are members of the handler. For example:
 
   struct my_operation
   {
-    shared_ptr<tcp::socket> socket;
-    shared_ptr<vector<char>> buffer;
+    unique_ptr<tcp::socket> socket;
+    unique_ptr<vector<char>> buffer;
     ...
     void operator(error_code ec, size_t length)
     {
