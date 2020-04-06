@@ -25,9 +25,13 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
+#if defined(__NetBSD__)
+# include <sys/param.h>
+#endif
+
 #include "asio/detail/push_options.hpp"
 
-#if defined(__NetBSD__)
+#if defined(__NetBSD__) && __NetBSD_Version__ < 999001500
 # define ASIO_KQUEUE_EV_SET(ev, ident, filt, flags, fflags, data, udata) \
     EV_SET(ev, ident, filt, flags, fflags, data, \
       reinterpret_cast<intptr_t>(static_cast<void*>(udata)))
