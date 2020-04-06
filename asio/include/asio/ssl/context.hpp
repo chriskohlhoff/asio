@@ -43,6 +43,9 @@ public:
   /// Constructor.
   ASIO_DECL explicit context(method m);
 
+  /// Construct to take ownership of a native handle.
+  ASIO_DECL explicit context(native_handle_type native_handle);
+
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Move-construct a context from another.
   /**

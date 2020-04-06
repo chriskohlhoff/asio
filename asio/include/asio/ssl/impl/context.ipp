@@ -366,6 +366,16 @@ context::context(context::method m)
   set_options(no_compression);
 }
 
+context::context(context::native_handle_type native_handle)
+  : handle_(native_handle)
+{
+  if (!handle_)
+  {
+    asio::detail::throw_error(
+        asio::error::invalid_argument, "context");
+  }
+}
+
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 context::context(context&& other)
 {
