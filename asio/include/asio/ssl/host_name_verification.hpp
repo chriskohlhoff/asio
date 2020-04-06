@@ -1,6 +1,6 @@
 //
-// ssl/rfc2818_verification.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ssl/host_name_verification.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,16 +8,14 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_SSL_RFC2818_VERIFICATION_HPP
-#define ASIO_SSL_RFC2818_VERIFICATION_HPP
+#ifndef ASIO_SSL_HOST_NAME_VERIFICATION_HPP
+#define ASIO_SSL_HOST_NAME_VERIFICATION_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
-#if !defined(ASIO_NO_DEPRECATED)
 
 #include <string>
 #include "asio/ssl/detail/openssl_types.hpp"
@@ -28,8 +26,8 @@
 namespace asio {
 namespace ssl {
 
-/// (Deprecated. Use ssl::host_name_verification.) Verifies a certificate
-/// against a hostname according to the rules described in RFC 2818.
+/// Verifies a certificate against a host_name according to the rules described
+/// in RFC 6125.
 /**
  * @par Example
  * The following example shows how to synchronously open a secure connection to
@@ -53,20 +51,20 @@ namespace ssl {
  *
  * // Perform SSL handshake and verify the remote host's certificate.
  * sock.set_verify_mode(ssl::verify_peer);
- * sock.set_verify_callback(ssl::rfc2818_verification("host.name"));
+ * sock.set_verify_callback(ssl::host_name_verification("host.name"));
  * sock.handshake(ssl_socket::client);
  *
  * // ... read and write as normal ...
  * @endcode
  */
-class rfc2818_verification
+class host_name_verification
 {
 public:
   /// The type of the function object's result.
   typedef bool result_type;
 
   /// Constructor.
-  explicit rfc2818_verification(const std::string& host)
+  explicit host_name_verification(const std::string& host)
     : host_(host)
   {
   }
@@ -75,10 +73,6 @@ public:
   ASIO_DECL bool operator()(bool preverified, verify_context& ctx) const;
 
 private:
-  // Helper function to check a host name against a pattern.
-  ASIO_DECL static bool match_pattern(const char* pattern,
-      std::size_t pattern_length, const char* host);
-
   // Helper function to check a host name against an IPv4 address
   // The host name to be checked.
   std::string host_;
@@ -90,9 +84,7 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/ssl/impl/rfc2818_verification.ipp"
+# include "asio/ssl/impl/host_name_verification.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // !defined(ASIO_NO_DEPRECATED)
-
-#endif // ASIO_SSL_RFC2818_VERIFICATION_HPP
+#endif // ASIO_SSL_HOST_NAME_VERIFICATION_HPP

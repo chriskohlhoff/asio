@@ -28,6 +28,7 @@
 #include <openssl/dh.h>
 #include <openssl/err.h>
 #include <openssl/rsa.h>
+#include <openssl/x509.h>
 #include <openssl/x509v3.h>
 
 #endif // ASIO_SSL_DETAIL_OPENSSL_TYPES_HPP

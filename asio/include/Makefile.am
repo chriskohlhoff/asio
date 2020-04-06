@@ -430,9 +430,11 @@ nobase_include_HEADERS = \
 	asio/ssl/detail/write_op.hpp \
 	asio/ssl/error.hpp \
 	asio/ssl.hpp \
+	asio/ssl/host_name_verification.hpp \
 	asio/ssl/impl/context.hpp \
 	asio/ssl/impl/context.ipp \
 	asio/ssl/impl/error.ipp \
+	asio/ssl/impl/host_name_verification.ipp \
 	asio/ssl/impl/rfc2818_verification.ipp \
 	asio/ssl/impl/src.hpp \
 	asio/ssl/rfc2818_verification.hpp \

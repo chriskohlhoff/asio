@@ -64,10 +64,10 @@ verified:
 * [link asio.reference.ssl__stream.set_verify_callback ssl::stream::set_verify_callback()]
 
 To simplify use cases where certificates are verified according to the rules in
-RFC 2818 (certificate verification for HTTPS), Asio provides a reusable
-verification callback as a function object:
+RFC 6125 (identity verification in the context of Transport Layer Security),
+Asio provides a reusable verification callback as a function object:
 
-* [link asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification]
+* [link asio.reference.ssl__host_name_verification ssl::host_name_verification]
 
 The following example shows verification of a remote host's certificate
 according to the rules used by HTTPS:
@@ -92,7 +92,7 @@ according to the rules used by HTTPS:
   // Perform SSL handshake and verify the remote host's
   // certificate.
   sock.set_verify_mode(ssl::verify_peer);
-  sock.set_verify_callback(ssl::rfc2818_verification("host.name"));
+  sock.set_verify_callback(ssl::host_name_verification("host.name"));
   sock.handshake(ssl_socket::client);
 
   // ... read and write as normal ...
@@ -108,7 +108,7 @@ threaded programs.
 [heading See Also]
 
 [link asio.reference.ssl__context ssl::context],
-[link asio.reference.ssl__rfc2818_verification ssl::rfc2818_verification],
+[link asio.reference.ssl__host_name_verification ssl::host_name_verification],
 [link asio.reference.ssl__stream ssl::stream],
 [link asio.examples.cpp03_examples.ssl SSL example (C++03)],
 [link asio.examples.cpp11_examples.ssl SSL example (C++11)].

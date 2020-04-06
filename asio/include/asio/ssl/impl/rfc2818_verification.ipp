@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 #include <cctype>
 #include <cstring>
 #include "asio/ip/address.hpp"
@@ -156,5 +158,7 @@ bool rfc2818_verification::match_pattern(const char* pattern,
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_SSL_IMPL_RFC2818_VERIFICATION_IPP
