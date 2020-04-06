@@ -168,7 +168,7 @@ public:
    * constructed using the @c basic_descriptor(const executor_type&)
    * constructor.
    */
-  basic_descriptor(basic_descriptor&& other)
+  basic_descriptor(basic_descriptor&& other) ASIO_NOEXCEPT
     : impl_(std::move(other.impl_))
   {
   }

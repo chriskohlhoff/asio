@@ -144,7 +144,7 @@ public:
    * constructed using the @c basic_stream_descriptor(const executor_type&)
    * constructor.
    */
-  basic_stream_descriptor(basic_stream_descriptor&& other)
+  basic_stream_descriptor(basic_stream_descriptor&& other) ASIO_NOEXCEPT
     : descriptor(std::move(other))
   {
   }
