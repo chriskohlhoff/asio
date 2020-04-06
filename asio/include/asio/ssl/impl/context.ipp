@@ -560,11 +560,21 @@ ASIO_SYNC_OP_VOID context::add_certificate_authority(
   {
     if (X509_STORE* store = ::SSL_CTX_get_cert_store(handle_))
     {
-      for (;;)
+      for (bool added = false;; added = true)
       {
         x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
         if (!cert.p)
-          break;
+        {
+          unsigned long err = ::ERR_get_error();
+          if (added && ERR_GET_LIB(err) == ERR_LIB_PEM
+              && ERR_GET_REASON(err) == PEM_R_NO_START_LINE)
+            break;
+
+          ec = asio::error_code(
+              static_cast<int>(err),
+              asio::error::get_ssl_category());
+          ASIO_SYNC_OP_VOID_RETURN(ec);
+        }
 
         if (::X509_STORE_add_cert(store, cert.p) != 1)
         {
