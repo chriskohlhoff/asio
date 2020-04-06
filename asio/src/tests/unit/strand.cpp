@@ -17,6 +17,7 @@
 #include "asio/strand.hpp"
 
 #include <sstream>
+#include "asio/executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/post.hpp"
@@ -238,8 +239,25 @@ void strand_test()
   ASIO_CHECK(count == 0);
 }
 
+void strand_conversion_test()
+{
+  io_context ioc;
+  strand<io_context::executor_type> s1 = make_strand(ioc);
+
+  // Converting constructors.
+
+  strand<executor> s2(s1);
+  strand<executor> s3 = strand<io_context::executor_type>(s1);
+
+  // Converting assignment.
+
+  s3 = s1;
+  s3 = strand<io_context::executor_type>(s1);
+}
+
 ASIO_TEST_SUITE
 (
   "strand",
   ASIO_TEST_CASE(strand_test)
+  ASIO_COMPILE_TEST_CASE(strand_conversion_test)
 )
