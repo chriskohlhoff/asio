@@ -49,6 +49,8 @@
 #  endif // !defined(ASIO_DISABLE_VISIBILITY)
 # endif // !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32)
 
+# pragma GCC diagnostic pop
+
 #elif defined(__GNUC__)
 
 // GNU C++
@@ -73,9 +75,7 @@
 #  endif // !defined(ASIO_DISABLE_VISIBILITY)
 # endif // (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
 
-# if (__GNUC__ >= 7)
-#  pragma GCC diagnostic pop
-# endif // (__GNUC__ >= 7)
+# pragma GCC diagnostic pop
 
 #elif defined(__KCC)
 
