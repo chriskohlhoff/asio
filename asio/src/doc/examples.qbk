@@ -20,6 +20,10 @@ To show the changes between C++03 and C++11, these examples include a diff
 between the C++03 and C++11 versions.
 [/boostify: non-boost docs end here]
 
+* [link asio.examples.cpp14_examples C++14 Examples]: Contains a limited set of
+the C++03 Asio examples, updated to use only C++14 library and language
+facilities. These examples do not make direct use of Boost C++ libraries.
+
 * [link asio.examples.cpp17_examples C++17 Examples]: Selected examples
 illustrating C++17 usage in conjunction with Technical Specifications.
 
