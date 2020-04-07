@@ -78,13 +78,14 @@ struct use_awaitable_t
   /// Function helper to adapt an I/O object to use @c use_awaitable_t as its
   /// default completion token type.
   template <typename T>
-  static typename T::template rebind_executor<
-      executor_with_default<typename T::executor_type>
+  static typename decay<T>::type::template rebind_executor<
+      executor_with_default<typename decay<T>::type::executor_type>
     >::other
   as_default_on(ASIO_MOVE_ARG(T) object)
   {
-    return typename as_default_on_t<typename decay<T>::type>::type(
-        ASIO_MOVE_CAST(T)(object));
+    return typename decay<T>::type::template rebind_executor<
+        executor_with_default<typename decay<T>::type::executor_type>
+      >::other(ASIO_MOVE_CAST(T)(object));
   }
 };
 

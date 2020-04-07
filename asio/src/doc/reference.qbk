@@ -117167,7 +117167,7 @@ Function helper to adapt an I/O object to use `use_awaitable_t` as its default c
 
   template<
       typename T>
-  static T::template rebind_executor< executor_with_default< typename T::executor_type > >::other as_default_on(
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
       T && object);
 
 
