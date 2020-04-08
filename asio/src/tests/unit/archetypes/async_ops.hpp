@@ -17,7 +17,7 @@
 #include <asio/error.hpp>
 
 #if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(ASIO_HAS_BOOST_BIND)

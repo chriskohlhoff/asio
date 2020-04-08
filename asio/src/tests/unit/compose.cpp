@@ -22,7 +22,7 @@
 #include "asio/post.hpp"
 
 #if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(ASIO_HAS_BOOST_BIND)
@@ -152,8 +152,8 @@ void compose_1_completion_arg_test()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
 
   asio::io_context ioc;
   int count = 0;

@@ -10,7 +10,7 @@
 
 #include "server.hpp"
 #include <stdexcept>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace http {

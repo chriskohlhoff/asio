@@ -12,7 +12,7 @@
 #include <sstream>
 #include <string>
 #include "asio.hpp"
-#include "boost/bind.hpp"
+#include "boost/bind/bind.hpp"
 
 const short multicast_port = 30001;
 const int max_message_count = 10;

@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 #include <asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include "server.hpp"
 
 int main(int argc, char* argv[])

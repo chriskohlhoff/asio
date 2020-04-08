@@ -10,7 +10,7 @@
 
 #include "asio.hpp"
 #include <algorithm>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <iostream>
 #include <list>
 #include "handler_allocator.hpp"

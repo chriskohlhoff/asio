@@ -9,7 +9,7 @@
 //
 
 #include <asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <iostream>
 #include <vector>
 #include "connection.hpp" // Must come before boost/serialization headers.

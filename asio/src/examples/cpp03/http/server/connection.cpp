@@ -10,7 +10,7 @@
 
 #include "connection.hpp"
 #include <vector>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include "connection_manager.hpp"
 #include "request_handler.hpp"
 

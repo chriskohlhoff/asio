@@ -30,7 +30,7 @@
 #include "asio/thread.hpp"
 
 #if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(ASIO_HAS_BOOST_BIND)
@@ -90,10 +90,8 @@ void system_timer_test()
 {
   using asio::chrono::seconds;
   using asio::chrono::microseconds;
-#if !defined(ASIO_HAS_BOOST_BIND)
-  using std::placeholders::_1;
-  using std::placeholders::_2;
-#endif // !defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   const asio::io_context::executor_type ioc_ex = ioc.get_executor();

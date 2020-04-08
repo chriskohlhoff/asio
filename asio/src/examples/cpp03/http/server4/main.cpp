@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <signal.h>
 #include "server.hpp"
 #include "file_handler.hpp"

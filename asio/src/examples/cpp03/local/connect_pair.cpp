@@ -13,7 +13,7 @@
 #include <cctype>
 #include <asio.hpp>
 #include <boost/array.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #if defined(ASIO_HAS_LOCAL_SOCKETS)
 

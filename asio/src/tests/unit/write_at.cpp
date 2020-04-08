@@ -24,7 +24,7 @@
 #include "unit_test.hpp"
 
 #if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(ASIO_HAS_BOOST_BIND)
@@ -2951,9 +2951,9 @@ void test_4_arg_const_buffer_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -3050,9 +3050,9 @@ void test_4_arg_mutable_buffer_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -3149,9 +3149,9 @@ void test_4_arg_boost_array_buffers_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
 #if defined(ASIO_HAS_BOOST_ARRAY)
   asio::io_context ioc;
@@ -3251,9 +3251,9 @@ void test_4_arg_std_array_buffers_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
 #if defined(ASIO_HAS_STD_ARRAY)
   asio::io_context ioc;
@@ -3353,9 +3353,9 @@ void test_4_arg_vector_buffers_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -3453,9 +3453,9 @@ void test_4_arg_streambuf_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -3569,9 +3569,9 @@ void test_5_arg_const_buffer_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -4211,9 +4211,9 @@ void test_5_arg_mutable_buffer_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -4853,9 +4853,9 @@ void test_5_arg_boost_array_buffers_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
 #if defined(ASIO_HAS_BOOST_ARRAY)
   asio::io_context ioc;
@@ -5498,9 +5498,9 @@ void test_5_arg_std_array_buffers_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
 #if defined(ASIO_HAS_STD_ARRAY)
   asio::io_context ioc;
@@ -6143,9 +6143,9 @@ void test_5_arg_vector_buffers_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);
@@ -6786,9 +6786,9 @@ void test_5_arg_streambuf_async_write_at()
   namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-  using std::placeholders::_1;
-  using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
 
   asio::io_context ioc;
   test_random_access_device s(ioc);

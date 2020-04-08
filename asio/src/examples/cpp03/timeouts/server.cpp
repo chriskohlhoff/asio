@@ -14,7 +14,7 @@
 #include <iostream>
 #include <set>
 #include <string>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "asio/buffer.hpp"
@@ -58,7 +58,8 @@ public:
   void deliver(const std::string& msg)
   {
     std::for_each(subscribers_.begin(), subscribers_.end(),
-        boost::bind(&subscriber::deliver, _1, boost::ref(msg)));
+        boost::bind(&subscriber::deliver,
+          boost::placeholders::_1, boost::ref(msg)));
   }
 
 private:
@@ -207,7 +208,8 @@ private:
     // Start an asynchronous operation to read a newline-delimited message.
     asio::async_read_until(socket_,
         asio::dynamic_buffer(input_buffer_), '\n',
-        boost::bind(&tcp_session::handle_read, shared_from_this(), _1, _2));
+        boost::bind(&tcp_session::handle_read, shared_from_this(),
+          boost::placeholders::_1, boost::placeholders::_2));
   }
 
   void handle_read(const asio::error_code& ec, std::size_t n)
@@ -275,7 +277,8 @@ private:
     // Start an asynchronous operation to send a message.
     asio::async_write(socket_,
         asio::buffer(output_queue_.front()),
-        boost::bind(&tcp_session::handle_write, shared_from_this(), _1));
+        boost::bind(&tcp_session::handle_write,
+          shared_from_this(), boost::placeholders::_1));
   }
 
   void handle_write(const asio::error_code& ec)
@@ -375,7 +378,8 @@ public:
     tcp_session_ptr new_session(new tcp_session(io_context_, channel_));
 
     acceptor_.async_accept(new_session->socket(),
-        boost::bind(&server::handle_accept, this, new_session, _1));
+        boost::bind(&server::handle_accept,
+          this, new_session, boost::placeholders::_1));
   }
 
   void handle_accept(tcp_session_ptr session,

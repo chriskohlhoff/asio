@@ -21,7 +21,7 @@
 #include "asio/ip/tcp.hpp"
 
 #if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind.hpp>
+# include <boost/bind/bind.hpp>
 #else // defined(ASIO_HAS_BOOST_BIND)
 # include <functional>
 #endif // defined(ASIO_HAS_BOOST_BIND)
@@ -32,9 +32,9 @@
 namespace bindns = boost;
 #else // defined(ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-using std::placeholders::_1;
-using std::placeholders::_2;
 #endif // defined(ASIO_HAS_BOOST_BIND)
+using bindns::placeholders::_1;
+using bindns::placeholders::_2;
 
 class connection_sink
 {

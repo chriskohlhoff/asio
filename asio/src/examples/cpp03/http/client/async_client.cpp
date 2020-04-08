@@ -13,7 +13,7 @@
 #include <ostream>
 #include <string>
 #include <asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 using asio::ip::tcp;
 

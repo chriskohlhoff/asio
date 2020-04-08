@@ -9,7 +9,7 @@
 //
 
 #include <asio.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <istream>
 #include <iostream>
 #include <ostream>
@@ -79,7 +79,7 @@ private:
 
     // Wait for a reply. We prepare the buffer to receive up to 64KB.
     socket_.async_receive(reply_buffer_.prepare(65536),
-        boost::bind(&pinger::handle_receive, this, _2));
+        boost::bind(&pinger::handle_receive, this, boost::placeholders::_2));
   }
 
   void handle_receive(std::size_t length)

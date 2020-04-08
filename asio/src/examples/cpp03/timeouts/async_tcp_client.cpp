@@ -14,7 +14,7 @@
 #include "asio/read_until.hpp"
 #include "asio/steady_timer.hpp"
 #include "asio/write.hpp"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <iostream>
 #include <string>
 
@@ -130,8 +130,8 @@ private:
 
       // Start the asynchronous connect operation.
       socket_.async_connect(endpoint_iter->endpoint(),
-          boost::bind(&client::handle_connect,
-            this, _1, endpoint_iter));
+          boost::bind(&client::handle_connect, this,
+            boost::placeholders::_1, endpoint_iter));
     }
     else
     {
@@ -191,7 +191,8 @@ private:
     // Start an asynchronous operation to read a newline-delimited message.
     asio::async_read_until(socket_,
         asio::dynamic_buffer(input_buffer_), '\n',
-        boost::bind(&client::handle_read, this, _1, _2));
+        boost::bind(&client::handle_read, this,
+          boost::placeholders::_1, boost::placeholders::_2));
   }
 
   void handle_read(const asio::error_code& ec, std::size_t n)
@@ -228,7 +229,7 @@ private:
 
     // Start an asynchronous operation to send a heartbeat message.
     asio::async_write(socket_, asio::buffer("\n", 1),
-        boost::bind(&client::handle_write, this, _1));
+        boost::bind(&client::handle_write, this, boost::placeholders::_1));
   }
 
   void handle_write(const asio::error_code& ec)
