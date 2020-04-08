@@ -1644,7 +1644,6 @@ Wait for a client to initiate contact with us. The remote\_endpoint object will 
   ``''''''``    {
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
-  ``''''''``      asio::error_code error;
   ``''''''``      socket.receive_from(asio::buffer(recv_buf), remote_endpoint);
 
 
@@ -1732,7 +1731,6 @@ Next: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytime se
   ``''''''``    {
   ``''''''``      boost::array<char, 1> recv_buf;
   ``''''''``      udp::endpoint remote_endpoint;
-  ``''''''``      asio::error_code error;
   ``''''''``      socket.receive_from(asio::buffer(recv_buf), remote_endpoint);
 
   ``''''''``      std::string message = make_daytime_string();
