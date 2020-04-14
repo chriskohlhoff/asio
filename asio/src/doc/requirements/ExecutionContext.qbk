@@ -14,7 +14,7 @@ requirements listed below.
 In the table below, `x` denotes a value of type `X`.
 
 [table ExecutionContext requirements
-  [[expression] [return type] [assertion/note\npre/post-condition]]
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
   [
     [`X::executor_type`]
     [type meeting [link asio.reference.Executor1 `Executor`] requirements]

@@ -17,7 +17,7 @@ the [link asio.reference.Protocol `Protocol`] requirements, and `s` denotes a
 size in bytes.
 
 [table GettableSocketOption requirements for extensible implementations
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [`a.level(p)`]
     [`int`]
@@ -55,7 +55,7 @@ size in bytes.
     [`b.resize(p,s)`]
     []
     [
-      post: `b.size(p) == s`.\n
+      post: `b.size(p) == s`.[br]
       Passed the value contained in the /option_len/ argument to __POSIX__
       __getsockopt__ (or equivalent) after successful completion of the
       function. Permitted to throw an exception if the socket option object `b`

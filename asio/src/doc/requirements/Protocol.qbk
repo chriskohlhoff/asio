@@ -15,7 +15,7 @@ as the additional requirements listed below.
 No copy or move operation of the type `X` shall exit via an exception.
 
 [table Protocol requirements
-  [[expression] [return type] [assertion/note\npre/post-conditions]]
+  [[expression] [return type] [assertion/note[br]pre/post-conditions]]
   [
     [`X::endpoint`]
     [type meeting [link asio.reference.Endpoint endpoint] requirements]
@@ -26,7 +26,7 @@ No copy or move operation of the type `X` shall exit via an exception.
 In the table below, `a` denotes a (possibly const) value of type `X`.
 
 [table Protocol requirements for extensible implementations
-  [[expression] [return type] [assertion/note\npre/post-conditions]]
+  [[expression] [return type] [assertion/note[br]pre/post-conditions]]
   [
     [`a.family()`]
     [`int`]

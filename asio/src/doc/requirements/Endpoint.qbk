@@ -20,7 +20,7 @@ In the table below, `a` denotes a (possibly const) value of type `X`, and `u`
 denotes an identifier.
 
 [table Endpoint requirements
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [`X::protocol_type`]
     [type meeting [link asio.reference.Protocol `Protocol`] requirements]
@@ -38,7 +38,7 @@ denotes a value of type `X`, and `s` denotes a (possibly const) value of a type
 that is convertible to `size_t` and denotes a size in bytes.
 
 [table Endpoint requirements for extensible implementations
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [`a.data()`]
     [`const void*`]
@@ -74,8 +74,8 @@ that is convertible to `size_t` and denotes a size in bytes.
     [`b.resize(s)`]
     []
     [
-      pre: `s >= 0`\n
-      post: `a.size() == s`\n
+      pre: `s >= 0`[br]
+      post: `a.size() == s`[br]
       Passed the value contained in the /address_len/ argument to functions
       such as __POSIX__ __accept__, __getpeername__, __getsockname__ and
       __recvfrom__, after successful completion of the function. Permitted to

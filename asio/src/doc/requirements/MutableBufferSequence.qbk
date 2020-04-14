@@ -20,9 +20,9 @@ In the table below, `x` denotes a (possibly const) value of type `X`, and `u`
 denotes an identifier.
 
 [table MutableBufferSequence requirements
-  [[expression] [return type] [assertion/note\npre/post-condition]]
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
   [
-    [`asio::buffer_sequence_begin(x)`\n
+    [`asio::buffer_sequence_begin(x)`[br]
      `asio::buffer_sequence_end(x)`]
     [An iterator type meeting the requirements for bidirectional iterators
      (C++Std \[bidirectional.iterators\]) whose value type is convertible to
@@ -34,7 +34,7 @@ denotes an identifier.
       X u(x);
     ``]
     []
-    [post:\n
+    [post:[br]
      ``
        equal(
          asio::buffer_sequence_begin(x),

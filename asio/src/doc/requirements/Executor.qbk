@@ -37,20 +37,20 @@ a (possibly const) value of type `A` meeting the `Allocator` requirements
 (C++Std [allocator.requirements]), and `u` denotes an identifier.
 
 [table Executor requirements
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [`X u(x1);`]
     []
-    [Shall not exit via an exception.\n
-     \n
+    [Shall not exit via an exception.[br]
+     [br]
      post: `u == x1` and
      `std::addressof(u.context()) == std::addressof(x1.context()).`]
   ]
   [
     [`X u(mx1);`]
     []
-    [Shall not exit via an exception.\n
-     \n
+    [Shall not exit via an exception.[br]
+     [br]
      post: `u` equals the prior value of `mx1` and
      `std::addressof(u.context())` equals the prior value of
      `std::addressof(mx1.context())`.]
@@ -61,8 +61,8 @@ a (possibly const) value of type `A` meeting the `Allocator` requirements
     [ Returns `true` only if `x1` and `x2` can be interchanged with identical
      effects in any of the expressions defined in these type requirements.
      [inline_note Returning `false` does not necessarily imply that the effects
-     are not identical.]\n
-     \n
+     are not identical.][br]
+     [br]
      `operator==` shall be reflexive, symmetric, and transitive, and shall not
      exit via an exception.]
   ]
@@ -75,8 +75,8 @@ a (possibly const) value of type `A` meeting the `Allocator` requirements
     [`x1.context()`]
     [`execution_context&`, or `E&` where `E` is a type that satifisfies the
      [link asio.reference.ExecutionContext `ExecutionContext`] requirements.]
-    [Shall not exit via an exception.\n
-     \n
+    [Shall not exit via an exception.[br]
+     [br]
      The comparison operators and member functions defined in these
      requirements shall not alter the reference returned by this function.]
   ]
@@ -88,8 +88,8 @@ a (possibly const) value of type `A` meeting the `Allocator` requirements
   [
     [`x1.on_work_finished()`]
     []
-    [Shall not exit via an exception.\n
-     \n
+    [Shall not exit via an exception.[br]
+     [br]
      Precondition: A preceding call `x2.on_work_started()` where `x1 == x2`.]
   ]
   [
@@ -98,35 +98,35 @@ a (possibly const) value of type `A` meeting the `Allocator` requirements
     [Effects: Creates an object `f1` initialized with
      [^['DECAY_COPY]]`(forward<Func>(f))` (C++Std \[thread.decaycopy\]) in the
      current thread of execution . Calls `f1()` at most once. The executor may
-     block forward progress of the caller until `f1()` finishes execution.\n
-     \n
+     block forward progress of the caller until `f1()` finishes execution.[br]
+     [br]
      Executor implementations should use the supplied allocator to allocate any
      memory required to store the function object. Prior to invoking the
      function object, the executor shall deallocate any memory allocated.
      [inline_note Executors defined in this Technical Specification always use
-     the supplied allocator unless otherwise specified.]\n
-     \n
+     the supplied allocator unless otherwise specified.][br]
+     [br]
      Synchronization: The invocation of `dispatch` synchronizes with (C++Std
      \[intro.multithread\]) the invocation of `f1`.]
   ]
   [
-    [`x1.post(std::move(f),a)`\n
+    [`x1.post(std::move(f),a)`[br]
      `x1.defer(std::move(f),a)`]
     []
     [Effects: Creates an object `f1` initialized with
      [^['DECAY_COPY]]`(forward<Func>(f))` in the current thread of execution.
      Calls `f1()` at most once. The executor shall not block forward progress
-     of the caller pending completion of `f1()`.\n
-     \n
+     of the caller pending completion of `f1()`.[br]
+     [br]
      Executor implementations should use the supplied allocator to allocate any
      memory required to store the function object. Prior to invoking the
      function object, the executor shall deallocate any memory allocated.
      [inline_note Executors defined in this Technical Specification always use
-     the supplied allocator unless otherwise specified.]\n
-     \n
+     the supplied allocator unless otherwise specified.][br]
+     [br]
      Synchronization: The invocation of `post` or `defer` synchronizes with
-     (C++Std \[intro.multithread\]) the invocation of `f1`.\n
-     \n
+     (C++Std \[intro.multithread\]) the invocation of `f1`.[br]
+     [br]
      [inline_note Although the requirements placed on `defer` are identical to
      `post`, the use of `post` conveys a preference that the caller ['does not]
      block the first step of [^f1]'s progress, whereas `defer` conveys a

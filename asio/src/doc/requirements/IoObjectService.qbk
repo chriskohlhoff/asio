@@ -16,7 +16,7 @@ values of type `X`, `b` and `c` denote values of type `X::implementation_type`,
 and `u` denotes an identifier.
 
 [table IoObjectService requirements
-  [[expression] [return type] [assertion/note\npre/post-condition]]
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
   [
     [`X::implementation_type`]
     []

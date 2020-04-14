@@ -17,7 +17,7 @@ const) value of type `error_code`, and `ep` denotes a (possibly const) value of
 some type satisfying the [link asio.reference.Endpoint endpoint] requirements.
 
 [table ConnectCondition requirements
-  [[expression] [return type] [assertion/note\npre/post-condition]]
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
   [
     [`x(ec, ep)`]
     [`bool`]

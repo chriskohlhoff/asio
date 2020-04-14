@@ -23,7 +23,7 @@ value of type `X&`, `x1` denotes values of type `const X&`, and `n` denotes a
 value of type `size_t`, and `u` denotes an identifier.
 
 [table DynamicBuffer_v1 requirements
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [`X::const_buffers_type`]
     [type meeting [link asio.reference.ConstBufferSequence ConstBufferSequence]
@@ -62,13 +62,13 @@ value of type `size_t`, and `u` denotes an identifier.
   [
     [`x.prepare(n)`]
     [`X::mutable_buffers_type`]
-    [Requires: `size() + n <= max_size()`.\n
-     \n
+    [Requires: `size() + n <= max_size()`.[br]
+     [br]
      Returns a mutable buffer sequence `u` representing the output sequence, and
      where `buffer_size(u) == n`. The dynamic buffer reallocates memory as
      required. All constant or mutable buffer sequences previously obtained
-     using `data()` or `prepare()` are invalidated.\n
-     \n
+     using `data()` or `prepare()` are invalidated.[br]
+     [br]
      Throws: `length_error` if `size() + n > max_size()`.]
   ]
   [

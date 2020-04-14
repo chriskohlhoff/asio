@@ -15,7 +15,7 @@ denotes a (possibly const) value that meets the [link asio.reference.Protocol
 `Protocol`] requirements, and `u` denotes an identifier.
 
 [table SettableSocketOption requirements for extensible implementations
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [`a.level(p)`]
     [`int`]

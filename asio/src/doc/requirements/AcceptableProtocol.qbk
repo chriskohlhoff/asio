@@ -12,7 +12,7 @@ requirements of [link asio.reference.Protocol `Protocol`] as well as the
 additional requirements listed below.
 
 [table AcceptableProtocol requirements
-  [[expression] [return type] [assertion/note\npre/post-conditions]]
+  [[expression] [return type] [assertion/note[br]pre/post-conditions]]
   [
     [`X::socket`]
     [A type that satisfies the requirements of `Destructible` (C++Std
