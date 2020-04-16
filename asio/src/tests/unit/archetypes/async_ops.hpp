@@ -15,6 +15,7 @@
 #include <asio/associated_executor.hpp>
 #include <asio/async_result.hpp>
 #include <asio/error.hpp>
+#include <asio/system_executor.hpp>
 
 #if defined(ASIO_HAS_BOOST_BIND)
 # include <boost/bind/bind.hpp>
@@ -43,8 +44,8 @@ async_op_0(ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   ex.post(ASIO_MOVE_CAST(handler_type)(completion.completion_handler), a);
 
@@ -64,8 +65,8 @@ async_op_ec_0(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -98,8 +99,8 @@ async_op_ex_0(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -132,8 +133,8 @@ async_op_1(ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   ex.post(
       bindns::bind(
@@ -158,8 +159,8 @@ async_op_ec_1(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -194,8 +195,8 @@ async_op_ex_1(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -228,8 +229,8 @@ async_op_2(ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   ex.post(
       bindns::bind(
@@ -254,8 +255,8 @@ async_op_ec_2(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -291,8 +292,8 @@ async_op_ex_2(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -325,8 +326,8 @@ async_op_3(ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   ex.post(
       bindns::bind(
@@ -351,8 +352,8 @@ async_op_ec_3(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {
@@ -388,8 +389,8 @@ async_op_ex_3(bool ok, ASIO_MOVE_ARG(CompletionToken) token)
   typename asio::associated_allocator<handler_type>::type a
     = asio::get_associated_allocator(completion.completion_handler);
 
-  typename asio::associated_executor<handler_type>::type ex
-    = asio::get_associated_executor(completion.completion_handler);
+  typename asio::associated_executor<handler_type, asio::system_executor>::type ex
+    = asio::get_associated_executor(completion.completion_handler, asio::system_executor());
 
   if (ok)
   {

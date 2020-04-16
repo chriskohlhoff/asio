@@ -17,8 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
-#include "asio/system_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -75,7 +75,7 @@ struct associated_executor_impl<T, E,
  * @li Provide a noexcept static member function named @c get, callable as @c
  * get(t,e) and with return type @c type.
  */
-template <typename T, typename Executor = system_executor>
+template <typename T, typename Executor>
 struct associated_executor
 {
   /// If @c T has a nested type @c executor_type, <tt>T::executor_type</tt>.
@@ -88,23 +88,11 @@ struct associated_executor
 
   /// If @c T has a nested type @c executor_type, returns
   /// <tt>t.get_executor()</tt>. Otherwise returns @c ex.
-  static type get(const T& t,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  static type get(const T& t, const Executor& ex) ASIO_NOEXCEPT
   {
     return detail::associated_executor_impl<T, Executor>::get(t, ex);
   }
 };
-
-/// Helper function to obtain an object's associated executor.
-/**
- * @returns <tt>associated_executor<T>::get(t)</tt>
- */
-template <typename T>
-inline typename associated_executor<T>::type
-get_associated_executor(const T& t) ASIO_NOEXCEPT
-{
-  return associated_executor<T>::get(t);
-}
 
 /// Helper function to obtain an object's associated executor.
 /**
@@ -137,7 +125,7 @@ get_associated_executor(const T& t, ExecutionContext& ctx,
 
 #if defined(ASIO_HAS_ALIAS_TEMPLATES)
 
-template <typename T, typename Executor = system_executor>
+template <typename T, typename Executor>
 using associated_executor_t = typename associated_executor<T, Executor>::type;
 
 #endif // defined(ASIO_HAS_ALIAS_TEMPLATES)

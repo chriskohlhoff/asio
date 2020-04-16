@@ -23,10 +23,18 @@
       && !defined(ASIO_HAS_KQUEUE) \
       && !defined(ASIO_WINDOWS_RUNTIME))
 
+#include "asio/detail/scheduler.hpp"
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
+
+inline void select_reactor::post_immediate_completion(
+    reactor_op* op, bool is_continuation)
+{
+  scheduler_.post_immediate_completion(op, is_continuation);
+}
 
 template <typename Time_Traits>
 void select_reactor::add_timer_queue(timer_queue<Time_Traits>& queue)
