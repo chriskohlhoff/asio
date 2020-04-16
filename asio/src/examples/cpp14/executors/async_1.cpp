@@ -1,4 +1,5 @@
 #include <asio/ts/executor.hpp>
+#include <asio/system_executor.hpp>
 #include <asio/thread_pool.hpp>
 #include <iostream>
 #include <string>
@@ -7,6 +8,7 @@ using asio::bind_executor;
 using asio::dispatch;
 using asio::make_work_guard;
 using asio::post;
+using asio::system_executor;
 using asio::thread_pool;
 
 // A function to asynchronously read a single line from an input stream.
@@ -14,10 +16,11 @@ template <class Handler>
 void async_getline(std::istream& is, Handler handler)
 {
   // Create executor_work for the handler's associated executor.
-  auto work = make_work_guard(handler);
+  auto work = make_work_guard(handler, system_executor());
 
   // Post a function object to do the work asynchronously.
-  post([&is, work, handler=std::move(handler)]() mutable
+  post(system_executor(),
+      [&is, work, handler=std::move(handler)]() mutable
       {
         std::string line;
         std::getline(is, line);

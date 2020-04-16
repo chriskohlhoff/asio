@@ -16,37 +16,37 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/associated_executor.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/executor_work_guard.hpp"
+#include "asio/is_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace detail {
 
-template <typename Handler>
+template <typename Handler, typename Executor>
 class work_dispatcher
 {
 public:
   template <typename CompletionHandler>
-  explicit work_dispatcher(ASIO_MOVE_ARG(CompletionHandler) handler)
-    : work_((get_associated_executor)(handler)),
-      handler_(ASIO_MOVE_CAST(CompletionHandler)(handler))
+  work_dispatcher(ASIO_MOVE_ARG(CompletionHandler) handler,
+      const Executor& handler_ex)
+    : handler_(ASIO_MOVE_CAST(CompletionHandler)(handler)),
+      work_(handler_ex)
   {
   }
 
 #if defined(ASIO_HAS_MOVE)
   work_dispatcher(const work_dispatcher& other)
-    : work_(other.work_),
-      handler_(other.handler_)
+    : handler_(other.handler_),
+      work_(other.work_)
   {
   }
 
   work_dispatcher(work_dispatcher&& other)
-    : work_(ASIO_MOVE_CAST(executor_work_guard<
-        typename associated_executor<Handler>::type>)(other.work_)),
-      handler_(ASIO_MOVE_CAST(Handler)(other.handler_))
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      work_(ASIO_MOVE_CAST(executor_work_guard<Executor>)(other.work_))
   {
   }
 #endif // defined(ASIO_HAS_MOVE)
@@ -61,8 +61,8 @@ public:
   }
 
 private:
-  executor_work_guard<typename associated_executor<Handler>::type> work_;
   Handler handler_;
+  executor_work_guard<Executor> work_;
 };
 
 } // namespace detail

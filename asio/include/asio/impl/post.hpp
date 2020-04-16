@@ -31,15 +31,39 @@ public:
   template <typename CompletionHandler>
   void operator()(ASIO_MOVE_ARG(CompletionHandler) handler) const
   {
-    typedef typename decay<CompletionHandler>::type DecayedHandler;
+    typedef typename decay<CompletionHandler>::type handler_t;
 
-    typename associated_executor<DecayedHandler>::type ex(
-        (get_associated_executor)(handler));
+    typedef typename handler_t::executor_type io_ex_t;
+    io_ex_t io_ex(handler.get_executor());
 
-    typename associated_allocator<DecayedHandler>::type alloc(
+    typedef typename associated_executor<handler_t, io_ex_t>::type handler_ex_t;
+    handler_ex_t handler_ex((get_associated_executor)(handler, io_ex));
+
+    typename associated_allocator<handler_t>::type alloc(
         (get_associated_allocator)(handler));
 
-    ex.post(ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
+    if (this->is_same_executor(io_ex, handler_ex))
+    {
+      io_ex.post(ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
+    }
+    else
+    {
+      io_ex.post(detail::work_dispatcher<handler_t, handler_ex_t>(
+            ASIO_MOVE_CAST(CompletionHandler)(handler), handler_ex), alloc);
+    }
+  }
+
+private:
+  template <typename T, typename U>
+  bool is_same_executor(const T&, const U&) const
+  {
+    return false;
+  }
+
+  template <typename T>
+  bool is_same_executor(const T& a, const T& b) const
+  {
+    return a == b;
   }
 };
 
@@ -50,29 +74,52 @@ public:
   typedef Executor executor_type;
 
   explicit initiate_post_with_executor(const Executor& ex)
-    : ex_(ex)
+    : io_ex_(ex)
   {
   }
 
   executor_type get_executor() const ASIO_NOEXCEPT
   {
-    return ex_;
+    return io_ex_;
   }
 
   template <typename CompletionHandler>
   void operator()(ASIO_MOVE_ARG(CompletionHandler) handler) const
   {
-    typedef typename decay<CompletionHandler>::type DecayedHandler;
+    typedef typename decay<CompletionHandler>::type handler_t;
 
-    typename associated_allocator<DecayedHandler>::type alloc(
+    typedef typename associated_executor<
+      handler_t, Executor>::type handler_ex_t;
+    handler_ex_t handler_ex((get_associated_executor)(handler, io_ex_));
+
+    typename associated_allocator<handler_t>::type alloc(
         (get_associated_allocator)(handler));
 
-    ex_.post(detail::work_dispatcher<DecayedHandler>(
-          ASIO_MOVE_CAST(CompletionHandler)(handler)), alloc);
+    if (this->is_same_executor(io_ex_, handler_ex))
+    {
+      io_ex_.post(ASIO_MOVE_CAST(CompletionHandler)(handler), alloc);
+    }
+    else
+    {
+      io_ex_.post(detail::work_dispatcher<handler_t, handler_ex_t>(
+            ASIO_MOVE_CAST(CompletionHandler)(handler), handler_ex), alloc);
+    }
   }
 
 private:
-  Executor ex_;
+  template <typename T, typename U>
+  bool is_same_executor(const T&, const U&) const
+  {
+    return false;
+  }
+
+  template <typename T>
+  bool is_same_executor(const T& a, const T& b) const
+  {
+    return a == b;
+  }
+
+  Executor io_ex_;
 };
 
 } // namespace detail
