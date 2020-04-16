@@ -128,17 +128,6 @@ make_work_guard(ExecutionContext& ctx,
 }
 
 /// Create an @ref executor_work_guard object.
-template <typename T>
-inline executor_work_guard<typename associated_executor<T>::type>
-make_work_guard(const T& t,
-    typename enable_if<!is_executor<T>::value &&
-      !is_convertible<T&, execution_context&>::value>::type* = 0)
-{
-  return executor_work_guard<typename associated_executor<T>::type>(
-      associated_executor<T>::get(t));
-}
-
-/// Create an @ref executor_work_guard object.
 template <typename T, typename Executor>
 inline executor_work_guard<typename associated_executor<T, Executor>::type>
 make_work_guard(const T& t, const Executor& ex,

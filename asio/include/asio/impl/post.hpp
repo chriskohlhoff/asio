@@ -33,8 +33,15 @@ public:
   {
     typedef typename decay<CompletionHandler>::type DecayedHandler;
 
-    typename associated_executor<DecayedHandler>::type ex(
-        (get_associated_executor)(handler));
+    typename associated_executor<DecayedHandler,
+      detail::unspecified_candidate_executor>::type ex(
+        associated_executor<DecayedHandler,
+          detail::unspecified_candidate_executor>::get(handler,
+            detail::unspecified_candidate_executor()));
+
+    static_assert(!is_same<decltype(ex),
+        detail::unspecified_candidate_executor>::value,
+        "handler has no associated executor");
 
     typename associated_allocator<DecayedHandler>::type alloc(
         (get_associated_allocator)(handler));
