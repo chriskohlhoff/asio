@@ -428,7 +428,8 @@ namespace detail
 
   template <typename IoObject>
   inline typename IoObject::executor_type
-  get_composed_io_executor(IoObject& io_object)
+  get_composed_io_executor(IoObject& io_object,
+      typename enable_if<!is_executor<IoObject>::value>::type* = 0)
   {
     return io_object.get_executor();
   }
