@@ -34,17 +34,15 @@ asio::ip::tcp::resolver object.
 
 \until tcp::resolver
 
-A resolver takes a query object and turns it into a list of endpoints. We
-construct a query using the name of the server, specified in <tt>argv[1]</tt>,
-and the name of the service, in this case <tt>"daytime"</tt>.
+A resolver takes a host name and service name and turns them into a list of
+endpoints. We perform a resolve call using the name of the server, specified in
+<tt>argv[1]</tt>, and the name of the service, in this case <tt>"daytime"</tt>.
 
-\until tcp::resolver::query
+The list of endpoints is returned using an object of type
+asio::ip::tcp::resolver::results_type. This object is a range, with begin() and
+end() member functions that may be used for iterating over the results.
 
-The list of endpoints is returned using an iterator of type
-asio::ip::tcp::resolver::iterator. (Note that a default constructed
-asio::ip::tcp::resolver::iterator object can be used as an end iterator.)
-
-\until tcp::resolver::iterator
+\until resolver.resolve
 
 Now we create and connect the socket. The list of endpoints obtained above may
 contain both IPv4 and IPv6 endpoints, so we need to try each of them until we

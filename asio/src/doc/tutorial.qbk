@@ -884,21 +884,22 @@ We need to turn the server name that was specified as a parameter to the applica
 
 
 
-A resolver takes a query object and turns it into a list of endpoints. We construct a query using the name of the server, specified in `argv[1]`, and the name of the service, in this case `"daytime"`.
+A resolver takes a host name and service name and turns them into a list of endpoints. We perform a resolve call using the name of the server, specified in `argv[1]`, and the name of the service, in this case `"daytime"`.
+
+The list of endpoints is returned using an object of type [link asio.reference.ip__basic_resolver.results_type ip::tcp::resolver::results_type]. This object is a range, with begin() and end() member functions that may be used for iterating over the results.
 
 
-
-
-
-The list of endpoints is returned using an iterator of type [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator]. (Note that a default constructed [link asio.reference.ip__basic_resolver.iterator ip::tcp::resolver::iterator] object can be used as an end iterator.)
-
-
+  ``''''''``    tcp::resolver::results_type endpoints =
+  ``''''''``      resolver.resolve(argv[1], "daytime");
 
 
 
 Now we create and connect the socket. The list of endpoints obtained above may contain both IPv4 and IPv6 endpoints, so we need to try each of them until we find one that works. This keeps the client program independent of a specific IP version. The asio::connect() function does this for us automatically.
 
 
+
+  ``''''''``    tcp::socket socket(io_context);
+  ``''''''``    asio::connect(socket, endpoints);
 
 
 
@@ -908,17 +909,37 @@ We use a `boost::array` to hold the received data. The asio::buffer() function a
 
 
 
+  ``''''''``    for (;;)
+  ``''''''``    {
+  ``''''''``      boost::array<char, 128> buf;
+  ``''''''``      asio::error_code error;
+
+  ``''''''``      size_t len = socket.read_some(asio::buffer(buf), error);
+
 
 
 When the server closes the connection, the [link asio.reference.basic_stream_socket.read_some ip::tcp::socket::read_some()] function will exit with the asio::error::eof error, which is how we know to exit the loop.
 
 
 
+  ``''''''``      if (error == asio::error::eof)
+  ``''''''``        break; // Connection closed cleanly by peer.
+  ``''''''``      else if (error)
+  ``''''''``        throw asio::system_error(error); // Some other error.
+
+  ``''''''``      std::cout.write(buf.data(), len);
+  ``''''''``    }
+
 
 
 Finally, handle any exceptions that may have been thrown.
 
 
+  ``''''''``  }
+  ``''''''``  catch (std::exception& e)
+  ``''''''``  {
+  ``''''''``    std::cerr << e.what() << std::endl;
+  ``''''''``  }
 
 
 
