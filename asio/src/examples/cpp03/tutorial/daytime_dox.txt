@@ -34,15 +34,16 @@ asio::ip::tcp::resolver object.
 
 \until tcp::resolver
 
-A resolver takes a query object and turns it into a list of endpoints. We
-construct a query using the name of the server, specified in <tt>argv[1]</tt>,
-and the name of the service, in this case <tt>"daytime"</tt>.
+A resolver takes two parameters: <tt>host name</tt> and <tt>service name</tt> -
+and turns it into a list of endpoints. We construct resolver using the name
+of the server, specified in <tt>argv[1]</tt>, and the name of the service,
+in this case <tt>"daytime"</tt>.
 
 \until tcp::resolver::results_type
 
-The list of endpoints is returned using an iterator of type
-asio::ip::tcp::resolver::iterator. (Note that a default constructed
-asio::ip::tcp::resolver::iterator object can be used as an end iterator.)
+The list of endpoints is returned using an object of type
+boost::asio::ip::tcp::resolver::results_type. (Note that this object has
+begin() and end() functions which can be used for iterating over results.)
 
 \until resolver.resolve
 
