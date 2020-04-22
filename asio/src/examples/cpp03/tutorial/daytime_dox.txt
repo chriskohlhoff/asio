@@ -274,13 +274,11 @@ We use an asio::ip::udp::resolver object to find the correct remote endpoint to
 use based on the host and service names. The query is restricted to return only
 IPv4 endpoints by the asio::ip::udp::v4() argument.
 
-\until udp::v4
-
 The asio::ip::udp::resolver::resolve() function is guaranteed to return at
 least one endpoint in the list if it does not fail. This means it is safe to
 dereference the return value directly.
 
-\until udp::endpoint
+\until udp::v4
 
 Since UDP is datagram-oriented, we will not be using a stream socket. Create an
 asio::ip::udp::socket and initiate contact with the remote endpoint.
