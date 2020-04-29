@@ -445,11 +445,13 @@
 /boost/asio/ssl/detail/verify_callback.hpp
 /boost/asio/ssl/detail/write_op.hpp
 /boost/asio/ssl/error.hpp
+/boost/asio/ssl/host_name_verification.hpp
 /boost/asio/ssl.hpp
 /boost/asio/ssl/impl/
 /boost/asio/ssl/impl/context.hpp
 /boost/asio/ssl/impl/context.ipp
 /boost/asio/ssl/impl/error.ipp
+/boost/asio/ssl/impl/host_name_verification.ipp
 /boost/asio/ssl/impl/rfc2818_verification.ipp
 /boost/asio/ssl/impl/src.hpp
 /boost/asio/ssl/rfc2818_verification.hpp
@@ -3920,6 +3922,7 @@
 /doc/html/boost_asio/reference/ssl__context/context.html
 /doc/html/boost_asio/reference/ssl__context/context/overload1.html
 /doc/html/boost_asio/reference/ssl__context/context/overload2.html
+/doc/html/boost_asio/reference/ssl__context/context/overload3.html
 /doc/html/boost_asio/reference/ssl__context/default_workarounds.html
 /doc/html/boost_asio/reference/ssl__context/file_format.html
 /doc/html/boost_asio/reference/ssl__context.html
@@ -4009,6 +4012,11 @@
 /doc/html/boost_asio/reference/ssl__error__make_error_code.html
 /doc/html/boost_asio/reference/ssl__error__stream_category.html
 /doc/html/boost_asio/reference/ssl__error__stream_errors.html
+/doc/html/boost_asio/reference/ssl__host_name_verification/
+/doc/html/boost_asio/reference/ssl__host_name_verification/host_name_verification.html
+/doc/html/boost_asio/reference/ssl__host_name_verification.html
+/doc/html/boost_asio/reference/ssl__host_name_verification/operator_lp__rp_.html
+/doc/html/boost_asio/reference/ssl__host_name_verification/result_type.html
 /doc/html/boost_asio/reference/ssl__rfc2818_verification/
 /doc/html/boost_asio/reference/ssl__rfc2818_verification.html
 /doc/html/boost_asio/reference/ssl__rfc2818_verification/operator_lp__rp_.html
@@ -4934,6 +4942,7 @@
 /libs/asio/example/cpp14/executors/bank_account_1.cpp
 /libs/asio/example/cpp14/executors/bank_account_2.cpp
 /libs/asio/example/cpp14/executors/fork_join.cpp
+/libs/asio/example/cpp14/executors/Jamfile.v2
 /libs/asio/example/cpp14/executors/pipeline.cpp
 /libs/asio/example/cpp14/executors/priority_scheduler.cpp
 /libs/asio/example/cpp14/operations/
@@ -4960,8 +4969,6 @@
 /libs/asio/test/archetypes/
 /libs/asio/test/archetypes/async_ops.hpp
 /libs/asio/test/archetypes/async_result.hpp
-/libs/asio/test/archetypes/deprecated_async_ops.hpp
-/libs/asio/test/archetypes/deprecated_async_result.hpp
 /libs/asio/test/archetypes/gettable_socket_option.hpp
 /libs/asio/test/archetypes/io_control_command.hpp
 /libs/asio/test/archetypes/settable_socket_option.hpp
@@ -5068,6 +5075,7 @@
 /libs/asio/test/ssl/context_base.cpp
 /libs/asio/test/ssl/context.cpp
 /libs/asio/test/ssl/error.cpp
+/libs/asio/test/ssl/host_name_verification.cpp
 /libs/asio/test/ssl/Jamfile.v2
 /libs/asio/test/ssl/rfc2818_verification.cpp
 /libs/asio/test/ssl/stream_base.cpp
@@ -5134,6 +5142,9 @@
 /libs/system/test/
 /libs/system/test/after_main_test.cpp
 /libs/system/test/before_main_test.cpp
+/libs/system/test/cmake_install_test/
+/libs/system/test/cmake_install_test/CMakeLists.txt
+/libs/system/test/CMakeLists.txt
 /libs/system/test/cmake_subdir_test/
 /libs/system/test/cmake_subdir_test/CMakeLists.txt
 /libs/system/test/config_test.cpp
