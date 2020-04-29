@@ -7,6 +7,66 @@
 
 [section:history Revision History]
 
+[heading Asio 1.16.1]
+
+* Fixed compatibility with C++20 concept syntax.
+
+* Marked the POSIX descriptor classes' move constructors as `noexcept`.
+
+* Added the `ssl::host_name_verification` class, which is a drop-in replacement
+  for `ssl::rfc2818_verification`. The `ssl::rfc2818_verification` class has
+  been marked as deprecated. As a consequence of this change, SSL support now
+  depends on functions that were introduced in OpenSSL 1.0.2.
+
+* Added an `ssl::context` constructor to take ownership of a native handle.
+
+* Changed C++ language version detection with [^gcc] to use `__cplusplus` macro.
+
+* Fixed a work counting issue in the asynchronous resolve operation for
+  endpoints.
+
+* Fixed the `strand<>` converting constructors and assignment operators.
+
+* Ensured that resolvers are restarted correctly after a fork.
+
+* Fixed compatibility with the current NetBSD release.
+
+* Removed spurious handler requirement checks in some `async_read` overloads.
+
+* Changed the `ssl::context` class to propagate non-EOF errors from the
+  `add_certificate_authority` function.
+
+* Fixed a Windows-specific `thread_pool` destructor hang that occurred when the
+  pool had an associated I/O object.
+
+* Changed the [^select] reactor to recreate the "self pipe trick" sockets on
+  error. This addresses an issue on some versions of Windows, where these
+  sockets are discconected after a system sleep.
+
+* Fixed a compile error in the buffered streams due to the lack of reference
+  collapsing in C++98.
+
+* Changed the `priority_scheduler` example to demonstrate calls to `shutdown()`
+  and `destroy()`.
+
+* Removed some unnecessary null pointer checks.
+
+* Changed Windows platform detection to recognise TV titles as Windows apps.
+
+* Added some emscripten compatibility patches.
+
+* Fixed a compile error in the `use_awaitable_t::as_default_on` function.
+
+* Changed all uses of the boost.bind placeholders to use the
+  `boost::placeholders` namespace.
+
+* Fixed a potential compile error in the `async_compose` implementation due to
+  incorrect overload selection.
+
+* Suppressed some non-virtual destructor warnings.
+
+* Various documentation fixes and improvements.
+
 [heading Asio 1.16.0]
 
 * Changed the `async_initiate` helper function to automatically deduce its
