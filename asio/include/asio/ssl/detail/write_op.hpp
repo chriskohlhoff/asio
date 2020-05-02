@@ -39,9 +39,13 @@ public:
       asio::error_code& ec,
       std::size_t& bytes_transferred) const
   {
+    unsigned char storage[
+      asio::detail::buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence>::linearisation_storage_size];
+
     asio::const_buffer buffer =
       asio::detail::buffer_sequence_adapter<asio::const_buffer,
-        ConstBufferSequence>::first(buffers_);
+        ConstBufferSequence>::linearise(buffers_, asio::buffer(storage));
 
     return eng.write(buffer, ec, bytes_transferred);
   }

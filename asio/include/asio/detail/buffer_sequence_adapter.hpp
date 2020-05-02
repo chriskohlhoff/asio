@@ -153,6 +153,16 @@ public:
         asio::buffer_sequence_end(buffer_sequence));
   }
 
+  enum { linearisation_storage_size = 8192 };
+
+  static Buffer linearise(const Buffers& buffer_sequence,
+      const asio::mutable_buffer& storage)
+  {
+    return buffer_sequence_adapter::linearise(
+        asio::buffer_sequence_begin(buffer_sequence),
+        asio::buffer_sequence_end(buffer_sequence), storage);
+  }
+
 private:
   template <typename Iterator>
   void init(Iterator begin, Iterator end)
@@ -199,6 +209,30 @@ private:
         return buffer;
     }
     return Buffer();
+  }
+
+  template <typename Iterator>
+  static Buffer linearise(Iterator begin, Iterator end,
+      const asio::mutable_buffer& storage)
+  {
+    asio::mutable_buffer unused_storage = storage;
+    Iterator iter = begin;
+    while (iter != end && unused_storage.size() != 0)
+    {
+      Buffer buffer(*iter);
+      ++iter;
+      if (buffer.size() == 0)
+        continue;
+      if (unused_storage.size() == storage.size())
+      {
+        if (iter == end)
+          return buffer;
+        if (buffer.size() >= unused_storage.size())
+          return buffer;
+      }
+      unused_storage += asio::buffer_copy(unused_storage, buffer);
+    }
+    return Buffer(storage.data(), storage.size() - unused_storage.size());
   }
 
   native_buffer_type buffers_[max_buffers];
@@ -253,6 +287,14 @@ public:
     return Buffer(buffer_sequence);
   }
 
+  enum { linearisation_storage_size = 1 };
+
+  static Buffer linearise(const asio::mutable_buffer& buffer_sequence,
+      const Buffer&)
+  {
+    return Buffer(buffer_sequence);
+  }
+
 private:
   native_buffer_type buffer_;
   std::size_t total_buffer_size_;
@@ -301,6 +343,14 @@ public:
   }
 
   static Buffer first(const asio::const_buffer& buffer_sequence)
+  {
+    return Buffer(buffer_sequence);
+  }
+
+  enum { linearisation_storage_size = 1 };
+
+  static Buffer linearise(const asio::const_buffer& buffer_sequence,
+      const Buffer&)
   {
     return Buffer(buffer_sequence);
   }
@@ -359,6 +409,14 @@ public:
     return Buffer(buffer_sequence);
   }
 
+  enum { linearisation_storage_size = 1 };
+
+  static Buffer linearise(const asio::mutable_buffers_1& buffer_sequence,
+      const Buffer&)
+  {
+    return Buffer(buffer_sequence);
+  }
+
 private:
   native_buffer_type buffer_;
   std::size_t total_buffer_size_;
@@ -407,6 +465,14 @@ public:
   }
 
   static Buffer first(const asio::const_buffers_1& buffer_sequence)
+  {
+    return Buffer(buffer_sequence);
+  }
+
+  enum { linearisation_storage_size = 1 };
+
+  static Buffer linearise(const asio::const_buffers_1& buffer_sequence,
+      const Buffer&)
   {
     return Buffer(buffer_sequence);
   }
@@ -468,6 +534,19 @@ public:
         ? buffer_sequence[0] : buffer_sequence[1]);
   }
 
+  enum { linearisation_storage_size = 8192 };
+
+  static Buffer linearise(const boost::array<Elem, 2>& buffer_sequence,
+      const asio::mutable_buffer& storage)
+  {
+    if (buffer_sequence[0].size() == 0)
+      return Buffer(buffer_sequence[1]);
+    if (buffer_sequence[1].size() == 0)
+      return Buffer(buffer_sequence[0]);
+    return Buffer(storage.data(),
+        asio::buffer_copy(storage, buffer_sequence));
+  }
+
 private:
   native_buffer_type buffers_[2];
   std::size_t total_buffer_size_;
@@ -523,6 +602,19 @@ public:
   {
     return Buffer(buffer_sequence[0].size() != 0
         ? buffer_sequence[0] : buffer_sequence[1]);
+  }
+
+  enum { linearisation_storage_size = 8192 };
+
+  static Buffer linearise(const std::array<Elem, 2>& buffer_sequence,
+      const asio::mutable_buffer& storage)
+  {
+    if (buffer_sequence[0].size() == 0)
+      return Buffer(buffer_sequence[1]);
+    if (buffer_sequence[1].size() == 0)
+      return Buffer(buffer_sequence[0]);
+    return Buffer(storage.data(),
+        asio::buffer_copy(storage, buffer_sequence));
   }
 
 private:
