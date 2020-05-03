@@ -248,12 +248,13 @@ namespace detail
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
   {
   public:
-    composed_op(ASIO_MOVE_ARG(Impl) impl,
-        ASIO_MOVE_ARG(Work) work,
-        ASIO_MOVE_ARG(Handler) handler)
-      : impl_(ASIO_MOVE_CAST(Impl)(impl)),
-        work_(ASIO_MOVE_CAST(Work)(work)),
-        handler_(ASIO_MOVE_CAST(Handler)(handler)),
+    template <typename I, typename W, typename H>
+    composed_op(ASIO_MOVE_ARG(I) impl,
+        ASIO_MOVE_ARG(W) work,
+        ASIO_MOVE_ARG(H) handler)
+      : impl_(ASIO_MOVE_CAST(I)(impl)),
+        work_(ASIO_MOVE_CAST(W)(work)),
+        handler_(ASIO_MOVE_CAST(H)(handler)),
         invocations_(0)
     {
     }

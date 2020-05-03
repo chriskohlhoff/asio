@@ -74,6 +74,16 @@ void compose_0_args_handler(int* count)
   ++(*count);
 }
 
+struct compose_0_args_lvalue_handler
+{
+  int* count_;
+
+  void operator()()
+  {
+    ++(*count_);
+  }
+};
+
 void compose_0_completion_args_test()
 {
 #if defined(ASIO_HAS_BOOST_BIND)
@@ -86,6 +96,22 @@ void compose_0_completion_args_test()
   int count = 0;
 
   async_0_completion_args(ioc, bindns::bind(&compose_0_args_handler, &count));
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(!ioc.stopped());
+  ASIO_CHECK(count == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  ASIO_CHECK(ioc.stopped());
+  ASIO_CHECK(count == 1);
+
+  ioc.restart();
+  count = 0;
+
+  compose_0_args_lvalue_handler lvalue_handler = { &count };
+  async_0_completion_args(ioc, lvalue_handler);
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(!ioc.stopped());
@@ -140,11 +166,23 @@ async_1_completion_arg(asio::io_context& ioc,
       impl_1_completion_arg(ioc), token);
 }
 
-void compose_1_args_handler(int* count, int* result_out, int result)
+void compose_1_arg_handler(int* count, int* result_out, int result)
 {
   ++(*count);
   *result_out = result;
 }
+
+struct compose_1_arg_lvalue_handler
+{
+  int* count_;
+  int* result_out_;
+
+  void operator()(int result)
+  {
+    ++(*count_);
+    *result_out_ = result;
+  }
+};
 
 void compose_1_completion_arg_test()
 {
@@ -160,7 +198,26 @@ void compose_1_completion_arg_test()
   int result = 0;
 
   async_1_completion_arg(ioc,
-      bindns::bind(&compose_1_args_handler, &count, &result, _1));
+      bindns::bind(&compose_1_arg_handler, &count, &result, _1));
+
+  // No handlers can be called until run() is called.
+  ASIO_CHECK(!ioc.stopped());
+  ASIO_CHECK(count == 0);
+  ASIO_CHECK(result == 0);
+
+  ioc.run();
+
+  // The run() call will not return until all work has finished.
+  ASIO_CHECK(ioc.stopped());
+  ASIO_CHECK(count == 1);
+  ASIO_CHECK(result == 42);
+
+  ioc.restart();
+  count = 0;
+  result = 0;
+
+  compose_1_arg_lvalue_handler lvalue_handler = { &count, &result };
+  async_1_completion_arg(ioc, lvalue_handler);
 
   // No handlers can be called until run() is called.
   ASIO_CHECK(!ioc.stopped());
