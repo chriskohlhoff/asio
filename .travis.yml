@@ -258,34 +258,42 @@ matrix:
       compiler: clang
     #
     #---------------------------------------------------------------------------
-    # macOS / xcode8
+    # macOS / xcode10.1
     #---------------------------------------------------------------------------
     #
-    # macOS / xcode8 / -O2 / standalone
+    # macOS / xcode10.1 / -std=c++2a -fcoroutines-ts -O2 / standalone
+    #
+    - os: osx
+      env:
+        - CXXFLAGS="-std=c++2a -fcoroutines-ts -Wall -Wextra -O0 -fno-inline"
+        - CONFIGFLAGS="--with-boost=no"
+      osx_image: xcode10.1
+    #
+    # macOS / xcode10.1 / -O2 / standalone
     #
     - os: osx
       env:
         - CXXFLAGS="-Wall -Wextra -O0 -fno-inline"
         - CONFIGFLAGS="--with-boost=no"
-      osx_image: xcode8
+      osx_image: xcode10.1
     #
-    # macOS / xcode8 / -O0 / standalone / kqueue disabled
+    # macOS / xcode10.1 / -O0 / standalone / kqueue disabled
     #
     - os: osx
       env:
         - CXXFLAGS="-Wall -Wextra -O0 -fno-inline -DASIO_DISABLE_KQUEUE"
         - CONFIGFLAGS="--with-boost=no"
-      osx_image: xcode8
+      osx_image: xcode10.1
     #
-    # macOS / xcode8 / -O0 / standalone / separate compilation
+    # macOS / xcode10.1 / -O0 / standalone / separate compilation
     #
     - os: osx
       env:
         - CXXFLAGS="-Wall -Wextra -O0 -fno-inline"
         - CONFIGFLAGS="--with-boost=no --enable-separate-compilation"
-      osx_image: xcode8
+      osx_image: xcode10.1
     #
-    # macOS / xcode8 / -O2 / boost 1.64
+    # macOS / xcode10.1 / -O2 / boost 1.64
     #
     - os: osx
       env:
@@ -293,9 +301,9 @@ matrix:
         - BOOST_URL="https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2"
         - CXXFLAGS="-Wall -Wextra -O2"
         - CONFIGFLAGS=""
-      osx_image: xcode8
+      osx_image: xcode10.1
     #
-    # macOS / xcode8 / -O0 / boost 1.64 / separate compilation
+    # macOS / xcode10.1 / -O0 / boost 1.64 / separate compilation
     #
     - os: osx
       env:
@@ -303,7 +311,7 @@ matrix:
         - BOOST_URL="https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2"
         - CXXFLAGS="-Wall -Wextra -O0 -fno-inline"
         - CONFIGFLAGS="--enable-separate-compilation"
-      osx_image: xcode8
+      osx_image: xcode10.1
 
 before_install:
   - eval "${MATRIX_EVAL}"
