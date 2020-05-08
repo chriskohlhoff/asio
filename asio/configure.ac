@@ -150,6 +150,41 @@ AC_COMPILE_IFELSE(
   [AC_MSG_RESULT([no])
     HAVE_CXX14=no;])
 
+AC_MSG_CHECKING([whether C++17 is enabled])
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[#if __cplusplus < 201703L]]
+    [[#error C++17 not available]]
+    [[#endif]])],
+  [AC_MSG_RESULT([yes])
+    HAVE_CXX17=yes;],
+  [AC_MSG_RESULT([no])
+    HAVE_CXX17=no;])
+
+AC_MSG_CHECKING([whether coroutines are enabled])
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[#if defined(__clang__)]]
+    [[# if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)]]
+    [[#  if __has_include(<experimental/coroutine>)]]
+    [[#   define ASIO_HAS_CO_AWAIT 1]]
+    [[#  endif]]
+    [[# endif]]
+    [[#elif defined(__GNUC__)]]
+    [[# if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)]]
+    [[#  if __has_include(<coroutine>)]]
+    [[#   define ASIO_HAS_CO_AWAIT 1]]
+    [[#  endif]]
+    [[# endif]]
+    [[#endif]]
+    [[#ifndef ASIO_HAS_CO_AWAIT]]
+    [[# error coroutines not available]]
+    [[#endif]])],
+  [AC_MSG_RESULT([yes])
+    HAVE_COROUTINES=yes;],
+  [AC_MSG_RESULT([no])
+    HAVE_COROUTINES=no;])
+
 if test "$GXX" = yes; then
   if test "$STANDALONE" = yes; then
     if test "$HAVE_CXX11" = no; then
@@ -170,6 +205,10 @@ AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 AM_CONDITIONAL(HAVE_CXX11,test x$HAVE_CXX11 = xyes)
 
 AM_CONDITIONAL(HAVE_CXX14,test x$HAVE_CXX14 = xyes)
+
+AM_CONDITIONAL(HAVE_CXX17,test x$HAVE_CXX17 = xyes)
+
+AM_CONDITIONAL(HAVE_COROUTINES,test x$HAVE_COROUTINES = xyes)
 
 AC_OUTPUT([
   Makefile
