@@ -253,6 +253,7 @@
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
+            <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
             <member><link linkend="asio.reference.io_context__basic_executor_type">io_context::basic_executor_type</link></member>
             <member><link linkend="asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>
@@ -264,6 +265,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.detached">detached</link></member>
             <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
+            <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
             <member><link linkend="asio.reference.this_coro__executor">this_coro::executor</link></member>
             <member><link linkend="asio.reference.use_future">use_future</link></member>
             <member><link linkend="asio.reference.use_awaitable">use_awaitable</link></member>

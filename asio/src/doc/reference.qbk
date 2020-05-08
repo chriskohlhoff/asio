@@ -74368,6 +74368,379 @@ Unless the object has already been reset, or is in a moved-from state, calls `on
 
 [endsect]
 
+
+[section:experimental__as_single experimental::as_single]
+
+[indexterm1 asio.indexterm.experimental__as_single..experimental::as_single] 
+Create a completion token to specify that the completion handler arguments should be combined into a single argument. 
+
+
+  template<
+      typename CompletionToken>
+  constexpr as_single_t< typename decay< CompletionToken >::type > as_single(
+      CompletionToken && completion_token);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_single.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:experimental__as_single_t experimental::as_single_t]
+
+
+Completion token type used to specify that the completion handler arguments should be combined into a single argument. 
+
+
+  template<
+      typename CompletionToken>
+  class as_single_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__as_single_t__default_constructor_tag [*default_constructor_tag]]]
+    [Tag type used to prevent the "default" constructor from being used for conversions. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__as_single_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the as_single_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_single_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use as_single_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__as_single_t.as_single_t [*as_single_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_single_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.experimental__as_single_t `experimental::as_single_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single argument. If there is already one argument, that argument is passed as-is. If there is more than argument, the arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_single.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:as_default_on experimental::as_single_t::as_default_on]
+
+[indexterm2 asio.indexterm.experimental__as_single_t.as_default_on..as_default_on..experimental::as_single_t] 
+Function helper to adapt an I/O object to use `as_single_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+[section:as_single_t experimental::as_single_t::as_single_t]
+
+[indexterm2 asio.indexterm.experimental__as_single_t.as_single_t..as_single_t..experimental::as_single_t] 
+Default constructor. 
+
+
+  constexpr ``[link asio.reference.experimental__as_single_t.as_single_t.overload1 as_single_t]``(
+      default_constructor_tag  = default_constructor_tag(),
+      CompletionToken token = CompletionToken());
+  ``  [''''&raquo;''' [link asio.reference.experimental__as_single_t.as_single_t.overload1 more...]]``
+
+
+Constructor. 
+
+
+  template<
+      typename T>
+  explicit constexpr ``[link asio.reference.experimental__as_single_t.as_single_t.overload2 as_single_t]``(
+      T && completion_token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__as_single_t.as_single_t.overload2 more...]]``
+
+
+[section:overload1 experimental::as_single_t::as_single_t (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr as_single_t(
+      default_constructor_tag  = default_constructor_tag(),
+      CompletionToken token = CompletionToken());
+
+
+This constructor is only valid if the underlying completion token is default constructible and move constructible. The underlying completion token is itself defaulted as an argument to allow it to capture a source location. 
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::as_single_t::as_single_t (2 of 2 overloads)]
+
+
+Constructor. 
+
+
+  template<
+      typename T>
+  constexpr as_single_t(
+      T && completion_token);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:token_ experimental::as_single_t::token_]
+
+[indexterm2 asio.indexterm.experimental__as_single_t.token_..token_..experimental::as_single_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__as_single_t__default_constructor_tag experimental::as_single_t::default_constructor_tag]
+
+
+Tag type used to prevent the "default" constructor from being used for conversions. 
+
+
+  struct default_constructor_tag
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_single.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+[section:experimental__as_single_t__executor_with_default experimental::as_single_t::executor_with_default]
+
+
+Adapts an executor to add the `as_single_t` completion token as the default. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__as_single_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify as_single_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_single_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. 
+     [hr]
+     Convert the specified executor to the inner executor type, then use that to construct the adapted executor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_single.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:default_completion_token_type experimental::as_single_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 asio.indexterm.experimental__as_single_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::as_single_t::executor_with_default] 
+Specify `as_single_t` as the default completion token type. 
+
+
+  typedef as_single_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__as_single_t__default_constructor_tag [*default_constructor_tag]]]
+    [Tag type used to prevent the "default" constructor from being used for conversions. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__as_single_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the as_single_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_single_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use as_single_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__as_single_t.as_single_t [*as_single_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_single_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.experimental__as_single_t `experimental::as_single_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single argument. If there is already one argument, that argument is passed as-is. If there is more than argument, the arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_single.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:executor_with_default experimental::as_single_t::executor_with_default::executor_with_default]
+
+[indexterm2 asio.indexterm.experimental__as_single_t__executor_with_default.executor_with_default..executor_with_default..experimental::as_single_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  ``[link asio.reference.experimental__as_single_t__executor_with_default.executor_with_default.overload1 executor_with_default]``(
+      const InnerExecutor & ex);
+  ``  [''''&raquo;''' [link asio.reference.experimental__as_single_t__executor_with_default.executor_with_default.overload1 more...]]``
+
+
+Convert the specified executor to the inner executor type, then use that to construct the adapted executor. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
+  ``[link asio.reference.experimental__as_single_t__executor_with_default.executor_with_default.overload2 executor_with_default]``(
+      const OtherExecutor & ex,
+      typename enable_if< is_convertible< OtherExecutor, InnerExecutor >::value >::type *  = 0);
+  ``  [''''&raquo;''' [link asio.reference.experimental__as_single_t__executor_with_default.executor_with_default.overload2 more...]]``
+
+
+[section:overload1 experimental::as_single_t::executor_with_default::executor_with_default (1 of 2 overloads)]
+
+
+Construct the adapted executor from the inner executor type. 
+
+
+  executor_with_default(
+      const InnerExecutor & ex);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::as_single_t::executor_with_default::executor_with_default (2 of 2 overloads)]
+
+
+Convert the specified executor to the inner executor type, then use that to construct the adapted executor. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
+  executor_with_default(
+      const OtherExecutor & ex,
+      typename enable_if< is_convertible< OtherExecutor, InnerExecutor >::value >::type *  = 0);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
 [section:generic__basic_endpoint generic::basic_endpoint]
 
 
