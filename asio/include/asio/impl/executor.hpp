@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/atomic_count.hpp"
-#include "asio/detail/executor_function.hpp"
 #include "asio/detail/global.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/recycling_allocator.hpp"
@@ -29,98 +28,6 @@
 namespace asio {
 
 #if !defined(GENERATING_DOCUMENTATION)
-
-#if defined(ASIO_HAS_MOVE)
-
-// Lightweight, move-only function object wrapper.
-class executor::function
-{
-public:
-  template <typename F, typename Alloc>
-  explicit function(F f, const Alloc& a)
-  {
-    // Allocate and construct an operation to wrap the function.
-    typedef detail::executor_function<F, Alloc> func_type;
-    typename func_type::ptr p = {
-      detail::addressof(a), func_type::ptr::allocate(a), 0 };
-    func_ = new (p.v) func_type(ASIO_MOVE_CAST(F)(f), a);
-    p.v = 0;
-  }
-
-  function(function&& other) ASIO_NOEXCEPT
-    : func_(other.func_)
-  {
-    other.func_ = 0;
-  }
-
-  ~function()
-  {
-    if (func_)
-      func_->destroy();
-  }
-
-  void operator()()
-  {
-    if (func_)
-    {
-      detail::executor_function_base* func = func_;
-      func_ = 0;
-      func->complete();
-    }
-  }
-
-private:
-  detail::executor_function_base* func_;
-};
-
-#else // defined(ASIO_HAS_MOVE)
-
-// Not so lightweight, copyable function object wrapper.
-class executor::function
-{
-public:
-  template <typename F, typename Alloc>
-  explicit function(const F& f, const Alloc&)
-    : impl_(new impl<F>(f))
-  {
-  }
-
-  void operator()()
-  {
-    impl_->invoke_(impl_.get());
-  }
-
-private:
-  // Base class for polymorphic function implementations.
-  struct impl_base
-  {
-    void (*invoke_)(impl_base*);
-  };
-
-  // Polymorphic function implementation.
-  template <typename F>
-  struct impl : impl_base
-  {
-    impl(const F& f)
-      : function_(f)
-    {
-      invoke_ = &function::invoke<F>;
-    }
-
-    F function_;
-  };
-
-  // Helper to invoke a function.
-  template <typename F>
-  static void invoke(impl_base* i)
-  {
-    static_cast<impl<F>*>(i)->function_();
-  }
-
-  detail::shared_ptr<impl_base> impl_;
-};
-
-#endif // defined(ASIO_HAS_MOVE)
 
 // Default polymorphic executor implementation.
 template <typename Executor, typename Allocator>

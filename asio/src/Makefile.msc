@@ -147,6 +147,7 @@ UNIT_TEST_EXES = \
 	tests\unit\dispatch.exe \
 	tests\unit\error.exe \
 	tests\unit\execution_context.exe \
+	tests\unit\execution\any_executor.exe \
 	tests\unit\execution\blocking.exe \
 	tests\unit\execution\blocking_adaptation.exe \
 	tests\unit\execution\bulk_guarantee.exe \

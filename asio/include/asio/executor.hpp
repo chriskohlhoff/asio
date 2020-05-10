@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <typeinfo>
 #include "asio/detail/cstddef.hpp"
+#include "asio/detail/executor_function.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/throw_exception.hpp"
 #include "asio/execution_context.hpp"
@@ -253,7 +254,7 @@ public:
 
 private:
 #if !defined(GENERATING_DOCUMENTATION)
-  class function;
+  typedef detail::executor_function function;
   template <typename, typename> class impl;
 
 #if !defined(ASIO_NO_TYPEID)

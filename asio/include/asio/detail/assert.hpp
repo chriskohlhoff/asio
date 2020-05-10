@@ -29,4 +29,12 @@
 # define ASIO_ASSERT(expr) assert(expr)
 #endif // defined(ASIO_HAS_BOOST_ASSERT)
 
+#if defined(ASIO_HAS_STATIC_ASSERT)
+# define ASIO_STATIC_ASSERT(c, n, m) static_assert((c), m)
+#else // defined(ASIO_HAS_STATIC_ASSERT)
+# define ASIO_STATIC_ASSERT(c, n, m) \
+  typedef char static_assert_ ## n \
+    [(c) ? 1 : -1] ASIO_UNUSED_TYPEDEF
+#endif // defined(ASIO_HAS_STATIC_ASSERT)
+
 #endif // ASIO_DETAIL_ASSERT_HPP

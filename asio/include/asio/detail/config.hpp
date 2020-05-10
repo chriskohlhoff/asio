@@ -507,6 +507,29 @@
 # endif // !defined(ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
 #endif // !defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
+// Support static_assert on compilers known to allow it.
+#if !defined(ASIO_HAS_STATIC_ASSERT)
+# if !defined(ASIO_DISABLE_STATIC_ASSERT)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_static_assert__)
+#    define ASIO_HAS_STATIC_ASSERT 1
+#   endif // __has_feature(__cxx_static_assert__)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STATIC_ASSERT 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define ASIO_HAS_STATIC_ASSERT 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STATIC_ASSERT)
+#endif // !defined(ASIO_HAS_STATIC_ASSERT)
+
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)

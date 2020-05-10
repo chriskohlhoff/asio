@@ -292,12 +292,15 @@ nobase_include_HEADERS = \
 	asio/error.hpp \
 	asio/execution_context.hpp \
 	asio/execution/allocator.hpp \
+	asio/execution/any_executor.hpp \
+	asio/execution/bad_executor.hpp \
 	asio/execution/blocking.hpp \
 	asio/execution/blocking_adaptation.hpp \
 	asio/execution/bulk_guarantee.hpp \
 	asio/execution/context.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
+	asio/execution/impl/bad_executor.ipp \
 	asio/execution/invocable_archetype.hpp \
 	asio/execution/mapping.hpp \
 	asio/execution/occupancy.hpp \

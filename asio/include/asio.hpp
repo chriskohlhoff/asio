@@ -54,6 +54,7 @@
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution/allocator.hpp"
+#include "asio/execution/any_executor.hpp"
 #include "asio/execution/blocking.hpp"
 #include "asio/execution/blocking_adaptation.hpp"
 #include "asio/execution/bulk_guarantee.hpp"
