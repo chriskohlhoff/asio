@@ -54,7 +54,7 @@ template <typename, typename...>
 class awaitable_handler;
 
 template <typename Executor>
-class awaitable_handler<Executor, void>
+class awaitable_handler<Executor>
   : public awaitable_handler_base<Executor, void>
 {
 public:
