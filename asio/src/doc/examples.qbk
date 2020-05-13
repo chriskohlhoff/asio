@@ -402,9 +402,14 @@ Asio's asynchronous operations.
 
 [heading Handler Tracking]
 
-This example shows how to implement custom handler tracking.
+This example header file shows how to implement custom handler tracking.
 
 * [@../src/examples/cpp11/handler_tracking/custom_tracking.hpp]
+
+This example program shows how to include source location information in
+the handler tracking output.
+
+* [@../src/examples/cpp11/handler_tracking/async_tcp_echo_server.cpp]
 
 
 [heading HTTP Server]

@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
+#include "asio/detail/handler_tracking.hpp"
 #include "asio/ssl/detail/engine.hpp"
 #include "asio/ssl/detail/stream_core.hpp"
 #include "asio/write.hpp"
@@ -162,6 +163,9 @@ public:
             // Prevent other read operations from being started.
             core_.pending_read_.expires_at(core_.pos_infin());
 
+            ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             // Start reading some data from the underlying transport.
             next_layer_.async_read_some(
                 asio::buffer(core_.input_buffer_),
@@ -169,6 +173,9 @@ public:
           }
           else
           {
+            ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             // Wait until the current read operation completes.
             core_.pending_read_.async_wait(ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -189,6 +196,9 @@ public:
             // Prevent other write operations from being started.
             core_.pending_write_.expires_at(core_.pos_infin());
 
+            ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             // Start writing all the data to the underlying transport.
             asio::async_write(next_layer_,
                 core_.engine_.get_output(core_.output_buffer_),
@@ -196,6 +206,9 @@ public:
           }
           else
           {
+            ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             // Wait until the current write operation completes.
             core_.pending_write_.async_wait(ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -213,6 +226,9 @@ public:
           // read so the handler runs "as-if" posted using io_context::post().
           if (start)
           {
+            ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             next_layer_.async_read_some(
                 asio::buffer(core_.input_buffer_, 0),
                 ASIO_MOVE_CAST(io_op)(*this));

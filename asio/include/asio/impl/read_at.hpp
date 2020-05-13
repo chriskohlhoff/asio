@@ -225,9 +225,12 @@ namespace detail
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
         do
         {
-          device_.async_read_some_at(
-              offset_ + buffers_.total_consumed(), buffers_.prepare(max_size),
-              ASIO_MOVE_CAST(read_at_op)(*this));
+          {
+            ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read_at"));
+            device_.async_read_some_at(
+                offset_ + buffers_.total_consumed(), buffers_.prepare(max_size),
+                ASIO_MOVE_CAST(read_at_op)(*this));
+          }
           return; default:
           buffers_.consume(bytes_transferred);
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
@@ -500,9 +503,12 @@ namespace detail
         bytes_available = read_size_helper(streambuf_, max_size);
         for (;;)
         {
-          device_.async_read_some_at(offset_ + total_transferred_,
-              streambuf_.prepare(bytes_available),
-              ASIO_MOVE_CAST(read_at_streambuf_op)(*this));
+          {
+            ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_read_at"));
+            device_.async_read_some_at(offset_ + total_transferred_,
+                streambuf_.prepare(bytes_available),
+                ASIO_MOVE_CAST(read_at_streambuf_op)(*this));
+          }
           return; default:
           total_transferred_ += bytes_transferred;
           streambuf_.commit(bytes_transferred);

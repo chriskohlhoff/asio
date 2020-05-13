@@ -251,10 +251,13 @@ public:
 
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(Initiation initiation,
-      use_awaitable_t<Executor>, InitArgs... args)
+      use_awaitable_t<Executor> u, InitArgs... args)
   {
+    (void)u;
+
     co_await [&](auto* frame)
       {
+        ASIO_HANDLER_LOCATION((u.file_name_, u.line_, u.function_name_));
         handler_type handler(frame->detach_thread());
         std::move(initiation)(std::move(handler), std::move(args)...);
         return static_cast<handler_type*>(nullptr);

@@ -18,30 +18,31 @@ asynchronous operations are chained together, or what the pending asynchronous
 operations are. As an illustration, here is the output when you run the HTTP
 Server example, handle a single request, then shut down via Ctrl+C:
 
-  @asio|1512254357.979980|0*1|signal_set@0x7ffeaaaa20d8.async_wait
-  @asio|1512254357.980127|0*2|socket@0x7ffeaaaa20f8.async_accept
-  @asio|1512254357.980150|.2|non_blocking_accept,ec=asio.system:11
-  @asio|1512254357.980162|0|resolver@0x7ffeaaaa1fd8.cancel
-  @asio|1512254368.457147|.2|non_blocking_accept,ec=system:0
-  @asio|1512254368.457193|>2|ec=system:0
-  @asio|1512254368.457219|2*3|socket@0x55cf39f0a238.async_receive
-  @asio|1512254368.457244|.3|non_blocking_recv,ec=system:0,bytes_transferred=141
-  @asio|1512254368.457275|2*4|socket@0x7ffeaaaa20f8.async_accept
-  @asio|1512254368.457293|.4|non_blocking_accept,ec=asio.system:11
-  @asio|1512254368.457301|<2|
-  @asio|1512254368.457310|>3|ec=system:0,bytes_transferred=141
-  @asio|1512254368.457441|3*5|socket@0x55cf39f0a238.async_send
-  @asio|1512254368.457502|.5|non_blocking_send,ec=system:0,bytes_transferred=156
-  @asio|1512254368.457511|<3|
-  @asio|1512254368.457519|>5|ec=system:0,bytes_transferred=156
-  @asio|1512254368.457544|5|socket@0x55cf39f0a238.close
-  @asio|1512254368.457559|<5|
-  @asio|1512254371.385106|>1|ec=system:0,signal_number=2
-  @asio|1512254371.385130|1|socket@0x7ffeaaaa20f8.close
-  @asio|1512254371.385163|<1|
-  @asio|1512254371.385175|>4|ec=asio.system:125
-  @asio|1512254371.385182|<4|
-  @asio|1512254371.385202|0|signal_set@0x7ffeaaaa20d8.cancel
+  @asio|1589424178.741850|0*1|signal_set@0x7ffee977d878.async_wait
+  @asio|1589424178.742593|0*2|socket@0x7ffee977d8a8.async_accept
+  @asio|1589424178.742619|.2|non_blocking_accept,ec=asio.system:11
+  @asio|1589424178.742625|0|resolver@0x7ffee977d760.cancel
+  @asio|1589424195.830382|.2|non_blocking_accept,ec=system:0
+  @asio|1589424195.830413|>2|ec=system:0
+  @asio|1589424195.830473|2*3|socket@0x7fa71d808230.async_receive
+  @asio|1589424195.830496|.3|non_blocking_recv,ec=system:0,bytes_transferred=151
+  @asio|1589424195.830503|2*4|socket@0x7ffee977d8a8.async_accept
+  @asio|1589424195.830507|.4|non_blocking_accept,ec=asio.system:11
+  @asio|1589424195.830510|<2|
+  @asio|1589424195.830529|>3|ec=system:0,bytes_transferred=151
+  @asio|1589424195.831143|3^5|in 'async_write' (./../../../include/asio/impl/write.hpp:330)
+  @asio|1589424195.831143|3*5|socket@0x7fa71d808230.async_send
+  @asio|1589424195.831186|.5|non_blocking_send,ec=system:0,bytes_transferred=1090
+  @asio|1589424195.831194|<3|
+  @asio|1589424195.831218|>5|ec=system:0,bytes_transferred=1090
+  @asio|1589424195.831263|5|socket@0x7fa71d808230.close
+  @asio|1589424195.831298|<5|
+  @asio|1589424199.793770|>1|ec=system:0,signal_number=2
+  @asio|1589424199.793781|1|socket@0x7ffee977d8a8.close
+  @asio|1589424199.793809|<1|
+  @asio|1589424199.793840|>4|ec=asio.system:125
+  @asio|1589424199.793854|<4|
+  @asio|1589424199.793883|0|signal_set@0x7ffee977d878.cancel
 
 Each line is of the form:
 
@@ -75,6 +76,13 @@ The `<action>` takes one of the following forms:
     `io_context` is destroyed.]
   ]
   [
+    [n^m]
+    [The handler number `n` is about to create a new asynchronous operation with
+    completion handler number `m`. The `<description>` contains source location
+    information to help identify where in the program the asynchronous operation
+    is being started.]
+  ]
+  [
     [n*m]
     [The handler number `n` created a new asynchronous operation with completion
     handler number `m`. The `<description>` shows what asynchronous operation
@@ -104,6 +112,53 @@ comma-separated list of arguments and their values.
 As shown above, Each handler is assigned a numeric identifier. Where the
 handler tracking output shows a handler number of 0, it means that the action
 was performed outside of any handler.
+
+[heading Adding Location Information]
+
+[c++]
+Programs may augment the handler tracking output's location information by
+using the macro `ASIO_HANDLER_LOCATION` in the source code. For example:
+
+  #define HANDLER_LOCATION \
+    ASIO_HANDLER_LOCATION((__FILE__, __LINE__, __func__))
+
+  // ...
+
+  void do_read()
+  {
+    HANDLER_LOCATION;
+
+    auto self(shared_from_this());
+    socket_.async_read_some(asio::buffer(data_, max_length),
+        [this, self](std::error_code ec, std::size_t length)
+        {
+          HANDLER_LOCATION;
+
+          if (!ec)
+          {
+            do_write(length);
+          }
+        });
+  }
+
+[teletype]
+With the additional location information available, the handler tracking output
+may include a call stack of source locations:
+
+  @asio|1589423304.861944|>7|ec=system:0,bytes_transferred=5
+  @asio|1589423304.861952|7^8|in 'async_write' (./../../../include/asio/impl/write.hpp:330)
+  @asio|1589423304.861952|7^8|called from 'do_write' (handler_tracking/async_tcp_echo_server.cpp:62)
+  @asio|1589423304.861952|7^8|called from 'operator()' (handler_tracking/async_tcp_echo_server.cpp:51)
+  @asio|1589423304.861952|7*8|socket@0x7ff61c008230.async_send
+  @asio|1589423304.861975|.8|non_blocking_send,ec=system:0,bytes_transferred=5
+  @asio|1589423304.861980|<7|
+
+Furthermore, if `std::source_location` or `std::experimental::source_location`
+are available, the [link asio.reference.use_awaitable_t `use_awaitable_t`]
+token (when default-constructed or used as a default completion token) will
+also cause handler tracking to output a source location for each newly created
+asynchronous operation. A `use_awaitable_t` object may also be explicitly
+constructed with location information.
 
 [heading Visual Representations]
 
@@ -136,6 +191,12 @@ preprocessor macros:
   [
     [`ASIO_HANDLER_TRACKING_INIT(args)`]
     [An expression that is used to initialise the tracking mechanism.]
+  ]
+  [
+    [`ASIO_HANDLER_LOCATION(args)`]
+    [A variable declaration that is used to define a source code location.
+    `args` is a parenthesised function argument list containing the file
+    name, line number, and function name.]
   ]
   [
     [`ASIO_HANDLER_CREATION(args)`]
@@ -214,7 +275,7 @@ preprocessor macros:
 
 [heading See Also]
 
-[link asio.examples.cpp11_examples.handler_tracking Custom handler tracking
-example].
+[link asio.examples.cpp11_examples.handler_tracking Handler tracking
+examples].
 
 [endsect]

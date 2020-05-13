@@ -943,6 +943,37 @@
 # endif // !defined(ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(ASIO_HAS_STD_INVOKE_RESULT)
 
+// Standard library support for std::source_location.
+#if !defined(ASIO_HAS_STD_SOURCE_LOCATION)
+# if !defined(ASIO_DISABLE_STD_SOURCE_LOCATION)
+// ...
+# endif // !defined(ASIO_DISABLE_STD_SOURCE_LOCATION)
+#endif // !defined(ASIO_HAS_STD_SOURCE_LOCATION)
+
+// Standard library support for std::experimental::source_location.
+#if !defined(ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
+# if !defined(ASIO_DISABLE_STD_EXPERIMENTAL_SOURCE_LOCATION)
+#  if defined(__GNUC__)
+#   if (__cplusplus >= 201709)
+#    if __has_include(<experimental/source_location>)
+#     define ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION 1
+#    endif // __has_include(<experimental/source_location>)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_STD_EXPERIMENTAL_SOURCE_LOCATION)
+#endif // !defined(ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
+
+// Standard library has a source_location that we can use.
+#if !defined(ASIO_HAS_SOURCE_LOCATION)
+# if !defined(ASIO_DISABLE_SOURCE_LOCATION)
+#  if defined(ASIO_HAS_STD_SOURCE_LOCATION)
+#   define ASIO_HAS_SOURCE_LOCATION 1
+#  elif defined(ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
+#   define ASIO_HAS_SOURCE_LOCATION 1
+#  endif // defined(ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
+# endif // !defined(ASIO_DISABLE_SOURCE_LOCATION)
+#endif // !defined(ASIO_HAS_SOURCE_LOCATION)
+
 // Windows App target. Windows but with a limited API.
 #if !defined(ASIO_WINDOWS_APP)
 # if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)

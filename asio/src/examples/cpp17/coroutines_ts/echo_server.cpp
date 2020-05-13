@@ -23,6 +23,11 @@ using asio::detached;
 using asio::use_awaitable;
 namespace this_coro = asio::this_coro;
 
+#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+# define use_awaitable \
+  asio::use_awaitable_t(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+#endif
+
 awaitable<void> echo(tcp::socket socket)
 {
   try

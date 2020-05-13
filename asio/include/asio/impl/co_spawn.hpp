@@ -70,7 +70,7 @@ awaitable<void, Executor> co_spawn_entry_point(
   auto handler_work = make_work_guard(handler, ex);
 
   (void) co_await (post)(spawn_work.get_executor(),
-      use_awaitable_t<Executor>{});
+      use_awaitable_t<Executor>{__FILE__, __LINE__, "co_spawn_entry_point"});
 
   std::exception_ptr e = nullptr;
   try

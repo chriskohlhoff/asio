@@ -24,6 +24,9 @@
 # define ASIO_HANDLER_TRACKING_INIT \
   ::custom_tracking::init()
 
+# define ASIO_HANDLER_LOCATION(args) \
+  ::custom_tracking::location args
+
 # define ASIO_HANDLER_CREATION(args) \
   ::custom_tracking::creation args
 
@@ -69,6 +72,13 @@ struct custom_tracking
   // Initialise the tracking system.
   static void init()
   {
+  }
+
+  // Record a source location.
+  static void location(const char* file_name,
+      int line, const char* function_name)
+  {
+    std::printf("At location %s:%d in %s\n", file_name, line, function_name);
   }
 
   // Record the creation of a tracked handler.
