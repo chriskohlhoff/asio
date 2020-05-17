@@ -295,6 +295,7 @@ nobase_include_HEADERS = \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/invocable_archetype.hpp \
+	asio/execution/mapping.hpp \
 	asio/execution/outstanding_work.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
