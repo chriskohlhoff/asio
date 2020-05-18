@@ -8,6 +8,7 @@
 *.pdb
 *.tds
 blocking
+blocking_adaptation
 execute
 invocable_archetype
 mapping

@@ -148,6 +148,7 @@ UNIT_TEST_EXES = \
 	tests\unit\error.exe \
 	tests\unit\execution_context.exe \
 	tests\unit\execution\blocking.exe \
+	tests\unit\execution\blocking_adaptation.exe \
 	tests\unit\execution\execute.exe \
 	tests\unit\execution\invocable_archetype.exe \
 	tests\unit\execution\mapping.exe \
