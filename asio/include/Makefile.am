@@ -295,6 +295,7 @@ nobase_include_HEADERS = \
 	asio/execution/blocking.hpp \
 	asio/execution/blocking_adaptation.hpp \
 	asio/execution/bulk_guarantee.hpp \
+	asio/execution/context.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/invocable_archetype.hpp \
