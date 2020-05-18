@@ -290,6 +290,7 @@ nobase_include_HEADERS = \
 	asio/dispatch.hpp \
 	asio/error_code.hpp \
 	asio/error.hpp \
+	asio/execution.hpp \
 	asio/execution_context.hpp \
 	asio/execution/allocator.hpp \
 	asio/execution/any_executor.hpp \
