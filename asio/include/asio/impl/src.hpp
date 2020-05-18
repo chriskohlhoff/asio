@@ -25,6 +25,7 @@
 #include "asio/impl/executor.ipp"
 #include "asio/impl/handler_alloc_hook.ipp"
 #include "asio/impl/io_context.ipp"
+#include "asio/impl/multiple_exceptions.ipp"
 #include "asio/impl/serial_port_base.ipp"
 #include "asio/impl/system_context.ipp"
 #include "asio/impl/thread_pool.ipp"

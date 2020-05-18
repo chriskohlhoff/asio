@@ -1108,6 +1108,30 @@
 # endif // !defined(ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(ASIO_HAS_STD_INVOKE_RESULT)
 
+// Standard library support for std::exception_ptr and std::current_exception.
+#if !defined(ASIO_HAS_STD_EXCEPTION_PTR)
+# if !defined(ASIO_DISABLE_STD_EXCEPTION_PTR)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_EXCEPTION_PTR 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_STD_EXCEPTION_PTR 1
+#   endif // (__cplusplus >= 201103)
+#  elif defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_EXCEPTION_PTR 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1800)
+#    define ASIO_HAS_STD_EXCEPTION_PTR 1
+#   endif // (_MSC_VER >= 1800)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_EXCEPTION_PTR)
+#endif // !defined(ASIO_HAS_STD_EXCEPTION_PTR)
+
 // Standard library support for std::source_location.
 #if !defined(ASIO_HAS_STD_SOURCE_LOCATION)
 # if !defined(ASIO_DISABLE_STD_SOURCE_LOCATION)

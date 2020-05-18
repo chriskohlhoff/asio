@@ -117,6 +117,7 @@
 #include "asio/local/connect_pair.hpp"
 #include "asio/local/datagram_protocol.hpp"
 #include "asio/local/stream_protocol.hpp"
+#include "asio/multiple_exceptions.hpp"
 #include "asio/packaged_task.hpp"
 #include "asio/placeholders.hpp"
 #include "asio/posix/basic_descriptor.hpp"

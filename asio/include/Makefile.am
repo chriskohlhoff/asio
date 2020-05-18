@@ -342,6 +342,7 @@ nobase_include_HEADERS = \
 	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_context.hpp \
 	asio/impl/io_context.ipp \
+	asio/impl/multiple_exceptions.ipp \
 	asio/impl/post.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
@@ -415,6 +416,7 @@ nobase_include_HEADERS = \
 	asio/local/detail/endpoint.hpp \
 	asio/local/detail/impl/endpoint.ipp \
 	asio/local/stream_protocol.hpp \
+	asio/multiple_exceptions.hpp \
 	asio/packaged_task.hpp \
 	asio/placeholders.hpp \
 	asio/posix/basic_descriptor.hpp \

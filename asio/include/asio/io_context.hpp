@@ -22,6 +22,7 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/error_code.hpp"
+#include "asio/execution.hpp"
 #include "asio/execution_context.hpp"
 
 #if defined(ASIO_HAS_CHRONO)
@@ -46,6 +47,13 @@ namespace detail {
 #else
   typedef class scheduler io_context_impl;
 #endif
+
+  struct io_context_bits
+  {
+    ASIO_STATIC_CONSTEXPR(unsigned int, blocking_never = 1);
+    ASIO_STATIC_CONSTEXPR(unsigned int, relationship_continuation = 2);
+    ASIO_STATIC_CONSTEXPR(unsigned int, outstanding_work_tracked = 4);
+  };
 } // namespace detail
 
 /// Provides core I/O functionality.
@@ -184,8 +192,14 @@ private:
 #endif
 
 public:
-  class executor_type;
-  friend class executor_type;
+  template <typename Allocator, unsigned int Bits>
+  class basic_executor_type;
+
+  template <typename Allocator, unsigned int Bits>
+  friend class basic_executor_type;
+
+  /// Executor used to submit functions to an io_context.
+  typedef basic_executor_type<std::allocator<void>, 0> executor_type;
 
 #if !defined(ASIO_NO_DEPRECATED)
   class work;
@@ -620,10 +634,215 @@ private:
   impl_type& impl_;
 };
 
-/// Executor used to submit functions to an io_context.
-class io_context::executor_type
+namespace detail {
+
+} // namespace detail
+
+/// Executor implementation type used to submit functions to an io_context.
+template <typename Allocator, unsigned int Bits>
+class io_context::basic_executor_type : detail::io_context_bits
 {
 public:
+  /// Copy construtor.
+  basic_executor_type(
+      const basic_executor_type& other) ASIO_NOEXCEPT
+    : io_context_(other.io_context_),
+      allocator_(other.allocator_),
+      bits_(other.bits_)
+  {
+    if (Bits & outstanding_work_tracked)
+      if (io_context_)
+        io_context_->impl_.work_started();
+  }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move construtor.
+  basic_executor_type(basic_executor_type&& other) ASIO_NOEXCEPT
+    : io_context_(other.io_context_),
+      allocator_(ASIO_MOVE_CAST(Allocator)(other.allocator_)),
+      bits_(other.bits_)
+  {
+    if (Bits & outstanding_work_tracked)
+      other.io_context_ = 0;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Destructor.
+  ~basic_executor_type()
+  {
+    if (Bits & outstanding_work_tracked)
+      if (io_context_)
+        io_context_->impl_.work_finished();
+  }
+
+  /// Assignment operator.
+  basic_executor_type& operator=(
+      const basic_executor_type& other) ASIO_NOEXCEPT;
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move assignment operator.
+  basic_executor_type& operator=(
+      basic_executor_type&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Obtain an executor with the @c blocking.possibly property.
+  ASIO_CONSTEXPR basic_executor_type require(
+      execution::blocking_t::possibly_t) const
+  {
+    return basic_executor_type(io_context_,
+        allocator_, bits_ & ~blocking_never);
+  }
+
+  /// Obtain an executor with the @c blocking.never property.
+  ASIO_CONSTEXPR basic_executor_type require(
+      execution::blocking_t::never_t) const
+  {
+    return basic_executor_type(io_context_,
+        allocator_, bits_ | blocking_never);
+  }
+
+  /// Obtain an executor with the @c relationship.fork property.
+  ASIO_CONSTEXPR basic_executor_type require(
+      execution::relationship_t::fork_t) const
+  {
+    return basic_executor_type(io_context_,
+        allocator_, bits_ & ~relationship_continuation);
+  }
+
+  /// Obtain an executor with the @c relationship.continuation property.
+  ASIO_CONSTEXPR basic_executor_type require(
+      execution::relationship_t::continuation_t) const
+  {
+    return basic_executor_type(io_context_,
+        allocator_, bits_ | relationship_continuation);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.tracked property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED(Bits | outstanding_work_tracked)>
+  require(execution::outstanding_work_t::tracked_t) const
+  {
+    return basic_executor_type<Allocator, Bits | outstanding_work_tracked>(
+        io_context_, allocator_, bits_);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.untracked property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED(Bits & ~outstanding_work_tracked)>
+  require(execution::outstanding_work_t::untracked_t) const
+  {
+    return basic_executor_type<Allocator, Bits & ~outstanding_work_tracked>(
+        io_context_, allocator_, bits_);
+  }
+
+  /// Obtain an executor with the specified @c allocator property.
+  template <typename OtherAllocator>
+  ASIO_CONSTEXPR basic_executor_type<OtherAllocator, Bits>
+  require(execution::allocator_t<OtherAllocator> a) const
+  {
+    return basic_executor_type<OtherAllocator, Bits>(
+        io_context_, a.value(), bits_);
+  }
+
+  /// Obtain an executor with the default @c allocator property.
+  ASIO_CONSTEXPR basic_executor_type<std::allocator<void>, Bits>
+  require(execution::allocator_t<void>) const
+  {
+    return basic_executor_type<std::allocator<void>, Bits>(
+        io_context_, std::allocator<void>(), bits_);
+  }
+
+  /// Query the current value of the @c mapping property.
+  static ASIO_CONSTEXPR execution::mapping_t query(
+      execution::mapping_t) ASIO_NOEXCEPT
+  {
+    return execution::mapping.thread;
+  }
+
+  /// Query the current value of the @c context property.
+  io_context& query(execution::context_t) const ASIO_NOEXCEPT
+  {
+    return *io_context_;
+  }
+
+  /// Query the current value of the @c blocking property.
+  ASIO_CONSTEXPR execution::blocking_t query(
+      execution::blocking_t) const ASIO_NOEXCEPT
+  {
+    return (bits_ & blocking_never)
+      ? execution::blocking_t(execution::blocking.never)
+      : execution::blocking_t(execution::blocking.possibly);
+  }
+
+  /// Query the current value of the @c relationship property.
+  ASIO_CONSTEXPR execution::relationship_t query(
+      execution::relationship_t) const ASIO_NOEXCEPT
+  {
+    return (bits_ & relationship_continuation)
+      ? execution::relationship_t(execution::relationship.continuation)
+      : execution::relationship_t(execution::relationship.fork);
+  }
+
+  /// Query the current value of the @c outstanding_work property.
+  static ASIO_CONSTEXPR execution::outstanding_work_t query(
+      execution::outstanding_work_t) ASIO_NOEXCEPT
+  {
+    return (Bits & outstanding_work_tracked)
+      ? execution::outstanding_work_t(execution::outstanding_work.tracked)
+      : execution::outstanding_work_t(execution::outstanding_work.untracked);
+  }
+
+  /// Query the current value of the @c allocator property.
+  template <typename OtherAllocator>
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<OtherAllocator>) const ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<void>) const ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Determine whether the io_context is running in the current thread.
+  /**
+   * @return @c true if the current thread is running the io_context. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
+
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_context.
+   */
+  friend bool operator==(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.io_context_ == b.io_context_
+      && a.allocator_ == b.allocator_
+      && a.bits_ == b.bits_;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying io_context.
+   */
+  friend bool operator!=(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.io_context_ != b.io_context_
+      || a.allocator_ != b.allocator_
+      || a.bits_ != b.bits_;
+  }
+
+  /// Execution function.
+  template <typename Function>
+  void execute(ASIO_MOVE_ARG(Function) f) const;
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
   /// Obtain the underlying execution context.
   io_context& context() const ASIO_NOEXCEPT;
 
@@ -657,8 +876,9 @@ public:
    * @param a An allocator that may be used by the executor to allocate the
    * internal storage needed for function invocation.
    */
-  template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  template <typename Function, typename OtherAllocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f,
+      const OtherAllocator& a) const;
 
   /// Request the io_context to invoke the given function object.
   /**
@@ -673,8 +893,9 @@ public:
    * @param a An allocator that may be used by the executor to allocate the
    * internal storage needed for function invocation.
    */
-  template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  template <typename Function, typename OtherAllocator>
+  void post(ASIO_MOVE_ARG(Function) f,
+      const OtherAllocator& a) const;
 
   /// Request the io_context to invoke the given function object.
   /**
@@ -693,44 +914,45 @@ public:
    * @param a An allocator that may be used by the executor to allocate the
    * internal storage needed for function invocation.
    */
-  template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
-
-  /// Determine whether the io_context is running in the current thread.
-  /**
-   * @return @c true if the current thread is running the io_context. Otherwise
-   * returns @c false.
-   */
-  bool running_in_this_thread() const ASIO_NOEXCEPT;
-
-  /// Compare two executors for equality.
-  /**
-   * Two executors are equal if they refer to the same underlying io_context.
-   */
-  friend bool operator==(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.io_context_ == &b.io_context_;
-  }
-
-  /// Compare two executors for inequality.
-  /**
-   * Two executors are equal if they refer to the same underlying io_context.
-   */
-  friend bool operator!=(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.io_context_ != &b.io_context_;
-  }
+  template <typename Function, typename OtherAllocator>
+  void defer(ASIO_MOVE_ARG(Function) f,
+      const OtherAllocator& a) const;
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 private:
   friend class io_context;
+  template <typename, unsigned int> friend class basic_executor_type;
 
-  // Constructor.
-  explicit executor_type(io_context& i) : io_context_(i) {}
+  // Constructor used by io_context::get_executor().
+  explicit basic_executor_type(io_context& i) ASIO_NOEXCEPT
+    : io_context_(&i),
+      allocator_(),
+      bits_(0)
+  {
+    if (Bits & outstanding_work_tracked)
+      io_context_->impl_.work_started();
+  }
+
+  // Constructor used by require().
+  basic_executor_type(io_context* i,
+      const Allocator& a, unsigned int bits) ASIO_NOEXCEPT
+    : io_context_(i),
+      allocator_(a),
+      bits_(bits)
+  {
+    if (Bits & outstanding_work_tracked)
+      if (io_context_)
+        io_context_->impl_.work_started();
+  }
 
   // The underlying io_context.
-  io_context& io_context_;
+  io_context* io_context_;
+
+  // The allocator used for execution functions.
+  Allocator allocator_;
+
+  // The runtime-switched properties of the io_context executor.
+  unsigned int bits_;
 };
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -854,6 +1076,266 @@ template <typename Type>
 asio::detail::service_id<Type> service_base<Type>::id;
 
 } // namespace detail
+
+#if !defined(GENERATING_DOCUMENTATION)
+
+namespace execution {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+template <typename Allocator, unsigned int Bits>
+struct is_executor<
+    asio::io_context::basic_executor_type<Allocator, Bits>
+  > : true_type
+{
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+} // namespace execution
+namespace traits {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Function>
+struct execute_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    Function
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::blocking_t::possibly_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::blocking_t::never_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::relationship_t::fork_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::relationship_t::continuation_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::outstanding_work_t::tracked_t
+  > : asio::detail::io_context_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      Allocator, Bits | outstanding_work_tracked> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::outstanding_work_t::untracked_t
+  > : asio::detail::io_context_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      Allocator, Bits & ~outstanding_work_tracked> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<void>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      std::allocator<void>, Bits> result_type;
+};
+
+template <unsigned int Bits,
+    typename Allocator, typename OtherAllocator>
+struct require_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<OtherAllocator>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::io_context::basic_executor_type<
+      OtherAllocator, Bits> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_static_constexpr_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::outstanding_work_t
+      >::value
+    >::type
+  > : asio::detail::io_context_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::outstanding_work_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return (Bits & outstanding_work_tracked)
+      ? execution::outstanding_work_t(execution::outstanding_work.tracked)
+      : execution::outstanding_work_t(execution::outstanding_work.untracked);
+  }
+};
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_static_constexpr_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::mapping_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::mapping_t::thread_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::blocking_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::blocking_t result_type;
+};
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::relationship_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::relationship_t result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct query_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::context_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::io_context& result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct query_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<void>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Allocator result_type;
+};
+
+template <typename Allocator, unsigned int Bits, typename OtherAllocator>
+struct query_member<
+    asio::io_context::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<OtherAllocator>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Allocator result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+} // namespace traits
+
+#endif // !defined(GENERATING_DOCUMENTATION)
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

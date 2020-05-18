@@ -324,6 +324,12 @@ void scheduler::compensating_work_started()
   ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
 }
 
+void scheduler::capture_current_exception()
+{
+  if (thread_info_base* this_thread = thread_call_stack::contains(this))
+    this_thread->capture_current_exception();
+}
+
 void scheduler::post_immediate_completion(
     scheduler::operation* op, bool is_continuation)
 {
@@ -448,6 +454,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 
         // Complete the operation. May throw an exception. Deletes the object.
         o->complete(this, ec, task_result);
+        this_thread.rethrow_pending_exception();
 
         return 1;
       }
@@ -528,6 +535,7 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
 
   // Complete the operation. May throw an exception. Deletes the object.
   o->complete(this, ec, task_result);
+  this_thread.rethrow_pending_exception();
 
   return 1;
 }
@@ -582,6 +590,7 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
 
   // Complete the operation. May throw an exception. Deletes the object.
   o->complete(this, ec, task_result);
+  this_thread.rethrow_pending_exception();
 
   return 1;
 }
