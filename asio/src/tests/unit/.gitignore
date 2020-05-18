@@ -59,6 +59,7 @@ serial_port
 serial_port_base
 signal_set
 socket_base
+static_thread_pool
 steady_timer
 strand
 streambuf

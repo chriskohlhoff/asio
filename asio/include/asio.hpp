@@ -137,6 +137,7 @@
 #include "asio/serial_port_base.hpp"
 #include "asio/signal_set.hpp"
 #include "asio/socket_base.hpp"
+#include "asio/static_thread_pool.hpp"
 #include "asio/steady_timer.hpp"
 #include "asio/strand.hpp"
 #include "asio/streambuf.hpp"

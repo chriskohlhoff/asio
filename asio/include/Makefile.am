@@ -42,6 +42,7 @@ nobase_include_HEADERS = \
 	asio/detail/atomic_count.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
+	asio/detail/blocking_executor_op.hpp \
 	asio/detail/buffered_stream_storage.hpp \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
@@ -465,6 +466,7 @@ nobase_include_HEADERS = \
 	asio/ssl/stream.hpp \
 	asio/ssl/verify_context.hpp \
 	asio/ssl/verify_mode.hpp \
+	asio/static_thread_pool.hpp \
 	asio/steady_timer.hpp \
 	asio/strand.hpp \
 	asio/streambuf.hpp \

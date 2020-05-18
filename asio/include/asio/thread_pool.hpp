@@ -16,13 +16,25 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/atomic_count.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
+#include "asio/execution.hpp"
 #include "asio/execution_context.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+namespace detail {
+  struct thread_pool_bits
+  {
+    ASIO_STATIC_CONSTEXPR(unsigned int, blocking_never = 1);
+    ASIO_STATIC_CONSTEXPR(unsigned int, blocking_always = 2);
+    ASIO_STATIC_CONSTEXPR(unsigned int, blocking_mask = 3);
+    ASIO_STATIC_CONSTEXPR(unsigned int, relationship_continuation = 4);
+    ASIO_STATIC_CONSTEXPR(unsigned int, outstanding_work_tracked = 8);
+  };
+} // namespace detail
 
 /// A simple fixed-size thread pool.
 /**
@@ -31,7 +43,7 @@ namespace asio {
  *
  * @par Submitting tasks to the pool
  *
- * To submit functions to the thread_pool, use the @ref asio::dispatch,
+ * To submit functions to the thread pool, use the @ref asio::dispatch,
  * @ref asio::post or @ref asio::defer free functions.
  *
  * For example:
@@ -63,10 +75,19 @@ class thread_pool
   : public execution_context
 {
 public:
-  class executor_type;
+  template <typename Allocator, unsigned int Bits>
+  class basic_executor_type;
 
+  template <typename Allocator, unsigned int Bits>
+  friend class basic_executor_type;
+
+  /// Executor used to submit functions to a thread pool.
+  typedef basic_executor_type<std::allocator<void>, 0> executor_type;
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
   /// Constructs a pool with an automatically determined number of threads.
   ASIO_DECL thread_pool();
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
   /// Constructs a pool with a specified number of threads.
   ASIO_DECL thread_pool(std::size_t num_threads);
@@ -80,12 +101,23 @@ public:
   /// Obtains the executor associated with the pool.
   executor_type get_executor() ASIO_NOEXCEPT;
 
+  /// Obtains the executor associated with the pool.
+  executor_type executor() ASIO_NOEXCEPT;
+
   /// Stops the threads.
   /**
    * This function stops the threads as soon as possible. As a result of calling
    * @c stop(), pending function objects may be never be invoked.
    */
   ASIO_DECL void stop();
+
+  /// Attaches the current thread to the pool.
+  /**
+   * This function attaches the current thread to the pool so that it may be
+   * used for executing submitted function objects. Blocks the calling thread
+   * until the pool is stopped or joined and has no outstanding work.
+   */
+  ASIO_DECL void attach();
 
   /// Joins the threads.
   /**
@@ -95,11 +127,18 @@ public:
    */
   ASIO_DECL void join();
 
+  /// Waits for threads to complete.
+  /**
+   * This function blocks until the threads in the pool have completed. If @c
+   * stop() is not called prior to @c wait(), the @c wait() call will wait
+   * until the pool has no more outstanding work.
+   */
+  ASIO_DECL void wait();
+
 private:
   thread_pool(const thread_pool&) ASIO_DELETED;
   thread_pool& operator=(const thread_pool&) ASIO_DELETED;
 
-  friend class executor_type;
   struct thread_function;
 
   // Helper function to create the underlying scheduler.
@@ -110,12 +149,247 @@ private:
 
   // The threads in the pool.
   detail::thread_group threads_;
+
+  // The current number of threads in the pool.
+  detail::atomic_count num_threads_;
 };
 
-/// Executor used to submit functions to a thread pool.
-class thread_pool::executor_type
+/// Executor implementation type used to submit functions to a thread pool.
+template <typename Allocator, unsigned int Bits>
+class thread_pool::basic_executor_type : detail::thread_pool_bits
 {
 public:
+  /// Copy construtor.
+  basic_executor_type(
+      const basic_executor_type& other) ASIO_NOEXCEPT
+    : pool_(other.pool_),
+      allocator_(other.allocator_),
+      bits_(other.bits_)
+  {
+    if (Bits & outstanding_work_tracked)
+      if (pool_)
+        pool_->scheduler_.work_started();
+  }
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move construtor.
+  basic_executor_type(basic_executor_type&& other) ASIO_NOEXCEPT
+    : pool_(other.pool_),
+      allocator_(ASIO_MOVE_CAST(Allocator)(other.allocator_)),
+      bits_(other.bits_)
+  {
+    if (Bits & outstanding_work_tracked)
+      other.pool_ = 0;
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Destructor.
+  ~basic_executor_type()
+  {
+    if (Bits & outstanding_work_tracked)
+      if (pool_)
+        pool_->scheduler_.work_finished();
+  }
+
+  /// Assignment operator.
+  basic_executor_type& operator=(
+      const basic_executor_type& other) ASIO_NOEXCEPT;
+
+#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  /// Move assignment operator.
+  basic_executor_type& operator=(
+      basic_executor_type&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  /// Obtain an executor with the @c blocking.possibly property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED(Bits & ~blocking_mask)>
+  require(execution::blocking_t::possibly_t) const
+  {
+    return basic_executor_type<Allocator, Bits & ~blocking_mask>(
+        pool_, allocator_, bits_ & ~blocking_mask);
+  }
+
+  /// Obtain an executor with the @c blocking.always property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED((Bits & ~blocking_mask) | blocking_always)>
+  require(execution::blocking_t::always_t) const
+  {
+    return basic_executor_type<Allocator,
+        ASIO_UNSPECIFIED((Bits & ~blocking_mask) | blocking_always)>(
+          pool_, allocator_, bits_ & ~blocking_mask);
+  }
+
+  /// Obtain an executor with the @c blocking.never property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED(Bits & ~blocking_mask)>
+  require(execution::blocking_t::never_t) const
+  {
+    return basic_executor_type<Allocator, Bits & ~blocking_mask>(
+        pool_, allocator_, (bits_ & ~blocking_mask) | blocking_never);
+  }
+
+  /// Obtain an executor with the @c relationship.fork property.
+  ASIO_CONSTEXPR basic_executor_type require(
+      execution::relationship_t::fork_t) const
+  {
+    return basic_executor_type(pool_,
+        allocator_, bits_ & ~relationship_continuation);
+  }
+
+  /// Obtain an executor with the @c relationship.continuation property.
+  ASIO_CONSTEXPR basic_executor_type require(
+      execution::relationship_t::continuation_t) const
+  {
+    return basic_executor_type(pool_,
+        allocator_, bits_ | relationship_continuation);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.tracked property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED(Bits | outstanding_work_tracked)>
+  require(execution::outstanding_work_t::tracked_t) const
+  {
+    return basic_executor_type<Allocator, Bits | outstanding_work_tracked>(
+        pool_, allocator_, bits_);
+  }
+
+  /// Obtain an executor with the @c outstanding_work.untracked property.
+  ASIO_CONSTEXPR basic_executor_type<Allocator,
+      ASIO_UNSPECIFIED(Bits & ~outstanding_work_tracked)>
+  require(execution::outstanding_work_t::untracked_t) const
+  {
+    return basic_executor_type<Allocator, Bits & ~outstanding_work_tracked>(
+        pool_, allocator_, bits_);
+  }
+
+  /// Obtain an executor with the specified @c allocator property.
+  template <typename OtherAllocator>
+  ASIO_CONSTEXPR basic_executor_type<OtherAllocator, Bits>
+  require(execution::allocator_t<OtherAllocator> a) const
+  {
+    return basic_executor_type<OtherAllocator, Bits>(
+        pool_, a.value(), bits_);
+  }
+
+  /// Obtain an executor with the default @c allocator property.
+  ASIO_CONSTEXPR basic_executor_type<std::allocator<void>, Bits>
+  require(execution::allocator_t<void>) const
+  {
+    return basic_executor_type<std::allocator<void>, Bits>(
+        pool_, std::allocator<void>(), bits_);
+  }
+
+  /// Query the current value of the @c bulk_guarantee property.
+  static ASIO_CONSTEXPR execution::bulk_guarantee_t query(
+      execution::bulk_guarantee_t) ASIO_NOEXCEPT
+  {
+    return execution::bulk_guarantee.parallel;
+  }
+
+  /// Query the current value of the @c mapping property.
+  static ASIO_CONSTEXPR execution::mapping_t query(
+      execution::mapping_t) ASIO_NOEXCEPT
+  {
+    return execution::mapping.thread;
+  }
+
+  /// Query the current value of the @c context property.
+  thread_pool& query(execution::context_t) const ASIO_NOEXCEPT
+  {
+    return *pool_;
+  }
+
+  /// Query the current value of the @c blocking property.
+  ASIO_CONSTEXPR execution::blocking_t query(
+      execution::blocking_t) const ASIO_NOEXCEPT
+  {
+    return (bits_ & blocking_never)
+      ? execution::blocking_t(execution::blocking.never)
+      : ((Bits & blocking_always)
+          ? execution::blocking_t(execution::blocking.always)
+          : execution::blocking_t(execution::blocking.possibly));
+  }
+
+  /// Query the current value of the @c relationship property.
+  ASIO_CONSTEXPR execution::relationship_t query(
+      execution::relationship_t) const ASIO_NOEXCEPT
+  {
+    return (bits_ & relationship_continuation)
+      ? execution::relationship_t(execution::relationship.continuation)
+      : execution::relationship_t(execution::relationship.fork);
+  }
+
+  /// Query the current value of the @c outstanding_work property.
+  static ASIO_CONSTEXPR execution::outstanding_work_t query(
+      execution::outstanding_work_t) ASIO_NOEXCEPT
+  {
+    return (Bits & outstanding_work_tracked)
+      ? execution::outstanding_work_t(execution::outstanding_work.tracked)
+      : execution::outstanding_work_t(execution::outstanding_work.untracked);
+  }
+
+  /// Query the current value of the @c allocator property.
+  template <typename OtherAllocator>
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<OtherAllocator>) const ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Query the current value of the @c allocator property.
+  ASIO_CONSTEXPR Allocator query(
+      execution::allocator_t<void>) const ASIO_NOEXCEPT
+  {
+    return allocator_;
+  }
+
+  /// Query the occupancy (recommended number of work items) for the pool.
+  std::size_t query(execution::occupancy_t) const ASIO_NOEXCEPT
+  {
+    return static_cast<std::size_t>(pool_->num_threads_);
+  }
+
+  /// Determine whether the thread pool is running in the current thread.
+  /**
+   * @return @c true if the current thread is running the thread pool. Otherwise
+   * returns @c false.
+   */
+  bool running_in_this_thread() const ASIO_NOEXCEPT;
+
+  /// Compare two executors for equality.
+  /**
+   * Two executors are equal if they refer to the same underlying thread pool.
+   */
+  friend bool operator==(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.pool_ == b.pool_
+      && a.allocator_ == b.allocator_
+      && a.bits_ == b.bits_;
+  }
+
+  /// Compare two executors for inequality.
+  /**
+   * Two executors are equal if they refer to the same underlying thread pool.
+   */
+  friend bool operator!=(const basic_executor_type& a,
+      const basic_executor_type& b) ASIO_NOEXCEPT
+  {
+    return a.pool_ != b.pool_
+      || a.allocator_ != b.allocator_
+      || a.bits_ != b.bits_;
+  }
+
+  /// Execution function.
+  template <typename Function>
+  void execute(ASIO_MOVE_ARG(Function) f) const
+  {
+    this->do_execute(ASIO_MOVE_CAST(Function)(f),
+        integral_constant<bool, (Bits & blocking_always) != 0>());
+  }
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
   /// Obtain the underlying execution context.
   thread_pool& context() const ASIO_NOEXCEPT;
 
@@ -149,8 +423,9 @@ public:
    * @param a An allocator that may be used by the executor to allocate the
    * internal storage needed for function invocation.
    */
-  template <typename Function, typename Allocator>
-  void dispatch(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  template <typename Function, typename OtherAllocator>
+  void dispatch(ASIO_MOVE_ARG(Function) f,
+      const OtherAllocator& a) const;
 
   /// Request the thread pool to invoke the given function object.
   /**
@@ -165,8 +440,9 @@ public:
    * @param a An allocator that may be used by the executor to allocate the
    * internal storage needed for function invocation.
    */
-  template <typename Function, typename Allocator>
-  void post(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
+  template <typename Function, typename OtherAllocator>
+  void post(ASIO_MOVE_ARG(Function) f,
+      const OtherAllocator& a) const;
 
   /// Request the thread pool to invoke the given function object.
   /**
@@ -185,45 +461,358 @@ public:
    * @param a An allocator that may be used by the executor to allocate the
    * internal storage needed for function invocation.
    */
-  template <typename Function, typename Allocator>
-  void defer(ASIO_MOVE_ARG(Function) f, const Allocator& a) const;
-
-  /// Determine whether the thread pool is running in the current thread.
-  /**
-   * @return @c true if the current thread belongs to the pool. Otherwise
-   * returns @c false.
-   */
-  bool running_in_this_thread() const ASIO_NOEXCEPT;
-
-  /// Compare two executors for equality.
-  /**
-   * Two executors are equal if they refer to the same underlying thread pool.
-   */
-  friend bool operator==(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.pool_ == &b.pool_;
-  }
-
-  /// Compare two executors for inequality.
-  /**
-   * Two executors are equal if they refer to the same underlying thread pool.
-   */
-  friend bool operator!=(const executor_type& a,
-      const executor_type& b) ASIO_NOEXCEPT
-  {
-    return &a.pool_ != &b.pool_;
-  }
+  template <typename Function, typename OtherAllocator>
+  void defer(ASIO_MOVE_ARG(Function) f,
+      const OtherAllocator& a) const;
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 private:
   friend class thread_pool;
+  template <typename, unsigned int> friend class basic_executor_type;
 
-  // Constructor.
-  explicit executor_type(thread_pool& p) : pool_(p) {}
+  // Constructor used by thread_pool::get_executor().
+  explicit basic_executor_type(thread_pool& p) ASIO_NOEXCEPT
+    : pool_(&p),
+      allocator_(),
+      bits_(0)
+  {
+    if (Bits & outstanding_work_tracked)
+      pool_->scheduler_.work_started();
+  }
+
+  // Constructor used by require().
+  basic_executor_type(thread_pool* p,
+      const Allocator& a, unsigned int bits) ASIO_NOEXCEPT
+    : pool_(p),
+      allocator_(a),
+      bits_(bits)
+  {
+    if (Bits & outstanding_work_tracked)
+      if (pool_)
+        pool_->scheduler_.work_started();
+  }
+
+  /// Execution helper implementation for possibly and never blocking.
+  template <typename Function>
+  void do_execute(ASIO_MOVE_ARG(Function) f, false_type) const;
+
+  /// Execution helper implementation for always blocking.
+  template <typename Function>
+  void do_execute(ASIO_MOVE_ARG(Function) f, true_type) const;
 
   // The underlying thread pool.
-  thread_pool& pool_;
+  thread_pool* pool_;
+
+  // The allocator used for execution functions.
+  Allocator allocator_;
+
+  // The runtime-switched properties of the thread pool executor.
+  unsigned int bits_;
 };
+
+#if !defined(GENERATING_DOCUMENTATION)
+
+namespace execution {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+template <typename Allocator, unsigned int Bits>
+struct is_executor<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>
+  > : true_type
+{
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+} // namespace execution
+namespace traits {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Function>
+struct execute_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Function
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::blocking_t::possibly_t
+  > : asio::detail::thread_pool_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits & ~blocking_mask> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::blocking_t::always_t
+  > : asio::detail::thread_pool_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<Allocator,
+      (Bits & ~blocking_mask) | blocking_always> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::blocking_t::never_t
+  > : asio::detail::thread_pool_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits & ~blocking_mask> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::relationship_t::fork_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::relationship_t::continuation_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::outstanding_work_t::tracked_t
+  > : asio::detail::thread_pool_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits | outstanding_work_tracked> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::outstanding_work_t::untracked_t
+  > : asio::detail::thread_pool_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits & ~outstanding_work_tracked> result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<void>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      std::allocator<void>, Bits> result_type;
+};
+
+template <unsigned int Bits,
+    typename Allocator, typename OtherAllocator>
+struct require_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<OtherAllocator>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      OtherAllocator, Bits> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_static_constexpr_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::bulk_guarantee_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::bulk_guarantee_t::parallel_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_static_constexpr_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::outstanding_work_t
+      >::value
+    >::type
+  > : asio::detail::thread_pool_bits
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::outstanding_work_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return (Bits & outstanding_work_tracked)
+      ? execution::outstanding_work_t(execution::outstanding_work.tracked)
+      : execution::outstanding_work_t(execution::outstanding_work.untracked);
+  }
+};
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_static_constexpr_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::mapping_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::mapping_t::thread_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::blocking_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::blocking_t result_type;
+};
+
+template <typename Allocator, unsigned int Bits, typename Property>
+struct query_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::relationship_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::execution::relationship_t result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct query_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::occupancy_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef std::size_t result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct query_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::context_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::thread_pool& result_type;
+};
+
+template <typename Allocator, unsigned int Bits>
+struct query_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<void>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Allocator result_type;
+};
+
+template <typename Allocator, unsigned int Bits, typename OtherAllocator>
+struct query_member<
+    asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    asio::execution::allocator_t<OtherAllocator>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Allocator result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+} // namespace traits
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

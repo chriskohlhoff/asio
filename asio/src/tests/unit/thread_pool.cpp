@@ -80,7 +80,7 @@ void thread_pool_test()
   int count3 = 10;
   asio::post(pool, bindns::bind(nested_decrement_to_zero, &pool, &count3));
 
-  pool.join();
+  pool.wait();
 
   ASIO_CHECK(count1 == 1);
   ASIO_CHECK(count2 == 0);
@@ -158,9 +158,143 @@ void thread_pool_service_test()
   ASIO_CHECK(!asio::has_service<test_service>(pool3));
 }
 
+void thread_pool_executor_query_test()
+{
+  thread_pool pool(1);
+
+  ASIO_CHECK(
+      &asio::query(pool.executor(),
+        asio::execution::context)
+      == &pool);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::blocking)
+      == asio::execution::blocking.possibly);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::blocking.possibly)
+      == asio::execution::blocking.possibly);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::outstanding_work)
+      == asio::execution::outstanding_work.untracked);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::outstanding_work.untracked)
+      == asio::execution::outstanding_work.untracked);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::relationship)
+      == asio::execution::relationship.fork);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::relationship.fork)
+      == asio::execution::relationship.fork);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::bulk_guarantee)
+      == asio::execution::bulk_guarantee.parallel);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::mapping)
+      == asio::execution::mapping.thread);
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::allocator)
+      == std::allocator<void>());
+
+  ASIO_CHECK(
+      asio::query(pool.executor(),
+        asio::execution::occupancy)
+      == 1);
+}
+
+void thread_pool_executor_execute_test()
+{
+  int count = 0;
+  thread_pool pool(1);
+
+  asio::execution::execute(pool.executor(),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.possibly),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.always),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.never),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.tracked),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.fork),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(pool.executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.continuation),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::prefer(
+        asio::require(pool.executor(),
+          asio::execution::blocking.never,
+          asio::execution::outstanding_work.untracked,
+          asio::execution::relationship.continuation),
+        asio::execution::allocator(std::allocator<void>())),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::prefer(
+        asio::require(pool.executor(),
+          asio::execution::blocking.never,
+          asio::execution::outstanding_work.untracked,
+          asio::execution::relationship.continuation),
+        asio::execution::allocator),
+      bindns::bind(increment, &count));
+
+  pool.wait();
+
+  ASIO_CHECK(count == 10);
+}
+
 ASIO_TEST_SUITE
 (
   "thread_pool",
   ASIO_TEST_CASE(thread_pool_test)
   ASIO_TEST_CASE(thread_pool_service_test)
+  ASIO_TEST_CASE(thread_pool_executor_query_test)
+  ASIO_TEST_CASE(thread_pool_executor_execute_test)
 )
