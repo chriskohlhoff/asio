@@ -9,6 +9,7 @@
 *.tds
 blocking
 blocking_adaptation
+bulk_guarantee
 execute
 invocable_archetype
 mapping
