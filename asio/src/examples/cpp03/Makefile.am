@@ -170,6 +170,27 @@ tutorial_daytime4_client_SOURCES = tutorial/daytime4/client.cpp
 tutorial_daytime5_server_SOURCES = tutorial/daytime5/server.cpp
 tutorial_daytime6_server_SOURCES = tutorial/daytime6/server.cpp
 tutorial_daytime7_server_SOURCES = tutorial/daytime7/server.cpp
+if !HAVE_CXX11
+## ASIO_HAS_STD_CHRONO not set and probably using ASIO_HAS_BOOST_CHRONO
+icmp_ping_LDADD = $(LDADD) -lboost_chrono
+invocation_prioritised_handlers_LDADD = $(LDADD) -lboost_chrono
+iostreams_daytime_client_LDADD = $(LDADD) -lboost_chrono
+iostreams_daytime_server_LDADD = $(LDADD) -lboost_chrono
+iostreams_http_client_LDADD = $(LDADD) -lboost_chrono
+multicast_sender_LDADD = $(LDADD) -lboost_chrono
+porthopper_client_LDADD = $(LDADD) -lboost_chrono
+porthopper_server_LDADD = $(LDADD) -lboost_chrono
+timeouts_async_tcp_client_LDADD = $(LDADD) -lboost_chrono
+timeouts_blocking_tcp_client_LDADD = $(LDADD) -lboost_chrono
+timeouts_blocking_token_tcp_client_LDADD = $(LDADD) -lboost_chrono
+timeouts_blocking_udp_client_LDADD = $(LDADD) -lboost_chrono
+timeouts_server_LDADD = $(LDADD) -lboost_chrono
+tutorial_timer1_timer_LDADD = $(LDADD) -lboost_chrono
+tutorial_timer2_timer_LDADD = $(LDADD) -lboost_chrono
+tutorial_timer3_timer_LDADD = $(LDADD) -lboost_chrono
+tutorial_timer4_timer_LDADD = $(LDADD) -lboost_chrono
+tutorial_timer5_timer_LDADD = $(LDADD) -lboost_chrono
+endif
 
 if !WINDOWS_TARGET
 chat_posix_chat_client_SOURCES = chat/posix_chat_client.cpp
@@ -177,6 +198,10 @@ fork_daemon_SOURCES = fork/daemon.cpp
 fork_process_per_connection_SOURCES = fork/process_per_connection.cpp
 local_connect_pair_SOURCES = local/connect_pair.cpp
 local_iostream_client_SOURCES = local/iostream_client.cpp
+if !HAVE_CXX11
+## ASIO_HAS_STD_CHRONO not set and probably using ASIO_HAS_BOOST_CHRONO
+local_iostream_client_LDADD = $(LDADD) -lboost_chrono
+endif
 local_stream_server_SOURCES = local/stream_server.cpp
 local_stream_client_SOURCES = local/stream_client.cpp
 endif

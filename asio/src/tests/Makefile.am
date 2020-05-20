@@ -288,6 +288,10 @@ latency_udp_client_SOURCES = latency/udp_client.cpp
 latency_udp_server_SOURCES = latency/udp_server.cpp
 performance_client_SOURCES = performance/client.cpp
 performance_server_SOURCES = performance/server.cpp
+if !HAVE_CXX11
+## ASIO_HAS_STD_CHRONO not set and probably using ASIO_HAS_BOOST_CHRONO
+performance_client_LDADD = $(LDADD) -lboost_chrono
+endif
 endif
 
 unit_associated_allocator_SOURCES = unit/associated_allocator.cpp
