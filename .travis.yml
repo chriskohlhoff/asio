@@ -48,6 +48,22 @@ matrix:
         - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
       compiler: gcc
     #
+    # Linux / g++-9 -std=c++14 / -O0 / standalone / separate compilation
+    #
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - CXXFLAGS="-std=c++14 -Wall -Wextra -O0 -fno-inline"
+        - CONFIGFLAGS="--with-boost=no --enable-separate-compilation"
+        - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
+      compiler: gcc
+    #
     #---------------------------------------------------------------------------
     # Linux / g++-6
     #---------------------------------------------------------------------------
@@ -94,21 +110,6 @@ matrix:
       env:
         - CXXFLAGS="-Wall -Wextra -O0 -fno-inline -DASIO_DISABLE_EPOLL"
         - CONFIGFLAGS="--with-boost=no"
-        - MATRIX_EVAL="CC=gcc-6 CXX=g++-6"
-      compiler: gcc
-    #
-    # Linux / g++-6 / -O0 / standalone / separate compilation
-    #
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - CXXFLAGS="-Wall -Wextra -O0 -fno-inline"
-        - CONFIGFLAGS="--with-boost=no --enable-separate-compilation"
         - MATRIX_EVAL="CC=gcc-6 CXX=g++-6"
       compiler: gcc
     #
