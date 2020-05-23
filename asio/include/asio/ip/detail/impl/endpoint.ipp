@@ -45,6 +45,9 @@ endpoint::endpoint(int family, unsigned short port_num) ASIO_NOEXCEPT
   using namespace std; // For memcpy.
   if (family == ASIO_OS_DEF(AF_INET))
   {
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v4.sin_len = sizeof(data_.v4);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v4.sin_family = ASIO_OS_DEF(AF_INET);
     data_.v4.sin_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
@@ -52,6 +55,9 @@ endpoint::endpoint(int family, unsigned short port_num) ASIO_NOEXCEPT
   }
   else
   {
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v6.sin6_len = sizeof(data_.v6);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v6.sin6_family = ASIO_OS_DEF(AF_INET6);
     data_.v6.sin6_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
@@ -75,6 +81,9 @@ endpoint::endpoint(const asio::ip::address& addr,
   using namespace std; // For memcpy.
   if (addr.is_v4())
   {
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v4.sin_len = sizeof(data_.v4);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v4.sin_family = ASIO_OS_DEF(AF_INET);
     data_.v4.sin_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
@@ -84,6 +93,9 @@ endpoint::endpoint(const asio::ip::address& addr,
   }
   else
   {
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    data_.v6.sin6_len = sizeof(data_.v6);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     data_.v6.sin6_family = ASIO_OS_DEF(AF_INET6);
     data_.v6.sin6_port =
       asio::detail::socket_ops::host_to_network_short(port_num);
@@ -105,6 +117,44 @@ void endpoint::resize(std::size_t new_size)
     asio::detail::throw_error(ec);
   }
 }
+
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+asio::detail::apple_nw_ptr<nw_endpoint_t>
+endpoint::apple_nw_create_endpoint() const
+{
+  return asio::detail::apple_nw_ptr<nw_endpoint_t>(
+      nw_endpoint_create_address(&data_.base));
+}
+
+void endpoint::apple_nw_set_endpoint(
+    asio::detail::apple_nw_ptr<nw_endpoint_t> new_ep)
+{
+  using namespace std; // For memcpy.
+
+  if (nw_endpoint_get_type(new_ep) != nw_endpoint_type_address)
+  {
+    asio::error_code ec(asio::error::invalid_argument);
+    asio::detail::throw_error(ec);
+  }
+
+  const asio::detail::socket_addr_type* addr =
+    nw_endpoint_get_address(new_ep);
+
+  switch (addr->sa_family)
+  {
+  case ASIO_OS_DEF(AF_INET):
+    memcpy(&data_.v4, addr, sizeof(data_.v4));
+    break;
+  case ASIO_OS_DEF(AF_INET6):
+    memcpy(&data_.v6, addr, sizeof(data_.v6));
+    break;
+  default:
+    asio::error_code ec(asio::error::invalid_argument);
+    asio::detail::throw_error(ec);
+    break;
+  }
+}
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
 unsigned short endpoint::port() const ASIO_NOEXCEPT
 {

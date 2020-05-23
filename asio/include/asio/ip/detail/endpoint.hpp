@@ -22,6 +22,11 @@
 #include "asio/error_code.hpp"
 #include "asio/ip/address.hpp"
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include "asio/detail/apple_nw_ptr.hpp"
+# include <Network/Network.h>
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -85,6 +90,16 @@ public:
   {
     return sizeof(data_);
   }
+
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // Create a new native object corresponding to the endpoint.
+  ASIO_DECL asio::detail::apple_nw_ptr<nw_endpoint_t>
+  apple_nw_create_endpoint() const;
+
+  // Set the endpoint from the native object.
+  ASIO_DECL void apple_nw_set_endpoint(
+      asio::detail::apple_nw_ptr<nw_endpoint_t> new_ep);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   // Get the port associated with the endpoint.
   ASIO_DECL unsigned short port() const ASIO_NOEXCEPT;

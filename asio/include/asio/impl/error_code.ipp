@@ -172,6 +172,8 @@ public:
       return std::errc::operation_canceled;
     case operation_not_supported:
       return std::errc::operation_not_supported;
+    case protocol_not_supported:
+      return std::errc::protocol_not_supported;
     case shut_down:
       return std::make_error_condition(ev, *this);
     case timed_out:
@@ -180,6 +182,8 @@ public:
       return std::errc::resource_unavailable_try_again;
     case would_block:
       return std::errc::operation_would_block;
+    case wrong_protocol_type:
+      return std::errc::wrong_protocol_type;
     default:
       return std::make_error_condition(ev, *this);
   }

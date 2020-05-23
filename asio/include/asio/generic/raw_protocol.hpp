@@ -23,6 +23,11 @@
 #include "asio/detail/throw_exception.hpp"
 #include "asio/generic/basic_endpoint.hpp"
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include "asio/detail/apple_nw_ptr.hpp"
+# include <Network/Network.h>
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -49,12 +54,25 @@ namespace generic {
 class raw_protocol
 {
 public:
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  /// Construct a protocol object from parameters and max size.
+  raw_protocol(
+      asio::detail::apple_nw_ptr<nw_parameters_t> parameters,
+      std::size_t max_receive_size)
+    : parameters_(
+        ASIO_MOVE_CAST(
+          asio::detail::apple_nw_ptr<nw_parameters_t>)(parameters)),
+      max_receive_size_(max_receive_size)
+  {
+  }
+#else // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   /// Construct a protocol object for a specific address family and protocol.
   raw_protocol(int address_family, int socket_protocol)
     : family_(address_family),
       protocol_(socket_protocol)
   {
   }
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   /// Construct a generic protocol object from a specific protocol.
   /**
@@ -62,8 +80,13 @@ public:
    */
   template <typename Protocol>
   raw_protocol(const Protocol& source_protocol)
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    : parameters_(source_protocol.apple_nw_create_parameters()),
+      max_receive_size_(source_protocol.apple_nw_max_receive_size())
+#else // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     : family_(source_protocol.family()),
       protocol_(source_protocol.protocol())
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   {
     if (source_protocol.type() != type())
     {
@@ -78,6 +101,27 @@ public:
     return ASIO_OS_DEF(SOCK_RAW);
   }
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the Protocol
+  // concept when targeting the Apple Network Framework.
+
+  // Obtain parameters to be used when creating a new connection or listener.
+  asio::detail::apple_nw_ptr<nw_parameters_t>
+  apple_nw_create_parameters() const
+  {
+    return asio::detail::apple_nw_ptr<nw_parameters_t>(
+        nw_parameters_copy(parameters_));
+  }
+
+  // Obtain the override value for the maximum receive size.
+  std::size_t apple_nw_max_receive_size() const
+  {
+    return max_receive_size_;
+  }
+#else // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions are only available with the standard extensible
+  // interface.
+
   /// Obtain an identifier for the protocol.
   int protocol() const ASIO_NOEXCEPT
   {
@@ -89,11 +133,17 @@ public:
   {
     return family_;
   }
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   /// Compare two protocols for equality.
   friend bool operator==(const raw_protocol& p1, const raw_protocol& p2)
   {
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+    return p1.parameters_ == p2.parameters_
+      && p1.max_receive_size_ == p2.max_receive_size_;
+#else // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     return p1.family_ == p2.family_ && p1.protocol_ == p2.protocol_;
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   }
 
   /// Compare two protocols for inequality.
@@ -109,8 +159,13 @@ public:
   typedef basic_raw_socket<raw_protocol> socket;
 
 private:
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  asio::detail::apple_nw_ptr<nw_parameters_t> parameters_;
+  std::size_t max_receive_size_;
+#else // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   int family_;
   int protocol_;
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 };
 
 } // namespace generic

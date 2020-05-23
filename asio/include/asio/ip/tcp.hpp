@@ -26,6 +26,11 @@
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include "asio/detail/apple_nw_ptr.hpp"
+# include <Network/Network.h>
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -78,6 +83,21 @@ public:
     return family_;
   }
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the Protocol
+  // concept when targeting the Apple Network Framework.
+
+  // Obtain parameters to be used when creating a new connection or listener.
+  ASIO_DECL asio::detail::apple_nw_ptr<nw_parameters_t>
+  apple_nw_create_parameters() const;
+
+  // Obtain the override value for the maximum receive size.
+  std::size_t apple_nw_max_receive_size() const ASIO_NOEXCEPT
+  {
+    return 0;
+  }
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
   /// The TCP socket type.
   typedef basic_stream_socket<tcp> socket;
 
@@ -87,10 +107,12 @@ public:
   /// The TCP resolver type.
   typedef basic_resolver<tcp> resolver;
 
-#if !defined(ASIO_NO_IOSTREAM)
+#if !defined(ASIO_NO_IOSTREAM) \
+  && !defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
   /// The TCP iostream type.
   typedef basic_socket_iostream<tcp> iostream;
 #endif // !defined(ASIO_NO_IOSTREAM)
+       //   && !defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 
   /// Socket option for disabling the Nagle algorithm.
   /**
@@ -121,8 +143,55 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined no_delay;
 #else
-  typedef asio::detail::socket_option::boolean<
-    ASIO_OS_DEF(IPPROTO_TCP), ASIO_OS_DEF(TCP_NODELAY)> no_delay;
+  class no_delay :
+    public asio::detail::socket_option::boolean<
+      ASIO_OS_DEF(IPPROTO_TCP), ASIO_OS_DEF(TCP_NODELAY)>
+  {
+  public:
+    no_delay()
+    {
+    }
+
+    explicit no_delay(bool b)
+      : asio::detail::socket_option::boolean<
+          ASIO_OS_DEF(IPPROTO_TCP), ASIO_OS_DEF(TCP_NODELAY)>(b)
+    {
+    }
+
+    no_delay& operator=(bool b)
+    {
+      asio::detail::socket_option::boolean<
+          ASIO_OS_DEF(IPPROTO_TCP),
+          ASIO_OS_DEF(TCP_NODELAY)>::operator=(b);
+      return *this;
+    }
+
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the
+  // SettableSocketOption and GettableSocketOption concepts when targeting the
+  // Apple Network Framework.
+
+  // Set the socket option on the specified connection.
+  ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      asio::error_code& ec);
+
+  // Set the socket option on the specified connection.
+  ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      asio::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      asio::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      asio::error_code& ec);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  };
 #endif
 
   /// Compare two protocols for equality.
@@ -151,5 +220,9 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/ip/impl/tcp.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_IP_TCP_HPP

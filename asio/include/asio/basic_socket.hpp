@@ -32,6 +32,8 @@
 # include "asio/detail/null_socket_service.hpp"
 #elif defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_socket_service.hpp"
+#elif defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include "asio/detail/apple_nw_socket_service.hpp"
 #else
 # include "asio/detail/reactive_socket_service.hpp"
 #endif
@@ -86,6 +88,9 @@ public:
     Protocol>::native_handle_type native_handle_type;
 #elif defined(ASIO_HAS_IOCP)
   typedef typename detail::win_iocp_socket_service<
+    Protocol>::native_handle_type native_handle_type;
+#elif defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  typedef typename detail::apple_nw_socket_service<
     Protocol>::native_handle_type native_handle_type;
 #else
   typedef typename detail::reactive_socket_service<
@@ -1801,6 +1806,9 @@ protected:
 #elif defined(ASIO_HAS_IOCP)
   detail::io_object_impl<
     detail::win_iocp_socket_service<Protocol>, Executor> impl_;
+#elif defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  detail::io_object_impl<
+    detail::apple_nw_socket_service<Protocol>, Executor> impl_;
 #else
   detail::io_object_impl<
     detail::reactive_socket_service<Protocol>, Executor> impl_;

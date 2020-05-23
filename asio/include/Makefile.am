@@ -37,6 +37,19 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \
 	asio/detached.hpp \
+	asio/detail/apple_nw_acceptor_service.hpp \
+	asio/detail/apple_nw_acceptor_service_base.hpp \
+	asio/detail/apple_nw_async_op.hpp \
+	asio/detail/apple_nw_async_scope.hpp \
+	asio/detail/apple_nw_buffer_helpers.hpp \
+	asio/detail/apple_nw_ptr.hpp \
+	asio/detail/apple_nw_socket_accept_op.hpp \
+	asio/detail/apple_nw_socket_connect_op.hpp \
+	asio/detail/apple_nw_socket_recv_op.hpp \
+	asio/detail/apple_nw_socket_send_op.hpp \
+	asio/detail/apple_nw_socket_service.hpp \
+	asio/detail/apple_nw_socket_service_base.hpp \
+	asio/detail/apple_nw_sync_result.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
@@ -87,6 +100,8 @@ nobase_include_HEADERS = \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/handler_work.hpp \
 	asio/detail/hash_map.hpp \
+	asio/detail/impl/apple_nw_acceptor_service_base.ipp \
+	asio/detail/impl/apple_nw_socket_service_base.ipp \
 	asio/detail/impl/buffer_sequence_adapter.ipp \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/dev_poll_reactor.hpp \
@@ -420,6 +435,8 @@ nobase_include_HEADERS = \
 	asio/ip/impl/network_v4.ipp \
 	asio/ip/impl/network_v6.hpp \
 	asio/ip/impl/network_v6.ipp \
+	asio/ip/impl/tcp.ipp \
+	asio/ip/impl/udp.ipp \
 	asio/ip/multicast.hpp \
 	asio/ip/network_v4.hpp \
 	asio/ip/network_v6.hpp \

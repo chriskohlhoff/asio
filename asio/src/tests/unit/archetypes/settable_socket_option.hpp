@@ -42,6 +42,18 @@ public:
   {
     return 0;
   }
+
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  static void apple_nw_set(const void*, nw_parameters_t,
+      nw_connection_t, asio::error_code&)
+  {
+  }
+
+  static void apple_nw_set(const void*, nw_parameters_t,
+      nw_listener_t, asio::error_code&)
+  {
+  }
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 };
 
 } // namespace archetypes

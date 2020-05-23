@@ -23,6 +23,11 @@
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include "asio/detail/apple_nw_ptr.hpp"
+# include <Network/Network.h>
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -75,6 +80,21 @@ public:
     return family_;
   }
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the Protocol
+  // concept when targeting the Apple Network Framework.
+
+  // Obtain parameters to be used when creating a new connection or listener.
+  ASIO_DECL asio::detail::apple_nw_ptr<nw_parameters_t>
+  apple_nw_create_parameters() const;
+
+  // Obtain the override value for the maximum receive size.
+  std::size_t apple_nw_max_receive_size() const ASIO_NOEXCEPT
+  {
+    return 65535;
+  }
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
   /// The UDP socket type.
   typedef basic_datagram_socket<udp> socket;
 
@@ -107,5 +127,9 @@ private:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/ip/impl/udp.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_IP_UDP_HPP

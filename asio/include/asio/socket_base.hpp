@@ -20,6 +20,10 @@
 #include "asio/detail/socket_option.hpp"
 #include "asio/detail/socket_types.hpp"
 
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+# include <Network/Network.h>
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -221,8 +225,55 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined keep_alive;
 #else
-  typedef asio::detail::socket_option::boolean<
-    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_KEEPALIVE)> keep_alive;
+  class keep_alive :
+    public asio::detail::socket_option::boolean<
+      ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_KEEPALIVE)>
+  {
+  public:
+    keep_alive()
+    {
+    }
+
+    explicit keep_alive(bool b)
+      : asio::detail::socket_option::boolean<
+          ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_KEEPALIVE)>(b)
+    {
+    }
+
+    keep_alive& operator=(bool b)
+    {
+      asio::detail::socket_option::boolean<
+          ASIO_OS_DEF(SOL_SOCKET),
+          ASIO_OS_DEF(SO_KEEPALIVE)>::operator=(b);
+      return *this;
+    }
+
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the
+  // SettableSocketOption and GettableSocketOption concepts when targeting the
+  // Apple Network Framework.
+
+  // Set the socket option on the specified connection.
+  ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      asio::error_code& ec);
+
+  // Set the socket option on the specified connection.
+  ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      asio::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      asio::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      asio::error_code& ec);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  };
 #endif
 
   /// Socket option for the send buffer size of a socket.
@@ -391,9 +442,55 @@ public:
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined reuse_address;
 #else
-  typedef asio::detail::socket_option::boolean<
-    ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_REUSEADDR)>
-      reuse_address;
+  class reuse_address :
+    public asio::detail::socket_option::boolean<
+      ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_REUSEADDR)>
+  {
+  public:
+    reuse_address()
+    {
+    }
+
+    explicit reuse_address(bool b)
+      : asio::detail::socket_option::boolean<
+          ASIO_OS_DEF(SOL_SOCKET), ASIO_OS_DEF(SO_REUSEADDR)>(b)
+    {
+    }
+
+    reuse_address& operator=(bool b)
+    {
+      asio::detail::socket_option::boolean<
+          ASIO_OS_DEF(SOL_SOCKET),
+          ASIO_OS_DEF(SO_REUSEADDR)>::operator=(b);
+      return *this;
+    }
+
+#if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  // The following functions comprise the extensible interface for the
+  // SettableSocketOption and GettableSocketOption concepts when targeting the
+  // Apple Network Framework.
+
+  // Set the socket option on the specified connection.
+  ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      asio::error_code& ec);
+
+  // Set the socket option on the specified connection.
+  ASIO_DECL static void apple_nw_set(const void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      asio::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_connection_t connection,
+      asio::error_code& ec);
+
+  // Get the socket option from the specified connection.
+  ASIO_DECL static void apple_nw_get(void* self,
+      nw_parameters_t parameters, nw_listener_t listener,
+      asio::error_code& ec);
+#endif // defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
+  };
 #endif
 
   /// Socket option to specify whether the socket lingers on close if unsent
@@ -555,5 +652,9 @@ protected:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/impl/socket_base.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_SOCKET_BASE_HPP
