@@ -103,6 +103,17 @@ struct use_awaitable_t
       : InnerExecutor(ex)
     {
     }
+
+    /// Convert the specified executor to the inner executor type, then use
+    /// that to construct the adapted executor.
+    template <typename OtherExecutor>
+    executor_with_default(const OtherExecutor& ex,
+        typename enable_if<
+          is_convertible<OtherExecutor, InnerExecutor>::value
+        >::type* = 0) ASIO_NOEXCEPT
+      : InnerExecutor(ex)
+    {
+    }
   };
 
   /// Type alias to adapt an I/O object to use @c use_awaitable_t as its
