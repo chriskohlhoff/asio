@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #include <typeinfo>
+#include "asio/basic_socket_acceptor.hpp"
 #include "asio/basic_socket_iostream.hpp"
 #include "asio/basic_stream_socket.hpp"
 #include "asio/detail/socket_types.hpp"
@@ -162,6 +163,9 @@ public:
 
   /// The generic socket type.
   typedef basic_stream_socket<stream_protocol> socket;
+
+  /// The generic acceptor type.
+  typedef basic_socket_acceptor<stream_protocol> acceptor;
 
 #if !defined(ASIO_NO_IOSTREAM) \
   && !defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
