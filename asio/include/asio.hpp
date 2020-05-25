@@ -86,6 +86,7 @@
 #include "asio/executor_work_guard.hpp"
 #include "asio/generic/basic_endpoint.hpp"
 #include "asio/generic/datagram_protocol.hpp"
+#include "asio/generic/host.hpp"
 #include "asio/generic/raw_protocol.hpp"
 #include "asio/generic/seq_packet_protocol.hpp"
 #include "asio/generic/stream_protocol.hpp"

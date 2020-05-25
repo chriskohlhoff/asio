@@ -355,6 +355,7 @@ nobase_include_HEADERS = \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
 	asio/generic/detail/impl/endpoint.ipp \
+	asio/generic/host.hpp \
 	asio/generic/raw_protocol.hpp \
 	asio/generic/seq_packet_protocol.hpp \
 	asio/generic/stream_protocol.hpp \
