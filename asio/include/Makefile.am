@@ -437,6 +437,7 @@ nobase_include_HEADERS = \
 	asio/ip/impl/network_v6.hpp \
 	asio/ip/impl/network_v6.ipp \
 	asio/ip/impl/tcp.ipp \
+	asio/ip/impl/tls_tcp.ipp \
 	asio/ip/impl/udp.ipp \
 	asio/ip/multicast.hpp \
 	asio/ip/network_v4.hpp \

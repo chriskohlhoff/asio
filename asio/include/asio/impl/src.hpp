@@ -83,6 +83,7 @@
 #include "asio/ip/impl/network_v4.ipp"
 #include "asio/ip/impl/network_v6.ipp"
 #include "asio/ip/impl/tcp.ipp"
+#include "asio/ip/impl/tls_tcp.ipp"
 #include "asio/ip/impl/udp.ipp"
 #include "asio/ip/detail/impl/endpoint.ipp"
 #include "asio/local/detail/impl/endpoint.ipp"

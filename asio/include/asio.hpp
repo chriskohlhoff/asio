@@ -119,6 +119,7 @@
 #include "asio/ip/resolver_base.hpp"
 #include "asio/ip/resolver_query_base.hpp"
 #include "asio/ip/tcp.hpp"
+#include "asio/ip/tls_tcp.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/ip/unicast.hpp"
 #include "asio/ip/v6_only.hpp"
