@@ -22,6 +22,7 @@
 #include "asio/basic_stream_socket.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/throw_exception.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/generic/basic_endpoint.hpp"
 
 #if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
@@ -80,7 +81,10 @@ public:
    * @throws @c bad_cast Thrown if the source protocol is not stream-oriented.
    */
   template <typename Protocol>
-  stream_protocol(const Protocol& source_protocol)
+  stream_protocol(const Protocol& source_protocol,
+      typename enable_if<
+        is_same<Protocol, typename Protocol::endpoint::protocol_type>::value
+      >::type* = 0)
 #if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     : parameters_(source_protocol.apple_nw_create_parameters()),
       max_receive_size_(source_protocol.apple_nw_max_receive_size())

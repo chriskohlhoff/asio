@@ -79,7 +79,10 @@ public:
    * @throws @c bad_cast Thrown if the source protocol is not datagram-oriented.
    */
   template <typename Protocol>
-  datagram_protocol(const Protocol& source_protocol)
+  datagram_protocol(const Protocol& source_protocol,
+      typename enable_if<
+        is_same<Protocol, typename Protocol::endpoint::protocol_type>::value
+      >::type* = 0)
 #if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     : parameters_(source_protocol.apple_nw_create_parameters()),
       max_receive_size_(source_protocol.apple_nw_max_receive_size())

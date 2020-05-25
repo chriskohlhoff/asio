@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
 # include "asio/detail/apple_nw_ptr.hpp"
@@ -79,7 +80,10 @@ public:
 
   /// Construct an endpoint from the specific endpoint type.
   template <typename Endpoint>
-  basic_endpoint(const Endpoint& endpoint)
+  basic_endpoint(const Endpoint& endpoint,
+      typename enable_if<
+        is_convertible<typename Endpoint::protocol_type, protocol_type>::value
+      >::type* = 0)
 #if defined(ASIO_HAS_APPLE_NETWORK_FRAMEWORK)
     : endpoint_(endpoint.apple_nw_create_endpoint()),
       protocol_(endpoint.protocol())
