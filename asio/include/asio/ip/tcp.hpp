@@ -65,6 +65,12 @@ public:
     return tcp(ASIO_OS_DEF(AF_INET6));
   }
 
+  /// Construct to represent an unspecified TCP protocol.
+  static tcp any() ASIO_NOEXCEPT
+  {
+    return tcp(ASIO_OS_DEF(AF_UNSPEC));
+  }
+
   /// Obtain an identifier for the type of the protocol.
   int type() const ASIO_NOEXCEPT
   {

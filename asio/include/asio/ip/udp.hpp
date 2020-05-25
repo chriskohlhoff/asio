@@ -62,6 +62,12 @@ public:
     return udp(ASIO_OS_DEF(AF_INET6));
   }
 
+  /// Construct to represent an unspecified TCP protocol.
+  static udp any() ASIO_NOEXCEPT
+  {
+    return udp(ASIO_OS_DEF(AF_UNSPEC));
+  }
+
   /// Obtain an identifier for the type of the protocol.
   int type() const ASIO_NOEXCEPT
   {

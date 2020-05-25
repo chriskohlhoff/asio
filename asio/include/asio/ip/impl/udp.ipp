@@ -40,7 +40,7 @@ udp::apple_nw_create_parameters() const
 
   if (family_ == ASIO_OS_DEF(AF_INET))
     nw_ip_options_set_version(ip_options, nw_ip_version_4);
-  else
+  else if (family_ == ASIO_OS_DEF(AF_INET6))
     nw_ip_options_set_version(ip_options, nw_ip_version_6);
 
   return parameters;
