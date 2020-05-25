@@ -91,12 +91,7 @@ int main()
     signals.async_wait([&](auto, auto){ io_context.stop(); });
 
     tcp::acceptor acceptor(io_context, {tcp::v4(), 55555});
-    co_spawn(io_context,
-        [acceptor = std::move(acceptor)]() mutable
-        {
-          return listener(std::move(acceptor));
-        },
-        detached);
+    co_spawn(io_context, listener(std::move(acceptor)), detached);
 
     io_context.run();
   }

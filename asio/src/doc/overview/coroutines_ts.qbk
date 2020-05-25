@@ -14,12 +14,7 @@ asio.reference.co_spawn `co_spawn()`] function. These facilities allow programs
 to implement asynchronous logic in a synchronous manner, in conjunction with
 the `co_await` keyword, as shown in the following example:
 
-  asio::co_spawn(executor,
-      [socket = std::move(socket)]() mutable
-      {
-        return echo(std::move(socket));
-      },
-      asio::detached);
+  asio::co_spawn(executor, echo(std::move(socket)), asio::detached);
 
   // ...
 
@@ -46,10 +41,12 @@ execute. For example, a server's per-client object may consist of multiple
 coroutines; they should all run on the same `strand` so that no explicit
 synchronisation is required.
 
-The second argument is a nullary function object that returns a [link
-asio.reference.awaitable `asio::awaitable<R>`],
-where `R` is the type of return value produced by the coroutine. In the above
-example, the coroutine returns `void`.
+The second argument is an [link asio.reference.awaitable `awaitable<R>`],
+that is the result of the coroutine's entry point function, and in the above
+example is the result of the call to `echo`. (Alternatively, this argument can
+be a function object that returns the [link asio.reference.awaitable
+`awaitable<R>`].) The template parameter `R` is the type of return value
+produced by the coroutine. In the above example, the coroutine returns `void`.
 
 The third argument is a completion token, and this is used by `co_spawn()` to
 produce a completion handler with signature `void(std::exception_ptr, R)`. This

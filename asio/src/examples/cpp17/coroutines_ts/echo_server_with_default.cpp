@@ -49,12 +49,7 @@ awaitable<void> listener()
   for (;;)
   {
     auto socket = co_await acceptor.async_accept();
-    co_spawn(executor,
-        [socket = std::move(socket)]() mutable
-        {
-          return echo(std::move(socket));
-        },
-        detached);
+    co_spawn(executor, echo(std::move(socket)), detached);
   }
 }
 
@@ -67,7 +62,7 @@ int main()
     asio::signal_set signals(io_context, SIGINT, SIGTERM);
     signals.async_wait([&](auto, auto){ io_context.stop(); });
 
-    co_spawn(io_context, listener, detached);
+    co_spawn(io_context, listener(), detached);
 
     io_context.run();
   }

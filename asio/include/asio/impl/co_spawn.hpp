@@ -89,6 +89,24 @@ awaitable<void, Executor> co_spawn_entry_point(
       });
 }
 
+template <typename T, typename Executor>
+class awaitable_as_function
+{
+public:
+  explicit awaitable_as_function(awaitable<T, Executor>&& a)
+    : awaitable_(std::move(a))
+  {
+  }
+
+  awaitable<T, Executor> operator()()
+  {
+    return std::move(awaitable_);
+  }
+
+private:
+  awaitable<T, Executor> awaitable_;
+};
+
 template <typename Executor>
 class initiate_co_spawn
 {
@@ -121,6 +139,75 @@ private:
 };
 
 } // namespace detail
+
+template <typename Executor, typename T, typename AwaitableExecutor,
+    ASIO_COMPLETION_TOKEN_FOR(
+      void(std::exception_ptr, T)) CompletionToken>
+inline ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken, void(std::exception_ptr, T))
+co_spawn(const Executor& ex,
+    awaitable<T, AwaitableExecutor> a, CompletionToken&& token,
+    typename enable_if<
+      is_executor<Executor>::value
+        && is_convertible<Executor, AwaitableExecutor>::value
+    >::type*)
+{
+  return async_initiate<CompletionToken, void(std::exception_ptr, T)>(
+      detail::initiate_co_spawn<AwaitableExecutor>(AwaitableExecutor(ex)),
+      token, detail::awaitable_as_function<T, AwaitableExecutor>(std::move(a)));
+}
+
+template <typename Executor, typename AwaitableExecutor,
+    ASIO_COMPLETION_TOKEN_FOR(
+      void(std::exception_ptr)) CompletionToken>
+inline ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken, void(std::exception_ptr))
+co_spawn(const Executor& ex,
+    awaitable<void, AwaitableExecutor> a, CompletionToken&& token,
+    typename enable_if<
+      is_executor<Executor>::value
+        && is_convertible<Executor, AwaitableExecutor>::value
+    >::type*)
+{
+  return async_initiate<CompletionToken, void(std::exception_ptr)>(
+      detail::initiate_co_spawn<AwaitableExecutor>(AwaitableExecutor(ex)),
+      token, detail::awaitable_as_function<
+        void, AwaitableExecutor>(std::move(a)));
+}
+
+template <typename ExecutionContext, typename T, typename AwaitableExecutor,
+    ASIO_COMPLETION_TOKEN_FOR(
+      void(std::exception_ptr, T)) CompletionToken>
+inline ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken, void(std::exception_ptr, T))
+co_spawn(ExecutionContext& ctx,
+    awaitable<T, AwaitableExecutor> a, CompletionToken&& token,
+    typename enable_if<
+      is_convertible<ExecutionContext&, execution_context&>::value
+        && is_convertible<typename ExecutionContext::executor_type,
+          AwaitableExecutor>::value
+    >::type*)
+{
+  return (co_spawn)(ctx.get_executor(), std::move(a),
+      std::forward<CompletionToken>(token));
+}
+
+template <typename ExecutionContext, typename AwaitableExecutor,
+    ASIO_COMPLETION_TOKEN_FOR(
+      void(std::exception_ptr)) CompletionToken>
+inline ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken, void(std::exception_ptr))
+co_spawn(ExecutionContext& ctx,
+    awaitable<void, AwaitableExecutor> a, CompletionToken&& token,
+    typename enable_if<
+      is_convertible<ExecutionContext&, execution_context&>::value
+        && is_convertible<typename ExecutionContext::executor_type,
+          AwaitableExecutor>::value
+    >::type*)
+{
+  return (co_spawn)(ctx.get_executor(), std::move(a),
+      std::forward<CompletionToken>(token));
+}
 
 template <typename Executor, typename F,
     ASIO_COMPLETION_TOKEN_FOR(typename detail::awaitable_signature<
