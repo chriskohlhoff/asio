@@ -13,7 +13,7 @@ using socket_type = default_token::as_default_on_t<netx::generic_stream_socket>;
 netx::awaitable<void> run(net::io_context& ctx)
 {
   socket_type socket(ctx);
-  co_await socket.async_connect(netx::host(netx::ip::tls_tcp::any(), "www.boost.org", "80"));
+  co_await socket.async_connect(netx::host(net::ip::tcp::any(), "www.boost.org", "80"));
 
   std::cout << "Sending request" << std::endl;
   std::string request("GET /LICENSE_1_0.txt HTTP/1.0\r\nHost: www.boost.org\r\n\r\n");
