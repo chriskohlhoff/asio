@@ -23,6 +23,8 @@
 #include "asio/generic/stream_protocol.hpp"
 #include "asio/generic/host.hpp"
 #include "asio/ip/tls_tcp.hpp"
+#include "asio/security/on_certificate_verify.hpp"
+#include "asio/security/server_name.hpp"
 #include "asio/use_awaitable.hpp"
 
 namespace netx
@@ -36,6 +38,7 @@ namespace netx
   using generic_datagram_socket = asio::generic::datagram_protocol::socket;
   using generic_stream_socket = asio::generic::stream_protocol::socket;
   namespace ip { using asio::ip::tls_tcp; }
+  namespace security = asio::security;
 }
 
 #endif // NETX_HPP
