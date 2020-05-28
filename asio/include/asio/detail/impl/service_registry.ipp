@@ -137,8 +137,17 @@ execution_context::service* service_registry::do_use_service(
   service = first_service_;
   while (service)
   {
-    if (keys_match(service->key_, key))
+    if (keys_match(service->key_, key)) {
+      // Manually unlock the mutex before service shutdown and destructor call
+      // to avoid long lock contention for services based on win_iocp_io_context
+      // that join a thread upon destruction
+      lock.unlock ();
+      // Shutdown the service before destroying it, for services based on
+      // win_iocp_io_context that .join in the destructor but do not request
+      // the thread to quit there
+      new_service.ptr_->shutdown ();
       return service;
+    }
     service = service->next_;
   }
 
