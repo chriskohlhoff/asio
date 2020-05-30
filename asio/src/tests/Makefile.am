@@ -104,6 +104,7 @@ check_PROGRAMS = \
 	unit/system_timer \
 	unit/this_coro \
 	unit/thread \
+	unit/thread_pool \
 	unit/time_traits \
 	unit/ts/buffer \
 	unit/ts/executor \
@@ -239,6 +240,7 @@ TESTS = \
 	unit/system_timer \
 	unit/this_coro \
 	unit/thread \
+	unit/thread_pool \
 	unit/time_traits \
 	unit/ts/buffer \
 	unit/ts/executor \
@@ -384,6 +386,7 @@ unit_system_executor_SOURCES = unit/system_executor.cpp
 unit_system_timer_SOURCES = unit/system_timer.cpp
 unit_this_coro_SOURCES = unit/this_coro.cpp
 unit_thread_SOURCES = unit/thread.cpp
+unit_thread_pool_SOURCES = unit/thread_pool.cpp
 unit_time_traits_SOURCES = unit/time_traits.cpp
 unit_ts_buffer_SOURCES = unit/ts/buffer.cpp
 unit_ts_executor_SOURCES = unit/ts/executor.cpp

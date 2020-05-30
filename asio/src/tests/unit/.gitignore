@@ -67,6 +67,7 @@ system_executor
 system_timer
 this_coro
 thread
+thread_pool
 time_traits
 use_awaitable
 use_future

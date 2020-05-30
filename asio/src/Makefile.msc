@@ -200,6 +200,7 @@ UNIT_TEST_EXES = \
 	tests\unit\system_timer.exe \
 	tests\unit\this_coro.exe \
 	tests\unit\thread.exe \
+	tests\unit\thread_pool.exe \
 	tests\unit\time_traits.exe \
 	tests\unit\ts\buffer.exe \
 	tests\unit\ts\executor.exe \
