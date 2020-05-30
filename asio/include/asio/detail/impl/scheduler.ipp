@@ -135,6 +135,10 @@ scheduler::~scheduler()
 {
   if (thread_)
   {
+    mutex::scoped_lock lock(mutex_);
+    shutdown_ = true;
+    stop_all_threads(lock);
+    lock.unlock();
     thread_->join();
     delete thread_;
   }

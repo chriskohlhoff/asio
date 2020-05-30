@@ -113,6 +113,7 @@ win_iocp_io_context::~win_iocp_io_context()
 {
   if (thread_.get())
   {
+    stop();
     thread_->join();
     thread_.reset();
   }
