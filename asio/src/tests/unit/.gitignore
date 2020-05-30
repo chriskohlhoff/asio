@@ -44,6 +44,7 @@ executor
 executor_work_guard
 high_resolution_timer
 io_context
+io_context_strand
 io_service
 is_read_buffered
 is_write_buffered
