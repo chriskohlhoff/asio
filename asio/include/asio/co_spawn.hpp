@@ -167,7 +167,7 @@ co_spawn(const Executor& ex, awaitable<void, AwaitableExecutor> a,
 
 /// Spawn a new coroutined-based thread of execution.
 /**
- * @param ex An execution context that will provide the executor to be used to
+ * @param ctx An execution context that will provide the executor to be used to
  * schedule the new thread of execution.
  *
  * @param a The asio::awaitable object that is the result of calling the
@@ -234,7 +234,7 @@ co_spawn(ExecutionContext& ctx, awaitable<T, AwaitableExecutor> a,
 
 /// Spawn a new coroutined-based thread of execution.
 /**
- * @param ex An execution context that will provide the executor to be used to
+ * @param ctx An execution context that will provide the executor to be used to
  * schedule the new thread of execution.
  *
  * @param a The asio::awaitable object that is the result of calling the
@@ -376,7 +376,7 @@ co_spawn(const Executor& ex, F&& f,
 
 /// Spawn a new coroutined-based thread of execution.
 /**
- * @param ex An execution context that will provide the executor to be used to
+ * @param ctx An execution context that will provide the executor to be used to
  * schedule the new thread of execution.
  *
  * @param f A nullary function object with a return type of the form
