@@ -154,16 +154,14 @@ struct executor_binder_argument_type<R(&)(A1, A2)>
   typedef A2 second_argument_type;
 };
 
-// Helper to:
-// - Apply the empty base optimisation to the executor.
-// - Perform uses_executor construction of the target type, if required.
+// Helper to perform uses_executor construction of the target type, if
+// required.
 
 template <typename T, typename Executor, bool UsesExecutor>
 class executor_binder_base;
 
 template <typename T, typename Executor>
 class executor_binder_base<T, Executor, true>
-  : protected Executor
 {
 protected:
   template <typename E, typename U>
