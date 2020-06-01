@@ -24,6 +24,7 @@ noinst_PROGRAMS = \
 	executors/fork_join \
 	executors/pipeline \
 	executors/priority_scheduler \
+	executors/priority_scheduler_with_allocator \
 	iostreams/http_client \
 	operations/composed_1 \
 	operations/composed_2 \
@@ -50,6 +51,7 @@ executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
 executors_fork_join_SOURCES = executors/fork_join.cpp
 executors_pipeline_SOURCES = executors/pipeline.cpp
 executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
+executors_priority_scheduler_with_allocator_SOURCES = executors/priority_scheduler_with_allocator.cpp
 iostreams_http_client_SOURCES = iostreams/http_client.cpp
 operations_composed_1_SOURCES = operations/composed_1.cpp
 operations_composed_2_SOURCES = operations/composed_2.cpp
