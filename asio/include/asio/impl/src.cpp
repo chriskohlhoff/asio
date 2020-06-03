@@ -9,7 +9,7 @@
 //
 
 #if defined(_MSC_VER) \
-  || defined(__BORLANDC__) \
+  || (defined(__BORLANDC__) && !defined(__clang__)) \
   || defined(__DMC__)
 # pragma message ( \
     "This file is deprecated. " \
