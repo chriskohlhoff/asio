@@ -21,10 +21,150 @@
 // Test that header file is self-contained.
 #include "asio/system_executor.hpp"
 
+#include "asio/dispatch.hpp"
+#include "asio/post.hpp"
 #include "unit_test.hpp"
+
+#if defined(ASIO_HAS_BOOST_BIND)
+# include <boost/bind/bind.hpp>
+#else // defined(ASIO_HAS_BOOST_BIND)
+# include <functional>
+#endif // defined(ASIO_HAS_BOOST_BIND)
+
+using namespace asio;
+
+#if defined(ASIO_HAS_BOOST_BIND)
+namespace bindns = boost;
+#else // defined(ASIO_HAS_BOOST_BIND)
+namespace bindns = std;
+#endif
+
+void increment(asio::detail::atomic_count* count)
+{
+  ++(*count);
+}
+
+void system_executor_query_test()
+{
+  ASIO_CHECK(
+      &asio::query(system_executor(),
+        asio::execution::context)
+      != static_cast<const system_context*>(0));
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::blocking)
+      == asio::execution::blocking.possibly);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::blocking.possibly)
+      == asio::execution::blocking.possibly);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::outstanding_work)
+      == asio::execution::outstanding_work.untracked);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::outstanding_work.untracked)
+      == asio::execution::outstanding_work.untracked);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::relationship)
+      == asio::execution::relationship.fork);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::relationship.fork)
+      == asio::execution::relationship.fork);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::bulk_guarantee)
+      == asio::execution::bulk_guarantee.unsequenced);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::mapping)
+      == asio::execution::mapping.thread);
+
+  ASIO_CHECK(
+      asio::query(system_executor(),
+        asio::execution::allocator)
+      == std::allocator<void>());
+}
+
+void system_executor_execute_test()
+{
+  asio::detail::atomic_count count(0);
+
+  asio::execution::execute(system_executor(),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(system_executor(),
+        asio::execution::blocking.possibly),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(system_executor(),
+        asio::execution::blocking.always),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(system_executor(),
+        asio::execution::blocking.never),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(system_executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(system_executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.fork),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::require(system_executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.continuation),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::prefer(
+        asio::require(system_executor(),
+          asio::execution::blocking.never,
+          asio::execution::outstanding_work.untracked,
+          asio::execution::relationship.continuation),
+        asio::execution::allocator(std::allocator<void>())),
+      bindns::bind(increment, &count));
+
+  asio::execution::execute(
+      asio::prefer(
+        asio::require(system_executor(),
+          asio::execution::blocking.never,
+          asio::execution::outstanding_work.untracked,
+          asio::execution::relationship.continuation),
+        asio::execution::allocator),
+      bindns::bind(increment, &count));
+
+  asio::query(system_executor(), execution::context).join();
+
+  ASIO_CHECK(count == 9);
+}
 
 ASIO_TEST_SUITE
 (
   "system_executor",
-  ASIO_TEST_CASE(null_test)
+  ASIO_TEST_CASE(system_executor_query_test)
+  ASIO_TEST_CASE(system_executor_execute_test)
 )

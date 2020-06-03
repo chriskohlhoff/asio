@@ -39,7 +39,8 @@ class executor_binder;
 template <typename Executor>
 class executor_work_guard;
 
-class system_executor;
+template <typename Blocking, typename Relationship, typename Allocator>
+class basic_system_executor;
 
 class executor;
 
