@@ -110,19 +110,27 @@ namespace detail
   }
 
   template <typename Function, typename WriteHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       buffered_flush_handler<WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename WriteHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       buffered_flush_handler<WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Stream>
@@ -326,22 +334,30 @@ namespace detail
 
   template <typename Function, typename ConstBufferSequence,
       typename WriteHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       buffered_write_some_handler<
         ConstBufferSequence, WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename ConstBufferSequence,
       typename WriteHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       buffered_write_some_handler<
         ConstBufferSequence, WriteHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Stream>

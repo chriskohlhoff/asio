@@ -131,19 +131,27 @@ namespace detail {
   }
 
   template <typename Function, typename Handler, typename T>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       coro_handler<Handler, T>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename Handler, typename T>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       coro_handler<Handler, T>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Handler, typename T>
@@ -358,19 +366,27 @@ namespace detail {
   };
 
   template <typename Function, typename Handler, typename Function1>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       spawn_helper<Handler, Function1>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->data_->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename Handler, typename Function1>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       spawn_helper<Handler, Function1>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->data_->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   inline void default_spawn_handler() {}
