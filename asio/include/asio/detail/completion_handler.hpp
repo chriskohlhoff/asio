@@ -35,9 +35,9 @@ public:
 
   completion_handler(Handler& h)
     : operation(&completion_handler::do_complete),
-      handler_(ASIO_MOVE_CAST(Handler)(h))
+      handler_(ASIO_MOVE_CAST(Handler)(h)),
+      work_(handler_)
   {
-    handler_work<Handler>::start(handler_);
   }
 
   static void do_complete(void* owner, operation* base,
@@ -47,9 +47,12 @@ public:
     // Take ownership of the handler object.
     completion_handler* h(static_cast<completion_handler*>(base));
     ptr p = { asio::detail::addressof(h->handler_), h, h };
-    handler_work<Handler> w(h->handler_);
 
     ASIO_HANDLER_COMPLETION((*h));
+
+    // Take ownership of the operation's outstanding work.
+    handler_work<Handler> w(
+        ASIO_MOVE_CAST(handler_work<Handler>)(h->work_));
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a
@@ -73,6 +76,7 @@ public:
 
 private:
   Handler handler_;
+  handler_work<Handler> work_;
 };
 
 } // namespace detail

@@ -35,34 +35,51 @@ class handler_work
 public:
   explicit handler_work(Handler& handler) ASIO_NOEXCEPT
     : io_executor_(),
-      executor_(asio::get_associated_executor(handler, io_executor_))
+      executor_(asio::get_associated_executor(handler, io_executor_)),
+      owns_work_(true)
   {
+    io_executor_.on_work_started();
+    executor_.on_work_started();
   }
 
   handler_work(Handler& handler, const IoExecutor& io_ex) ASIO_NOEXCEPT
     : io_executor_(io_ex),
-      executor_(asio::get_associated_executor(handler, io_executor_))
+      executor_(asio::get_associated_executor(handler, io_executor_)),
+      owns_work_(true)
   {
+    io_executor_.on_work_started();
+    executor_.on_work_started();
   }
 
-  static void start(Handler& handler) ASIO_NOEXCEPT
+  handler_work(const handler_work& other)
+    : io_executor_(other.io_executor_),
+      executor_(other.executor_),
+      owns_work_(other.owns_work_)
   {
-    HandlerExecutor ex(asio::get_associated_executor(handler));
-    ex.on_work_started();
+    if (owns_work_)
+    {
+      io_executor_.on_work_started();
+      executor_.on_work_started();
+    }
   }
 
-  static void start(Handler& handler,
-      const IoExecutor& io_ex) ASIO_NOEXCEPT
+#if defined(ASIO_HAS_MOVE)
+  handler_work(handler_work&& other)
+    : io_executor_(ASIO_MOVE_CAST(IoExecutor)(other.io_executor_)),
+      executor_(ASIO_MOVE_CAST(HandlerExecutor)(other.executor_)),
+      owns_work_(other.owns_work_)
   {
-    HandlerExecutor ex(asio::get_associated_executor(handler, io_ex));
-    ex.on_work_started();
-    io_ex.on_work_started();
+    other.owns_work_ = false;
   }
+#endif // defined(ASIO_HAS_MOVE)
 
   ~handler_work()
   {
-    io_executor_.on_work_finished();
-    executor_.on_work_finished();
+    if (owns_work_)
+    {
+      io_executor_.on_work_finished();
+      executor_.on_work_finished();
+    }
   }
 
   template <typename Function>
@@ -73,12 +90,12 @@ public:
   }
 
 private:
-  // Disallow copying and assignment.
-  handler_work(const handler_work&);
+  // Disallow assignment.
   handler_work& operator=(const handler_work&);
 
   IoExecutor io_executor_;
   HandlerExecutor executor_;
+  bool owns_work_;
 };
 
 // This specialisation dispatches a handler through the old invocation hook.
@@ -90,8 +107,7 @@ class handler_work<Handler, system_executor, system_executor>
 {
 public:
   explicit handler_work(Handler&) ASIO_NOEXCEPT {}
-  static void start(Handler&) ASIO_NOEXCEPT {}
-  ~handler_work() {}
+  handler_work(Handler&, const system_executor&) ASIO_NOEXCEPT {}
 
   template <typename Function>
   void complete(Function& function, Handler& handler)
@@ -100,8 +116,7 @@ public:
   }
 
 private:
-  // Disallow copying and assignment.
-  handler_work(const handler_work&);
+  // Disallow assignment.
   handler_work& operator=(const handler_work&);
 };
 
