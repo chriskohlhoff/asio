@@ -18,7 +18,10 @@
 #include <new>
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/execution/executor.hpp"
+#include "asio/execution/context.hpp"
 #include "asio/io_context.hpp"
+#include "asio/query.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -41,7 +44,8 @@ public:
 
   // Construct an I/O object using an executor.
   explicit io_object_impl(const executor_type& ex)
-    : service_(&asio::use_service<IoObjectService>(ex.context())),
+    : service_(&asio::use_service<IoObjectService>(
+          io_object_impl::get_context(ex))),
       executor_(ex)
   {
     service_->construct(implementation_);
@@ -71,7 +75,7 @@ public:
   template <typename IoObjectService1, typename Executor1>
   io_object_impl(io_object_impl<IoObjectService1, Executor1>&& other)
     : service_(&asio::use_service<IoObjectService>(
-            other.get_executor().context())),
+            io_object_impl::get_context(other.get_executor()))),
       executor_(other.get_executor())
   {
     service_->converting_move_construct(implementation_,
@@ -133,6 +137,22 @@ public:
   }
 
 private:
+  // Helper function to get an executor's context.
+  template <typename T>
+  static execution_context& get_context(const T& t,
+      typename enable_if<execution::is_executor<T>::value>::type* = 0)
+  {
+    return asio::query(t, execution::context);
+  }
+
+  // Helper function to get an executor's context.
+  template <typename T>
+  static execution_context& get_context(const T& t,
+      typename enable_if<!execution::is_executor<T>::value>::type* = 0)
+  {
+    return t.context();
+  }
+
   // Disallow copying and copy assignment.
   io_object_impl(const io_object_impl&);
   io_object_impl& operator=(const io_object_impl&);

@@ -19,6 +19,13 @@
 #include "asio/associated_executor.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/execution/allocator.hpp"
+#include "asio/execution/blocking.hpp"
+#include "asio/execution/execute.hpp"
+#include "asio/execution/executor.hpp"
+#include "asio/execution/outstanding_work.hpp"
+#include "asio/executor_work_guard.hpp"
+#include "asio/prefer.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -33,6 +40,66 @@ template <typename Executor, typename CandidateExecutor = void,
     typename IoContext = io_context,
     typename PolymorphicExecutor = executor, typename = void>
 class handler_work_base
+{
+public:
+  explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
+    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+  {
+  }
+
+  template <typename OtherExecutor>
+  handler_work_base(const Executor& ex,
+      const OtherExecutor&) ASIO_NOEXCEPT
+    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+  {
+  }
+
+  handler_work_base(const handler_work_base& other) ASIO_NOEXCEPT
+    : executor_(other.executor_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  handler_work_base(handler_work_base&& other) ASIO_NOEXCEPT
+    : executor_(ASIO_MOVE_CAST(executor_type)(other.executor_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  bool owns_work() const ASIO_NOEXCEPT
+  {
+    return true;
+  }
+
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    execution::execute(
+        asio::prefer(executor_,
+          execution::blocking.possibly,
+          execution::allocator((get_associated_allocator)(handler))),
+        ASIO_MOVE_CAST(Function)(function));
+  }
+
+private:
+  typedef typename decay<
+      typename prefer_result_type<Executor,
+        execution::outstanding_work_t::tracked_t
+      >::type
+    >::type executor_type;
+
+  executor_type executor_;
+};
+
+template <typename Executor, typename CandidateExecutor,
+    typename IoContext, typename PolymorphicExecutor>
+class handler_work_base<Executor, CandidateExecutor,
+    IoContext, PolymorphicExecutor,
+    typename enable_if<
+      !execution::is_executor<Executor>::value
+        && (!is_same<Executor, PolymorphicExecutor>::value
+          || !is_same<CandidateExecutor, void>::value)
+    >::type>
 {
 public:
   explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
@@ -88,9 +155,11 @@ public:
     return owns_work_;
   }
 
-  const Executor& get_executor() const ASIO_NOEXCEPT
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
   {
-    return executor_;
+    executor_.dispatch(ASIO_MOVE_CAST(Function)(function),
+        asio::get_associated_allocator(handler));
   }
 
 private:
@@ -176,9 +245,11 @@ public:
     return !!executor_;
   }
 
-  const Executor& get_executor() const ASIO_NOEXCEPT
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
   {
-    return executor_;
+    executor_.dispatch(ASIO_MOVE_CAST(Function)(function),
+        asio::get_associated_allocator(handler));
   }
 
 private:
@@ -213,15 +284,10 @@ public:
     }
     else
     {
-      handler_work_base<HandlerExecutor, IoExecutor>::get_executor().dispatch(
-          ASIO_MOVE_CAST(Function)(function),
-          asio::get_associated_allocator(handler));
+      handler_work_base<HandlerExecutor,
+          IoExecutor>::dispatch(function, handler);
     }
   }
-
-private:
-  // Disallow assignment.
-  handler_work& operator=(const handler_work&);
 };
 
 } // namespace detail
