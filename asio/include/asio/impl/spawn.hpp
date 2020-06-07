@@ -327,9 +327,7 @@ namespace detail {
     void operator()(typename basic_yield_context<Handler>::caller_type& ca)
     {
       shared_ptr<spawn_data<Handler, Function> > data(data_);
-#if !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2)
       ca(); // Yield until coroutine pointer has been initialised.
-#endif // !defined(BOOST_COROUTINES_UNIDIRECT) && !defined(BOOST_COROUTINES_V2)
       const basic_yield_context<Handler> yield(
           data->coro_, ca, data->handler_);
 
@@ -348,13 +346,12 @@ namespace detail {
     {
       typedef typename basic_yield_context<Handler>::callee_type callee_type;
       coro_entry_point<Handler, Function> entry_point = { data_ };
-      shared_ptr<callee_type> coro(new callee_type(entry_point, attributes_));
+      shared_ptr<callee_type> coro(new callee_type(entry_point));
       data_->coro_ = coro;
       (*coro)();
     }
 
     shared_ptr<spawn_data<Handler, Function> > data_;
-    boost::coroutines::attributes attributes_;
   };
 
   template <typename Function, typename Handler, typename Function1>
@@ -378,21 +375,19 @@ namespace detail {
 } // namespace detail
 
 template <typename Function>
-inline void spawn(ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes)
+inline void spawn(ASIO_MOVE_ARG(Function) function)
 {
   typedef typename decay<Function>::type function_type;
 
   typename associated_executor<function_type>::type ex(
       (get_associated_executor)(function));
 
-  asio::spawn(ex, ASIO_MOVE_CAST(Function)(function), attributes);
+  asio::spawn(ex, ASIO_MOVE_CAST(Function)(function));
 }
 
 template <typename Handler, typename Function>
 void spawn(ASIO_MOVE_ARG(Handler) handler,
     ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes,
     typename enable_if<!is_executor<typename decay<Handler>::type>::value &&
       !is_convertible<Handler&, execution_context&>::value>::type*)
 {
@@ -410,15 +405,13 @@ void spawn(ASIO_MOVE_ARG(Handler) handler,
       new detail::spawn_data<handler_type, function_type>(
         ASIO_MOVE_CAST(Handler)(handler), true,
         ASIO_MOVE_CAST(Function)(function)));
-  helper.attributes_ = attributes;
 
   ex.dispatch(helper, a);
 }
 
 template <typename Handler, typename Function>
 void spawn(basic_yield_context<Handler> ctx,
-    ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes)
+    ASIO_MOVE_ARG(Function) function)
 {
   typedef typename decay<Function>::type function_type;
 
@@ -435,7 +428,6 @@ void spawn(basic_yield_context<Handler> ctx,
       new detail::spawn_data<Handler, function_type>(
         ASIO_MOVE_CAST(Handler)(handler), false,
         ASIO_MOVE_CAST(Function)(function)));
-  helper.attributes_ = attributes;
 
   ex.dispatch(helper, a);
 }
@@ -443,42 +435,38 @@ void spawn(basic_yield_context<Handler> ctx,
 template <typename Function, typename Executor>
 inline void spawn(const Executor& ex,
     ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes,
     typename enable_if<is_executor<Executor>::value>::type*)
 {
   asio::spawn(asio::strand<Executor>(ex),
-      ASIO_MOVE_CAST(Function)(function), attributes);
+      ASIO_MOVE_CAST(Function)(function));
 }
 
 template <typename Function, typename Executor>
 inline void spawn(const strand<Executor>& ex,
-    ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes)
+    ASIO_MOVE_ARG(Function) function)
 {
   asio::spawn(asio::bind_executor(
         ex, &detail::default_spawn_handler),
-      ASIO_MOVE_CAST(Function)(function), attributes);
+      ASIO_MOVE_CAST(Function)(function));
 }
 
 template <typename Function>
 inline void spawn(const asio::io_context::strand& s,
-    ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes)
+    ASIO_MOVE_ARG(Function) function)
 {
   asio::spawn(asio::bind_executor(
         s, &detail::default_spawn_handler),
-      ASIO_MOVE_CAST(Function)(function), attributes);
+      ASIO_MOVE_CAST(Function)(function));
 }
 
 template <typename Function, typename ExecutionContext>
 inline void spawn(ExecutionContext& ctx,
     ASIO_MOVE_ARG(Function) function,
-    const boost::coroutines::attributes& attributes,
     typename enable_if<is_convertible<
       ExecutionContext&, execution_context&>::value>::type*)
 {
   asio::spawn(ctx.get_executor(),
-      ASIO_MOVE_CAST(Function)(function), attributes);
+      ASIO_MOVE_CAST(Function)(function));
 }
 
 #endif // !defined(GENERATING_DOCUMENTATION)
