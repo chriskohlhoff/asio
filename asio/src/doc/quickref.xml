@@ -56,8 +56,8 @@
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution_context.add_service">add_service</link></member>
-            <member><link linkend="asio.reference.asio_handler_allocate">asio_handler_allocate</link></member>
-            <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link></member>
+            <member><link linkend="asio.reference.asio_handler_allocate">asio_handler_allocate</link> (deprecated)</member>
+            <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
             <member><link linkend="asio.reference.async_compose">async_compose</link></member>

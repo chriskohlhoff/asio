@@ -201,19 +201,29 @@ public:
 };
 
 template <typename Dispatcher, typename Handler, typename IsContinuation>
-inline void* asio_handler_allocate(std::size_t size,
+inline asio_handler_allocate_is_deprecated
+asio_handler_allocate(std::size_t size,
     wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
 {
+#if defined(ASIO_NO_DEPRECATED)
+  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+  return asio_handler_allocate_is_no_longer_used();
+#else // defined(ASIO_NO_DEPRECATED)
   return asio_handler_alloc_helpers::allocate(
       size, this_handler->handler_);
+#endif // defined(ASIO_NO_DEPRECATED)
 }
 
 template <typename Dispatcher, typename Handler, typename IsContinuation>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
+inline asio_handler_deallocate_is_deprecated
+asio_handler_deallocate(void* pointer, std::size_t size,
     wrapped_handler<Dispatcher, Handler, IsContinuation>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
       pointer, size, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+  return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
 }
 
 template <typename Dispatcher, typename Handler, typename IsContinuation>
@@ -252,19 +262,29 @@ asio_handler_invoke(const Function& function,
 }
 
 template <typename Handler, typename Context>
-inline void* asio_handler_allocate(std::size_t size,
+inline asio_handler_allocate_is_deprecated
+asio_handler_allocate(std::size_t size,
     rewrapped_handler<Handler, Context>* this_handler)
 {
+#if defined(ASIO_NO_DEPRECATED)
+  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+  return asio_handler_allocate_is_no_longer_used();
+#else // defined(ASIO_NO_DEPRECATED)
   return asio_handler_alloc_helpers::allocate(
-      size, this_handler->context_);
+      size, this_handler->handler_);
+#endif // defined(ASIO_NO_DEPRECATED)
 }
 
 template <typename Handler, typename Context>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
+inline asio_handler_deallocate_is_deprecated
+asio_handler_deallocate(void* pointer, std::size_t size,
     rewrapped_handler<Handler, Context>* this_handler)
 {
   asio_handler_alloc_helpers::deallocate(
       pointer, size, this_handler->context_);
+#if defined(ASIO_NO_DEPRECATED)
+  return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
 }
 
 template <typename Dispatcher, typename Context>
