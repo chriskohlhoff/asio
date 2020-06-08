@@ -17,8 +17,11 @@ AC_ARG_WITH(boost,
   if test "${withval}" = no; then
     STANDALONE="yes"
   else
-    CPPFLAGS="$CPPFLAGS -I${withval} -DASIO_ENABLE_BOOST -DBOOST_CHRONO_HEADER_ONLY -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
-    LIBS="$LIBS -L${withval}/stage/lib"
+    if test "${withval}" != system; then
+      CPPFLAGS="$CPPFLAGS -I${withval}"
+      LIBS="$LIBS -L${withval}/stage/lib"
+    fi
+    CPPFLAGS="$CPPFLAGS -DASIO_ENABLE_BOOST -DBOOST_CHRONO_HEADER_ONLY -DBOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING"
   fi
 ],
 [
