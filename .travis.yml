@@ -5,9 +5,48 @@ dist: xenial
 cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/boost_1_64_0
+    - ${TRAVIS_BUILD_DIR}/boost_1_73_0
 
 matrix:
   include:
+    #
+    #---------------------------------------------------------------------------
+    # Linux / g++-9
+    #---------------------------------------------------------------------------
+    #
+    # Linux / g++-9 -std=c++2a / -O2 / standalone
+    #
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - CXXFLAGS="-std=c++2a -fconcepts -Wall -Wextra -O2"
+        - CONFIGFLAGS="--with-boost=no"
+        - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
+      compiler: gcc
+    #
+    # Linux / g++-9 -std=c++17 / -O2 / boost 1.73
+    #
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - BOOST_DIR="boost_1_73_0"
+        - BOOST_URL="https://sourceforge.net/projects/boost/files/boost/1.73.0/boost_1_73_0.tar.bz2/download"
+        - CXXFLAGS="-std=c++17 -Wall -Wextra -O2"
+        - CONFIGFLAGS="--with-boost=$PWD/$BOOST_DIR"
+        - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
+      compiler: gcc
     #
     #---------------------------------------------------------------------------
     # Linux / g++-6
