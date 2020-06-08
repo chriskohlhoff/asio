@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/thread_group.hpp"
 #include "asio/execution_context.hpp"
@@ -97,6 +96,9 @@ public:
   ASIO_DECL void join();
 
 private:
+  thread_pool(const thread_pool&) ASIO_DELETED;
+  thread_pool& operator=(const thread_pool&) ASIO_DELETED;
+
   friend class executor_type;
   struct thread_function;
 
