@@ -65,6 +65,7 @@
 #include "asio/execution/mapping.hpp"
 #include "asio/execution/occupancy.hpp"
 #include "asio/execution/outstanding_work.hpp"
+#include "asio/execution/prefer_only.hpp"
 #include "asio/execution/relationship.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/executor.hpp"
