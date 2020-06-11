@@ -21,6 +21,8 @@ noinst_PROGRAMS = \
 	executors/async_2 \
 	executors/bank_account_1 \
 	executors/bank_account_2 \
+	executors/factory_1 \
+	executors/factory_2 \
 	executors/fork_join \
 	executors/pipeline \
 	executors/priority_scheduler \
@@ -48,6 +50,8 @@ executors_async_1_SOURCES = executors/async_1.cpp
 executors_async_2_SOURCES = executors/async_2.cpp
 executors_bank_account_1_SOURCES = executors/bank_account_1.cpp
 executors_bank_account_2_SOURCES = executors/bank_account_2.cpp
+executors_factory_1_SOURCES = executors/factory_1.cpp
+executors_factory_2_SOURCES = executors/factory_2.cpp
 executors_fork_join_SOURCES = executors/fork_join.cpp
 executors_pipeline_SOURCES = executors/pipeline.cpp
 executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
