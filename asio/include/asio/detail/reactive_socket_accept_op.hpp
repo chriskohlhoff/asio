@@ -33,10 +33,12 @@ template <typename Socket, typename Protocol>
 class reactive_socket_accept_op_base : public reactor_op
 {
 public:
-  reactive_socket_accept_op_base(socket_type socket,
-      socket_ops::state_type state, Socket& peer, const Protocol& protocol,
-      typename Protocol::endpoint* peer_endpoint, func_type complete_func)
-    : reactor_op(&reactive_socket_accept_op_base::do_perform, complete_func),
+  reactive_socket_accept_op_base(const asio::error_code& success_ec,
+      socket_type socket, socket_ops::state_type state, Socket& peer,
+      const Protocol& protocol, typename Protocol::endpoint* peer_endpoint,
+      func_type complete_func)
+    : reactor_op(success_ec,
+        &reactive_socket_accept_op_base::do_perform, complete_func),
       socket_(socket),
       state_(state),
       peer_(peer),
@@ -93,12 +95,13 @@ class reactive_socket_accept_op :
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_accept_op);
 
-  reactive_socket_accept_op(socket_type socket,
-      socket_ops::state_type state, Socket& peer, const Protocol& protocol,
-      typename Protocol::endpoint* peer_endpoint, Handler& handler,
-      const IoExecutor& io_ex)
-    : reactive_socket_accept_op_base<Socket, Protocol>(socket, state, peer,
-        protocol, peer_endpoint, &reactive_socket_accept_op::do_complete),
+  reactive_socket_accept_op(const asio::error_code& success_ec,
+      socket_type socket, socket_ops::state_type state, Socket& peer,
+      const Protocol& protocol, typename Protocol::endpoint* peer_endpoint,
+      Handler& handler, const IoExecutor& io_ex)
+    : reactive_socket_accept_op_base<Socket, Protocol>(
+        success_ec, socket, state, peer, protocol, peer_endpoint,
+        &reactive_socket_accept_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)
   {
@@ -159,13 +162,14 @@ class reactive_socket_move_accept_op :
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_move_accept_op);
 
-  reactive_socket_move_accept_op(const PeerIoExecutor& peer_io_ex,
-      socket_type socket, socket_ops::state_type state,
-      const Protocol& protocol, typename Protocol::endpoint* peer_endpoint,
-      Handler& handler, const IoExecutor& io_ex)
+  reactive_socket_move_accept_op(const asio::error_code& success_ec,
+      const PeerIoExecutor& peer_io_ex, socket_type socket,
+      socket_ops::state_type state, const Protocol& protocol,
+      typename Protocol::endpoint* peer_endpoint, Handler& handler,
+      const IoExecutor& io_ex)
     : peer_socket_type(peer_io_ex),
       reactive_socket_accept_op_base<peer_socket_type, Protocol>(
-        socket, state, *this, protocol, peer_endpoint,
+        success_ec, socket, state, *this, protocol, peer_endpoint,
         &reactive_socket_move_accept_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)

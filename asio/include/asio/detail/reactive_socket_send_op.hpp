@@ -32,10 +32,12 @@ template <typename ConstBufferSequence>
 class reactive_socket_send_op_base : public reactor_op
 {
 public:
-  reactive_socket_send_op_base(socket_type socket,
-      socket_ops::state_type state, const ConstBufferSequence& buffers,
+  reactive_socket_send_op_base(const asio::error_code& success_ec,
+      socket_type socket, socket_ops::state_type state,
+      const ConstBufferSequence& buffers,
       socket_base::message_flags flags, func_type complete_func)
-    : reactor_op(&reactive_socket_send_op_base::do_perform, complete_func),
+    : reactor_op(success_ec,
+        &reactive_socket_send_op_base::do_perform, complete_func),
       socket_(socket),
       state_(state),
       buffers_(buffers),
@@ -97,10 +99,11 @@ class reactive_socket_send_op :
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_send_op);
 
-  reactive_socket_send_op(socket_type socket, socket_ops::state_type state,
+  reactive_socket_send_op(const asio::error_code& success_ec,
+      socket_type socket, socket_ops::state_type state,
       const ConstBufferSequence& buffers, socket_base::message_flags flags,
       Handler& handler, const IoExecutor& io_ex)
-    : reactive_socket_send_op_base<ConstBufferSequence>(socket,
+    : reactive_socket_send_op_base<ConstBufferSequence>(success_ec, socket,
         state, buffers, flags, &reactive_socket_send_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)

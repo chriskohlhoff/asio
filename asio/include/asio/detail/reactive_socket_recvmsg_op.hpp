@@ -33,10 +33,12 @@ template <typename MutableBufferSequence>
 class reactive_socket_recvmsg_op_base : public reactor_op
 {
 public:
-  reactive_socket_recvmsg_op_base(socket_type socket,
-      const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
+  reactive_socket_recvmsg_op_base(const asio::error_code& success_ec,
+      socket_type socket, const MutableBufferSequence& buffers,
+      socket_base::message_flags in_flags,
       socket_base::message_flags& out_flags, func_type complete_func)
-    : reactor_op(&reactive_socket_recvmsg_op_base::do_perform, complete_func),
+    : reactor_op(success_ec,
+        &reactive_socket_recvmsg_op_base::do_perform, complete_func),
       socket_(socket),
       buffers_(buffers),
       in_flags_(in_flags),
@@ -77,12 +79,14 @@ class reactive_socket_recvmsg_op :
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_socket_recvmsg_op);
 
-  reactive_socket_recvmsg_op(socket_type socket,
-      const MutableBufferSequence& buffers, socket_base::message_flags in_flags,
+  reactive_socket_recvmsg_op(const asio::error_code& success_ec,
+      socket_type socket, const MutableBufferSequence& buffers,
+      socket_base::message_flags in_flags,
       socket_base::message_flags& out_flags, Handler& handler,
       const IoExecutor& io_ex)
-    : reactive_socket_recvmsg_op_base<MutableBufferSequence>(socket, buffers,
-        in_flags, out_flags, &reactive_socket_recvmsg_op::do_complete),
+    : reactive_socket_recvmsg_op_base<MutableBufferSequence>(
+        success_ec, socket, buffers, in_flags, out_flags,
+        &reactive_socket_recvmsg_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)
   {

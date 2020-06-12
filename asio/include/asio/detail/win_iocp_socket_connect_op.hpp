@@ -37,7 +37,8 @@ class win_iocp_socket_connect_op_base : public reactor_op
 {
 public:
   win_iocp_socket_connect_op_base(socket_type socket, func_type complete_func)
-    : reactor_op(&win_iocp_socket_connect_op_base::do_perform, complete_func),
+    : reactor_op(asio::error_code(),
+        &win_iocp_socket_connect_op_base::do_perform, complete_func),
       socket_(socket),
       connect_ex_(false)
   {

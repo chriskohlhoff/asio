@@ -33,8 +33,9 @@ class reactive_null_buffers_op : public reactor_op
 public:
   ASIO_DEFINE_HANDLER_PTR(reactive_null_buffers_op);
 
-  reactive_null_buffers_op(Handler& handler, const IoExecutor& io_ex)
-    : reactor_op(&reactive_null_buffers_op::do_perform,
+  reactive_null_buffers_op(const asio::error_code& success_ec,
+      Handler& handler, const IoExecutor& io_ex)
+    : reactor_op(success_ec, &reactive_null_buffers_op::do_perform,
         &reactive_null_buffers_op::do_complete),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),
       io_executor_(io_ex)
