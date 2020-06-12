@@ -787,6 +787,38 @@ signed_size_type recv(socket_type s, buf* bufs, size_t count,
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
+signed_size_type recv1(socket_type s, void* data, size_t size,
+    int flags, asio::error_code& ec)
+{
+  clear_last_error();
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  // Receive some data.
+  WSABUF buf;
+  buf.buf = const_cast<char*>(static_cast<const char*>(data));
+  buf.len = static_cast<ULONG>(size);
+  DWORD bytes_transferred = 0;
+  DWORD recv_flags = flags;
+  int result = error_wrapper(::WSARecv(s, &buf, 1,
+        &bytes_transferred, &recv_flags, 0, 0), ec);
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
+  else if (ec.value() == WSAEMSGSIZE || ec.value() == ERROR_MORE_DATA)
+    result = 0;
+  if (result != 0)
+    return socket_error_retval;
+  ec = asio::error_code();
+  return bytes_transferred;
+#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  signed_size_type result = error_wrapper(::recv(s,
+        static_cast<char*>(data), size, flags), ec);
+  if (result >= 0)
+    ec = asio::error_code();
+  return result;
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+}
+
 size_t sync_recv(socket_type s, state_type state, buf* bufs,
     size_t count, int flags, bool all_empty, asio::error_code& ec)
 {
@@ -808,6 +840,51 @@ size_t sync_recv(socket_type s, state_type state, buf* bufs,
   {
     // Try to complete the operation without blocking.
     signed_size_type bytes = socket_ops::recv(s, bufs, count, flags, ec);
+
+    // Check if operation succeeded.
+    if (bytes > 0)
+      return bytes;
+
+    // Check for EOF.
+    if ((state & stream_oriented) && bytes == 0)
+    {
+      ec = asio::error::eof;
+      return 0;
+    }
+
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_read(s, 0, -1, ec) < 0)
+      return 0;
+  }
+}
+
+size_t sync_recv1(socket_type s, state_type state, void* data,
+    size_t size, int flags, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to read 0 bytes on a stream is a no-op.
+  if (size == 0 && (state & stream_oriented))
+  {
+    ec = asio::error_code();
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    signed_size_type bytes = socket_ops::recv1(s, data, size, flags, ec);
 
     // Check if operation succeeded.
     if (bytes > 0)
@@ -874,6 +951,44 @@ bool non_blocking_recv(socket_type s,
   {
     // Read some data.
     signed_size_type bytes = socket_ops::recv(s, bufs, count, flags, ec);
+
+    // Check for end of stream.
+    if (is_stream && bytes == 0)
+    {
+      ec = asio::error::eof;
+      return true;
+    }
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
+}
+
+bool non_blocking_recv1(socket_type s,
+    void* data, size_t size, int flags, bool is_stream,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Read some data.
+    signed_size_type bytes = socket_ops::recv1(s, data, size, flags, ec);
 
     // Check for end of stream.
     if (is_stream && bytes == 0)
@@ -1187,6 +1302,39 @@ signed_size_type send(socket_type s, const buf* bufs, size_t count,
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
+signed_size_type send1(socket_type s, const void* data, size_t size,
+    int flags, asio::error_code& ec)
+{
+  clear_last_error();
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  // Send the data.
+  WSABUF buf;
+  buf.buf = const_cast<char*>(static_cast<const char*>(data));
+  buf.len = static_cast<ULONG>(size);
+  DWORD bytes_transferred = 0;
+  DWORD send_flags = flags;
+  int result = error_wrapper(::WSASend(s, &buf, 1,
+        &bytes_transferred, send_flags, 0, 0), ec);
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
+  if (result != 0)
+    return socket_error_retval;
+  ec = asio::error_code();
+  return bytes_transferred;
+#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(__linux__)
+  flags |= MSG_NOSIGNAL;
+#endif // defined(__linux__)
+  signed_size_type result = error_wrapper(::send(s,
+        static_cast<const char*>(data), size, flags), ec);
+  if (result >= 0)
+    ec = asio::error_code();
+  return result;
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+}
+
 size_t sync_send(socket_type s, state_type state, const buf* bufs,
     size_t count, int flags, bool all_empty, asio::error_code& ec)
 {
@@ -1208,6 +1356,44 @@ size_t sync_send(socket_type s, state_type state, const buf* bufs,
   {
     // Try to complete the operation without blocking.
     signed_size_type bytes = socket_ops::send(s, bufs, count, flags, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_write(s, 0, -1, ec) < 0)
+      return 0;
+  }
+}
+
+size_t sync_send1(socket_type s, state_type state, const void* data,
+    size_t size, int flags, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to write 0 bytes to a stream is a no-op.
+  if (size == 0 && (state & stream_oriented))
+  {
+    ec = asio::error_code();
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    signed_size_type bytes = socket_ops::send1(s, data, size, flags, ec);
 
     // Check if operation succeeded.
     if (bytes >= 0)
@@ -1255,6 +1441,37 @@ bool non_blocking_send(socket_type s,
   {
     // Write some data.
     signed_size_type bytes = socket_ops::send(s, bufs, count, flags, ec);
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation is complete.
+    if (bytes >= 0)
+    {
+      ec = asio::error_code();
+      bytes_transferred = bytes;
+    }
+    else
+      bytes_transferred = 0;
+
+    return true;
+  }
+}
+
+bool non_blocking_send1(socket_type s,
+    const void* data, size_t size, int flags,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Write some data.
+    signed_size_type bytes = socket_ops::send1(s, data, size, flags, ec);
 
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)

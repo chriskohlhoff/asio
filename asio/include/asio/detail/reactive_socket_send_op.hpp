@@ -48,17 +48,34 @@ public:
     reactive_socket_send_op_base* o(
         static_cast<reactive_socket_send_op_base*>(base));
 
-    buffer_sequence_adapter<asio::const_buffer,
-        ConstBufferSequence> bufs(o->buffers_);
+    typedef buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs_type;
 
-    status result = socket_ops::non_blocking_send(o->socket_,
-          bufs.buffers(), bufs.count(), o->flags_,
+    status result;
+    if (bufs_type::is_single_buffer)
+    {
+      result = socket_ops::non_blocking_send1(o->socket_,
+          bufs_type::first(o->buffers_).data(),
+          bufs_type::first(o->buffers_).size(), o->flags_,
           o->ec_, o->bytes_transferred_) ? done : not_done;
 
-    if (result == done)
-      if ((o->state_ & socket_ops::stream_oriented) != 0)
-        if (o->bytes_transferred_ < bufs.total_size())
-          result = done_and_exhausted;
+      if (result == done)
+        if ((o->state_ & socket_ops::stream_oriented) != 0)
+          if (o->bytes_transferred_ < bufs_type::first(o->buffers_).size())
+            result = done_and_exhausted;
+    }
+    else
+    {
+      bufs_type bufs(o->buffers_);
+      result = socket_ops::non_blocking_send(o->socket_,
+            bufs.buffers(), bufs.count(), o->flags_,
+            o->ec_, o->bytes_transferred_) ? done : not_done;
+
+      if (result == done)
+        if ((o->state_ & socket_ops::stream_oriented) != 0)
+          if (o->bytes_transferred_ < bufs.total_size())
+            result = done_and_exhausted;
+    }
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_send",
           o->ec_, o->bytes_transferred_));

@@ -48,13 +48,26 @@ public:
     reactive_socket_recv_op_base* o(
         static_cast<reactive_socket_recv_op_base*>(base));
 
-    buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence> bufs(o->buffers_);
+    typedef buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
 
-    status result = socket_ops::non_blocking_recv(o->socket_,
-        bufs.buffers(), bufs.count(), o->flags_,
-        (o->state_ & socket_ops::stream_oriented) != 0,
-        o->ec_, o->bytes_transferred_) ? done : not_done;
+    status result;
+    if (bufs_type::is_single_buffer)
+    {
+      result = socket_ops::non_blocking_recv1(o->socket_,
+          bufs_type::first(o->buffers_).data(),
+          bufs_type::first(o->buffers_).size(), o->flags_,
+          (o->state_ & socket_ops::stream_oriented) != 0,
+          o->ec_, o->bytes_transferred_) ? done : not_done;
+    }
+    else
+    {
+      bufs_type bufs(o->buffers_);
+      result = socket_ops::non_blocking_recv(o->socket_,
+          bufs.buffers(), bufs.count(), o->flags_,
+          (o->state_ & socket_ops::stream_oriented) != 0,
+          o->ec_, o->bytes_transferred_) ? done : not_done;
+    }
 
     if (result == done)
       if ((o->state_ & socket_ops::stream_oriented) != 0)
