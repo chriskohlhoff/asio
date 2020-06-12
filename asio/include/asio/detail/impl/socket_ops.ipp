@@ -945,6 +945,13 @@ bool non_blocking_recv(socket_type s,
       return true;
     }
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -954,15 +961,8 @@ bool non_blocking_recv(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -983,6 +983,13 @@ bool non_blocking_recv1(socket_type s,
       return true;
     }
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -992,15 +999,8 @@ bool non_blocking_recv1(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -1114,6 +1114,13 @@ bool non_blocking_recvfrom(socket_type s,
     signed_size_type bytes = socket_ops::recvfrom(
         s, bufs, count, flags, addr, addrlen, ec);
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -1123,15 +1130,8 @@ bool non_blocking_recvfrom(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -1227,6 +1227,13 @@ bool non_blocking_recvmsg(socket_type s,
     signed_size_type bytes = socket_ops::recvmsg(
         s, bufs, count, in_flags, out_flags, ec);
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -1236,15 +1243,8 @@ bool non_blocking_recvmsg(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -1422,6 +1422,13 @@ bool non_blocking_send(socket_type s,
     // Write some data.
     signed_size_type bytes = socket_ops::send(s, bufs, count, flags, ec);
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -1431,15 +1438,8 @@ bool non_blocking_send(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -1453,6 +1453,13 @@ bool non_blocking_send1(socket_type s,
     // Write some data.
     signed_size_type bytes = socket_ops::send1(s, data, size, flags, ec);
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -1462,15 +1469,8 @@ bool non_blocking_send1(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -1558,6 +1558,13 @@ bool non_blocking_sendto(socket_type s,
     signed_size_type bytes = socket_ops::sendto(
         s, bufs, count, flags, addr, addrlen, ec);
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -1567,15 +1574,8 @@ bool non_blocking_sendto(socket_type s,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }

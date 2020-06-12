@@ -221,6 +221,13 @@ bool non_blocking_read(int d, buf* bufs, std::size_t count,
       return true;
     }
 
+    // Check if operation succeeded.
+    if (bytes > 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -230,15 +237,8 @@ bool non_blocking_read(int d, buf* bufs, std::size_t count,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes > 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
@@ -291,6 +291,13 @@ bool non_blocking_write(int d, const buf* bufs, std::size_t count,
     signed_size_type bytes = ::writev(d, bufs, static_cast<int>(count));
     get_last_error(ec, bytes < 0);
 
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
     // Retry operation if interrupted by signal.
     if (ec == asio::error::interrupted)
       continue;
@@ -300,15 +307,8 @@ bool non_blocking_write(int d, const buf* bufs, std::size_t count,
         || ec == asio::error::try_again)
       return false;
 
-    // Operation is complete.
-    if (bytes >= 0)
-    {
-      ec = asio::error_code();
-      bytes_transferred = bytes;
-    }
-    else
-      bytes_transferred = 0;
-
+    // Operation failed.
+    bytes_transferred = 0;
     return true;
   }
 }
