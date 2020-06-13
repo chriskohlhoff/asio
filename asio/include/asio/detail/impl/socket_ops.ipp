@@ -78,7 +78,7 @@ inline void get_last_error(
 {
   if (!is_error_condition)
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
   }
   else
   {
@@ -129,7 +129,7 @@ socket_type accept(socket_type s, socket_addr_type* addr,
   }
 #endif
 
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return new_s;
 }
 
@@ -596,7 +596,7 @@ bool non_blocking_connect(socket_type s, asio::error_code& ec)
           asio::error::get_system_category());
     }
     else
-      ec = asio::error_code();
+      ec.assign(0, ec.category());
   }
 
   return true;
@@ -763,7 +763,7 @@ signed_size_type recv(socket_type s, buf* bufs, size_t count,
     result = 0;
   if (result != 0)
     return socket_error_retval;
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return bytes_transferred;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -796,7 +796,7 @@ signed_size_type recv1(socket_type s, void* data, size_t size,
     result = 0;
   if (result != 0)
     return socket_error_retval;
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return bytes_transferred;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   signed_size_type result = ::recv(s, static_cast<char*>(data), size, flags);
@@ -817,7 +817,7 @@ size_t sync_recv(socket_type s, state_type state, buf* bufs,
   // A request to read 0 bytes on a stream is a no-op.
   if (all_empty && (state & stream_oriented))
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -862,7 +862,7 @@ size_t sync_recv1(socket_type s, state_type state, void* data,
   // A request to read 0 bytes on a stream is a no-op.
   if (size == 0 && (state & stream_oriented))
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -1029,7 +1029,7 @@ signed_size_type recvfrom(socket_type s, buf* bufs, size_t count,
     result = 0;
   if (result != 0)
     return socket_error_retval;
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return bytes_transferred;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -1268,7 +1268,7 @@ signed_size_type send(socket_type s, const buf* bufs, size_t count,
     ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return bytes_transferred;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -1302,7 +1302,7 @@ signed_size_type send1(socket_type s, const void* data, size_t size,
     ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return bytes_transferred;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #if defined(__linux__)
@@ -1327,7 +1327,7 @@ size_t sync_send(socket_type s, state_type state, const buf* bufs,
   // A request to write 0 bytes to a stream is a no-op.
   if (all_empty && (state & stream_oriented))
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -1365,7 +1365,7 @@ size_t sync_send1(socket_type s, state_type state, const void* data,
   // A request to write 0 bytes to a stream is a no-op.
   if (size == 0 && (state & stream_oriented))
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -1495,7 +1495,7 @@ signed_size_type sendto(socket_type s, const buf* bufs, size_t count,
     ec = asio::error::connection_refused;
   if (result != 0)
     return socket_error_retval;
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return bytes_transferred;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   msghdr msg = msghdr();
@@ -1661,7 +1661,7 @@ int setsockopt(socket_type s, state_type& state, int level, int optname,
       state |= enable_connection_aborted;
     else
       state &= ~enable_connection_aborted;
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -1746,7 +1746,7 @@ int getsockopt(socket_type s, state_type state, int level, int optname,
     }
 
     *static_cast<int*>(optval) = (state & enable_connection_aborted) ? 1 : 0;
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -1773,7 +1773,7 @@ int getsockopt(socket_type s, state_type state, int level, int optname,
         // value is non-zero (i.e. true). This corresponds to the behavior of
         // IPv6 sockets on Windows platforms pre-Vista.
         *static_cast<DWORD*>(optval) = 1;
-        ec = asio::error_code();
+        ec.assign(0, ec.category());
       }
       return result;
     }
@@ -1793,7 +1793,7 @@ int getsockopt(socket_type s, state_type state, int level, int optname,
     // non-zero (i.e. true). This corresponds to the behavior of IPv6 sockets
     // on Windows platforms pre-Vista.
     *static_cast<DWORD*>(optval) = 1;
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
   }
   return result;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -1854,7 +1854,7 @@ int getpeername(socket_type s, socket_addr_type* addr,
     }
 
     // The cached value is still valid.
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 #else // defined(ASIO_WINDOWS) && !defined(ASIO_WINDOWS_APP)
@@ -1949,7 +1949,7 @@ int select(int nfds, fd_set* readfds, fd_set* writefds,
     if (milliseconds == 0)
       milliseconds = 1; // Force context switch.
     ::Sleep(milliseconds);
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -2269,7 +2269,7 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
 
   // Windows may set error code on success.
   if (result != socket_error_retval)
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
 
   // Windows may not set an error code on failure.
   else if (result == socket_error_retval && !ec)
@@ -2323,7 +2323,7 @@ int inet_pton(int af, const char* src, void* dest,
     bytes[1] = static_cast<unsigned char>(b1);
     bytes[2] = static_cast<unsigned char>(b2);
     bytes[3] = static_cast<unsigned char>(b3);
-    ec = asio::error_code();
+    ec.assign(), ec.category());
     return 1;
   }
   else if (af == ASIO_OS_DEF(AF_INET6))
@@ -2439,7 +2439,7 @@ int inet_pton(int af, const char* src, void* dest,
     for (int i = 0; i < num_back_bytes; ++i)
       bytes[16 - num_back_bytes + i] = back_bytes[i];
 
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 1;
   }
   else
@@ -2482,12 +2482,12 @@ int inet_pton(int af, const char* src, void* dest,
     if (result != socket_error_retval)
     {
       memcpy(dest, &address.v4.sin_addr, sizeof(in4_addr_type));
-      ec = asio::error_code();
+      ec.assign(0, ec.category());
     }
     else if (strcmp(src, "255.255.255.255") == 0)
     {
       static_cast<in4_addr_type*>(dest)->s_addr = INADDR_NONE;
-      ec = asio::error_code();
+      ec.assign(0, ec.category());
     }
   }
   else // AF_INET6
@@ -2497,7 +2497,7 @@ int inet_pton(int af, const char* src, void* dest,
       memcpy(dest, &address.v6.sin6_addr, sizeof(in6_addr_type));
       if (scope_id)
         *scope_id = address.v6.sin6_scope_id;
-      ec = asio::error_code();
+      ec.assign(0, ec.category());
     }
   }
 
@@ -2506,7 +2506,7 @@ int inet_pton(int af, const char* src, void* dest,
     ec = asio::error::invalid_argument;
 
   if (result != socket_error_retval)
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
 
   return result == socket_error_retval ? -1 : 1;
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -3435,7 +3435,7 @@ inline asio::error_code getnameinfo_emulation(
     }
   }
 
-  ec = asio::error_code();
+  ec.assign(0, ec.category());
   return ec;
 }
 

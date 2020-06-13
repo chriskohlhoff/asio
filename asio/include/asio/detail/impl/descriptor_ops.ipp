@@ -171,7 +171,7 @@ std::size_t sync_read(int d, state_type state, buf* bufs,
   // A request to read 0 bytes on a stream is a no-op.
   if (all_empty)
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 
@@ -255,7 +255,7 @@ std::size_t sync_write(int d, state_type state, const buf* bufs,
   // A request to write 0 bytes on a stream is a no-op.
   if (all_empty)
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
     return 0;
   }
 

@@ -55,7 +55,7 @@ inline void get_last_error(
 {
   if (!is_error_condition)
   {
-    ec = asio::error_code();
+    ec.assign(0, ec.category());
   }
   else
   {
