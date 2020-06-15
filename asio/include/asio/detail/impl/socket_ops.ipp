@@ -827,16 +827,16 @@ size_t sync_recv(socket_type s, state_type state, buf* bufs,
     // Try to complete the operation without blocking.
     signed_size_type bytes = socket_ops::recv(s, bufs, count, flags, ec);
 
-    // Check if operation succeeded.
-    if (bytes > 0)
-      return bytes;
-
     // Check for EOF.
     if ((state & stream_oriented) && bytes == 0)
     {
       ec = asio::error::eof;
       return 0;
     }
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
 
     // Operation failed.
     if ((state & user_set_non_blocking)
@@ -872,16 +872,16 @@ size_t sync_recv1(socket_type s, state_type state, void* data,
     // Try to complete the operation without blocking.
     signed_size_type bytes = socket_ops::recv1(s, data, size, flags, ec);
 
-    // Check if operation succeeded.
-    if (bytes > 0)
-      return bytes;
-
     // Check for EOF.
     if ((state & stream_oriented) && bytes == 0)
     {
       ec = asio::error::eof;
       return 0;
     }
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
 
     // Operation failed.
     if ((state & user_set_non_blocking)
