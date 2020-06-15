@@ -234,11 +234,22 @@ public:
   size_t write_some(implementation_type& impl,
       const ConstBufferSequence& buffers, asio::error_code& ec)
   {
-    buffer_sequence_adapter<asio::const_buffer,
-        ConstBufferSequence> bufs(buffers);
+    typedef buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs_type;
 
-    return descriptor_ops::sync_write(impl.descriptor_, impl.state_,
-        bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
+    if (bufs_type::is_single_buffer)
+    {
+      return descriptor_ops::sync_write1(impl.descriptor_,
+          impl.state_, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+
+      return descriptor_ops::sync_write(impl.descriptor_, impl.state_,
+          bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
+    }
   }
 
   // Wait until data can be written without blocking.
@@ -302,11 +313,22 @@ public:
   size_t read_some(implementation_type& impl,
       const MutableBufferSequence& buffers, asio::error_code& ec)
   {
-    buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence> bufs(buffers);
+    typedef buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
 
-    return descriptor_ops::sync_read(impl.descriptor_, impl.state_,
-        bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
+    if (bufs_type::is_single_buffer)
+    {
+      return descriptor_ops::sync_read1(impl.descriptor_,
+          impl.state_, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+
+      return descriptor_ops::sync_read(impl.descriptor_, impl.state_,
+          bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
+    }
   }
 
   // Wait until data can be read without blocking.

@@ -50,12 +50,24 @@ public:
   {
     descriptor_read_op_base* o(static_cast<descriptor_read_op_base*>(base));
 
-    buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence> bufs(o->buffers_);
+    typedef buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
 
-    status result = descriptor_ops::non_blocking_read(o->descriptor_,
-        bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_)
-      ? done : not_done;
+    status result;
+    if (bufs_type::is_single_buffer)
+    {
+      result = descriptor_ops::non_blocking_read1(o->descriptor_,
+          bufs_type::first(o->buffers_).data(),
+          bufs_type::first(o->buffers_).size(),
+          o->ec_, o->bytes_transferred_) ? done : not_done;
+    }
+    else
+    {
+      bufs_type bufs(o->buffers_);
+      result = descriptor_ops::non_blocking_read(o->descriptor_,
+          bufs.buffers(), bufs.count(), o->ec_, o->bytes_transferred_)
+        ? done : not_done;
+    }
 
     ASIO_HANDLER_REACTOR_OPERATION((*o, "non_blocking_read",
           o->ec_, o->bytes_transferred_));
