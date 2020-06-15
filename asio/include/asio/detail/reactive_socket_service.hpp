@@ -219,12 +219,23 @@ public:
       const endpoint_type& destination, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    buffer_sequence_adapter<asio::const_buffer,
-        ConstBufferSequence> bufs(buffers);
+    typedef buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs_type;
 
-    return socket_ops::sync_sendto(impl.socket_, impl.state_,
-        bufs.buffers(), bufs.count(), flags,
-        destination.data(), destination.size(), ec);
+    if (bufs_type::is_single_buffer)
+    {
+      return socket_ops::sync_sendto1(impl.socket_, impl.state_,
+          bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), flags,
+          destination.data(), destination.size(), ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+      return socket_ops::sync_sendto(impl.socket_, impl.state_,
+          bufs.buffers(), bufs.count(), flags,
+          destination.data(), destination.size(), ec);
+    }
   }
 
   // Wait until data can be sent without blocking.
@@ -294,13 +305,25 @@ public:
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       asio::error_code& ec)
   {
-    buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence> bufs(buffers);
+    typedef buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
 
     std::size_t addr_len = sender_endpoint.capacity();
-    std::size_t bytes_recvd = socket_ops::sync_recvfrom(
-        impl.socket_, impl.state_, bufs.buffers(), bufs.count(),
-        flags, sender_endpoint.data(), &addr_len, ec);
+    std::size_t bytes_recvd;
+    if (bufs_type::is_single_buffer)
+    {
+      bytes_recvd = socket_ops::sync_recvfrom1(impl.socket_,
+          impl.state_, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), flags,
+          sender_endpoint.data(), &addr_len, ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+      bytes_recvd = socket_ops::sync_recvfrom(
+          impl.socket_, impl.state_, bufs.buffers(), bufs.count(),
+          flags, sender_endpoint.data(), &addr_len, ec);
+    }
 
     if (!ec)
       sender_endpoint.resize(addr_len);

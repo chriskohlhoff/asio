@@ -1044,6 +1044,53 @@ signed_size_type recvfrom(socket_type s, buf* bufs, size_t count,
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
+template <typename SockLenType>
+inline signed_size_type call_recvfrom(SockLenType msghdr::*,
+    socket_type s, void* data, size_t size, int flags,
+    socket_addr_type* addr, std::size_t* addrlen)
+{
+  SockLenType tmp_addrlen = addrlen ? (SockLenType)*addrlen : 0;
+  signed_size_type result = ::recvfrom(s, static_cast<char*>(data),
+      size, flags, addr, addrlen ? &tmp_addrlen : 0);
+  if (addrlen)
+    *addrlen = (std::size_t)tmp_addrlen;
+  return result;
+}
+
+signed_size_type recvfrom1(socket_type s, void* data, size_t size,
+    int flags, socket_addr_type* addr, std::size_t* addrlen,
+    asio::error_code& ec)
+{
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  // Receive some data.
+  WSABUF buf;
+  buf.buf = static_cast<char*>(data);
+  buf.len = static_cast<ULONG>(size);
+  DWORD bytes_transferred = 0;
+  DWORD recv_flags = flags;
+  int tmp_addrlen = (int)*addrlen;
+  int result = ::WSARecvFrom(s, &buf, 1, &bytes_transferred,
+      &recv_flags, addr, &tmp_addrlen, 0, 0);
+  get_last_error(ec, true);
+  *addrlen = (std::size_t)tmp_addrlen;
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
+  else if (ec.value() == WSAEMSGSIZE || ec.value() == ERROR_MORE_DATA)
+    result = 0;
+  if (result != 0)
+    return socket_error_retval;
+  ec.assign(0, ec.category());
+  return bytes_transferred;
+#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  signed_size_type result = call_recvfrom(&msghdr::msg_namelen,
+      s, data, size, flags, addr, addrlen);
+  get_last_error(ec, result < 0);
+  return result;
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+}
+
 size_t sync_recvfrom(socket_type s, state_type state, buf* bufs,
     size_t count, int flags, socket_addr_type* addr,
     std::size_t* addrlen, asio::error_code& ec)
@@ -1060,6 +1107,39 @@ size_t sync_recvfrom(socket_type s, state_type state, buf* bufs,
     // Try to complete the operation without blocking.
     signed_size_type bytes = socket_ops::recvfrom(
         s, bufs, count, flags, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_read(s, 0, -1, ec) < 0)
+      return 0;
+  }
+}
+
+size_t sync_recvfrom1(socket_type s, state_type state, void* data,
+    size_t size, int flags, socket_addr_type* addr,
+    std::size_t* addrlen, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // Read some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    signed_size_type bytes = socket_ops::recvfrom1(
+        s, data, size, flags, addr, addrlen, ec);
 
     // Check if operation succeeded.
     if (bytes >= 0)
@@ -1113,6 +1193,39 @@ bool non_blocking_recvfrom(socket_type s,
     // Read some data.
     signed_size_type bytes = socket_ops::recvfrom(
         s, bufs, count, flags, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation failed.
+    bytes_transferred = 0;
+    return true;
+  }
+}
+
+bool non_blocking_recvfrom1(socket_type s,
+    void* data, size_t size, int flags,
+    socket_addr_type* addr, std::size_t* addrlen,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Read some data.
+    signed_size_type bytes = socket_ops::recvfrom1(
+        s, data, size, flags, addr, addrlen, ec);
 
     // Check if operation succeeded.
     if (bytes >= 0)
@@ -1512,6 +1625,47 @@ signed_size_type sendto(socket_type s, const buf* bufs, size_t count,
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 }
 
+template <typename SockLenType>
+inline signed_size_type call_sendto(SockLenType msghdr::*,
+    socket_type s, const void* data, size_t size, int flags,
+    const socket_addr_type* addr, std::size_t addrlen)
+{
+  return ::sendto(s, static_cast<char*>(const_cast<void*>(data)),
+      size, flags, addr, (SockLenType)addrlen);
+}
+
+signed_size_type sendto1(socket_type s, const void* data, size_t size,
+    int flags, const socket_addr_type* addr, std::size_t addrlen,
+    asio::error_code& ec)
+{
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  // Send the data.
+  WSABUF buf;
+  buf.buf = const_cast<char*>(static_cast<const char*>(data));
+  buf.len = static_cast<ULONG>(size);
+  DWORD bytes_transferred = 0;
+  int result = ::WSASendTo(s, &buf, 1, &bytes_transferred,
+      flags, addr, static_cast<int>(addrlen), 0, 0);
+  get_last_error(ec, true);
+  if (ec.value() == ERROR_NETNAME_DELETED)
+    ec = asio::error::connection_reset;
+  else if (ec.value() == ERROR_PORT_UNREACHABLE)
+    ec = asio::error::connection_refused;
+  if (result != 0)
+    return socket_error_retval;
+  ec.assign(0, ec.category());
+  return bytes_transferred;
+#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(__linux__)
+  flags |= MSG_NOSIGNAL;
+#endif // defined(__linux__)
+  signed_size_type result = call_sendto(&msghdr::msg_namelen,
+      s, data, size, flags, addr, addrlen);
+  get_last_error(ec, result < 0);
+  return result;
+#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+}
+
 size_t sync_sendto(socket_type s, state_type state, const buf* bufs,
     size_t count, int flags, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec)
@@ -1545,6 +1699,39 @@ size_t sync_sendto(socket_type s, state_type state, const buf* bufs,
   }
 }
 
+size_t sync_sendto1(socket_type s, state_type state, const void* data,
+    size_t size, int flags, const socket_addr_type* addr,
+    std::size_t addrlen, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // Write some data.
+  for (;;)
+  {
+    // Try to complete the operation without blocking.
+    signed_size_type bytes = socket_ops::sendto1(
+        s, data, size, flags, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+      return bytes;
+
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (ec != asio::error::would_block
+          && ec != asio::error::try_again))
+      return 0;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_write(s, 0, -1, ec) < 0)
+      return 0;
+  }
+}
+
 #if !defined(ASIO_HAS_IOCP)
 
 bool non_blocking_sendto(socket_type s,
@@ -1557,6 +1744,39 @@ bool non_blocking_sendto(socket_type s,
     // Write some data.
     signed_size_type bytes = socket_ops::sendto(
         s, bufs, count, flags, addr, addrlen, ec);
+
+    // Check if operation succeeded.
+    if (bytes >= 0)
+    {
+      bytes_transferred = bytes;
+      return true;
+    }
+
+    // Retry operation if interrupted by signal.
+    if (ec == asio::error::interrupted)
+      continue;
+
+    // Check if we need to run the operation again.
+    if (ec == asio::error::would_block
+        || ec == asio::error::try_again)
+      return false;
+
+    // Operation failed.
+    bytes_transferred = 0;
+    return true;
+  }
+}
+
+bool non_blocking_sendto1(socket_type s,
+    const void* data, size_t size, int flags,
+    const socket_addr_type* addr, std::size_t addrlen,
+    asio::error_code& ec, size_t& bytes_transferred)
+{
+  for (;;)
+  {
+    // Write some data.
+    signed_size_type bytes = socket_ops::sendto1(
+        s, data, size, flags, addr, addrlen, ec);
 
     // Check if operation succeeded.
     if (bytes >= 0)

@@ -51,14 +51,27 @@ public:
     reactive_socket_recvfrom_op_base* o(
         static_cast<reactive_socket_recvfrom_op_base*>(base));
 
-    buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence> bufs(o->buffers_);
+    typedef buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
 
     std::size_t addr_len = o->sender_endpoint_.capacity();
-    status result = socket_ops::non_blocking_recvfrom(o->socket_,
-        bufs.buffers(), bufs.count(), o->flags_,
-        o->sender_endpoint_.data(), &addr_len,
-        o->ec_, o->bytes_transferred_) ? done : not_done;
+    status result;
+    if (bufs_type::is_single_buffer)
+    {
+      result = socket_ops::non_blocking_recvfrom1(
+          o->socket_, bufs_type::first(o->buffers_).data(),
+          bufs_type::first(o->buffers_).size(), o->flags_,
+          o->sender_endpoint_.data(), &addr_len,
+          o->ec_, o->bytes_transferred_) ? done : not_done;
+    }
+    else
+    {
+      bufs_type bufs(o->buffers_);
+      result = socket_ops::non_blocking_recvfrom(o->socket_,
+          bufs.buffers(), bufs.count(), o->flags_,
+          o->sender_endpoint_.data(), &addr_len,
+          o->ec_, o->bytes_transferred_) ? done : not_done;
+    }
 
     if (result && !o->ec_)
       o->sender_endpoint_.resize(addr_len);
