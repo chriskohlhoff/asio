@@ -11,6 +11,7 @@ any_executor
 blocking
 blocking_adaptation
 bulk_guarantee
+context_as
 execute
 invocable_archetype
 mapping

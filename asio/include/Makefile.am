@@ -298,6 +298,7 @@ nobase_include_HEADERS = \
 	asio/execution/blocking_adaptation.hpp \
 	asio/execution/bulk_guarantee.hpp \
 	asio/execution/context.hpp \
+	asio/execution/context_as.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/impl/bad_executor.ipp \

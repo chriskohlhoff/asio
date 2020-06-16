@@ -151,6 +151,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\blocking.exe \
 	tests\unit\execution\blocking_adaptation.exe \
 	tests\unit\execution\bulk_guarantee.exe \
+	tests\unit\execution\context_as.exe \
 	tests\unit\execution\execute.exe \
 	tests\unit\execution\invocable_archetype.exe \
 	tests\unit\execution\mapping.exe \

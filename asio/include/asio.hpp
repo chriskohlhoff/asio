@@ -59,6 +59,7 @@
 #include "asio/execution/blocking_adaptation.hpp"
 #include "asio/execution/bulk_guarantee.hpp"
 #include "asio/execution/context.hpp"
+#include "asio/execution/context_as.hpp"
 #include "asio/execution/execute.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/execution/invocable_archetype.hpp"
