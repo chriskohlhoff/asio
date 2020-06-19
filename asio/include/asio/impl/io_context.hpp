@@ -154,10 +154,10 @@ struct io_context::initiate_dispatch
     {
       // Allocate and construct an operation to wrap the handler.
       typedef detail::completion_handler<
-        typename decay<LegacyCompletionHandler>::type> op;
+        typename decay<LegacyCompletionHandler>::type, executor_type> op;
       typename op::ptr p = { detail::addressof(handler2.value),
         op::ptr::allocate(handler2.value), 0 };
-      p.p = new (p.v) op(handler2.value);
+      p.p = new (p.v) op(handler2.value, self->get_executor());
 
       ASIO_HANDLER_CREATION((*self, *p.p,
             "io_context", self, 0, "dispatch"));
@@ -194,10 +194,10 @@ struct io_context::initiate_post
 
     // Allocate and construct an operation to wrap the handler.
     typedef detail::completion_handler<
-      typename decay<LegacyCompletionHandler>::type> op;
+      typename decay<LegacyCompletionHandler>::type, executor_type> op;
     typename op::ptr p = { detail::addressof(handler2.value),
         op::ptr::allocate(handler2.value), 0 };
-    p.p = new (p.v) op(handler2.value);
+    p.p = new (p.v) op(handler2.value, self->get_executor());
 
     ASIO_HANDLER_CREATION((*self, *p.p,
           "io_context", self, 0, "post"));
