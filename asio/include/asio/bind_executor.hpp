@@ -21,6 +21,7 @@
 #include "asio/associated_executor.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/async_result.hpp"
+#include "asio/execution/executor.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/uses_executor.hpp"
@@ -493,7 +494,9 @@ private:
 template <typename Executor, typename T>
 inline executor_binder<typename decay<T>::type, Executor>
 bind_executor(const Executor& ex, ASIO_MOVE_ARG(T) t,
-    typename enable_if<is_executor<Executor>::value>::type* = 0)
+    typename enable_if<
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
+    >::type* = 0)
 {
   return executor_binder<typename decay<T>::type, Executor>(
       executor_arg_t(), ex, ASIO_MOVE_CAST(T)(t));
