@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/any_io_executor.hpp"
 #include "asio/basic_socket.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/io_object_impl.hpp"
@@ -24,7 +25,6 @@
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/execution_context.hpp"
-#include "asio/executor.hpp"
 #include "asio/socket_base.hpp"
 
 #if defined(ASIO_WINDOWS_RUNTIME)
@@ -47,7 +47,7 @@ namespace asio {
 #define ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL
 
 // Forward declaration with defaulted arguments.
-template <typename Protocol, typename Executor = executor>
+template <typename Protocol, typename Executor = any_io_executor>
 class basic_socket_acceptor;
 
 #endif // !defined(ASIO_BASIC_SOCKET_ACCEPTOR_FWD_DECL)

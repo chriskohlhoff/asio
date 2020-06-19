@@ -17,11 +17,11 @@
 
 #include "asio/detail/config.hpp"
 #include <boost/coroutine/all.hpp>
+#include "asio/any_io_executor.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/wrapped_handler.hpp"
-#include "asio/executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/strand.hpp"
@@ -151,7 +151,7 @@ private:
 typedef basic_yield_context<unspecified> yield_context;
 #else // defined(GENERATING_DOCUMENTATION)
 typedef basic_yield_context<
-  executor_binder<void(*)(), executor> > yield_context;
+  executor_binder<void(*)(), any_io_executor> > yield_context;
 #endif // defined(GENERATING_DOCUMENTATION)
 
 /**

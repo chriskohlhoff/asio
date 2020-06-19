@@ -25,7 +25,7 @@
 # include <experimental/coroutine>
 #endif // defined(ASIO_HAS_STD_COROUTINE)
 
-#include "asio/executor.hpp"
+#include "asio/any_io_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -46,7 +46,7 @@ template <typename, typename> class awaitable_frame;
 } // namespace detail
 
 /// The return type of a coroutine or asynchronous operation.
-template <typename T, typename Executor = executor>
+template <typename T, typename Executor = any_io_executor>
 class awaitable
 {
 public:

@@ -49,7 +49,7 @@ namespace asio {
  * the asynchronous operation completes, and the result of the operation is
  * returned.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 struct use_awaitable_t
 {
   /// Default constructor.

@@ -36,7 +36,7 @@ namespace posix {
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 class basic_stream_descriptor
   : public basic_descriptor<Executor>
 {

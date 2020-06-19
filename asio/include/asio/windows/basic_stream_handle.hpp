@@ -38,7 +38,7 @@ namespace windows {
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 class basic_stream_handle
   : public basic_overlapped_handle<Executor>
 {
