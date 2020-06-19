@@ -18,7 +18,9 @@
 #include "asio/detail/config.hpp"
 #include "asio/awaitable.hpp"
 #include "asio/dispatch.hpp"
+#include "asio/execution/outstanding_work.hpp"
 #include "asio/post.hpp"
+#include "asio/prefer.hpp"
 #include "asio/use_awaitable.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -26,12 +28,56 @@
 namespace asio {
 namespace detail {
 
+template <typename Executor, typename = void>
+class co_spawn_work_guard
+{
+public:
+  typedef typename decay<
+      typename prefer_result_type<Executor,
+        execution::outstanding_work_t::tracked_t
+      >::type
+    >::type executor_type;
+
+  co_spawn_work_guard(const Executor& ex)
+    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+  {
+  }
+
+  executor_type get_executor() const ASIO_NOEXCEPT
+  {
+    return executor_;
+  }
+
+private:
+  executor_type executor_;
+};
+
+template <typename Executor>
+struct co_spawn_work_guard<Executor,
+    typename enable_if<
+      !execution::is_executor<Executor>::value
+    >::type> : executor_work_guard<Executor>
+{
+  co_spawn_work_guard(const Executor& ex)
+    : executor_work_guard<Executor>(ex)
+  {
+  }
+};
+
+template <typename Executor>
+inline co_spawn_work_guard<Executor>
+make_co_spawn_work_guard(const Executor& ex)
+{
+  return co_spawn_work_guard<Executor>(ex);
+}
+
 template <typename T, typename Executor, typename F, typename Handler>
 awaitable<void, Executor> co_spawn_entry_point(
     awaitable<T, Executor>*, Executor ex, F f, Handler handler)
 {
-  auto spawn_work = make_work_guard(ex);
-  auto handler_work = make_work_guard(handler, ex);
+  auto spawn_work = make_co_spawn_work_guard(ex);
+  auto handler_work = make_co_spawn_work_guard(
+      asio::get_associated_executor(handler, ex));
 
   (void) co_await (post)(spawn_work.get_executor(),
       use_awaitable_t<Executor>{});
@@ -66,8 +112,9 @@ template <typename Executor, typename F, typename Handler>
 awaitable<void, Executor> co_spawn_entry_point(
     awaitable<void, Executor>*, Executor ex, F f, Handler handler)
 {
-  auto spawn_work = make_work_guard(ex);
-  auto handler_work = make_work_guard(handler, ex);
+  auto spawn_work = make_co_spawn_work_guard(ex);
+  auto handler_work = make_co_spawn_work_guard(
+      asio::get_associated_executor(handler, ex));
 
   (void) co_await (post)(spawn_work.get_executor(),
       use_awaitable_t<Executor>{__FILE__, __LINE__, "co_spawn_entry_point"});
@@ -148,7 +195,7 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(
 co_spawn(const Executor& ex,
     awaitable<T, AwaitableExecutor> a, CompletionToken&& token,
     typename enable_if<
-      is_executor<Executor>::value
+      (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
     >::type*)
 {
@@ -165,7 +212,7 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(
 co_spawn(const Executor& ex,
     awaitable<void, AwaitableExecutor> a, CompletionToken&& token,
     typename enable_if<
-      is_executor<Executor>::value
+      (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
     >::type*)
 {
@@ -216,7 +263,7 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
     typename enable_if<
-      is_executor<Executor>::value
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
     >::type*)
 {
   return async_initiate<CompletionToken,
