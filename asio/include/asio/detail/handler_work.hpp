@@ -185,24 +185,14 @@ private:
   Executor executor_;
 };
 
-// A helper class template to allow completion handlers to be dispatched
-// through either the new executors framework or the old invocaton hook. The
-// primary template uses the new executors framework.
-template <typename Handler,
-    typename IoExecutor = system_executor, typename HandlerExecutor
-      = typename associated_executor<Handler, IoExecutor>::type>
+template <typename Handler, typename IoExecutor,
+    typename HandlerExecutor =
+      typename associated_executor<Handler, IoExecutor>::type>
 class handler_work :
   handler_work_base<IoExecutor>,
   handler_work_base<HandlerExecutor, IoExecutor>
 {
 public:
-  explicit handler_work(Handler& handler) ASIO_NOEXCEPT
-    : handler_work_base<IoExecutor>(IoExecutor()),
-      handler_work_base<HandlerExecutor, IoExecutor>(
-          asio::get_associated_executor(handler), IoExecutor())
-  {
-  }
-
   handler_work(Handler& handler, const IoExecutor& io_ex) ASIO_NOEXCEPT
     : handler_work_base<IoExecutor>(io_ex),
       handler_work_base<HandlerExecutor, IoExecutor>(
@@ -227,28 +217,6 @@ public:
           ASIO_MOVE_CAST(Function)(function),
           asio::get_associated_allocator(handler));
     }
-  }
-
-private:
-  // Disallow assignment.
-  handler_work& operator=(const handler_work&);
-};
-
-// This specialisation dispatches a handler through the old invocation hook.
-// The specialisation is not strictly required for correctness, as the
-// system_executor will dispatch through the hook anyway. However, by doing
-// this we avoid an extra copy of the handler.
-template <typename Handler>
-class handler_work<Handler, system_executor, system_executor>
-{
-public:
-  explicit handler_work(Handler&) ASIO_NOEXCEPT {}
-  handler_work(Handler&, const system_executor&) ASIO_NOEXCEPT {}
-
-  template <typename Function>
-  void complete(Function& function, Handler& handler)
-  {
-    asio_handler_invoke_helpers::invoke(function, handler);
   }
 
 private:
