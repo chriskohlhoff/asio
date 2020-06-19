@@ -18,11 +18,172 @@
 #include "asio/detail/config.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+
+class executor;
+class io_context;
+
 namespace detail {
+
+template <typename Executor, typename CandidateExecutor = void,
+    typename IoContext = io_context,
+    typename PolymorphicExecutor = executor, typename = void>
+class handler_work_base
+{
+public:
+  explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
+    : executor_(ex),
+      owns_work_(true)
+  {
+    executor_.on_work_started();
+  }
+
+  handler_work_base(const Executor& ex,
+      const Executor& candidate) ASIO_NOEXCEPT
+    : executor_(ex),
+      owns_work_(ex != candidate)
+  {
+    if (owns_work_)
+      executor_.on_work_started();
+  }
+
+  template <typename OtherExecutor>
+  handler_work_base(const Executor& ex,
+      const OtherExecutor&) ASIO_NOEXCEPT
+    : executor_(ex),
+      owns_work_(true)
+  {
+    executor_.on_work_started();
+  }
+
+  handler_work_base(const handler_work_base& other) ASIO_NOEXCEPT
+    : executor_(other.executor_),
+      owns_work_(other.owns_work_)
+  {
+    if (owns_work_)
+      executor_.on_work_started();
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  handler_work_base(handler_work_base&& other) ASIO_NOEXCEPT
+    : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
+      owns_work_(other.owns_work_)
+  {
+    other.owns_work_ = false;
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  ~handler_work_base()
+  {
+    if (owns_work_)
+      executor_.on_work_finished();
+  }
+
+  bool owns_work() const ASIO_NOEXCEPT
+  {
+    return owns_work_;
+  }
+
+  const Executor& get_executor() const ASIO_NOEXCEPT
+  {
+    return executor_;
+  }
+
+private:
+  Executor executor_;
+  bool owns_work_;
+};
+
+template <typename Executor, typename IoContext, typename PolymorphicExecutor>
+class handler_work_base<Executor, void, IoContext, PolymorphicExecutor,
+    typename enable_if<
+      is_same<
+        Executor,
+        typename IoContext::executor_type
+      >::value
+    >::type>
+{
+public:
+  explicit handler_work_base(const Executor&)
+  {
+  }
+
+  bool owns_work() const ASIO_NOEXCEPT
+  {
+    return false;
+  }
+};
+
+template <typename Executor, typename IoContext>
+class handler_work_base<Executor, void, IoContext, Executor>
+{
+public:
+  explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
+#if !defined(ASIO_NO_TYPEID)
+    : executor_(
+        ex.target_type() == typeid(typename IoContext::executor_type)
+          ? Executor() : ex)
+#else // !defined(ASIO_NO_TYPEID)
+    : executor_(ex)
+#endif // !defined(ASIO_NO_TYPEID)
+  {
+    if (executor_)
+      executor_.on_work_started();
+  }
+
+  handler_work_base(const Executor& ex,
+      const Executor& candidate) ASIO_NOEXCEPT
+    : executor_(ex != candidate ? ex : Executor())
+  {
+    if (executor_)
+      executor_.on_work_started();
+  }
+
+  template <typename OtherExecutor>
+  handler_work_base(const Executor& ex,
+      const OtherExecutor&) ASIO_NOEXCEPT
+    : executor_(ex)
+  {
+    executor_.on_work_started();
+  }
+
+  handler_work_base(const handler_work_base& other) ASIO_NOEXCEPT
+    : executor_(other.executor_)
+  {
+    if (executor_)
+      executor_.on_work_started();
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  handler_work_base(handler_work_base&& other) ASIO_NOEXCEPT
+    : executor_(ASIO_MOVE_CAST(Executor)(other.executor_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  ~handler_work_base()
+  {
+    if (executor_)
+      executor_.on_work_finished();
+  }
+
+  bool owns_work() const ASIO_NOEXCEPT
+  {
+    return !!executor_;
+  }
+
+  const Executor& get_executor() const ASIO_NOEXCEPT
+  {
+    return executor_;
+  }
+
+private:
+  Executor executor_;
+};
 
 // A helper class template to allow completion handlers to be dispatched
 // through either the new executors framework or the old invocaton hook. The
@@ -30,72 +191,47 @@ namespace detail {
 template <typename Handler,
     typename IoExecutor = system_executor, typename HandlerExecutor
       = typename associated_executor<Handler, IoExecutor>::type>
-class handler_work
+class handler_work :
+  handler_work_base<IoExecutor>,
+  handler_work_base<HandlerExecutor, IoExecutor>
 {
 public:
   explicit handler_work(Handler& handler) ASIO_NOEXCEPT
-    : io_executor_(),
-      executor_(asio::get_associated_executor(handler, io_executor_)),
-      owns_work_(true)
+    : handler_work_base<IoExecutor>(IoExecutor()),
+      handler_work_base<HandlerExecutor, IoExecutor>(
+          asio::get_associated_executor(handler), IoExecutor())
   {
-    io_executor_.on_work_started();
-    executor_.on_work_started();
   }
 
   handler_work(Handler& handler, const IoExecutor& io_ex) ASIO_NOEXCEPT
-    : io_executor_(io_ex),
-      executor_(asio::get_associated_executor(handler, io_executor_)),
-      owns_work_(true)
+    : handler_work_base<IoExecutor>(io_ex),
+      handler_work_base<HandlerExecutor, IoExecutor>(
+          asio::get_associated_executor(handler, io_ex), io_ex)
   {
-    io_executor_.on_work_started();
-    executor_.on_work_started();
-  }
-
-  handler_work(const handler_work& other)
-    : io_executor_(other.io_executor_),
-      executor_(other.executor_),
-      owns_work_(other.owns_work_)
-  {
-    if (owns_work_)
-    {
-      io_executor_.on_work_started();
-      executor_.on_work_started();
-    }
-  }
-
-#if defined(ASIO_HAS_MOVE)
-  handler_work(handler_work&& other)
-    : io_executor_(ASIO_MOVE_CAST(IoExecutor)(other.io_executor_)),
-      executor_(ASIO_MOVE_CAST(HandlerExecutor)(other.executor_)),
-      owns_work_(other.owns_work_)
-  {
-    other.owns_work_ = false;
-  }
-#endif // defined(ASIO_HAS_MOVE)
-
-  ~handler_work()
-  {
-    if (owns_work_)
-    {
-      io_executor_.on_work_finished();
-      executor_.on_work_finished();
-    }
   }
 
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
-    executor_.dispatch(ASIO_MOVE_CAST(Function)(function),
-        asio::get_associated_allocator(handler));
+    if (!handler_work_base<IoExecutor>::owns_work()
+        && !handler_work_base<HandlerExecutor, IoExecutor>::owns_work())
+    {
+      // When using a native implementation, I/O completion handlers are
+      // already dispatched according to the execution context's executor's
+      // rules. We can call the function directly.
+      asio_handler_invoke_helpers::invoke(function, handler);
+    }
+    else
+    {
+      handler_work_base<HandlerExecutor, IoExecutor>::get_executor().dispatch(
+          ASIO_MOVE_CAST(Function)(function),
+          asio::get_associated_allocator(handler));
+    }
   }
 
 private:
   // Disallow assignment.
   handler_work& operator=(const handler_work&);
-
-  IoExecutor io_executor_;
-  HandlerExecutor executor_;
-  bool owns_work_;
 };
 
 // This specialisation dispatches a handler through the old invocation hook.

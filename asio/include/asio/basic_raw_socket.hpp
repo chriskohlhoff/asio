@@ -1085,7 +1085,7 @@ private:
       detail::non_const_lvalue<WriteHandler> handler2(handler);
       self_->impl_.get_service().async_send(
           self_->impl_.get_implementation(), buffers, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -1118,8 +1118,8 @@ private:
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
       self_->impl_.get_service().async_send_to(
-          self_->impl_.get_implementation(), buffers, destination, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), buffers, destination,
+          flags, handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -1153,7 +1153,7 @@ private:
       detail::non_const_lvalue<ReadHandler> handler2(handler);
       self_->impl_.get_service().async_receive(
           self_->impl_.get_implementation(), buffers, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -1186,8 +1186,8 @@ private:
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
       self_->impl_.get_service().async_receive_from(
-          self_->impl_.get_implementation(), buffers, *sender_endpoint, flags,
-          handler2.value, self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), buffers, *sender_endpoint,
+          flags, handler2.value, self_->impl_.get_executor());
     }
 
   private:

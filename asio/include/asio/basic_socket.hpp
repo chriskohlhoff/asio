@@ -1846,7 +1846,7 @@ private:
         detail::non_const_lvalue<ConnectHandler> handler2(handler);
         self_->impl_.get_service().async_connect(
             self_->impl_.get_implementation(), peer_endpoint,
-            handler2.value, self_->impl_.get_implementation_executor());
+            handler2.value, self_->impl_.get_executor());
       }
     }
 
@@ -1878,8 +1878,8 @@ private:
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
       self_->impl_.get_service().async_wait(
-          self_->impl_.get_implementation(), w, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), w,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

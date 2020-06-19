@@ -135,7 +135,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
-	asio/detail/io_object_executor.hpp \
 	asio/detail/io_object_impl.hpp \
 	asio/detail/is_buffer_sequence.hpp \
 	asio/detail/is_executor.hpp \

@@ -437,8 +437,8 @@ private:
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
       self_->impl_.get_service().async_write_some_at(
-          self_->impl_.get_implementation(), offset, buffers, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), offset, buffers,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -470,8 +470,8 @@ private:
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
       self_->impl_.get_service().async_read_some_at(
-          self_->impl_.get_implementation(), offset, buffers, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), offset, buffers,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

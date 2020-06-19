@@ -671,8 +671,8 @@ private:
 
       detail::non_const_lvalue<WaitHandler> handler2(handler);
       self_->impl_.get_service().async_wait(
-          self_->impl_.get_implementation(), handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(),
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
