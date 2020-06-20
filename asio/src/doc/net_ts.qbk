@@ -46,7 +46,7 @@ below shows the new Networking TS interfaces and the facilities they replace:
   [
     [[link asio.reference.dispatch `post`]]
     [[link asio.reference.io_context.post `io_service::post`]]
-    [The `dispatch` free function can be used to submit functions to any [link
+    [The `post` free function can be used to submit functions to any [link
     asio.reference.Executor1 Executor] or [link asio.reference.ExecutionContext
     ExecutionContext].]
   ]
