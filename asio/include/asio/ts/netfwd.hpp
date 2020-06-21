@@ -36,8 +36,13 @@ class execution_context;
 template <typename T, typename Executor>
 class executor_binder;
 
-template <typename Executor>
+#if !defined(ASIO_EXECUTOR_WORK_GUARD_DECL)
+#define ASIO_EXECUTOR_WORK_GUARD_DECL
+
+template <typename Executor, typename = void>
 class executor_work_guard;
+
+#endif // !defined(ASIO_EXECUTOR_WORK_GUARD_DECL)
 
 template <typename Blocking, typename Relationship, typename Allocator>
 class basic_system_executor;
