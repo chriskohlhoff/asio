@@ -19,7 +19,9 @@
 #include <tuple>
 #include "asio/async_result.hpp"
 #include "asio/detail/memory.hpp"
+#include "asio/dispatch.hpp"
 #include "asio/error_code.hpp"
+#include "asio/execution.hpp"
 #include "asio/packaged_task.hpp"
 #include "asio/system_error.hpp"
 #include "asio/system_executor.hpp"
@@ -200,7 +202,7 @@ private:
 
 // An executor that adapts the system_executor to capture any exeption thrown
 // by a submitted function object and save it into a promise.
-template <typename T>
+template <typename T, typename Blocking = execution::blocking_t::possibly_t>
 class promise_executor
 {
 public:
@@ -209,6 +211,32 @@ public:
   {
   }
 
+  static ASIO_CONSTEXPR Blocking query(execution::blocking_t)
+  {
+    return Blocking();
+  }
+
+  promise_executor<T, execution::blocking_t::possibly_t>
+  require(execution::blocking_t::possibly_t) const
+  {
+    return promise_executor<T, execution::blocking_t::possibly_t>(p_);
+  }
+
+  promise_executor<T, execution::blocking_t::never_t>
+  require(execution::blocking_t::never_t) const
+  {
+    return promise_executor<T, execution::blocking_t::never_t>(p_);
+  }
+
+  template <typename F>
+  void execute(ASIO_MOVE_ARG(F) f) const
+  {
+    execution::execute(
+        asio::require(system_executor(), Blocking()),
+        promise_invoker<T, F>(p_, ASIO_MOVE_CAST(F)(f)));
+  }
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
   execution_context& context() const ASIO_NOEXCEPT
   {
     return system_executor().context();
@@ -236,6 +264,7 @@ public:
     system_executor().defer(
         promise_invoker<T, F>(p_, ASIO_MOVE_CAST(F)(f)), a);
   }
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
   friend bool operator==(const promise_executor& a,
       const promise_executor& b) ASIO_NOEXCEPT
@@ -607,6 +636,27 @@ private:
   Allocator allocator_;
 };
 
+template <typename Function>
+struct promise_function_wrapper
+{
+  explicit promise_function_wrapper(Function& f)
+    : function_(ASIO_MOVE_CAST(Function)(f))
+  {
+  }
+
+  explicit promise_function_wrapper(const Function& f)
+    : function_(f)
+  {
+  }
+
+  void operator()()
+  {
+    function_();
+  }
+
+  Function function_;
+};
+
 #if !defined(ASIO_NO_DEPRECATED)
 
 template <typename Function, typename Signature, typename Allocator>
@@ -615,7 +665,7 @@ inline void asio_handler_invoke(Function& f,
 {
   typename promise_handler<Signature, Allocator>::executor_type
     ex(h->get_executor());
-  ex.dispatch(ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 template <typename Function, typename Signature, typename Allocator>
@@ -624,7 +674,7 @@ inline void asio_handler_invoke(const Function& f,
 {
   typename promise_handler<Signature, Allocator>::executor_type
     ex(h->get_executor());
-  ex.dispatch(f, std::allocator<void>());
+  asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 #endif // !defined(ASIO_NO_DEPRECATED)
@@ -732,7 +782,7 @@ inline void asio_handler_invoke(Function& f,
 {
   typename packaged_handler<Function1, Allocator, Result>::executor_type
     ex(h->get_executor());
-  ex.dispatch(ASIO_MOVE_CAST(Function)(f), std::allocator<void>());
+  asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 template <typename Function,
@@ -742,7 +792,7 @@ inline void asio_handler_invoke(const Function& f,
 {
   typename packaged_handler<Function1, Allocator, Result>::executor_type
     ex(h->get_executor());
-  ex.dispatch(f, std::allocator<void>());
+  asio::dispatch(ex, promise_function_wrapper<Function>(f));
 }
 
 #endif // !defined(ASIO_NO_DEPRECATED)
@@ -885,6 +935,90 @@ public:
 #undef ASIO_PRIVATE_ASYNC_RESULT_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+namespace execution {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+template <typename T, typename Blocking>
+struct is_executor<
+    asio::detail::promise_executor<T, Blocking> > : true_type
+{
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+
+} // namespace execution
+namespace traits {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename T, typename Blocking, typename Function>
+struct execute_member<
+    asio::detail::promise_executor<T, Blocking>, Function>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_TRAIT)
+
+template <typename T, typename Blocking, typename Property>
+struct query_static_constexpr_member<
+    asio::detail::promise_executor<T, Blocking>,
+    Property,
+    typename asio::enable_if<
+      asio::is_convertible<
+        Property,
+        asio::execution::blocking_t
+      >::value
+    >::type
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef Blocking result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return Blocking();
+  }
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename T, typename Blocking>
+struct require_member<
+    asio::detail::promise_executor<T, Blocking>,
+    execution::blocking_t::possibly_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::detail::promise_executor<T,
+      execution::blocking_t::possibly_t> result_type;
+};
+
+template <typename T, typename Blocking>
+struct require_member<
+    asio::detail::promise_executor<T, Blocking>,
+    execution::blocking_t::never_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::detail::promise_executor<T,
+      execution::blocking_t::never_t> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+} // namespace traits
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
