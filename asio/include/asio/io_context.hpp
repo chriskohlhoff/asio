@@ -160,12 +160,30 @@ namespace detail {
  * returning when there is no more work to do. For example, the io_context may
  * be being run in a background thread that is launched prior to the
  * application's asynchronous operations. The run() call may be kept running by
- * creating an object of type
- * asio::executor_work_guard<io_context::executor_type>:
+ * creating an executor that tracks work against the io_context:
  *
  * @code asio::io_context io_context;
- * asio::executor_work_guard<asio::io_context::executor_type>
- *   = asio::make_work_guard(io_context);
+ * auto work = asio::require(io_context.get_executor(),
+ *     asio::execution::outstanding_work.tracked);
+ * ... @endcode
+ *
+ * If using C++03, which lacks automatic variable type deduction, you may
+ * compute the return type of the require call:
+ *
+ * @code asio::io_context io_context;
+ * typename asio::require_result_type<
+ *     asio::io_context::executor_type,
+ *     asio::exeution::outstanding_work_t::tracked_t>
+ *   work = asio::require(io_context.get_executor(),
+ *     asio::execution::outstanding_work.tracked);
+ * ... @endcode
+ *
+ * or store the result in the type-erasing executor wrapper, any_io_executor:
+ *
+ * @code asio::io_context io_context;
+ * asio::any_io_executor work
+ *   = asio::require(io_context.get_executor(),
+ *       asio::execution::outstanding_work.tracked);
  * ... @endcode
  *
  * To effect a shutdown, the application will then need to call the io_context
@@ -174,13 +192,15 @@ namespace detail {
  * permitting ready handlers to be dispatched.
  *
  * Alternatively, if the application requires that all operations and handlers
- * be allowed to finish normally, the work object may be explicitly reset.
+ * be allowed to finish normally, store the work-tracking executor in an
+ * any_io_executor object, so that it may be explicitly reset.
  *
  * @code asio::io_context io_context;
- * asio::executor_work_guard<asio::io_context::executor_type>
- *   = asio::make_work_guard(io_context);
+ * asio::any_io_executor work
+ *   = asio::require(io_context.get_executor(),
+ *       asio::execution::outstanding_work.tracked);
  * ...
- * work.reset(); // Allow run() to exit. @endcode
+ * work = asio::any_io_executor(); // Allow run() to exit. @endcode
  */
 class io_context
   : public execution_context

@@ -28,7 +28,8 @@ io_context_pool::io_context_pool(std::size_t pool_size)
   {
     io_context_ptr io_context(new asio::io_context);
     io_contexts_.push_back(io_context);
-    work_.push_back(asio::make_work_guard(*io_context));
+    work_.push_back(asio::require(io_context->get_executor(),
+          asio::execution::outstanding_work.tracked));
   }
 }
 
