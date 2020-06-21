@@ -110,7 +110,8 @@
             not(contains(compoundname, 'std_allocator_void')) and
             not(contains(compoundname, 'thread_function')) and
             not(contains(compoundname, 'context_impl')) and
-            not(contains(compoundname, 'initiate_'))">
+            not(contains(compoundname, 'initiate_')) and
+            not(contains(compoundname, '_is_deprecated'))">
           <xsl:call-template name="class"/>
         </xsl:if>
       </xsl:when>
@@ -124,7 +125,8 @@
             not(contains(name, 'std_allocator_void')) and
             not(contains(name, 'thread_function')) and
             not(contains(name, 'io_context_impl')) and
-            not(contains(name, 'initiate_'))">
+            not(contains(name, 'initiate_')) and
+            not(contains(name, '_is_deprecated'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
       </xsl:otherwise>
@@ -133,6 +135,7 @@
 
   <xsl:value-of select="$newline"/>
   <xsl:text>[endsect]</xsl:text>
+  <xsl:value-of select="$newline"/>
 
 </xsl:template>
 
@@ -214,7 +217,11 @@
 
 <xsl:template name="make-id">
   <xsl:param name="name"/>
+  <xsl:param name="static"/>
   <xsl:choose>
+    <xsl:when test="$name='query' and $static='yes'">
+      <xsl:text>query__static</xsl:text>
+    </xsl:when>
     <xsl:when test="contains($name, 'boost::system::')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -261,6 +268,12 @@
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, '&gt;'), '_gt_', substring-after($name, '&gt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '&amp;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&amp;'), '_amp_', substring-after($name, '&amp;'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '[')">
@@ -774,6 +787,9 @@
   <xsl:value-of select="$newline"/>
   <xsl:text>['Convenience header: ]</xsl:text>
   <xsl:choose>
+    <xsl:when test="contains($file, 'include/asio/execution')">
+      <xsl:text>[^asio/execution.hpp]</xsl:text>
+    </xsl:when>
     <xsl:when test="contains($file, 'include/asio/ssl')">
       <xsl:text>[^asio/ssl.hpp]</xsl:text>
     </xsl:when>
@@ -909,6 +925,7 @@
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
+      <xsl:with-param name="static" select="@static"/>
     </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="doxygen-id">
@@ -958,6 +975,7 @@
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
+      <xsl:with-param name="static" select="@static"/>
     </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="doxygen-id">
@@ -1008,6 +1026,7 @@
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
+      <xsl:with-param name="static" select="@static"/>
     </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="doxygen-id">
@@ -1219,6 +1238,7 @@
   <xsl:variable name="id">
     <xsl:call-template name="make-id">
       <xsl:with-param name="name" select="$name"/>
+      <xsl:with-param name="static" select="@static"/>
     </xsl:call-template>
   </xsl:variable>
   <xsl:variable name="doxygen-id">
@@ -1362,7 +1382,7 @@
   </xsl:text>typedef <xsl:value-of select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>;<xsl:text>
 
 </xsl:text>
-<xsl:if test="count(type/ref) &gt; 0 and not(contains(type, '*'))">
+<xsl:if test="count(type/ref) &gt; 0 and not(contains(type, '*')) and not(contains(name, 'polymorphic_query_result_type'))">
   <xsl:variable name="class-refid">
     <xsl:choose>
       <xsl:when test="type='basic_address_iterator&lt; address_v4 &gt;'">
@@ -1407,6 +1427,14 @@
 
 
 <xsl:template name="variable">
+<xsl:if test="contains(name, 'is_applicable_property_v')">
+<xsl:text>
+  template &lt;typename T&gt;</xsl:text>
+</xsl:if>
+<xsl:if test="contains(name, 'context_as')">
+<xsl:text>
+  template &lt;typename U&gt;</xsl:text>
+</xsl:if>
 <xsl:text>
   </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:value-of
  select="type"/><xsl:text> </xsl:text><xsl:value-of select="name"/>
@@ -1495,6 +1523,12 @@
         <xsl:when test="declname = 'AwaitableExecutor'">
           <xsl:value-of select="concat('``[link asio.reference.Executor1 ', declname, ']``')"/>
         </xsl:when>
+        <xsl:when test="declname = 'Bits'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Blocking'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'BufferSequence'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1582,6 +1616,12 @@
         <xsl:when test="declname = 'OtherHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'OtherSupportableProperties'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'OutstandingWork'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'PasswordCallback'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1594,6 +1634,12 @@
         <xsl:when test="declname = 'PointerToPodType'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Properties'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Property'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Protocol1'">
           <xsl:value-of select="concat('``[link asio.reference.Protocol ', declname, ']``')"/>
         </xsl:when>
@@ -1602,6 +1648,9 @@
         </xsl:when>
         <xsl:when test="declname = 'RawSocketService1'">
           <xsl:value-of select="concat('``[link asio.reference.RawSocketService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Relationship'">
+          <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Rep'">
           <xsl:value-of select="declname"/>
@@ -1626,6 +1675,9 @@
         </xsl:when>
         <xsl:when test="declname = 'StreamSocketService1'">
           <xsl:value-of select="concat('``[link asio.reference.StreamSocketService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'SupportableProperties'">
+          <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'T'">
           <xsl:value-of select="declname"/>

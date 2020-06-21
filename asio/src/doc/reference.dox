@@ -81,6 +81,7 @@ INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio/posix \
                          ./../../include/asio/ssl \
                          ./../../include/asio/windows \
+                         ./../../include/asio/execution \
                          ./noncopyable_dox.txt \
                          ./std_exception_dox.txt
 FILE_PATTERNS          = 
@@ -221,7 +222,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_MUTABLE_BUFFER=mutable_buffer \
                          ASIO_SYNC_OP_VOID=void \
                          ASIO_STRING_VIEW_PARAM=string_view \
-                         ASIO_UNUSED_VARIABLE=
+                         ASIO_UNUSED_VARIABLE= \
+                         ASIO_UNSPECIFIED(e)=unspecified
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

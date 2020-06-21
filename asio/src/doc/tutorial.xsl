@@ -66,6 +66,7 @@
 
   <xsl:value-of select="$newline"/>
   <xsl:text>[endsect]</xsl:text>
+  <xsl:value-of select="$newline"/>
 
 </xsl:template>
 
@@ -119,6 +120,12 @@
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, '&gt;'), '_gt_', substring-after($name, '&gt;'))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '&amp;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&amp;'), '_amp_', substring-after($name, '&amp;'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '+')">
