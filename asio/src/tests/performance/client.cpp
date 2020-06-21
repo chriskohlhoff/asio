@@ -51,7 +51,7 @@ class session
 {
 public:
   session(asio::io_context& ioc, size_t block_size, stats& s)
-    : strand_(ioc),
+    : strand_(ioc.get_executor()),
       socket_(ioc),
       block_size_(block_size),
       read_data_(new char[block_size]),
@@ -173,7 +173,7 @@ private:
   }
 
 private:
-  asio::io_context::strand strand_;
+  asio::strand<asio::io_context::executor_type> strand_;
   asio::ip::tcp::socket socket_;
   size_t block_size_;
   char* read_data_;
