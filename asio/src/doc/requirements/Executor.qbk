@@ -7,6 +7,78 @@
 
 [section:Executor1 Executor requirements]
 
+[heading Standard executors]
+
+An executor is defined by the following concept:
+
+    template<class E>
+      concept executor =
+        invocable<remove_cvref_t<F>&>
+          && constructible_from<remove_cvref_t<F>, F>
+          && move_constructible<remove_cvref_t<F>>
+          && copy_constructible<E>
+          && is_nothrow_copy_constructible_v<E>
+          && equality_comparable<E>
+          &&
+          requires(const E& e, invocable_archetype f)
+          {
+            execution::execute(e, static_cast<invocable_archetype&&>(f));
+          };
+
+Neither an executor's equality comparison nor `swap` operation shall exit via
+an exception.
+
+None of an executor type's copy constructor, destructor, equality comparison,
+`swap` function, `execute` function, or associated `query` functions shall
+introduce data races as a result of concurrent invocations of those functions
+from different threads.
+
+For any two (possibly const) values `x1` and `x2` of some executor type `X`,
+`x1 == x2` shall return `true` only if `asio::query(x1,p) == asio::query(x2,p)`
+for every property `p` where both `asio::query(x1,p)` and `asio::query(x2,p)`
+are well-formed and result in a non-void type that is `equality_comparable`
+(C++Std [equalitycomparable]). [inline_note The above requirements imply that `x1
+== x2` returns `true` if `x1` and `x2` can be interchanged with identical
+effects. An executor may conceptually contain additional properties which are
+not exposed by a named property type that can be observed via `asio::query`; in
+this case, it is up to the concrete executor implementation to decide if these
+properties affect equality. Returning `false` does not necessarily imply that
+the effects are not identical.]
+
+An executor type's destructor shall not block pending completion of the
+submitted function objects. [inline_note The ability to wait for completion of
+submitted function objects may be provided by the associated execution
+context.]
+
+In addition to the above requirements, types `E` and `F` model `executor_of`
+only if they satisfy the requirements of the Table below.
+
+Let:
+
+* `e` denotes a (possibly const) executor object of type `E`,
+
+* `cf` denotes the function object `DECAY_COPY(std::forward<F>(f))`
+
+* `f` denotes a function of type `F&&` invocable as `cf()` and where
+  `decay_t<F>` models `move_constructible`.
+
+The expression `execution::execute(e, f)`:
+
+* Evaluates `DECAY_COPY(std::forward<F>(f))` on the calling thread to create
+  `cf` that will be invoked at most once by an execution agent.
+
+* May block pending completion of this invocation. Synchronizes with
+  [intro.multithread] the invocation of `f`.
+
+* Shall not propagate any exception thrown by the function object or any other
+  function submitted to the executor.
+
+[inline_note The treatment of exceptions thrown by one-way submitted functions
+is implementation-defined. The forward progress guarantee of the associated
+execution agent(s) is implementation-defined.]
+
+[heading Networking TS-style executors]
+
 The library describes a standard set of requirements for ['executors]. A type
 meeting the `Executor` requirements embodies a set of rules for determining how
 submitted function objects are to be executed.
