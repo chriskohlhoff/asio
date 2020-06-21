@@ -30,7 +30,9 @@ void read_handler(const asio::error_code& e,
   }
   else
   {
-    services::logger logger(s->get_executor().context(), "read_handler");
+    asio::execution_context& context = asio::query(
+        s->get_executor(), asio::execution::context);
+    services::logger logger(context, "read_handler");
 
     std::string msg = "Read error: ";
     msg += e.message();
@@ -40,7 +42,9 @@ void read_handler(const asio::error_code& e,
 
 void connect_handler(const asio::error_code& e, tcp::socket* s)
 {
-  services::logger logger(s->get_executor().context(), "connect_handler");
+  asio::execution_context& context = asio::query(
+      s->get_executor(), asio::execution::context);
+  services::logger logger(context, "connect_handler");
 
   if (!e)
   {

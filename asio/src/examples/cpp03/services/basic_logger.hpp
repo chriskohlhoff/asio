@@ -52,12 +52,6 @@ public:
     service_.destroy(impl_);
   }
 
-  /// Get the io_context associated with the object.
-  asio::io_context& get_io_context()
-  {
-    return service_.get_io_context();
-  }
-
   /// Set the output file for all logger instances.
   void use_file(const std::string& file)
   {
