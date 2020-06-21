@@ -83,7 +83,7 @@ class connection
 public:
   typedef boost::shared_ptr<connection> pointer;
 
-  static pointer create(const asio::executor& ex)
+  static pointer create(const asio::any_io_executor& ex)
   {
     return pointer(new connection(ex));
   }
@@ -102,7 +102,7 @@ public:
   }
 
 private:
-  connection(const asio::executor& ex)
+  connection(const asio::any_io_executor& ex)
     : socket_(ex),
       session_impl_(socket_),
       read_in_progress_(false),

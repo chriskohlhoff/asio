@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
+
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/global.hpp"
 #include "asio/detail/memory.hpp"
@@ -292,5 +295,7 @@ const Executor* executor::target() const ASIO_NOEXCEPT
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 #endif // ASIO_IMPL_EXECUTOR_HPP
