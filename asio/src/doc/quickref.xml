@@ -20,7 +20,7 @@
           <bridgehead renderas="sect2">Properties</bridgehead>
         </entry>
         <entry valign="center" namest="b" nameend="d">
-          <bridgehead renderas="sect2"></bridgehead>
+          <bridgehead renderas="sect2">Execution</bridgehead>
         </entry>
       </row>
     </thead>
@@ -51,10 +51,89 @@
           </simplelist>
         </entry>
         <entry valign="top">
+          <bridgehead renderas="sect3">Concepts</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.Executor1">Executor</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Customisation Points</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__execute">execution::execute</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Class Templates</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__any_executor">execution::any_executor</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Classes</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__bad_executor">execution::bad_executor</link></member>
+            <member><link linkend="asio.reference.execution__invocable_archetype">execution::invocable_archetype</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Traits</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__is_executor">execution::is_executor</link></member>
+            <member><link linkend="asio.reference.execution__can_execute">execution::can_execute</link></member>
+          </simplelist>
         </entry>
         <entry valign="top">
+          <bridgehead renderas="sect3">Properties</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__allocator_t">execution::allocator_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t">execution::blocking_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t__possibly_t">execution::blocking_t::possibly_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t__always_t">execution::blocking_t::always_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t__never_t">execution::blocking_t::never_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_adaptation_t">execution::blocking_adaptation_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_adaptation_t__disallowed_t">execution::blocking_adaptation_t::disallowed_t</link></member>
+            <member><link linkend="asio.reference.execution__blocking_adaptation_t__allowed_t">execution::blocking_adaptation_t::allowed_t</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t">execution::bulk_guarantee_t</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t__unsequenced_t">execution::bulk_guarantee_t::unsequenced_t</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t__sequenced_t">execution::bulk_guarantee_t::sequenced_t</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t__parallel_t">execution::bulk_guarantee_t::parallel_t</link></member>
+            <member><link linkend="asio.reference.execution__context_t">execution::context_t</link></member>
+            <member><link linkend="asio.reference.execution__context_as_t">execution::context_as_t</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t">execution::mapping_t</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t__thread_t">execution::mapping_t::thread_t</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t__new_thread_t">execution::mapping_t::new_thread_t</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t__other_t">execution::mapping_t::other_t</link></member>
+            <member><link linkend="asio.reference.execution__occupancy_t">execution::occupancy_t</link></member>
+            <member><link linkend="asio.reference.execution__outstanding_work_t">execution::outstanding_work_t</link></member>
+            <member><link linkend="asio.reference.execution__outstanding_work_t__untracked_t">execution::outstanding_work_t::untracked_t</link></member>
+            <member><link linkend="asio.reference.execution__outstanding_work_t__tracked_t">execution::outstanding_work_t::tracked_t</link></member>
+            <member><link linkend="asio.reference.execution__prefer_only">execution::prefer_only</link></member>
+            <member><link linkend="asio.reference.execution__relationship_t">execution::relationship_t</link></member>
+            <member><link linkend="asio.reference.execution__relationship_t__fork_t">execution::relationship_t::fork_t</link></member>
+            <member><link linkend="asio.reference.execution__relationship_t__continuation_t">execution::relationship_t::continuation_t</link></member>
+          </simplelist>
         </entry>
         <entry valign="top">
+          <bridgehead renderas="sect3">Property Objects</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__allocator">execution::allocator</link></member>
+            <member><link linkend="asio.reference.execution__blocking">execution::blocking</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t.possibly">execution::blocking.possibly</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t.always">execution::blocking.always</link></member>
+            <member><link linkend="asio.reference.execution__blocking_t.never">execution::blocking.never</link></member>
+            <member><link linkend="asio.reference.execution__blocking_adaptation">execution::blocking_adaptation</link></member>
+            <member><link linkend="asio.reference.execution__blocking_adaptation_t.disallowed">execution::blocking_adaptation.disallowed</link></member>
+            <member><link linkend="asio.reference.execution__blocking_adaptation_t.allowed">execution::blocking_adaptation.allowed</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee">execution::bulk_guarantee</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t.unsequenced">execution::bulk_guarantee.unsequenced</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t.sequenced">execution::bulk_guarantee.sequenced</link></member>
+            <member><link linkend="asio.reference.execution__bulk_guarantee_t.parallel">execution::bulk_guarantee.parallel</link></member>
+            <member><link linkend="asio.reference.execution__context">execution::context</link></member>
+            <member><link linkend="asio.reference.execution__context_as">execution::context_as</link></member>
+            <member><link linkend="asio.reference.execution__mapping">execution::mapping</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t.thread">execution::mapping.thread</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t.new_thread">execution::mapping.new_thread</link></member>
+            <member><link linkend="asio.reference.execution__mapping_t.other">execution::mapping.other</link></member>
+            <member><link linkend="asio.reference.execution__occupancy">execution::occupancy</link></member>
+            <member><link linkend="asio.reference.execution__outstanding_work">execution::outstanding_work</link></member>
+            <member><link linkend="asio.reference.execution__outstanding_work_t.untracked">execution::outstanding_work.untracked</link></member>
+            <member><link linkend="asio.reference.execution__outstanding_work_t.tracked">execution::outstanding_work.tracked</link></member>
+            <member><link linkend="asio.reference.execution__relationship">execution::relationship</link></member>
+            <member><link linkend="asio.reference.execution__relationship_t.fork">execution::relationship.fork</link></member>
+            <member><link linkend="asio.reference.execution__relationship_t.continuation">execution::relationship.continuation</link></member>
+          </simplelist>
         </entry>
       </row>
     </tbody>
@@ -76,6 +155,7 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.any_io_executor">any_io_executor</link></member>
             <member><link linkend="asio.reference.bad_executor">bad_executor</link></member>
             <member><link linkend="asio.reference.coroutine">coroutine</link></member>
             <member><link linkend="asio.reference.detached_t">detached_t</link></member>
@@ -87,18 +167,20 @@
             <member><link linkend="asio.reference.executor_arg_t">executor_arg_t</link></member>
             <member><link linkend="asio.reference.invalid_service_owner">invalid_service_owner</link></member>
             <member><link linkend="asio.reference.io_context">io_context</link></member>
-            <member><link linkend="asio.reference.io_context__executor_type">io_context::executor_type</link></member>
+            <member><link linkend="asio.reference.io_context.executor_type">io_context::executor_type</link></member>
             <member><link linkend="asio.reference.io_context__service">io_context::service</link></member>
             <member><link linkend="asio.reference.io_context__strand">io_context::strand</link></member>
             <member><link linkend="asio.reference.io_context__work">io_context::work</link> (deprecated)</member>
+            <member><link linkend="asio.reference.multiple_exceptions">multiple_exceptions</link></member>
             <member><link linkend="asio.reference.service_already_exists">service_already_exists</link></member>
+            <member><link linkend="asio.reference.static_thread_pool">static_thread_pool</link></member>
             <member><link linkend="asio.reference.system_context">system_context</link></member>
             <member><link linkend="asio.reference.system_error">system_error</link></member>
             <member><link linkend="asio.reference.system_executor">system_executor</link></member>
             <member><link linkend="asio.reference.this_coro__executor_t">this_coro::executor_t</link></member>
             <member><link linkend="asio.reference.thread">thread</link></member>
             <member><link linkend="asio.reference.thread_pool">thread_pool</link></member>
-            <member><link linkend="asio.reference.thread_pool__executor_type">thread_pool::executor_type</link></member>
+            <member><link linkend="asio.reference.thread_pool.executor_type">thread_pool::executor_type</link></member>
             <member><link linkend="asio.reference.yield_context">yield_context</link></member>
           </simplelist>
         </entry>
@@ -133,11 +215,14 @@
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="asio.reference.awaitable">awaitable</link></member>
             <member><link linkend="asio.reference.basic_io_object">basic_io_object</link></member>
+            <member><link linkend="asio.reference.basic_system_executor">basic_system_executor</link></member>
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
+            <member><link linkend="asio.reference.io_context__basic_executor_type">io_context::basic_executor_type</link></member>
             <member><link linkend="asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>
+            <member><link linkend="asio.reference.thread_pool__basic_executor_type">thread_pool::basic_executor_type</link></member>
             <member><link linkend="asio.reference.use_awaitable_t">use_awaitable_t</link></member>
             <member><link linkend="asio.reference.use_future_t">use_future_t</link></member>
           </simplelist>
