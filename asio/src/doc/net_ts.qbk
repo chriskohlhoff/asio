@@ -44,14 +44,14 @@ below shows the new Networking TS interfaces and the facilities they replace:
     ExecutionContext].]
   ]
   [
-    [[link asio.reference.dispatch `post`]]
+    [[link asio.reference.post `post`]]
     [[link asio.reference.io_context.post `io_service::post`]]
-    [The `dispatch` free function can be used to submit functions to any [link
+    [The `post` free function can be used to submit functions to any [link
     asio.reference.Executor1 Executor] or [link asio.reference.ExecutionContext
     ExecutionContext].]
   ]
   [
-    [[link asio.reference.dispatch `defer`]]
+    [[link asio.reference.defer `defer`]]
     [[link asio.reference.io_context.post `io_service::post`] when the [link
     asio.reference.asio_handler_is_continuation `asio_handler_is_continuation`]
     hook returns true]
