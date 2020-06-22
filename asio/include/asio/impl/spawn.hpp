@@ -419,7 +419,9 @@ template <typename Handler, typename Function>
 void spawn(ASIO_MOVE_ARG(Handler) handler,
     ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes,
-    typename enable_if<!is_executor<typename decay<Handler>::type>::value &&
+    typename enable_if<
+      !is_executor<typename decay<Handler>::type>::value &&
+      !execution::is_executor<typename decay<Handler>::type>::value &&
       !is_convertible<Handler&, execution_context&>::value>::type*)
 {
   typedef typename decay<Handler>::type handler_type;
@@ -470,7 +472,9 @@ template <typename Function, typename Executor>
 inline void spawn(const Executor& ex,
     ASIO_MOVE_ARG(Function) function,
     const boost::coroutines::attributes& attributes,
-    typename enable_if<is_executor<Executor>::value>::type*)
+    typename enable_if<
+      is_executor<Executor>::value || execution::is_executor<Executor>::value
+    >::type*)
 {
   asio::spawn(asio::strand<Executor>(ex),
       ASIO_MOVE_CAST(Function)(function), attributes);
