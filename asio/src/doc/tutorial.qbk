@@ -1535,6 +1535,8 @@ We use an [link asio.reference.ip__udp.resolver ip::udp::resolver] object to fin
 
 The [link asio.reference.ip__basic_resolver.resolve ip::udp::resolver::resolve()] function is guaranteed to return at least one endpoint in the list if it does not fail. This means it is safe to dereference the return value directly.
 
+Since UDP is datagram-oriented, we will not be using a stream socket. Create an [link asio.reference.ip__udp.socket ip::udp::socket] and initiate contact with the remote endpoint.
+
 
 
   ``''''''``    udp::socket socket(io_context);
@@ -1543,26 +1545,32 @@ The [link asio.reference.ip__basic_resolver.resolve ip::udp::resolver::resolve()
   ``''''''``    boost::array<char, 1> send_buf  = {{ 0 }};
   ``''''''``    socket.send_to(asio::buffer(send_buf), receiver_endpoint);
 
-  ``''''''``    boost::array<char, 128> recv_buf;
-  ``''''''``    udp::endpoint sender_endpoint;
-
-
-
-Since UDP is datagram-oriented, we will not be using a stream socket. Create an [link asio.reference.ip__udp.socket ip::udp::socket] and initiate contact with the remote endpoint.
-
-
-
 
 
 Now we need to be ready to accept whatever the server sends back to us. The endpoint on our side that receives the server's response will be initialised by [link asio.reference.basic_datagram_socket.receive_from ip::udp::socket::receive_from()].
 
 
 
+  ``''''''``    boost::array<char, 128> recv_buf;
+  ``''''''``    udp::endpoint sender_endpoint;
+  ``''''''``    size_t len = socket.receive_from(
+  ``''''''``        asio::buffer(recv_buf), sender_endpoint);
+
+  ``''''''``    std::cout.write(recv_buf.data(), len);
+  ``''''''``  }
+
 
 
 Finally, handle any exceptions that may have been thrown.
 
 
+  ``''''''``  catch (std::exception& e)
+  ``''''''``  {
+  ``''''''``    std::cerr << e.what() << std::endl;
+  ``''''''``  }
+
+  ``''''''``  return 0;
+  ``''''''``}
 
 See the [link asio.tutorial.tutdaytime4.src full source listing]
 
