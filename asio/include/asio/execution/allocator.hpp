@@ -30,8 +30,8 @@ namespace asio {
 
 namespace execution {
 
-/// A property that is used to obtain the execution context that is associated
-/// with an executor.
+/// A property to describe which allocator an executor will use to allocate the
+/// memory required to store a submitted function object.
 template <typename ProtoAllocator>
 struct allocator_t
 {

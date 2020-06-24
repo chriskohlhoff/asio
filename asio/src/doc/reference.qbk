@@ -64701,7 +64701,7 @@ A special value used for accessing the [link asio.reference.execution__allocator
 [section:execution__allocator_t execution::allocator_t]
 
 
-A property that is used to obtain the execution context that is associated with an executor. 
+A property to describe which allocator an executor will use to allocate the memory required to store a submitted function object. 
 
 
   template<
