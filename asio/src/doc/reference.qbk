@@ -36206,7 +36206,7 @@ Accept a new connection and obtain the endpoint of the peer.
       typename ``[link asio.reference.Executor1 Executor1]``>
   Protocol::socket::template rebind_executor< Executor1 >::other ``[link asio.reference.basic_socket_acceptor.accept.overload7 accept]``(
       const Executor1 & ex,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.accept.overload7 more...]]``
 
   template<
@@ -36221,7 +36221,7 @@ Accept a new connection and obtain the endpoint of the peer.
   Protocol::socket::template rebind_executor< Executor1 >::other ``[link asio.reference.basic_socket_acceptor.accept.overload9 accept]``(
       const Executor1 & ex,
       asio::error_code & ec,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.accept.overload9 more...]]``
 
   template<
@@ -36246,7 +36246,7 @@ Accept a new connection and obtain the endpoint of the peer.
   Protocol::socket::template rebind_executor< Executor1 >::other ``[link asio.reference.basic_socket_acceptor.accept.overload13 accept]``(
       const Executor1 & ex,
       endpoint_type & peer_endpoint,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.accept.overload13 more...]]``
 
   template<
@@ -36263,7 +36263,7 @@ Accept a new connection and obtain the endpoint of the peer.
       const executor_type & ex,
       endpoint_type & peer_endpoint,
       asio::error_code & ec,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.accept.overload15 more...]]``
 
   template<
@@ -36609,7 +36609,7 @@ Accept a new connection.
       typename ``[link asio.reference.Executor1 Executor1]``>
   Protocol::socket::template rebind_executor< Executor1 >::other accept(
       const Executor1 & ex,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
 
 
 This function is used to accept a new connection from a peer. The function call will block until a new connection has been accepted successfully or an error occurs.
@@ -36732,7 +36732,7 @@ Accept a new connection.
   Protocol::socket::template rebind_executor< Executor1 >::other accept(
       const Executor1 & ex,
       asio::error_code & ec,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
 
 
 This function is used to accept a new connection from a peer. The function call will block until a new connection has been accepted successfully or an error occurs.
@@ -36963,7 +36963,7 @@ Accept a new connection.
   Protocol::socket::template rebind_executor< Executor1 >::other accept(
       const Executor1 & ex,
       endpoint_type & peer_endpoint,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
 
 
 This function is used to accept a new connection from a peer. The function call will block until a new connection has been accepted successfully or an error occurs.
@@ -37096,7 +37096,7 @@ Accept a new connection.
       const executor_type & ex,
       endpoint_type & peer_endpoint,
       asio::error_code & ec,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
 
 
 This function is used to accept a new connection from a peer. The function call will block until a new connection has been accepted successfully or an error occurs.
@@ -37300,7 +37300,7 @@ Start an asynchronous accept.
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_socket_acceptor.async_accept.overload4 async_accept]``(
       const Executor1 & ex,
       MoveAcceptHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.async_accept.overload4 more...]]``
 
   template<
@@ -37326,7 +37326,7 @@ Start an asynchronous accept.
       const Executor1 & ex,
       endpoint_type & peer_endpoint,
       MoveAcceptHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.basic_socket_acceptor.async_accept.overload7 more...]]``
 
   template<
@@ -37528,7 +37528,7 @@ Start an asynchronous accept.
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_accept(
       const Executor1 & ex,
       MoveAcceptHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
 
 
 This function is used to asynchronously accept a new connection. The function call always returns immediately.
@@ -37738,7 +37738,7 @@ Start an asynchronous accept.
       const Executor1 & ex,
       endpoint_type & peer_endpoint,
       MoveAcceptHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
-      typename enable_if< is_executor< Executor1 >::value >::type *  = 0);
+      typename enable_if< is_executor< Executor1 >::value||execution::is_executor< Executor1 >::value >::type *  = 0);
 
 
 This function is used to asynchronously accept a new connection. The function call always returns immediately.

@@ -1620,6 +1620,7 @@ public:
   accept(const Executor1& ex,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     asio::error_code ec;
@@ -1702,6 +1703,7 @@ public:
   accept(const Executor1& ex, asio::error_code& ec,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typename Protocol::socket::template
@@ -1808,6 +1810,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
@@ -2066,6 +2069,7 @@ public:
   accept(const Executor1& ex, endpoint_type& peer_endpoint,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     asio::error_code ec;
@@ -2161,6 +2165,7 @@ public:
       endpoint_type& peer_endpoint, asio::error_code& ec,
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typename Protocol::socket::template
@@ -2281,6 +2286,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_executor<Executor1>::value
+          || execution::is_executor<Executor1>::value
       >::type* = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
