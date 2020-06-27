@@ -158,6 +158,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\outstanding_work.exe \
 	tests\unit\execution\prefer_only.exe \
 	tests\unit\execution\relationship.exe \
+	tests\unit\execution\set_error.exe \
 	tests\unit\executor.exe \
 	tests\unit\executor_work_guard.exe \
 	tests\unit\generic\basic_endpoint.exe \
