@@ -54,6 +54,7 @@ check_PROGRAMS = \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
 	unit/execution/relationship \
+	unit/execution/set_done \
 	unit/execution/set_error \
 	unit/execution_context \
 	unit/executor \
@@ -208,6 +209,7 @@ TESTS = \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
 	unit/execution/relationship \
+	unit/execution/set_done \
 	unit/execution/set_error \
 	unit/execution_context \
 	unit/executor \
@@ -362,6 +364,7 @@ unit_execution_mapping_SOURCES = unit/execution/mapping.cpp
 unit_execution_outstanding_work_SOURCES = unit/execution/outstanding_work.cpp
 unit_execution_prefer_only_SOURCES = unit/execution/prefer_only.cpp
 unit_execution_relationship_SOURCES = unit/execution/relationship.cpp
+unit_execution_set_done_SOURCES = unit/execution/set_done.cpp
 unit_execution_set_error_SOURCES = unit/execution/set_error.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp

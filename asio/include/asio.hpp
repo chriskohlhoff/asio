@@ -69,6 +69,7 @@
 #include "asio/execution/outstanding_work.hpp"
 #include "asio/execution/prefer_only.hpp"
 #include "asio/execution/relationship.hpp"
+#include "asio/execution/set_done.hpp"
 #include "asio/execution/set_error.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/executor.hpp"
