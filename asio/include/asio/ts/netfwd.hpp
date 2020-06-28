@@ -64,7 +64,7 @@ typedef execution any_io_executor;
 namespace execution {
 
 #if !defined(ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL)
-#define EXECUTION_ANY_EXECUTOR_FWD_DECL
+#define ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 

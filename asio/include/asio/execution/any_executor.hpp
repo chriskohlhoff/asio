@@ -177,7 +177,7 @@ bool operator!=(const any_executor<SupportableProperties...>& a,
 namespace execution {
 
 #if !defined(ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL)
-#define EXECUTION_ANY_EXECUTOR_FWD_DECL
+#define ASIO_EXECUTION_ANY_EXECUTOR_FWD_DECL
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
