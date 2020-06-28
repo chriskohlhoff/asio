@@ -53,6 +53,7 @@ check_PROGRAMS = \
 	unit/execution/mapping \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
+	unit/execution/receiver \
 	unit/execution/relationship \
 	unit/execution/set_done \
 	unit/execution/set_error \
@@ -209,6 +210,7 @@ TESTS = \
 	unit/execution/mapping \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
+	unit/execution/receiver \
 	unit/execution/relationship \
 	unit/execution/set_done \
 	unit/execution/set_error \
@@ -365,6 +367,7 @@ unit_execution_invocable_archetype_SOURCES = unit/execution/invocable_archetype.
 unit_execution_mapping_SOURCES = unit/execution/mapping.cpp
 unit_execution_outstanding_work_SOURCES = unit/execution/outstanding_work.cpp
 unit_execution_prefer_only_SOURCES = unit/execution/prefer_only.cpp
+unit_execution_receiver_SOURCES = unit/execution/receiver.cpp
 unit_execution_relationship_SOURCES = unit/execution/relationship.cpp
 unit_execution_set_done_SOURCES = unit/execution/set_done.cpp
 unit_execution_set_error_SOURCES = unit/execution/set_error.cpp

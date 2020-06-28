@@ -17,6 +17,7 @@ invocable_archetype
 mapping
 outstanding_work
 prefer_only
+receiver
 relationship
 set_done
 set_error

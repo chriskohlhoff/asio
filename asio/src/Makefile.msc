@@ -157,6 +157,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\mapping.exe \
 	tests\unit\execution\outstanding_work.exe \
 	tests\unit\execution\prefer_only.exe \
+	tests\unit\execution\receiver.exe \
 	tests\unit\execution\relationship.exe \
 	tests\unit\execution\set_done.exe \
 	tests\unit\execution\set_error.exe \

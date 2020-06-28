@@ -30,6 +30,7 @@
 #include "asio/execution/occupancy.hpp"
 #include "asio/execution/outstanding_work.hpp"
 #include "asio/execution/prefer_only.hpp"
+#include "asio/execution/receiver.hpp"
 #include "asio/execution/relationship.hpp"
 #include "asio/execution/set_done.hpp"
 #include "asio/execution/set_error.hpp"

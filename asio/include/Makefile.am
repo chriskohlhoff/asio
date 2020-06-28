@@ -310,6 +310,7 @@ nobase_include_HEADERS = \
 	asio/execution/occupancy.hpp \
 	asio/execution/outstanding_work.hpp \
 	asio/execution/prefer_only.hpp \
+	asio/execution/receiver.hpp \
 	asio/execution/relationship.hpp \
 	asio/execution/set_done.hpp \
 	asio/execution/set_error.hpp \
