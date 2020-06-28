@@ -198,6 +198,30 @@
   ASIO_MOVE_CAST(T5)(x5), ASIO_MOVE_CAST(T6)(x6), \
   ASIO_MOVE_CAST(T7)(x7), ASIO_MOVE_CAST(T8)(x8)
 
+# define ASIO_VARIADIC_DECLVAL(n) \
+  ASIO_VARIADIC_DECLVAL_##n
+
+# define ASIO_VARIADIC_DECLVAL_1 \
+  declval<T1>()
+# define ASIO_VARIADIC_DECLVAL_2 \
+  declval<T1>(), declval<T2>()
+# define ASIO_VARIADIC_DECLVAL_3 \
+  declval<T1>(), declval<T2>(), declval<T3>()
+# define ASIO_VARIADIC_DECLVAL_4 \
+  declval<T1>(), declval<T2>(), declval<T3>(), declval<T4>()
+# define ASIO_VARIADIC_DECLVAL_5 \
+  declval<T1>(), declval<T2>(), declval<T3>(), declval<T4>(), \
+  declval<T5>()
+# define ASIO_VARIADIC_DECLVAL_6 \
+  declval<T1>(), declval<T2>(), declval<T3>(), declval<T4>(), \
+  declval<T5>(), declval<T6>()
+# define ASIO_VARIADIC_DECLVAL_7 \
+  declval<T1>(), declval<T2>(), declval<T3>(), declval<T4>(), \
+  declval<T5>(), declval<T6>(), declval<T7>()
+# define ASIO_VARIADIC_DECLVAL_8 \
+  declval<T1>(), declval<T2>(), declval<T3>(), declval<T4>(), \
+  declval<T5>(), declval<T6>(), declval<T7>(), declval<T8>()
+
 # define ASIO_VARIADIC_MOVE_DECLVAL(n) \
   ASIO_VARIADIC_MOVE_DECLVAL_##n
 

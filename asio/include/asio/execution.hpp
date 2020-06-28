@@ -33,5 +33,6 @@
 #include "asio/execution/relationship.hpp"
 #include "asio/execution/set_done.hpp"
 #include "asio/execution/set_error.hpp"
+#include "asio/execution/set_value.hpp"
 
 #endif // ASIO_EXECUTION_HPP

@@ -110,6 +110,15 @@ using boost::true_type;
 
 template <typename> struct void_type { typedef void type; };
 
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename...> struct conjunction : true_type {};
+template <typename T> struct conjunction<T> : T {};
+template <typename Head, typename... Tail> struct conjunction<Head, Tail...> :
+  conditional<Head::value, conjunction<Tail...>, Head>::type {};
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
 } // namespace asio
 
 #endif // ASIO_DETAIL_TYPE_TRAITS_HPP

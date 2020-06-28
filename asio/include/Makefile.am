@@ -313,6 +313,7 @@ nobase_include_HEADERS = \
 	asio/execution/relationship.hpp \
 	asio/execution/set_done.hpp \
 	asio/execution/set_error.hpp \
+	asio/execution/set_value.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
 	asio/generic/basic_endpoint.hpp \
@@ -499,6 +500,8 @@ nobase_include_HEADERS = \
 	asio/traits/set_done_member.hpp \
 	asio/traits/set_error_free.hpp \
 	asio/traits/set_error_member.hpp \
+	asio/traits/set_value_free.hpp \
+	asio/traits/set_value_member.hpp \
 	asio/traits/static_query.hpp \
 	asio/traits/static_require.hpp \
 	asio/traits/static_require_concept.hpp \
