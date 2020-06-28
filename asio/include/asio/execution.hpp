@@ -28,6 +28,7 @@
 #include "asio/execution/invocable_archetype.hpp"
 #include "asio/execution/mapping.hpp"
 #include "asio/execution/occupancy.hpp"
+#include "asio/execution/operation_state.hpp"
 #include "asio/execution/outstanding_work.hpp"
 #include "asio/execution/prefer_only.hpp"
 #include "asio/execution/receiver.hpp"

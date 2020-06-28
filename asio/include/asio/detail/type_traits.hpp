@@ -36,6 +36,7 @@
 # include <boost/type_traits/is_copy_constructible.hpp>
 # include <boost/type_traits/is_destructible.hpp>
 # include <boost/type_traits/is_function.hpp>
+# include <boost/type_traits/is_object.hpp>
 # include <boost/type_traits/is_same.hpp>
 # include <boost/type_traits/remove_cv.hpp>
 # include <boost/type_traits/remove_pointer.hpp>
@@ -68,6 +69,7 @@ using std::is_function;
 using std::is_move_constructible;
 using std::is_nothrow_copy_constructible;
 using std::is_nothrow_destructible;
+using std::is_object;
 using std::is_reference;
 using std::is_same;
 using std::is_scalar;
@@ -114,6 +116,7 @@ template <typename T>
 struct is_nothrow_copy_constructible : boost::has_nothrow_copy<T> {};
 template <typename T>
 struct is_nothrow_destructible : boost::has_nothrow_destructor<T> {};
+using boost::is_object;
 using boost::is_reference;
 using boost::is_same;
 using boost::is_scalar;

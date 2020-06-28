@@ -156,6 +156,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\executor.exe \
 	tests\unit\execution\invocable_archetype.exe \
 	tests\unit\execution\mapping.exe \
+	tests\unit\execution\operation_state.exe \
 	tests\unit\execution\outstanding_work.exe \
 	tests\unit\execution\prefer_only.exe \
 	tests\unit\execution\receiver.exe \

@@ -308,6 +308,7 @@ nobase_include_HEADERS = \
 	asio/execution/invocable_archetype.hpp \
 	asio/execution/mapping.hpp \
 	asio/execution/occupancy.hpp \
+	asio/execution/operation_state.hpp \
 	asio/execution/outstanding_work.hpp \
 	asio/execution/prefer_only.hpp \
 	asio/execution/receiver.hpp \
