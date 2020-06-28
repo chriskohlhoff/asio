@@ -49,6 +49,7 @@ check_PROGRAMS = \
 	unit/execution/bulk_guarantee \
 	unit/execution/context_as \
 	unit/execution/execute \
+	unit/execution/executor \
 	unit/execution/invocable_archetype \
 	unit/execution/mapping \
 	unit/execution/outstanding_work \
@@ -206,6 +207,7 @@ TESTS = \
 	unit/execution/bulk_guarantee \
 	unit/execution/context_as \
 	unit/execution/execute \
+	unit/execution/executor \
 	unit/execution/invocable_archetype \
 	unit/execution/mapping \
 	unit/execution/outstanding_work \
@@ -363,6 +365,7 @@ unit_execution_blocking_adaptation_SOURCES = unit/execution/blocking_adaptation.
 unit_execution_bulk_guarantee_SOURCES = unit/execution/bulk_guarantee.cpp
 unit_execution_context_as_SOURCES = unit/execution/context_as.cpp
 unit_execution_execute_SOURCES = unit/execution/execute.cpp
+unit_execution_executor_SOURCES = unit/execution/executor.cpp
 unit_execution_invocable_archetype_SOURCES = unit/execution/invocable_archetype.cpp
 unit_execution_mapping_SOURCES = unit/execution/mapping.cpp
 unit_execution_outstanding_work_SOURCES = unit/execution/outstanding_work.cpp

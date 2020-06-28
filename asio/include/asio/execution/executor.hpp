@@ -33,6 +33,31 @@
 
 namespace asio {
 namespace execution {
+namespace detail {
+
+template <typename T, typename F>
+struct is_executor_of_impl :
+  integral_constant<bool,
+    conditional<true, true_type,
+        typename result_of<typename decay<F>::type&()>::type
+      >::type::value
+      && is_constructible<typename decay<F>::type, F>::value
+      && is_move_constructible<typename decay<F>::type>::value
+      && can_execute<T, F>::value
+#if defined(ASIO_HAS_NOEXCEPT)
+      && is_nothrow_copy_constructible<T>::value
+      && is_nothrow_destructible<T>::value
+#else // defined(ASIO_HAS_NOEXCEPT)
+      && is_copy_constructible<T>::value
+      && is_destructible<T>::value
+#endif // defined(ASIO_HAS_NOEXCEPT)
+      && traits::equality_comparable<T>::is_valid
+      && traits::equality_comparable<T>::is_noexcept
+  >
+{
+};
+
+} // namespace detail
 
 /// The is_executor trait detects whether a type T satisfies the
 /// execution::executor concept.
@@ -46,18 +71,7 @@ struct is_executor :
 #if defined(GENERATING_DOCUMENTATION)
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
-  integral_constant<bool,
-    can_execute<const T, invocable_archetype>::value
-#if defined(ASIO_HAS_NOEXCEPT)
-      && is_nothrow_copy_constructible<T>::value
-      && is_nothrow_destructible<T>::value
-#else // defined(ASIO_HAS_NOEXCEPT)
-      && is_copy_constructible<T>::value
-      && is_destructible<T>::value
-#endif // defined(ASIO_HAS_NOEXCEPT)
-      && traits::equality_comparable<typename decay<T>::type>::is_valid
-      && traits::equality_comparable<typename decay<T>::type>::is_noexcept
-  >
+  detail::is_executor_of_impl<T, invocable_archetype>
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
@@ -79,6 +93,47 @@ ASIO_CONCEPT executor = is_executor<T>::value;
 #else // defined(ASIO_HAS_CONCEPTS)
 
 #define ASIO_EXECUTION_EXECUTOR typename
+
+#endif // defined(ASIO_HAS_CONCEPTS)
+
+/// The is_executor_of trait detects whether a type T satisfies the
+/// execution::executor_of concept for some set of value arguments.
+/**
+ * Class template @c is_executor_of is a type trait that is derived from @c
+ * true_type if the type @c T meets the concept definition for a executor for
+ * value arguments @c Vs, otherwise @c false_type.
+ */
+template <typename T, typename F>
+struct is_executor_of :
+#if defined(GENERATING_DOCUMENTATION)
+  integral_constant<bool, automatically_determined>
+#else // defined(GENERATING_DOCUMENTATION)
+  integral_constant<bool,
+    is_executor<T>::value && detail::is_executor_of_impl<T, F>::value
+  >
+#endif // defined(GENERATING_DOCUMENTATION)
+{
+};
+
+#if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+
+template <typename T, typename F>
+ASIO_CONSTEXPR const bool is_executor_of_v =
+  is_executor_of<T, F>::value;
+
+#endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
+
+#if defined(ASIO_HAS_CONCEPTS)
+
+template <typename T, typename F>
+ASIO_CONCEPT executor_of = is_executor_of<T, F>::value;
+
+#define ASIO_EXECUTION_EXECUTOR_OF(f) \
+  ::asio::execution::executor_of<f>
+
+#else // defined(ASIO_HAS_CONCEPTS)
+
+#define ASIO_EXECUTION_EXECUTOR_OF typename
 
 #endif // defined(ASIO_HAS_CONCEPTS)
 

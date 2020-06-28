@@ -13,6 +13,7 @@ blocking_adaptation
 bulk_guarantee
 context_as
 execute
+executor
 invocable_archetype
 mapping
 outstanding_work
