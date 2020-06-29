@@ -306,6 +306,7 @@ nobase_include_HEADERS = \
 	asio/execution/detail/as_invocable.hpp \
 	asio/execution/detail/as_operation.hpp \
 	asio/execution/detail/as_receiver.hpp \
+	asio/execution/detail/void_receiver.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/impl/bad_executor.ipp \

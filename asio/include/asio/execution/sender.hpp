@@ -17,6 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/execution/detail/as_invocable.hpp"
+#include "asio/execution/detail/void_receiver.hpp"
+#include "asio/execution/executor.hpp"
 #include "asio/execution/receiver.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -37,6 +40,14 @@ template <typename S>
 struct sender_traits_base<S,
     typename enable_if<
       is_base_of<sender_base_ns::sender_base, S>::value
+    >::type>
+{
+};
+
+template <typename S>
+struct sender_traits_base<S,
+    typename enable_if<
+      detail::is_executor_of_impl<S, as_invocable<void_receiver, S> >::value
     >::type>
 {
 };
