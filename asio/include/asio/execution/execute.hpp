@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/execution/detail/as_invocable.hpp"
+#include "asio/execution/detail/as_receiver.hpp"
 #include "asio/traits/execute_member.hpp"
 #include "asio/traits/execute_free.hpp"
 
@@ -29,7 +31,7 @@ namespace execution {
 
 /// A customisation point that executes a function on an executor.
 /**
- * The name <tt>execution::execute</tt> denotes a customization point object.
+ * The name <tt>execution::execute</tt> denotes a customisation point object.
  *
  * For some subexpressions <tt>e</tt> and <tt>f</tt>, let <tt>E</tt> be a type
  * such that <tt>decltype((e))</tt> is <tt>E</tt> and let <tt>F</tt> be a type
@@ -68,13 +70,34 @@ struct can_execute :
 
 #else // defined(GENERATING_DOCUMENTATION)
 
+namespace asio {
+namespace execution {
+
+template <typename T, typename R>
+struct is_sender_to;
+
+namespace detail {
+
+template <typename S, typename R>
+void submit(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r);
+
+} // namespace detail
+} // namespace execution
+} // namespace asio
 namespace asio_execution_execute_fn {
 
+using asio::conditional;
 using asio::decay;
 using asio::declval;
 using asio::enable_if;
+using asio::execution::detail::as_receiver;
+using asio::execution::detail::is_as_invocable;
+using asio::execution::is_sender_to;
+using asio::false_type;
+using asio::result_of;
 using asio::traits::execute_free;
 using asio::traits::execute_member;
+using asio::true_type;
 
 void execute();
 
@@ -82,6 +105,7 @@ enum overload_type
 {
   call_member,
   call_free,
+  adapter,
   ill_formed
 };
 
@@ -117,6 +141,35 @@ struct call_traits<T, void(F),
   ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
 };
 
+template <typename T, typename F>
+struct call_traits<T, void(F),
+  typename enable_if<
+    (
+      !execute_member<T, F>::is_valid
+      &&
+      !execute_free<T, F>::is_valid
+      &&
+      conditional<true, true_type,
+       typename result_of<typename decay<F>::type&()>::type
+      >::type::value
+      &&
+      conditional<
+        !is_as_invocable<
+          typename decay<F>::type
+        >::value,
+        is_sender_to<
+          T,
+          as_receiver<typename decay<F>::type, T>
+        >,
+        false_type
+      >::type::value
+    )
+  >::type> :
+  execute_free<T, F>
+{
+  ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
+};
+
 struct impl
 {
   template <typename T, typename F>
@@ -145,6 +198,23 @@ struct impl
       call_traits<T, void(F)>::is_noexcept))
   {
     return execute(ASIO_MOVE_CAST(T)(t), ASIO_MOVE_CAST(F)(f));
+  }
+
+  template <typename T, typename F>
+  ASIO_CONSTEXPR typename enable_if<
+    call_traits<T, void(F)>::overload == adapter,
+    typename call_traits<T, void(F)>::result_type
+  >::type
+  operator()(
+      ASIO_MOVE_ARG(T) t,
+      ASIO_MOVE_ARG(F) f) const
+    ASIO_NOEXCEPT_IF((
+      call_traits<T, void(F)>::is_noexcept))
+  {
+    return asio::execution::detail::submit(
+        ASIO_MOVE_CAST(T)(t),
+        as_receiver<typename decay<F>::type, T>(
+          ASIO_MOVE_CAST(F)(f)));
   }
 };
 

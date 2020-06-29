@@ -431,6 +431,15 @@ struct submit_result_type
       S, void(R)>::result_type type;
 };
 
+namespace detail {
+
+template <typename S, typename R>
+void submit(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r)
+{
+  execution::submit(ASIO_MOVE_CAST(S)(s), ASIO_MOVE_CAST(R)(r));
+}
+
+} // namespace detail
 } // namespace execution
 } // namespace asio
 
