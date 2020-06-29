@@ -300,8 +300,12 @@ nobase_include_HEADERS = \
 	asio/execution/blocking.hpp \
 	asio/execution/blocking_adaptation.hpp \
 	asio/execution/bulk_guarantee.hpp \
+	asio/execution/connect.hpp \
 	asio/execution/context.hpp \
 	asio/execution/context_as.hpp \
+	asio/execution/detail/as_invocable.hpp \
+	asio/execution/detail/as_operation.hpp \
+	asio/execution/detail/as_receiver.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/impl/bad_executor.ipp \
@@ -490,6 +494,8 @@ nobase_include_HEADERS = \
 	asio/thread.hpp \
 	asio/thread_pool.hpp \
 	asio/time_traits.hpp \
+	asio/traits/connect_free.hpp \
+	asio/traits/connect_member.hpp \
 	asio/traits/equality_comparable.hpp \
 	asio/traits/execute_free.hpp \
 	asio/traits/execute_member.hpp \

@@ -147,6 +147,7 @@
 # define ASIO_NONDEDUCED_MOVE_ARG(type) type&
 # define ASIO_MOVE_CAST(type) static_cast<type&&>
 # define ASIO_MOVE_CAST2(type1, type2) static_cast<type1, type2&&>
+# define ASIO_MOVE_OR_LVALUE(type) static_cast<type&&>
 #endif // defined(ASIO_HAS_MOVE) && !defined(ASIO_MOVE_CAST)
 
 // If ASIO_MOVE_CAST still isn't defined, default to a C++03-compatible
@@ -173,6 +174,7 @@
 # define ASIO_NONDEDUCED_MOVE_ARG(type) const type&
 # define ASIO_MOVE_CAST(type) static_cast<const type&>
 # define ASIO_MOVE_CAST2(type1, type2) static_cast<const type1, type2&>
+# define ASIO_MOVE_OR_LVALUE(type)
 #endif // !defined(ASIO_MOVE_CAST)
 
 // Support variadic templates on compilers known to allow it.
@@ -532,6 +534,44 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STATIC_ASSERT)
 #endif // !defined(ASIO_HAS_STATIC_ASSERT)
+
+// Support ref-qualified functions on compilers known to allow it.
+#if !defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+# if !defined(ASIO_DISABLE_REF_QUALIFIED_FUNCTIONS)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_reference_qualified_functions__)
+#    define ASIO_HAS_REF_QUALIFIED_FUNCTIONS 1
+#   endif // __has_feature(__cxx_reference_qualified_functions__)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_REF_QUALIFIED_FUNCTIONS 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900)
+#    define ASIO_HAS_REF_QUALIFIED_FUNCTIONS 1
+#   endif // (_MSC_VER >= 1900)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_REF_QUALIFIED_FUNCTIONS)
+#endif // !defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+# if !defined(ASIO_LVALUE_REF_QUAL)
+#  define ASIO_LVALUE_REF_QUAL &
+# endif // !defined(ASIO_LVALUE_REF_QUAL)
+# if !defined(ASIO_RVALUE_REF_QUAL)
+#  define ASIO_RVALUE_REF_QUAL &&
+# endif // !defined(ASIO_LVALUE_REF_QUAL)
+#else // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+# if !defined(ASIO_LVALUE_REF_QUAL)
+#  define ASIO_LVALUE_REF_QUAL
+# endif // !defined(ASIO_LVALUE_REF_QUAL)
+# if !defined(ASIO_RVALUE_REF_QUAL)
+#  define ASIO_RVALUE_REF_QUAL
+# endif // !defined(ASIO_LVALUE_REF_QUAL)
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
