@@ -40,5 +40,6 @@
 #include "asio/execution/set_error.hpp"
 #include "asio/execution/set_value.hpp"
 #include "asio/execution/start.hpp"
+#include "asio/execution/submit.hpp"
 
 #endif // ASIO_EXECUTION_HPP

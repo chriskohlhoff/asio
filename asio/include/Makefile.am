@@ -325,6 +325,7 @@ nobase_include_HEADERS = \
 	asio/execution/set_error.hpp \
 	asio/execution/set_value.hpp \
 	asio/execution/start.hpp \
+	asio/execution/submit.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
 	asio/generic/basic_endpoint.hpp \
@@ -520,6 +521,8 @@ nobase_include_HEADERS = \
 	asio/traits/static_query.hpp \
 	asio/traits/static_require.hpp \
 	asio/traits/static_require_concept.hpp \
+	asio/traits/submit_free.hpp \
+	asio/traits/submit_member.hpp \
 	asio/ts/buffer.hpp \
 	asio/ts/executor.hpp \
 	asio/ts/internet.hpp \

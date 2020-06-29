@@ -63,6 +63,7 @@ check_PROGRAMS = \
 	unit/execution/set_error \
 	unit/execution/set_value \
 	unit/execution/start \
+	unit/execution/submit \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
@@ -225,6 +226,7 @@ TESTS = \
 	unit/execution/set_error \
 	unit/execution/set_value \
 	unit/execution/start \
+	unit/execution/submit \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
@@ -387,6 +389,7 @@ unit_execution_set_done_SOURCES = unit/execution/set_done.cpp
 unit_execution_set_error_SOURCES = unit/execution/set_error.cpp
 unit_execution_set_value_SOURCES = unit/execution/set_value.cpp
 unit_execution_start_SOURCES = unit/execution/start.cpp
+unit_execution_submit_SOURCES = unit/execution/submit.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp
 unit_executor_work_guard_SOURCES = unit/executor_work_guard.cpp
