@@ -18,6 +18,8 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
+#include "asio/execution/scheduler.hpp"
+#include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/query.hpp"
 #include "asio/traits/query_free.hpp"
@@ -37,9 +39,11 @@ namespace execution {
 /// A property to describe whether task submission is likely in the future.
 struct outstanding_work_t
 {
-  /// The outstanding_work_t property applies to executors.
+  /// The outstanding_work_t property applies to executors, senders, and
+  /// schedulers.
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
   /// The top-level outstanding_work_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -54,9 +58,11 @@ struct outstanding_work_t
   /// future submission of a function object.
   struct untracked_t
   {
-    /// The outstanding_work_t::untracked_t property applies to executors.
+    /// The outstanding_work_t::untracked_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The outstanding_work_t::untracked_t property can be required.
     static constexpr bool is_requirable = true;
@@ -81,9 +87,11 @@ struct outstanding_work_t
   /// future submission of a function object.
   struct tracked_t
   {
-    /// The outstanding_work_t::tracked_t property applies to executors.
+    /// The outstanding_work_t::untracked_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The outstanding_work_t::tracked_t property can be required.
     static constexpr bool is_requirable = true;
@@ -152,7 +160,8 @@ struct outstanding_work_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -324,7 +333,8 @@ struct untracked_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -396,7 +406,8 @@ struct tracked_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -468,19 +479,28 @@ namespace { static const outstanding_work_t&
 
 template <typename T>
 struct is_applicable_property<T, execution::outstanding_work_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::outstanding_work_t::untracked_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::outstanding_work_t::tracked_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 

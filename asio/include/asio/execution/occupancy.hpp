@@ -18,6 +18,8 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
+#include "asio/execution/scheduler.hpp"
+#include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/traits/query_static_constexpr_member.hpp"
 #include "asio/traits/static_query.hpp"
@@ -34,9 +36,10 @@ namespace execution {
 /// should occupy the associated execution context.
 struct occupancy_t
 {
-  /// The occupancy_t property applies to executors.
+  /// The occupancy_t property applies to executors, senders, and schedulers.
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
   /// The occupancy_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -64,7 +67,8 @@ struct occupancy_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -126,7 +130,10 @@ namespace { static const occupancy_t& occupancy = occupancy_t::instance; }
 
 template <typename T>
 struct is_applicable_property<T, execution::occupancy_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 

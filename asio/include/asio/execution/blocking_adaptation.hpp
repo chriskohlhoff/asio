@@ -18,6 +18,8 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
+#include "asio/execution/scheduler.hpp"
+#include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/query.hpp"
 #include "asio/traits/query_free.hpp"
@@ -38,9 +40,11 @@ namespace execution {
 /// allowed in order to apply the blocking_adaptation_t::allowed_t property.
 struct blocking_adaptation_t
 {
-  /// The blocking_adaptation_t property applies to executors.
+  /// The blocking_adaptation_t property applies to executors, senders, and
+  /// schedulers.
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
   /// The top-level blocking_adaptation_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -54,9 +58,11 @@ struct blocking_adaptation_t
   /// A sub-property that indicates that automatic adaptation is not allowed.
   struct disallowed_t
   {
-    /// The blocking_adaptation_t::disallowed_t property applies to executors.
+    /// The blocking_adaptation_t::disallowed_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The blocking_adaptation_t::disallowed_t property can be required.
     static constexpr bool is_requirable = true;
@@ -80,9 +86,11 @@ struct blocking_adaptation_t
   /// A sub-property that indicates that automatic adaptation is allowed.
   struct allowed_t
   {
-    /// The blocking_adaptation_t::allowed_t property applies to executors.
+    /// The blocking_adaptation_t::allowed_t property applies to executors,
+    /// senders, and schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The blocking_adaptation_t::allowed_t property can be required.
     static constexpr bool is_requirable = true;
@@ -151,7 +159,8 @@ struct blocking_adaptation_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -324,7 +333,8 @@ struct disallowed_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -396,7 +406,8 @@ struct allowed_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -468,19 +479,28 @@ namespace { static const blocking_adaptation_t&
 
 template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t::disallowed_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::blocking_adaptation_t::allowed_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 

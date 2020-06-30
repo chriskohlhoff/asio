@@ -18,6 +18,8 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
+#include "asio/execution/scheduler.hpp"
+#include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/query.hpp"
 #include "asio/traits/query_free.hpp"
@@ -38,9 +40,10 @@ namespace execution {
 /// of execution agents on to threads of execution.
 struct mapping_t
 {
-  /// The mapping_t property applies to executors.
+  /// The mapping_t property applies to executors, senders, and schedulers.
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
   /// The top-level mapping_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -55,9 +58,11 @@ struct mapping_t
   /// threads of execution.
   struct thread_t
   {
-    /// The mapping_t::thread_t property applies to executors.
+    /// The mapping_t::thread_t property applies to executors, senders, and
+    /// schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The mapping_t::thread_t property can be required.
     static constexpr bool is_requirable = true;
@@ -82,9 +87,11 @@ struct mapping_t
   /// new threads of execution.
   struct new_thread_t
   {
-    /// The mapping_t::new_thread_t property applies to executors.
+    /// The mapping_t::new_thread_t property applies to executors, senders, and
+    /// schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The mapping_t::new_thread_t property can be required.
     static constexpr bool is_requirable = true;
@@ -109,9 +116,11 @@ struct mapping_t
   /// implementation-defined.
   struct other_t
   {
-    /// The mapping_t::other_t property applies to executors.
+    /// The mapping_t::other_t property applies to executors, senders, and
+    /// schedulers.
     template <typename T>
-    static constexpr bool is_applicable_property_v = is_executor_v<T>;
+    static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
     /// The mapping_t::other_t property can be required.
     static constexpr bool is_requirable = true;
@@ -185,7 +194,8 @@ struct mapping_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -388,7 +398,8 @@ struct thread_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -461,7 +472,8 @@ struct new_thread_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -521,7 +533,8 @@ struct other_t
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
-    is_applicable_property_v = is_executor<T>::value);
+    is_applicable_property_v = is_executor<T>::value
+      || is_sender<T>::value || is_scheduler<T>::value);
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -592,25 +605,37 @@ namespace { static const mapping_t& mapping = mapping_t::instance; }
 
 template <typename T>
 struct is_applicable_property<T, execution::mapping_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::mapping_t::thread_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::mapping_t::new_thread_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::mapping_t::other_t>
-  : execution::is_executor<T>
+  : integral_constant<bool,
+      execution::is_executor<T>::value
+        || execution::is_sender<T>::value
+        || execution::is_scheduler<T>::value>
 {
 };
 
