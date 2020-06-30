@@ -287,21 +287,20 @@ typedef basic_system_executor<execution::blocking_t::possibly_t,
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-namespace execution {
+namespace traits {
 
-#if !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+#if !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 template <typename Blocking, typename Relationship, typename Allocator>
-struct is_executor<
+struct equality_comparable<
     asio::basic_system_executor<Blocking, Relationship, Allocator>
-  > : true_type
+  >
 {
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 };
 
-#endif // !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-} // namespace execution
-namespace traits {
+#endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
