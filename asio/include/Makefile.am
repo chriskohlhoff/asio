@@ -305,6 +305,7 @@ nobase_include_HEADERS = \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/impl/bad_executor.ipp \
+	asio/execution/impl/receiver_invocation_error.ipp \
 	asio/execution/invocable_archetype.hpp \
 	asio/execution/mapping.hpp \
 	asio/execution/occupancy.hpp \
@@ -312,6 +313,7 @@ nobase_include_HEADERS = \
 	asio/execution/outstanding_work.hpp \
 	asio/execution/prefer_only.hpp \
 	asio/execution/receiver.hpp \
+	asio/execution/receiver_invocation_error.hpp \
 	asio/execution/relationship.hpp \
 	asio/execution/sender.hpp \
 	asio/execution/set_done.hpp \

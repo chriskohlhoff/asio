@@ -71,6 +71,7 @@
 #include "asio/detail/impl/winrt_timer_scheduler.ipp"
 #include "asio/detail/impl/winsock_init.ipp"
 #include "asio/execution/impl/bad_executor.ipp"
+#include "asio/execution/impl/receiver_invocation_error.ipp"
 #include "asio/generic/detail/impl/endpoint.ipp"
 #include "asio/ip/impl/address.ipp"
 #include "asio/ip/impl/address_v4.ipp"
