@@ -72,6 +72,21 @@ struct executor_shape<T,
   typedef typename T::shape_type type;
 };
 
+template <typename T, typename Default, typename = void>
+struct executor_index
+{
+  typedef Default type;
+};
+
+template <typename T, typename Default>
+struct executor_index<T, Default,
+    typename void_type<
+      typename T::index_type
+    >::type>
+{
+  typedef typename T::index_type type;
+};
+
 } // namespace detail
 
 /// The is_executor trait detects whether a type T satisfies the
@@ -175,6 +190,33 @@ struct executor_shape
 
 template <typename T>
 using executor_shape_t = typename executor_shape<T>::type;
+
+#endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
+
+/// The executor_index trait detects the type used by an executor to represent
+/// an index within a bulk operation.
+/**
+ * Class template @c executor_index is a type trait with a nested type alias
+ * @c type whose type is @c T::index_type if @c T::index_type is valid,
+ * otherwise @c executor_shape_t<T>.
+ */
+template <typename T>
+struct executor_index
+#if !defined(GENERATING_DOCUMENTATION)
+  : detail::executor_index<T, typename executor_shape<T>::type>
+#endif // !defined(GENERATING_DOCUMENTATION)
+{
+#if defined(GENERATING_DOCUMENTATION)
+ /// @c T::index_type if @c T::index_type is valid, otherwise
+ /// @c executor_shape_t<T>.
+ typedef automatically_determined type;
+#endif // defined(GENERATING_DOCUMENTATION)
+};
+
+#if defined(ASIO_HAS_ALIAS_TEMPLATES)
+
+template <typename T>
+using executor_index_t = typename executor_index<T>::type;
 
 #endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
 
