@@ -58,6 +58,7 @@ check_PROGRAMS = \
 	unit/execution/prefer_only \
 	unit/execution/receiver \
 	unit/execution/relationship \
+	unit/execution/schedule \
 	unit/execution/sender \
 	unit/execution/set_done \
 	unit/execution/set_error \
@@ -221,6 +222,7 @@ TESTS = \
 	unit/execution/prefer_only \
 	unit/execution/receiver \
 	unit/execution/relationship \
+	unit/execution/schedule \
 	unit/execution/sender \
 	unit/execution/set_done \
 	unit/execution/set_error \
@@ -384,6 +386,7 @@ unit_execution_operation_state_SOURCES = unit/execution/operation_state.cpp
 unit_execution_prefer_only_SOURCES = unit/execution/prefer_only.cpp
 unit_execution_receiver_SOURCES = unit/execution/receiver.cpp
 unit_execution_relationship_SOURCES = unit/execution/relationship.cpp
+unit_execution_schedule_SOURCES = unit/execution/schedule.cpp
 unit_execution_sender_SOURCES = unit/execution/sender.cpp
 unit_execution_set_done_SOURCES = unit/execution/set_done.cpp
 unit_execution_set_error_SOURCES = unit/execution/set_error.cpp

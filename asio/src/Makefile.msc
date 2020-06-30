@@ -162,6 +162,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\prefer_only.exe \
 	tests\unit\execution\receiver.exe \
 	tests\unit\execution\relationship.exe \
+	tests\unit\execution\schedule.exe \
 	tests\unit\execution\sender.exe \
 	tests\unit\execution\set_done.exe \
 	tests\unit\execution\set_error.exe \

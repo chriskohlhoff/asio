@@ -21,6 +21,7 @@ outstanding_work
 prefer_only
 receiver
 relationship
+schedule
 sender
 set_done
 set_error

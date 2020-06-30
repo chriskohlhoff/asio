@@ -320,6 +320,7 @@ nobase_include_HEADERS = \
 	asio/execution/receiver.hpp \
 	asio/execution/receiver_invocation_error.hpp \
 	asio/execution/relationship.hpp \
+	asio/execution/schedule.hpp \
 	asio/execution/sender.hpp \
 	asio/execution/set_done.hpp \
 	asio/execution/set_error.hpp \
