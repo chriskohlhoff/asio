@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
-#include "asio/execution/executor.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/prefer.hpp"
 #include "asio/query.hpp"
@@ -31,14 +30,15 @@ namespace asio {
 
 namespace execution {
 
-/// A property that is used to obtain the execution context that is associated
-/// with an executor.
+/// A property adapter that is used with the polymorphic executor wrapper
+/// to mark properties as preferable, but not requirable.
 template <typename Property>
 struct prefer_only
 {
-  /// The context_t property applies to executors.
+  /// The prefer_only adapter applies to the same types as the nested property.
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_applicable_property<T, Property>::value;
 
   /// The context_t property cannot be required.
   static constexpr bool is_requirable = false;
