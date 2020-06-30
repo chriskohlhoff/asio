@@ -22,6 +22,7 @@ prefer_only
 receiver
 relationship
 schedule
+scheduler
 sender
 set_done
 set_error

@@ -36,6 +36,7 @@
 #include "asio/execution/receiver_invocation_error.hpp"
 #include "asio/execution/relationship.hpp"
 #include "asio/execution/schedule.hpp"
+#include "asio/execution/scheduler.hpp"
 #include "asio/execution/sender.hpp"
 #include "asio/execution/set_done.hpp"
 #include "asio/execution/set_error.hpp"
