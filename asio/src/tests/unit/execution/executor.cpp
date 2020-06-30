@@ -111,9 +111,32 @@ void is_executor_of_test()
       >::value));
 }
 
+struct executor_with_other_shape_type
+{
+  typedef double shape_type;
+};
+
+void executor_shape_test()
+{
+  ASIO_CHECK((
+      asio::is_same<
+        asio::execution::executor_shape<executor>::type,
+        std::size_t
+      >::value));
+
+  ASIO_CHECK((
+      asio::is_same<
+        asio::execution::executor_shape<
+          executor_with_other_shape_type
+        >::type,
+        double
+      >::value));
+}
+
 ASIO_TEST_SUITE
 (
   "executor",
   ASIO_TEST_CASE(is_executor_test)
   ASIO_TEST_CASE(is_executor_of_test)
+  ASIO_TEST_CASE(executor_shape_test)
 )

@@ -57,6 +57,21 @@ struct is_executor_of_impl :
 {
 };
 
+template <typename T, typename = void>
+struct executor_shape
+{
+  typedef std::size_t type;
+};
+
+template <typename T>
+struct executor_shape<T,
+    typename void_type<
+      typename T::shape_type
+    >::type>
+{
+  typedef typename T::shape_type type;
+};
+
 } // namespace detail
 
 /// The is_executor trait detects whether a type T satisfies the
@@ -136,6 +151,32 @@ ASIO_CONCEPT executor_of = is_executor_of<T, F>::value;
 #define ASIO_EXECUTION_EXECUTOR_OF typename
 
 #endif // defined(ASIO_HAS_CONCEPTS)
+
+/// The executor_shape trait detects the type used by an executor to represent
+/// the shape of a bulk operation.
+/**
+ * Class template @c executor_shape is a type trait with a nested type alias
+ * @c type whose type is @c T::shape_type if @c T::shape_type is valid,
+ * otherwise @c std::size_t.
+ */
+template <typename T>
+struct executor_shape
+#if !defined(GENERATING_DOCUMENTATION)
+  : detail::executor_shape<T>
+#endif // !defined(GENERATING_DOCUMENTATION)
+{
+#if defined(GENERATING_DOCUMENTATION)
+ /// @c T::shape_type if @c T::shape_type is valid, otherwise @c std::size_t.
+ typedef automatically_determined type;
+#endif // defined(GENERATING_DOCUMENTATION)
+};
+
+#if defined(ASIO_HAS_ALIAS_TEMPLATES)
+
+template <typename T>
+using executor_shape_t = typename executor_shape<T>::type;
+
+#endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
 
 } // namespace execution
 } // namespace asio
