@@ -84,6 +84,9 @@ public:
   /// Executor used to submit functions to a thread pool.
   typedef basic_executor_type<std::allocator<void>, 0> executor_type;
 
+  /// Scheduler used to schedule receivers on a thread pool.
+  typedef basic_executor_type<std::allocator<void>, 0> scheduler_type;
+
 #if !defined(ASIO_NO_TS_EXECUTORS)
   /// Constructs a pool with an automatically determined number of threads.
   ASIO_DECL thread_pool();
@@ -103,6 +106,9 @@ public:
 
   /// Obtains the executor associated with the pool.
   executor_type executor() ASIO_NOEXCEPT;
+
+  /// Obtains the scheduler associated with the pool.
+  scheduler_type scheduler() ASIO_NOEXCEPT;
 
   /// Stops the threads.
   /**
@@ -159,6 +165,9 @@ template <typename Allocator, unsigned int Bits>
 class thread_pool::basic_executor_type : detail::thread_pool_bits
 {
 public:
+  /// The sender type, when this type is used as a scheduler.
+  typedef basic_executor_type sender_type;
+
   /// Copy construtor.
   basic_executor_type(
       const basic_executor_type& other) ASIO_NOEXCEPT
@@ -389,6 +398,12 @@ public:
         integral_constant<bool, (Bits & blocking_always) != 0>());
   }
 
+  /// Schedule function.
+  sender_type schedule() const ASIO_NOEXCEPT
+  {
+    return *this;
+  }
+
 #if !defined(ASIO_NO_TS_EXECUTORS)
   /// Obtain the underlying execution context.
   thread_pool& context() const ASIO_NOEXCEPT;
@@ -512,21 +527,20 @@ private:
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-namespace execution {
+namespace traits {
 
-#if !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
+#if !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 template <typename Allocator, unsigned int Bits>
-struct is_executor<
+struct equality_comparable<
     asio::thread_pool::basic_executor_type<Allocator, Bits>
-  > : true_type
+  >
 {
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 };
 
-#endif // !defined(ASIO_HAS_DEDUCED_EXECUTION_IS_EXECUTOR_TRAIT)
-
-} // namespace execution
-namespace traits {
+#endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 
@@ -542,6 +556,21 @@ struct execute_member<
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits>
+struct schedule_member<
+    const asio::thread_pool::basic_executor_type<Allocator, Bits>
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::thread_pool::basic_executor_type<
+      Allocator, Bits> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 

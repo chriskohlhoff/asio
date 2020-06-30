@@ -290,6 +290,159 @@ void thread_pool_executor_execute_test()
   ASIO_CHECK(count == 10);
 }
 
+struct receiver
+{
+  int* count_;
+
+  receiver(int* count)
+    : count_(count)
+  {
+  }
+
+  receiver(const receiver& other) ASIO_NOEXCEPT
+    : count_(other.count_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  receiver(receiver&& other) ASIO_NOEXCEPT
+    : count_(other.count_)
+  {
+    other.count_ = 0;
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  void set_value() ASIO_NOEXCEPT
+  {
+    ++(*count_);
+  }
+
+  template <typename E>
+  void set_error(ASIO_MOVE_ARG(E) e) ASIO_NOEXCEPT
+  {
+    (void)e;
+  }
+
+  void set_done() ASIO_NOEXCEPT
+  {
+  }
+};
+
+namespace asio {
+namespace traits {
+
+#if !defined(ASIO_HAS_DEDUCED_SET_VALUE_MEMBER_TRAIT)
+
+template <>
+struct set_value_member<receiver, void()>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_SET_VALUE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
+
+template <typename E>
+struct set_error_member<receiver, E>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_SET_DONE_MEMBER_TRAIT)
+
+template <>
+struct set_done_member<receiver>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_SET_DONE_MEMBER_TRAIT)
+
+} // namespace traits
+} // namespace asio
+
+void thread_pool_scheduler_test()
+{
+  int count = 0;
+  receiver r(&count);
+  thread_pool pool(1);
+
+  asio::execution::submit(
+    asio::execution::schedule(pool.scheduler()), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.possibly), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.always), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.never), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.tracked), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.fork), r);
+
+  asio::execution::submit(
+      asio::require(
+        asio::execution::schedule(pool.executor()),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.continuation), r);
+
+  asio::execution::submit(
+      asio::prefer(
+        asio::require(
+          asio::execution::schedule(pool.executor()),
+          asio::execution::blocking.never,
+          asio::execution::outstanding_work.untracked,
+          asio::execution::relationship.continuation),
+        asio::execution::allocator(std::allocator<void>())), r);
+
+  asio::execution::submit(
+      asio::prefer(
+        asio::require(
+          asio::execution::schedule(pool.executor()),
+          asio::execution::blocking.never,
+          asio::execution::outstanding_work.untracked,
+          asio::execution::relationship.continuation),
+        asio::execution::allocator), r);
+
+  pool.wait();
+
+  ASIO_CHECK(count == 10);
+}
+
 ASIO_TEST_SUITE
 (
   "thread_pool",
@@ -297,4 +450,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(thread_pool_service_test)
   ASIO_TEST_CASE(thread_pool_executor_query_test)
   ASIO_TEST_CASE(thread_pool_executor_execute_test)
+  ASIO_TEST_CASE(thread_pool_scheduler_test)
 )
