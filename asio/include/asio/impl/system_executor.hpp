@@ -146,7 +146,7 @@ void basic_system_executor<Blocking, Relationship, Allocator>::post(
   system_context& ctx = detail::global<system_context>();
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator> op;
+  typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
 
@@ -167,7 +167,7 @@ void basic_system_executor<Blocking, Relationship, Allocator>::defer(
   system_context& ctx = detail::global<system_context>();
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator> op;
+  typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(ASIO_MOVE_CAST(Function)(f), a);
 
