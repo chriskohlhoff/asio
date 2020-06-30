@@ -1433,11 +1433,6 @@ inline bool operator!=(const any_executor<SupportableProperties...>& a,
   return !a.equality_helper(b);
 }
 
-template <typename... SupportableProperties>
-struct is_executor<any_executor<SupportableProperties...> > : true_type
-{
-};
-
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS(n) \
@@ -1777,11 +1772,6 @@ struct is_executor<any_executor<SupportableProperties...> > : true_type
   { \
     return !a.equality_helper(b); \
   } \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  struct is_executor<any_executor<ASIO_VARIADIC_TARGS(n)> > : true_type \
-  { \
-  }; \
   /**/
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_ANY_EXECUTOR_DEF)
 #undef ASIO_PRIVATE_ANY_EXECUTOR_DEF
@@ -1800,6 +1790,41 @@ struct is_executor<any_executor<SupportableProperties...> > : true_type
 
 } // namespace execution
 namespace traits {
+
+#if !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename... SupportableProperties>
+struct equality_comparable<execution::any_executor<SupportableProperties...> >
+{
+  static const bool is_valid = true;
+  static const bool is_noexcept = true;
+};
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <>
+struct equality_comparable<execution::any_executor<> >
+{
+  static const bool is_valid = true;
+  static const bool is_noexcept = true;
+};
+
+#define ASIO_PRIVATE_ANY_EXECUTOR_EQUALITY_COMPARABLE_DEF(n) \
+  template <ASIO_VARIADIC_TPARAMS(n)> \
+  struct equality_comparable< \
+      execution::any_executor<ASIO_VARIADIC_TARGS(n)> > \
+  { \
+    static const bool is_valid = true; \
+    static const bool is_noexcept = true; \
+  }; \
+  /**/
+  ASIO_VARIADIC_GENERATE(
+      ASIO_PRIVATE_ANY_EXECUTOR_EQUALITY_COMPARABLE_DEF)
+#undef ASIO_PRIVATE_ANY_EXECUTOR_EQUALITY_COMPARABLE_DEF
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+#endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
