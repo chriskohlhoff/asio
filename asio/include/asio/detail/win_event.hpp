@@ -19,6 +19,7 @@
 
 #if defined(ASIO_WINDOWS)
 
+#include <cstddef>
 #include "asio/detail/assert.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/socket_types.hpp"

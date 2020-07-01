@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/event.hpp"
+#include "asio/detail/mutex.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/execute.hpp"
 #include "asio/execution/executor.hpp"
@@ -586,6 +588,66 @@ template <int I> template <typename E, typename T>
 const T allowed_t<I>::static_query_v;
 #endif // defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
+
+template <typename Function>
+class blocking_execute_state
+{
+public:
+  template <typename F>
+  blocking_execute_state(ASIO_MOVE_ARG(F) f)
+    : func_(ASIO_MOVE_CAST(F)(f)),
+      is_complete_(false)
+  {
+  }
+
+  template <typename Executor>
+  void execute_and_wait(ASIO_MOVE_ARG(Executor) ex)
+  {
+    handler h = { this };
+    execution::execute(ASIO_MOVE_CAST(Executor)(ex), h);
+    asio::detail::mutex::scoped_lock lock(mutex_);
+    while (!is_complete_)
+      event_.wait(lock);
+  }
+
+  struct cleanup
+  {
+    ~cleanup()
+    {
+      asio::detail::mutex::scoped_lock lock(state_->mutex_);
+      state_->is_complete_ = true;
+      state_->event_.unlock_and_signal_one_for_destruction(lock);
+    }
+
+    blocking_execute_state* state_;
+  };
+
+  struct handler
+  {
+    void operator()()
+    {
+      cleanup c = { state_ };
+      state_->func_();
+    }
+
+    blocking_execute_state* state_;
+  };
+
+  Function func_;
+  asio::detail::mutex mutex_;
+  asio::detail::event event_;
+  bool is_complete_;
+};
+
+template <typename Executor, typename Function>
+void blocking_execute(
+    ASIO_MOVE_ARG(Executor) ex,
+    ASIO_MOVE_ARG(Function) func)
+{
+  typedef typename decay<Function>::type func_t;
+  blocking_execute_state<func_t> state(ASIO_MOVE_CAST(Function)(func));
+  state.execute_and_wait(ex);
+}
 
 } // namespace blocking_adaptation
 } // namespace detail

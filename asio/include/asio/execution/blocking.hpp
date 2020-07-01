@@ -17,11 +17,14 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/execution/execute.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/execution/scheduler.hpp"
 #include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
+#include "asio/prefer.hpp"
 #include "asio/query.hpp"
+#include "asio/require.hpp"
 #include "asio/traits/query_free.hpp"
 #include "asio/traits/query_member.hpp"
 #include "asio/traits/query_static_constexpr_member.hpp"
@@ -190,6 +193,16 @@ template <int I> struct always_t;
 template <int I> struct never_t;
 
 } // namespace blocking
+namespace blocking_adaptation {
+
+template <int I> struct allowed_t;
+
+template <typename Executor, typename Function>
+void blocking_execute(
+    ASIO_MOVE_ARG(Executor) ex,
+    ASIO_MOVE_ARG(Function) func);
+
+} // namespace blocking_adaptation
 
 template <int I = 0>
 struct blocking_t
@@ -493,6 +506,137 @@ const T possibly_t<I>::static_query_v;
 #endif // defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
+template <typename Executor>
+class adapter
+{
+public:
+  explicit adapter(const Executor& e) ASIO_NOEXCEPT
+    : executor_(e)
+  {
+  }
+
+  adapter(const adapter& other) ASIO_NOEXCEPT
+    : executor_(other.executor_)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  adapter(adapter&& other) ASIO_NOEXCEPT
+    : executor_(ASIO_MOVE_CAST(Executor)(other.executor_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+
+  template <int I>
+  static ASIO_CONSTEXPR always_t<I> query(
+      blocking_t<I>) ASIO_NOEXCEPT
+  {
+    return always_t<I>();
+  }
+
+  template <int I>
+  static ASIO_CONSTEXPR always_t<I> query(
+      possibly_t<I>) ASIO_NOEXCEPT
+  {
+    return always_t<I>();
+  }
+
+  template <int I>
+  static ASIO_CONSTEXPR always_t<I> query(
+      always_t<I>) ASIO_NOEXCEPT
+  {
+    return always_t<I>();
+  }
+
+  template <int I>
+  static ASIO_CONSTEXPR always_t<I> query(
+      never_t<I>) ASIO_NOEXCEPT
+  {
+    return always_t<I>();
+  }
+
+  template <typename Property>
+  typename enable_if<
+    can_query<const Executor&, Property>::value,
+    typename query_result_type<const Executor&, Property>::type
+  >::type query(const Property& p) const
+    ASIO_NOEXCEPT_IF((
+      is_nothrow_query<const Executor&, Property>::value))
+  {
+    return asio::query(executor_, p);
+  }
+
+  template <int I>
+  typename enable_if<
+    can_require<const Executor&, possibly_t<I> >::value,
+    typename require_result_type<const Executor&, possibly_t<I> >::type
+  >::type require(possibly_t<I>) const ASIO_NOEXCEPT
+  {
+    return asio::require(executor_, possibly_t<I>());
+  }
+
+  template <int I>
+  typename enable_if<
+    can_require<const Executor&, never_t<I> >::value,
+    typename require_result_type<const Executor&, never_t<I> >::type
+  >::type require(never_t<I>) const ASIO_NOEXCEPT
+  {
+    return asio::require(executor_, never_t<I>());
+  }
+
+  template <typename Property>
+  typename enable_if<
+    can_require<const Executor&, Property>::value,
+    adapter<typename decay<
+      typename require_result_type<const Executor&, Property>::type
+    >::type>
+  >::type require(const Property& p) const
+    ASIO_NOEXCEPT_IF((
+      is_nothrow_require<const Executor&, Property>::value))
+  {
+    return adapter<typename decay<
+      typename require_result_type<const Executor&, Property>::type
+        >::type>(asio::require(executor_, p));
+  }
+
+  template <typename Property>
+  typename enable_if<
+    can_prefer<const Executor&, Property>::value,
+    adapter<typename decay<
+      typename prefer_result_type<const Executor&, Property>::type
+    >::type>
+  >::type prefer(const Property& p) const
+    ASIO_NOEXCEPT_IF((
+      is_nothrow_prefer<const Executor&, Property>::value))
+  {
+    return adapter<typename decay<
+      typename prefer_result_type<const Executor&, Property>::type
+        >::type>(asio::prefer(executor_, p));
+  }
+
+  template <typename Function>
+  typename enable_if<
+    execution::can_execute<const Executor&, Function>::value
+  >::type execute(ASIO_MOVE_ARG(Function) f) const
+  {
+    blocking_adaptation::blocking_execute(
+        executor_, ASIO_MOVE_CAST(Function)(f));
+  }
+
+  friend bool operator==(const adapter& a, const adapter& b) ASIO_NOEXCEPT
+  {
+    return a.executor_ == b.executor_;
+  }
+
+  friend bool operator!=(const adapter& a, const adapter& b) ASIO_NOEXCEPT
+  {
+    return a.executor_ != b.executor_;
+  }
+
+private:
+  Executor executor_;
+};
+
 template <int I = 0>
 struct always_t
 {
@@ -568,6 +712,20 @@ struct always_t
       const always_t&, const never_t<I>&)
   {
     return true;
+  }
+
+  template <typename Executor>
+  friend adapter<Executor> require(
+      const Executor& e, const always_t&,
+      typename enable_if<
+        is_executor<Executor>::value
+        && traits::static_require<
+          const Executor&,
+          blocking_adaptation::allowed_t<0>
+        >::is_valid
+      >::type* = 0)
+  {
+    return adapter<Executor>(e);
   }
 };
 
@@ -973,6 +1131,208 @@ struct static_require<T, execution::blocking_t::never_t,
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_STATIC_REQUIRE_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_REQUIRE_FREE_TRAIT)
+
+template <typename T>
+struct require_free_default<T, execution::blocking_t::always_t,
+  typename enable_if<
+    is_same<T, typename decay<T>::type>::value
+      && execution::is_executor<T>::value
+      && traits::static_require<
+          const T&,
+          execution::detail::blocking_adaptation::allowed_t<0>
+        >::is_valid
+  >::type>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef execution::detail::blocking::adapter<T> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_REQUIRE_FREE_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <typename Executor>
+struct equality_comparable<
+  execution::detail::blocking::adapter<Executor> >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename Executor, typename Function>
+struct execute_member<
+  execution::detail::blocking::adapter<Executor>, Function>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking::adapter<Executor>,
+  execution::detail::blocking_t<I> >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_t::always_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking::adapter<Executor>,
+  execution::detail::blocking::always_t<I> >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_t::always_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking::adapter<Executor>,
+  execution::detail::blocking::possibly_t<I> >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_t::always_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+template <typename Executor, int I>
+struct query_static_constexpr_member<
+  execution::detail::blocking::adapter<Executor>,
+  execution::detail::blocking::never_t<I> >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef execution::blocking_t::always_t result_type;
+
+  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  {
+    return result_type();
+  }
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct query_member<
+  execution::detail::blocking::adapter<Executor>, Property,
+  typename enable_if<
+    can_query<const Executor&, Property>::value
+  >::type>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_query<Executor, Property>::value));
+  typedef typename query_result_type<Executor, Property>::type result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+template <typename Executor, int I>
+struct require_member<
+  execution::detail::blocking::adapter<Executor>,
+  execution::detail::blocking::possibly_t<I>,
+  typename enable_if<
+    can_require<
+      const Executor&,
+      execution::detail::blocking::possibly_t<I>
+    >::value
+  >::type>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_require<const Executor&,
+        execution::detail::blocking::possibly_t<I> >::value));
+  typedef typename require_result_type<const Executor&,
+    execution::detail::blocking::possibly_t<I> >::type result_type;
+};
+
+template <typename Executor, int I>
+struct require_member<
+  execution::detail::blocking::adapter<Executor>,
+  execution::detail::blocking::never_t<I>,
+  typename enable_if<
+    can_require<
+      const Executor&,
+      execution::detail::blocking::never_t<I>
+    >::value
+  >::type>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_require<const Executor&,
+        execution::detail::blocking::never_t<I> >::value));
+  typedef typename require_result_type<const Executor&,
+    execution::detail::blocking::never_t<I> >::type result_type;
+};
+
+template <typename Executor, typename Property>
+struct require_member<
+  execution::detail::blocking::adapter<Executor>, Property,
+  typename enable_if<
+    can_require<const Executor&, Property>::value
+  >::type>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_require<Executor, Property>::value));
+  typedef execution::detail::blocking::adapter<typename decay<
+    typename require_result_type<Executor, Property>::type
+      >::type> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
+
+template <typename Executor, typename Property>
+struct prefer_member<
+  execution::detail::blocking::adapter<Executor>, Property,
+  typename enable_if<
+    can_prefer<const Executor&, Property>::value
+  >::type>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
+      (is_nothrow_prefer<Executor, Property>::value));
+  typedef execution::detail::blocking::adapter<typename decay<
+    typename prefer_result_type<Executor, Property>::type
+      >::type> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_PREFER_MEMBER_TRAIT)
 
 } // namespace traits
 
