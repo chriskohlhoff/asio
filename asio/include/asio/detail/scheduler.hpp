@@ -112,6 +112,11 @@ public:
   ASIO_DECL void post_immediate_completion(
       operation* op, bool is_continuation);
 
+  // Request invocation of the given operations and return immediately. Assumes
+  // that work_started() has not yet been called for the operations.
+  ASIO_DECL void post_immediate_completions(std::size_t n,
+      op_queue<operation>& ops, bool is_continuation);
+
   // Request invocation of the given operation and return immediately. Assumes
   // that work_started() was previously called for the operation.
   ASIO_DECL void post_deferred_completion(operation* op);

@@ -353,6 +353,29 @@ void scheduler::post_immediate_completion(
   wake_one_thread_and_unlock(lock);
 }
 
+void scheduler::post_immediate_completions(std::size_t n,
+    op_queue<scheduler::operation>& ops, bool is_continuation)
+{
+#if defined(ASIO_HAS_THREADS)
+  if (one_thread_ || is_continuation)
+  {
+    if (thread_info_base* this_thread = thread_call_stack::contains(this))
+    {
+      static_cast<thread_info*>(this_thread)->private_outstanding_work += n;
+      static_cast<thread_info*>(this_thread)->private_op_queue.push(ops);
+      return;
+    }
+  }
+#else // defined(ASIO_HAS_THREADS)
+  (void)is_continuation;
+#endif // defined(ASIO_HAS_THREADS)
+
+  increment(outstanding_work_, static_cast<long>(n));
+  mutex::scoped_lock lock(mutex_);
+  op_queue_.push(ops);
+  wake_one_thread_and_unlock(lock);
+}
+
 void scheduler::post_deferred_completion(scheduler::operation* op)
 {
 #if defined(ASIO_HAS_THREADS)
