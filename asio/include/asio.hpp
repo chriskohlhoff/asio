@@ -58,6 +58,7 @@
 #include "asio/execution/any_executor.hpp"
 #include "asio/execution/blocking.hpp"
 #include "asio/execution/blocking_adaptation.hpp"
+#include "asio/execution/bulk_execute.hpp"
 #include "asio/execution/bulk_guarantee.hpp"
 #include "asio/execution/connect.hpp"
 #include "asio/execution/context.hpp"

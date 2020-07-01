@@ -299,6 +299,7 @@ nobase_include_HEADERS = \
 	asio/execution/bad_executor.hpp \
 	asio/execution/blocking.hpp \
 	asio/execution/blocking_adaptation.hpp \
+	asio/execution/bulk_execute.hpp \
 	asio/execution/bulk_guarantee.hpp \
 	asio/execution/connect.hpp \
 	asio/execution/context.hpp \
