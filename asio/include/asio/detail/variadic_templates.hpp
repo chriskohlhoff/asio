@@ -287,6 +287,7 @@
   typename decay<T7>::type, typename decay<T8>::type
 
 # define ASIO_VARIADIC_GENERATE(m) m(1) m(2) m(3) m(4) m(5) m(6) m(7) m(8)
+# define ASIO_VARIADIC_GENERATE_5(m) m(1) m(2) m(3) m(4) m(5)
 
 #endif // !defined(ASIO_HAS_VARIADIC_TEMPLATES)
 

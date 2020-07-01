@@ -606,7 +606,7 @@ class promise_handler_selector<void(std::exception_ptr, Arg...)>
       : public promise_handler_ex_n< \
         std::tuple<Arg, ASIO_VARIADIC_TARGS(n)> > {}; \
   /**/
-  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_PROMISE_SELECTOR_DEF)
+  ASIO_VARIADIC_GENERATE_5(ASIO_PRIVATE_PROMISE_SELECTOR_DEF)
 #undef ASIO_PRIVATE_PROMISE_SELECTOR_DEF
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
