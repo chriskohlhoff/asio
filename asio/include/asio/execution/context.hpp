@@ -24,6 +24,10 @@
 #include "asio/traits/query_static_constexpr_member.hpp"
 #include "asio/traits/static_query.hpp"
 
+#if defined(ASIO_HAS_STD_ANY)
+# include <any>
+#endif // defined(ASIO_HAS_STD_ANY)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -46,6 +50,9 @@ struct context_t
 
   /// The context_t property cannot be preferred.
   static constexpr bool is_preferable = false;
+
+  /// The type returned by queries against an @c any_executor.
+  typedef std::any polymorphic_query_result_type;
 };
 
 /// A special value used for accessing the context_t property.
@@ -70,6 +77,10 @@ struct context_t
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
   ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
+
+#if defined(ASIO_HAS_STD_ANY)
+  typedef std::any polymorphic_query_result_type;
+#endif // defined(ASIO_HAS_STD_ANY)
 
   ASIO_CONSTEXPR context_t()
   {

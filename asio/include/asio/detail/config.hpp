@@ -1196,6 +1196,30 @@
 # endif // !defined(ASIO_DISABLE_STD_NESTED_EXCEPTION)
 #endif // !defined(ASIO_HAS_STD_NESTED_EXCEPTION)
 
+// Standard library support for std::any.
+#if !defined(ASIO_HAS_STD_ANY)
+# if !defined(ASIO_DISABLE_STD_ANY)
+#  if defined(__clang__)
+#   if (__cplusplus >= 201703)
+#    if __has_include(<any>)
+#     define ASIO_HAS_STD_ANY 1
+#    endif // __has_include(<any>)
+#   endif // (__cplusplus >= 201703)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 7)
+#    if (__cplusplus >= 201703)
+#     define ASIO_HAS_STD_ANY 1
+#    endif // (__cplusplus >= 201703)
+#   endif // (__GNUC__ >= 7)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1910) && (_MSVC_LANG >= 201703)
+#    define ASIO_HAS_STD_ANY 1
+#   endif // (_MSC_VER >= 1910) && (_MSVC_LANG >= 201703)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_ANY)
+#endif // !defined(ASIO_HAS_STD_ANY)
+
 // Standard library support for std::source_location.
 #if !defined(ASIO_HAS_STD_SOURCE_LOCATION)
 # if !defined(ASIO_DISABLE_STD_SOURCE_LOCATION)
