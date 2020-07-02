@@ -62,8 +62,8 @@ struct as_invocable
 #endif // !defined(ASIO_NO_EXCEPTIONS)
       execution::set_value(ASIO_MOVE_CAST(Receiver)(*receiver_));
       receiver_ = 0;
-    }
 #if !defined(ASIO_NO_EXCEPTIONS)
+    }
     catch (...)
     {
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR)

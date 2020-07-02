@@ -62,8 +62,8 @@ struct as_operation
                 , ref_count_
 #endif // !defined(ASIO_HAS_MOVE)
               ));
-    }
 #if !defined(ASIO_NO_EXCEPTIONS)
+    }
     catch (...)
     {
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR)
