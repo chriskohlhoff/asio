@@ -521,7 +521,7 @@ int epoll_reactor::do_timerfd_create()
 {
 #if defined(ASIO_HAS_TIMERFD)
 # if defined(TFD_CLOEXEC)
-  int fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
+  int fd = timerfd_create(CLOCK_BOOTTIME, TFD_CLOEXEC);
 # else // defined(TFD_CLOEXEC)
   int fd = -1;
   errno = EINVAL;
@@ -529,7 +529,7 @@ int epoll_reactor::do_timerfd_create()
 
   if (fd == -1 && errno == EINVAL)
   {
-    fd = timerfd_create(CLOCK_MONOTONIC, 0);
+    fd = timerfd_create(CLOCK_BOOTTIME, 0);
     if (fd != -1)
       ::fcntl(fd, F_SETFD, FD_CLOEXEC);
   }
