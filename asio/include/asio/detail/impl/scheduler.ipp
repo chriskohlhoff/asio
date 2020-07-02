@@ -361,7 +361,8 @@ void scheduler::post_immediate_completions(std::size_t n,
   {
     if (thread_info_base* this_thread = thread_call_stack::contains(this))
     {
-      static_cast<thread_info*>(this_thread)->private_outstanding_work += n;
+      static_cast<thread_info*>(this_thread)->private_outstanding_work
+        += static_cast<long>(n);
       static_cast<thread_info*>(this_thread)->private_op_queue.push(ops);
       return;
     }
