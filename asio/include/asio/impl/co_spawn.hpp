@@ -52,6 +52,8 @@ private:
   executor_type executor_;
 };
 
+#if !defined(ASIO_NO_TS_EXECUTORS)
+
 template <typename Executor>
 struct co_spawn_work_guard<Executor,
     typename enable_if<
@@ -63,6 +65,8 @@ struct co_spawn_work_guard<Executor,
   {
   }
 };
+
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 template <typename Executor>
 inline co_spawn_work_guard<Executor>
