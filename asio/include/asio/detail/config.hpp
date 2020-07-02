@@ -279,10 +279,13 @@
 #    define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
       static const type name
 #   endif // (__GNUC__ >= 8)
-#  else // defined(__GNUC__)
+#  elif defined(ASIO_MSVC)
+#   define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
+     static const type name
+#  else // defined(ASIO_MSVC)
 #   define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
      static constexpr const type name{}
-#  endif // defined(__GNUC__)
+#  endif // defined(ASIO_MSVC)
 # else // defined(ASIO_HAS_CONSTEXPR)
 #  define ASIO_STATIC_CONSTEXPR_DEFAULT_INIT(type, name) \
     static const type name

@@ -5,7 +5,7 @@ BOOSTDIR = ../../boost_1_34_1
 COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include
 
 !ifdef CXXLATEST
-STD_CXXFLAGS = -std:c++latest
+STD_CXXFLAGS = -std:c++latest -permissive-
 !endif
 
 !ifdef WARNINGS
