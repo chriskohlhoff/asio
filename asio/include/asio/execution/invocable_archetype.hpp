@@ -28,6 +28,11 @@ namespace execution {
 /// execution::executor concept.
 struct invocable_archetype
 {
+#if !defined(GENERATING_DOCUMENTATION)
+  // Necessary for compatibility with a C++03 implementation of result_of.
+  typedef void result_type;
+#endif // !defined(GENERATING_DOCUMENTATION)
+
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES) \
   || defined(GENERATING_DOCUMENTATION)
 

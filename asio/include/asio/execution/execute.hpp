@@ -216,7 +216,7 @@ struct impl
     return asio::execution::detail::submit_helper(
         ASIO_MOVE_CAST(T)(t),
         as_receiver<typename decay<F>::type, T>(
-          ASIO_MOVE_CAST(F)(f)));
+          ASIO_MOVE_CAST(F)(f), 0));
   }
 };
 
