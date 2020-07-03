@@ -377,6 +377,80 @@ void any_executor_assignment_test()
   ASIO_CHECK(ex_no_props_6.target<void>() != 0);
 }
 
+void any_executor_swap_test()
+{
+  typedef execution::any_executor<> ex_no_props_t;
+
+  typedef execution::any_executor<
+      execution::blocking_t
+    > ex_one_prop_t;
+
+  typedef execution::any_executor<
+      execution::blocking_t,
+      execution::occupancy_t
+    > ex_two_props_t;
+
+  thread_pool pool1(1);
+  thread_pool pool2(1);
+
+  ex_no_props_t ex_no_props_1(pool1.executor());
+  ex_no_props_t ex_no_props_2(pool2.executor());
+
+  ex_no_props_t ex_no_props_3(ex_no_props_1);
+  ex_no_props_t ex_no_props_4(ex_no_props_2);
+
+  ASIO_CHECK(ex_no_props_3 == ex_no_props_1);
+  ASIO_CHECK(ex_no_props_4 == ex_no_props_2);
+
+  ex_no_props_3.swap(ex_no_props_4);
+
+  ASIO_CHECK(ex_no_props_3 == ex_no_props_2);
+  ASIO_CHECK(ex_no_props_4 == ex_no_props_1);
+
+  execution::swap(ex_no_props_3, ex_no_props_4);
+
+  ASIO_CHECK(ex_no_props_3 == ex_no_props_1);
+  ASIO_CHECK(ex_no_props_4 == ex_no_props_2);
+
+  ex_one_prop_t ex_one_prop_1(pool1.executor());
+  ex_one_prop_t ex_one_prop_2(pool2.executor());
+
+  ex_one_prop_t ex_one_prop_3(ex_one_prop_1);
+  ex_one_prop_t ex_one_prop_4(ex_one_prop_2);
+
+  ASIO_CHECK(ex_one_prop_3 == ex_one_prop_1);
+  ASIO_CHECK(ex_one_prop_4 == ex_one_prop_2);
+
+  ex_one_prop_3.swap(ex_one_prop_4);
+
+  ASIO_CHECK(ex_one_prop_3 == ex_one_prop_2);
+  ASIO_CHECK(ex_one_prop_4 == ex_one_prop_1);
+
+  execution::swap(ex_one_prop_3, ex_one_prop_4);
+
+  ASIO_CHECK(ex_one_prop_3 == ex_one_prop_1);
+  ASIO_CHECK(ex_one_prop_4 == ex_one_prop_2);
+
+  ex_two_props_t ex_two_props_1(pool1.executor());
+  ex_two_props_t ex_two_props_2(pool2.executor());
+
+  ex_two_props_t ex_two_props_3(ex_two_props_1);
+  ex_two_props_t ex_two_props_4(ex_two_props_2);
+
+  ASIO_CHECK(ex_two_props_3 == ex_two_props_1);
+  ASIO_CHECK(ex_two_props_4 == ex_two_props_2);
+
+  ex_two_props_3.swap(ex_two_props_4);
+
+  ASIO_CHECK(ex_two_props_3 == ex_two_props_2);
+  ASIO_CHECK(ex_two_props_4 == ex_two_props_1);
+
+  execution::swap(ex_two_props_3, ex_two_props_4);
+
+  ASIO_CHECK(ex_two_props_3 == ex_two_props_1);
+  ASIO_CHECK(ex_two_props_4 == ex_two_props_2);
+}
+
 void any_executor_query_test()
 {
   thread_pool pool(1);
@@ -475,6 +549,7 @@ ASIO_TEST_SUITE
   "any_executor",
   ASIO_TEST_CASE(any_executor_construction_test)
   ASIO_TEST_CASE(any_executor_assignment_test)
+  ASIO_TEST_CASE(any_executor_swap_test)
   ASIO_TEST_CASE(any_executor_query_test)
   ASIO_TEST_CASE(any_executor_execute_test)
 )
