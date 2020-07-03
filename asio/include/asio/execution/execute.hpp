@@ -79,7 +79,7 @@ struct is_sender_to;
 namespace detail {
 
 template <typename S, typename R>
-void submit(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r);
+void submit_helper(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r);
 
 } // namespace detail
 } // namespace execution
@@ -164,10 +164,12 @@ struct call_traits<T, void(F),
         false_type
       >::type::value
     )
-  >::type> :
-  execute_free<T, F>
+  >::type>
 {
   ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef void result_type;
 };
 
 struct impl
@@ -211,7 +213,7 @@ struct impl
     ASIO_NOEXCEPT_IF((
       call_traits<T, void(F)>::is_noexcept))
   {
-    return asio::execution::detail::submit(
+    return asio::execution::detail::submit_helper(
         ASIO_MOVE_CAST(T)(t),
         as_receiver<typename decay<F>::type, T>(
           ASIO_MOVE_CAST(F)(f)));

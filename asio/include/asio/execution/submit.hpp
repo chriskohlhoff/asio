@@ -434,7 +434,7 @@ struct submit_result_type
 namespace detail {
 
 template <typename S, typename R>
-void submit(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r)
+void submit_helper(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r)
 {
   execution::submit(ASIO_MOVE_CAST(S)(s), ASIO_MOVE_CAST(R)(r));
 }
