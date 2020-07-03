@@ -29,6 +29,7 @@
 #include "asio/detail/variadic_templates.hpp"
 #include "asio/execution/bad_executor.hpp"
 #include "asio/execution/blocking.hpp"
+#include "asio/execution/execute.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/prefer.hpp"
 #include "asio/query.hpp"
@@ -850,13 +851,13 @@ protected:
   static void execute_ex(const any_executor_base& ex,
       ASIO_MOVE_ARG(function) f)
   {
-    ex.target<Ex>()->execute(ASIO_MOVE_CAST(function)(f));
+    execution::execute(*ex.target<Ex>(), ASIO_MOVE_CAST(function)(f));
   }
 
   template <typename Ex>
   static void blocking_execute_ex(const any_executor_base& ex, function_view f)
   {
-    ex.target<Ex>()->execute(f);
+    execution::execute(*ex.target<Ex>(), f);
   }
 
   template <typename Ex>
