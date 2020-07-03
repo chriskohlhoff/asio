@@ -606,12 +606,14 @@ protected:
   {
   }
 
-  static void copy_void(any_executor_base&, const any_executor_base&)
+  static void copy_void(any_executor_base& ex1, const any_executor_base&)
   {
+    ex1.target_ = 0;
   }
 
-  static void move_void(any_executor_base&, any_executor_base&)
+  static void move_void(any_executor_base& ex1, any_executor_base&)
   {
+    ex1.target_ = 0;
   }
 
   static const void* target_void(const any_executor_base&)
