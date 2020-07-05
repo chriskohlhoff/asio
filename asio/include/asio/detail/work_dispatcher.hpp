@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/type_traits.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/executor_work_guard.hpp"
@@ -29,6 +30,23 @@
 
 namespace asio {
 namespace detail {
+
+template <typename Handler, typename Executor, typename = void>
+struct is_work_dispatcher_required : true_type
+{
+};
+
+template <typename Handler, typename Executor>
+struct is_work_dispatcher_required<Handler, Executor,
+    typename enable_if<
+      is_same<
+        typename associated_executor<Handler,
+          Executor>::asio_associated_executor_is_unspecialised,
+        void
+      >::value
+    >::type> : false_type
+{
+};
 
 template <typename Handler, typename Executor, typename = void>
 class work_dispatcher

@@ -410,6 +410,7 @@ struct associated_executor<
     detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
     MutableBufferIterator, CompletionCondition, ReadHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor>::type type;
 
@@ -685,6 +686,7 @@ struct associated_executor<
     detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
       Executor, CompletionCondition, ReadHandler>,
     Executor1>
+  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
 {
   typedef typename associated_executor<ReadHandler, Executor1>::type type;
 

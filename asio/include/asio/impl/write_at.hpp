@@ -395,6 +395,7 @@ struct associated_executor<
     detail::write_at_op<AsyncRandomAccessWriteDevice, ConstBufferSequence,
       ConstBufferIterator, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 
@@ -606,6 +607,7 @@ template <typename Executor, typename WriteHandler, typename Executor1>
 struct associated_executor<
     detail::write_at_streambuf_op<Executor, WriteHandler>,
     Executor1>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor1>::type type;
 

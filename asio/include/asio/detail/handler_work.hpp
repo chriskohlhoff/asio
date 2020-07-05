@@ -185,6 +185,15 @@ public:
   {
     return false;
   }
+
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    // When using a native implementation, I/O completion handlers are
+    // already dispatched according to the execution context's executor's
+    // rules. We can call the function directly.
+    asio_handler_invoke_helpers::invoke(function, handler);
+  }
 };
 
 template <typename Executor, typename IoContext>
@@ -256,26 +265,27 @@ private:
   Executor executor_;
 };
 
-template <typename Handler, typename IoExecutor,
-    typename HandlerExecutor =
-      typename associated_executor<Handler, IoExecutor>::type>
+template <typename Handler, typename IoExecutor, typename = void>
 class handler_work :
   handler_work_base<IoExecutor>,
-  handler_work_base<HandlerExecutor, IoExecutor>
+  handler_work_base<typename associated_executor<
+      Handler, IoExecutor>::type, IoExecutor>
 {
 public:
+  typedef handler_work_base<IoExecutor> base1_type;
+  typedef handler_work_base<typename associated_executor<
+    Handler, IoExecutor>::type, IoExecutor> base2_type;
+
   handler_work(Handler& handler, const IoExecutor& io_ex) ASIO_NOEXCEPT
-    : handler_work_base<IoExecutor>(io_ex),
-      handler_work_base<HandlerExecutor, IoExecutor>(
-          asio::get_associated_executor(handler, io_ex), io_ex)
+    : base1_type(io_ex),
+      base2_type(asio::get_associated_executor(handler, io_ex), io_ex)
   {
   }
 
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
-    if (!handler_work_base<IoExecutor>::owns_work()
-        && !handler_work_base<HandlerExecutor, IoExecutor>::owns_work())
+    if (!base1_type::owns_work() && !base2_type::owns_work())
     {
       // When using a native implementation, I/O completion handlers are
       // already dispatched according to the execution context's executor's
@@ -284,8 +294,43 @@ public:
     }
     else
     {
-      handler_work_base<HandlerExecutor,
-          IoExecutor>::dispatch(function, handler);
+      base2_type::dispatch(function, handler);
+    }
+  }
+};
+
+template <typename Handler, typename IoExecutor>
+class handler_work<
+    Handler, IoExecutor,
+    typename enable_if<
+      is_same<
+        typename associated_executor<Handler,
+          IoExecutor>::asio_associated_executor_is_unspecialised,
+        void
+      >::value
+    >::type> : handler_work_base<IoExecutor>
+{
+public:
+  typedef handler_work_base<IoExecutor> base1_type;
+
+  handler_work(Handler&, const IoExecutor& io_ex) ASIO_NOEXCEPT
+    : base1_type(io_ex)
+  {
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler)
+  {
+    if (!base1_type::owns_work())
+    {
+      // When using a native implementation, I/O completion handlers are
+      // already dispatched according to the execution context's executor's
+      // rules. We can call the function directly.
+      asio_handler_invoke_helpers::invoke(function, handler);
+    }
+    else
+    {
+      base1_type::dispatch(function, handler);
     }
   }
 };

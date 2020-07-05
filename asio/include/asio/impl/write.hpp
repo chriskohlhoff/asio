@@ -505,6 +505,7 @@ struct associated_executor<
     detail::write_op<AsyncWriteStream, ConstBufferSequence,
       ConstBufferIterator, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 
@@ -756,6 +757,7 @@ struct associated_executor<
     detail::write_dynbuf_v1_op<AsyncWriteStream,
       DynamicBuffer_v1, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 
@@ -1044,6 +1046,7 @@ struct associated_executor<
     detail::write_dynbuf_v2_op<AsyncWriteStream,
       DynamicBuffer_v2, CompletionCondition, WriteHandler>,
     Executor>
+  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
 {
   typedef typename associated_executor<WriteHandler, Executor>::type type;
 
