@@ -105,11 +105,6 @@ public:
 
   // Request invocation of the given function.
   template <typename Executor, typename Function, typename Allocator>
-  static void execute(const implementation_type& impl, Executor& ex,
-      ASIO_MOVE_ARG(Function) function, const Allocator& a);
-
-  // Request invocation of the given function.
-  template <typename Executor, typename Function, typename Allocator>
   static void dispatch(const implementation_type& impl, Executor& ex,
       ASIO_MOVE_ARG(Function) function, const Allocator& a);
 
@@ -135,6 +130,11 @@ private:
   // Adds a function to the strand. Returns true if it acquires the lock.
   ASIO_DECL static bool enqueue(const implementation_type& impl,
       scheduler_operation* op);
+
+  // Helper function to request invocation of the given function.
+  template <typename Executor, typename Function, typename Allocator>
+  static void do_execute(const implementation_type& impl, Executor& ex,
+      ASIO_MOVE_ARG(Function) function, const Allocator& a);
 
   // Mutex to protect access to the service-wide state.
   mutex mutex_;
