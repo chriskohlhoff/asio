@@ -130,8 +130,9 @@ ASIO_CONCEPT executor = is_executor<T>::value;
 /// execution::executor_of concept for some set of value arguments.
 /**
  * Class template @c is_executor_of is a type trait that is derived from @c
- * true_type if the type @c T meets the concept definition for a executor for
- * value arguments @c Vs, otherwise @c false_type.
+ * true_type if the type @c T meets the concept definition for an executor
+ * that is invocable with a function object of type @c F, otherwise @c
+ * false_type.
  */
 template <typename T, typename F>
 struct is_executor_of :
