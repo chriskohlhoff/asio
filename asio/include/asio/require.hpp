@@ -90,12 +90,12 @@ struct is_nothrow_require :
 
 /// A type trait that determines the result type of a @c require expression.
 /**
- * Class template @c require_result_type is a trait that determines the result
+ * Class template @c require_result is a trait that determines the result
  * type of the expression <tt>asio::require(std::declval<T>(),
  * std::declval<Properties>()...)</tt>.
  */
 template <typename T, typename... Properties>
-struct require_result_type
+struct require_result
 {
   /// The result of the @c require expression.
   typedef automatically_determined type;
@@ -478,7 +478,7 @@ constexpr bool is_nothrow_require_v
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename T, typename... Properties>
-struct require_result_type
+struct require_result
 {
   typedef typename asio_require_fn::call_traits<
       T, void(Properties...)>::result_type type;
@@ -488,28 +488,28 @@ struct require_result_type
 
 template <typename T, typename P0 = void,
     typename P1 = void, typename P2 = void>
-struct require_result_type
+struct require_result
 {
   typedef typename asio_require_fn::call_traits<
       T, void(P0, P1, P2)>::result_type type;
 };
 
 template <typename T, typename P0, typename P1>
-struct require_result_type<T, P0, P1>
+struct require_result<T, P0, P1>
 {
   typedef typename asio_require_fn::call_traits<
       T, void(P0, P1)>::result_type type;
 };
 
 template <typename T, typename P0>
-struct require_result_type<T, P0>
+struct require_result<T, P0>
 {
   typedef typename asio_require_fn::call_traits<
       T, void(P0)>::result_type type;
 };
 
 template <typename T>
-struct require_result_type<T>
+struct require_result<T>
 {
 };
 

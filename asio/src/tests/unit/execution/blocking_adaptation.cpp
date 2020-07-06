@@ -735,7 +735,7 @@ void test_require()
   ASIO_CHECK((
       asio::execution::is_executor<
         typename asio::decay<
-          typename asio::require_result_type<Executor&, Param>::type
+          typename asio::require_result<Executor&, Param>::type
         >::type
       >::value));
 
@@ -749,7 +749,7 @@ void test_require()
   ASIO_CHECK((
       asio::execution::is_executor<
         typename asio::decay<
-          typename asio::require_result_type<const Executor&, Param>::type
+          typename asio::require_result<const Executor&, Param>::type
         >::type
       >::value));
 }

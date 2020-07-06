@@ -373,7 +373,7 @@ constexpr bool is_nothrow_bulk_execute_v
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename S, typename F, typename N>
-struct bulk_execute_result_type
+struct bulk_execute_result
 {
   typedef typename asio_execution_bulk_execute_fn::call_traits<
       S, void(F, N)>::result_type type;

@@ -200,7 +200,7 @@ private:
   executor_work_guard& operator=(const executor_work_guard&);
 
   typedef typename decay<
-      typename prefer_result_type<
+      typename prefer_result<
         const executor_type&,
         execution::outstanding_work_t::tracked_t
       >::type

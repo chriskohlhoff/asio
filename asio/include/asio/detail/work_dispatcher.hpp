@@ -86,7 +86,7 @@ public:
 
 private:
   typedef typename decay<
-      typename prefer_result_type<const Executor&,
+      typename prefer_result<const Executor&,
         execution::outstanding_work_t::tracked_t
       >::type
     >::type work_executor_type;

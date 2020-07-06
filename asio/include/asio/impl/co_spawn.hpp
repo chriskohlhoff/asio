@@ -33,7 +33,7 @@ class co_spawn_work_guard
 {
 public:
   typedef typename decay<
-      typename prefer_result_type<Executor,
+      typename prefer_result<Executor,
         execution::outstanding_work_t::tracked_t
       >::type
     >::type executor_type;

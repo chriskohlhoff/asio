@@ -150,7 +150,7 @@ public:
   template <typename Property>
   typename enable_if<
     can_query<const Executor&, Property>::value,
-    typename query_result_type<const Executor&, Property>::type
+    typename query_result<const Executor&, Property>::type
   >::type query(const Property& p) const
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, Property>::value))
@@ -163,14 +163,14 @@ public:
   typename enable_if<
     can_require<const Executor&, Property>::value,
     strand<typename decay<
-      typename require_result_type<const Executor&, Property>::type
+      typename require_result<const Executor&, Property>::type
     >::type>
   >::type require(const Property& p) const
     ASIO_NOEXCEPT_IF((
       is_nothrow_require<const Executor&, Property>::value))
   {
     return strand<typename decay<
-      typename require_result_type<const Executor&, Property>::type
+      typename require_result<const Executor&, Property>::type
         >::type>(asio::require(executor_, p), impl_);
   }
 
@@ -179,14 +179,14 @@ public:
   typename enable_if<
     can_prefer<const Executor&, Property>::value,
     strand<typename decay<
-      typename prefer_result_type<const Executor&, Property>::type
+      typename prefer_result<const Executor&, Property>::type
     >::type>
   >::type prefer(const Property& p) const
     ASIO_NOEXCEPT_IF((
       is_nothrow_prefer<const Executor&, Property>::value))
   {
     return strand<typename decay<
-      typename prefer_result_type<const Executor&, Property>::type
+      typename prefer_result<const Executor&, Property>::type
         >::type>(asio::prefer(executor_, p), impl_);
   }
 
@@ -434,7 +434,7 @@ struct query_member<strand<Executor>, Property,
   ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_query<Executor, Property>::value));
-  typedef typename query_result_type<Executor, Property>::type result_type;
+  typedef typename query_result<Executor, Property>::type result_type;
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
@@ -451,7 +451,7 @@ struct require_member<strand<Executor>, Property,
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_require<Executor, Property>::value));
   typedef strand<typename decay<
-    typename require_result_type<Executor, Property>::type
+    typename require_result<Executor, Property>::type
       >::type> result_type;
 };
 
@@ -469,7 +469,7 @@ struct prefer_member<strand<Executor>, Property,
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
       (is_nothrow_prefer<Executor, Property>::value));
   typedef strand<typename decay<
-    typename prefer_result_type<Executor, Property>::type
+    typename prefer_result<Executor, Property>::type
       >::type> result_type;
 };
 

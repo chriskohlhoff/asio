@@ -109,6 +109,22 @@ struct can_connect :
 {
 };
 
+/// A type trait to determine the result of a @c connect expression.
+template <typename S, typename R>
+struct connect_result
+{
+  /// The type of the connect expression.
+  /**
+   * The type of the expression <tt>execution::connect(std::declval<S>(),
+   * std::declval<R>())</tt>.
+   */
+  typedef automatically_determined type;
+};
+
+/// A type alis to determine the result of a @c connect expression.
+template <typename S, typename R>
+using connect_result_t = typename connect_result<S, R>::type;
+
 } // namespace execution
 } // namespace asio
 
@@ -447,7 +463,7 @@ constexpr bool is_nothrow_connect_v
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename S, typename R>
-struct connect_result_type
+struct connect_result
 {
   typedef typename asio_execution_connect_fn::call_traits<
       S, void(R)>::result_type type;
@@ -456,7 +472,7 @@ struct connect_result_type
 #if defined(ASIO_HAS_ALIAS_TEMPLATES)
 
 template <typename S, typename R>
-using connect_result_t = typename connect_result_type<S, R>::type;
+using connect_result_t = typename connect_result<S, R>::type;
 
 #endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
 

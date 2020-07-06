@@ -89,13 +89,13 @@ struct is_nothrow_require_concept :
 /// A type trait that determines the result type of a @c require_concept
 /// expression.
 /**
- * Class template @c require_concept_result_type is a trait that determines the
+ * Class template @c require_concept_result is a trait that determines the
  * result type of the expression
  * <tt>asio::require_concept(std::declval<T>(),
  * std::declval<Property>())</tt>.
  */
 template <typename T, typename Property>
-struct require_concept_result_type
+struct require_concept_result
 {
   /// The result of the @c require_concept expression.
   typedef automatically_determined type;
@@ -295,7 +295,7 @@ constexpr bool is_nothrow_require_concept_v
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename Property>
-struct require_concept_result_type
+struct require_concept_result
 {
   typedef typename asio_require_concept_fn::call_traits<
       T, void(Property)>::result_type type;

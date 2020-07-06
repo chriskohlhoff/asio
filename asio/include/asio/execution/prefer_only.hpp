@@ -216,7 +216,7 @@ struct prefer_only :
 
   template <typename Executor, typename Property>
   friend ASIO_CONSTEXPR
-  typename prefer_result_type<const Executor&, const InnerProperty&>::type
+  typename prefer_result<const Executor&, const InnerProperty&>::type
   prefer(const Executor& ex, const prefer_only<Property>& p,
       typename enable_if<
         is_same<Property, InnerProperty>::value
@@ -234,7 +234,7 @@ struct prefer_only :
 
   template <typename Executor, typename Property>
   friend ASIO_CONSTEXPR
-  typename query_result_type<const Executor&, const InnerProperty&>::type
+  typename query_result<const Executor&, const InnerProperty&>::type
   query(const Executor& ex, const prefer_only<Property>& p,
       typename enable_if<
         is_same<Property, InnerProperty>::value
@@ -292,7 +292,7 @@ struct prefer_free_default<T, execution::prefer_only<InnerProperty>,
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
     (is_nothrow_prefer<const T&, const InnerProperty&>::value));
 
-  typedef typename prefer_result_type<const T&,
+  typedef typename prefer_result<const T&,
       const InnerProperty&>::type result_type;
 };
 
@@ -310,7 +310,7 @@ struct query_free<T, execution::prefer_only<InnerProperty>,
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
     (is_nothrow_query<const T&, const InnerProperty&>::value));
 
-  typedef typename query_result_type<const T&,
+  typedef typename query_result<const T&,
       const InnerProperty&>::type result_type;
 };
 

@@ -454,21 +454,21 @@ void test_connect()
   (void)o8;
 
   executor s7;
-  exec::connect_result_type<executor&,
+  exec::connect_result<executor&,
       receiver&>::type o9 = exec::connect(s7, r);
   ASIO_CHECK((
       exec::is_operation_state<
-        exec::connect_result_type<executor&, receiver&>::type
+        exec::connect_result<executor&, receiver&>::type
       >::value));
   (void)o9;
 
   const executor s8;
-  exec::connect_result_type<const executor&,
+  exec::connect_result<const executor&,
       receiver&>::type o10 = exec::connect(s8, r);
   (void)exec::connect(s8, r);
   ASIO_CHECK((
       exec::is_operation_state<
-        exec::connect_result_type<const executor&, receiver&>::type
+        exec::connect_result<const executor&, receiver&>::type
       >::value));
   (void)o10;
 }

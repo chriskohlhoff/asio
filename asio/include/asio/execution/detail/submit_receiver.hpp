@@ -116,10 +116,10 @@ struct submit_receiver
 {
   typename remove_cvref<Receiver>::type r_;
 #if defined(ASIO_HAS_MOVE)
-  typename connect_result_type<Sender,
+  typename connect_result<Sender,
       submit_receiver_wrapper<Sender, Receiver> >::type state_;
 #else // defined(ASIO_HAS_MOVE)
-  typename connect_result_type<Sender,
+  typename connect_result<Sender,
       const submit_receiver_wrapper<Sender, Receiver>& >::type state_;
 #endif // defined(ASIO_HAS_MOVE)
 
