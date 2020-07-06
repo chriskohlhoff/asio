@@ -43,11 +43,15 @@
 [include requirements/LegacyCompletionHandler.qbk]
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/OperationState.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RangeConnectHandler.qbk]
 [include requirements/ReadHandler.qbk]
+[include requirements/Receiver.qbk]
 [include requirements/ResolveHandler.qbk]
+[include requirements/Scheduler.qbk]
+[include requirements/Sender.qbk]
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
@@ -81,6 +85,8 @@ Polymorphic executor type for use with I/O objects.
     [[link asio.reference.execution__any_executor.any_executor [*any_executor]]]
     [Default constructor. 
      [hr]
+     Construct in an empty state. Equivalent effects to default constructor. 
+     [hr]
      Copy constructor. 
      [hr]
      Move constructor. 
@@ -111,6 +117,8 @@ Polymorphic executor type for use with I/O objects.
      [hr]
      Move assignment operator. 
      [hr]
+     Assignment operator that sets the polymorphic wrapper to the empty state. 
+     [hr]
      Assignment operator to create a polymorphic wrapper for the specified executor. ]
   ]
   
@@ -127,6 +135,11 @@ Polymorphic executor type for use with I/O objects.
   [
     [[link asio.reference.execution__any_executor.require [*require]]]
     [Obtain a polymorphic wrapper with the specified property. ]
+  ]
+  
+  [
+    [[link asio.reference.execution__any_executor.swap [*swap]]]
+    [Swap targets with another polymorphic wrapper. ]
   ]
   
   [
@@ -64731,7 +64744,7 @@ A property to describe which allocator an executor will use to allocate the memo
 
   [
     [[link asio.reference.execution__allocator_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The allocator_t property applies to executors. ]
+    [The allocator_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -64770,11 +64783,12 @@ Default constructor.
 [section:is_applicable_property_v execution::allocator_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__allocator_t.is_applicable_property_v..is_applicable_property_v..execution::allocator_t] 
-The [link asio.reference.execution__allocator_t `execution::allocator_t`] property applies to executors. 
+The [link asio.reference.execution__allocator_t `execution::allocator_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -64847,6 +64861,8 @@ Polymorphic executor wrapper.
     [[link asio.reference.execution__any_executor.any_executor [*any_executor]]]
     [Default constructor. 
      [hr]
+     Construct in an empty state. Equivalent effects to default constructor. 
+     [hr]
      Copy constructor. 
      [hr]
      Move constructor. 
@@ -64877,6 +64893,8 @@ Polymorphic executor wrapper.
      [hr]
      Move assignment operator. 
      [hr]
+     Assignment operator that sets the polymorphic wrapper to the empty state. 
+     [hr]
      Assignment operator to create a polymorphic wrapper for the specified executor. ]
   ]
   
@@ -64893,6 +64911,11 @@ Polymorphic executor wrapper.
   [
     [[link asio.reference.execution__any_executor.require [*require]]]
     [Obtain a polymorphic wrapper with the specified property. ]
+  ]
+  
+  [
+    [[link asio.reference.execution__any_executor.swap [*swap]]]
+    [Swap targets with another polymorphic wrapper. ]
   ]
   
   [
@@ -64944,20 +64967,28 @@ Default constructor.
   ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload1 more...]]``
 
 
-Copy constructor. 
+Construct in an empty state. Equivalent effects to default constructor. 
 
 
   ``[link asio.reference.execution__any_executor.any_executor.overload2 any_executor]``(
-      const any_executor & e);
+      nullptr_t );
   ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload2 more...]]``
+
+
+Copy constructor. 
+
+
+  ``[link asio.reference.execution__any_executor.any_executor.overload3 any_executor]``(
+      const any_executor & e);
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload3 more...]]``
 
 
 Move constructor. 
 
 
-  ``[link asio.reference.execution__any_executor.any_executor.overload3 any_executor]``(
+  ``[link asio.reference.execution__any_executor.any_executor.overload4 any_executor]``(
       any_executor && e);
-  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload3 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload4 more...]]``
 
 
 Construct to point to the same target as another [link asio.reference.execution__any_executor `execution::any_executor`]. 
@@ -64965,9 +64996,9 @@ Construct to point to the same target as another [link asio.reference.execution_
 
   template<
       class... OtherSupportableProperties>
-  ``[link asio.reference.execution__any_executor.any_executor.overload4 any_executor]``(
+  ``[link asio.reference.execution__any_executor.any_executor.overload5 any_executor]``(
       any_executor< OtherSupportableProperties...> e);
-  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload4 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload5 more...]]``
 
 
 Construct a polymorphic wrapper for the specified executor. 
@@ -64975,12 +65006,12 @@ Construct a polymorphic wrapper for the specified executor.
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``>
-  ``[link asio.reference.execution__any_executor.any_executor.overload5 any_executor]``(
+  ``[link asio.reference.execution__any_executor.any_executor.overload6 any_executor]``(
       Executor e);
-  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload5 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.any_executor.overload6 more...]]``
 
 
-[section:overload1 execution::any_executor::any_executor (1 of 5 overloads)]
+[section:overload1 execution::any_executor::any_executor (1 of 6 overloads)]
 
 
 Default constructor. 
@@ -64994,7 +65025,22 @@ Default constructor.
 
 
 
-[section:overload2 execution::any_executor::any_executor (2 of 5 overloads)]
+[section:overload2 execution::any_executor::any_executor (2 of 6 overloads)]
+
+
+Construct in an empty state. Equivalent effects to default constructor. 
+
+
+  any_executor(
+      nullptr_t );
+
+
+
+[endsect]
+
+
+
+[section:overload3 execution::any_executor::any_executor (3 of 6 overloads)]
 
 
 Copy constructor. 
@@ -65009,7 +65055,7 @@ Copy constructor.
 
 
 
-[section:overload3 execution::any_executor::any_executor (3 of 5 overloads)]
+[section:overload4 execution::any_executor::any_executor (4 of 6 overloads)]
 
 
 Move constructor. 
@@ -65024,7 +65070,7 @@ Move constructor.
 
 
 
-[section:overload4 execution::any_executor::any_executor (4 of 5 overloads)]
+[section:overload5 execution::any_executor::any_executor (5 of 6 overloads)]
 
 
 Construct to point to the same target as another [link asio.reference.execution__any_executor `execution::any_executor`]. 
@@ -65041,7 +65087,7 @@ Construct to point to the same target as another [link asio.reference.execution_
 
 
 
-[section:overload5 execution::any_executor::any_executor (5 of 5 overloads)]
+[section:overload6 execution::any_executor::any_executor (6 of 6 overloads)]
 
 
 Construct a polymorphic wrapper for the specified executor. 
@@ -65125,10 +65171,31 @@ Determine whether the wrapper has a target executor.
 [endsect]
 
 
-
 [section:operator_not__eq_ execution::any_executor::operator!=]
 
 [indexterm2 asio.indexterm.execution__any_executor.operator_not__eq_..operator!=..execution::any_executor] 
+Inequality operator. 
+
+
+  bool ``[link asio.reference.execution__any_executor.operator_not__eq_.overload1 operator!=]``(
+      const any_executor< SupportableProperties...> & a,
+      const any_executor< SupportableProperties...> & b);
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_not__eq_.overload1 more...]]``
+
+  bool ``[link asio.reference.execution__any_executor.operator_not__eq_.overload2 operator!=]``(
+      const any_executor< SupportableProperties...> & a,
+      nullptr_t );
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_not__eq_.overload2 more...]]``
+
+  bool ``[link asio.reference.execution__any_executor.operator_not__eq_.overload3 operator!=]``(
+      nullptr_t ,
+      const any_executor< SupportableProperties...> & b);
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_not__eq_.overload3 more...]]``
+
+
+[section:overload1 execution::any_executor::operator!= (1 of 3 overloads)]
+
+
 Inequality operator. 
 
 
@@ -65140,6 +65207,40 @@ Inequality operator.
 
 [endsect]
 
+
+
+[section:overload2 execution::any_executor::operator!= (2 of 3 overloads)]
+
+
+Inequality operator. 
+
+
+  bool operator!=(
+      const any_executor< SupportableProperties...> & a,
+      nullptr_t );
+
+
+
+[endsect]
+
+
+
+[section:overload3 execution::any_executor::operator!= (3 of 3 overloads)]
+
+
+Inequality operator. 
+
+
+  bool operator!=(
+      nullptr_t ,
+      const any_executor< SupportableProperties...> & b);
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:operator_eq_ execution::any_executor::operator=]
 
@@ -65160,17 +65261,25 @@ Move assignment operator.
   ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq_.overload2 more...]]``
 
 
+Assignment operator that sets the polymorphic wrapper to the empty state. 
+
+
+  any_executor & ``[link asio.reference.execution__any_executor.operator_eq_.overload3 operator=]``(
+      nullptr_t );
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq_.overload3 more...]]``
+
+
 Assignment operator to create a polymorphic wrapper for the specified executor. 
 
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``>
-  any_executor & ``[link asio.reference.execution__any_executor.operator_eq_.overload3 operator=]``(
+  any_executor & ``[link asio.reference.execution__any_executor.operator_eq_.overload4 operator=]``(
       Executor e);
-  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq_.overload3 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq_.overload4 more...]]``
 
 
-[section:overload1 execution::any_executor::operator= (1 of 3 overloads)]
+[section:overload1 execution::any_executor::operator= (1 of 4 overloads)]
 
 
 Assignment operator. 
@@ -65185,7 +65294,7 @@ Assignment operator.
 
 
 
-[section:overload2 execution::any_executor::operator= (2 of 3 overloads)]
+[section:overload2 execution::any_executor::operator= (2 of 4 overloads)]
 
 
 Move assignment operator. 
@@ -65200,7 +65309,22 @@ Move assignment operator.
 
 
 
-[section:overload3 execution::any_executor::operator= (3 of 3 overloads)]
+[section:overload3 execution::any_executor::operator= (3 of 4 overloads)]
+
+
+Assignment operator that sets the polymorphic wrapper to the empty state. 
+
+
+  any_executor & operator=(
+      nullptr_t );
+
+
+
+[endsect]
+
+
+
+[section:overload4 execution::any_executor::operator= (4 of 4 overloads)]
 
 
 Assignment operator to create a polymorphic wrapper for the specified executor. 
@@ -65218,10 +65342,31 @@ Assignment operator to create a polymorphic wrapper for the specified executor.
 
 [endsect]
 
-
 [section:operator_eq__eq_ execution::any_executor::operator==]
 
 [indexterm2 asio.indexterm.execution__any_executor.operator_eq__eq_..operator==..execution::any_executor] 
+Equality operator. 
+
+
+  bool ``[link asio.reference.execution__any_executor.operator_eq__eq_.overload1 operator==]``(
+      const any_executor< SupportableProperties...> & a,
+      const any_executor< SupportableProperties...> & b);
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq__eq_.overload1 more...]]``
+
+  bool ``[link asio.reference.execution__any_executor.operator_eq__eq_.overload2 operator==]``(
+      const any_executor< SupportableProperties...> & a,
+      nullptr_t );
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq__eq_.overload2 more...]]``
+
+  bool ``[link asio.reference.execution__any_executor.operator_eq__eq_.overload3 operator==]``(
+      nullptr_t ,
+      const any_executor< SupportableProperties...> & b);
+  ``  [''''&raquo;''' [link asio.reference.execution__any_executor.operator_eq__eq_.overload3 more...]]``
+
+
+[section:overload1 execution::any_executor::operator== (1 of 3 overloads)]
+
+
 Equality operator. 
 
 
@@ -65233,6 +65378,40 @@ Equality operator.
 
 [endsect]
 
+
+
+[section:overload2 execution::any_executor::operator== (2 of 3 overloads)]
+
+
+Equality operator. 
+
+
+  bool operator==(
+      const any_executor< SupportableProperties...> & a,
+      nullptr_t );
+
+
+
+[endsect]
+
+
+
+[section:overload3 execution::any_executor::operator== (3 of 3 overloads)]
+
+
+Equality operator. 
+
+
+  bool operator==(
+      nullptr_t ,
+      const any_executor< SupportableProperties...> & b);
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:prefer execution::any_executor::prefer]
@@ -65309,6 +65488,21 @@ For example:
    auto ex2 = asio::requre(ex, execution::blocking.possibly); 
 
 
+
+
+
+[endsect]
+
+
+
+[section:swap execution::any_executor::swap]
+
+[indexterm2 asio.indexterm.execution__any_executor.swap..swap..execution::any_executor] 
+Swap targets with another polymorphic wrapper. 
+
+
+  void swap(
+      any_executor & other);
 
 
 
@@ -65564,7 +65758,7 @@ A property to describe whether automatic adaptation of an executor is allowed in
 
   [
     [[link asio.reference.execution__blocking_adaptation_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_adaptation_t property applies to executors. ]
+    [The blocking_adaptation_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -65700,11 +65894,12 @@ A special value used for accessing the [link asio.reference.execution__blocking_
 [section:is_applicable_property_v execution::blocking_adaptation_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_adaptation_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_adaptation_t] 
-The [link asio.reference.execution__blocking_adaptation_t `execution::blocking_adaptation_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_adaptation_t `execution::blocking_adaptation_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -65851,7 +66046,7 @@ A sub-property that indicates that automatic adaptation is allowed.
 
   [
     [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_adaptation_t::allowed_t property applies to executors. ]
+    [The blocking_adaptation_t::allowed_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -65890,11 +66085,12 @@ Default constructor.
 [section:is_applicable_property_v execution::blocking_adaptation_t::allowed_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_adaptation_t__allowed_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_adaptation_t::allowed_t] 
-The [link asio.reference.execution__blocking_adaptation_t__allowed_t `execution::blocking_adaptation_t::allowed_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_adaptation_t__allowed_t `execution::blocking_adaptation_t::allowed_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -65908,7 +66104,7 @@ The [link asio.reference.execution__blocking_adaptation_t__allowed_t `execution:
 The [link asio.reference.execution__blocking_adaptation_t__allowed_t `execution::blocking_adaptation_t::allowed_t`] property can be preferred. 
 
 
-  static constexpr bool is_preferable = true;
+  static constexpr bool is_preferable = false;
 
 
 
@@ -66018,7 +66214,7 @@ A sub-property that indicates that automatic adaptation is not allowed.
 
   [
     [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_adaptation_t::disallowed_t property applies to executors. ]
+    [The blocking_adaptation_t::disallowed_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -66057,11 +66253,12 @@ Default constructor.
 [section:is_applicable_property_v execution::blocking_adaptation_t::disallowed_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_adaptation_t__disallowed_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_adaptation_t::disallowed_t] 
-The [link asio.reference.execution__blocking_adaptation_t__disallowed_t `execution::blocking_adaptation_t::disallowed_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_adaptation_t__disallowed_t `execution::blocking_adaptation_t::disallowed_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -66208,7 +66405,7 @@ A property to describe what guarantees an executor makes about the blocking beha
 
   [
     [[link asio.reference.execution__blocking_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_t property applies to executors. ]
+    [The blocking_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -66359,11 +66556,12 @@ Construct from a sub-property value.
 [section:is_applicable_property_v execution::blocking_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_t] 
-The [link asio.reference.execution__blocking_t `execution::blocking_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_t `execution::blocking_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -66538,7 +66736,7 @@ A sub-property that indicates that invocation of an executor's execution functio
 
   [
     [[link asio.reference.execution__blocking_t__always_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_t::always_t property applies to executors. ]
+    [The blocking_t::always_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -66577,11 +66775,12 @@ Default constructor.
 [section:is_applicable_property_v execution::blocking_t::always_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_t__always_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_t::always_t] 
-The [link asio.reference.execution__blocking_t__always_t `execution::blocking_t::always_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_t__always_t `execution::blocking_t::always_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -66705,7 +66904,7 @@ A sub-property that indicates that invocation of an executor's execution functio
 
   [
     [[link asio.reference.execution__blocking_t__never_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_t::never_t property applies to executors. ]
+    [The blocking_t::never_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -66730,11 +66929,12 @@ A sub-property that indicates that invocation of an executor's execution functio
 [section:is_applicable_property_v execution::blocking_t::never_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_t__never_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_t::never_t] 
-The [link asio.reference.execution__blocking_t__never_t `execution::blocking_t::never_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_t__never_t `execution::blocking_t::never_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -66872,7 +67072,7 @@ A sub-property that indicates that invocation of an executor's execution functio
 
   [
     [[link asio.reference.execution__blocking_t__possibly_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The blocking_t::possibly_t property applies to executors. ]
+    [The blocking_t::possibly_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -66897,11 +67097,12 @@ A sub-property that indicates that invocation of an executor's execution functio
 [section:is_applicable_property_v execution::blocking_t::possibly_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__blocking_t__possibly_t.is_applicable_property_v..is_applicable_property_v..execution::blocking_t::possibly_t] 
-The [link asio.reference.execution__blocking_t__possibly_t `execution::blocking_t::possibly_t`] property applies to executors. 
+The [link asio.reference.execution__blocking_t__possibly_t `execution::blocking_t::possibly_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -66996,6 +67197,62 @@ Get the value associated with a property object.
 [endsect]
 
 
+[section:execution__bulk_execute execution::bulk_execute]
+
+[indexterm1 asio.indexterm.execution__bulk_execute..execution::bulk_execute] 
+A customisation point that creates a bulk sender. 
+
+
+  constexpr unspecified bulk_execute = unspecified;
+
+
+The name `execution::bulk_execute` denotes a customisation point object. If `is_convertible_v<N, size_t>` is true, then the expression `execution::bulk_execute(S, F, N)` for some subexpressions `S`, `F`, and `N` is expression-equivalent to:
+
+
+* `S.bulk_execute(F, N)`, if that expression is valid. If the function selected does not execute `N` invocations of the function object `F` on the executor `S` in bulk with forward progress guarantee `std::query(S, execution::bulk_guarantee)`, and the result of that function does not model `sender<void>`, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `bulk_execute(S, F, N)`, if that expression is valid, with overload resolution performed in a context that includes the declaration `void bulk_execute();` and that does not include a declaration of `execution::bulk_execute`. If the function selected by overload resolution does not execute `N` invocations of the function object `F` on the executor `S` in bulk with forward progress guarantee `std::query(E, execution::bulk_guarantee)`, and the result of that function does not model `sender<void>`, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, if the types `F` and `executor_index_t<remove_cvref_t<S>>` model `invocable` and if `std::query(S, execution::bulk_guarantee)` equals `execution::bulk_guarantee.unsequenced`, then
+
+
+* Evaluates `DECAY_COPY(std::forward<decltype(F)>(F))` on the calling thread to create a function object `cf`. [Note: Additional copies of `cf` may subsequently be created. --end note.]
+
+
+
+
+* For each value of `i` in `N`, `cf(i)` (or copy of `cf`)) will be invoked at most once by an execution agent that is unique for each value of `i`.
+
+
+
+
+* May block pending completion of one or more invocations of `cf`.
+
+
+
+
+* Synchronizes with (C++Std [intro.multithread]) the invocations of `cf`.
+
+
+
+
+* Otherwise, `execution::bulk_execute(S, F, N)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/bulk_execute.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
 [section:execution__bulk_guarantee execution::bulk_guarantee]
 
 [indexterm1 asio.indexterm.execution__bulk_guarantee..execution::bulk_guarantee] 
@@ -67077,7 +67334,7 @@ A property to communicate the forward progress and ordering guarantees of execut
 
   [
     [[link asio.reference.execution__bulk_guarantee_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The bulk_guarantee_t property applies to executors. ]
+    [The bulk_guarantee_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -67219,11 +67476,12 @@ Construct from a sub-property value.
 [section:is_applicable_property_v execution::bulk_guarantee_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__bulk_guarantee_t.is_applicable_property_v..is_applicable_property_v..execution::bulk_guarantee_t] 
-The [link asio.reference.execution__bulk_guarantee_t `execution::bulk_guarantee_t`] property applies to executors. 
+The [link asio.reference.execution__bulk_guarantee_t `execution::bulk_guarantee_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -67412,7 +67670,7 @@ A sub-property that indicates that execution agents within the same bulk executi
 
   [
     [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The bulk_guarantee_t::parallel_t property applies to executors. ]
+    [The bulk_guarantee_t::parallel_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -67437,11 +67695,12 @@ A sub-property that indicates that execution agents within the same bulk executi
 [section:is_applicable_property_v execution::bulk_guarantee_t::parallel_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__bulk_guarantee_t__parallel_t.is_applicable_property_v..is_applicable_property_v..execution::bulk_guarantee_t::parallel_t] 
-The [link asio.reference.execution__bulk_guarantee_t__parallel_t `execution::bulk_guarantee_t::parallel_t`] property applies to executors. 
+The [link asio.reference.execution__bulk_guarantee_t__parallel_t `execution::bulk_guarantee_t::parallel_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -67579,7 +67838,7 @@ A sub-property that indicates that execution agents within the same bulk executi
 
   [
     [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The bulk_guarantee_t::sequenced_t property applies to executors. ]
+    [The bulk_guarantee_t::sequenced_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -67604,11 +67863,12 @@ A sub-property that indicates that execution agents within the same bulk executi
 [section:is_applicable_property_v execution::bulk_guarantee_t::sequenced_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__bulk_guarantee_t__sequenced_t.is_applicable_property_v..is_applicable_property_v..execution::bulk_guarantee_t::sequenced_t] 
-The [link asio.reference.execution__bulk_guarantee_t__sequenced_t `execution::bulk_guarantee_t::sequenced_t`] property applies to executors. 
+The [link asio.reference.execution__bulk_guarantee_t__sequenced_t `execution::bulk_guarantee_t::sequenced_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -67746,7 +68006,7 @@ A sub-property that indicates that execution agents within the same bulk executi
 
   [
     [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The bulk_guarantee_t::unsequenced_t property applies to executors. ]
+    [The bulk_guarantee_t::unsequenced_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -67771,11 +68031,12 @@ A sub-property that indicates that execution agents within the same bulk executi
 [section:is_applicable_property_v execution::bulk_guarantee_t::unsequenced_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__bulk_guarantee_t__unsequenced_t.is_applicable_property_v..is_applicable_property_v..execution::bulk_guarantee_t::unsequenced_t] 
-The [link asio.reference.execution__bulk_guarantee_t__unsequenced_t `execution::bulk_guarantee_t::unsequenced_t`] property applies to executors. 
+The [link asio.reference.execution__bulk_guarantee_t__unsequenced_t `execution::bulk_guarantee_t::unsequenced_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -67869,6 +68130,53 @@ Get the value associated with a property object.
 
 [endsect]
 
+[section:execution__can_bulk_execute execution::can_bulk_execute]
+
+
+A type trait that determines whether a `bulk_execute` expression is well-formed. 
+
+
+  template<
+      typename S,
+      typename F,
+      typename N>
+  struct can_bulk_execute
+
+
+Class template `can_bulk_execute` is a trait that is derived from `true_type` if the expression `execution::bulk_execute(std::declval<S>(), std::declval<F>(), std::declval<N>)` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/bulk_execute.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_connect execution::can_connect]
+
+
+A type trait that determines whether a `connect` expression is well-formed. 
+
+
+  template<
+      typename S,
+      typename R>
+  struct can_connect
+
+
+Class template `can_connect` is a trait that is derived from `true_type` if the expression `execution::connect(std::declval<S>(), std::declval<R>())` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/connect.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
 [section:execution__can_execute execution::can_execute]
 
 
@@ -67888,6 +68196,274 @@ Class template `can_execute` is a trait that is derived from `true_type` if the 
 ['Header: ][^asio/execution/execute.hpp]
 
 ['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_schedule execution::can_schedule]
+
+
+A type trait that determines whether a `schedule` expression is well-formed. 
+
+
+  template<
+      typename S>
+  struct can_schedule
+
+
+Class template `can_schedule` is a trait that is derived from `true_type` if the expression `execution::schedule(std::declval<S>())` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/schedule.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_set_done execution::can_set_done]
+
+
+A type trait that determines whether a `set_done` expression is well-formed. 
+
+
+  template<
+      typename R>
+  struct can_set_done
+
+
+Class template `can_set_done` is a trait that is derived from `true_type` if the expression `execution::set_done(std::declval<R>(), std::declval<E>())` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/set_done.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_set_error execution::can_set_error]
+
+
+A type trait that determines whether a `set_error` expression is well-formed. 
+
+
+  template<
+      typename R,
+      typename E>
+  struct can_set_error
+
+
+Class template `can_set_error` is a trait that is derived from `true_type` if the expression `execution::set_error(std::declval<R>(), std::declval<E>())` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/set_error.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_set_value execution::can_set_value]
+
+
+A type trait that determines whether a `set_value` expression is well-formed. 
+
+
+  template<
+      typename R,
+      typename... Vs>
+  struct can_set_value
+
+
+Class template `can_set_value` is a trait that is derived from `true_type` if the expression `execution::set_value(std::declval<R>(), std::declval<Vs>()...)` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/set_value.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_start execution::can_start]
+
+
+A type trait that determines whether a `start` expression is well-formed. 
+
+
+  template<
+      typename R>
+  struct can_start
+
+
+Class template `can_start` is a trait that is derived from `true_type` if the expression `execution::start(std::declval<R>(), std::declval<E>())` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/start.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__can_submit execution::can_submit]
+
+
+A type trait that determines whether a `submit` expression is well-formed. 
+
+
+  template<
+      typename S,
+      typename R>
+  struct can_submit
+
+
+Class template `can_submit` is a trait that is derived from `true_type` if the expression `execution::submit(std::declval<R>(), std::declval<E>())` is well formed; otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/submit.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+[section:execution__connect execution::connect]
+
+[indexterm1 asio.indexterm.execution__connect..execution::connect] 
+A customisation point that connects a sender to a receiver. 
+
+
+  constexpr unspecified connect = unspecified;
+
+
+The name `execution::connect` denotes a customisation point object. For some subexpressions `s` and `r`, let `S` be a type such that `decltype((s))` is `S` and let `R` be a type such that `decltype((r))` is `R`. The expression `execution::connect(s, r)` is expression-equivalent to:
+
+
+* `s.connect(r)`, if that expression is valid, if its type satisfies `operation_state`, and if `S` satisfies `sender`.
+
+
+* Otherwise, `connect(s, r)`, if that expression is valid, if its type satisfies `operation_state`, and if `S` satisfies `sender`, with overload resolution performed in a context that includes the declaration `void connect();` and that does not include a declaration of `execution::connect`.
+
+
+* Otherwise, `as_operation{s, r}`, if `r` is not an instance of `as_receiver<F, S>` for some type `F`, and if `receiver_of<R> && executor_of<remove_cvref_t<S>, as_invocable<remove_cvref_t<R>, S>>` is `true`, where `as_operation` is an implementation-defined class equivalent to 
+
+   template <class S, class R>
+    struct as_operation
+    {
+      remove_cvref_t<S> e_;
+      remove_cvref_t<R> r_;
+      void start() noexcept try {
+        execution::execute(std::move(e_),
+            as_invocable<remove_cvref_t<R>, S>{r_});
+      } catch(...) {
+        execution::set_error(std::move(r_), current_exception());
+      }
+    }; 
+
+
+and `as_invocable` is a class template equivalent to the following: 
+
+   template<class R>
+    struct as_invocable
+    {
+      R* r_;
+      explicit as_invocable(R& r) noexcept
+        : r_(std::addressof(r)) {}
+      as_invocable(as_invocable && other) noexcept
+        : r_(std::exchange(other.r_, nullptr)) {}
+      ~as_invocable() {
+        if(r_)
+          execution::set_done(std::move(*r_));
+      }
+      void operator()() & noexcept try {
+        execution::set_value(std::move(*r_));
+        r_ = nullptr;
+      } catch(...) {
+        execution::set_error(std::move(*r_), current_exception());
+        r_ = nullptr;
+      }
+    };
+
+
+
+
+
+* Otherwise, `execution::connect(s, r)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/connect.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+[section:execution__connect_result execution::connect_result]
+
+
+A type trait to determine the result of a `connect` expression. 
+
+
+  template<
+      typename S,
+      typename R>
+  struct connect_result
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.execution__connect_result.type [*type]]]
+    [The type of the connect expression. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/execution/connect.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[section:type execution::connect_result::type]
+
+[indexterm2 asio.indexterm.execution__connect_result.type..type..execution::connect_result] 
+The type of the connect expression. 
+
+
+  typedef automatically_determined type;
+
+
+
+The type of the expression `execution::connect(std::declval<S>(), std::declval<R>())`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/connect.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
 
 
 [endsect]
@@ -67963,7 +68539,7 @@ A property that is used to obtain the execution context that is associated with 
 
   [
     [[link asio.reference.execution__context_as_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The context_t property applies to executors. ]
+    [The context_as_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -67988,11 +68564,12 @@ A property that is used to obtain the execution context that is associated with 
 [section:is_applicable_property_v execution::context_as_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__context_as_t.is_applicable_property_v..is_applicable_property_v..execution::context_as_t] 
-The [link asio.reference.execution__context_t `execution::context_t`] property applies to executors. 
+The [link asio.reference.execution__context_as_t `execution::context_as_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -68060,13 +68637,26 @@ A property that is used to obtain the execution context that is associated with 
   struct context_t
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.execution__context_t.polymorphic_query_result_type [*polymorphic_query_result_type]]]
+    [The type returned by queries against an any_executor. ]
+  
+  ]
+
+]
+
 [heading Data Members]
 [table
   [[Name][Description]]
 
   [
     [[link asio.reference.execution__context_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The context_t property applies to executors. ]
+    [The context_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -68091,11 +68681,12 @@ A property that is used to obtain the execution context that is associated with 
 [section:is_applicable_property_v execution::context_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__context_t.is_applicable_property_v..is_applicable_property_v..execution::context_t] 
-The [link asio.reference.execution__context_t `execution::context_t`] property applies to executors. 
+The [link asio.reference.execution__context_t `execution::context_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -68131,6 +68722,27 @@ The [link asio.reference.execution__context_t `execution::context_t`] property c
 
 
 
+[section:polymorphic_query_result_type execution::context_t::polymorphic_query_result_type]
+
+[indexterm2 asio.indexterm.execution__context_t.polymorphic_query_result_type..polymorphic_query_result_type..execution::context_t] 
+The type returned by queries against an `any_executor`. 
+
+
+  typedef std::any polymorphic_query_result_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/context.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
 [endsect]
 
 
@@ -68143,7 +68755,7 @@ A customisation point that executes a function on an executor.
   constexpr unspecified execute = unspecified;
 
 
-The name `execution::execute` denotes a customization point object.
+The name `execution::execute` denotes a customisation point object.
 
 For some subexpressions `e` and `f`, let `E` be a type such that `decltype((e))` is `E` and let `F` be a type such that `decltype((f))` is `F`. The expression `execution::execute(e, f)` is ill-formed if `F` does not model `invocable`, or if `E` does not model either `executor` or `sender`. Otherwise, it is expression-equivalent to:
 
@@ -68164,6 +68776,118 @@ For some subexpressions `e` and `f`, let `E` be a type such that `decltype((e))`
 
 [endsect]
 
+
+[section:execution__executor_index execution::executor_index]
+
+
+The [link asio.reference.execution__executor_index `execution::executor_index`] trait detects the type used by an executor to represent an index within a bulk operation. 
+
+
+  template<
+      typename T>
+  struct executor_index
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.execution__executor_index.type [*type]]]
+    [T::index_type if T::index_type is valid, otherwise executor_shape_t<T>. ]
+  
+  ]
+
+]
+
+Class template `executor_index` is a type trait with a nested type alias `type` whose type is `T::index_type` if `T::index_type` is valid, otherwise `executor_shape_t<T>`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/executor.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[section:type execution::executor_index::type]
+
+[indexterm2 asio.indexterm.execution__executor_index.type..type..execution::executor_index] 
+`T::index_type` if `T::index_type` is valid, otherwise `executor_shape_t<T>`. 
+
+
+  typedef automatically_determined type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/executor.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:execution__executor_shape execution::executor_shape]
+
+
+The [link asio.reference.execution__executor_shape `execution::executor_shape`] trait detects the type used by an executor to represent the shape of a bulk operation. 
+
+
+  template<
+      typename T>
+  struct executor_shape
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.execution__executor_shape.type [*type]]]
+    [T::shape_type if T::shape_type is valid, otherwise std::size_t. ]
+  
+  ]
+
+]
+
+Class template `executor_shape` is a type trait with a nested type alias `type` whose type is `T::shape_type` if `T::shape_type` is valid, otherwise `std::size_t`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/executor.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[section:type execution::executor_shape::type]
+
+[indexterm2 asio.indexterm.execution__executor_shape.type..type..execution::executor_shape] 
+`T::shape_type` if `T::shape_type` is valid, otherwise `std::size_t`. 
+
+
+  typedef automatically_determined type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/executor.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
 
 [section:execution__invocable_archetype execution::invocable_archetype]
 
@@ -68227,6 +68951,209 @@ Class template `is_executor` is a UnaryTypeTrait that is derived from `true_type
 [heading Requirements]
 
 ['Header: ][^asio/execution/executor.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_executor_of execution::is_executor_of]
+
+
+The [link asio.reference.execution__is_executor_of `execution::is_executor_of`] trait detects whether a type T satisfies the execution::executor\_of concept for some set of value arguments. 
+
+
+  template<
+      typename T,
+      typename F>
+  struct is_executor_of
+
+
+Class template `is_executor_of` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for an executor that is invocable with a function object of type `F`, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/executor.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_nothrow_receiver_of execution::is_nothrow_receiver_of]
+
+
+The [link asio.reference.execution__is_nothrow_receiver_of `execution::is_nothrow_receiver_of`] trait detects whether a type T satisfies the execution::receiver\_of concept for some set of value arguments, with a noexcept `set_value` operation. 
+
+
+  template<
+      typename T,
+      typename... Vs>
+  struct is_nothrow_receiver_of
+
+
+Class template `is_nothrow_receiver_of` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a receiver for value arguments `Vs`, and the expression `execution::set_value(declval<T>(), declval<Ts>()...)` is noexcept, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/receiver.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_operation_state execution::is_operation_state]
+
+
+The [link asio.reference.execution__is_operation_state `execution::is_operation_state`] trait detects whether a type T satisfies the execution::operation\_state concept. 
+
+
+  template<
+      typename T>
+  struct is_operation_state
+
+
+Class template `is_operation_state` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for an `operation_state`, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/operation_state.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_receiver execution::is_receiver]
+
+
+The [link asio.reference.execution__is_receiver `execution::is_receiver`] trait detects whether a type T satisfies the execution::receiver concept. 
+
+
+  template<
+      typename T,
+      typename E = std::exception_ptr>
+  struct is_receiver
+
+
+Class template `is_receiver` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a receiver for error type `E`, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/receiver.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_receiver_of execution::is_receiver_of]
+
+
+The [link asio.reference.execution__is_receiver_of `execution::is_receiver_of`] trait detects whether a type T satisfies the execution::receiver\_of concept for some set of value arguments. 
+
+
+  template<
+      typename T,
+      typename... Vs>
+  struct is_receiver_of
+
+
+Class template `is_receiver_of` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a receiver for value arguments `Vs`, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/receiver.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_scheduler execution::is_scheduler]
+
+
+The [link asio.reference.execution__is_scheduler `execution::is_scheduler`] trait detects whether a type T satisfies the execution::scheduler concept. 
+
+
+  template<
+      typename T>
+  struct is_scheduler
+
+
+Class template `is_scheduler` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a scheduler for error type `E`, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/scheduler.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_sender execution::is_sender]
+
+
+The [link asio.reference.execution__is_sender `execution::is_sender`] trait detects whether a type T satisfies the execution::sender concept. 
+
+
+  template<
+      typename T>
+  struct is_sender
+
+
+Class template `is_sender` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a sender, otherwise `false_type`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/sender.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_sender_to execution::is_sender_to]
+
+
+The [link asio.reference.execution__is_sender_to `execution::is_sender_to`] trait detects whether a type T satisfies the execution::sender\_to concept for some receiver. 
+
+
+  template<
+      typename T,
+      typename R>
+  struct is_sender_to
+
+
+Class template `is_sender_to` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a sender for some receiver type R, otherwise `false`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/sender.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+[section:execution__is_typed_sender execution::is_typed_sender]
+
+
+The [link asio.reference.execution__is_typed_sender `execution::is_typed_sender`] trait detects whether a type T satisfies the execution::typed\_sender concept. 
+
+
+  template<
+      typename T>
+  struct is_typed_sender
+
+
+Class template `is_typed_sender` is a type trait that is derived from `true_type` if the type `T` meets the concept definition for a typed sender, otherwise `false`. 
+
+[heading Requirements]
+
+['Header: ][^asio/execution/sender.hpp]
 
 ['Convenience header: ][^asio/execution.hpp]
 
@@ -68315,7 +69242,7 @@ A property to describe what guarantees an executor makes about the mapping of ex
 
   [
     [[link asio.reference.execution__mapping_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The mapping_t property applies to executors. ]
+    [The mapping_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -68371,11 +69298,12 @@ A property to describe what guarantees an executor makes about the mapping of ex
 [section:is_applicable_property_v execution::mapping_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__mapping_t.is_applicable_property_v..is_applicable_property_v..execution::mapping_t] 
-The [link asio.reference.execution__mapping_t `execution::mapping_t`] property applies to executors. 
+The [link asio.reference.execution__mapping_t `execution::mapping_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -68650,7 +69578,7 @@ A sub-property that indicates that execution agents are mapped on to new threads
 
   [
     [[link asio.reference.execution__mapping_t__new_thread_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The mapping_t::new_thread_t property applies to executors. ]
+    [The mapping_t::new_thread_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -68675,11 +69603,12 @@ A sub-property that indicates that execution agents are mapped on to new threads
 [section:is_applicable_property_v execution::mapping_t::new_thread_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__mapping_t__new_thread_t.is_applicable_property_v..is_applicable_property_v..execution::mapping_t::new_thread_t] 
-The [link asio.reference.execution__mapping_t__new_thread_t `execution::mapping_t::new_thread_t`] property applies to executors. 
+The [link asio.reference.execution__mapping_t__new_thread_t `execution::mapping_t::new_thread_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -68817,7 +69746,7 @@ A sub-property that indicates that the mapping of execution agents is implementa
 
   [
     [[link asio.reference.execution__mapping_t__other_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The mapping_t::other_t property applies to executors. ]
+    [The mapping_t::other_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -68842,11 +69771,12 @@ A sub-property that indicates that the mapping of execution agents is implementa
 [section:is_applicable_property_v execution::mapping_t::other_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__mapping_t__other_t.is_applicable_property_v..is_applicable_property_v..execution::mapping_t::other_t] 
-The [link asio.reference.execution__mapping_t__other_t `execution::mapping_t::other_t`] property applies to executors. 
+The [link asio.reference.execution__mapping_t__other_t `execution::mapping_t::other_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -68984,7 +69914,7 @@ A sub-property that indicates that execution agents are mapped on to threads of 
 
   [
     [[link asio.reference.execution__mapping_t__thread_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The mapping_t::thread_t property applies to executors. ]
+    [The mapping_t::thread_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -69009,11 +69939,12 @@ A sub-property that indicates that execution agents are mapped on to threads of 
 [section:is_applicable_property_v execution::mapping_t::thread_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__mapping_t__thread_t.is_applicable_property_v..is_applicable_property_v..execution::mapping_t::thread_t] 
-The [link asio.reference.execution__mapping_t__thread_t `execution::mapping_t::thread_t`] property applies to executors. 
+The [link asio.reference.execution__mapping_t__thread_t `execution::mapping_t::thread_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -69155,7 +70086,7 @@ A property that gives an estimate of the number of execution agents that should 
 
   [
     [[link asio.reference.execution__occupancy_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The occupancy_t property applies to executors. ]
+    [The occupancy_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -69180,11 +70111,12 @@ A property that gives an estimate of the number of execution agents that should 
 [section:is_applicable_property_v execution::occupancy_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__occupancy_t.is_applicable_property_v..is_applicable_property_v..execution::occupancy_t] 
-The [link asio.reference.execution__occupancy_t `execution::occupancy_t`] property applies to executors. 
+The [link asio.reference.execution__occupancy_t `execution::occupancy_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -69318,7 +70250,7 @@ A property to describe whether task submission is likely in the future.
 
   [
     [[link asio.reference.execution__outstanding_work_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The outstanding_work_t property applies to executors. ]
+    [The outstanding_work_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -69369,11 +70301,12 @@ A property to describe whether task submission is likely in the future.
 [section:is_applicable_property_v execution::outstanding_work_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__outstanding_work_t.is_applicable_property_v..is_applicable_property_v..execution::outstanding_work_t] 
-The [link asio.reference.execution__outstanding_work_t `execution::outstanding_work_t`] property applies to executors. 
+The [link asio.reference.execution__outstanding_work_t `execution::outstanding_work_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -69615,7 +70548,7 @@ A sub-property that indicates that the executor represents likely future submiss
 
   [
     [[link asio.reference.execution__outstanding_work_t__tracked_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The outstanding_work_t::tracked_t property applies to executors. ]
+    [The outstanding_work_t::untracked_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -69640,11 +70573,12 @@ A sub-property that indicates that the executor represents likely future submiss
 [section:is_applicable_property_v execution::outstanding_work_t::tracked_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__outstanding_work_t__tracked_t.is_applicable_property_v..is_applicable_property_v..execution::outstanding_work_t::tracked_t] 
-The [link asio.reference.execution__outstanding_work_t__tracked_t `execution::outstanding_work_t::tracked_t`] property applies to executors. 
+The [link asio.reference.execution__outstanding_work_t__untracked_t `execution::outstanding_work_t::untracked_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -69782,7 +70716,7 @@ A sub-property that indicates that the executor does not represent likely future
 
   [
     [[link asio.reference.execution__outstanding_work_t__untracked_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The outstanding_work_t::untracked_t property applies to executors. ]
+    [The outstanding_work_t::untracked_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -69807,11 +70741,12 @@ A sub-property that indicates that the executor does not represent likely future
 [section:is_applicable_property_v execution::outstanding_work_t::untracked_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__outstanding_work_t__untracked_t.is_applicable_property_v..is_applicable_property_v..execution::outstanding_work_t::untracked_t] 
-The [link asio.reference.execution__outstanding_work_t__untracked_t `execution::outstanding_work_t::untracked_t`] property applies to executors. 
+The [link asio.reference.execution__outstanding_work_t__untracked_t `execution::outstanding_work_t::untracked_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -69908,7 +70843,7 @@ Get the value associated with a property object.
 [section:execution__prefer_only execution::prefer_only]
 
 
-A property that is used to obtain the execution context that is associated with an executor. 
+A property adapter that is used with the polymorphic executor wrapper to mark properties as preferable, but not requirable. 
 
 
   template<
@@ -69935,7 +70870,7 @@ A property that is used to obtain the execution context that is associated with 
 
   [
     [[link asio.reference.execution__prefer_only.is_applicable_property_v [*is_applicable_property_v]]]
-    [The context_t property applies to executors. ]
+    [The prefer_only adapter applies to the same types as the nested property. ]
   ]
 
   [
@@ -69960,11 +70895,11 @@ A property that is used to obtain the execution context that is associated with 
 [section:is_applicable_property_v execution::prefer_only::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__prefer_only.is_applicable_property_v..is_applicable_property_v..execution::prefer_only] 
-The [link asio.reference.execution__context_t `execution::context_t`] property applies to executors. 
+The [link asio.reference.execution__prefer_only `execution::prefer_only`] adapter applies to the same types as the nested property. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =is_applicable_property<T, Property>::value;
 
 
 
@@ -70017,6 +70952,49 @@ The type returned by queries against an `any_executor`.
 ['Header: ][^asio/execution/prefer_only.hpp]
 
 ['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:execution__receiver_invocation_error execution::receiver_invocation_error]
+
+
+Exception reported via `set_error` when an exception escapes from `set_value`. 
+
+
+  class receiver_invocation_error
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.execution__receiver_invocation_error.receiver_invocation_error [*receiver_invocation_error]]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/execution/receiver_invocation_error.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[section:receiver_invocation_error execution::receiver_invocation_error::receiver_invocation_error]
+
+[indexterm2 asio.indexterm.execution__receiver_invocation_error.receiver_invocation_error..receiver_invocation_error..execution::receiver_invocation_error] 
+Constructor. 
+
+
+  receiver_invocation_error();
+
 
 
 [endsect]
@@ -70110,7 +71088,7 @@ A property to describe whether submitted tasks represent continuations of the ca
 
   [
     [[link asio.reference.execution__relationship_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The relationship_t property applies to executors. ]
+    [The relationship_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -70179,11 +71157,12 @@ A special value used for accessing the [link asio.reference.execution__relations
 [section:is_applicable_property_v execution::relationship_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__relationship_t.is_applicable_property_v..is_applicable_property_v..execution::relationship_t] 
-The [link asio.reference.execution__relationship_t `execution::relationship_t`] property applies to executors. 
+The [link asio.reference.execution__relationship_t `execution::relationship_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -70397,7 +71376,7 @@ A sub-property that indicates that the executor represents a continuation of the
 
   [
     [[link asio.reference.execution__relationship_t__continuation_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The relationship_t::continuation_t property applies to executors. ]
+    [The relationship_t::continuation_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -70436,11 +71415,12 @@ Default constructor.
 [section:is_applicable_property_v execution::relationship_t::continuation_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__relationship_t__continuation_t.is_applicable_property_v..is_applicable_property_v..execution::relationship_t::continuation_t] 
-The [link asio.reference.execution__relationship_t__continuation_t `execution::relationship_t::continuation_t`] property applies to executors. 
+The [link asio.reference.execution__relationship_t__continuation_t `execution::relationship_t::continuation_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -70564,7 +71544,7 @@ A sub-property that indicates that the executor does not represent a continuatio
 
   [
     [[link asio.reference.execution__relationship_t__fork_t.is_applicable_property_v [*is_applicable_property_v]]]
-    [The relationship_t::fork_t property applies to executors. ]
+    [The relationship_t::fork_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
@@ -70603,11 +71583,12 @@ Default constructor.
 [section:is_applicable_property_v execution::relationship_t::fork_t::is_applicable_property_v]
 
 [indexterm2 asio.indexterm.execution__relationship_t__fork_t.is_applicable_property_v..is_applicable_property_v..execution::relationship_t::fork_t] 
-The [link asio.reference.execution__relationship_t__fork_t `execution::relationship_t::fork_t`] property applies to executors. 
+The [link asio.reference.execution__relationship_t__fork_t `execution::relationship_t::fork_t`] property applies to executors, senders, and schedulers. 
 
 
   template <typename T>
-  static constexpr bool is_applicable_property_v = is_executor_v<T>;
+  static constexpr bool is_applicable_property_v =
+      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
 
 
 
@@ -70686,6 +71667,280 @@ Get the value associated with a property object.
 
 
 [endsect]
+
+
+[section:execution__schedule execution::schedule]
+
+[indexterm1 asio.indexterm.execution__schedule..execution::schedule] 
+A customisation point that is used to obtain a sender from a scheduler. 
+
+
+  constexpr unspecified schedule = unspecified;
+
+
+The name `execution::schedule` denotes a customisation point object. For some subexpression `s`, let `S` be a type such that `decltype((s))` is `S`. The expression `execution::schedule(s)` is expression-equivalent to:
+
+
+* `s.schedule()`, if that expression is valid and its type models `sender`.
+
+
+* Otherwise, `schedule(s)`, if that expression is valid and its type models `sender` with overload resolution performed in a context that includes the declaration `void schedule();` and that does not include a declaration of `execution::schedule`.
+
+
+* Otherwise, `S` if `S` satisfies `executor`.
+
+
+* Otherwise, `execution::schedule(s)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/schedule.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[section:execution__sender_base execution::sender_base]
+
+[indexterm1 asio.indexterm.execution__sender_base..execution::sender_base] 
+Base class used for tagging senders. 
+
+
+  typedef unspecified sender_base;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/sender.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+[section:execution__sender_traits execution::sender_traits]
+
+
+Traits for senders. 
+
+
+  template<
+      typename S>
+  struct sender_traits
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/sender.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+[section:execution__set_done execution::set_done]
+
+[indexterm1 asio.indexterm.execution__set_done..execution::set_done] 
+A customisation point that delivers a done notification to a receiver. 
+
+
+  constexpr unspecified set_done = unspecified;
+
+
+The name `execution::set_done` denotes a customisation point object. The expression `execution::set_done(R)` for some subexpression `R` is expression-equivalent to:
+
+
+* `R.set_done()`, if that expression is valid. If the function selected does not signal the receiver `R`'s done channel, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `set_done(R)`, if that expression is valid, with overload resolution performed in a context that includes the declaration `void set_done();` and that does not include a declaration of `execution::set_done`. If the function selected by overload resolution does not signal the receiver `R`'s done channel, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `execution::set_done(R)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/set_done.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[section:execution__set_error execution::set_error]
+
+[indexterm1 asio.indexterm.execution__set_error..execution::set_error] 
+A customisation point that delivers an error notification to a receiver. 
+
+
+  constexpr unspecified set_error = unspecified;
+
+
+The name `execution::set_error` denotes a customisation point object. The expression `execution::set_error(R, E)` for some subexpressions `R` and `E` are expression-equivalent to:
+
+
+* `R.set_error(E)`, if that expression is valid. If the function selected does not send the error `E` to the receiver `R`'s error channel, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `set_error(R, E)`, if that expression is valid, with overload resolution performed in a context that includes the declaration `void set_error();` and that does not include a declaration of `execution::set_error`. If the function selected by overload resolution does not send the error `E` to the receiver `R`'s error channel, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `execution::set_error(R, E)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/set_error.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[section:execution__set_value execution::set_value]
+
+[indexterm1 asio.indexterm.execution__set_value..execution::set_value] 
+A customisation point that delivers a value to a receiver. 
+
+
+  constexpr unspecified set_value = unspecified;
+
+
+The name `execution::set_value` denotes a customisation point object. The expression `execution::set_value(R, Vs...)` for some subexpressions `R` and `Vs...` is expression-equivalent to:
+
+
+* `R.set_value(Vs...)`, if that expression is valid. If the function selected does not send the value(s) `Vs...` to the receiver `R`'s value channel, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `set_value(R, Vs...)`, if that expression is valid, with overload resolution performed in a context that includes the declaration `void set_value();` and that does not include a declaration of `execution::set_value`. If the function selected by overload resolution does not send the value(s) `Vs...` to the receiver `R`'s value channel, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `execution::set_value(R, Vs...)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/set_value.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[section:execution__start execution::start]
+
+[indexterm1 asio.indexterm.execution__start..execution::start] 
+A customisation point that notifies an operation state object to start its associated operation. 
+
+
+  constexpr unspecified start = unspecified;
+
+
+The name `execution::start` denotes a customisation point object. The expression `execution::start(R)` for some subexpression `R` is expression-equivalent to:
+
+
+* `R.start()`, if that expression is valid.
+
+
+* Otherwise, `start(R)`, if that expression is valid, with overload resolution performed in a context that includes the declaration `void start();` and that does not include a declaration of `execution::start`.
+
+
+* Otherwise, `execution::start(R)` is ill-formed. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/start.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
+
+
+[section:execution__submit execution::submit]
+
+[indexterm1 asio.indexterm.execution__submit..execution::submit] 
+A customisation point that submits a sender to a receiver. 
+
+
+  constexpr unspecified submit = unspecified;
+
+
+The name `execution::submit` denotes a customisation point object. For some subexpressions `s` and `r`, let `S` be a type such that `decltype((s))` is `S` and let `R` be a type such that `decltype((r))` is `R`. The expression `execution::submit(s, r)` is ill-formed if `sender_to<S, R>` is not `true`. Otherwise, it is expression-equivalent to:
+
+
+* `s.submit(r)`, if that expression is valid and `S` models `sender`. If the function selected does not submit the receiver object `r` via the sender `s`, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `submit(s, r)`, if that expression is valid and `S` models `sender`, with overload resolution performed in a context that includes the declaration `void submit();` and that does not include a declaration of `execution::submit`. If the function selected by overload resolution does not submit the receiver object `r` via the sender `s`, the program is ill-formed with no diagnostic required.
+
+
+* Otherwise, `execution::start((new submit_receiver<S, R>{s,r})->state_)`, where `submit_receiver` is an implementation-defined class template equivalent to: 
+
+   template<class S, class R>
+     struct submit_receiver {
+       struct wrap {
+         submit_receiver * p_;
+         template<class...As>
+           requires receiver_of<R, As...>
+         void set_value(As&&... as) &&
+           noexcept(is_nothrow_receiver_of_v<R, As...>) {
+           execution::set_value(std::move(p_->r_), (As&&) as...);
+           delete p_;
+         }
+         template<class E>
+           requires receiver<R, E>
+         void set_error(E&& e) && noexcept {
+           execution::set_error(std::move(p_->r_), (E&&) e);
+           delete p_;
+         }
+         void set_done() && noexcept {
+           execution::set_done(std::move(p_->r_));
+           delete p_;
+         }
+       };
+       remove_cvref_t<R> r_;
+       connect_result_t<S, wrap> state_;
+       submit_receiver(S&& s, R&& r)
+         : r_((R&&) r)
+         , state_(execution::connect((S&&) s, wrap{this})) {}
+     };
+
+
+
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/execution/submit.hpp]
+
+['Convenience header: ][^asio/execution.hpp]
+
+
+[endsect]
+
 
 [section:execution_context execution_context]
 
@@ -78040,7 +79295,7 @@ If using C++03, which lacks automatic variable type deduction, you may compute t
 
 
    asio::io_context io_context;
-   typename asio::require_result_type<
+   typename asio::require_result<
        asio::io_context::executor_type,
        asio::exeution::outstanding_work_t::tracked_t>
      work = asio::require(io_context.get_executor(),
@@ -81516,7 +82771,7 @@ If using C++03, which lacks automatic variable type deduction, you may compute t
 
 
    asio::io_context io_context;
-   typename asio::require_result_type<
+   typename asio::require_result<
        asio::io_context::executor_type,
        asio::exeution::outstanding_work_t::tracked_t>
      work = asio::require(io_context.get_executor(),
@@ -109137,7 +110392,7 @@ The name `prefer` denotes a customisation point object. The expression `asio::pr
 [endsect]
 
 
-[section:prefer_result_type prefer_result_type]
+[section:prefer_result prefer_result]
 
 
 A type trait that determines the result type of a `prefer` expression. 
@@ -109146,7 +110401,7 @@ A type trait that determines the result type of a `prefer` expression.
   template<
       typename T,
       typename... Properties>
-  struct prefer_result_type
+  struct prefer_result
 
 
 [heading Types]
@@ -109155,14 +110410,14 @@ A type trait that determines the result type of a `prefer` expression.
 
   [
 
-    [[link asio.reference.prefer_result_type.type [*type]]]
+    [[link asio.reference.prefer_result.type [*type]]]
     [The result of the prefer expression. ]
   
   ]
 
 ]
 
-Class template `prefer_result_type` is a trait that determines the result type of the expression `asio::prefer(std::declval<T>(), std::declval<Properties>()...)`. 
+Class template `prefer_result` is a trait that determines the result type of the expression `asio::prefer(std::declval<T>(), std::declval<Properties>()...)`. 
 
 [heading Requirements]
 
@@ -109171,9 +110426,9 @@ Class template `prefer_result_type` is a trait that determines the result type o
 ['Convenience header: ][^asio.hpp]
 
 
-[section:type prefer_result_type::type]
+[section:type prefer_result::type]
 
-[indexterm2 asio.indexterm.prefer_result_type.type..type..prefer_result_type] 
+[indexterm2 asio.indexterm.prefer_result.type..type..prefer_result] 
 The result of the `prefer` expression. 
 
 
@@ -109233,7 +110488,7 @@ The name `query` denotes a customization point object. The expression `asio::que
 [endsect]
 
 
-[section:query_result_type query_result_type]
+[section:query_result query_result]
 
 
 A type trait that determines the result type of a `query` expression. 
@@ -109242,7 +110497,7 @@ A type trait that determines the result type of a `query` expression.
   template<
       typename T,
       typename Property>
-  struct query_result_type
+  struct query_result
 
 
 [heading Types]
@@ -109251,14 +110506,14 @@ A type trait that determines the result type of a `query` expression.
 
   [
 
-    [[link asio.reference.query_result_type.type [*type]]]
+    [[link asio.reference.query_result.type [*type]]]
     [The result of the query expression. ]
   
   ]
 
 ]
 
-Class template `query_result_type` is a trait that determines the result type of the expression `asio::query(std::declval<T>(), std::declval<Property>())`. 
+Class template `query_result` is a trait that determines the result type of the expression `asio::query(std::declval<T>(), std::declval<Property>())`. 
 
 [heading Requirements]
 
@@ -109267,9 +110522,9 @@ Class template `query_result_type` is a trait that determines the result type of
 ['Convenience header: ][^asio.hpp]
 
 
-[section:type query_result_type::type]
+[section:type query_result::type]
 
-[indexterm2 asio.indexterm.query_result_type.type..type..query_result_type] 
+[indexterm2 asio.indexterm.query_result.type..type..query_result] 
 The result of the `query` expression. 
 
 
@@ -113747,7 +115002,7 @@ The name `require_concept` denotes a customization point object. The expression 
 [endsect]
 
 
-[section:require_concept_result_type require_concept_result_type]
+[section:require_concept_result require_concept_result]
 
 
 A type trait that determines the result type of a `require_concept` expression. 
@@ -113756,7 +115011,7 @@ A type trait that determines the result type of a `require_concept` expression.
   template<
       typename T,
       typename Property>
-  struct require_concept_result_type
+  struct require_concept_result
 
 
 [heading Types]
@@ -113765,14 +115020,14 @@ A type trait that determines the result type of a `require_concept` expression.
 
   [
 
-    [[link asio.reference.require_concept_result_type.type [*type]]]
+    [[link asio.reference.require_concept_result.type [*type]]]
     [The result of the require_concept expression. ]
   
   ]
 
 ]
 
-Class template `require_concept_result_type` is a trait that determines the result type of the expression `asio::require_concept(std::declval<T>(), std::declval<Property>())`. 
+Class template `require_concept_result` is a trait that determines the result type of the expression `asio::require_concept(std::declval<T>(), std::declval<Property>())`. 
 
 [heading Requirements]
 
@@ -113781,9 +115036,9 @@ Class template `require_concept_result_type` is a trait that determines the resu
 ['Convenience header: ][^asio.hpp]
 
 
-[section:type require_concept_result_type::type]
+[section:type require_concept_result::type]
 
-[indexterm2 asio.indexterm.require_concept_result_type.type..type..require_concept_result_type] 
+[indexterm2 asio.indexterm.require_concept_result.type..type..require_concept_result] 
 The result of the `require_concept` expression. 
 
 
@@ -113804,7 +115059,7 @@ The result of the `require_concept` expression.
 
 [endsect]
 
-[section:require_result_type require_result_type]
+[section:require_result require_result]
 
 
 A type trait that determines the result type of a `require` expression. 
@@ -113813,7 +115068,7 @@ A type trait that determines the result type of a `require` expression.
   template<
       typename T,
       typename... Properties>
-  struct require_result_type
+  struct require_result
 
 
 [heading Types]
@@ -113822,14 +115077,14 @@ A type trait that determines the result type of a `require` expression.
 
   [
 
-    [[link asio.reference.require_result_type.type [*type]]]
+    [[link asio.reference.require_result.type [*type]]]
     [The result of the require expression. ]
   
   ]
 
 ]
 
-Class template `require_result_type` is a trait that determines the result type of the expression `asio::require(std::declval<T>(), std::declval<Properties>()...)`. 
+Class template `require_result` is a trait that determines the result type of the expression `asio::require(std::declval<T>(), std::declval<Properties>()...)`. 
 
 [heading Requirements]
 
@@ -113838,9 +115093,9 @@ Class template `require_result_type` is a trait that determines the result type 
 ['Convenience header: ][^asio.hpp]
 
 
-[section:type require_result_type::type]
+[section:type require_result::type]
 
-[indexterm2 asio.indexterm.require_result_type.type..type..require_result_type] 
+[indexterm2 asio.indexterm.require_result.type..type..require_result] 
 The result of the `require` expression. 
 
 
@@ -122137,6 +123392,13 @@ Verify the peer.
   
   ]
 
+  [
+
+    [[link asio.reference.thread_pool.scheduler_type [*scheduler_type]]]
+    [Scheduler used to schedule receivers on a thread pool. ]
+  
+  ]
+
 ]
 
 [heading Member Functions]
@@ -122166,6 +123428,11 @@ Verify the peer.
   [
     [[link asio.reference.thread_pool.notify_fork [*notify_fork]]]
     [Notify the execution_context of a fork-related event. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool.scheduler [*scheduler]]]
+    [Obtains the scheduler associated with the pool. ]
   ]
   
   [
@@ -122995,7 +124262,7 @@ This function is used to ask the executor to execute the given function object. 
 
 [indexterm2 asio.indexterm.strand.prefer..prefer..strand] 
 
-  Property strand< typename decay< typename prefer_result_type< const Executor &, Property >::type >::type >::type prefer(
+  Property strand< typename decay< typename prefer_result< const Executor &, Property >::type >::type >::type prefer(
       const Property & p) const;
 
 
@@ -123012,7 +124279,7 @@ Forward a query to the underlying executor.
 
   template<
       typename Property>
-  enable_if< can_query< const Executor &, Property >::value, typename query_result_type< const Executor &, Property >::type >::type query(
+  enable_if< can_query< const Executor &, Property >::value, typename query_result< const Executor &, Property >::type >::type query(
       const Property & p) const;
 
 
@@ -123025,7 +124292,7 @@ Forward a query to the underlying executor.
 
 [indexterm2 asio.indexterm.strand.require..require..strand] 
 
-  Property strand< typename decay< typename require_result_type< const Executor &, Property >::type >::type >::type require(
+  Property strand< typename decay< typename require_result< const Executor &, Property >::type >::type >::type require(
       const Property & p) const;
 
 
@@ -124945,6 +126212,13 @@ A simple fixed-size thread pool.
   
   ]
 
+  [
+
+    [[link asio.reference.thread_pool.scheduler_type [*scheduler_type]]]
+    [Scheduler used to schedule receivers on a thread pool. ]
+  
+  ]
+
 ]
 
 [heading Member Functions]
@@ -124974,6 +126248,11 @@ A simple fixed-size thread pool.
   [
     [[link asio.reference.thread_pool.notify_fork [*notify_fork]]]
     [Notify the execution_context of a fork-related event. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool.scheduler [*scheduler]]]
+    [Obtains the scheduler associated with the pool. ]
   ]
   
   [
@@ -125210,6 +126489,19 @@ Executor used to submit functions to a thread pool.
   typedef basic_executor_type< std::allocator< void >, 0 > executor_type;
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
+    [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -125219,6 +126511,11 @@ Executor used to submit functions to a thread pool.
     [Copy construtor. 
      [hr]
      Move construtor. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.bulk_execute [*bulk_execute]]]
+    [Bulk execution function. ]
   ]
   
   [
@@ -125309,6 +126606,11 @@ Executor used to submit functions to a thread pool.
   [
     [[link asio.reference.thread_pool__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
     [Determine whether the thread pool is running in the current thread. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.schedule [*schedule]]]
+    [Schedule function. ]
   ]
   
   [
@@ -125585,6 +126887,188 @@ For each service object `svc` in the [link asio.reference.execution_context `exe
 
 
 
+[section:scheduler thread_pool::scheduler]
+
+[indexterm2 asio.indexterm.thread_pool.scheduler..scheduler..thread_pool] 
+Obtains the scheduler associated with the pool. 
+
+
+  scheduler_type scheduler();
+
+
+
+[endsect]
+
+
+
+[section:scheduler_type thread_pool::scheduler_type]
+
+[indexterm2 asio.indexterm.thread_pool.scheduler_type..scheduler_type..thread_pool] 
+Scheduler used to schedule receivers on a thread pool. 
+
+
+  typedef basic_executor_type< std::allocator< void >, 0 > scheduler_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
+    [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [Copy construtor. 
+     [hr]
+     Move construtor. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.bulk_execute [*bulk_execute]]]
+    [Bulk execution function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.defer [*defer]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.dispatch [*dispatch]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.execute [*execute]]]
+    [Execution function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.on_work_finished [*on_work_finished]]]
+    [Inform the thread pool that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.on_work_started [*on_work_started]]]
+    [Inform the thread pool that it has some outstanding work to do. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.operator_eq_ [*operator=]]]
+    [Assignment operator. 
+     [hr]
+     Move assignment operator. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.post [*post]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.query [*query]]]
+    [Query the current value of the context property. 
+     [hr]
+     Query the current value of the blocking property. 
+     [hr]
+     Query the current value of the relationship property. 
+     [hr]
+     Query the current value of the allocator property. 
+     [hr]
+     Query the occupancy (recommended number of work items) for the pool. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]]]
+    [Query the current value of the bulk_guarantee property. 
+     [hr]
+     Query the current value of the mapping property. 
+     [hr]
+     Query the current value of the outstanding_work property. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.require [*require]]]
+    [Obtain an executor with the blocking.possibly property. 
+     [hr]
+     Obtain an executor with the blocking.always property. 
+     [hr]
+     Obtain an executor with the blocking.never property. 
+     [hr]
+     Obtain an executor with the relationship.fork property. 
+     [hr]
+     Obtain an executor with the relationship.continuation property. 
+     [hr]
+     Obtain an executor with the outstanding_work.tracked property. 
+     [hr]
+     Obtain an executor with the outstanding_work.untracked property. 
+     [hr]
+     Obtain an executor with the specified allocator property. 
+     [hr]
+     Obtain an executor with the default allocator property. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the thread pool is running in the current thread. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.schedule [*schedule]]]
+    [Schedule function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.operator_not__eq_ [*operator!=]]]
+    [Compare two executors for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.operator_eq__eq_ [*operator==]]]
+    [Compare two executors for equality. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/thread_pool.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:shutdown thread_pool::shutdown]
 
 
@@ -125834,6 +127318,19 @@ Executor implementation type used to submit functions to a thread pool.
   class basic_executor_type
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
+    [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+]
+
 [heading Member Functions]
 [table
   [[Name][Description]]
@@ -125843,6 +127340,11 @@ Executor implementation type used to submit functions to a thread pool.
     [Copy construtor. 
      [hr]
      Move construtor. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.bulk_execute [*bulk_execute]]]
+    [Bulk execution function. ]
   ]
   
   [
@@ -125936,6 +127438,11 @@ Executor implementation type used to submit functions to a thread pool.
   ]
   
   [
+    [[link asio.reference.thread_pool__basic_executor_type.schedule [*schedule]]]
+    [Schedule function. ]
+  ]
+  
+  [
     [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
     [Destructor. ]
   ]
@@ -126013,6 +127520,24 @@ Move construtor.
 
 
 [endsect]
+
+
+[section:bulk_execute thread_pool::basic_executor_type::bulk_execute]
+
+[indexterm2 asio.indexterm.thread_pool__basic_executor_type.bulk_execute..bulk_execute..thread_pool::basic_executor_type] 
+Bulk execution function. 
+
+
+  template<
+      typename Function>
+  void bulk_execute(
+      Function && f,
+      std::size_t n) const;
+
+
+
+[endsect]
+
 
 
 [section:context thread_pool::basic_executor_type::context]
@@ -126740,6 +128265,188 @@ Determine whether the thread pool is running in the current thread.
 `true` if the current thread is running the thread pool. Otherwise returns `false`. 
 
 
+
+
+[endsect]
+
+
+
+[section:schedule thread_pool::basic_executor_type::schedule]
+
+[indexterm2 asio.indexterm.thread_pool__basic_executor_type.schedule..schedule..thread_pool::basic_executor_type] 
+Schedule function. 
+
+
+  sender_type schedule() const;
+
+
+
+[endsect]
+
+
+
+[section:sender_type thread_pool::basic_executor_type::sender_type]
+
+[indexterm2 asio.indexterm.thread_pool__basic_executor_type.sender_type..sender_type..thread_pool::basic_executor_type] 
+The sender type, when this type is used as a scheduler. 
+
+
+  typedef basic_executor_type sender_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
+    [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [Copy construtor. 
+     [hr]
+     Move construtor. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.bulk_execute [*bulk_execute]]]
+    [Bulk execution function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.defer [*defer]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.dispatch [*dispatch]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.execute [*execute]]]
+    [Execution function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.on_work_finished [*on_work_finished]]]
+    [Inform the thread pool that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.on_work_started [*on_work_started]]]
+    [Inform the thread pool that it has some outstanding work to do. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.operator_eq_ [*operator=]]]
+    [Assignment operator. 
+     [hr]
+     Move assignment operator. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.post [*post]]]
+    [Request the thread pool to invoke the given function object. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.query [*query]]]
+    [Query the current value of the context property. 
+     [hr]
+     Query the current value of the blocking property. 
+     [hr]
+     Query the current value of the relationship property. 
+     [hr]
+     Query the current value of the allocator property. 
+     [hr]
+     Query the occupancy (recommended number of work items) for the pool. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]]]
+    [Query the current value of the bulk_guarantee property. 
+     [hr]
+     Query the current value of the mapping property. 
+     [hr]
+     Query the current value of the outstanding_work property. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.require [*require]]]
+    [Obtain an executor with the blocking.possibly property. 
+     [hr]
+     Obtain an executor with the blocking.always property. 
+     [hr]
+     Obtain an executor with the blocking.never property. 
+     [hr]
+     Obtain an executor with the relationship.fork property. 
+     [hr]
+     Obtain an executor with the relationship.continuation property. 
+     [hr]
+     Obtain an executor with the outstanding_work.tracked property. 
+     [hr]
+     Obtain an executor with the outstanding_work.untracked property. 
+     [hr]
+     Obtain an executor with the specified allocator property. 
+     [hr]
+     Obtain an executor with the default allocator property. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.running_in_this_thread [*running_in_this_thread]]]
+    [Determine whether the thread pool is running in the current thread. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.schedule [*schedule]]]
+    [Schedule function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.operator_not__eq_ [*operator!=]]]
+    [Compare two executors for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.operator_eq__eq_ [*operator==]]]
+    [Compare two executors for equality. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/thread_pool.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
