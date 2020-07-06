@@ -9,21 +9,30 @@
 
 [heading Standard executors]
 
-An executor is defined by the following concept:
+Let `executor-of-impl` be the exposition-only concept
+
+    template<class E, class F>
+      concept executor-of-impl =
+        invocable<decay_t<F>&> &&
+        constructible_from<decay_t<F>, F> &&
+        move_constructible<decay_t<F>> &&
+        copy_constructible<E> &&
+        is_nothrow_copy_constructible_v<E> &&
+        equality_comparable<E> /* nothrow */ &&
+        requires(const E& e, F&& f) {
+          execution::execute(e, (F&&)f);
+        };
+
+Then the `executor` and `executor_of` concepts are defined as follows:
 
     template<class E>
       concept executor =
-        invocable<remove_cvref_t<F>&>
-          && constructible_from<remove_cvref_t<F>, F>
-          && move_constructible<remove_cvref_t<F>>
-          && copy_constructible<E>
-          && is_nothrow_copy_constructible_v<E>
-          && equality_comparable<E>
-          &&
-          requires(const E& e, invocable_archetype f)
-          {
-            execution::execute(e, static_cast<invocable_archetype&&>(f));
-          };
+        executor-of-impl<E, execution::invocable_archetype>;
+
+    template<class E, class F>
+      concept executor_of =
+        executor<E> &&
+        executor-of-impl<E, F>;
 
 Neither an executor's equality comparison nor `swap` operation shall exit via
 an exception.
