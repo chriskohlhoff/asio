@@ -52,9 +52,9 @@ inline constexpr unspecified schedule = unspecified;
 /// A type trait that determines whether a @c schedule expression is
 /// well-formed.
 /**
- * Class template @c can_schedule is a trait that is derived from
- * @c true_type if the expression <tt>execution::schedule(std::declval<S>(),
- * std::declval<E>())</tt> is well formed; otherwise @c false_type.
+ * Class template @c can_schedule is a trait that is derived from @c true_type
+ * if the expression <tt>execution::schedule(std::declval<S>())</tt> is well
+ * formed; otherwise @c false_type.
  */
 template <typename S>
 struct can_schedule :
