@@ -115,6 +115,7 @@
             not(contains(compoundname, 'thread_function')) and
             not(contains(compoundname, 'context_impl')) and
             not(contains(compoundname, 'initiate_')) and
+            not(contains(compoundname, '_adapter')) and
             not(contains(compoundname, '_is_deprecated'))">
           <xsl:call-template name="class"/>
         </xsl:if>
@@ -130,6 +131,7 @@
             not(contains(name, 'thread_function')) and
             not(contains(name, 'io_context_impl')) and
             not(contains(name, 'initiate_')) and
+            not(contains(name, '_adapter')) and
             not(contains(name, '_is_deprecated'))">
           <xsl:call-template name="namespace-memberdef"/>
         </xsl:if>
@@ -1560,6 +1562,9 @@
         <xsl:when test="declname = 'DatagramSocketService1'">
           <xsl:value-of select="concat('``[link asio.reference.DatagramSocketService ', declname, ']``')"/>
         </xsl:when>
+        <xsl:when test="declname = 'E'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'EndpointIterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1683,6 +1688,12 @@
         <xsl:when test="declname = 'SupportableProperties'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'R'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'S'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'T'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1702,6 +1713,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'U'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Vs'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'VerifyCallback'">
