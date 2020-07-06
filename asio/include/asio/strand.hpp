@@ -136,7 +136,7 @@ public:
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
-  ~strand()
+  ~strand() ASIO_NOEXCEPT
   {
   }
 

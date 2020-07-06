@@ -193,7 +193,7 @@ public:
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destructor.
-  ~basic_executor_type()
+  ~basic_executor_type() ASIO_NOEXCEPT
   {
     if (Bits & outstanding_work_tracked)
       if (pool_)
