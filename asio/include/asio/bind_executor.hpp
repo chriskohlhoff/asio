@@ -31,12 +31,6 @@
 namespace asio {
 namespace detail {
 
-template <typename T>
-struct executor_binder_check
-{
-  typedef void type;
-};
-
 // Helper to automatically define nested typedef result_type.
 
 template <typename T, typename = void>
@@ -48,7 +42,7 @@ protected:
 
 template <typename T>
 struct executor_binder_result_type<T,
-  typename executor_binder_check<typename T::result_type>::type>
+  typename void_type<typename T::result_type>::type>
 {
   typedef typename T::result_type result_type;
 protected:
@@ -110,7 +104,7 @@ struct executor_binder_argument_type {};
 
 template <typename T>
 struct executor_binder_argument_type<T,
-  typename executor_binder_check<typename T::argument_type>::type>
+  typename void_type<typename T::argument_type>::type>
 {
   typedef typename T::argument_type argument_type;
 };
@@ -135,7 +129,7 @@ struct executor_binder_argument_types {};
 
 template <typename T>
 struct executor_binder_argument_types<T,
-  typename executor_binder_check<typename T::first_argument_type>::type>
+  typename void_type<typename T::first_argument_type>::type>
 {
   typedef typename T::first_argument_type first_argument_type;
   typedef typename T::second_argument_type second_argument_type;
@@ -201,7 +195,7 @@ struct executor_binder_result_of0
 
 template <typename T>
 struct executor_binder_result_of0<T,
-  typename executor_binder_check<typename result_of<T()>::type>::type>
+  typename void_type<typename result_of<T()>::type>::type>
 {
   typedef typename result_of<T()>::type type;
 };
