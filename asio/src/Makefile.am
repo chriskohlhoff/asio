@@ -21,6 +21,8 @@ DIST_SUBDIRS = examples/cpp03 examples/cpp11 examples/cpp14 examples/cpp17 tests
 EXTRA_DIST = \
 	Makefile.mgw \
 	Makefile.msc \
+	tools/handlerlive.pl \
+	tools/handlertree.pl \
 	tools/handlerviz.pl
 
 MAINTAINERCLEANFILES = \
