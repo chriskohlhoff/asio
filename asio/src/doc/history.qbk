@@ -7,6 +7,193 @@
 
 [section:history Revision History]
 
+[heading Asio 1.17.0]
+
+* Added an implementation of the proposed standard executors
+	([@http://wg21.link/P0443r13 P0443r13], [@http://wg21.link/P1348r0 P1348r0],
+  and [@http://wg21.link/P1393r0 P1393r0]).
+
+* Added support for the proposed standard executors to Asio's I/O facilities:
+
+  * The `io_context::executor_type`, `thread_pool::executor_type`,
+    `system_executor`, and `strand` executors now meet the requirements for the
+    proposed standard executors. These classes also continue to meet the
+    existing requirements for the Networking TS model of executors.
+
+  * All I/O objects, asynchronous operations, and utilities including
+    `dispatch`, `post`, `defer`, `get_associated_executor`, `bind_executor`,
+    `make_work_guard`, `spawn`, `co_spawn`, `async_compose`, `use_future`,
+    etc., can interoperate with both new proposed standard executors, and with
+    existing Networking TS executors. The implementation determines at compile
+    time which model a particular executor meets; the proposed standard
+    executor model is used in preference if both are detected.
+
+  * The `any_io_executor` type alias has been introduced as the default
+    runtime-polymorphic executor for all I/O objects. This type alias points to
+    the `execution::any_executor<>` template with a set of supportable
+    properties specified for use with I/O. If required for backward
+    compatibility, `ASIO_USE_TS_EXECUTOR_AS_DEFAULT` can be defined, which
+    changes the `any_io_executor` type alias to point to the old polymorphic
+    wrapper, `executor`.
+
+  * Support for the existing Networking TS model of executors can be disabled
+    by defining `ASIO_NO_TS_EXECUTORS`.
+
+* Added converting move construction and assignment to `basic_waitable_timer`.
+  This enables move construction and assignment between different timer
+  types, provided the executor types are convertible. For example:[br]
+  ``
+  basic_waitable_timer<
+      clock_type,
+      traits_type,
+      io_context::executor_type
+    > timer1(my_io_context);
+
+  basic_waitable_timer<
+      clock_type,
+      traits_type,
+      any_io_executor // polymorphic wrapper
+    > timer2(std::move(timer1));
+  ``[br]
+
+* Enabled C++20 coroutine support when using [^gcc] 10.
+
+* Added overloads of `co_spawn` that launch an awaitable. This change allows us
+  to write:[br]
+  ``
+  co_spawn(executor,
+      echo(std::move(socket)),
+      detached);
+  ``[br]
+  instead of:[br]
+  ``
+  co_spawn(executor,
+      [socket = std::move(socket)]() mutable
+      {
+        return echo(std::move(socket));
+      },
+      detached);
+  ``[br]
+
+* Added a new constructor overload to `use_awaitable_t`'s default executor
+  adapter, to enable conversion between executor types.
+
+* Added support for using `detached_t` as a default completion token, by
+  adding members `as_default_on()` and `as_default_on_t<>`.
+
+* Added a move constructor to `ssl::stream<>`.
+
+* Changed `ssl::stream<>` write operations to linearise gather-write buffer
+  sequences.
+
+* Added compile-time detection of the deprecated `asio_handler_invoke` hook.
+  This hook was deprecated with the introduction of the Networking TS trait
+  `associated_executor` and function `get_associated_executor()`. Compiling
+  an application with `ASIO_NO_DEPRECATED` will now trigger a compile error if
+  any handler implements the `asio_handler_invoke` hook.
+
+* Added compile-time detection of the deprecated `asio_handler_allocate`
+  and `asio_handle_deallocate` hooks. These hooks were deprecated with the
+  introduction of the Networking TS trait `associated_allocator` and function
+  `get_associated_allocator()`. Compiling an application with
+  `ASIO_NO_DEPRECATED` will now trigger a compile error if any handler
+  implements the `asio_handler_allocate` or `asio_handler_deallocate` hooks.
+
+* Implemented a number of performance optimisations, including:
+
+  * Specialising single-buffer operations to use `recv` rather than `recvmsg`,
+    `send` rather than `sendmsg`, `read` rather than `readv`, and `write`
+    rather than `writev`.
+
+  * Lightening the reference counting overhead of the polymorphic wrapper
+    `executor`.
+
+  * Returning from system call operation wrappers as early as possible, and
+    only accessing `errno` and error codes when on an error path.
+
+  * Applying additional optimisations if a "native" I/O executor (such as
+    `io_context::exeutor_type`) is detected.
+
+* Added source location support to handler tracking. The new
+  `ASIO_HANDLER_LOCATION((file_name, line, function_name))` macro may be used
+  to inform the handler tracking mechanism of a source location. This macro
+  declares an object that is placed on the stack. Then, when an asynchronous
+  operation is launched with location information, it outputs lines using the
+  [*<action>] [^n^m], prior to the [^n*m] line that signifies the beginning
+  of the asynchronous operation. For example:
+  ``
+  @asio|1589423304.861944|>7|ec=system:0,bytes_transferred=5
+  @asio|1589423304.861952|7^8|in 'async_write' (./../../../include/asio/impl/write.hpp:330)
+  @asio|1589423304.861952|7^8|called from 'do_write' (handler_tracking/async_tcp_echo_server.cpp:62)
+  @asio|1589423304.861952|7^8|called from 'operator()' (handler_tracking/async_tcp_echo_server.cpp:51)
+  @asio|1589423304.861952|7*8|socket@0x7ff61c008230.async_send
+  @asio|1589423304.861975|.8|non_blocking_send,ec=system:0,bytes_transferred=5
+  @asio|1589423304.861980|<7|
+  ``[br]
+  If `std::source_location` or `std::experimental::source_location` are
+  available, the `use_awaitable_t` token (when default-constructed or used as a
+  default completion token) will also cause handler tracking to output a source
+  location for each newly created asynchronous operation. A `use_awaitable_t`
+  object may also be explicitly constructed with location information.
+
+* Implemented various improvements to the [^handlerviz.pl] tool.
+
+  * Add nodes for pending handlers at bottom of graph, outlined in red.
+
+  * Display source location in a tooltip on the edge label (for SVG).
+
+  * Use invisible nodes to enforce order to keep related control flow vertical.
+
+* Added the [^handlerlive.pl] tool, which processes handler tracking output to
+  produce a list of "live" handlers. Live handlers are those that are
+  associated with pending asynchronous operations, as well as handlers that are
+  currently executing. For example:
+  ``
+  cat output.txt | perl handlerlive.pl
+  ``
+  or:
+  ``
+  perl handerlive.pl < output.txt
+  ``
+  or:
+  ``
+  perl handlerlive.pl output.txt
+  ``[br]
+
+* Added the [^handlertree.pl] tool, which filters handler tracking output to
+  include only those events in the tree that produced the nominated handlers.
+  For example, to filter the output to include only the events associated with
+  handlers `123`, `456`, and their predecessors:
+  ``
+  cat output.txt | perl handlertree.pl 123 456
+  ``
+  or:
+  ``
+  perl handlertree.pl 123 456 < output.txt
+  ``[br]
+  This script may be combined with handerlive.pl and handlerviz.pl to produce a
+  graph of the "live" asynchronous operation chains. For example:
+  ``
+  cat output.txt | \
+    perl handlertree.pl `perl handlerlive.pl output.txt` | \
+    perl handlerviz.pl | \
+    dot -Tsvg > output.svg
+  ``[br]
+
+* Added changes for clang-based Embarcadero C++ compilers.
+
+* Fixed a deadlock that can occur when multiple threads concurrently initialise
+  the Windows I/O completion port backend.
+
+* Fixed `async_compose` to work with copyable handlers when passed by lvalue.
+
+* Fixed completion signature deduction in `co_spawn`.
+
+* Removed a spurious `Executor` base class from the `executor_binder`
+  implementation.
+
+* Various fixes and improvements in the documentation and examples.
+
 [heading Asio 1.16.1]
 
 * Fixed compatibility with C++20 concept syntax.
