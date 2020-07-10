@@ -1025,7 +1025,7 @@ protected:
   }
 
   template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn_impl(const void*, const void*,
+  static Poly require_cref_fn_impl(const void*, const void*,
       typename enable_if<
         is_same<Ex, void>::value
       >::type*)
@@ -1036,7 +1036,7 @@ protected:
   }
 
   template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn_impl(const void* ex, const void* prop,
+  static Poly require_cref_fn_impl(const void* ex, const void* prop,
       typename enable_if<
         !is_same<Ex, void>::value && Prop::is_requirable
       >::type*)
@@ -1046,15 +1046,54 @@ protected:
   }
 
   template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn_impl(const void*, const void*, ...)
+  static Poly require_cref_fn_impl(const void*, const void*, ...)
   {
     return Poly();
   }
 
   template <typename Poly, typename Ex, class Prop>
-  static Poly require_fn(const void* ex, const void* prop)
+  static Poly require_cref_fn(const void* ex, const void* prop)
   {
-    return require_fn_impl<Poly, Ex, Prop>(ex, prop, 0);
+    return require_cref_fn_impl<Poly, Ex, Prop>(ex, prop, 0);
+  }
+
+  template <typename Poly, typename Ex, class Prop>
+  static Poly require_rvref_fn_impl(const void*, void*,
+      typename enable_if<
+        is_same<Ex, void>::value
+      >::type*)
+  {
+    bad_executor ex;
+    asio::detail::throw_exception(ex);
+    return Poly();
+  }
+
+  template <typename Poly, typename Ex, class Prop>
+  static Poly require_rvref_fn_impl(const void* ex, void* prop,
+      typename enable_if<
+        !is_same<Ex, void>::value && Prop::is_requirable
+      >::type*)
+  {
+#if defined(ASIO_HAS_MOVE)
+    return asio::require(*static_cast<const Ex*>(ex),
+        ASIO_MOVE_CAST(Prop)(*static_cast<Prop*>(prop)));
+#else // defined(ASIO_HAS_MOVE)
+    (void)ex;
+    (void)prop;
+    return Poly();
+#endif // defined(ASIO_HAS_MOVE)
+  }
+
+  template <typename Poly, typename Ex, class Prop>
+  static Poly require_rvref_fn_impl(const void*, void*, ...)
+  {
+    return Poly();
+  }
+
+  template <typename Poly, typename Ex, class Prop>
+  static Poly require_rvref_fn(const void* ex, void* prop)
+  {
+    return require_rvref_fn_impl<Poly, Ex, Prop>(ex, prop, 0);
   }
 
   template <typename Poly, typename Ex, class Prop>
@@ -1094,9 +1133,26 @@ protected:
   struct prop_fns
   {
     void (*query)(void*, const void*, const void*);
-    Poly (*require)(const void*, const void*);
+    Poly (*require_cref)(const void*, const void*);
+    Poly (*require_rvref)(const void*, void*);
     Poly (*prefer)(const void*, const void*);
   };
+
+  template <typename T, typename Poly>
+  Poly call_require(const prop_fns<Poly>& fns, const void* target,
+      const typename conditional<true, T, void>::type& prop) const
+  {
+    return fns.require_cref(target, asio::detail::addressof(prop));
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  template <typename T, typename Poly>
+  Poly call_require(const prop_fns<Poly>& fns, const void* target,
+      typename conditional<true, T, void>::type&& prop) const
+  {
+    return fns.require_rvref(target, asio::detail::addressof(prop));
+  }
+#endif // defined(ASIO_HAS_MOVE)
 
 #if defined(ASIO_MSVC)
 # pragma warning (pop)
@@ -1544,17 +1600,18 @@ public:
   struct find_convertible_requirable_property :
       detail::supportable_properties<
         0, void(SupportableProperties...)>::template
-          find_convertible_requirable_property<T> {};
+          find_convertible_requirable_property<
+            typename remove_cvref<T>::type> {};
 
   template <typename Property>
-  any_executor require(const Property& p,
+  any_executor require(ASIO_MOVE_ARG(Property) p,
       typename enable_if<
         find_convertible_requirable_property<Property>::value
       >::type* = 0) const
   {
     typedef find_convertible_requirable_property<Property> found;
-    return prop_fns_[found::index].require(object_fns_->target(*this),
-        &static_cast<const typename found::type&>(p));
+    return call_require<typename found::type>(prop_fns_[found::index],
+        object_fns_->target(*this), ASIO_MOVE_CAST(Property)(p));
   }
 
   template <typename T>
@@ -1583,7 +1640,9 @@ public:
       {
         &detail::any_executor_base::query_fn<
             Ex, SupportableProperties>,
-        &detail::any_executor_base::require_fn<
+        &detail::any_executor_base::require_cref_fn<
+            any_executor, Ex, SupportableProperties>,
+        &detail::any_executor_base::require_rvref_fn<
             any_executor, Ex, SupportableProperties>,
         &detail::any_executor_base::prefer_fn<
             any_executor, Ex, SupportableProperties>
@@ -1652,56 +1711,64 @@ inline void swap(any_executor<SupportableProperties...>& a,
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_1 \
   {  \
     &detail::any_executor_base::query_fn<Ex, T1>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T1>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T1>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T1>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T1> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_2 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_1, \
   { \
     &detail::any_executor_base::query_fn<Ex, T2>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T2>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T2>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T2>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T2> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_3 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_2, \
   { \
     &detail::any_executor_base::query_fn<Ex, T3>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T3>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T3>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T3>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T3> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_4 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_3, \
   { \
     &detail::any_executor_base::query_fn<Ex, T4>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T4>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T4>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T4>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T4> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_5 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_4, \
   { \
     &detail::any_executor_base::query_fn<Ex, T5>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T5>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T5>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T5>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T5> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_6 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_5, \
   { \
     &detail::any_executor_base::query_fn<Ex, T6>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T6>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T6>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T6>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T6> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_7 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_6, \
   { \
     &detail::any_executor_base::query_fn<Ex, T7>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T7>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T7>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T7>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T7> \
   }
 #define ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_8 \
   ASIO_PRIVATE_ANY_EXECUTOR_PROP_FNS_7, \
   { \
     &detail::any_executor_base::query_fn<Ex, T8>, \
-    &detail::any_executor_base::require_fn<any_executor, Ex, T8>, \
+    &detail::any_executor_base::require_cref_fn<any_executor, Ex, T8>, \
+    &detail::any_executor_base::require_rvref_fn<any_executor, Ex, T8>, \
     &detail::any_executor_base::prefer_fn<any_executor, Ex, T8> \
   }
 
@@ -1943,17 +2010,18 @@ inline void swap(any_executor<SupportableProperties...>& a,
     struct find_convertible_requirable_property : \
         detail::supportable_properties< \
           0, void(ASIO_VARIADIC_TARGS(n))>::template \
-            find_convertible_requirable_property<T> {}; \
+            find_convertible_requirable_property< \
+              typename remove_cvref<T>::type> {}; \
     \
     template <typename Property> \
-    any_executor require(const Property& p, \
+    any_executor require(ASIO_MOVE_ARG(Property) p, \
         typename enable_if< \
           find_convertible_requirable_property<Property>::value \
         >::type* = 0) const \
     { \
       typedef find_convertible_requirable_property<Property> found; \
-      return prop_fns_[found::index].require(object_fns_->target(*this), \
-          &static_cast<const typename found::type&>(p)); \
+      return call_require<typename found::type>(prop_fns_[found::index], \
+          object_fns_->target(*this), ASIO_MOVE_CAST(Property)(p)); \
     } \
     \
     template <typename T> \
