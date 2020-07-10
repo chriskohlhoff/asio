@@ -257,7 +257,7 @@ ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_SET_VALUE_CALL_DEF)
   >::type
   operator()(const R& r, const Vs&... v) const
     ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void(const Vs&)>::is_noexcept))
+      call_traits<const R&, void(const Vs&...)>::is_noexcept))
   {
     return set_value(r, v...);
   }
