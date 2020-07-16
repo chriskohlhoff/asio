@@ -141,7 +141,7 @@ private:
   static win_iocp_io_context* get_iocp_service(
       const io_context::executor_type& ex)
   {
-    return &ex.context().impl_;
+    return &asio::query(ex, asio::execution::context).impl_;
   }
 
   win_iocp_operation* ptr_;
