@@ -12,20 +12,33 @@ environment:
   matrix:
     - STANDALONE: 1
       HEADER_ONLY: 1
+      MSVC: 1
     - STANDALONE: 1
       SEPARATE_COMPILATION: 1
+      MSVC: 1
+    - STANDALONE: 1
+      SEPARATE_COMPILATION: 1
+      MINGW: 1
     - STANDALONE: 1
       CXXLATEST: 1
+      MSVC: 1
     - STANDALONE: 1
       HEADER_ONLY: 1
       WIN9X: 1
+      MSVC: 1
     - STANDALONE: 1
       SEPARATE_COMPILATION: 1
       WIN9X: 1
+      MSVC: 1
     - USING_BOOST: 1
       HEADER_ONLY: 1
+      MSVC: 1
     - USING_BOOST: 1
       SEPARATE_COMPILATION: 1
+      MSVC: 1
+    - USING_BOOST: 1
+      SEPARATE_COMPILATION: 1
+      MINGW: 1
 
 for:
   -
@@ -44,6 +57,7 @@ for:
     matrix:
       only:
         - image: Visual Studio 2015
+          MSVC: 1
     environment:
       BOOSTDIR: C:\Libraries\boost_1_63_0
     build_script:
@@ -52,6 +66,18 @@ for:
       - cd asio\src
       - nmake -f Makefile.msc
       - nmake -f Makefile.msc check
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2015
+          MINGW: 1
+    environment:
+      BOOSTDIR: C:/Libraries/boost_1_63_0
+    build_script:
+      - PATH=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\msys64\usr\bin;%PATH%
+      - cd asio\src
+      - mingw32-make -f Makefile.mgw
+      - mingw32-make -f Makefile.mgw check
   -
     matrix:
       only:
@@ -85,6 +111,8 @@ matrix:
       CXXLATEST: 1
     - image: Visual Studio 2013
       USING_BOOST: 1
+    - image: Visual Studio 2013
+      MINGW: 1
     - image: Visual Studio 2015
       HEADER_ONLY: 1
     - image: Visual Studio 2015
@@ -99,9 +127,13 @@ matrix:
       WIN9X: 1
     - image: Visual Studio 2017
       USING_BOOST: 1
+    - image: Visual Studio 2017
+      MINGW: 1
     - image: Visual Studio 2019
       HEADER_ONLY: 1
     - image: Visual Studio 2019
       WIN9X: 1
     - image: Visual Studio 2019
       USING_BOOST: 1
+    - image: Visual Studio 2019
+      MINGW: 1
