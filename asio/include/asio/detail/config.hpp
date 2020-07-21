@@ -469,11 +469,11 @@
 #   endif // (__cplusplus >= 201703)
 #  endif // defined(__clang__)
 #  if defined(__GNUC__)
-#   if (__GNUC__ >= 7)
+#   if ((__GNUC__ == 8) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ > 8)
 #    if (__cplusplus >= 201402)
 #     define ASIO_HAS_SFINAE_VARIABLE_TEMPLATES 1
 #    endif // (__cplusplus >= 201402)
-#   endif // (__GNUC__ >= 7)
+#   endif // ((__GNUC__ == 8) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ > 8)
 #  endif // defined(__GNUC__)
 #  if defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
