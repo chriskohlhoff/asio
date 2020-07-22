@@ -1315,7 +1315,7 @@ void test()
 
   ios1.expires_at(tp);
 
-  ip::tcp::iostream::duration d;
+  ip::tcp::iostream::duration d = ip::tcp::iostream::duration();
   ios1.expires_after(d);
 
   // iostream operators.
