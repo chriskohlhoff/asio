@@ -27,9 +27,9 @@
 
 #include "asio/detail/push_options.hpp"
 
-#if !defined(GENERATING_DOCUMENTATION)
-
 namespace asio {
+
+#if !defined(GENERATING_DOCUMENTATION)
 
 template <typename Service>
 inline Service& use_service(io_context& ioc)
@@ -48,21 +48,7 @@ inline detail::io_context_impl& use_service<detail::io_context_impl>(
   return ioc.impl_;
 }
 
-} // namespace asio
-
 #endif // !defined(GENERATING_DOCUMENTATION)
-
-#include "asio/detail/pop_options.hpp"
-
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/win_iocp_io_context.hpp"
-#else
-# include "asio/detail/scheduler.hpp"
-#endif
-
-#include "asio/detail/push_options.hpp"
-
-namespace asio {
 
 inline io_context::executor_type
 io_context::get_executor() ASIO_NOEXCEPT
