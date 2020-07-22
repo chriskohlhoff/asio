@@ -76,7 +76,6 @@ public:
   template <typename Executor, typename Handler>
   void reset(const Executor& ex, Handler handler)
   {
-    const bool native = is_same<Executor, io_context::executor_type>::value;
     win_iocp_io_context* iocp_service = this->get_iocp_service(ex);
 
     typedef win_iocp_overlapped_op<Handler, Executor> op;
