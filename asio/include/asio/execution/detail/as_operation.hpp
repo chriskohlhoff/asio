@@ -68,7 +68,7 @@ struct as_operation
     {
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR)
       execution::set_error(
-          ASIO_MOVE_CAST(
+          ASIO_MOVE_OR_LVALUE(
             typename remove_cvref<Receiver>::type)(
               receiver_),
           std::current_exception());
