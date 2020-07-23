@@ -20,6 +20,7 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/io_context.hpp"
+#include "asio/query.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -132,7 +133,20 @@ public:
 
 private:
   template <typename Executor>
-  static win_iocp_io_context* get_iocp_service(const Executor& ex)
+  static win_iocp_io_context* get_iocp_service(const Executor& ex,
+      typename enable_if<
+        can_query<const Executor&, execution::context_t>::value
+      >::type* = 0)
+  {
+    return &use_service<win_iocp_io_context>(
+        asio::query(ex, execution::context));
+  }
+
+  template <typename Executor>
+  static win_iocp_io_context* get_iocp_service(const Executor& ex,
+      typename enable_if<
+        !can_query<const Executor&, execution::context_t>::value
+      >::type* = 0)
   {
     return &use_service<win_iocp_io_context>(ex.context());
   }
@@ -140,7 +154,7 @@ private:
   static win_iocp_io_context* get_iocp_service(
       const io_context::executor_type& ex)
   {
-    return &ex.context().impl_;
+    return &asio::query(ex, execution::context).impl_;
   }
 
   win_iocp_operation* ptr_;
