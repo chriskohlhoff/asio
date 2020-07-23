@@ -57,7 +57,7 @@ class basic_system_executor;
 
 class executor;
 
-typedef execution any_io_executor;
+typedef executor any_io_executor;
 
 #else // defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
