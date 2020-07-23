@@ -168,6 +168,20 @@ public:
   /// The sender type, when this type is used as a scheduler.
   typedef basic_executor_type sender_type;
 
+#if defined(ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT) \
+  && defined(ASIO_HAS_STD_EXCEPTION_PTR)
+  template <
+      template <typename...> class Tuple,
+      template <typename...> class Variant>
+  using value_types = Variant<Tuple<>>;
+
+  template <template <typename...> class Variant>
+  using error_types = Variant<std::exception_ptr>;
+
+  ASIO_STATIC_CONSTEXPR(bool, sends_done = true);
+#endif // defined(ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
+       //   && defined(ASIO_HAS_STD_EXCEPTION_PTR)
+
   /// Copy construtor.
   basic_executor_type(
       const basic_executor_type& other) ASIO_NOEXCEPT
@@ -406,10 +420,19 @@ public:
         integral_constant<bool, (Bits & blocking_always) != 0>());
   }
 
-  /// Schedule function.
+  /// Schedule function. Returns a sender.
   sender_type schedule() const ASIO_NOEXCEPT
   {
     return *this;
+  }
+
+  /// Connect function. Returns operation state.
+  template <ASIO_EXECUTION_RECEIVER_OF_0 Receiver>
+  execution::detail::as_operation<basic_executor_type, Receiver>
+  connect(ASIO_MOVE_ARG(Receiver) r) const
+  {
+    return execution::detail::as_operation<basic_executor_type, Receiver>(
+        *this, ASIO_MOVE_CAST(Receiver)(r));
   }
 
 #if !defined(ASIO_NO_TS_EXECUTORS)
@@ -589,6 +612,23 @@ struct schedule_member<
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_SCHEDULE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
+
+template <typename Allocator, unsigned int Bits, typename Receiver>
+struct connect_member<
+    const asio::thread_pool::basic_executor_type<Allocator, Bits>,
+    Receiver
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  typedef asio::execution::detail::as_operation<
+      asio::thread_pool::basic_executor_type<Allocator, Bits>,
+      Receiver> result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 
