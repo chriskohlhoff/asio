@@ -159,7 +159,7 @@ struct bulk_sender : sender_base
 } // namespace execution
 namespace traits {
 
-#if !defined(ASIO_HAS_DEDUCED_SET_VALUE_TRAIT)
+#if !defined(ASIO_HAS_DEDUCED_SET_VALUE_MEMBER_TRAIT)
 
 template <typename Receiver, typename Function, typename Number, typename Index>
 struct set_value_member<
@@ -171,9 +171,9 @@ struct set_value_member<
   typedef void result_type;
 };
 
-#endif // !defined(ASIO_HAS_DEDUCED_SET_VALUE_TRAIT)
+#endif // !defined(ASIO_HAS_DEDUCED_SET_VALUE_MEMBER_TRAIT)
 
-#if !defined(ASIO_HAS_DEDUCED_SET_VALUE_TRAIT)
+#if !defined(ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
 
 template <typename Receiver, typename Function,
     typename Number, typename Index, typename Error>
@@ -186,9 +186,9 @@ struct set_error_member<
   typedef void result_type;
 };
 
-#endif // !defined(ASIO_HAS_DEDUCED_SET_VALUE_TRAIT)
+#endif // !defined(ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
 
-#if !defined(ASIO_HAS_DEDUCED_SET_DONE_TRAIT)
+#if !defined(ASIO_HAS_DEDUCED_SET_DONE_MEMBER_TRAIT)
 
 template <typename Receiver, typename Function, typename Number, typename Index>
 struct set_done_member<
@@ -199,7 +199,7 @@ struct set_done_member<
   typedef void result_type;
 };
 
-#endif // !defined(ASIO_HAS_DEDUCED_SET_DONE_TRAIT)
+#endif // !defined(ASIO_HAS_DEDUCED_SET_DONE_MEMBER_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_CONNECT_MEMBER_TRAIT)
 
