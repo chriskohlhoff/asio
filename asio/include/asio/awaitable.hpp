@@ -100,7 +100,7 @@ public:
   // Support for co_await keyword.
   T await_resume()
   {
-    return frame_->get();
+    return awaitable(static_cast<awaitable&&>(*this)).frame_->get();
   }
 
 #endif // !defined(GENERATING_DOCUMENTATION)
