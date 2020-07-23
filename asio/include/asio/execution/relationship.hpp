@@ -262,12 +262,14 @@ struct relationship_t
       typename enable_if<
         can_query<const Executor&, fork_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, relationship_t<>::fork_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(ASIO_MSVC)
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, fork_t>::value))
+#endif // defined(ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return asio::query(ex, fork_t());
@@ -280,13 +282,15 @@ struct relationship_t
         !can_query<const Executor&, fork_t>::value
           && can_query<const Executor&, continuation_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&,
         relationship_t<>::continuation_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(ASIO_MSVC)
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, continuation_t>::value))
+#endif // defined(ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return asio::query(ex, continuation_t());

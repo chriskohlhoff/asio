@@ -263,13 +263,15 @@ struct outstanding_work_t
       typename enable_if<
         can_query<const Executor&, untracked_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&,
         outstanding_work_t<>::untracked_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(ASIO_MSVC)
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, untracked_t>::value))
+#endif // defined(ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return asio::query(ex, untracked_t());
@@ -282,13 +284,15 @@ struct outstanding_work_t
         !can_query<const Executor&, untracked_t>::value
           && can_query<const Executor&, tracked_t>::value
       >::type* = 0)
-#if defined(_MSC_VER) // Visual C++ wants the type to be qualified.
+#if !defined(__clang__) // Clang crashes if noexcept is used here.
+#if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&,
         outstanding_work_t<>::tracked_t>::value))
-#elif !defined(__clang__) // Clang crashes if noexcept is used here.
+#else // defined(ASIO_MSVC)
     ASIO_NOEXCEPT_IF((
       is_nothrow_query<const Executor&, tracked_t>::value))
+#endif // defined(ASIO_MSVC)
 #endif // !defined(__clang__)
   {
     return asio::query(ex, tracked_t());
