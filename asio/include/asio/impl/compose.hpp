@@ -495,14 +495,20 @@ namespace detail
   template <typename IoObject>
   inline typename IoObject::executor_type
   get_composed_io_executor(IoObject& io_object,
-      typename enable_if<!is_executor<IoObject>::value>::type* = 0)
+      typename enable_if<
+        !is_executor<IoObject>::value
+          && !execution::is_executor<IoObject>::value
+      >::type* = 0)
   {
     return io_object.get_executor();
   }
 
   template <typename Executor>
   inline const Executor& get_composed_io_executor(const Executor& ex,
-      typename enable_if<is_executor<Executor>::value>::type* = 0)
+      typename enable_if<
+        is_executor<Executor>::value
+          || execution::is_executor<Executor>::value
+      >::type* = 0)
   {
     return ex;
   }
