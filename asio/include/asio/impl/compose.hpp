@@ -459,7 +459,7 @@ namespace detail
     typedef typename composed_io_executors<Executors>::head_type executor_type;
 
     template <typename T>
-    explicit initiate_composed_op(ASIO_MOVE_ARG(T) executors)
+    explicit initiate_composed_op(int, ASIO_MOVE_ARG(T) executors)
       : executors_(ASIO_MOVE_CAST(T)(executors))
     {
     }
@@ -488,7 +488,7 @@ namespace detail
   inline initiate_composed_op<Signature, Executors> make_initiate_composed_op(
       ASIO_MOVE_ARG(composed_io_executors<Executors>) executors)
   {
-    return initiate_composed_op<Signature, Executors>(
+    return initiate_composed_op<Signature, Executors>(0,
         ASIO_MOVE_CAST(composed_io_executors<Executors>)(executors));
   }
 
