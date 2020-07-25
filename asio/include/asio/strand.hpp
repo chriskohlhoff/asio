@@ -147,6 +147,16 @@ public:
   }
 
   /// Forward a query to the underlying executor.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * execution::execute customisation point.
+   *
+   * For example:
+   * @code asio::strand<my_executor_type> ex = ...;
+   * if (asio::query(ex, asio::execution::blocking)
+   *       == asio::execution::blocking.never)
+   *   ... @endcode
+   */
   template <typename Property>
   typename enable_if<
     can_query<const Executor&, Property>::value,
@@ -159,6 +169,15 @@ public:
   }
 
   /// Forward a requirement to the underlying executor.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * asio::require customisation point.
+   *
+   * For example:
+   * @code asio::strand<my_executor_type> ex1 = ...;
+   * auto ex2 = asio::require(ex1,
+   *     asio::execution::blocking.never); @endcode
+   */
   template <typename Property>
   typename enable_if<
     can_require<const Executor&, Property>::value,
@@ -175,6 +194,15 @@ public:
   }
 
   /// Forward a preference to the underlying executor.
+  /**
+   * Do not call this function directly. It is intended for use with the
+   * asio::prefer customisation point.
+   *
+   * For example:
+   * @code asio::strand<my_executor_type> ex1 = ...;
+   * auto ex2 = asio::prefer(ex1,
+   *     asio::execution::blocking.never); @endcode
+   */
   template <typename Property>
   typename enable_if<
     can_prefer<const Executor&, Property>::value,
@@ -218,6 +246,13 @@ public:
 
   /// Request the strand to invoke the given function object.
   /**
+   * Do not call this function directly. It is intended for use with the
+   * execution::execute customisation point.
+   *
+   * For example:
+   * @code asio::strand<my_executor_type> ex = ...;
+   * execution::execute(ex, my_function_object); @endcode
+   *
    * This function is used to ask the strand to execute the given function
    * object on its underlying executor. The function object will be executed
    * according to the properties of the underlying executor.

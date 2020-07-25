@@ -50608,7 +50608,7 @@ An executor that uses arbitrary threads.
   
   [
     [[link asio.reference.basic_system_executor.execute [*execute]]]
-    [Oneway execution function. ]
+    [Execution function. ]
   ]
   
   [
@@ -50797,13 +50797,23 @@ This function is used to ask the executor to execute the given function object. 
 [section:execute basic_system_executor::execute]
 
 [indexterm2 asio.indexterm.basic_system_executor.execute..execute..basic_system_executor] 
-Oneway execution function. 
+Execution function. 
 
 
   template<
       typename Function>
   void execute(
       Function && f) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__execute `execution::execute`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   execution::execute(ex, my_function_object); 
+
+
 
 
 
@@ -50966,6 +50976,17 @@ Query the current value of the `allocator` property.
       execution::allocator_t< OtherAllocator > ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   auto alloc = asio::query(ex,
+       asio::execution::allocator); 
+
+
+
+
 
 [endsect]
 
@@ -50981,6 +51002,17 @@ Query the current value of the `allocator` property.
       execution::allocator_t< void > ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   auto alloc = asio::query(ex,
+       asio::execution::allocator); 
+
+
+
+
 
 [endsect]
 
@@ -50994,6 +51026,17 @@ Query the occupancy (recommended number of work items) for the system context.
 
   std::size_t query(
       execution::occupancy_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   std::size_t occupancy = asio::query(
+       ex, asio::execution::occupancy); 
+
+
 
 
 
@@ -51047,6 +51090,18 @@ Query the current value of the `mapping` property.
       execution::mapping_t );
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   if (asio::query(ex, asio::execution::mapping)
+         == asio::execution::mapping.thread)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -51060,6 +51115,17 @@ Query the current value of the `context` property.
 
   static system_context & query(
       execution::context_t );
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   asio::system_context& pool = asio::query(
+       ex, asio::execution::context); 
+
+
 
 
 
@@ -51077,6 +51143,18 @@ Query the current value of the `blocking` property.
       execution::blocking_t );
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   if (asio::query(ex, asio::execution::blocking)
+         == asio::execution::blocking.always)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -51090,6 +51168,18 @@ Query the current value of the `relationship` property.
 
   static constexpr execution::relationship_t query(
       execution::relationship_t );
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   asio::system_executor ex;
+   if (asio::query(ex, asio::execution::relationship)
+         == asio::execution::relationship.continuation)
+     ... 
+
+
 
 
 
@@ -51169,6 +51259,17 @@ Obtain an executor with the `blocking.possibly` property.
       execution::blocking_t::possibly_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.possibly); 
+
+
+
+
 
 [endsect]
 
@@ -51182,6 +51283,17 @@ Obtain an executor with the `blocking.always` property.
 
   basic_system_executor< execution::blocking_t::always_t, Relationship, Allocator > require(
       execution::blocking_t::always_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.always); 
+
+
 
 
 
@@ -51199,6 +51311,17 @@ Obtain an executor with the `blocking.never` property.
       execution::blocking_t::never_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.never); 
+
+
+
+
 
 [endsect]
 
@@ -51214,6 +51337,17 @@ Obtain an executor with the `relationship.continuation` property.
       execution::relationship_t::continuation_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::relationship.continuation); 
+
+
+
+
 
 [endsect]
 
@@ -51227,6 +51361,17 @@ Obtain an executor with the `relationship.fork` property.
 
   basic_system_executor< Blocking, execution::relationship_t::fork_t, Allocator > require(
       execution::relationship_t::fork_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::relationship.fork); 
+
+
 
 
 
@@ -51246,6 +51391,17 @@ Obtain an executor with the specified `allocator` property.
       execution::allocator_t< OtherAllocator > a) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::allocator(my_allocator)); 
+
+
+
+
 
 [endsect]
 
@@ -51259,6 +51415,17 @@ Obtain an executor with the default `allocator` property.
 
   basic_system_executor< Blocking, Relationship, std::allocator< void > > require(
       execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::system_executor ex1;
+   auto ex2 = asio::require(ex1,
+       asio::execution::allocator); 
+
+
 
 
 
@@ -81013,6 +81180,16 @@ Execution function.
       Function && f) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__execute `execution::execute`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   execution::execute(ex, my_function_object); 
+
+
+
+
 
 [endsect]
 
@@ -81237,6 +81414,17 @@ Query the current value of the `context` property.
       execution::context_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   asio::io_context& ctx = asio::query(
+       ex, asio::execution::context); 
+
+
+
+
 
 [endsect]
 
@@ -81252,6 +81440,18 @@ Query the current value of the `blocking` property.
       execution::blocking_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   if (asio::query(ex, asio::execution::blocking)
+         == asio::execution::blocking.always)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -81265,6 +81465,18 @@ Query the current value of the `relationship` property.
 
   constexpr execution::relationship_t query(
       execution::relationship_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   if (asio::query(ex, asio::execution::relationship)
+         == asio::execution::relationship.continuation)
+     ... 
+
+
 
 
 
@@ -81284,6 +81496,17 @@ Query the current value of the `allocator` property.
       execution::allocator_t< OtherAllocator > ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   auto alloc = asio::query(ex,
+       asio::execution::allocator); 
+
+
+
+
 
 [endsect]
 
@@ -81297,6 +81520,17 @@ Query the current value of the `allocator` property.
 
   constexpr Allocator query(
       execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   auto alloc = asio::query(ex,
+       asio::execution::allocator); 
+
+
 
 
 
@@ -81334,6 +81568,18 @@ Query the current value of the `mapping` property.
       execution::mapping_t );
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   if (asio::query(ex, asio::execution::mapping)
+         == asio::execution::mapping.thread)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -81347,6 +81593,18 @@ Query the current value of the `outstanding_work` property.
 
   static constexpr execution::outstanding_work_t query(
       execution::outstanding_work_t );
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_io_context.get_executor();
+   if (asio::query(ex, asio::execution::outstanding_work)
+         == asio::execution::outstanding_work.tracked)
+     ... 
+
+
 
 
 
@@ -81434,6 +81692,17 @@ Obtain an executor with the `blocking.possibly` property.
       execution::blocking_t::possibly_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.possibly); 
+
+
+
+
 
 [endsect]
 
@@ -81447,6 +81716,17 @@ Obtain an executor with the `blocking.never` property.
 
   constexpr basic_executor_type require(
       execution::blocking_t::never_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.never); 
+
+
 
 
 
@@ -81464,6 +81744,17 @@ Obtain an executor with the `relationship.fork` property.
       execution::relationship_t::fork_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::relationship.fork); 
+
+
+
+
 
 [endsect]
 
@@ -81477,6 +81768,17 @@ Obtain an executor with the `relationship.continuation` property.
 
   constexpr basic_executor_type require(
       execution::relationship_t::continuation_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::relationship.continuation); 
+
+
 
 
 
@@ -81494,6 +81796,17 @@ Obtain an executor with the `outstanding_work.tracked` property.
       execution::outstanding_work_t::tracked_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::outstanding_work.tracked); 
+
+
+
+
 
 [endsect]
 
@@ -81507,6 +81820,17 @@ Obtain an executor with the `outstanding_work.untracked` property.
 
   constexpr basic_executor_type< Allocator, unspecified > require(
       execution::outstanding_work_t::untracked_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::outstanding_work.untracked); 
+
+
 
 
 
@@ -81526,6 +81850,17 @@ Obtain an executor with the specified `allocator` property.
       execution::allocator_t< OtherAllocator > a) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::allocator(my_allocator)); 
+
+
+
+
 
 [endsect]
 
@@ -81539,6 +81874,17 @@ Obtain an executor with the default `allocator` property.
 
   constexpr basic_executor_type< std::allocator< void >, Bits > require(
       execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_io_context.get_executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::allocator); 
+
+
 
 
 
@@ -124283,6 +124629,18 @@ Forward a query to the underlying executor.
       const Property & p) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__execute `execution::execute`] customisation point.
+
+For example: 
+
+   asio::strand<my_executor_type> ex = ...;
+   if (asio::query(ex, asio::execution::blocking)
+         == asio::execution::blocking.never)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -124911,7 +125269,7 @@ The executor type associated with the context.
   
   [
     [[link asio.reference.basic_system_executor.execute [*execute]]]
-    [Oneway execution function. ]
+    [Execution function. ]
   ]
   
   [
@@ -125638,7 +125996,7 @@ An executor that uses arbitrary threads.
   
   [
     [[link asio.reference.basic_system_executor.execute [*execute]]]
-    [Oneway execution function. ]
+    [Execution function. ]
   ]
   
   [
@@ -126519,6 +126877,11 @@ Executor used to submit functions to a thread pool.
   ]
   
   [
+    [[link asio.reference.thread_pool__basic_executor_type.connect [*connect]]]
+    [Connect function. ]
+  ]
+  
+  [
     [[link asio.reference.thread_pool__basic_executor_type.context [*context]]]
     [Obtain the underlying execution context. ]
   ]
@@ -126940,6 +127303,11 @@ Scheduler used to schedule receivers on a thread pool.
   ]
   
   [
+    [[link asio.reference.thread_pool__basic_executor_type.connect [*connect]]]
+    [Connect function. ]
+  ]
+  
+  [
     [[link asio.reference.thread_pool__basic_executor_type.context [*context]]]
     [Obtain the underlying execution context. ]
   ]
@@ -127348,6 +127716,11 @@ Executor implementation type used to submit functions to a thread pool.
   ]
   
   [
+    [[link asio.reference.thread_pool__basic_executor_type.connect [*connect]]]
+    [Connect function. ]
+  ]
+  
+  [
     [[link asio.reference.thread_pool__basic_executor_type.context [*context]]]
     [Obtain the underlying execution context. ]
   ]
@@ -127540,6 +127913,32 @@ Bulk execution function.
 
 
 
+[section:connect thread_pool::basic_executor_type::connect]
+
+[indexterm2 asio.indexterm.thread_pool__basic_executor_type.connect..connect..thread_pool::basic_executor_type] 
+Connect function. 
+
+
+  template<
+      typename ``[link asio.reference.Receiver Receiver]``>
+  unspecified connect(
+      Receiver && r) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__connect `execution::connect`] customisation point.
+
+
+[heading Return Value]
+      
+An object of an unspecified type that satisfies the `operation_state` concept. 
+
+
+
+
+[endsect]
+
+
+
 [section:context thread_pool::basic_executor_type::context]
 
 [indexterm2 asio.indexterm.thread_pool__basic_executor_type.context..context..thread_pool::basic_executor_type] 
@@ -127644,6 +128043,16 @@ Execution function.
       typename Function>
   void execute(
       Function && f) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__execute `execution::execute`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   execution::execute(ex, my_function_object); 
+
+
 
 
 
@@ -127878,6 +128287,17 @@ Query the current value of the `context` property.
       execution::context_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   asio::thread_pool& pool = asio::query(
+       ex, asio::execution::context); 
+
+
+
+
 
 [endsect]
 
@@ -127893,6 +128313,18 @@ Query the current value of the `blocking` property.
       execution::blocking_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   if (asio::query(ex, asio::execution::blocking)
+         == asio::execution::blocking.always)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -127906,6 +128338,18 @@ Query the current value of the `relationship` property.
 
   constexpr execution::relationship_t query(
       execution::relationship_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   if (asio::query(ex, asio::execution::relationship)
+         == asio::execution::relationship.continuation)
+     ... 
+
+
 
 
 
@@ -127925,6 +128369,17 @@ Query the current value of the `allocator` property.
       execution::allocator_t< OtherAllocator > ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   auto alloc = asio::query(ex,
+       asio::execution::allocator); 
+
+
+
+
 
 [endsect]
 
@@ -127940,6 +128395,17 @@ Query the current value of the `allocator` property.
       execution::allocator_t< void > ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   auto alloc = asio::query(ex,
+       asio::execution::allocator); 
+
+
+
+
 
 [endsect]
 
@@ -127953,6 +128419,17 @@ Query the occupancy (recommended number of work items) for the pool.
 
   std::size_t query(
       execution::occupancy_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   std::size_t occupancy = asio::query(
+       ex, asio::execution::occupancy); 
+
+
 
 
 
@@ -127998,6 +128475,18 @@ Query the current value of the `bulk_guarantee` property.
       execution::bulk_guarantee_t );
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   if (asio::query(ex, asio::execution::bulk_guarantee)
+         == asio::execution::bulk_guarantee.parallel)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -128013,6 +128502,18 @@ Query the current value of the `mapping` property.
       execution::mapping_t );
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   if (asio::query(ex, asio::execution::mapping)
+         == asio::execution::mapping.thread)
+     ... 
+
+
+
+
 
 [endsect]
 
@@ -128026,6 +128527,18 @@ Query the current value of the `outstanding_work` property.
 
   static constexpr execution::outstanding_work_t query(
       execution::outstanding_work_t );
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
+
+For example: 
+
+   auto ex = my_thread_pool.executor();
+   if (asio::query(ex, asio::execution::outstanding_work)
+         == asio::execution::outstanding_work.tracked)
+     ... 
+
+
 
 
 
@@ -128121,6 +128634,17 @@ Obtain an executor with the `blocking.possibly` property.
       execution::blocking_t::possibly_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.possibly); 
+
+
+
+
 
 [endsect]
 
@@ -128134,6 +128658,17 @@ Obtain an executor with the `blocking.always` property.
 
   constexpr basic_executor_type< Allocator, unspecified > require(
       execution::blocking_t::always_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.always); 
+
+
 
 
 
@@ -128151,6 +128686,17 @@ Obtain an executor with the `blocking.never` property.
       execution::blocking_t::never_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.never); 
+
+
+
+
 
 [endsect]
 
@@ -128164,6 +128710,17 @@ Obtain an executor with the `relationship.fork` property.
 
   constexpr basic_executor_type require(
       execution::relationship_t::fork_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::relationship.fork); 
+
+
 
 
 
@@ -128181,6 +128738,17 @@ Obtain an executor with the `relationship.continuation` property.
       execution::relationship_t::continuation_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::relationship.continuation); 
+
+
+
+
 
 [endsect]
 
@@ -128196,6 +128764,17 @@ Obtain an executor with the `outstanding_work.tracked` property.
       execution::outstanding_work_t::tracked_t ) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::outstanding_work.tracked); 
+
+
+
+
 
 [endsect]
 
@@ -128209,6 +128788,17 @@ Obtain an executor with the `outstanding_work.untracked` property.
 
   constexpr basic_executor_type< Allocator, unspecified > require(
       execution::outstanding_work_t::untracked_t ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::outstanding_work.untracked); 
+
+
 
 
 
@@ -128228,6 +128818,17 @@ Obtain an executor with the specified `allocator` property.
       execution::allocator_t< OtherAllocator > a) const;
 
 
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::allocator(my_allocator)); 
+
+
+
+
 
 [endsect]
 
@@ -128241,6 +128842,17 @@ Obtain an executor with the default `allocator` property.
 
   constexpr basic_executor_type< std::allocator< void >, Bits > require(
       execution::allocator_t< void > ) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   auto ex1 = my_thread_pool.executor();
+   auto ex2 = asio::require(ex1,
+       asio::execution::allocator); 
+
+
 
 
 
@@ -128278,6 +128890,15 @@ Schedule function.
 
 
   sender_type schedule() const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__schedule `execution::schedule`] customisation point.
+
+
+[heading Return Value]
+      
+An object that satisfies the sender concept. 
+
 
 
 
@@ -128321,6 +128942,11 @@ The sender type, when this type is used as a scheduler.
   [
     [[link asio.reference.thread_pool__basic_executor_type.bulk_execute [*bulk_execute]]]
     [Bulk execution function. ]
+  ]
+  
+  [
+    [[link asio.reference.thread_pool__basic_executor_type.connect [*connect]]]
+    [Connect function. ]
   ]
   
   [
