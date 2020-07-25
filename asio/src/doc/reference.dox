@@ -224,7 +224,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_STRING_VIEW_PARAM=string_view \
                          ASIO_UNUSED_VARIABLE= \
                          ASIO_UNSPECIFIED(e)=unspecified \
-                         ASIO_EXECUTION_RECEIVER_ERROR_DEFAULT==std::exception_ptr
+                         ASIO_EXECUTION_RECEIVER_ERROR_DEFAULT==std::exception_ptr \
+                         ASIO_EXECUTION_RECEIVER_OF_0=typename
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
