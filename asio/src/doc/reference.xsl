@@ -848,6 +848,7 @@
 <xsl:call-template name="class-tables">
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
+  <xsl:with-param name="unqualified-class-name" select="$class-name"/>
 </xsl:call-template>
 
 <xsl:apply-templates select="detaileddescription" mode="markup"/>
@@ -869,6 +870,7 @@
 <xsl:template name="class-tables">
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
+<xsl:param name="unqualified-class-name"/>
 <xsl:if test="
     count(
       sectiondef[@kind='public-type'] |
@@ -951,7 +953,10 @@
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
       <xsl:text> </xsl:text>[*<xsl:value-of select="$escaped-name"/><xsl:text>]]</xsl:text>
-      <xsl:if test="@static='yes'"> [static]</xsl:if><xsl:text>]
+      <xsl:if test="$name=$unqualified-class-name"> [constructor]</xsl:if>
+      <xsl:if test="starts-with($name, '~')"> [destructor]</xsl:if>
+      <xsl:if test="@static='yes'"> [static]</xsl:if>
+      <xsl:text>]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -1002,7 +1007,10 @@
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
       <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]</xsl:text>
-      <xsl:if test="@static='yes'"> [static]</xsl:if><xsl:text>]
+      <xsl:if test="$name=$unqualified-class-name"> [constructor]</xsl:if>
+      <xsl:if test="starts-with($name, '~')"> [destructor]</xsl:if>
+      <xsl:if test="@static='yes'"> [static]</xsl:if>
+      <xsl:text>]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -1054,7 +1062,10 @@
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
       <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]</xsl:text>
-      <xsl:if test="@static='yes'"> [static]</xsl:if><xsl:text>]
+      <xsl:if test="$name=$unqualified-class-name"> [constructor]</xsl:if>
+      <xsl:if test="starts-with($name, '~')"> [destructor]</xsl:if>
+      <xsl:if test="@static='yes'"> [static]</xsl:if>
+      <xsl:text>]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -1428,6 +1439,11 @@
               <xsl:with-param name="name" select="compoundname"/>
             </xsl:call-template>
           </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+      <xsl:with-param name="unqualified-class-name">
+        <xsl:call-template name="strip-ns">
+          <xsl:with-param name="name" select="compoundname"/>
         </xsl:call-template>
       </xsl:with-param>
     </xsl:call-template>

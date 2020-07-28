@@ -82,7 +82,7 @@ Polymorphic executor type for use with I/O objects.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__any_executor.any_executor [*any_executor]]]
+    [[link asio.reference.execution__any_executor.any_executor [*any_executor]] [constructor]]
     [Default constructor. 
      [hr]
      Construct in an empty state. Equivalent effects to default constructor. 
@@ -153,7 +153,7 @@ Polymorphic executor type for use with I/O objects.
   ]
   
   [
-    [[link asio.reference.execution__any_executor._any_executor [*~any_executor]]]
+    [[link asio.reference.execution__any_executor._any_executor [*~any_executor]] [destructor]]
     [Destructor. ]
   ]
   
@@ -654,7 +654,7 @@ Helper template to deduce the handler type from a CompletionToken, capture a loc
   [[Name][Description]]
 
   [
-    [[link asio.reference.async_completion.async_completion [*async_completion]]]
+    [[link asio.reference.async_completion.async_completion [*async_completion]] [constructor]]
     [Constructor. ]
   ]
   
@@ -748,7 +748,7 @@ The real handler type to be used for the asynchronous operation.
   [[Name][Description]]
 
   [
-    [[link asio.reference.async_result.async_result [*async_result]]]
+    [[link asio.reference.async_result.async_result [*async_result]] [constructor]]
     [Construct an async result from a given handler. ]
   ]
   
@@ -4268,7 +4268,7 @@ An interface for customising the behaviour of an initiating function.
   [[Name][Description]]
 
   [
-    [[link asio.reference.async_result.async_result [*async_result]]]
+    [[link asio.reference.async_result.async_result [*async_result]] [constructor]]
     [Construct an async result from a given handler. ]
   ]
   
@@ -5606,7 +5606,7 @@ The return type of a coroutine or asynchronous operation.
   [[Name][Description]]
 
   [
-    [[link asio.reference.awaitable.awaitable [*awaitable]]]
+    [[link asio.reference.awaitable.awaitable [*awaitable]] [constructor]]
     [Default constructor. 
      [hr]
      Move constructor. ]
@@ -5618,7 +5618,7 @@ The return type of a coroutine or asynchronous operation.
   ]
   
   [
-    [[link asio.reference.awaitable._awaitable [*~awaitable]]]
+    [[link asio.reference.awaitable._awaitable [*~awaitable]] [destructor]]
     [Destructor. ]
   ]
   
@@ -5766,7 +5766,7 @@ Exception thrown when trying to access an empty polymorphic executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.bad_executor.bad_executor [*bad_executor]]]
+    [[link asio.reference.bad_executor.bad_executor [*bad_executor]] [constructor]]
     [Constructor. ]
   ]
   
@@ -6037,7 +6037,7 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]] [constructor]]
     [Construct a basic_datagram_socket without opening it. 
      [hr]
      Construct and open a basic_datagram_socket. 
@@ -6180,7 +6180,7 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -9235,7 +9235,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -9364,7 +9364,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -12339,7 +12339,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]] [constructor]]
     [Construct a basic_datagram_socket without opening it. 
      [hr]
      Construct and open a basic_datagram_socket. 
@@ -12482,7 +12482,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -12624,7 +12624,7 @@ Provides waitable timer functionality.
   ]
   
   [
-    [[link asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]]]
+    [[link asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -12674,7 +12674,7 @@ Provides waitable timer functionality.
   ]
   
   [
-    [[link asio.reference.basic_deadline_timer._basic_deadline_timer [*~basic_deadline_timer]]]
+    [[link asio.reference.basic_deadline_timer._basic_deadline_timer [*~basic_deadline_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -13931,7 +13931,7 @@ The timer type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]]]
+    [[link asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -13981,7 +13981,7 @@ The timer type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_deadline_timer._basic_deadline_timer [*~basic_deadline_timer]]]
+    [[link asio.reference.basic_deadline_timer._basic_deadline_timer [*~basic_deadline_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -14159,7 +14159,7 @@ Base class for all I/O objects.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_io_object.basic_io_object [*basic_io_object]]]
+    [[link asio.reference.basic_io_object.basic_io_object [*basic_io_object]] [constructor]]
     [Construct a basic_io_object. 
      [hr]
      Move-construct a basic_io_object. 
@@ -14183,7 +14183,7 @@ Base class for all I/O objects.
   ]
   
   [
-    [[link asio.reference.basic_io_object._basic_io_object [*~basic_io_object]]]
+    [[link asio.reference.basic_io_object._basic_io_object [*~basic_io_object]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -14787,7 +14787,7 @@ Provides raw-oriented socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]] [constructor]]
     [Construct a basic_raw_socket without opening it. 
      [hr]
      Construct and open a basic_raw_socket. 
@@ -14930,7 +14930,7 @@ Provides raw-oriented socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -17985,7 +17985,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -18114,7 +18114,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -21089,7 +21089,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]] [constructor]]
     [Construct a basic_raw_socket without opening it. 
      [hr]
      Construct and open a basic_raw_socket. 
@@ -21232,7 +21232,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -21523,7 +21523,7 @@ Provides sequenced packet socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]]]
+    [[link asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]] [constructor]]
     [Construct a basic_seq_packet_socket without opening it. 
      [hr]
      Construct and open a basic_seq_packet_socket. 
@@ -21658,7 +21658,7 @@ Provides sequenced packet socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_seq_packet_socket._basic_seq_packet_socket [*~basic_seq_packet_socket]]]
+    [[link asio.reference.basic_seq_packet_socket._basic_seq_packet_socket [*~basic_seq_packet_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -24382,7 +24382,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -24511,7 +24511,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -27055,7 +27055,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]]]
+    [[link asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]] [constructor]]
     [Construct a basic_seq_packet_socket without opening it. 
      [hr]
      Construct and open a basic_seq_packet_socket. 
@@ -27190,7 +27190,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_seq_packet_socket._basic_seq_packet_socket [*~basic_seq_packet_socket]]]
+    [[link asio.reference.basic_seq_packet_socket._basic_seq_packet_socket [*~basic_seq_packet_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -27334,7 +27334,7 @@ Provides serial port functionality.
   ]
   
   [
-    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]] [constructor]]
     [Construct a basic_serial_port without opening it. 
      [hr]
      Construct and open a basic_serial_port. 
@@ -27412,7 +27412,7 @@ Provides serial port functionality.
   ]
   
   [
-    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]]]
+    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]] [destructor]]
     [Destroys the serial port. ]
   ]
   
@@ -28408,7 +28408,7 @@ A basic\_basic\_serial\_port is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]] [constructor]]
     [Construct a basic_serial_port without opening it. 
      [hr]
      Construct and open a basic_serial_port. 
@@ -28486,7 +28486,7 @@ A basic\_basic\_serial\_port is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]]]
+    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]] [destructor]]
     [Destroys the serial port. ]
   ]
   
@@ -29208,7 +29208,7 @@ The serial port type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]] [constructor]]
     [Construct a basic_serial_port without opening it. 
      [hr]
      Construct and open a basic_serial_port. 
@@ -29286,7 +29286,7 @@ The serial port type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]]]
+    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]] [destructor]]
     [Destroys the serial port. ]
   ]
   
@@ -29363,7 +29363,7 @@ Provides signal functionality.
   ]
   
   [
-    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]] [constructor]]
     [Construct a signal set without adding any signals. 
      [hr]
      Construct a signal set and add one signal. 
@@ -29394,7 +29394,7 @@ Provides signal functionality.
   ]
   
   [
-    [[link asio.reference.basic_signal_set._basic_signal_set [*~basic_signal_set]]]
+    [[link asio.reference.basic_signal_set._basic_signal_set [*~basic_signal_set]] [destructor]]
     [Destroys the signal set. ]
   ]
   
@@ -30435,7 +30435,7 @@ The signal set type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]] [constructor]]
     [Construct a signal set without adding any signals. 
      [hr]
      Construct a signal set and add one signal. 
@@ -30466,7 +30466,7 @@ The signal set type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_signal_set._basic_signal_set [*~basic_signal_set]]]
+    [[link asio.reference.basic_signal_set._basic_signal_set [*~basic_signal_set]] [destructor]]
     [Destroys the signal set. ]
   ]
   
@@ -30749,7 +30749,7 @@ Provides socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -30878,7 +30878,7 @@ Provides socket functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -33321,7 +33321,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -33450,7 +33450,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -35586,7 +35586,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -35715,7 +35715,7 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -35986,7 +35986,7 @@ Provides the ability to accept new connections.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]] [constructor]]
     [Construct an acceptor without opening it. 
      [hr]
      Construct an open acceptor. 
@@ -36092,7 +36092,7 @@ Provides the ability to accept new connections.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]] [destructor]]
     [Destroys the acceptor. ]
   ]
   
@@ -41282,7 +41282,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]] [constructor]]
     [Construct an acceptor without opening it. 
      [hr]
      Construct an open acceptor. 
@@ -41388,7 +41388,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]] [destructor]]
     [Destroys the acceptor. ]
   ]
   
@@ -41543,7 +41543,7 @@ Iostream interface for a socket.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
+    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]] [constructor]]
     [Construct a basic_socket_iostream without establishing a connection. 
      [hr]
      Construct a basic_socket_iostream from the supplied socket. 
@@ -42250,7 +42250,7 @@ Iostream streambuf for a socket.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_streambuf.basic_socket_streambuf [*basic_socket_streambuf]]]
+    [[link asio.reference.basic_socket_streambuf.basic_socket_streambuf [*basic_socket_streambuf]] [constructor]]
     [Construct a basic_socket_streambuf without establishing a connection. 
      [hr]
      Construct a basic_socket_streambuf from the supplied socket. 
@@ -42313,7 +42313,7 @@ Iostream streambuf for a socket.
   ]
   
   [
-    [[link asio.reference.basic_socket_streambuf._basic_socket_streambuf [*~basic_socket_streambuf]]]
+    [[link asio.reference.basic_socket_streambuf._basic_socket_streambuf [*~basic_socket_streambuf]] [destructor]]
     [Destructor flushes buffered data. ]
   ]
   
@@ -43216,7 +43216,7 @@ Provides stream-oriented socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]] [constructor]]
     [Construct a basic_stream_socket without opening it. 
      [hr]
      Construct and open a basic_stream_socket. 
@@ -43361,7 +43361,7 @@ Provides stream-oriented socket functionality.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -46287,7 +46287,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.basic_socket.basic_socket [*basic_socket]]]
+    [[link asio.reference.basic_socket.basic_socket [*basic_socket]] [constructor]]
     [Construct a basic_socket without opening it. 
      [hr]
      Construct and open a basic_socket. 
@@ -46416,7 +46416,7 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]]]
+    [[link asio.reference.basic_socket._basic_socket [*~basic_socket]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -49287,7 +49287,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]] [constructor]]
     [Construct a basic_stream_socket without opening it. 
      [hr]
      Construct and open a basic_stream_socket. 
@@ -49432,7 +49432,7 @@ The socket type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -49548,7 +49548,7 @@ Automatically resizable buffer class based on std::streambuf.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]]]
+    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]] [constructor]]
     [Construct a basic_streambuf object. ]
   ]
   
@@ -50009,7 +50009,7 @@ Adapts [link asio.reference.basic_streambuf `basic_streambuf`] to the dynamic bu
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_streambuf_ref.basic_streambuf_ref [*basic_streambuf_ref]]]
+    [[link asio.reference.basic_streambuf_ref.basic_streambuf_ref [*basic_streambuf_ref]] [constructor]]
     [Construct a basic_streambuf_ref for the given basic_streambuf object. 
      [hr]
      Copy construct a basic_streambuf_ref. 
@@ -50197,7 +50197,7 @@ The type used to represent the input sequence as a list of buffers.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]]]
+    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]] [constructor]]
     [Construct a basic_streambuf object. ]
   ]
   
@@ -50406,7 +50406,7 @@ The type used to represent the output sequence as a list of buffers.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]]]
+    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]] [constructor]]
     [Construct a basic_streambuf object. ]
   ]
   
@@ -50587,7 +50587,7 @@ An executor that uses arbitrary threads.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_system_executor.basic_system_executor [*basic_system_executor]]]
+    [[link asio.reference.basic_system_executor.basic_system_executor [*basic_system_executor]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -51508,7 +51508,7 @@ Provides waitable timer functionality.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -51574,7 +51574,7 @@ Provides waitable timer functionality.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -53045,7 +53045,7 @@ The timer type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -53111,7 +53111,7 @@ The timer type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -53266,7 +53266,7 @@ Context object the represents the currently executing coroutine.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]]]
+    [[link asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]] [constructor]]
     [Construct a yield context to represent the specified coroutine. 
      [hr]
      Construct a yield context from another yield context type. ]
@@ -55585,7 +55585,7 @@ Adds buffering to the read-related operations of a stream.
   ]
   
   [
-    [[link asio.reference.buffered_read_stream.buffered_read_stream [*buffered_read_stream]]]
+    [[link asio.reference.buffered_read_stream.buffered_read_stream [*buffered_read_stream]] [constructor]]
     [Construct, passing the specified argument to initialise the next layer. ]
   ]
   
@@ -56320,7 +56320,7 @@ Adds buffering to the read- and write-related operations of a stream.
   ]
   
   [
-    [[link asio.reference.buffered_stream.buffered_stream [*buffered_stream]]]
+    [[link asio.reference.buffered_stream.buffered_stream [*buffered_stream]] [constructor]]
     [Construct, passing the specified argument to initialise the next layer. ]
   ]
   
@@ -57099,7 +57099,7 @@ Adds buffering to the write-related operations of a stream.
   ]
   
   [
-    [[link asio.reference.buffered_write_stream.buffered_write_stream [*buffered_write_stream]]]
+    [[link asio.reference.buffered_write_stream.buffered_write_stream [*buffered_write_stream]] [constructor]]
     [Construct, passing the specified argument to initialise the next layer. ]
   ]
   
@@ -57879,7 +57879,7 @@ A random access iterator over the bytes in a buffer sequence.
   ]
   
   [
-    [[link asio.reference.buffers_iterator.buffers_iterator [*buffers_iterator]]]
+    [[link asio.reference.buffers_iterator.buffers_iterator [*buffers_iterator]] [constructor]]
     [Default constructor. Creates an iterator in an undefined state. ]
   ]
   
@@ -60319,7 +60319,7 @@ Holds a buffer that cannot be modified.
   [[Name][Description]]
 
   [
-    [[link asio.reference.const_buffer.const_buffer [*const_buffer]]]
+    [[link asio.reference.const_buffer.const_buffer [*const_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. 
@@ -60590,7 +60590,7 @@ Get the size of the memory range.
   ]
   
   [
-    [[link asio.reference.const_buffers_1.const_buffers_1 [*const_buffers_1]]]
+    [[link asio.reference.const_buffers_1.const_buffers_1 [*const_buffers_1]] [constructor]]
     [Construct to represent a given memory range. 
      [hr]
      Construct to represent a single non-modifiable buffer. ]
@@ -60859,7 +60859,7 @@ The type for each element in the list of buffers.
   [[Name][Description]]
 
   [
-    [[link asio.reference.const_buffer.const_buffer [*const_buffer]]]
+    [[link asio.reference.const_buffer.const_buffer [*const_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. 
@@ -60943,7 +60943,7 @@ Provides support for implementing stackless coroutines.
   [[Name][Description]]
 
   [
-    [[link asio.reference.coroutine.coroutine [*coroutine]]]
+    [[link asio.reference.coroutine.coroutine [*coroutine]] [constructor]]
     [Constructs a coroutine in its initial state. ]
   ]
   
@@ -61363,7 +61363,7 @@ Typedef for the typical usage of timer. Uses a UTC clock.
   ]
   
   [
-    [[link asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]]]
+    [[link asio.reference.basic_deadline_timer.basic_deadline_timer [*basic_deadline_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -61413,7 +61413,7 @@ Typedef for the typical usage of timer. Uses a UTC clock.
   ]
   
   [
-    [[link asio.reference.basic_deadline_timer._basic_deadline_timer [*~basic_deadline_timer]]]
+    [[link asio.reference.basic_deadline_timer._basic_deadline_timer [*~basic_deadline_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -61795,7 +61795,7 @@ Class used to specify that an asynchronous operation is detached.
   ]
   
   [
-    [[link asio.reference.detached_t.detached_t [*detached_t]]]
+    [[link asio.reference.detached_t.detached_t [*detached_t]] [constructor]]
     [Constructor. ]
   ]
   
@@ -61926,7 +61926,7 @@ Specify `detached_t` as the default completion token type.
   ]
   
   [
-    [[link asio.reference.detached_t.detached_t [*detached_t]]]
+    [[link asio.reference.detached_t.detached_t [*detached_t]] [constructor]]
     [Constructor. ]
   ]
   
@@ -62380,7 +62380,7 @@ Adapt a basic\_string to the DynamicBuffer requirements.
   ]
   
   [
-    [[link asio.reference.dynamic_string_buffer.dynamic_string_buffer [*dynamic_string_buffer]]]
+    [[link asio.reference.dynamic_string_buffer.dynamic_string_buffer [*dynamic_string_buffer]] [constructor]]
     [Construct a dynamic buffer from a string. 
      [hr]
      DynamicBuffer_v2: Copy construct a dynamic buffer. 
@@ -62493,7 +62493,7 @@ The type used to represent a sequence of constant buffers that refers to the und
   [[Name][Description]]
 
   [
-    [[link asio.reference.const_buffer.const_buffer [*const_buffer]]]
+    [[link asio.reference.const_buffer.const_buffer [*const_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. 
@@ -62877,7 +62877,7 @@ The type used to represent a sequence of mutable buffers that refers to the unde
   ]
   
   [
-    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
+    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. ]
@@ -63076,7 +63076,7 @@ Adapt a vector to the DynamicBuffer requirements.
   ]
   
   [
-    [[link asio.reference.dynamic_vector_buffer.dynamic_vector_buffer [*dynamic_vector_buffer]]]
+    [[link asio.reference.dynamic_vector_buffer.dynamic_vector_buffer [*dynamic_vector_buffer]] [constructor]]
     [Construct a dynamic buffer from a vector. 
      [hr]
      DynamicBuffer_v2: Copy construct a dynamic buffer. 
@@ -63189,7 +63189,7 @@ The type used to represent a sequence of constant buffers that refers to the und
   [[Name][Description]]
 
   [
-    [[link asio.reference.const_buffer.const_buffer [*const_buffer]]]
+    [[link asio.reference.const_buffer.const_buffer [*const_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. 
@@ -63563,7 +63563,7 @@ The type used to represent a sequence of mutable buffers that refers to the unde
   ]
   
   [
-    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
+    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. ]
@@ -64392,7 +64392,7 @@ Base class for all error categories.
   ]
   
   [
-    [[link asio.reference.error_category._error_category [*~error_category]]]
+    [[link asio.reference.error_category._error_category [*~error_category]] [destructor]]
     [Destructor. ]
   ]
   
@@ -64529,7 +64529,7 @@ Class to represent an error code value.
   ]
   
   [
-    [[link asio.reference.error_code.error_code [*error_code]]]
+    [[link asio.reference.error_code.error_code [*error_code]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specific error code and category. 
@@ -65096,7 +65096,7 @@ Polymorphic executor wrapper.
   ]
   
   [
-    [[link asio.reference.execution__any_executor._any_executor [*~any_executor]]]
+    [[link asio.reference.execution__any_executor._any_executor [*~any_executor]] [destructor]]
     [Destructor. ]
   ]
   
@@ -72151,7 +72151,7 @@ A context for function object execution.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution_context.execution_context [*execution_context]]]
+    [[link asio.reference.execution_context.execution_context [*execution_context]] [constructor]]
     [Constructor. ]
   ]
   
@@ -72161,7 +72161,7 @@ A context for function object execution.
   ]
   
   [
-    [[link asio.reference.execution_context._execution_context [*~execution_context]]]
+    [[link asio.reference.execution_context._execution_context [*~execution_context]] [destructor]]
     [Destructor. ]
   ]
   
@@ -72765,7 +72765,7 @@ Base class for all [link asio.reference.io_context `io_context`] services.
   ]
   
   [
-    [[link asio.reference.execution_context__service._service [*~service]]]
+    [[link asio.reference.execution_context__service._service [*~service]] [destructor]]
     [Destructor. ]
   ]
   
@@ -72931,7 +72931,7 @@ Polymorphic wrapper for executors.
   ]
   
   [
-    [[link asio.reference.executor.executor [*executor]]]
+    [[link asio.reference.executor.executor [*executor]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from nullptr. 
@@ -72992,7 +72992,7 @@ Polymorphic wrapper for executors.
   ]
   
   [
-    [[link asio.reference.executor._executor [*~executor]]]
+    [[link asio.reference.executor._executor [*~executor]] [destructor]]
     [Destructor. ]
   ]
   
@@ -73673,7 +73673,7 @@ A special type, similar to std::nothrow\_t, used to disambiguate constructors th
   [[Name][Description]]
 
   [
-    [[link asio.reference.executor_arg_t.executor_arg_t [*executor_arg_t]]]
+    [[link asio.reference.executor_arg_t.executor_arg_t [*executor_arg_t]] [constructor]]
     [Constructor. ]
   ]
   
@@ -73769,7 +73769,7 @@ A call wrapper type to bind an executor of type `Executor` to an object of type 
   [[Name][Description]]
 
   [
-    [[link asio.reference.executor_binder.executor_binder [*executor_binder]]]
+    [[link asio.reference.executor_binder.executor_binder [*executor_binder]] [constructor]]
     [Construct an executor wrapper for the specified object. 
      [hr]
      Copy constructor. 
@@ -73805,7 +73805,7 @@ A call wrapper type to bind an executor of type `Executor` to an object of type 
   ]
   
   [
-    [[link asio.reference.executor_binder._executor_binder [*~executor_binder]]]
+    [[link asio.reference.executor_binder._executor_binder [*~executor_binder]] [destructor]]
     [Destructor. ]
   ]
   
@@ -74410,7 +74410,7 @@ An object of type `executor_work_guard` controls ownership of executor work with
   [[Name][Description]]
 
   [
-    [[link asio.reference.executor_work_guard.executor_work_guard [*executor_work_guard]]]
+    [[link asio.reference.executor_work_guard.executor_work_guard [*executor_work_guard]] [constructor]]
     [Constructs a executor_work_guard object for the specified executor. 
      [hr]
      Copy constructor. 
@@ -74434,7 +74434,7 @@ An object of type `executor_work_guard` controls ownership of executor work with
   ]
   
   [
-    [[link asio.reference.executor_work_guard._executor_work_guard [*~executor_work_guard]]]
+    [[link asio.reference.executor_work_guard._executor_work_guard [*~executor_work_guard]] [destructor]]
     [Destructor. ]
   ]
   
@@ -75344,7 +75344,7 @@ The type of an endpoint.
   [[Name][Description]]
 
   [
-    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint from the specified socket address. 
@@ -75742,7 +75742,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]] [constructor]]
     [Construct a basic_datagram_socket without opening it. 
      [hr]
      Construct and open a basic_datagram_socket. 
@@ -75885,7 +75885,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -76118,7 +76118,7 @@ The type of an endpoint.
   [[Name][Description]]
 
   [
-    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint from the specified socket address. 
@@ -76584,7 +76584,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]] [constructor]]
     [Construct a basic_raw_socket without opening it. 
      [hr]
      Construct and open a basic_raw_socket. 
@@ -76727,7 +76727,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -76955,7 +76955,7 @@ The type of an endpoint.
   [[Name][Description]]
 
   [
-    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint from the specified socket address. 
@@ -77411,7 +77411,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]]]
+    [[link asio.reference.basic_seq_packet_socket.basic_seq_packet_socket [*basic_seq_packet_socket]] [constructor]]
     [Construct a basic_seq_packet_socket without opening it. 
      [hr]
      Construct and open a basic_seq_packet_socket. 
@@ -77546,7 +77546,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_seq_packet_socket._basic_seq_packet_socket [*~basic_seq_packet_socket]]]
+    [[link asio.reference.basic_seq_packet_socket._basic_seq_packet_socket [*~basic_seq_packet_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -77786,7 +77786,7 @@ The type of an endpoint.
   [[Name][Description]]
 
   [
-    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint from the specified socket address. 
@@ -77976,7 +77976,7 @@ The generic socket iostream type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
+    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]] [constructor]]
     [Construct a basic_socket_iostream without establishing a connection. 
      [hr]
      Construct a basic_socket_iostream from the supplied socket. 
@@ -78331,7 +78331,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]] [constructor]]
     [Construct a basic_stream_socket without opening it. 
      [hr]
      Construct and open a basic_stream_socket. 
@@ -78476,7 +78476,7 @@ The generic socket type.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -78897,7 +78897,7 @@ Typedef for a timer based on the high resolution clock.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -78963,7 +78963,7 @@ Typedef for a timer based on the high resolution clock.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -79100,7 +79100,7 @@ Exception thrown when trying to add a service object to an [link asio.reference.
   [[Name][Description]]
 
   [
-    [[link asio.reference.invalid_service_owner.invalid_service_owner [*invalid_service_owner]]]
+    [[link asio.reference.invalid_service_owner.invalid_service_owner [*invalid_service_owner]] [constructor]]
     []
   ]
   
@@ -79207,7 +79207,7 @@ Provides core I/O functionality.
   ]
   
   [
-    [[link asio.reference.io_context.io_context [*io_context]]]
+    [[link asio.reference.io_context.io_context [*io_context]] [constructor]]
     [Constructor. ]
   ]
   
@@ -79295,7 +79295,7 @@ Provides core I/O functionality.
   ]
   
   [
-    [[link asio.reference.io_context._io_context [*~io_context]]]
+    [[link asio.reference.io_context._io_context [*~io_context]] [destructor]]
     [Destructor. ]
   ]
   
@@ -79674,7 +79674,7 @@ Executor used to submit functions to an [link asio.reference.io_context `io_cont
   [[Name][Description]]
 
   [
-    [[link asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [[link asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
     [Copy construtor. 
      [hr]
      Move construtor. ]
@@ -79765,7 +79765,7 @@ Executor used to submit functions to an [link asio.reference.io_context `io_cont
   ]
   
   [
-    [[link asio.reference.io_context__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [[link asio.reference.io_context__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
     [Destructor. ]
   ]
   
@@ -80995,7 +80995,7 @@ Executor implementation type used to submit functions to an [link asio.reference
   ]
   
   [
-    [[link asio.reference.io_context__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [[link asio.reference.io_context__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
     [Destructor. ]
   ]
   
@@ -81961,7 +81961,7 @@ Base class for all [link asio.reference.io_context `io_context`] services.
   ]
   
   [
-    [[link asio.reference.io_context__service._service [*~service]]]
+    [[link asio.reference.io_context__service._service [*~service]] [destructor]]
     [Destructor. ]
   ]
   
@@ -82094,7 +82094,7 @@ Provides serialised handler execution.
   ]
   
   [
-    [[link asio.reference.io_context__strand._strand [*~strand]]]
+    [[link asio.reference.io_context__strand._strand [*~strand]] [destructor]]
     [Destructor. ]
   ]
   
@@ -82679,7 +82679,7 @@ Handlers posted through the strand that have not yet been invoked will still be 
   ]
   
   [
-    [[link asio.reference.io_context__work._work [*~work]]]
+    [[link asio.reference.io_context__work._work [*~work]] [destructor]]
     [Destructor notifies the io_context that the work is complete. ]
   ]
   
@@ -82862,7 +82862,7 @@ Typedef for backwards compatibility.
   ]
   
   [
-    [[link asio.reference.io_context.io_context [*io_context]]]
+    [[link asio.reference.io_context.io_context [*io_context]] [constructor]]
     [Constructor. ]
   ]
   
@@ -82950,7 +82950,7 @@ Typedef for backwards compatibility.
   ]
   
   [
-    [[link asio.reference.io_context._io_context [*~io_context]]]
+    [[link asio.reference.io_context._io_context [*~io_context]] [destructor]]
     [Destructor. ]
   ]
   
@@ -86928,7 +86928,7 @@ Thrown to indicate a failed address conversion.
   ]
   
   [
-    [[link asio.reference.ip__bad_address_cast._bad_address_cast [*~bad_address_cast]]]
+    [[link asio.reference.ip__bad_address_cast._bad_address_cast [*~bad_address_cast]] [destructor]]
     [Destructor. ]
   ]
   
@@ -87442,7 +87442,7 @@ The type of a reference to an element pointed to by the iterator.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]]]
+    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from raw bytes. 
@@ -87662,7 +87662,7 @@ The type of the elements pointed to by the iterator.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]]]
+    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from raw bytes. 
@@ -88300,7 +88300,7 @@ The type of a reference to an element pointed to by the iterator.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]]]
+    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from raw bytes and scope ID. 
@@ -88537,7 +88537,7 @@ The type of the elements pointed to by the iterator.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]]]
+    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from raw bytes and scope ID. 
@@ -90362,7 +90362,7 @@ Provides endpoint resolution functionality.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]] [destructor]]
     [Destroys the resolver. ]
   ]
   
@@ -91119,7 +91119,7 @@ Get the executor associated with the object.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
+    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]] [constructor]]
     [Default constructor creates an end iterator. 
      [hr]
      Copy constructor. 
@@ -91376,7 +91376,7 @@ The protocol type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]]]
+    [[link asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]] [constructor]]
     [Construct with specified service name for any protocol. 
      [hr]
      Construct with specified service name for a given protocol. 
@@ -92224,7 +92224,7 @@ The results type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_results.basic_resolver_results [*basic_resolver_results]]]
+    [[link asio.reference.ip__basic_resolver_results.basic_resolver_results [*basic_resolver_results]] [constructor]]
     [Default constructor creates an empty range. 
      [hr]
      Copy constructor. 
@@ -92537,7 +92537,7 @@ The resolver type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]] [constructor]]
     [Construct with executor. 
      [hr]
      Construct with execution context. 
@@ -92570,7 +92570,7 @@ The resolver type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]] [destructor]]
     [Destroys the resolver. ]
   ]
   
@@ -93500,7 +93500,7 @@ The type of the result of applying `operator*()` to the iterator.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specified endpoint, host name and service name. ]
@@ -93585,7 +93585,7 @@ The type of the value pointed to by the iterator.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specified endpoint, host name and service name. ]
@@ -94610,7 +94610,7 @@ The type of an iterator into the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
+    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]] [constructor]]
     [Default constructor creates an end iterator. 
      [hr]
      Copy constructor. 
@@ -94761,7 +94761,7 @@ The type of a const reference to a value in the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specified endpoint, host name and service name. ]
@@ -94998,7 +94998,7 @@ The type of an iterator into the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
+    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]] [constructor]]
     [Default constructor creates an end iterator. 
      [hr]
      Copy constructor. 
@@ -95500,7 +95500,7 @@ The type of a non-const reference to a value in the range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specified endpoint, host name and service name. ]
@@ -95635,7 +95635,7 @@ The type of a value in the results range.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specified endpoint, host name and service name. ]
@@ -95895,7 +95895,7 @@ The type of a ICMP endpoint.
   ]
   
   [
-    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
@@ -96176,7 +96176,7 @@ The ICMP resolver type.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]] [constructor]]
     [Construct with executor. 
      [hr]
      Construct with execution context. 
@@ -96209,7 +96209,7 @@ The ICMP resolver type.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]] [destructor]]
     [Destroys the resolver. ]
   ]
   
@@ -96498,7 +96498,7 @@ The ICMP socket type.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket.basic_raw_socket [*basic_raw_socket]] [constructor]]
     [Construct a basic_raw_socket without opening it. 
      [hr]
      Construct and open a basic_raw_socket. 
@@ -96641,7 +96641,7 @@ The ICMP socket type.
   ]
   
   [
-    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]]]
+    [[link asio.reference.basic_raw_socket._basic_raw_socket [*~basic_raw_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -98116,7 +98116,7 @@ The [link asio.reference.ip__resolver_base `ip::resolver_base`] class is used as
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__resolver_base._resolver_base [*~resolver_base]]]
+    [[link asio.reference.ip__resolver_base._resolver_base [*~resolver_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -98333,7 +98333,7 @@ The [link asio.reference.ip__resolver_query_base `ip::resolver_query_base`] clas
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__resolver_query_base._resolver_query_base [*~resolver_query_base]]]
+    [[link asio.reference.ip__resolver_query_base._resolver_query_base [*~resolver_query_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -98858,7 +98858,7 @@ The TCP acceptor type.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]] [constructor]]
     [Construct an acceptor without opening it. 
      [hr]
      Construct an open acceptor. 
@@ -98964,7 +98964,7 @@ The TCP acceptor type.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]] [destructor]]
     [Destroys the acceptor. ]
   ]
   
@@ -99085,7 +99085,7 @@ The type of a TCP endpoint.
   ]
   
   [
-    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
@@ -99292,7 +99292,7 @@ The TCP iostream type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
+    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]] [constructor]]
     [Construct a basic_socket_iostream without establishing a connection. 
      [hr]
      Construct a basic_socket_iostream from the supplied socket. 
@@ -99564,7 +99564,7 @@ The TCP resolver type.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]] [constructor]]
     [Construct with executor. 
      [hr]
      Construct with execution context. 
@@ -99597,7 +99597,7 @@ The TCP resolver type.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]] [destructor]]
     [Destroys the resolver. ]
   ]
   
@@ -99886,7 +99886,7 @@ The TCP socket type.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]] [constructor]]
     [Construct a basic_stream_socket without opening it. 
      [hr]
      Construct and open a basic_stream_socket. 
@@ -100031,7 +100031,7 @@ The TCP socket type.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -100295,7 +100295,7 @@ The type of a UDP endpoint.
   ]
   
   [
-    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
@@ -100576,7 +100576,7 @@ The UDP resolver type.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]] [constructor]]
     [Construct with executor. 
      [hr]
      Construct with execution context. 
@@ -100609,7 +100609,7 @@ The UDP resolver type.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver._basic_resolver [*~basic_resolver]] [destructor]]
     [Destroys the resolver. ]
   ]
   
@@ -100898,7 +100898,7 @@ The UDP socket type.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]] [constructor]]
     [Construct a basic_datagram_socket without opening it. 
      [hr]
      Construct and open a basic_datagram_socket. 
@@ -101041,7 +101041,7 @@ The UDP socket type.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -102520,7 +102520,7 @@ The type of a UNIX domain endpoint.
   [[Name][Description]]
 
   [
-    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using the specified path name. 
@@ -102885,7 +102885,7 @@ The UNIX domain socket type.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket.basic_datagram_socket [*basic_datagram_socket]] [constructor]]
     [Construct a basic_datagram_socket without opening it. 
      [hr]
      Construct and open a basic_datagram_socket. 
@@ -103028,7 +103028,7 @@ The UNIX domain socket type.
   ]
   
   [
-    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]]]
+    [[link asio.reference.basic_datagram_socket._basic_datagram_socket [*~basic_datagram_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -103392,7 +103392,7 @@ The UNIX domain acceptor type.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor.basic_socket_acceptor [*basic_socket_acceptor]] [constructor]]
     [Construct an acceptor without opening it. 
      [hr]
      Construct an open acceptor. 
@@ -103498,7 +103498,7 @@ The UNIX domain acceptor type.
   ]
   
   [
-    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]]]
+    [[link asio.reference.basic_socket_acceptor._basic_socket_acceptor [*~basic_socket_acceptor]] [destructor]]
     [Destroys the acceptor. ]
   ]
   
@@ -103612,7 +103612,7 @@ The type of a UNIX domain endpoint.
   [[Name][Description]]
 
   [
-    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using the specified path name. 
@@ -103813,7 +103813,7 @@ The UNIX domain iostream type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]]]
+    [[link asio.reference.basic_socket_iostream.basic_socket_iostream [*basic_socket_iostream]] [constructor]]
     [Construct a basic_socket_iostream without establishing a connection. 
      [hr]
      Construct a basic_socket_iostream from the supplied socket. 
@@ -104124,7 +104124,7 @@ The UNIX domain socket type.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket.basic_stream_socket [*basic_stream_socket]] [constructor]]
     [Construct a basic_stream_socket without opening it. 
      [hr]
      Construct and open a basic_stream_socket. 
@@ -104269,7 +104269,7 @@ The UNIX domain socket type.
   ]
   
   [
-    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]]]
+    [[link asio.reference.basic_stream_socket._basic_stream_socket [*~basic_stream_socket]] [destructor]]
     [Destroys the socket. ]
   ]
   
@@ -104596,7 +104596,7 @@ Exception thrown when there are multiple pending exceptions to rethrow.
   ]
   
   [
-    [[link asio.reference.multiple_exceptions.multiple_exceptions [*multiple_exceptions]]]
+    [[link asio.reference.multiple_exceptions.multiple_exceptions [*multiple_exceptions]] [constructor]]
     [Constructor. ]
   ]
   
@@ -104678,7 +104678,7 @@ Holds a buffer that can be modified.
   ]
   
   [
-    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
+    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. ]
@@ -104929,7 +104929,7 @@ Get the size of the memory range.
   ]
   
   [
-    [[link asio.reference.mutable_buffers_1.mutable_buffers_1 [*mutable_buffers_1]]]
+    [[link asio.reference.mutable_buffers_1.mutable_buffers_1 [*mutable_buffers_1]] [constructor]]
     [Construct to represent a given memory range. 
      [hr]
      Construct to represent a single modifiable buffer. ]
@@ -105193,7 +105193,7 @@ The type for each element in the list of buffers.
   ]
   
   [
-    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
+    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. ]
@@ -105376,7 +105376,7 @@ The type for each element in the list of buffers.
   ]
   
   [
-    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]]]
+    [[link asio.reference.mutable_buffer.mutable_buffer [*mutable_buffer]] [constructor]]
     [Construct an empty buffer. 
      [hr]
      Construct a buffer to represent a given memory range. ]
@@ -105740,7 +105740,7 @@ Provides POSIX descriptor functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -106628,7 +106628,7 @@ A descriptor is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]] [constructor]]
     [Construct a descriptor without opening it. 
      [hr]
      Construct a descriptor on an existing native descriptor. 
@@ -106709,7 +106709,7 @@ A descriptor is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -107355,7 +107355,7 @@ The descriptor type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]] [constructor]]
     [Construct a descriptor without opening it. 
      [hr]
      Construct a descriptor on an existing native descriptor. 
@@ -107436,7 +107436,7 @@ The descriptor type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -108691,7 +108691,7 @@ A descriptor is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]] [constructor]]
     [Construct a descriptor without opening it. 
      [hr]
      Construct a descriptor on an existing native descriptor. 
@@ -108772,7 +108772,7 @@ A descriptor is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -108903,7 +108903,7 @@ The native representation of a descriptor.
   ]
   
   [
-    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]] [constructor]]
     [Construct a descriptor without opening it. 
      [hr]
      Construct a descriptor on an existing native descriptor. 
@@ -108984,7 +108984,7 @@ The native representation of a descriptor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -109866,7 +109866,7 @@ The descriptor type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]]]
+    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]] [constructor]]
     [Construct a stream descriptor without opening it. 
      [hr]
      Construct a stream descriptor on an existing native descriptor. 
@@ -110062,7 +110062,7 @@ Typedef for the typical usage of [link asio.reference.posix__basic_descriptor `p
   ]
   
   [
-    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]] [constructor]]
     [Construct a descriptor without opening it. 
      [hr]
      Construct a descriptor on an existing native descriptor. 
@@ -110143,7 +110143,7 @@ Typedef for the typical usage of [link asio.reference.posix__basic_descriptor `p
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor._basic_descriptor [*~basic_descriptor]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -110216,7 +110216,7 @@ The [link asio.reference.posix__descriptor_base `posix::descriptor_base`] class 
   [[Name][Description]]
 
   [
-    [[link asio.reference.posix__descriptor_base._descriptor_base [*~descriptor_base]]]
+    [[link asio.reference.posix__descriptor_base._descriptor_base [*~descriptor_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -110408,7 +110408,7 @@ Typedef for the typical usage of a stream-oriented descriptor.
   ]
   
   [
-    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]]]
+    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]] [constructor]]
     [Construct a stream descriptor without opening it. 
      [hr]
      Construct a stream descriptor on an existing native descriptor. 
@@ -115192,7 +115192,7 @@ Completion token type used to specify that an error produced by an asynchronous 
   [[Name][Description]]
 
   [
-    [[link asio.reference.redirect_error_t.redirect_error_t [*redirect_error_t]]]
+    [[link asio.reference.redirect_error_t.redirect_error_t [*redirect_error_t]] [constructor]]
     [Constructor. ]
   ]
   
@@ -115544,7 +115544,7 @@ Typedef for the typical usage of a serial port.
   ]
   
   [
-    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]]]
+    [[link asio.reference.basic_serial_port.basic_serial_port [*basic_serial_port]] [constructor]]
     [Construct a basic_serial_port without opening it. 
      [hr]
      Construct and open a basic_serial_port. 
@@ -115622,7 +115622,7 @@ Typedef for the typical usage of a serial port.
   ]
   
   [
-    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]]]
+    [[link asio.reference.basic_serial_port._basic_serial_port [*~basic_serial_port]] [destructor]]
     [Destroys the serial port. ]
   ]
   
@@ -115705,7 +115705,7 @@ The [link asio.reference.serial_port_base `serial_port_base`] class is used as a
   [[Name][Description]]
 
   [
-    [[link asio.reference.serial_port_base._serial_port_base [*~serial_port_base]]]
+    [[link asio.reference.serial_port_base._serial_port_base [*~serial_port_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -116390,7 +116390,7 @@ Exception thrown when trying to add a duplicate service to an [link asio.referen
   [[Name][Description]]
 
   [
-    [[link asio.reference.service_already_exists.service_already_exists [*service_already_exists]]]
+    [[link asio.reference.service_already_exists.service_already_exists [*service_already_exists]] [constructor]]
     []
   ]
   
@@ -116462,7 +116462,7 @@ Typedef for the typical usage of a signal set.
   ]
   
   [
-    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]]]
+    [[link asio.reference.basic_signal_set.basic_signal_set [*basic_signal_set]] [constructor]]
     [Construct a signal set without adding any signals. 
      [hr]
      Construct a signal set and add one signal. 
@@ -116493,7 +116493,7 @@ Typedef for the typical usage of a signal set.
   ]
   
   [
-    [[link asio.reference.basic_signal_set._basic_signal_set [*~basic_signal_set]]]
+    [[link asio.reference.basic_signal_set._basic_signal_set [*~basic_signal_set]] [destructor]]
     [Destroys the signal set. ]
   ]
   
@@ -116702,7 +116702,7 @@ The [link asio.reference.socket_base `socket_base`] class is used as a base for 
   [[Name][Description]]
 
   [
-    [[link asio.reference.socket_base._socket_base [*~socket_base]]]
+    [[link asio.reference.socket_base._socket_base [*~socket_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -118194,7 +118194,7 @@ This function is used to launch a new coroutine.
   ]
   
   [
-    [[link asio.reference.ssl__context._context [*~context]]]
+    [[link asio.reference.ssl__context._context [*~context]] [destructor]]
     [Destructor. ]
   ]
   
@@ -120906,7 +120906,7 @@ The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__context_base._context_base [*~context_base]]]
+    [[link asio.reference.ssl__context_base._context_base [*~context_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -121870,7 +121870,7 @@ Provides stream-oriented functionality using SSL.
   ]
   
   [
-    [[link asio.reference.ssl__stream._stream [*~stream]]]
+    [[link asio.reference.ssl__stream._stream [*~stream]] [destructor]]
     [Destructor. ]
   ]
   
@@ -123423,7 +123423,7 @@ The [link asio.reference.ssl__stream_base `ssl::stream_base`] class is used as a
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__stream_base._stream_base [*~stream_base]]]
+    [[link asio.reference.ssl__stream_base._stream_base [*~stream_base]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -123787,7 +123787,7 @@ Verify the peer.
   ]
   
   [
-    [[link asio.reference.thread_pool.thread_pool [*thread_pool]]]
+    [[link asio.reference.thread_pool.thread_pool [*thread_pool]] [constructor]]
     [Constructs a pool with an automatically determined number of threads. 
      [hr]
      Constructs a pool with a specified number of threads. ]
@@ -123799,7 +123799,7 @@ Verify the peer.
   ]
   
   [
-    [[link asio.reference.thread_pool._thread_pool [*~thread_pool]]]
+    [[link asio.reference.thread_pool._thread_pool [*~thread_pool]] [destructor]]
     [Destructor. ]
   ]
   
@@ -123965,7 +123965,7 @@ Typedef for a timer based on the steady clock.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -124031,7 +124031,7 @@ Typedef for a timer based on the steady clock.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -124239,7 +124239,7 @@ Provides serialised function invocation for any executor type.
   ]
   
   [
-    [[link asio.reference.strand.strand [*strand]]]
+    [[link asio.reference.strand.strand [*strand]] [constructor]]
     [Default constructor. 
      [hr]
      Construct a strand for the specified executor. 
@@ -124254,7 +124254,7 @@ Provides serialised function invocation for any executor type.
   ]
   
   [
-    [[link asio.reference.strand._strand [*~strand]]]
+    [[link asio.reference.strand._strand [*~strand]] [destructor]]
     [Destructor. ]
   ]
   
@@ -124885,7 +124885,7 @@ Typedef for the typical usage of [link asio.reference.basic_streambuf `basic_str
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]]]
+    [[link asio.reference.basic_streambuf.basic_streambuf [*basic_streambuf]] [constructor]]
     [Construct a basic_streambuf object. ]
   ]
   
@@ -125096,7 +125096,7 @@ The executor context for the system executor.
   ]
   
   [
-    [[link asio.reference.system_context._system_context [*~system_context]]]
+    [[link asio.reference.system_context._system_context [*~system_context]] [destructor]]
     [Destructor shuts down all threads in the system thread pool. ]
   ]
   
@@ -125248,7 +125248,7 @@ The executor type associated with the context.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_system_executor.basic_system_executor [*basic_system_executor]]]
+    [[link asio.reference.basic_system_executor.basic_system_executor [*basic_system_executor]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -125799,7 +125799,7 @@ The [link asio.reference.system_error `system_error`] class is used to represent
   ]
   
   [
-    [[link asio.reference.system_error.system_error [*system_error]]]
+    [[link asio.reference.system_error.system_error [*system_error]] [constructor]]
     [Construct with an error code. 
      [hr]
      Construct with an error code and context. 
@@ -125813,7 +125813,7 @@ The [link asio.reference.system_error `system_error`] class is used to represent
   ]
   
   [
-    [[link asio.reference.system_error._system_error [*~system_error]]]
+    [[link asio.reference.system_error._system_error [*~system_error]] [destructor]]
     [Destructor. ]
   ]
   
@@ -125975,7 +125975,7 @@ An executor that uses arbitrary threads.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_system_executor.basic_system_executor [*basic_system_executor]]]
+    [[link asio.reference.basic_system_executor.basic_system_executor [*basic_system_executor]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -126150,7 +126150,7 @@ Typedef for a timer based on the system clock.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer.basic_waitable_timer [*basic_waitable_timer]] [constructor]]
     [Constructor. 
      [hr]
      Constructor to set a particular expiry time as an absolute time. 
@@ -126216,7 +126216,7 @@ Typedef for a timer based on the system clock.
   ]
   
   [
-    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]]]
+    [[link asio.reference.basic_waitable_timer._basic_waitable_timer [*~basic_waitable_timer]] [destructor]]
     [Destroys the timer. ]
   ]
   
@@ -126420,12 +126420,12 @@ A simple abstraction for starting threads.
   ]
   
   [
-    [[link asio.reference.thread.thread [*thread]]]
+    [[link asio.reference.thread.thread [*thread]] [constructor]]
     [Start a new thread that executes the supplied function. ]
   ]
   
   [
-    [[link asio.reference.thread._thread [*~thread]]]
+    [[link asio.reference.thread._thread [*~thread]] [destructor]]
     [Destructor. ]
   ]
   
@@ -126619,7 +126619,7 @@ A simple fixed-size thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool.thread_pool [*thread_pool]]]
+    [[link asio.reference.thread_pool.thread_pool [*thread_pool]] [constructor]]
     [Constructs a pool with an automatically determined number of threads. 
      [hr]
      Constructs a pool with a specified number of threads. ]
@@ -126631,7 +126631,7 @@ A simple fixed-size thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool._thread_pool [*~thread_pool]]]
+    [[link asio.reference.thread_pool._thread_pool [*~thread_pool]] [destructor]]
     [Destructor. ]
   ]
   
@@ -126865,7 +126865,7 @@ Executor used to submit functions to a thread pool.
   [[Name][Description]]
 
   [
-    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
     [Copy construtor. 
      [hr]
      Move construtor. ]
@@ -126977,7 +126977,7 @@ Executor used to submit functions to a thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
     [Destructor. ]
   ]
   
@@ -127291,7 +127291,7 @@ Scheduler used to schedule receivers on a thread pool.
   [[Name][Description]]
 
   [
-    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
     [Copy construtor. 
      [hr]
      Move construtor. ]
@@ -127403,7 +127403,7 @@ Scheduler used to schedule receivers on a thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
     [Destructor. ]
   ]
   
@@ -127816,7 +127816,7 @@ Executor implementation type used to submit functions to a thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
     [Destructor. ]
   ]
   
@@ -128933,7 +128933,7 @@ The sender type, when this type is used as a scheduler.
   [[Name][Description]]
 
   [
-    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
     [Copy construtor. 
      [hr]
      Move construtor. ]
@@ -129045,7 +129045,7 @@ The sender type, when this type is used as a scheduler.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type._basic_executor_type [*~basic_executor_type]] [destructor]]
     [Destructor. ]
   ]
   
@@ -129480,7 +129480,7 @@ A completion token that represents the currently executing coroutine.
   ]
   
   [
-    [[link asio.reference.use_awaitable_t.use_awaitable_t [*use_awaitable_t]]]
+    [[link asio.reference.use_awaitable_t.use_awaitable_t [*use_awaitable_t]] [constructor]]
     [Default constructor. 
      [hr]
      Constructor used to specify file name, line, and function name. ]
@@ -129657,7 +129657,7 @@ Specify `use_awaitable_t` as the default completion token type.
   ]
   
   [
-    [[link asio.reference.use_awaitable_t.use_awaitable_t [*use_awaitable_t]]]
+    [[link asio.reference.use_awaitable_t.use_awaitable_t [*use_awaitable_t]] [constructor]]
     [Default constructor. 
      [hr]
      Constructor used to specify file name, line, and function name. ]
@@ -129821,7 +129821,7 @@ Class used to specify that an asynchronous operation should return a future.
   ]
   
   [
-    [[link asio.reference.use_future_t.use_future_t [*use_future_t]]]
+    [[link asio.reference.use_future_t.use_future_t [*use_future_t]] [constructor]]
     [Construct using default-constructed allocator. 
      [hr]
      Construct using specified allocator. ]
@@ -130876,7 +130876,7 @@ An object handle is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]]]
+    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]] [constructor]]
     [Construct an object handle without opening it. 
      [hr]
      Construct an object handle on an existing native handle. 
@@ -131185,7 +131185,7 @@ The handle type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]]]
+    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]] [constructor]]
     [Construct an object handle without opening it. 
      [hr]
      Construct an object handle on an existing native handle. 
@@ -131369,7 +131369,7 @@ Provides Windows handle functionality for objects that support overlapped I/O.
   [[Name][Description]]
 
   [
-    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -132000,7 +132000,7 @@ An overlapped\_handle is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]] [constructor]]
     [Construct an overlapped handle without opening it. 
      [hr]
      Construct an overlapped handle on an existing native handle. 
@@ -132052,7 +132052,7 @@ An overlapped\_handle is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -132265,7 +132265,7 @@ The handle type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]] [constructor]]
     [Construct an overlapped handle without opening it. 
      [hr]
      Construct an overlapped handle on an existing native handle. 
@@ -132317,7 +132317,7 @@ The handle type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -133263,7 +133263,7 @@ An overlapped\_handle is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]] [constructor]]
     [Construct an overlapped handle without opening it. 
      [hr]
      Construct an overlapped handle on an existing native handle. 
@@ -133315,7 +133315,7 @@ An overlapped\_handle is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -133793,7 +133793,7 @@ The handle type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]]]
+    [[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]] [constructor]]
     [Construct a random-access handle without opening it. 
      [hr]
      Construct a random-access handle on an existing native handle. 
@@ -134785,7 +134785,7 @@ An overlapped\_handle is always the lowest layer.
   ]
   
   [
-    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]] [constructor]]
     [Construct an overlapped handle without opening it. 
      [hr]
      Construct an overlapped handle on an existing native handle. 
@@ -134837,7 +134837,7 @@ An overlapped\_handle is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -135299,7 +135299,7 @@ The handle type when rebound to the specified executor.
   ]
   
   [
-    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]]]
+    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]] [constructor]]
     [Construct a stream handle without opening it. 
      [hr]
      Construct a stream handle on an existing native handle. 
@@ -135452,7 +135452,7 @@ Typedef for the typical usage of an object handle.
   ]
   
   [
-    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]]]
+    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]] [constructor]]
     [Construct an object handle without opening it. 
      [hr]
      Construct an object handle on an existing native handle. 
@@ -135580,7 +135580,7 @@ Typedef for the typical usage of an overlapped handle.
   ]
   
   [
-    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]] [constructor]]
     [Construct an overlapped handle without opening it. 
      [hr]
      Construct an overlapped handle on an existing native handle. 
@@ -135632,7 +135632,7 @@ Typedef for the typical usage of an overlapped handle.
   [[Name][Description]]
 
   [
-    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle._basic_overlapped_handle [*~basic_overlapped_handle]] [destructor]]
     [Protected destructor to prevent deletion through this type. ]
   ]
   
@@ -135715,7 +135715,7 @@ Wraps a handler to create an OVERLAPPED object for use with overlapped I/O.
   ]
   
   [
-    [[link asio.reference.windows__overlapped_ptr._overlapped_ptr [*~overlapped_ptr]]]
+    [[link asio.reference.windows__overlapped_ptr._overlapped_ptr [*~overlapped_ptr]] [destructor]]
     [Destructor automatically frees the OVERLAPPED object unless released. ]
   ]
   
@@ -136065,7 +136065,7 @@ Typedef for the typical usage of a random-access handle.
   ]
   
   [
-    [[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]]]
+    [[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]] [constructor]]
     [Construct a random-access handle without opening it. 
      [hr]
      Construct a random-access handle on an existing native handle. 
@@ -136219,7 +136219,7 @@ Typedef for the typical usage of a stream-oriented handle.
   ]
   
   [
-    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]]]
+    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]] [constructor]]
     [Construct a stream handle without opening it. 
      [hr]
      Construct a stream handle on an existing native handle. 
@@ -138364,7 +138364,7 @@ Context object that represents the currently executing coroutine.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]]]
+    [[link asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]] [constructor]]
     [Construct a yield context to represent the specified coroutine. 
      [hr]
      Construct a yield context from another yield context type. ]
