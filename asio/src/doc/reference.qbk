@@ -66724,7 +66724,7 @@ The [link asio.reference.execution__blocking_t__always_t `execution::blocking_t:
 The [link asio.reference.execution__blocking_t__always_t `execution::blocking_t::always_t`] property can be preferred. 
 
 
-  static constexpr bool is_preferable = true;
+  static constexpr bool is_preferable = false;
 
 
 

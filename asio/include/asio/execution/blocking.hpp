@@ -102,7 +102,7 @@ struct blocking_t
     static constexpr bool is_requirable = true;
 
     /// The blocking_t::always_t property can be preferred.
-    static constexpr bool is_preferable = true;
+    static constexpr bool is_preferable = false;
 
     /// The type returned by queries against an @c any_executor.
     typedef blocking_t polymorphic_query_result_type;
@@ -654,7 +654,7 @@ struct always_t
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_preferable = false);
   typedef blocking_t<I> polymorphic_query_result_type;
 
   ASIO_CONSTEXPR always_t()
