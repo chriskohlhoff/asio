@@ -41,9 +41,9 @@ namespace execution {
  * @li <tt>S.bulk_execute(F, N)</tt>, if that expression is valid. If the
  *   function selected does not execute <tt>N</tt> invocations of the function
  *   object <tt>F</tt> on the executor <tt>S</tt> in bulk with forward progress
- *   guarantee <tt>std::query(S, execution::bulk_guarantee)</tt>, and the result
- *   of that function does not model <tt>sender<void></tt>, the program is
- *   ill-formed with no diagnostic required.
+ *   guarantee <tt>asio::query(S, execution::bulk_guarantee)</tt>, and
+ *   the result of that function does not model <tt>sender<void></tt>, the
+ *   program is ill-formed with no diagnostic required.
  *
  * @li Otherwise, <tt>bulk_execute(S, F, N)</tt>, if that expression is valid,
  *   with overload resolution performed in a context that includes the
@@ -51,13 +51,14 @@ namespace execution {
  *   declaration of <tt>execution::bulk_execute</tt>. If the function selected
  *   by overload resolution does not execute <tt>N</tt> invocations of the
  *   function object <tt>F</tt> on the executor <tt>S</tt> in bulk with forward
- *   progress guarantee <tt>std::query(E, execution::bulk_guarantee)</tt>, and
- *   the result of that function does not model <tt>sender<void></tt>, the
- *   program is ill-formed with no diagnostic required.
+ *   progress guarantee <tt>asio::query(E,
+ *   execution::bulk_guarantee)</tt>, and the result of that function does not
+ *   model <tt>sender<void></tt>, the program is ill-formed with no diagnostic
+ *   required.
  *
  * @li Otherwise, if the types <tt>F</tt> and
  *   <tt>executor_index_t<remove_cvref_t<S>></tt> model <tt>invocable</tt> and
- *   if <tt>std::query(S, execution::bulk_guarantee)</tt> equals
+ *   if <tt>asio::query(S, execution::bulk_guarantee)</tt> equals
  *   <tt>execution::bulk_guarantee.unsequenced</tt>, then
  *
  *    - Evaluates <tt>DECAY_COPY(std::forward<decltype(F)>(F))</tt> on the
