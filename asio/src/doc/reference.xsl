@@ -950,7 +950,8 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$escaped-name"/><xsl:text>]]]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$escaped-name"/><xsl:text>]]</xsl:text>
+      <xsl:if test="@static='yes'"> [static]</xsl:if><xsl:text>]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -1000,7 +1001,8 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]</xsl:text>
+      <xsl:if test="@static='yes'"> [static]</xsl:if><xsl:text>]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -1051,7 +1053,8 @@
   <xsl:if test="$overload-position = 1">
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="$id"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="$name"/><xsl:text>]]</xsl:text>
+      <xsl:if test="@static='yes'"> [static]</xsl:if><xsl:text>]
     [</xsl:text><xsl:value-of select="briefdescription"/>
   </xsl:if>
   <xsl:if test="not($overload-position = 1) and not(briefdescription = preceding-sibling::*/briefdescription)">
@@ -1079,7 +1082,8 @@
   <xsl:sort select="name"/>
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/><xsl:text>]]</xsl:text>
+      <xsl:if test="@static='yes'"> [static]</xsl:if>]
     [<xsl:value-of select="briefdescription"/>]
   ]
 </xsl:for-each>
@@ -1094,7 +1098,8 @@
   <xsl:sort select="name"/>
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
-      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/>]]]
+      <xsl:text> </xsl:text>[*<xsl:value-of select="name"/><xsl:text>]]</xsl:text>
+      <xsl:if test="@static='yes'"> [static]</xsl:if>]
     [<xsl:value-of select="briefdescription"/>]
   ]
 </xsl:for-each>

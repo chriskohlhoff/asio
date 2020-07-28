@@ -25,6 +25,7 @@
 [template indexterm2[id term1 term2] '''<indexterm id="'''[id]'''"><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 [template inline_note[text] \[['Note:] [text] '''&mdash;'''['end note]\] ]
 [template ticket[number]'''<ulink url="https://svn.boost.org/trac/boost/ticket/'''[number]'''">'''#[number]'''</ulink>''']
+[template static[] '''<phrase role="silver">'''\[static\]'''</phrase>''']
 [def __POSIX__ /POSIX/]
 [def __Windows__ /Windows/]
 [def __accept__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/accept.html `accept()`]]

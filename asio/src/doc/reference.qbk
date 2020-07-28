@@ -460,7 +460,7 @@ Traits type used to obtain the allocator associated with an object.
   [[Name][Description]]
 
   [
-    [[link asio.reference.associated_allocator.get [*get]]]
+    [[link asio.reference.associated_allocator.get [*get]] [static]]
     [If T has a nested type allocator_type, returns t.get_allocator(). Otherwise returns a. ]
   ]
   
@@ -557,7 +557,7 @@ Traits type used to obtain the executor associated with an object.
   [[Name][Description]]
 
   [
-    [[link asio.reference.associated_executor.get [*get]]]
+    [[link asio.reference.associated_executor.get [*get]] [static]]
     [If T has a nested type executor_type, returns t.get_executor(). Otherwise returns ex. ]
   ]
   
@@ -758,7 +758,7 @@ The real handler type to be used for the asynchronous operation.
   ]
   
   [
-    [[link asio.reference.async_result.initiate [*initiate]]]
+    [[link asio.reference.async_result.initiate [*initiate]] [static]]
     [Initiate the asynchronous operation that will produce the result, and obtain the value to be returned from the initiating function. ]
   ]
   
@@ -4278,7 +4278,7 @@ An interface for customising the behaviour of an initiating function.
   ]
   
   [
-    [[link asio.reference.async_result.initiate [*initiate]]]
+    [[link asio.reference.async_result.initiate [*initiate]] [static]]
     [Initiate the asynchronous operation that will produce the result, and obtain the value to be returned from the initiating function. ]
   ]
   
@@ -6191,32 +6191,32 @@ Provides datagram-oriented socket functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -9375,32 +9375,32 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -12493,32 +12493,32 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -14941,32 +14941,32 @@ Provides raw-oriented socket functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -18125,32 +18125,32 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -21243,32 +21243,32 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -21669,32 +21669,32 @@ Provides sequenced packet socket functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_seq_packet_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_seq_packet_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_seq_packet_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_seq_packet_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -24522,32 +24522,32 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -27201,32 +27201,32 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_seq_packet_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_seq_packet_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_seq_packet_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_seq_packet_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -30889,32 +30889,32 @@ Provides socket functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -33461,32 +33461,32 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -35726,32 +35726,32 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -36103,32 +36103,32 @@ Provides the ability to accept new connections.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -41399,32 +41399,32 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -43372,32 +43372,32 @@ Provides stream-oriented socket functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -46427,32 +46427,32 @@ A [link asio.reference.basic_socket `basic_socket`] is always the lowest layer.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -49443,32 +49443,32 @@ The socket type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -50634,7 +50634,7 @@ An executor that uses arbitrary threads.
   ]
   
   [
-    [[link asio.reference.basic_system_executor.query__static [*query]]]
+    [[link asio.reference.basic_system_executor.query__static [*query]] [static]]
     [Query the current value of the mapping property. 
      [hr]
      Query the current value of the context property. 
@@ -55651,7 +55651,7 @@ Adds buffering to the read-related operations of a stream.
   [[Name][Description]]
 
   [
-    [[link asio.reference.buffered_read_stream.default_buffer_size [*default_buffer_size]]]
+    [[link asio.reference.buffered_read_stream.default_buffer_size [*default_buffer_size]] [static]]
     [The default buffer size. ]
   ]
 
@@ -57165,7 +57165,7 @@ Adds buffering to the write-related operations of a stream.
   [[Name][Description]]
 
   [
-    [[link asio.reference.buffered_write_stream.default_buffer_size [*default_buffer_size]]]
+    [[link asio.reference.buffered_write_stream.default_buffer_size [*default_buffer_size]] [static]]
     [The default buffer size. ]
   ]
 
@@ -57874,7 +57874,7 @@ A random access iterator over the bytes in a buffer sequence.
   [[Name][Description]]
 
   [
-    [[link asio.reference.buffers_iterator.begin [*begin]]]
+    [[link asio.reference.buffers_iterator.begin [*begin]] [static]]
     [Construct an iterator representing the beginning of the buffers' data. ]
   ]
   
@@ -57884,7 +57884,7 @@ A random access iterator over the bytes in a buffer sequence.
   ]
   
   [
-    [[link asio.reference.buffers_iterator.end [*end]]]
+    [[link asio.reference.buffers_iterator.end [*end]] [static]]
     [Construct an iterator representing the end of the buffers' data. ]
   ]
   
@@ -61790,7 +61790,7 @@ Class used to specify that an asynchronous operation is detached.
   [[Name][Description]]
 
   [
-    [[link asio.reference.detached_t.as_default_on [*as_default_on]]]
+    [[link asio.reference.detached_t.as_default_on [*as_default_on]] [static]]
     [Function helper to adapt an I/O object to use detached_t as its default completion token type. ]
   ]
   
@@ -61921,7 +61921,7 @@ Specify `detached_t` as the default completion token type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.detached_t.as_default_on [*as_default_on]]]
+    [[link asio.reference.detached_t.as_default_on [*as_default_on]] [static]]
     [Function helper to adapt an I/O object to use detached_t as its default completion token type. ]
   ]
   
@@ -64553,7 +64553,7 @@ Class to represent an error code value.
   ]
   
   [
-    [[link asio.reference.error_code.unspecified_bool_true [*unspecified_bool_true]]]
+    [[link asio.reference.error_code.unspecified_bool_true [*unspecified_bool_true]] [static]]
     []
   ]
   
@@ -64910,17 +64910,17 @@ A property to describe which allocator an executor will use to allocate the memo
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__allocator_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__allocator_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The allocator_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__allocator_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__allocator_t.is_preferable [*is_preferable]] [static]]
     [The allocator_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__allocator_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__allocator_t.is_requirable [*is_requirable]] [static]]
     [The allocator_t property can be required. ]
   ]
 
@@ -65914,27 +65914,27 @@ A property to describe whether automatic adaptation of an executor is allowed in
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t.allowed [*allowed]]]
+    [[link asio.reference.execution__blocking_adaptation_t.allowed [*allowed]] [static]]
     [A special value used for accessing the blocking_adaptation_t::allowed_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t.disallowed [*disallowed]]]
+    [[link asio.reference.execution__blocking_adaptation_t.disallowed [*disallowed]] [static]]
     [A special value used for accessing the blocking_adaptation_t::disallowed_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_adaptation_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_adaptation_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_adaptation_t.is_preferable [*is_preferable]] [static]]
     [The top-level blocking_adaptation_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_adaptation_t.is_requirable [*is_requirable]] [static]]
     [The top-level blocking_adaptation_t property cannot be required. ]
   ]
 
@@ -66201,7 +66201,7 @@ A sub-property that indicates that automatic adaptation is allowed.
   ]
   
   [
-    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.value [*value]]]
+    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -66212,17 +66212,17 @@ A sub-property that indicates that automatic adaptation is allowed.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_adaptation_t::allowed_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_preferable [*is_preferable]] [static]]
     [The blocking_adaptation_t::allowed_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.is_requirable [*is_requirable]] [static]]
     [The blocking_adaptation_t::allowed_t property can be required. ]
   ]
 
@@ -66369,7 +66369,7 @@ A sub-property that indicates that automatic adaptation is not allowed.
   ]
   
   [
-    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.value [*value]]]
+    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -66380,17 +66380,17 @@ A sub-property that indicates that automatic adaptation is not allowed.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_adaptation_t::disallowed_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_preferable [*is_preferable]] [static]]
     [The blocking_adaptation_t::disallowed_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.is_requirable [*is_requirable]] [static]]
     [The blocking_adaptation_t::disallowed_t property can be required. ]
   ]
 
@@ -66566,32 +66566,32 @@ A property to describe what guarantees an executor makes about the blocking beha
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t.always [*always]]]
+    [[link asio.reference.execution__blocking_t.always [*always]] [static]]
     [A special value used for accessing the blocking_t::always_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_t.is_preferable [*is_preferable]] [static]]
     [The top-level blocking_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_t.is_requirable [*is_requirable]] [static]]
     [The top-level blocking_t property cannot be required. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t.never [*never]]]
+    [[link asio.reference.execution__blocking_t.never [*never]] [static]]
     [A special value used for accessing the blocking_t::never_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t.possibly [*possibly]]]
+    [[link asio.reference.execution__blocking_t.possibly [*possibly]] [static]]
     [A special value used for accessing the blocking_t::possibly_t property. ]
   ]
 
@@ -66891,7 +66891,7 @@ A sub-property that indicates that invocation of an executor's execution functio
   ]
   
   [
-    [[link asio.reference.execution__blocking_t__always_t.value [*value]]]
+    [[link asio.reference.execution__blocking_t__always_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -66902,17 +66902,17 @@ A sub-property that indicates that invocation of an executor's execution functio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t__always_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_t__always_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_t::always_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t__always_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_t__always_t.is_preferable [*is_preferable]] [static]]
     [The blocking_t::always_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t__always_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_t__always_t.is_requirable [*is_requirable]] [static]]
     [The blocking_t::always_t property can be required. ]
   ]
 
@@ -67059,7 +67059,7 @@ A sub-property that indicates that invocation of an executor's execution functio
   ]
   
   [
-    [[link asio.reference.execution__blocking_t__never_t.value [*value]]]
+    [[link asio.reference.execution__blocking_t__never_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -67070,17 +67070,17 @@ A sub-property that indicates that invocation of an executor's execution functio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t__never_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_t__never_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_t::never_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t__never_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_t__never_t.is_preferable [*is_preferable]] [static]]
     [The blocking_t::never_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t__never_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_t__never_t.is_requirable [*is_requirable]] [static]]
     [The blocking_t::never_t property can be required. ]
   ]
 
@@ -67227,7 +67227,7 @@ A sub-property that indicates that invocation of an executor's execution functio
   ]
   
   [
-    [[link asio.reference.execution__blocking_t__possibly_t.value [*value]]]
+    [[link asio.reference.execution__blocking_t__possibly_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -67238,17 +67238,17 @@ A sub-property that indicates that invocation of an executor's execution functio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t__possibly_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__blocking_t__possibly_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The blocking_t::possibly_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t__possibly_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__blocking_t__possibly_t.is_preferable [*is_preferable]] [static]]
     [The blocking_t::possibly_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__blocking_t__possibly_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__blocking_t__possibly_t.is_requirable [*is_requirable]] [static]]
     [The blocking_t::possibly_t property can be required. ]
   ]
 
@@ -67500,32 +67500,32 @@ A property to communicate the forward progress and ordering guarantees of execut
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__bulk_guarantee_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The bulk_guarantee_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__bulk_guarantee_t.is_preferable [*is_preferable]] [static]]
     [The top-level bulk_guarantee_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__bulk_guarantee_t.is_requirable [*is_requirable]] [static]]
     [The top-level bulk_guarantee_t property cannot be required. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.parallel [*parallel]]]
+    [[link asio.reference.execution__bulk_guarantee_t.parallel [*parallel]] [static]]
     [A special value used for accessing the bulk_guarantee_t::parallel_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.sequenced [*sequenced]]]
+    [[link asio.reference.execution__bulk_guarantee_t.sequenced [*sequenced]] [static]]
     [A special value used for accessing the bulk_guarantee_t::sequenced_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.unsequenced [*unsequenced]]]
+    [[link asio.reference.execution__bulk_guarantee_t.unsequenced [*unsequenced]] [static]]
     [A special value used for accessing the bulk_guarantee_t::unsequenced_t property. ]
   ]
 
@@ -67825,7 +67825,7 @@ A sub-property that indicates that execution agents within the same bulk executi
   ]
   
   [
-    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.value [*value]]]
+    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -67836,17 +67836,17 @@ A sub-property that indicates that execution agents within the same bulk executi
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The bulk_guarantee_t::parallel_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_preferable [*is_preferable]] [static]]
     [The bulk_guarantee_t::parallel_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.is_requirable [*is_requirable]] [static]]
     [The bulk_guarantee_t::parallel_t property can be required. ]
   ]
 
@@ -67993,7 +67993,7 @@ A sub-property that indicates that execution agents within the same bulk executi
   ]
   
   [
-    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.value [*value]]]
+    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -68004,17 +68004,17 @@ A sub-property that indicates that execution agents within the same bulk executi
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The bulk_guarantee_t::sequenced_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_preferable [*is_preferable]] [static]]
     [The bulk_guarantee_t::sequenced_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.is_requirable [*is_requirable]] [static]]
     [The bulk_guarantee_t::sequenced_t property can be required. ]
   ]
 
@@ -68161,7 +68161,7 @@ A sub-property that indicates that execution agents within the same bulk executi
   ]
   
   [
-    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.value [*value]]]
+    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -68172,17 +68172,17 @@ A sub-property that indicates that execution agents within the same bulk executi
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The bulk_guarantee_t::unsequenced_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_preferable [*is_preferable]] [static]]
     [The bulk_guarantee_t::unsequenced_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.is_requirable [*is_requirable]] [static]]
     [The bulk_guarantee_t::unsequenced_t property can be required. ]
   ]
 
@@ -68705,17 +68705,17 @@ A property that is used to obtain the execution context that is associated with 
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__context_as_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__context_as_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The context_as_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__context_as_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__context_as_t.is_preferable [*is_preferable]] [static]]
     [The context_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__context_as_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__context_as_t.is_requirable [*is_requirable]] [static]]
     [The context_t property cannot be required. ]
   ]
 
@@ -68822,17 +68822,17 @@ A property that is used to obtain the execution context that is associated with 
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__context_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__context_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The context_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__context_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__context_t.is_preferable [*is_preferable]] [static]]
     [The context_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__context_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__context_t.is_requirable [*is_requirable]] [static]]
     [The context_t property cannot be required. ]
   ]
 
@@ -69408,32 +69408,32 @@ A property to describe what guarantees an executor makes about the mapping of ex
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__mapping_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The mapping_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__mapping_t.is_preferable [*is_preferable]] [static]]
     [The top-level mapping_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__mapping_t.is_requirable [*is_requirable]] [static]]
     [The top-level mapping_t property cannot be required. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t.new_thread [*new_thread]]]
+    [[link asio.reference.execution__mapping_t.new_thread [*new_thread]] [static]]
     [A special value used for accessing the mapping_t::new_thread_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t.other [*other]]]
+    [[link asio.reference.execution__mapping_t.other [*other]] [static]]
     [A special value used for accessing the mapping_t::other_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t.thread [*thread]]]
+    [[link asio.reference.execution__mapping_t.thread [*thread]] [static]]
     [A special value used for accessing the mapping_t::thread_t property. ]
   ]
 
@@ -69733,7 +69733,7 @@ A sub-property that indicates that execution agents are mapped on to new threads
   ]
   
   [
-    [[link asio.reference.execution__mapping_t__new_thread_t.value [*value]]]
+    [[link asio.reference.execution__mapping_t__new_thread_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -69744,17 +69744,17 @@ A sub-property that indicates that execution agents are mapped on to new threads
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t__new_thread_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__mapping_t__new_thread_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The mapping_t::new_thread_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t__new_thread_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__mapping_t__new_thread_t.is_preferable [*is_preferable]] [static]]
     [The mapping_t::new_thread_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t__new_thread_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__mapping_t__new_thread_t.is_requirable [*is_requirable]] [static]]
     [The mapping_t::new_thread_t property can be required. ]
   ]
 
@@ -69901,7 +69901,7 @@ A sub-property that indicates that the mapping of execution agents is implementa
   ]
   
   [
-    [[link asio.reference.execution__mapping_t__other_t.value [*value]]]
+    [[link asio.reference.execution__mapping_t__other_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -69912,17 +69912,17 @@ A sub-property that indicates that the mapping of execution agents is implementa
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t__other_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__mapping_t__other_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The mapping_t::other_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t__other_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__mapping_t__other_t.is_preferable [*is_preferable]] [static]]
     [The mapping_t::other_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t__other_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__mapping_t__other_t.is_requirable [*is_requirable]] [static]]
     [The mapping_t::other_t property can be required. ]
   ]
 
@@ -70069,7 +70069,7 @@ A sub-property that indicates that execution agents are mapped on to threads of 
   ]
   
   [
-    [[link asio.reference.execution__mapping_t__thread_t.value [*value]]]
+    [[link asio.reference.execution__mapping_t__thread_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -70080,17 +70080,17 @@ A sub-property that indicates that execution agents are mapped on to threads of 
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t__thread_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__mapping_t__thread_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The mapping_t::thread_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t__thread_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__mapping_t__thread_t.is_preferable [*is_preferable]] [static]]
     [The mapping_t::thread_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__mapping_t__thread_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__mapping_t__thread_t.is_requirable [*is_requirable]] [static]]
     [The mapping_t::thread_t property can be required. ]
   ]
 
@@ -70252,17 +70252,17 @@ A property that gives an estimate of the number of execution agents that should 
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__occupancy_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__occupancy_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The occupancy_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__occupancy_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__occupancy_t.is_preferable [*is_preferable]] [static]]
     [The occupancy_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__occupancy_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__occupancy_t.is_requirable [*is_requirable]] [static]]
     [The occupancy_t property cannot be required. ]
   ]
 
@@ -70416,27 +70416,27 @@ A property to describe whether task submission is likely in the future.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__outstanding_work_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__outstanding_work_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The outstanding_work_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__outstanding_work_t.is_preferable [*is_preferable]] [static]]
     [The top-level outstanding_work_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__outstanding_work_t.is_requirable [*is_requirable]] [static]]
     [The top-level outstanding_work_t property cannot be required. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t.tracked [*tracked]]]
+    [[link asio.reference.execution__outstanding_work_t.tracked [*tracked]] [static]]
     [A special value used for accessing the outstanding_work_t::tracked_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t.untracked [*untracked]]]
+    [[link asio.reference.execution__outstanding_work_t.untracked [*untracked]] [static]]
     [A special value used for accessing the outstanding_work_t::untracked_t property. ]
   ]
 
@@ -70703,7 +70703,7 @@ A sub-property that indicates that the executor represents likely future submiss
   ]
   
   [
-    [[link asio.reference.execution__outstanding_work_t__tracked_t.value [*value]]]
+    [[link asio.reference.execution__outstanding_work_t__tracked_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -70714,17 +70714,17 @@ A sub-property that indicates that the executor represents likely future submiss
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__tracked_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__outstanding_work_t__tracked_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The outstanding_work_t::untracked_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__tracked_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__outstanding_work_t__tracked_t.is_preferable [*is_preferable]] [static]]
     [The outstanding_work_t::tracked_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__tracked_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__outstanding_work_t__tracked_t.is_requirable [*is_requirable]] [static]]
     [The outstanding_work_t::tracked_t property can be required. ]
   ]
 
@@ -70871,7 +70871,7 @@ A sub-property that indicates that the executor does not represent likely future
   ]
   
   [
-    [[link asio.reference.execution__outstanding_work_t__untracked_t.value [*value]]]
+    [[link asio.reference.execution__outstanding_work_t__untracked_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -70882,17 +70882,17 @@ A sub-property that indicates that the executor does not represent likely future
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__untracked_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__outstanding_work_t__untracked_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The outstanding_work_t::untracked_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__untracked_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__outstanding_work_t__untracked_t.is_preferable [*is_preferable]] [static]]
     [The outstanding_work_t::untracked_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__untracked_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__outstanding_work_t__untracked_t.is_requirable [*is_requirable]] [static]]
     [The outstanding_work_t::untracked_t property can be required. ]
   ]
 
@@ -71036,17 +71036,17 @@ A property adapter that is used with the polymorphic executor wrapper to mark pr
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__prefer_only.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__prefer_only.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The prefer_only adapter applies to the same types as the nested property. ]
   ]
 
   [
-    [[link asio.reference.execution__prefer_only.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__prefer_only.is_preferable [*is_preferable]] [static]]
     [The context_t property can be preferred, it the underlying property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__prefer_only.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__prefer_only.is_requirable [*is_requirable]] [static]]
     [The context_t property cannot be required. ]
   ]
 
@@ -71244,27 +71244,27 @@ A property to describe whether submitted tasks represent continuations of the ca
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__relationship_t.continuation [*continuation]]]
+    [[link asio.reference.execution__relationship_t.continuation [*continuation]] [static]]
     [A special value used for accessing the relationship_t::continuation_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t.fork [*fork]]]
+    [[link asio.reference.execution__relationship_t.fork [*fork]] [static]]
     [A special value used for accessing the relationship_t::fork_t property. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__relationship_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The relationship_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__relationship_t.is_preferable [*is_preferable]] [static]]
     [The top-level relationship_t property cannot be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__relationship_t.is_requirable [*is_requirable]] [static]]
     [The top-level relationship_t property cannot be required. ]
   ]
 
@@ -71531,7 +71531,7 @@ A sub-property that indicates that the executor represents a continuation of the
   ]
   
   [
-    [[link asio.reference.execution__relationship_t__continuation_t.value [*value]]]
+    [[link asio.reference.execution__relationship_t__continuation_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -71542,17 +71542,17 @@ A sub-property that indicates that the executor represents a continuation of the
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__relationship_t__continuation_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__relationship_t__continuation_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The relationship_t::continuation_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t__continuation_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__relationship_t__continuation_t.is_preferable [*is_preferable]] [static]]
     [The relationship_t::continuation_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t__continuation_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__relationship_t__continuation_t.is_requirable [*is_requirable]] [static]]
     [The relationship_t::continuation_t property can be required. ]
   ]
 
@@ -71699,7 +71699,7 @@ A sub-property that indicates that the executor does not represent a continuatio
   ]
   
   [
-    [[link asio.reference.execution__relationship_t__fork_t.value [*value]]]
+    [[link asio.reference.execution__relationship_t__fork_t.value [*value]] [static]]
     [Get the value associated with a property object. ]
   ]
   
@@ -71710,17 +71710,17 @@ A sub-property that indicates that the executor does not represent a continuatio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__relationship_t__fork_t.is_applicable_property_v [*is_applicable_property_v]]]
+    [[link asio.reference.execution__relationship_t__fork_t.is_applicable_property_v [*is_applicable_property_v]] [static]]
     [The relationship_t::fork_t property applies to executors, senders, and schedulers. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t__fork_t.is_preferable [*is_preferable]]]
+    [[link asio.reference.execution__relationship_t__fork_t.is_preferable [*is_preferable]] [static]]
     [The relationship_t::fork_t property can be preferred. ]
   ]
 
   [
-    [[link asio.reference.execution__relationship_t__fork_t.is_requirable [*is_requirable]]]
+    [[link asio.reference.execution__relationship_t__fork_t.is_requirable [*is_requirable]] [static]]
     [The relationship_t::fork_t property can be required. ]
   ]
 
@@ -72987,7 +72987,7 @@ Polymorphic wrapper for executors.
   ]
   
   [
-    [[link asio.reference.executor.unspecified_bool_true [*unspecified_bool_true]]]
+    [[link asio.reference.executor.unspecified_bool_true [*unspecified_bool_true]] [static]]
     []
   ]
   
@@ -75896,32 +75896,32 @@ The generic socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -76738,32 +76738,32 @@ The generic socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -77557,32 +77557,32 @@ The generic socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_seq_packet_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_seq_packet_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_seq_packet_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_seq_packet_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_seq_packet_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_seq_packet_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_seq_packet_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -78487,32 +78487,32 @@ The generic socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -79734,7 +79734,7 @@ Executor used to submit functions to an [link asio.reference.io_context `io_cont
   ]
   
   [
-    [[link asio.reference.io_context__basic_executor_type.query__static [*query]]]
+    [[link asio.reference.io_context__basic_executor_type.query__static [*query]] [static]]
     [Query the current value of the mapping property. 
      [hr]
      Query the current value of the outstanding_work property. ]
@@ -80964,7 +80964,7 @@ Executor implementation type used to submit functions to an [link asio.reference
   ]
   
   [
-    [[link asio.reference.io_context__basic_executor_type.query__static [*query]]]
+    [[link asio.reference.io_context__basic_executor_type.query__static [*query]] [static]]
     [Query the current value of the mapping property. 
      [hr]
      Query the current value of the outstanding_work property. ]
@@ -83192,7 +83192,7 @@ Implements version-independent IP addresses.
   ]
   
   [
-    [[link asio.reference.ip__address.from_string [*from_string]]]
+    [[link asio.reference.ip__address.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address().) Create an address from an IPv4 address string in dotted decimal form, or from an IPv6 address in hexadecimal notation. ]
   ]
   
@@ -84067,19 +84067,19 @@ Implements IP version 4 style addresses.
   ]
   
   [
-    [[link asio.reference.ip__address_v4.any [*any]]]
+    [[link asio.reference.ip__address_v4.any [*any]] [static]]
     [Obtain an address object that represents any address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.broadcast [*broadcast]]]
+    [[link asio.reference.ip__address_v4.broadcast [*broadcast]] [static]]
     [Obtain an address object that represents the broadcast address. 
      [hr]
      (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.from_string [*from_string]]]
+    [[link asio.reference.ip__address_v4.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
   ]
   
@@ -84114,12 +84114,12 @@ Implements IP version 4 style addresses.
   ]
   
   [
-    [[link asio.reference.ip__address_v4.loopback [*loopback]]]
+    [[link asio.reference.ip__address_v4.loopback [*loopback]] [static]]
     [Obtain an address object that represents the loopback address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.netmask [*netmask]]]
+    [[link asio.reference.ip__address_v4.netmask [*netmask]] [static]]
     [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
   ]
   
@@ -85500,12 +85500,12 @@ Implements IP version 6 style addresses.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.any [*any]]]
+    [[link asio.reference.ip__address_v6.any [*any]] [static]]
     [Obtain an address object that represents any address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.from_string [*from_string]]]
+    [[link asio.reference.ip__address_v6.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
   ]
   
@@ -85570,7 +85570,7 @@ Implements IP version 6 style addresses.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.loopback [*loopback]]]
+    [[link asio.reference.ip__address_v6.loopback [*loopback]] [static]]
     [Obtain an address object that represents the loopback address. ]
   ]
   
@@ -85602,12 +85602,12 @@ Implements IP version 6 style addresses.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
+    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]] [static]]
     [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]] [static]]
     [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
   ]
   
@@ -87453,19 +87453,19 @@ The type of a reference to an element pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v4.any [*any]]]
+    [[link asio.reference.ip__address_v4.any [*any]] [static]]
     [Obtain an address object that represents any address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.broadcast [*broadcast]]]
+    [[link asio.reference.ip__address_v4.broadcast [*broadcast]] [static]]
     [Obtain an address object that represents the broadcast address. 
      [hr]
      (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.from_string [*from_string]]]
+    [[link asio.reference.ip__address_v4.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
   ]
   
@@ -87500,12 +87500,12 @@ The type of a reference to an element pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v4.loopback [*loopback]]]
+    [[link asio.reference.ip__address_v4.loopback [*loopback]] [static]]
     [Obtain an address object that represents the loopback address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.netmask [*netmask]]]
+    [[link asio.reference.ip__address_v4.netmask [*netmask]] [static]]
     [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
   ]
   
@@ -87673,19 +87673,19 @@ The type of the elements pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v4.any [*any]]]
+    [[link asio.reference.ip__address_v4.any [*any]] [static]]
     [Obtain an address object that represents any address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.broadcast [*broadcast]]]
+    [[link asio.reference.ip__address_v4.broadcast [*broadcast]] [static]]
     [Obtain an address object that represents the broadcast address. 
      [hr]
      (Deprecated: Use network_v4 class.) Obtain an address object that represents the broadcast address that corresponds to the specified address and netmask. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.from_string [*from_string]]]
+    [[link asio.reference.ip__address_v4.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address_v4().) Create an address from an IP address string in dotted decimal form. ]
   ]
   
@@ -87720,12 +87720,12 @@ The type of the elements pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v4.loopback [*loopback]]]
+    [[link asio.reference.ip__address_v4.loopback [*loopback]] [static]]
     [Obtain an address object that represents the loopback address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v4.netmask [*netmask]]]
+    [[link asio.reference.ip__address_v4.netmask [*netmask]] [static]]
     [(Deprecated: Use network_v4 class.) Obtain the netmask that corresponds to the address, based on its address class. ]
   ]
   
@@ -88309,12 +88309,12 @@ The type of a reference to an element pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.any [*any]]]
+    [[link asio.reference.ip__address_v6.any [*any]] [static]]
     [Obtain an address object that represents any address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.from_string [*from_string]]]
+    [[link asio.reference.ip__address_v6.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
   ]
   
@@ -88379,7 +88379,7 @@ The type of a reference to an element pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.loopback [*loopback]]]
+    [[link asio.reference.ip__address_v6.loopback [*loopback]] [static]]
     [Obtain an address object that represents the loopback address. ]
   ]
   
@@ -88411,12 +88411,12 @@ The type of a reference to an element pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
+    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]] [static]]
     [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]] [static]]
     [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
   ]
   
@@ -88546,12 +88546,12 @@ The type of the elements pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.any [*any]]]
+    [[link asio.reference.ip__address_v6.any [*any]] [static]]
     [Obtain an address object that represents any address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.from_string [*from_string]]]
+    [[link asio.reference.ip__address_v6.from_string [*from_string]] [static]]
     [(Deprecated: Use make_address_v6().) Create an IPv6 address from an IP address string. ]
   ]
   
@@ -88616,7 +88616,7 @@ The type of the elements pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.loopback [*loopback]]]
+    [[link asio.reference.ip__address_v6.loopback [*loopback]] [static]]
     [Obtain an address object that represents the loopback address. ]
   ]
   
@@ -88648,12 +88648,12 @@ The type of the elements pointed to by the iterator.
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]]]
+    [[link asio.reference.ip__address_v6.v4_compatible [*v4_compatible]] [static]]
     [(Deprecated: No replacement.) Create an IPv4-compatible IPv6 address. ]
   ]
   
   [
-    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__address_v6.v4_mapped [*v4_mapped]] [static]]
     [(Deprecated: Use make_address_v6().) Create an IPv4-mapped IPv6 address. ]
   ]
   
@@ -90373,37 +90373,37 @@ Provides endpoint resolution functionality.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -91408,37 +91408,37 @@ The protocol type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver_query.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver_query.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver_query.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver_query.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver_query.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver_query.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver_query.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -92581,37 +92581,37 @@ The resolver type when rebound to the specified executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -93719,37 +93719,37 @@ An query to be passed to a resolver.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver_query.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver_query.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver_query.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver_query.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver_query.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver_query.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver_query.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -95808,12 +95808,12 @@ Encapsulates the flags needed for ICMP.
   ]
   
   [
-    [[link asio.reference.ip__icmp.v4 [*v4]]]
+    [[link asio.reference.ip__icmp.v4 [*v4]] [static]]
     [Construct to represent the IPv4 ICMP protocol. ]
   ]
   
   [
-    [[link asio.reference.ip__icmp.v6 [*v6]]]
+    [[link asio.reference.ip__icmp.v6 [*v6]] [static]]
     [Construct to represent the IPv6 ICMP protocol. ]
   ]
   
@@ -96220,37 +96220,37 @@ The ICMP resolver type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -96652,32 +96652,32 @@ The ICMP socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_raw_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_raw_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_raw_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_raw_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_raw_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_raw_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -98127,37 +98127,37 @@ The [link asio.reference.ip__resolver_base `ip::resolver_base`] class is used as
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__resolver_base.address_configured [*address_configured]]]
+    [[link asio.reference.ip__resolver_base.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_base.all_matching [*all_matching]]]
+    [[link asio.reference.ip__resolver_base.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_base.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__resolver_base.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_base.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__resolver_base.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_base.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__resolver_base.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_base.passive [*passive]]]
+    [[link asio.reference.ip__resolver_base.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_base.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__resolver_base.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -98344,37 +98344,37 @@ The [link asio.reference.ip__resolver_query_base `ip::resolver_query_base`] clas
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__resolver_query_base.address_configured [*address_configured]]]
+    [[link asio.reference.ip__resolver_query_base.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_query_base.all_matching [*all_matching]]]
+    [[link asio.reference.ip__resolver_query_base.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_query_base.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__resolver_query_base.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_query_base.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__resolver_query_base.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_query_base.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__resolver_query_base.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_query_base.passive [*passive]]]
+    [[link asio.reference.ip__resolver_query_base.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__resolver_query_base.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__resolver_query_base.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -98623,12 +98623,12 @@ Encapsulates the flags needed for TCP.
   ]
   
   [
-    [[link asio.reference.ip__tcp.v4 [*v4]]]
+    [[link asio.reference.ip__tcp.v4 [*v4]] [static]]
     [Construct to represent the IPv4 TCP protocol. ]
   ]
   
   [
-    [[link asio.reference.ip__tcp.v6 [*v6]]]
+    [[link asio.reference.ip__tcp.v6 [*v6]] [static]]
     [Construct to represent the IPv6 TCP protocol. ]
   ]
   
@@ -98975,32 +98975,32 @@ The TCP acceptor type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -99608,37 +99608,37 @@ The TCP resolver type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -100042,32 +100042,32 @@ The TCP socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -100208,12 +100208,12 @@ Encapsulates the flags needed for UDP.
   ]
   
   [
-    [[link asio.reference.ip__udp.v4 [*v4]]]
+    [[link asio.reference.ip__udp.v4 [*v4]] [static]]
     [Construct to represent the IPv4 UDP protocol. ]
   ]
   
   [
-    [[link asio.reference.ip__udp.v6 [*v6]]]
+    [[link asio.reference.ip__udp.v6 [*v6]] [static]]
     [Construct to represent the IPv6 UDP protocol. ]
   ]
   
@@ -100620,37 +100620,37 @@ The UDP resolver type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]]]
+    [[link asio.reference.ip__basic_resolver.address_configured [*address_configured]] [static]]
     [Only return IPv4 addresses if a non-loopback IPv4 address is configured for the system. Only return IPv6 addresses if a non-loopback IPv6 address is configured for the system. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]]]
+    [[link asio.reference.ip__basic_resolver.all_matching [*all_matching]] [static]]
     [If used with v4_mapped, return all matching IPv6 and IPv4 addresses. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]]]
+    [[link asio.reference.ip__basic_resolver.canonical_name [*canonical_name]] [static]]
     [Determine the canonical name of the host specified in the query. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]]]
+    [[link asio.reference.ip__basic_resolver.numeric_host [*numeric_host]] [static]]
     [Host name should be treated as a numeric string defining an IPv4 or IPv6 address and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]]]
+    [[link asio.reference.ip__basic_resolver.numeric_service [*numeric_service]] [static]]
     [Service name should be treated as a numeric string defining a port number and no name resolution should be attempted. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.passive [*passive]]]
+    [[link asio.reference.ip__basic_resolver.passive [*passive]] [static]]
     [Indicate that returned endpoint is intended for use as a locally bound socket endpoint. ]
   ]
 
   [
-    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]]]
+    [[link asio.reference.ip__basic_resolver.v4_mapped [*v4_mapped]] [static]]
     [If the query protocol family is specified as IPv6, return IPv4-mapped IPv6 addresses on finding no IPv6 addresses. ]
   ]
 
@@ -101052,32 +101052,32 @@ The UDP socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -101413,7 +101413,7 @@ Type trait used to determine whether a type is an endpoint sequence that can be 
   [[Name][Description]]
 
   [
-    [[link asio.reference.is_endpoint_sequence.value [*value]]]
+    [[link asio.reference.is_endpoint_sequence.value [*value]] [static]]
     [The value member is true if the type may be used as an endpoint sequence. ]
   ]
 
@@ -101480,7 +101480,7 @@ Type trait used to determine whether a type can be used as a match condition fun
   [[Name][Description]]
 
   [
-    [[link asio.reference.is_match_condition.value [*value]]]
+    [[link asio.reference.is_match_condition.value [*value]] [static]]
     [The value member is true if the type may be used as a match condition. ]
   ]
 
@@ -101637,7 +101637,7 @@ The [link asio.reference.is_read_buffered `is_read_buffered`] class is a traits 
   [[Name][Description]]
 
   [
-    [[link asio.reference.is_read_buffered.value [*value]]]
+    [[link asio.reference.is_read_buffered.value [*value]] [static]]
     [The value member is true only if the Stream type supports buffering of read data. ]
   ]
 
@@ -101682,7 +101682,7 @@ The [link asio.reference.is_write_buffered `is_write_buffered`] class is a trait
   [[Name][Description]]
 
   [
-    [[link asio.reference.is_write_buffered.value [*value]]]
+    [[link asio.reference.is_write_buffered.value [*value]] [static]]
     [The value member is true only if the Stream type supports buffering of written data. ]
   ]
 
@@ -103039,32 +103039,32 @@ The UNIX domain socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_datagram_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_datagram_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_datagram_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_datagram_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_datagram_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -103509,32 +103509,32 @@ The UNIX domain acceptor type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_socket_acceptor.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_socket_acceptor.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_socket_acceptor.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_socket_acceptor.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]]]
+    [[link asio.reference.basic_socket_acceptor.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -104280,32 +104280,32 @@ The UNIX domain socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]]]
+    [[link asio.reference.basic_stream_socket.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.basic_stream_socket.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.basic_stream_socket.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.basic_stream_socket.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.basic_stream_socket.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]]]
+    [[link asio.reference.basic_stream_socket.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -116713,32 +116713,32 @@ The [link asio.reference.socket_base `socket_base`] class is used as a base for 
   [[Name][Description]]
 
   [
-    [[link asio.reference.socket_base.max_connections [*max_connections]]]
+    [[link asio.reference.socket_base.max_connections [*max_connections]] [static]]
     [(Deprecated: Use max_listen_connections.) The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.socket_base.max_listen_connections [*max_listen_connections]]]
+    [[link asio.reference.socket_base.max_listen_connections [*max_listen_connections]] [static]]
     [The maximum length of the queue of pending incoming connections. ]
   ]
 
   [
-    [[link asio.reference.socket_base.message_do_not_route [*message_do_not_route]]]
+    [[link asio.reference.socket_base.message_do_not_route [*message_do_not_route]] [static]]
     [Specify that the data should not be subject to routing. ]
   ]
 
   [
-    [[link asio.reference.socket_base.message_end_of_record [*message_end_of_record]]]
+    [[link asio.reference.socket_base.message_end_of_record [*message_end_of_record]] [static]]
     [Specifies that the data marks the end of a record. ]
   ]
 
   [
-    [[link asio.reference.socket_base.message_out_of_band [*message_out_of_band]]]
+    [[link asio.reference.socket_base.message_out_of_band [*message_out_of_band]] [static]]
     [Process out-of-band data. ]
   ]
 
   [
-    [[link asio.reference.socket_base.message_peek [*message_peek]]]
+    [[link asio.reference.socket_base.message_peek [*message_peek]] [static]]
     [Peek at incoming data without removing it from the input queue. ]
   ]
 
@@ -118205,47 +118205,47 @@ This function is used to launch a new coroutine.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__context.default_workarounds [*default_workarounds]]]
+    [[link asio.reference.ssl__context.default_workarounds [*default_workarounds]] [static]]
     [Implement various bug workarounds. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_compression [*no_compression]]]
+    [[link asio.reference.ssl__context.no_compression [*no_compression]] [static]]
     [Disable compression. Compression is disabled by default. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_sslv2 [*no_sslv2]]]
+    [[link asio.reference.ssl__context.no_sslv2 [*no_sslv2]] [static]]
     [Disable SSL v2. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_sslv3 [*no_sslv3]]]
+    [[link asio.reference.ssl__context.no_sslv3 [*no_sslv3]] [static]]
     [Disable SSL v3. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_tlsv1 [*no_tlsv1]]]
+    [[link asio.reference.ssl__context.no_tlsv1 [*no_tlsv1]] [static]]
     [Disable TLS v1. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_tlsv1_1 [*no_tlsv1_1]]]
+    [[link asio.reference.ssl__context.no_tlsv1_1 [*no_tlsv1_1]] [static]]
     [Disable TLS v1.1. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_tlsv1_2 [*no_tlsv1_2]]]
+    [[link asio.reference.ssl__context.no_tlsv1_2 [*no_tlsv1_2]] [static]]
     [Disable TLS v1.2. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.no_tlsv1_3 [*no_tlsv1_3]]]
+    [[link asio.reference.ssl__context.no_tlsv1_3 [*no_tlsv1_3]] [static]]
     [Disable TLS v1.3. ]
   ]
 
   [
-    [[link asio.reference.ssl__context.single_dh_use [*single_dh_use]]]
+    [[link asio.reference.ssl__context.single_dh_use [*single_dh_use]] [static]]
     [Always create a new key when using tmp_dh parameters. ]
   ]
 
@@ -120917,47 +120917,47 @@ The [link asio.reference.ssl__context_base `ssl::context_base`] class is used as
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__context_base.default_workarounds [*default_workarounds]]]
+    [[link asio.reference.ssl__context_base.default_workarounds [*default_workarounds]] [static]]
     [Implement various bug workarounds. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_compression [*no_compression]]]
+    [[link asio.reference.ssl__context_base.no_compression [*no_compression]] [static]]
     [Disable compression. Compression is disabled by default. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_sslv2 [*no_sslv2]]]
+    [[link asio.reference.ssl__context_base.no_sslv2 [*no_sslv2]] [static]]
     [Disable SSL v2. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_sslv3 [*no_sslv3]]]
+    [[link asio.reference.ssl__context_base.no_sslv3 [*no_sslv3]] [static]]
     [Disable SSL v3. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_tlsv1 [*no_tlsv1]]]
+    [[link asio.reference.ssl__context_base.no_tlsv1 [*no_tlsv1]] [static]]
     [Disable TLS v1. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_tlsv1_1 [*no_tlsv1_1]]]
+    [[link asio.reference.ssl__context_base.no_tlsv1_1 [*no_tlsv1_1]] [static]]
     [Disable TLS v1.1. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_tlsv1_2 [*no_tlsv1_2]]]
+    [[link asio.reference.ssl__context_base.no_tlsv1_2 [*no_tlsv1_2]] [static]]
     [Disable TLS v1.2. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.no_tlsv1_3 [*no_tlsv1_3]]]
+    [[link asio.reference.ssl__context_base.no_tlsv1_3 [*no_tlsv1_3]] [static]]
     [Disable TLS v1.3. ]
   ]
 
   [
-    [[link asio.reference.ssl__context_base.single_dh_use [*single_dh_use]]]
+    [[link asio.reference.ssl__context_base.single_dh_use [*single_dh_use]] [static]]
     [Always create a new key when using tmp_dh parameters. ]
   ]
 
@@ -125295,7 +125295,7 @@ The executor type associated with the context.
   ]
   
   [
-    [[link asio.reference.basic_system_executor.query__static [*query]]]
+    [[link asio.reference.basic_system_executor.query__static [*query]] [static]]
     [Query the current value of the mapping property. 
      [hr]
      Query the current value of the context property. 
@@ -126022,7 +126022,7 @@ An executor that uses arbitrary threads.
   ]
   
   [
-    [[link asio.reference.basic_system_executor.query__static [*query]]]
+    [[link asio.reference.basic_system_executor.query__static [*query]] [static]]
     [Query the current value of the mapping property. 
      [hr]
      Query the current value of the context property. 
@@ -126937,7 +126937,7 @@ Executor used to submit functions to a thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]]]
+    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]] [static]]
     [Query the current value of the bulk_guarantee property. 
      [hr]
      Query the current value of the mapping property. 
@@ -127363,7 +127363,7 @@ Scheduler used to schedule receivers on a thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]]]
+    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]] [static]]
     [Query the current value of the bulk_guarantee property. 
      [hr]
      Query the current value of the mapping property. 
@@ -127776,7 +127776,7 @@ Executor implementation type used to submit functions to a thread pool.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]]]
+    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]] [static]]
     [Query the current value of the bulk_guarantee property. 
      [hr]
      Query the current value of the mapping property. 
@@ -129005,7 +129005,7 @@ The sender type, when this type is used as a scheduler.
   ]
   
   [
-    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]]]
+    [[link asio.reference.thread_pool__basic_executor_type.query__static [*query]] [static]]
     [Query the current value of the bulk_guarantee property. 
      [hr]
      Query the current value of the mapping property. 
@@ -129130,27 +129130,27 @@ Time traits specialised for posix\_time.
   [[Name][Description]]
 
   [
-    [[link asio.reference.time_traits_lt__ptime__gt_.add [*add]]]
+    [[link asio.reference.time_traits_lt__ptime__gt_.add [*add]] [static]]
     [Add a duration to a time. ]
   ]
   
   [
-    [[link asio.reference.time_traits_lt__ptime__gt_.less_than [*less_than]]]
+    [[link asio.reference.time_traits_lt__ptime__gt_.less_than [*less_than]] [static]]
     [Test whether one time is less than another. ]
   ]
   
   [
-    [[link asio.reference.time_traits_lt__ptime__gt_.now [*now]]]
+    [[link asio.reference.time_traits_lt__ptime__gt_.now [*now]] [static]]
     [Get the current time. ]
   ]
   
   [
-    [[link asio.reference.time_traits_lt__ptime__gt_.subtract [*subtract]]]
+    [[link asio.reference.time_traits_lt__ptime__gt_.subtract [*subtract]] [static]]
     [Subtract one time from another. ]
   ]
   
   [
-    [[link asio.reference.time_traits_lt__ptime__gt_.to_posix_duration [*to_posix_duration]]]
+    [[link asio.reference.time_traits_lt__ptime__gt_.to_posix_duration [*to_posix_duration]] [static]]
     [Convert to POSIX duration type. ]
   ]
   
@@ -129475,7 +129475,7 @@ A completion token that represents the currently executing coroutine.
   [[Name][Description]]
 
   [
-    [[link asio.reference.use_awaitable_t.as_default_on [*as_default_on]]]
+    [[link asio.reference.use_awaitable_t.as_default_on [*as_default_on]] [static]]
     [Function helper to adapt an I/O object to use use_awaitable_t as its default completion token type. ]
   ]
   
@@ -129652,7 +129652,7 @@ Specify `use_awaitable_t` as the default completion token type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.use_awaitable_t.as_default_on [*as_default_on]]]
+    [[link asio.reference.use_awaitable_t.as_default_on [*as_default_on]] [static]]
     [Function helper to adapt an I/O object to use use_awaitable_t as its default completion token type. ]
   ]
   
@@ -130045,7 +130045,7 @@ Wait traits suitable for use with the [link asio.reference.basic_waitable_timer 
   [[Name][Description]]
 
   [
-    [[link asio.reference.wait_traits.to_wait_duration [*to_wait_duration]]]
+    [[link asio.reference.wait_traits.to_wait_duration [*to_wait_duration]] [static]]
     [Convert a clock duration into a duration used for waiting. ]
   ]
   
