@@ -1101,11 +1101,11 @@
 ]
 </xsl:if>
 
-<xsl:if test="count(sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']) > 0">
+<xsl:if test="count(sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']/memberdef[not(name='impl_')]) > 0">
 [heading Protected Data Members]
 [table
   [[Name][Description]]
-<xsl:for-each select="sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']/memberdef" mode="class-table">
+<xsl:for-each select="sectiondef[@kind='protected-attrib' or @kind='protected-static-attrib']/memberdef[not(name='impl_')]" mode="class-table">
   <xsl:sort select="name"/>
   [
     [[link asio.reference.<xsl:value-of select="$class-id"/>.<xsl:value-of select="name"/>
@@ -1221,7 +1221,7 @@
 <xsl:param name="class-name"/>
 <xsl:param name="class-id"/>
 <xsl:param name="class-file"/>
-<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
+<xsl:apply-templates select="sectiondef[@kind='public-type' or @kind='public-func' or @kind='public-static-func' or @kind='public-attrib' or @kind='public-static-attrib' or @kind='protected-func' or @kind='protected-static-func' or @kind='protected-attrib' or @kind='protected-static-attrib' or @kind='friend' or @kind='related']/memberdef[not(type = 'friend class') and not(contains(name, '_helper')) and not(name = 'impl_')]" mode="class-detail">
   <xsl:sort select="name"/>
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
