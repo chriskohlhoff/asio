@@ -671,7 +671,7 @@ template <typename Allocator, unsigned int Bits>
 class io_context::basic_executor_type : detail::io_context_bits
 {
 public:
-  /// Copy construtor.
+  /// Copy constructor.
   basic_executor_type(
       const basic_executor_type& other) ASIO_NOEXCEPT
     : io_context_(other.io_context_),
@@ -684,7 +684,7 @@ public:
   }
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Move construtor.
+  /// Move constructor.
   basic_executor_type(basic_executor_type&& other) ASIO_NOEXCEPT
     : io_context_(other.io_context_),
       allocator_(ASIO_MOVE_CAST(Allocator)(other.allocator_)),

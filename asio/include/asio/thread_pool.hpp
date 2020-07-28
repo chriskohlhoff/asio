@@ -182,7 +182,7 @@ public:
 #endif // defined(ASIO_HAS_DEDUCED_EXECUTION_IS_TYPED_SENDER_TRAIT)
        //   && defined(ASIO_HAS_STD_EXCEPTION_PTR)
 
-  /// Copy construtor.
+  /// Copy constructor.
   basic_executor_type(
       const basic_executor_type& other) ASIO_NOEXCEPT
     : pool_(other.pool_),
@@ -195,7 +195,7 @@ public:
   }
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Move construtor.
+  /// Move constructor.
   basic_executor_type(basic_executor_type&& other) ASIO_NOEXCEPT
     : pool_(other.pool_),
       allocator_(ASIO_MOVE_CAST(Allocator)(other.allocator_)),

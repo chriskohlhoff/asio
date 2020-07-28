@@ -79394,9 +79394,9 @@ Executor used to submit functions to an [link asio.reference.io_context `io_cont
 
   [
     [[link asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
-    [Copy construtor. 
+    [Copy constructor. 
      [hr]
-     Move construtor. ]
+     Move constructor. ]
   ]
   
   [
@@ -80624,9 +80624,9 @@ Executor implementation type used to submit functions to an [link asio.reference
 
   [
     [[link asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]]]
-    [Copy construtor. 
+    [Copy constructor. 
      [hr]
-     Move construtor. ]
+     Move constructor. ]
   ]
   
   [
@@ -80745,7 +80745,7 @@ Executor implementation type used to submit functions to an [link asio.reference
 [section:basic_executor_type io_context::basic_executor_type::basic_executor_type]
 
 [indexterm2 asio.indexterm.io_context__basic_executor_type.basic_executor_type..basic_executor_type..io_context::basic_executor_type] 
-Copy construtor. 
+Copy constructor. 
 
 
   ``[link asio.reference.io_context__basic_executor_type.basic_executor_type.overload1 basic_executor_type]``(
@@ -80753,7 +80753,7 @@ Copy construtor.
   ``  [''''&raquo;''' [link asio.reference.io_context__basic_executor_type.basic_executor_type.overload1 more...]]``
 
 
-Move construtor. 
+Move constructor. 
 
 
   ``[link asio.reference.io_context__basic_executor_type.basic_executor_type.overload2 basic_executor_type]``(
@@ -80764,7 +80764,7 @@ Move construtor.
 [section:overload1 io_context::basic_executor_type::basic_executor_type (1 of 2 overloads)]
 
 
-Copy construtor. 
+Copy constructor. 
 
 
   basic_executor_type(
@@ -80779,7 +80779,7 @@ Copy construtor.
 [section:overload2 io_context::basic_executor_type::basic_executor_type (2 of 2 overloads)]
 
 
-Move construtor. 
+Move constructor. 
 
 
   basic_executor_type(
@@ -126404,9 +126404,9 @@ Executor used to submit functions to a thread pool.
 
   [
     [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
-    [Copy construtor. 
+    [Copy constructor. 
      [hr]
-     Move construtor. ]
+     Move constructor. ]
   ]
   
   [
@@ -126830,9 +126830,9 @@ Scheduler used to schedule receivers on a thread pool.
 
   [
     [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
-    [Copy construtor. 
+    [Copy constructor. 
      [hr]
-     Move construtor. ]
+     Move constructor. ]
   ]
   
   [
@@ -127243,9 +127243,9 @@ Executor implementation type used to submit functions to a thread pool.
 
   [
     [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
-    [Copy construtor. 
+    [Copy constructor. 
      [hr]
-     Move construtor. ]
+     Move constructor. ]
   ]
   
   [
@@ -127385,7 +127385,7 @@ Executor implementation type used to submit functions to a thread pool.
 [section:basic_executor_type thread_pool::basic_executor_type::basic_executor_type]
 
 [indexterm2 asio.indexterm.thread_pool__basic_executor_type.basic_executor_type..basic_executor_type..thread_pool::basic_executor_type] 
-Copy construtor. 
+Copy constructor. 
 
 
   ``[link asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload1 basic_executor_type]``(
@@ -127393,7 +127393,7 @@ Copy construtor.
   ``  [''''&raquo;''' [link asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload1 more...]]``
 
 
-Move construtor. 
+Move constructor. 
 
 
   ``[link asio.reference.thread_pool__basic_executor_type.basic_executor_type.overload2 basic_executor_type]``(
@@ -127404,7 +127404,7 @@ Move construtor.
 [section:overload1 thread_pool::basic_executor_type::basic_executor_type (1 of 2 overloads)]
 
 
-Copy construtor. 
+Copy constructor. 
 
 
   basic_executor_type(
@@ -127419,7 +127419,7 @@ Copy construtor.
 [section:overload2 thread_pool::basic_executor_type::basic_executor_type (2 of 2 overloads)]
 
 
-Move construtor. 
+Move constructor. 
 
 
   basic_executor_type(
@@ -128472,9 +128472,9 @@ The sender type, when this type is used as a scheduler.
 
   [
     [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
-    [Copy construtor. 
+    [Copy constructor. 
      [hr]
-     Move construtor. ]
+     Move constructor. ]
   ]
   
   [
