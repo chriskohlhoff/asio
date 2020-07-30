@@ -848,7 +848,7 @@
 <xsl:call-template name="class-tables">
   <xsl:with-param name="class-name" select="$class-name"/>
   <xsl:with-param name="class-id" select="$class-id"/>
-  <xsl:with-param name="unqualified-class-name" select="$class-name"/>
+  <xsl:with-param name="unqualified-class-name" select="$unqualified-class-name"/>
 </xsl:call-template>
 
 <xsl:apply-templates select="detaileddescription" mode="markup"/>

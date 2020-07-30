@@ -61642,7 +61642,7 @@ Adapts an executor to add the `detached_t` completion token as the default.
   [[Name][Description]]
 
   [
-    [[link asio.reference.detached_t__executor_with_default.executor_with_default [*executor_with_default]]]
+    [[link asio.reference.detached_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
     [Construct the adapted executor from the inner executor type. 
      [hr]
      Convert the specified executor to the inner executor type, then use that to construct the adapted executor. ]
@@ -64657,7 +64657,7 @@ A property to describe which allocator an executor will use to allocate the memo
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__allocator_t.allocator_t [*allocator_t]]]
+    [[link asio.reference.execution__allocator_t.allocator_t [*allocator_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -64788,7 +64788,7 @@ Polymorphic executor wrapper.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__any_executor.any_executor [*any_executor]]]
+    [[link asio.reference.execution__any_executor.any_executor [*any_executor]] [constructor]]
     [Default constructor. 
      [hr]
      Construct in an empty state. Equivalent effects to default constructor. 
@@ -65535,7 +65535,7 @@ Exception thrown when trying to access an empty polymorphic executor.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bad_executor.bad_executor [*bad_executor]]]
+    [[link asio.reference.execution__bad_executor.bad_executor [*bad_executor]] [constructor]]
     [Constructor. ]
   ]
   
@@ -65664,7 +65664,7 @@ A property to describe whether automatic adaptation of an executor is allowed in
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t.blocking_adaptation_t [*blocking_adaptation_t]]]
+    [[link asio.reference.execution__blocking_adaptation_t.blocking_adaptation_t [*blocking_adaptation_t]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from a sub-property value. ]
@@ -65959,7 +65959,7 @@ A sub-property that indicates that automatic adaptation is allowed.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.allowed_t [*allowed_t]]]
+    [[link asio.reference.execution__blocking_adaptation_t__allowed_t.allowed_t [*allowed_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -66127,7 +66127,7 @@ A sub-property that indicates that automatic adaptation is not allowed.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.disallowed_t [*disallowed_t]]]
+    [[link asio.reference.execution__blocking_adaptation_t__disallowed_t.disallowed_t [*disallowed_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -66316,7 +66316,7 @@ A property to describe what guarantees an executor makes about the blocking beha
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t.blocking_t [*blocking_t]]]
+    [[link asio.reference.execution__blocking_t.blocking_t [*blocking_t]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from a sub-property value. ]
@@ -66649,7 +66649,7 @@ A sub-property that indicates that invocation of an executor's execution functio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t__always_t.always_t [*always_t]]]
+    [[link asio.reference.execution__blocking_t__always_t.always_t [*always_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -66817,7 +66817,7 @@ A sub-property that indicates that invocation of an executor's execution functio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t__never_t.never_t [*never_t]]]
+    [[link asio.reference.execution__blocking_t__never_t.never_t [*never_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -66985,7 +66985,7 @@ A sub-property that indicates that invocation of an executor's execution functio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__blocking_t__possibly_t.possibly_t [*possibly_t]]]
+    [[link asio.reference.execution__blocking_t__possibly_t.possibly_t [*possibly_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -67250,7 +67250,7 @@ A property to communicate the forward progress and ordering guarantees of execut
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t.bulk_guarantee_t [*bulk_guarantee_t]]]
+    [[link asio.reference.execution__bulk_guarantee_t.bulk_guarantee_t [*bulk_guarantee_t]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from a sub-property value. ]
@@ -67583,7 +67583,7 @@ A sub-property that indicates that execution agents within the same bulk executi
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.parallel_t [*parallel_t]]]
+    [[link asio.reference.execution__bulk_guarantee_t__parallel_t.parallel_t [*parallel_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -67751,7 +67751,7 @@ A sub-property that indicates that execution agents within the same bulk executi
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.sequenced_t [*sequenced_t]]]
+    [[link asio.reference.execution__bulk_guarantee_t__sequenced_t.sequenced_t [*sequenced_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -67919,7 +67919,7 @@ A sub-property that indicates that execution agents within the same bulk executi
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.unsequenced_t [*unsequenced_t]]]
+    [[link asio.reference.execution__bulk_guarantee_t__unsequenced_t.unsequenced_t [*unsequenced_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -69158,7 +69158,7 @@ A property to describe what guarantees an executor makes about the mapping of ex
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t.mapping_t [*mapping_t]]]
+    [[link asio.reference.execution__mapping_t.mapping_t [*mapping_t]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from a sub-property value. ]
@@ -69491,7 +69491,7 @@ A sub-property that indicates that execution agents are mapped on to new threads
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t__new_thread_t.new_thread_t [*new_thread_t]]]
+    [[link asio.reference.execution__mapping_t__new_thread_t.new_thread_t [*new_thread_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -69659,7 +69659,7 @@ A sub-property that indicates that the mapping of execution agents is implementa
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t__other_t.other_t [*other_t]]]
+    [[link asio.reference.execution__mapping_t__other_t.other_t [*other_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -69827,7 +69827,7 @@ A sub-property that indicates that execution agents are mapped on to threads of 
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__mapping_t__thread_t.thread_t [*thread_t]]]
+    [[link asio.reference.execution__mapping_t__thread_t.thread_t [*thread_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -70166,7 +70166,7 @@ A property to describe whether task submission is likely in the future.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__outstanding_work_t.outstanding_work_t [*outstanding_work_t]]]
+    [[link asio.reference.execution__outstanding_work_t.outstanding_work_t [*outstanding_work_t]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from a sub-property value. ]
@@ -70461,7 +70461,7 @@ A sub-property that indicates that the executor represents likely future submiss
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__tracked_t.tracked_t [*tracked_t]]]
+    [[link asio.reference.execution__outstanding_work_t__tracked_t.tracked_t [*tracked_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -70629,7 +70629,7 @@ A sub-property that indicates that the executor does not represent likely future
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__outstanding_work_t__untracked_t.untracked_t [*untracked_t]]]
+    [[link asio.reference.execution__outstanding_work_t__untracked_t.untracked_t [*untracked_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -70904,7 +70904,7 @@ Exception reported via `set_error` when an exception escapes from `set_value`.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__receiver_invocation_error.receiver_invocation_error [*receiver_invocation_error]]]
+    [[link asio.reference.execution__receiver_invocation_error.receiver_invocation_error [*receiver_invocation_error]] [constructor]]
     [Constructor. ]
   ]
   
@@ -70994,7 +70994,7 @@ A property to describe whether submitted tasks represent continuations of the ca
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__relationship_t.relationship_t [*relationship_t]]]
+    [[link asio.reference.execution__relationship_t.relationship_t [*relationship_t]] [constructor]]
     [Default constructor. 
      [hr]
      Construct from a sub-property value. ]
@@ -71289,7 +71289,7 @@ A sub-property that indicates that the executor represents a continuation of the
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__relationship_t__continuation_t.continuation_t [*continuation_t]]]
+    [[link asio.reference.execution__relationship_t__continuation_t.continuation_t [*continuation_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -71457,7 +71457,7 @@ A sub-property that indicates that the executor does not represent a continuatio
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution__relationship_t__fork_t.fork_t [*fork_t]]]
+    [[link asio.reference.execution__relationship_t__fork_t.fork_t [*fork_t]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -72468,7 +72468,7 @@ Class used to uniquely identify a service.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution_context__id.id [*id]]]
+    [[link asio.reference.execution_context__id.id [*id]] [constructor]]
     [Constructor. ]
   ]
   
@@ -72523,7 +72523,7 @@ Base class for all [link asio.reference.io_context `io_context`] services.
   [[Name][Description]]
 
   [
-    [[link asio.reference.execution_context__service.service [*service]]]
+    [[link asio.reference.execution_context__service.service [*service]] [constructor]]
     [Constructor. ]
   ]
   
@@ -74404,7 +74404,7 @@ Describes an endpoint for any socket type.
   [[Name][Description]]
 
   [
-    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.generic__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint from the specified socket address. 
@@ -74932,7 +74932,7 @@ Encapsulates the flags needed for a generic datagram-oriented socket.
   [[Name][Description]]
 
   [
-    [[link asio.reference.generic__datagram_protocol.datagram_protocol [*datagram_protocol]]]
+    [[link asio.reference.generic__datagram_protocol.datagram_protocol [*datagram_protocol]] [constructor]]
     [Construct a protocol object for a specific address family and protocol. 
      [hr]
      Construct a generic protocol object from a specific protocol. ]
@@ -75773,7 +75773,7 @@ Encapsulates the flags needed for a generic raw socket.
   ]
   
   [
-    [[link asio.reference.generic__raw_protocol.raw_protocol [*raw_protocol]]]
+    [[link asio.reference.generic__raw_protocol.raw_protocol [*raw_protocol]] [constructor]]
     [Construct a protocol object for a specific address family and protocol. 
      [hr]
      Construct a generic protocol object from a specific protocol. ]
@@ -76604,7 +76604,7 @@ Encapsulates the flags needed for a generic sequenced packet socket.
   ]
   
   [
-    [[link asio.reference.generic__seq_packet_protocol.seq_packet_protocol [*seq_packet_protocol]]]
+    [[link asio.reference.generic__seq_packet_protocol.seq_packet_protocol [*seq_packet_protocol]] [constructor]]
     [Construct a protocol object for a specific address family and protocol. 
      [hr]
      Construct a generic protocol object from a specific protocol. ]
@@ -77419,7 +77419,7 @@ Encapsulates the flags needed for a generic stream-oriented socket.
   ]
   
   [
-    [[link asio.reference.generic__stream_protocol.stream_protocol [*stream_protocol]]]
+    [[link asio.reference.generic__stream_protocol.stream_protocol [*stream_protocol]] [constructor]]
     [Construct a protocol object for a specific address family and protocol. 
      [hr]
      Construct a generic protocol object from a specific protocol. ]
@@ -80623,7 +80623,7 @@ Executor implementation type used to submit functions to an [link asio.reference
   [[Name][Description]]
 
   [
-    [[link asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [[link asio.reference.io_context__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
     [Copy constructor. 
      [hr]
      Move constructor. ]
@@ -81675,7 +81675,7 @@ Base class for all [link asio.reference.io_context `io_context`] services.
   [[Name][Description]]
 
   [
-    [[link asio.reference.io_context__service.service [*service]]]
+    [[link asio.reference.io_context__service.service [*service]] [constructor]]
     [Constructor. ]
   ]
   
@@ -81803,7 +81803,7 @@ Provides serialised handler execution.
   ]
   
   [
-    [[link asio.reference.io_context__strand.strand [*strand]]]
+    [[link asio.reference.io_context__strand.strand [*strand]] [constructor]]
     [Constructor. ]
   ]
   
@@ -82391,7 +82391,7 @@ Handlers posted through the strand that have not yet been invoked will still be 
   ]
   
   [
-    [[link asio.reference.io_context__work.work [*work]]]
+    [[link asio.reference.io_context__work.work [*work]] [constructor]]
     [Constructor notifies the io_context that work is starting. 
      [hr]
      Copy constructor notifies the io_context that work is starting. ]
@@ -82900,7 +82900,7 @@ Implements version-independent IP addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address.address [*address]]]
+    [[link asio.reference.ip__address.address [*address]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from an IPv4 address. 
@@ -83775,7 +83775,7 @@ Implements IP version 4 style addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]]]
+    [[link asio.reference.ip__address_v4.address_v4 [*address_v4]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from raw bytes. 
@@ -85210,7 +85210,7 @@ Implements IP version 6 style addresses.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]]]
+    [[link asio.reference.ip__address_v6.address_v6 [*address_v6]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an address from raw bytes and scope ID. 
@@ -86637,7 +86637,7 @@ Thrown to indicate a failed address conversion.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__bad_address_cast.bad_address_cast [*bad_address_cast]]]
+    [[link asio.reference.ip__bad_address_cast.bad_address_cast [*bad_address_cast]] [constructor]]
     [Default constructor. ]
   ]
   
@@ -89244,7 +89244,7 @@ Describes an endpoint for a version-independent IP socket.
   ]
   
   [
-    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.ip__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using a port number, specified in the host's byte order. The IP address will be the any address (i.e. INADDR_ANY or in6addr_any). This constructor would typically be used for accepting new connections. 
@@ -90048,7 +90048,7 @@ Provides endpoint resolution functionality.
   ]
   
   [
-    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]]]
+    [[link asio.reference.ip__basic_resolver.basic_resolver [*basic_resolver]] [constructor]]
     [Construct with executor. 
      [hr]
      Construct with execution context. 
@@ -92397,7 +92397,7 @@ An entry produced by a resolver.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]]]
+    [[link asio.reference.ip__basic_resolver_entry.basic_resolver_entry [*basic_resolver_entry]] [constructor]]
     [Default constructor. 
      [hr]
      Construct with specified endpoint, host name and service name. ]
@@ -92720,7 +92720,7 @@ An iterator over the entries produced by a resolver.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]]]
+    [[link asio.reference.ip__basic_resolver_iterator.basic_resolver_iterator [*basic_resolver_iterator]] [constructor]]
     [Default constructor creates an end iterator. 
      [hr]
      Copy constructor. 
@@ -93406,7 +93406,7 @@ An query to be passed to a resolver.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]]]
+    [[link asio.reference.ip__basic_resolver_query.basic_resolver_query [*basic_resolver_query]] [constructor]]
     [Construct with specified service name for any protocol. 
      [hr]
      Construct with specified service name for a given protocol. 
@@ -94004,7 +94004,7 @@ A range of entries produced by a resolver.
   [[Name][Description]]
 
   [
-    [[link asio.reference.ip__basic_resolver_results.basic_resolver_results [*basic_resolver_results]]]
+    [[link asio.reference.ip__basic_resolver_results.basic_resolver_results [*basic_resolver_results]] [constructor]]
     [Default constructor creates an empty range. 
      [hr]
      Copy constructor. 
@@ -96748,7 +96748,7 @@ Represents an IPv4 network.
   ]
   
   [
-    [[link asio.reference.ip__network_v4.network_v4 [*network_v4]]]
+    [[link asio.reference.ip__network_v4.network_v4 [*network_v4]] [constructor]]
     [Default constructor. 
      [hr]
      Construct a network based on the specified address and prefix length. 
@@ -97322,7 +97322,7 @@ Represents an IPv6 network.
   ]
   
   [
-    [[link asio.reference.ip__network_v6.network_v6 [*network_v6]]]
+    [[link asio.reference.ip__network_v6.network_v6 [*network_v6]] [constructor]]
     [Default constructor. 
      [hr]
      Construct a network based on the specified address and prefix length. 
@@ -101433,7 +101433,7 @@ Describes an endpoint for a UNIX socket.
   [[Name][Description]]
 
   [
-    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]]]
+    [[link asio.reference.local__basic_endpoint.basic_endpoint [*basic_endpoint]] [constructor]]
     [Default constructor. 
      [hr]
      Construct an endpoint using the specified path name. 
@@ -105323,7 +105323,7 @@ Provides POSIX descriptor functionality.
   ]
   
   [
-    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]]]
+    [[link asio.reference.posix__basic_descriptor.basic_descriptor [*basic_descriptor]] [constructor]]
     [Construct a descriptor without opening it. 
      [hr]
      Construct a descriptor on an existing native descriptor. 
@@ -107182,7 +107182,7 @@ Provides stream-oriented descriptor functionality.
   ]
   
   [
-    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]]]
+    [[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor [*basic_stream_descriptor]] [constructor]]
     [Construct a stream descriptor without opening it. 
      [hr]
      Construct a stream descriptor on an existing native descriptor. 
@@ -115286,7 +115286,7 @@ Serial port option to permit changing the baud rate.
   [[Name][Description]]
 
   [
-    [[link asio.reference.serial_port_base__baud_rate.baud_rate [*baud_rate]]]
+    [[link asio.reference.serial_port_base__baud_rate.baud_rate [*baud_rate]] [constructor]]
     []
   ]
   
@@ -115385,7 +115385,7 @@ Serial port option to permit changing the character size.
   [[Name][Description]]
 
   [
-    [[link asio.reference.serial_port_base__character_size.character_size [*character_size]]]
+    [[link asio.reference.serial_port_base__character_size.character_size [*character_size]] [constructor]]
     []
   ]
   
@@ -115497,7 +115497,7 @@ Serial port option to permit changing the flow control.
   [[Name][Description]]
 
   [
-    [[link asio.reference.serial_port_base__flow_control.flow_control [*flow_control]]]
+    [[link asio.reference.serial_port_base__flow_control.flow_control [*flow_control]] [constructor]]
     []
   ]
   
@@ -115650,7 +115650,7 @@ Serial port option to permit changing the parity.
   ]
   
   [
-    [[link asio.reference.serial_port_base__parity.parity [*parity]]]
+    [[link asio.reference.serial_port_base__parity.parity [*parity]] [constructor]]
     []
   ]
   
@@ -115798,7 +115798,7 @@ Serial port option to permit changing the number of stop bits.
   ]
   
   [
-    [[link asio.reference.serial_port_base__stop_bits.stop_bits [*stop_bits]]]
+    [[link asio.reference.serial_port_base__stop_bits.stop_bits [*stop_bits]] [constructor]]
     []
   ]
   
@@ -117628,7 +117628,7 @@ This function is used to launch a new coroutine.
   ]
   
   [
-    [[link asio.reference.ssl__context.context [*context]]]
+    [[link asio.reference.ssl__context.context [*context]] [constructor]]
     [Constructor. 
      [hr]
      Construct to take ownership of a native handle. 
@@ -121023,7 +121023,7 @@ Verifies a certificate against a host\_name according to the rules described in 
   [[Name][Description]]
 
   [
-    [[link asio.reference.ssl__host_name_verification.host_name_verification [*host_name_verification]]]
+    [[link asio.reference.ssl__host_name_verification.host_name_verification [*host_name_verification]] [constructor]]
     [Constructor. ]
   ]
   
@@ -121160,7 +121160,7 @@ The type of the function object's result.
   ]
   
   [
-    [[link asio.reference.ssl__rfc2818_verification.rfc2818_verification [*rfc2818_verification]]]
+    [[link asio.reference.ssl__rfc2818_verification.rfc2818_verification [*rfc2818_verification]] [constructor]]
     [Constructor. ]
   ]
   
@@ -121396,7 +121396,7 @@ Provides stream-oriented functionality using SSL.
   ]
   
   [
-    [[link asio.reference.ssl__stream.stream [*stream]]]
+    [[link asio.reference.ssl__stream.stream [*stream]] [constructor]]
     [Construct a stream. 
      [hr]
      Move-construct a stream from another. ]
@@ -123075,7 +123075,7 @@ A simple wrapper around the X509\_STORE\_CTX type, used during verification of a
   ]
   
   [
-    [[link asio.reference.ssl__verify_context.verify_context [*verify_context]]]
+    [[link asio.reference.ssl__verify_context.verify_context [*verify_context]] [constructor]]
     [Constructor. ]
   ]
   
@@ -125911,7 +125911,7 @@ Awaitable type that returns the executor of the current coroutine.
   [[Name][Description]]
 
   [
-    [[link asio.reference.this_coro__executor_t.executor_t [*executor_t]]]
+    [[link asio.reference.this_coro__executor_t.executor_t [*executor_t]] [constructor]]
     []
   ]
   
@@ -127242,7 +127242,7 @@ Executor implementation type used to submit functions to a thread pool.
   [[Name][Description]]
 
   [
-    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]]]
+    [[link asio.reference.thread_pool__basic_executor_type.basic_executor_type [*basic_executor_type]] [constructor]]
     [Copy constructor. 
      [hr]
      Move constructor. ]
@@ -129148,7 +129148,7 @@ Adapts an executor to add the `use_awaitable_t` completion token as the default.
   [[Name][Description]]
 
   [
-    [[link asio.reference.use_awaitable_t__executor_with_default.executor_with_default [*executor_with_default]]]
+    [[link asio.reference.use_awaitable_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
     [Construct the adapted executor from the inner executor type. 
      [hr]
      Convert the specified executor to the inner executor type, then use that to construct the adapted executor. ]
@@ -129718,7 +129718,7 @@ Provides object-oriented handle functionality.
   ]
   
   [
-    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]]]
+    [[link asio.reference.windows__basic_object_handle.basic_object_handle [*basic_object_handle]] [constructor]]
     [Construct an object handle without opening it. 
      [hr]
      Construct an object handle on an existing native handle. 
@@ -130855,7 +130855,7 @@ Provides Windows handle functionality for objects that support overlapped I/O.
   ]
   
   [
-    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]]]
+    [[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle [*basic_overlapped_handle]] [constructor]]
     [Construct an overlapped handle without opening it. 
      [hr]
      Construct an overlapped handle on an existing native handle. 
@@ -131918,7 +131918,7 @@ Provides random-access handle functionality.
   ]
   
   [
-    [[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]]]
+    [[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle [*basic_random_access_handle]] [constructor]]
     [Construct a random-access handle without opening it. 
      [hr]
      Construct a random-access handle on an existing native handle. 
@@ -133397,7 +133397,7 @@ Provides stream-oriented handle functionality.
   ]
   
   [
-    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]]]
+    [[link asio.reference.windows__basic_stream_handle.basic_stream_handle [*basic_stream_handle]] [constructor]]
     [Construct a stream handle without opening it. 
      [hr]
      Construct a stream handle on an existing native handle. 
@@ -135082,7 +135082,7 @@ Wraps a handler to create an OVERLAPPED object for use with overlapped I/O.
   ]
   
   [
-    [[link asio.reference.windows__overlapped_ptr.overlapped_ptr [*overlapped_ptr]]]
+    [[link asio.reference.windows__overlapped_ptr.overlapped_ptr [*overlapped_ptr]] [constructor]]
     [Construct an empty overlapped_ptr. 
      [hr]
      Construct an overlapped_ptr to contain the specified handler. ]
