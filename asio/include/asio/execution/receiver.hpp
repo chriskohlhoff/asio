@@ -50,6 +50,18 @@
 
 namespace asio {
 namespace execution {
+namespace detail {
+
+template <typename T, typename E>
+struct is_receiver_base :
+  integral_constant<bool,
+    is_move_constructible<typename remove_cvref<T>::type>::value
+      && is_constructible<typename remove_cvref<T>::type, T>::value
+  >
+{
+};
+
+} // namespace detail
 
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR)
 # define ASIO_EXECUTION_RECEIVER_ERROR_DEFAULT = std::exception_ptr
@@ -70,14 +82,14 @@ struct is_receiver :
 #if defined(GENERATING_DOCUMENTATION)
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
-  integral_constant<bool,
-    is_move_constructible<typename remove_cvref<T>::type>::value
-      && is_constructible<typename remove_cvref<T>::type, T>::value
-      && can_set_done<typename remove_cvref<T>::type>::value
+  conditional<
+    can_set_done<typename remove_cvref<T>::type>::value
       && is_nothrow_set_done<typename remove_cvref<T>::type>::value
       && can_set_error<typename remove_cvref<T>::type, E>::value
-      && is_nothrow_set_error<typename remove_cvref<T>::type, E>::value
-  >
+      && is_nothrow_set_error<typename remove_cvref<T>::type, E>::value,
+    detail::is_receiver_base<T, E>,
+    false_type
+  >::type
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
@@ -117,10 +129,11 @@ struct is_receiver_of :
 #if defined(GENERATING_DOCUMENTATION)
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
-  integral_constant<bool,
-    is_receiver<T>::value
-      && can_set_value<typename remove_cvref<T>::type, Vs...>::value
-  >
+  conditional<
+    is_receiver<T>::value,
+    can_set_value<typename remove_cvref<T>::type, Vs...>,
+    false_type
+  >::type
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
@@ -161,21 +174,24 @@ struct is_receiver_of;
 
 template <typename T>
 struct is_receiver_of<T> :
-  integral_constant<bool,
-    is_receiver<T>::value
-      && can_set_value<typename remove_cvref<T>::type>::value
-  >
+  conditional<
+    is_receiver<T>::value,
+    can_set_value<typename remove_cvref<T>::type>,
+    false_type
+  >::type
 {
 };
 
 #define ASIO_PRIVATE_RECEIVER_OF_TRAITS_DEF(n) \
   template <typename T, ASIO_VARIADIC_TPARAMS(n)> \
   struct is_receiver_of<T, ASIO_VARIADIC_TARGS(n)> : \
-    integral_constant<bool, \
-      is_receiver<T>::value \
-        && can_set_value<typename remove_cvref<T>::type, \
-          ASIO_VARIADIC_TARGS(n)>::value \
-    > \
+    conditional< \
+      conditional<true, is_receiver<T>, void>::type::value, \
+      can_set_value< \
+        typename remove_cvref<T>::type, \
+        ASIO_VARIADIC_TARGS(n)>, \
+      false_type \
+    >::type \
   { \
   }; \
   /**/

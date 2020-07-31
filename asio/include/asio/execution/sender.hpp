@@ -184,10 +184,11 @@ struct is_sender :
 #if defined(GENERATING_DOCUMENTATION)
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
-  integral_constant<bool,
-    is_move_constructible<typename remove_cvref<T>::type>::value
-      && detail::has_sender_traits<typename remove_cvref<T>::type>::value
-  >
+  conditional<
+    detail::has_sender_traits<typename remove_cvref<T>::type>::value,
+    is_move_constructible<typename remove_cvref<T>::type>,
+    false_type
+  >::type
 #endif // defined(GENERATING_DOCUMENTATION)
 {
 };
