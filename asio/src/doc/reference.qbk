@@ -124230,8 +124230,11 @@ Default constructor.
 Construct a strand for the specified executor. 
 
 
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
   explicit ``[link asio.reference.strand.strand.overload2 strand]``(
-      const Executor & e);
+      const Executor1 & e,
+      typename enable_if< conditional< !is_same< Executor1, strand >::value, is_convertible< Executor1, Executor >, false_type >::type::value >::type *  = 0);
   ``  [''''&raquo;''' [link asio.reference.strand.strand.overload2 more...]]``
 
 
@@ -124293,8 +124296,11 @@ This constructor is only valid if the underlying executor type is default constr
 Construct a strand for the specified executor. 
 
 
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
   strand(
-      const Executor & e);
+      const Executor1 & e,
+      typename enable_if< conditional< !is_same< Executor1, strand >::value, is_convertible< Executor1, Executor >, false_type >::type::value >::type *  = 0);
 
 
 

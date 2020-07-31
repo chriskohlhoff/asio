@@ -45,7 +45,15 @@ public:
   }
 
   /// Construct a strand for the specified executor.
-  explicit strand(const Executor& e)
+  template <typename Executor1>
+  explicit strand(const Executor1& e,
+      typename enable_if<
+        conditional<
+          !is_same<Executor1, strand>::value,
+          is_convertible<Executor1, Executor>,
+          false_type
+        >::type::value
+      >::type* = 0)
     : executor_(e),
       impl_(strand::create_implementation(executor_))
   {
