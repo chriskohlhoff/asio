@@ -297,6 +297,12 @@ void is_receiver_test()
 {
   ASIO_CHECK((
       !asio::execution::is_receiver<
+        void,
+        asio::error_code
+      >::value));
+
+  ASIO_CHECK((
+      !asio::execution::is_receiver<
         not_a_receiver,
         asio::error_code
       >::value));
@@ -328,6 +334,17 @@ void is_receiver_test()
 
 void is_receiver_of_test()
 {
+  ASIO_CHECK((
+      !asio::execution::is_receiver_of<
+        void
+      >::value));
+
+  ASIO_CHECK((
+      !asio::execution::is_receiver_of<
+        void,
+        int
+      >::value));
+
   ASIO_CHECK((
       !asio::execution::is_receiver_of<
         not_a_receiver
@@ -421,6 +438,17 @@ void is_receiver_of_test()
 
 void is_nothrow_receiver_of_test()
 {
+  ASIO_CHECK((
+      !asio::execution::is_nothrow_receiver_of<
+        void
+      >::value));
+
+  ASIO_CHECK((
+      !asio::execution::is_nothrow_receiver_of<
+        void,
+        int
+      >::value));
+
   ASIO_CHECK((
       !asio::execution::is_nothrow_receiver_of<
         not_a_receiver

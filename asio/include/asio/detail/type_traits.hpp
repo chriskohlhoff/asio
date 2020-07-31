@@ -21,6 +21,7 @@
 # include <type_traits>
 #else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 # include <boost/type_traits/add_const.hpp>
+# include <boost/type_traits/add_lvalue_reference.hpp>
 # include <boost/type_traits/aligned_storage.hpp>
 # include <boost/type_traits/alignment_of.hpp>
 # include <boost/type_traits/conditional.hpp>
@@ -50,6 +51,7 @@ namespace asio {
 
 #if defined(ASIO_HAS_STD_TYPE_TRAITS)
 using std::add_const;
+using std::add_lvalue_reference;
 using std::aligned_storage;
 using std::alignment_of;
 using std::conditional;
@@ -88,6 +90,7 @@ using std::result_of;
 using std::true_type;
 #else // defined(ASIO_HAS_STD_TYPE_TRAITS)
 using boost::add_const;
+using boost::add_lvalue_reference;
 using boost::aligned_storage;
 using boost::alignment_of;
 template <bool Condition, typename Type = void>

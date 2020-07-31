@@ -200,6 +200,7 @@ void test_sender_traits()
 
 void test_is_sender()
 {
+  ASIO_CHECK(!exec::is_sender<void>::value);
   ASIO_CHECK(!exec::is_sender<not_a_sender>::value);
   ASIO_CHECK(exec::is_sender<sender_using_base>::value);
   ASIO_CHECK(exec::is_sender<executor>::value);
@@ -211,6 +212,7 @@ void test_is_sender()
 
 void test_is_typed_sender()
 {
+  ASIO_CHECK(!exec::is_typed_sender<void>::value);
   ASIO_CHECK(!exec::is_typed_sender<not_a_sender>::value);
   ASIO_CHECK(!exec::is_typed_sender<sender_using_base>::value);
 

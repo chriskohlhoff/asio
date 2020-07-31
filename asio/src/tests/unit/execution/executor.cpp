@@ -87,6 +87,11 @@ void is_executor_test()
 {
   ASIO_CHECK((
       !asio::execution::is_executor<
+        void
+      >::value));
+
+  ASIO_CHECK((
+      !asio::execution::is_executor<
         not_an_executor
       >::value));
 
@@ -98,6 +103,12 @@ void is_executor_test()
 
 void is_executor_of_test()
 {
+  ASIO_CHECK((
+      !asio::execution::is_executor_of<
+        void,
+        void(*)()
+      >::value));
+
   ASIO_CHECK((
       !asio::execution::is_executor_of<
         not_an_executor,

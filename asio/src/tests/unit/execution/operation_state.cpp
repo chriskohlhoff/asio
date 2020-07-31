@@ -78,6 +78,11 @@ void is_operation_state_test()
 {
   ASIO_CHECK((
       !asio::execution::is_operation_state<
+        void
+      >::value));
+
+  ASIO_CHECK((
+      !asio::execution::is_operation_state<
         not_an_operation_state_1
       >::value));
 

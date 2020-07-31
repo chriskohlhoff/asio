@@ -55,7 +55,8 @@ struct is_operation_state :
   integral_constant<bool, automatically_determined>
 #else // defined(GENERATING_DOCUMENTATION)
   conditional<
-    can_start<T&>::value && is_nothrow_start<T&>::value,
+    can_start<typename add_lvalue_reference<T>::type>::value
+      && is_nothrow_start<typename add_lvalue_reference<T>::type>::value,
     detail::is_operation_state_base<T>,
     false_type
   >::type
