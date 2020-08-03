@@ -126397,8 +126397,22 @@ Executor used to submit functions to a thread pool.
 
   [
 
+    [[link asio.reference.thread_pool__basic_executor_type.index_type [*index_type]]]
+    [The bulk execution index type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
     [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.shape_type [*shape_type]]]
+    [The bulk execution shape type. ]
   
   ]
 
@@ -126823,8 +126837,22 @@ Scheduler used to schedule receivers on a thread pool.
 
   [
 
+    [[link asio.reference.thread_pool__basic_executor_type.index_type [*index_type]]]
+    [The bulk execution index type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
     [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.shape_type [*shape_type]]]
+    [The bulk execution shape type. ]
   
   ]
 
@@ -127236,8 +127264,22 @@ Executor implementation type used to submit functions to a thread pool.
 
   [
 
+    [[link asio.reference.thread_pool__basic_executor_type.index_type [*index_type]]]
+    [The bulk execution index type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
     [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.shape_type [*shape_type]]]
+    [The bulk execution shape type. ]
   
   ]
 
@@ -127598,6 +127640,27 @@ For example:
 
 
 
+
+
+[endsect]
+
+
+
+[section:index_type thread_pool::basic_executor_type::index_type]
+
+[indexterm2 asio.indexterm.thread_pool__basic_executor_type.index_type..index_type..thread_pool::basic_executor_type] 
+The bulk execution index type. 
+
+
+  typedef std::size_t index_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/thread_pool.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -128465,8 +128528,22 @@ The sender type, when this type is used as a scheduler.
 
   [
 
+    [[link asio.reference.thread_pool__basic_executor_type.index_type [*index_type]]]
+    [The bulk execution index type. ]
+  
+  ]
+
+  [
+
     [[link asio.reference.thread_pool__basic_executor_type.sender_type [*sender_type]]]
     [The sender type, when this type is used as a scheduler. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.thread_pool__basic_executor_type.shape_type [*shape_type]]]
+    [The bulk execution shape type. ]
   
   ]
 
@@ -128610,6 +128687,27 @@ The sender type, when this type is used as a scheduler.
   ]
   
 ]
+
+
+[heading Requirements]
+
+['Header: ][^asio/thread_pool.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:shape_type thread_pool::basic_executor_type::shape_type]
+
+[indexterm2 asio.indexterm.thread_pool__basic_executor_type.shape_type..shape_type..thread_pool::basic_executor_type] 
+The bulk execution shape type. 
+
+
+  typedef std::size_t shape_type;
+
 
 
 [heading Requirements]
