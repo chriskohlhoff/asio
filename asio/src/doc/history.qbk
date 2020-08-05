@@ -28,13 +28,14 @@
     time which model a particular executor meets; the proposed standard
     executor model is used in preference if both are detected.
 
-  * The `any_io_executor` type alias has been introduced as the default
+  * The `any_io_executor` type alias has been introduced as the new default
     runtime-polymorphic executor for all I/O objects. This type alias points to
     the `execution::any_executor<>` template with a set of supportable
-    properties specified for use with I/O. If required for backward
-    compatibility, `ASIO_USE_TS_EXECUTOR_AS_DEFAULT` can be defined, which
-    changes the `any_io_executor` type alias to point to the old polymorphic
-    wrapper, `executor`.
+    properties specified for use with I/O. This change may break existing code
+    that directly uses the old polymorphic wrapper, `executor`. If required for
+    backward compatibility, `ASIO_USE_TS_EXECUTOR_AS_DEFAULT` can be defined,
+    which changes the `any_io_executor` type alias to instead point to the
+    `executor` polymorphic wrapper.
 
   * Support for the existing Networking TS model of executors can be disabled
     by defining `ASIO_NO_TS_EXECUTORS`.
