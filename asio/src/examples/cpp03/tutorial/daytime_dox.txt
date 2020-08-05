@@ -23,8 +23,8 @@ so we need the user to specify the server.
 
 \until }
 
-All programs that use asio need to have at least one asio::io_context
-object.
+All programs that use asio need to have at least one I/O execution context,
+such as an asio::io_context object.
 
 \until asio::io_context
 

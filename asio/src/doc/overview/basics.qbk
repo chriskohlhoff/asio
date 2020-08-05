@@ -17,8 +17,10 @@ operations.
 
 [$sync_op.png]
 
-[*Your program] will have at least one [*io_context] object. The [*io_context]
-represents [*your program]'s link to the [*operating system]'s I/O services.
+[*Your program] will have at least one [*I/O execution context], such as an
+`asio::io_context` object, `asio::thread_pool` object, or
+`asio::system_context`. This [*I/O execution context] represents [*your
+program]'s link to the [*operating system]'s I/O services.
 
   asio::io_context io_context;
 
@@ -35,18 +37,19 @@ object]:
 
   socket.connect(server_endpoint);
 
-2. The [*I/O object] forwards the request to the [*io_context].
+2. The [*I/O object] forwards the request to the [*I/O execution context].
 
-3. The [*io_context] calls on the [*operating system] to perform the connect
-operation.
+3. The [*I/O execution context] calls on the [*operating system] to perform the
+connect operation.
 
 4. The [*operating system] returns the result of the operation to the
-[*io_context].
+[*I/O execution context].
 
-5. The [*io_context] translates any error resulting from the operation into an
-object of type `asio::error_code`. An `error_code` may be compared with
-specific values, or tested as a boolean (where a `false` result means that no
-error occurred). The result is then forwarded back up to the [*I/O object].
+5. The [*I/O execution context] translates any error resulting from the
+operation into an object of type `asio::error_code`. An `error_code` may be
+compared with specific values, or tested as a boolean (where a `false` result
+means that no error occurred). The result is then forwarded back up to the
+[*I/O object].
 
 6. The [*I/O object] throws an exception of type `asio::system_error` if the
 operation failed. If the code to initiate the operation had instead been
@@ -76,10 +79,10 @@ The exact signature required depends on the asynchronous operation being
 performed. The reference documentation indicates the appropriate form for each
 operation.
 
-2. The [*I/O object] forwards the request to the [*io_context].
+2. The [*I/O object] forwards the request to the [*I/O execution context].
 
-3. The [*io_context] signals to the [*operating system] that it should start an
-asynchronous connect.
+3. The [*I/O execution context] signals to the [*operating system] that it
+should start an asynchronous connect.
 
 Time passes. (In the synchronous case this wait would have been contained
 entirely within the duration of the connect operation.)
@@ -87,17 +90,19 @@ entirely within the duration of the connect operation.)
 [$async_op2.png]
 
 4. The [*operating system] indicates that the connect operation has completed
-by placing the result on a queue, ready to be picked up by the [*io_context].
+by placing the result on a queue, ready to be picked up by the [*I/O execution
+context].
 
-5. [*Your program] must make a call to `io_context::run()` (or to one of the
-similar [*io_context] member functions) in order for the result to be
-retrieved. A call to `io_context::run()` blocks while there are unfinished
-asynchronous operations, so you would typically call it as soon as you have
-started your first asynchronous operation.
+5. When using an `io_context` as the [*I/O execution context], [*your program]
+must make a call to `io_context::run()` (or to one of the similar `io_context`
+member functions) in order for the result to be retrieved. A call to
+`io_context::run()` blocks while there are unfinished asynchronous operations,
+so you would typically call it as soon as you have started your first
+asynchronous operation.
 
-6. While inside the call to `io_context::run()`, the [*io_context] dequeues the
-result of the operation, translates it into an `error_code`, and then passes it
-to [*your completion handler].
+6. While inside the call to `io_context::run()`, the [*I/O execution context]
+dequeues the result of the operation, translates it into an `error_code`, and
+then passes it to [*your completion handler].
 
 This is a simplified picture of how Asio operates. You will want to delve
 further into the documentation if your needs are more advanced, such as

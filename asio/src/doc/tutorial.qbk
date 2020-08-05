@@ -81,8 +81,10 @@ All of the asio classes can be used by simply including the `"asio.hpp"` header 
 
 
 
-All programs that use asio need to have at least one 
-[link asio.reference.io_context io_context] object. This class provides access to I/O functionality. We declare an object of this type first thing in the main function.
+All programs that use asio need to have at least one I/O execution context, such as an 
+[link asio.reference.io_context io_context] or 
+[link asio.reference.thread_pool thread_pool] object. An I/O execution context provides access to I/O functionality. We declare an object of type 
+[link asio.reference.io_context io_context] first thing in the main function.
 
 
 
@@ -867,7 +869,7 @@ The purpose of this application is to access a daytime service, so we need the u
 
 
 
-All programs that use asio need to have at least one 
+All programs that use asio need to have at least one I/O execution context, such as an 
 [link asio.reference.io_context io_context] object.
 
 

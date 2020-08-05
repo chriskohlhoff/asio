@@ -21,9 +21,10 @@ header file.
 
 \until asio.hpp
 
-All programs that use asio need to have at least one asio::io_context object.
-This class provides access to I/O functionality. We declare an object of this
-type first thing in the main function.
+All programs that use asio need to have at least one I/O execution context,
+such as an asio::io_context or asio::thread_pool object. An I/O execution
+context provides access to I/O functionality. We declare an object of type
+asio::io_context first thing in the main function.
 
 \until asio::io_context
 
