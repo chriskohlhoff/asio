@@ -143,6 +143,7 @@ sub copy_source_file
       $line =~ s/asio\.history/boost_asio.history/g;
       $line =~ s/asio\.index/boost_asio.index/g;
       $line =~ s/asio\.net_ts/boost_asio.net_ts/g;
+      $line =~ s/asio\.std_executors/boost_asio.std_executors/g;
       $line =~ s/asio\.overview/boost_asio.overview/g;
       $line =~ s/asio\.reference/boost_asio.reference/g;
       $line =~ s/asio\.tutorial/boost_asio.tutorial/g;
@@ -597,6 +598,7 @@ sub copy_doc
       "src/doc/examples.qbk",
       "src/doc/net_ts.qbk",
       "src/doc/reference.xsl",
+      "src/doc/std_executors.qbk",
       "src/doc/tutorial.xsl",
       glob("src/doc/overview/*.qbk"),
       glob("src/doc/requirements/*.qbk"));

@@ -104,6 +104,15 @@ C++ approach.
   ]
   [
     [
+      [link asio.std_executors Proposed Standard Executors]
+    ]
+    [
+      Description of Asio's support for the proposed standard executors
+      library.
+    ]
+  ]
+  [
+    [
       [link asio.history Revision History]
     ]
     [
@@ -126,5 +135,6 @@ C++ approach.
 [include examples.qbk]
 [include reference.qbk]
 [include net_ts.qbk]
+[include std_executors.qbk]
 [include history.qbk]
 [xinclude index.xml]
