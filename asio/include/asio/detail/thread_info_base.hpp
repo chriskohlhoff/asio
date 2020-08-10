@@ -58,6 +58,9 @@ public:
 #endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
        // && !defined(ASIO_NO_EXCEPTIONS)
   {
+    // avoid valgrind warning for branching on uninitialized data
+    ASIO_MAKE_MEM_DEFINED(reusable_memory_, sizeof(reusable_memory_));
+
     for (int i = 0; i < max_mem_index; ++i)
     {
       // The following test for non-null pointers is technically redundant, but

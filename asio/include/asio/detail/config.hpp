@@ -1819,4 +1819,12 @@
 # define ASIO_NODISCARD
 #endif // !defined(ASIO_NODISCARD)
 
+// Turn off valgrind false-positive warnings when branching on uninitialized data
+#if defined(HAVE_VALGRIND)
+#include <valgrind/memcheck.h>
+#define ASIO_MAKE_MEM_DEFINED(addr, len) VALGRIND_MAKE_MEM_DEFINED(addr, len)
+#else
+#define ASIO_MAKE_MEM_DEFINED(addr, len)
+#endif // defined(HAVE_VALGRIND)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
