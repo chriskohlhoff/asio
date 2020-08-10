@@ -59,13 +59,7 @@ public:
        // && !defined(ASIO_NO_EXCEPTIONS)
   {
     for (int i = 0; i < max_mem_index; ++i)
-    {
-      // The following test for non-null pointers is technically redundant, but
-      // it is significantly faster when using a tight io_context::poll() loop
-      // in latency sensitive applications.
-      if (reusable_memory_[i])
-        reusable_memory_[i] = 0;
-    }
+      reusable_memory_[i] = 0;
   }
 
   ~thread_info_base()
