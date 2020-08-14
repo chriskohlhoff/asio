@@ -95,7 +95,12 @@ struct prefer_only_polymorphic_query_result_type<InnerProperty,
 template <typename InnerProperty, typename = void>
 struct prefer_only_property
 {
-  InnerProperty property;
+  typename conditional<
+      is_move_constructible<InnerProperty>::value
+        || is_copy_constructible<InnerProperty>::value,
+      InnerProperty,
+      const InnerProperty&
+    >::type property;
 
   prefer_only_property(const InnerProperty& p)
     : property(p)
@@ -112,7 +117,12 @@ struct prefer_only_property<InnerProperty,
       decltype(asio::declval<const InnerProperty>().value())
     >::type>
 {
-  InnerProperty property;
+  typename conditional<
+      is_move_constructible<InnerProperty>::value
+        || is_copy_constructible<InnerProperty>::value,
+      InnerProperty,
+      const InnerProperty&
+    >::type property;
 
   prefer_only_property(const InnerProperty& p)
     : property(p)
@@ -164,7 +174,12 @@ struct prefer_only_property<InnerProperty,
           void>::value
     >::type>
 {
-  InnerProperty property;
+  typename conditional<
+      is_move_constructible<InnerProperty>::value
+        || is_copy_constructible<InnerProperty>::value,
+      InnerProperty,
+      const InnerProperty&
+    >::type property;
 
   prefer_only_property(const InnerProperty& p)
     : property(p)

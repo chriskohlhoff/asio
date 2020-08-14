@@ -535,9 +535,158 @@ void prefer_only_executor_execute_test()
   ASIO_CHECK(never_blocking_count == 6);
 }
 
+namespace test_props {
+
+struct noncopyable_property
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_applicable = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
+
+  typedef int polymorphic_query_result_type;
+
+  explicit noncopyable_property(int value)
+    : value_(value)
+  {
+  }
+
+  int value_;
+
+private:
+  noncopyable_property(const noncopyable_property&) ASIO_DELETED;
+  noncopyable_property& operator=(noncopyable_property&) ASIO_DELETED;
+};
+
+} // namespace test_props
+namespace asio {
+
+template <typename T>
+struct is_applicable_property<T, test_props::noncopyable_property> : true_type
+{
+};
+
+} // namespace asio
+
+static int total_value_count = 0;
+
+struct noncopyable_property_executor
+{
+  int value_;
+
+  explicit noncopyable_property_executor(int value = 0)
+    : value_(value)
+  {
+  }
+
+  int query(const test_props::noncopyable_property&) const ASIO_NOEXCEPT
+  {
+    return value_;
+  }
+
+  noncopyable_property_executor require(const test_props::noncopyable_property& p) const
+  {
+    return noncopyable_property_executor(p.value_);
+  }
+
+  template <typename F>
+  void execute(const F&) const
+  {
+    total_value_count += value_;
+  }
+
+  friend bool operator==(const noncopyable_property_executor& a,
+      const noncopyable_property_executor& b) ASIO_NOEXCEPT
+  {
+    return a.value_ == b.value_;
+  }
+
+  friend bool operator!=(const noncopyable_property_executor& a,
+      const noncopyable_property_executor& b) ASIO_NOEXCEPT
+  {
+    return a.value_ != b.value_;
+  }
+};
+
+namespace asio {
+namespace traits {
+
+#if !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+template <typename F>
+struct execute_member<noncopyable_property_executor, F>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef void result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+template <>
+struct equality_comparable<noncopyable_property_executor>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <>
+struct query_member<
+  noncopyable_property_executor, test_props::noncopyable_property>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+
+  typedef int result_type;
+};
+
+#if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <>
+struct require_member<
+  noncopyable_property_executor, test_props::noncopyable_property>
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+
+  typedef noncopyable_property_executor result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+} // namespace traits
+} // namespace asio
+
+void prefer_only_noncopyable_property_test()
+{
+  typedef execution::any_executor<
+      execution::prefer_only<test_props::noncopyable_property>
+    > executor_type;
+
+  noncopyable_property_executor ex;
+
+  executor_type ex1 = noncopyable_property_executor();
+
+  execution::execute(ex1, &do_nothing);
+  ASIO_CHECK(total_value_count == 0);
+
+  test_props::noncopyable_property prop1(42);
+  executor_type ex2 = asio::prefer(ex1, prop1);
+
+  execution::execute(ex2, &do_nothing);
+  ASIO_CHECK(total_value_count == 42);
+}
+
 ASIO_TEST_SUITE
 (
   "prefer_only",
   ASIO_TEST_CASE(prefer_only_executor_query_test)
   ASIO_TEST_CASE(prefer_only_executor_execute_test)
+  ASIO_TEST_CASE(prefer_only_noncopyable_property_test)
 )
