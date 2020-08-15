@@ -7,10 +7,77 @@
 
 [section:history Revision History]
 
+[heading Asio 1.18.0]
+
+* Marked the `basic_socket_acceptor` move constructor as `noexcept`.
+
+* Added workarounds for various issues in [^gcc] 10's coroutine support.
+
+* Added standard executor support to `windows::overlapped_ptr`.
+
+* Added missing compatibility macros for the `execution::receiver_of` concept.
+
+* Added short-circuited evaluation to `execution::executor`,
+	`execution::operation_state`,`execution::sender`, `execution::receiver`,
+	`execution::receiver_of`, and `execution::scheduler` concepts and the
+	corresponding traits. These now test first for well-formed CPO expressions
+	(or, in the case of senders, a specialised `sender_traits` template) and, if
+	not valid, short-circuit the remainder of the evaluation. This helps prevent
+	recursive template instantiations that can occur in some contexts.
+
+* Added constraints to the `strand` template's constructor, to prevent template
+  instantiation recursion.
+
+* Changed Asio's internal executor adapters to prevent template instantiation
+  recursion.
+
+* Added constraints to the `execution::any_executor` template's converting
+  constructors, as per the specification.
+
+* Added missing `execution::sender_traits` specialisation and `connect()`
+  member function to the `thread_pool` executor, as per the specification.
+
+* Changed `execution::blocking_t::always_t::is_preferable` to be false as per
+  the specification.
+
+* Added `shape_type` and `index_type` to `thread_pool` executors, as per the
+  specification.
+
+* Ensured that the standard executor concept-related traits (such as
+  `execution::is_executor`) work with `void`.
+
+* Fixed `async_compose` support for standard executors.
+
+* Fixed the forward declaration of `any_io_executor` in [^asio/ts/netfwd.hpp].
+
+* Fixed `use_future` compatibility with older compilers.
+
+* Fixed compatibility with MinGW.
+
+* Improved compatibility with older versions of [^gcc].
+
+* Added compatiblity with [^clang-cl] on Windows.
+
+* Fixed various compiler warnings.
+
+* Added basic overview documentation for the standard executors support.
+
+* Added detailed descriptions to the standard executor-related member functions
+  of `io_context` executors, `thread_pool` executors, `system_executor`, and
+  `strand<>`.
+
+* Changed introductory documentation to reflect that there our now multiple
+  types of I/O execution context.
+
+* Marked constructors, destructors, and static data members in class synopses
+  in the reference documentation.
+
+* Fixed various minor documentation errors.
+
 [heading Asio 1.17.0]
 
 * Added an implementation of the proposed standard executors
-	([@http://wg21.link/P0443r13 P0443r13], [@http://wg21.link/P1348r0 P1348r0],
+  ([@http://wg21.link/P0443r13 P0443r13], [@http://wg21.link/P1348r0 P1348r0],
   and [@http://wg21.link/P1393r0 P1393r0]).
 
 * Added support for the proposed standard executors to Asio's I/O facilities:
@@ -753,15 +820,15 @@
 [heading Asio 1.12.0]
 
 * Completed the interface changes to reflect the Networking TS
-	([@http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4656.pdf N4656]).
+  ([@http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4656.pdf N4656]).
 
-	* See the [link asio.net_ts list] of new interfaces and, where
+  * See the [link asio.net_ts list] of new interfaces and, where
     applicable, the corresponding old interfaces that have been superseded.
 
-	* The service template parameters, and the corresponding classes, are disabled
-		by default. For example, instead of `basic_socket<Protocol, SocketService>` we
-		now have simply `basic_socket<Protocol>`. The old interface can be enabled by
-		defining the `(BOOST_)ASIO_ENABLE_OLD_SERVICES` macro.
+  * The service template parameters, and the corresponding classes, are disabled
+    by default. For example, instead of `basic_socket<Protocol, SocketService>` we
+    now have simply `basic_socket<Protocol>`. The old interface can be enabled by
+    defining the `(BOOST_)ASIO_ENABLE_OLD_SERVICES` macro.
 
 * Added support for customised handler tracking.
 
@@ -773,7 +840,7 @@
 * Enabled perfect forwarding for the first `ssl::stream<>` constructor argument.
 
 * Added ability to release ownership of the underlying native socket. (Requires
-	Windows 8.1 or later when using the I/O completion port backend.)
+  Windows 8.1 or later when using the I/O completion port backend.)
 
 [heading Asio 1.11.0]
 
