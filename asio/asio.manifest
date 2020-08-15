@@ -257,7 +257,6 @@
 /doc/asio/reference/basic_datagram_socket/get_option/overload1.html
 /doc/asio/reference/basic_datagram_socket/get_option/overload2.html
 /doc/asio/reference/basic_datagram_socket.html
-/doc/asio/reference/basic_datagram_socket/impl_.html
 /doc/asio/reference/basic_datagram_socket/io_control/
 /doc/asio/reference/basic_datagram_socket/io_control.html
 /doc/asio/reference/basic_datagram_socket/io_control/overload1.html
@@ -493,7 +492,6 @@
 /doc/asio/reference/basic_raw_socket/get_option/overload1.html
 /doc/asio/reference/basic_raw_socket/get_option/overload2.html
 /doc/asio/reference/basic_raw_socket.html
-/doc/asio/reference/basic_raw_socket/impl_.html
 /doc/asio/reference/basic_raw_socket/io_control/
 /doc/asio/reference/basic_raw_socket/io_control.html
 /doc/asio/reference/basic_raw_socket/io_control/overload1.html
@@ -651,7 +649,6 @@
 /doc/asio/reference/basic_seq_packet_socket/get_option/overload1.html
 /doc/asio/reference/basic_seq_packet_socket/get_option/overload2.html
 /doc/asio/reference/basic_seq_packet_socket.html
-/doc/asio/reference/basic_seq_packet_socket/impl_.html
 /doc/asio/reference/basic_seq_packet_socket/io_control/
 /doc/asio/reference/basic_seq_packet_socket/io_control.html
 /doc/asio/reference/basic_seq_packet_socket/io_control/overload1.html
@@ -1032,7 +1029,6 @@
 /doc/asio/reference/basic_socket/get_option/overload1.html
 /doc/asio/reference/basic_socket/get_option/overload2.html
 /doc/asio/reference/basic_socket.html
-/doc/asio/reference/basic_socket/impl_.html
 /doc/asio/reference/basic_socket/io_control/
 /doc/asio/reference/basic_socket/io_control.html
 /doc/asio/reference/basic_socket/io_control/overload1.html
@@ -1275,7 +1271,6 @@
 /doc/asio/reference/basic_stream_socket/get_option/overload1.html
 /doc/asio/reference/basic_stream_socket/get_option/overload2.html
 /doc/asio/reference/basic_stream_socket.html
-/doc/asio/reference/basic_stream_socket/impl_.html
 /doc/asio/reference/basic_stream_socket/io_control/
 /doc/asio/reference/basic_stream_socket/io_control.html
 /doc/asio/reference/basic_stream_socket/io_control/overload1.html
@@ -3319,7 +3314,6 @@
 /doc/asio/reference/posix__basic_descriptor/executor_type.html
 /doc/asio/reference/posix__basic_descriptor/get_executor.html
 /doc/asio/reference/posix__basic_descriptor.html
-/doc/asio/reference/posix__basic_descriptor/impl_.html
 /doc/asio/reference/posix__basic_descriptor/io_control/
 /doc/asio/reference/posix__basic_descriptor/io_control.html
 /doc/asio/reference/posix__basic_descriptor/io_control/overload1.html
@@ -3379,7 +3373,6 @@
 /doc/asio/reference/posix__basic_stream_descriptor/executor_type.html
 /doc/asio/reference/posix__basic_stream_descriptor/get_executor.html
 /doc/asio/reference/posix__basic_stream_descriptor.html
-/doc/asio/reference/posix__basic_stream_descriptor/impl_.html
 /doc/asio/reference/posix__basic_stream_descriptor/io_control/
 /doc/asio/reference/posix__basic_stream_descriptor/io_control.html
 /doc/asio/reference/posix__basic_stream_descriptor/io_control/overload1.html
@@ -3895,11 +3888,13 @@
 /doc/asio/reference/thread_pool__basic_executor_type/basic_executor_type/overload1.html
 /doc/asio/reference/thread_pool__basic_executor_type/basic_executor_type/overload2.html
 /doc/asio/reference/thread_pool__basic_executor_type/bulk_execute.html
+/doc/asio/reference/thread_pool__basic_executor_type/connect.html
 /doc/asio/reference/thread_pool__basic_executor_type/context.html
 /doc/asio/reference/thread_pool__basic_executor_type/defer.html
 /doc/asio/reference/thread_pool__basic_executor_type/dispatch.html
 /doc/asio/reference/thread_pool__basic_executor_type/execute.html
 /doc/asio/reference/thread_pool__basic_executor_type.html
+/doc/asio/reference/thread_pool__basic_executor_type/index_type.html
 /doc/asio/reference/thread_pool__basic_executor_type/on_work_finished.html
 /doc/asio/reference/thread_pool__basic_executor_type/on_work_started.html
 /doc/asio/reference/thread_pool__basic_executor_type/operator_eq_/
@@ -3936,6 +3931,7 @@
 /doc/asio/reference/thread_pool__basic_executor_type/running_in_this_thread.html
 /doc/asio/reference/thread_pool__basic_executor_type/schedule.html
 /doc/asio/reference/thread_pool__basic_executor_type/sender_type.html
+/doc/asio/reference/thread_pool__basic_executor_type/shape_type.html
 /doc/asio/reference/thread_pool/destroy.html
 /doc/asio/reference/thread_pool/executor.html
 /doc/asio/reference/thread_pool/executor_type.html
@@ -4075,7 +4071,6 @@
 /doc/asio/reference/windows__basic_overlapped_handle/executor_type.html
 /doc/asio/reference/windows__basic_overlapped_handle/get_executor.html
 /doc/asio/reference/windows__basic_overlapped_handle.html
-/doc/asio/reference/windows__basic_overlapped_handle/impl_.html
 /doc/asio/reference/windows__basic_overlapped_handle/is_open.html
 /doc/asio/reference/windows__basic_overlapped_handle/lowest_layer/
 /doc/asio/reference/windows__basic_overlapped_handle/lowest_layer.html
@@ -4113,7 +4108,6 @@
 /doc/asio/reference/windows__basic_random_access_handle/executor_type.html
 /doc/asio/reference/windows__basic_random_access_handle/get_executor.html
 /doc/asio/reference/windows__basic_random_access_handle.html
-/doc/asio/reference/windows__basic_random_access_handle/impl_.html
 /doc/asio/reference/windows__basic_random_access_handle/is_open.html
 /doc/asio/reference/windows__basic_random_access_handle/lowest_layer/
 /doc/asio/reference/windows__basic_random_access_handle/lowest_layer.html
@@ -4159,7 +4153,6 @@
 /doc/asio/reference/windows__basic_stream_handle/executor_type.html
 /doc/asio/reference/windows__basic_stream_handle/get_executor.html
 /doc/asio/reference/windows__basic_stream_handle.html
-/doc/asio/reference/windows__basic_stream_handle/impl_.html
 /doc/asio/reference/windows__basic_stream_handle/is_open.html
 /doc/asio/reference/windows__basic_stream_handle/lowest_layer/
 /doc/asio/reference/windows__basic_stream_handle/lowest_layer.html
@@ -4233,6 +4226,7 @@
 /doc/asio/reference/write/overload8.html
 /doc/asio/reference/write/overload9.html
 /doc/asio/reference/yield_context.html
+/doc/asio/std_executors.html
 /doc/asio/tutorial/
 /doc/asio/tutorial/boost_bind.html
 /doc/asio/tutorial.html
