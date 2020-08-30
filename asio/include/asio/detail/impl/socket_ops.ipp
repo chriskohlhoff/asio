@@ -31,6 +31,8 @@
 # include <codecvt>
 # include <locale>
 # include <string>
+#include <winrt/Windows.Networking.h>
+#include <winrt/Windows.Networking.Connectivity.h>
 #endif // defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__) \
@@ -2543,7 +2545,7 @@ int inet_pton(int af, const char* src, void* dest,
     bytes[1] = static_cast<unsigned char>(b1);
     bytes[2] = static_cast<unsigned char>(b2);
     bytes[3] = static_cast<unsigned char>(b3);
-    ec.assign(), ec.category());
+    ec.assign(0, ec.category());
     return 1;
   }
   else if (af == ASIO_OS_DEF(AF_INET6))
@@ -2780,17 +2782,17 @@ int gethostname(char* name, int namelen, asio::error_code& ec)
 #if defined(ASIO_WINDOWS_RUNTIME)
   try
   {
-    using namespace Windows::Foundation::Collections;
-    using namespace Windows::Networking;
-    using namespace Windows::Networking::Connectivity;
-    IVectorView<HostName^>^ hostnames = NetworkInformation::GetHostNames();
-    for (unsigned i = 0; i < hostnames->Size; ++i)
+    using namespace winrt::Windows::Foundation::Collections;
+    using namespace winrt::Windows::Networking;
+    using namespace winrt::Windows::Networking::Connectivity;
+    IVectorView<HostName> hostnames = NetworkInformation::GetHostNames();
+    for (unsigned i = 0; i < hostnames.Size(); ++i)
     {
-      HostName^ hostname = hostnames->GetAt(i);
-      if (hostname->Type == HostNameType::DomainName)
+      HostName hostname = hostnames.GetAt(i);
+      if (hostname.Type() == HostNameType::DomainName)
       {
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-        std::string raw_name = converter.to_bytes(hostname->RawName->Data());
+        std::string raw_name = converter.to_bytes(hostname.RawName().data());
         if (namelen > 0 && raw_name.size() < static_cast<std::size_t>(namelen))
         {
           strcpy_s(name, namelen, raw_name.c_str());
@@ -2800,9 +2802,9 @@ int gethostname(char* name, int namelen, asio::error_code& ec)
     }
     return -1;
   }
-  catch (Platform::Exception^ e)
+  catch (winrt::hresult_error e)
   {
-    ec = asio::error_code(e->HResult,
+    ec = asio::error_code(e.code(),
         asio::system_category());
     return -1;
   }

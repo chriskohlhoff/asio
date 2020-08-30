@@ -37,8 +37,8 @@ namespace detail {
 template <typename Protocol, typename Handler, typename IoExecutor>
 class winrt_resolve_op :
   public winrt_async_op<
-    Windows::Foundation::Collections::IVectorView<
-      Windows::Networking::EndpointPair^>^>
+    winrt::Windows::Foundation::Collections::IVectorView<
+      winrt::Windows::Networking::EndpointPair>>
 {
 public:
   ASIO_DEFINE_HANDLER_PTR(winrt_resolve_op);
@@ -50,8 +50,8 @@ public:
   winrt_resolve_op(const query_type& query,
       Handler& handler, const IoExecutor& io_ex)
     : winrt_async_op<
-        Windows::Foundation::Collections::IVectorView<
-          Windows::Networking::EndpointPair^>^>(
+        winrt::Windows::Foundation::Collections::IVectorView<
+          winrt::Windows::Networking::EndpointPair>>(
             &winrt_resolve_op::do_complete),
       query_(query),
       handler_(ASIO_MOVE_CAST(Handler)(handler)),

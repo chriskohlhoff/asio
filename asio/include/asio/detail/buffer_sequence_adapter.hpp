@@ -22,6 +22,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if defined(ASIO_WINDOWS_RUNTIME)
+#include <winrt/Windows.Storage.Streams.h>
+#endif
+
 namespace asio {
 namespace detail {
 
@@ -33,7 +37,7 @@ public:
   enum { max_buffers = 1 };
 
 protected:
-  typedef Windows::Storage::Streams::IBuffer^ native_buffer_type;
+  typedef winrt::Windows::Storage::Streams::IBuffer native_buffer_type;
 
   ASIO_DECL static void init_native_buffer(
       native_buffer_type& buf,

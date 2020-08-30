@@ -24,7 +24,8 @@
 #include <future>
 #include <locale>
 #include <robuffer.h>
-#include <windows.storage.streams.h>
+#include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.Networking.h>
 #include <wrl/implements.h>
 #include "asio/buffer.hpp"
 #include "asio/error_code.hpp"
@@ -37,61 +38,58 @@ namespace asio {
 namespace detail {
 namespace winrt_utils {
 
-inline Platform::String^ string(const char* from)
+inline winrt::hstring string(const char* from)
 {
   std::wstring tmp(from, from + std::strlen(from));
-  return ref new Platform::String(tmp.c_str());
+  return winrt::hstring(tmp);
 }
 
-inline Platform::String^ string(const std::string& from)
+inline winrt::hstring string(const std::string& from)
 {
   std::wstring tmp(from.begin(), from.end());
-  return ref new Platform::String(tmp.c_str());
+  return winrt::hstring(tmp);
 }
 
-inline std::string string(Platform::String^ from)
+inline std::string string(winrt::hstring from)
 {
   std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-  return converter.to_bytes(from->Data());
+  return converter.to_bytes(from.data());
 }
 
-inline Platform::String^ string(unsigned short from)
+inline winrt::hstring string(unsigned short from)
 {
   return string(std::to_string(from));
 }
 
 template <typename T>
-inline Platform::String^ string(const T& from)
+inline winrt::hstring string(const T& from)
 {
   return string(from.to_string());
 }
 
-inline int integer(Platform::String^ from)
+inline int integer(winrt::hstring from)
 {
-  return _wtoi(from->Data());
+  return _wtoi(from.data());
 }
 
 template <typename T>
-inline Windows::Networking::HostName^ host_name(const T& from)
+inline winrt::Windows::Networking::HostName host_name(const T& from)
 {
-  return ref new Windows::Networking::HostName((string)(from));
+  return winrt::Windows::Networking::HostName((string)(from));
 }
 
 template <typename ConstBufferSequence>
-inline Windows::Storage::Streams::IBuffer^ buffer_dup(
+inline winrt::Windows::Storage::Streams::IBuffer buffer_dup(
     const ConstBufferSequence& buffers)
 {
-  using Microsoft::WRL::ComPtr;
   using asio::buffer_size;
   std::size_t size = buffer_size(buffers);
-  auto b = ref new Windows::Storage::Streams::Buffer(size);
-  ComPtr<IInspectable> insp = reinterpret_cast<IInspectable*>(b);
-  ComPtr<Windows::Storage::Streams::IBufferByteAccess> bacc;
-  insp.As(&bacc);
+  auto b = winrt::make<winrt::Windows::Storage::Streams::Buffer>(size);
   byte* bytes = nullptr;
-  bacc->Buffer(&bytes);
+
+  b.as<Windows::Storage::Streams::IBufferByteAccess>()->Buffer(&bytes);
   asio::buffer_copy(asio::buffer(bytes, size), buffers);
-  b->Length = size;
+  b.Length(size);
   return b;
 }
 
