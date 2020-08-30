@@ -64,17 +64,17 @@ public:
     }
   }
 
-  void sync(Windows::Foundation::IAsyncAction^ action,
+  void sync(winrt::Windows::Foundation::IAsyncAction action,
       asio::error_code& ec)
   {
-    using namespace Windows::Foundation;
-    using Windows::Foundation::AsyncStatus;
+    using namespace winrt::Windows::Foundation;
+    using winrt::Windows::Foundation::AsyncStatus;
 
     auto promise = std::make_shared<std::promise<asio::error_code>>();
     auto future = promise->get_future();
 
-    action->Completed = ref new AsyncActionCompletedHandler(
-      [promise](IAsyncAction^ action, AsyncStatus status)
+    action.Completed() = AsyncActionCompletedHandler(
+      [promise](IAsyncAction action, AsyncStatus status)
       {
         switch (status)
         {
@@ -85,7 +85,7 @@ public:
         case AsyncStatus::Completed:
         default:
           asio::error_code ec(
-              action->ErrorCode.Value,
+              action.ErrorCode(),
               asio::system_category());
           promise->set_value(ec);
           break;
@@ -96,17 +96,17 @@ public:
   }
 
   template <typename TResult>
-  TResult sync(Windows::Foundation::IAsyncOperation<TResult>^ operation,
+  TResult sync(winrt::Windows::Foundation::IAsyncOperation<TResult> operation,
       asio::error_code& ec)
   {
-    using namespace Windows::Foundation;
-    using Windows::Foundation::AsyncStatus;
+    using namespace winrt::Windows::Foundation;
+    using winrt::Windows::Foundation::AsyncStatus;
 
     auto promise = std::make_shared<std::promise<asio::error_code>>();
     auto future = promise->get_future();
 
     operation->Completed = ref new AsyncOperationCompletedHandler<TResult>(
-      [promise](IAsyncOperation<TResult>^ operation, AsyncStatus status)
+      [promise](IAsyncOperation<TResult> operation, AsyncStatus status)
       {
         switch (status)
         {
@@ -117,7 +117,7 @@ public:
         case AsyncStatus::Completed:
         default:
           asio::error_code ec(
-              operation->ErrorCode.Value,
+              operation->ErrorCode(),
               asio::system_category());
           promise->set_value(ec);
           break;
@@ -130,19 +130,19 @@ public:
 
   template <typename TResult, typename TProgress>
   TResult sync(
-      Windows::Foundation::IAsyncOperationWithProgress<
-        TResult, TProgress>^ operation,
+      winrt::Windows::Foundation::IAsyncOperationWithProgress<
+        TResult, TProgress> operation,
       asio::error_code& ec)
   {
-    using namespace Windows::Foundation;
-    using Windows::Foundation::AsyncStatus;
+    using namespace winrt::Windows::Foundation;
+    using winrt::Windows::Foundation::AsyncStatus;
 
     auto promise = std::make_shared<std::promise<asio::error_code>>();
     auto future = promise->get_future();
 
     operation->Completed
       = ref new AsyncOperationWithProgressCompletedHandler<TResult, TProgress>(
-        [promise](IAsyncOperationWithProgress<TResult, TProgress>^ operation,
+        [promise](IAsyncOperationWithProgress<TResult, TProgress> operation,
           AsyncStatus status)
         {
           switch (status)
@@ -156,7 +156,7 @@ public:
           case AsyncStatus::Completed:
           default:
             asio::error_code ec(
-                operation->ErrorCode.Value,
+                operation->ErrorCode(),
                 asio::system_category());
             promise->set_value(ec);
             break;
@@ -167,14 +167,14 @@ public:
     return operation->GetResults();
   }
 
-  void async(Windows::Foundation::IAsyncAction^ action,
+  void async(winrt::Windows::Foundation::IAsyncAction action,
       winrt_async_op<void>* handler)
   {
-    using namespace Windows::Foundation;
-    using Windows::Foundation::AsyncStatus;
+    using namespace winrt::Windows::Foundation;
+    using winrt::Windows::Foundation::AsyncStatus;
 
-    auto on_completed = ref new AsyncActionCompletedHandler(
-      [this, handler](IAsyncAction^ action, AsyncStatus status)
+    auto on_completed = AsyncActionCompletedHandler(
+      [this, handler](IAsyncAction action, AsyncStatus status)
       {
         switch (status)
         {
@@ -187,7 +187,7 @@ public:
         case AsyncStatus::Error:
         default:
           handler->ec_ = asio::error_code(
-              action->ErrorCode.Value,
+              action.ErrorCode(),
               asio::system_category());
           break;
         }
@@ -198,18 +198,18 @@ public:
 
     scheduler_.work_started();
     ++outstanding_ops_;
-    action->Completed = on_completed;
+    action.Completed() = on_completed;
   }
 
   template <typename TResult>
-  void async(Windows::Foundation::IAsyncOperation<TResult>^ operation,
+  void async(winrt::Windows::Foundation::IAsyncOperation<TResult> operation,
       winrt_async_op<TResult>* handler)
   {
-    using namespace Windows::Foundation;
-    using Windows::Foundation::AsyncStatus;
+    using namespace winrt::Windows::Foundation;
+    using winrt::Windows::Foundation::AsyncStatus;
 
-    auto on_completed = ref new AsyncOperationCompletedHandler<TResult>(
-      [this, handler](IAsyncOperation<TResult>^ operation, AsyncStatus status)
+    auto on_completed = AsyncOperationCompletedHandler<TResult>(
+      [this, handler](IAsyncOperation<TResult> operation, AsyncStatus status)
       {
         switch (status)
         {
@@ -224,7 +224,7 @@ public:
         case AsyncStatus::Error:
         default:
           handler->ec_ = asio::error_code(
-              operation->ErrorCode.Value,
+              operation.ErrorCode(),
               asio::system_category());
           break;
         }
@@ -235,22 +235,22 @@ public:
 
     scheduler_.work_started();
     ++outstanding_ops_;
-    operation->Completed = on_completed;
+    operation.Completed() = on_completed;
   }
 
   template <typename TResult, typename TProgress>
   void async(
-      Windows::Foundation::IAsyncOperationWithProgress<
-        TResult, TProgress>^ operation,
+      winrt::Windows::Foundation::IAsyncOperationWithProgress<
+        TResult, TProgress> operation,
       winrt_async_op<TResult>* handler)
   {
-    using namespace Windows::Foundation;
-    using Windows::Foundation::AsyncStatus;
+    using namespace winrt::Windows::Foundation;
+    using winrt::Windows::Foundation::AsyncStatus;
 
     auto on_completed
       = ref new AsyncOperationWithProgressCompletedHandler<TResult, TProgress>(
         [this, handler](IAsyncOperationWithProgress<
-          TResult, TProgress>^ operation, AsyncStatus status)
+          TResult, TProgress> operation, AsyncStatus status)
         {
           switch (status)
           {
@@ -265,7 +265,7 @@ public:
           case AsyncStatus::Error:
           default:
             handler->ec_ = asio::error_code(
-                operation->ErrorCode.Value,
+                operation.ErrorCode(),
                 asio::system_category());
             break;
           }
@@ -276,7 +276,7 @@ public:
 
     scheduler_.work_started();
     ++outstanding_ops_;
-    operation->Completed = on_completed;
+    operation.Completed() = on_completed;
   }
 
 private:
