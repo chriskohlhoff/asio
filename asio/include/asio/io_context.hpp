@@ -713,6 +713,18 @@ public:
       basic_executor_type&& other) ASIO_NOEXCEPT;
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
+#if !defined(ASIO_NO_TYPEID)
+  static const std::type_info& type_id()
+  {
+    return typeid(basic_executor_type);
+#else // !defined(ASIO_NO_TYPEID)
+  static const void* type_id()
+  {
+    static int unique_id;
+    return &unique_id;
+#endif // !defined(ASIO_NO_TYPEID)
+  }
+
   /// Obtain an executor with the @c blocking.possibly property.
   /**
    * Do not call this function directly. It is intended for use with the
