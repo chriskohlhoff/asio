@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:using Using Asio]
+[section:using Using, Building and Configuring Asio]
 
 [heading Supported Platforms]
 
@@ -290,6 +290,48 @@ Asio.
         `hash_map` objects will initially contain 53 buckets. The number of
         buckets will be increased to 389 and then 1543 as elements are added to
         the map.
+    ]
+  ]
+  [
+    [`ASIO_HAS_MOVE`]
+    [
+      Move support is automatically enabled for g++ 4.5 and later, when the
+      `-std=c++0x` or `-std=gnu++0x` compiler options are used.
+
+      `ASIO_HAS_MOVE` explicitly enables move support for other/older
+      compilers.
+    ]
+  ]
+  [
+    [`ASIO_DISABLE_MOVE`]
+    [
+      Explicitly disables move support for all compilers.
+    ]
+  ]
+  [
+    [`ASIO_NO_DEPRECATED`]
+    [
+      Enables compile-time detection of the deprecated `asio_handler_invoke`
+      hook.
+
+      This hook was deprecated with the introduction of the Networking TS trait
+      `associated_executor` and function `get_associated_executor()`. Compiling
+      an application with `ASIO_NO_DEPRECATED` will now trigger a compile
+      error if any handler implements the `asio_handler_invoke` hook.
+    ]
+  ]
+  [
+    [`ASIO_USE_TS_EXECUTOR_AS_DEFAULT`]
+    [
+      The `any_io_executor` type alias has been introduced as the new default
+      runtime-polymorphic executor for all I/O objects. This type alias points
+      to the `execution::any_executor<>` template with a set of supportable
+      properties specified for use with I/O. This change may break existing
+      code that directly uses the old polymorphic wrapper, executor.
+
+      If required for backward compatibility, `ASIO_USE_TS_EXECUTOR_AS_DEFAULT`
+      can be defined, which changes the `any_io_executor` type alias to instead
+      point to the executor polymorphic wrapper.
     ]
   ]
 ]
