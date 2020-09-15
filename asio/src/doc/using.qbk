@@ -311,13 +311,20 @@ Asio.
   [
     [`ASIO_NO_DEPRECATED`]
     [
-      Enables compile-time detection of the deprecated `asio_handler_invoke`
-      hook.
+      Enables compile-time detection of the deprecated `asio_handler_invoke`,
+      `asio_handler_allocate` and `asio_handle_deallocate` hooks.
 
-      This hook was deprecated with the introduction of the Networking TS trait
-      `associated_executor` and function `get_associated_executor()`. Compiling
-      an application with `ASIO_NO_DEPRECATED` will now trigger a compile
-      error if any handler implements the `asio_handler_invoke` hook.
+      The `asio_handler_invoke` hook was deprecated with the introduction of
+      the Networking TS trait `associated_executor` and function
+      `get_associated_executor()`.
+
+      The `asio_handler_allocate` and `asio_handle_deallocate` hooks were
+      deprecated with the introduction of the Networking TS trait
+      `associated_allocator` and function `get_associated_allocator()``.
+
+      Compiling an application with `ASIO_NO_DEPRECATED` will trigger a compile
+      error if any handler implements the `asio_handler_invoke`,
+      `asio_handler_allocate` or `asio_handler_deallocate` hook.
     ]
   ]
   [
