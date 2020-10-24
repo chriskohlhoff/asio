@@ -206,6 +206,12 @@ Asio.
     ]
   ]
   [
+    [`ASIO_NO_DEPRECATED`]
+    [
+      Omit deprecated features.
+    ]
+  ]
+  [
     [`ASIO_NO_WIN32_LEAN_AND_MEAN`]
     [
       By default, Asio will automatically define `WIN32_LEAN_AND_MEAN` when
