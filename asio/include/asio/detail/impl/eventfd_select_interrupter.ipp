@@ -152,7 +152,9 @@ bool eventfd_select_interrupter::reset()
         return false;
       if (errno == EINTR)
         continue;
-      if (errno == EWOULDBLOCK || errno == EAGAIN)
+      if (errno == EWOULDBLOCK)
+        return true;
+      if (errno == EAGAIN)
         return true;
       return false;
     }
