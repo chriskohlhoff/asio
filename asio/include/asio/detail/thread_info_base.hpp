@@ -139,6 +139,7 @@ public:
       pending_exception_ =
         std::make_exception_ptr<multiple_exceptions>(
             multiple_exceptions(pending_exception_));
+      break;
     default:
       break;
     }
