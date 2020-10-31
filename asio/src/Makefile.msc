@@ -4,6 +4,10 @@ BOOSTDIR = ../../boost_1_34_1
 
 COMMON_CXXFLAGS = -nologo -EHac -GR -I. -I../include
 
+!ifdef CXXLATEST
+STD_CXXFLAGS = -std:c++latest -permissive-
+!endif
+
 !ifdef WARNINGS
 WARNINGS_CXXFLAGS = -W4 -wd4512 -wd4447
 !endif
@@ -81,6 +85,7 @@ STANDALONE_CXXFLAGS = -I$(BOOSTDIR) -DASIO_ENABLE_BOOST
 
 CXXFLAGS = \
 	$(COMMON_CXXFLAGS) \
+	$(STD_CXXFLAGS) \
 	$(WARNINGS_CXXFLAGS) \
 	$(DEBUG_CXXFLAGS) \
 	$(UNICODE_CXXFLAGS) \
@@ -142,6 +147,30 @@ UNIT_TEST_EXES = \
 	tests\unit\dispatch.exe \
 	tests\unit\error.exe \
 	tests\unit\execution_context.exe \
+	tests\unit\execution\any_executor.exe \
+	tests\unit\execution\blocking.exe \
+	tests\unit\execution\blocking_adaptation.exe \
+	tests\unit\execution\bulk_execute.exe \
+	tests\unit\execution\bulk_guarantee.exe \
+	tests\unit\execution\connect.exe \
+	tests\unit\execution\context_as.exe \
+	tests\unit\execution\execute.exe \
+	tests\unit\execution\executor.exe \
+	tests\unit\execution\invocable_archetype.exe \
+	tests\unit\execution\mapping.exe \
+	tests\unit\execution\operation_state.exe \
+	tests\unit\execution\outstanding_work.exe \
+	tests\unit\execution\prefer_only.exe \
+	tests\unit\execution\receiver.exe \
+	tests\unit\execution\relationship.exe \
+	tests\unit\execution\schedule.exe \
+	tests\unit\execution\scheduler.exe \
+	tests\unit\execution\sender.exe \
+	tests\unit\execution\set_done.exe \
+	tests\unit\execution\set_error.exe \
+	tests\unit\execution\set_value.exe \
+	tests\unit\execution\start.exe \
+	tests\unit\execution\submit.exe \
 	tests\unit\executor.exe \
 	tests\unit\executor_work_guard.exe \
 	tests\unit\generic\basic_endpoint.exe \
@@ -187,6 +216,7 @@ UNIT_TEST_EXES = \
 	tests\unit\serial_port_base.exe \
 	tests\unit\signal_set.exe \
 	tests\unit\socket_base.exe \
+	tests\unit\static_thread_pool.exe \
 	tests\unit\steady_timer.exe \
 	tests\unit\strand.exe \
 	tests\unit\streambuf.exe \
@@ -195,6 +225,7 @@ UNIT_TEST_EXES = \
 	tests\unit\system_timer.exe \
 	tests\unit\this_coro.exe \
 	tests\unit\thread.exe \
+	tests\unit\thread_pool.exe \
 	tests\unit\time_traits.exe \
 	tests\unit\ts\buffer.exe \
 	tests\unit\ts\executor.exe \
@@ -318,6 +349,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fotests\unit\unit_test.obj $(CXXFLAGS) $(DEFINES) -c tests\unit\unit_test.cpp
 
 {tests\unit}.cpp{tests\unit}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{tests\unit\execution}.cpp{tests\unit\execution}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\generic}.cpp{tests\unit\generic}.exe:

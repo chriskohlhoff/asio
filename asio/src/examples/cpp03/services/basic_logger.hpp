@@ -2,7 +2,7 @@
 // basic_logger.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -50,12 +50,6 @@ public:
   ~basic_logger()
   {
     service_.destroy(impl_);
-  }
-
-  /// Get the io_context associated with the object.
-  asio::io_context& get_io_context()
-  {
-    return service_.get_io_context();
   }
 
   /// Set the output file for all logger instances.

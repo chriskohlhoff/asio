@@ -2,7 +2,7 @@
 // echo_server_with_default.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -49,12 +49,7 @@ awaitable<void> listener()
   for (;;)
   {
     auto socket = co_await acceptor.async_accept();
-    co_spawn(executor,
-        [socket = std::move(socket)]() mutable
-        {
-          return echo(std::move(socket));
-        },
-        detached);
+    co_spawn(executor, echo(std::move(socket)), detached);
   }
 }
 
@@ -67,7 +62,7 @@ int main()
     asio::signal_set signals(io_context, SIGINT, SIGTERM);
     signals.async_wait([&](auto, auto){ io_context.stop(); });
 
-    co_spawn(io_context, listener, detached);
+    co_spawn(io_context, listener(), detached);
 
     io_context.run();
   }

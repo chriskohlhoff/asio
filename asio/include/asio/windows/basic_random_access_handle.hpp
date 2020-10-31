@@ -2,7 +2,7 @@
 // windows/basic_random_access_handle.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -35,7 +35,7 @@ namespace windows {
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  */
-template <typename Executor = executor>
+template <typename Executor = any_io_executor>
 class basic_random_access_handle
   : public basic_overlapped_handle<Executor>
 {
@@ -437,8 +437,8 @@ private:
 
       detail::non_const_lvalue<WriteHandler> handler2(handler);
       self_->impl_.get_service().async_write_some_at(
-          self_->impl_.get_implementation(), offset, buffers, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), offset, buffers,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:
@@ -470,8 +470,8 @@ private:
 
       detail::non_const_lvalue<ReadHandler> handler2(handler);
       self_->impl_.get_service().async_read_some_at(
-          self_->impl_.get_implementation(), offset, buffers, handler2.value,
-          self_->impl_.get_implementation_executor());
+          self_->impl_.get_implementation(), offset, buffers,
+          handler2.value, self_->impl_.get_executor());
     }
 
   private:

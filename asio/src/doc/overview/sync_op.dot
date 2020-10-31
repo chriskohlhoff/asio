@@ -28,7 +28,7 @@ digraph g
   // Program elements.
   {
     operating_system [ label="Operating System", shape=ellipse ];
-    io_context [ label="io_context" ];
+    io_context [ label="I/O Execution Context\ne.g. io_context" ];
     io_object [ label="I/O Object\ne.g. socket" ];
     your_program [ label="Your Program" ];
   }

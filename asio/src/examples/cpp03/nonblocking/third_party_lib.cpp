@@ -2,7 +2,7 @@
 // third_party_lib.cpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -10,7 +10,7 @@
 
 #include <asio.hpp>
 #include <boost/array.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <iostream>
@@ -83,7 +83,7 @@ class connection
 public:
   typedef boost::shared_ptr<connection> pointer;
 
-  static pointer create(const asio::executor& ex)
+  static pointer create(const asio::any_io_executor& ex)
   {
     return pointer(new connection(ex));
   }
@@ -102,7 +102,7 @@ public:
   }
 
 private:
-  connection(const asio::executor& ex)
+  connection(const asio::any_io_executor& ex)
     : socket_(ex),
       session_impl_(socket_),
       read_in_progress_(false),

@@ -27,6 +27,7 @@ noinst_PROGRAMS = \
 	executors/pipeline \
 	executors/priority_scheduler \
 	futures/daytime_client \
+	handler_tracking/async_tcp_echo_server \
 	http/server/http_server \
 	invocation/prioritised_handlers \
 	iostreams/http_client \
@@ -94,6 +95,7 @@ executors_fork_join_SOURCES = executors/fork_join.cpp
 executors_pipeline_SOURCES = executors/pipeline.cpp
 executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
 futures_daytime_client_SOURCES = futures/daytime_client.cpp
+handler_tracking_async_tcp_echo_server_SOURCES = handler_tracking/async_tcp_echo_server.cpp
 http_server_http_server_SOURCES = \
 	http/server/connection.cpp \
 	http/server/connection_manager.cpp \

@@ -2,7 +2,7 @@
 // echo_server.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -13,7 +13,7 @@
 #include <asio/spawn.hpp>
 #include <asio/steady_timer.hpp>
 #include <asio/write.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <iostream>
@@ -39,10 +39,10 @@ public:
   {
     asio::spawn(strand_,
         boost::bind(&session::echo,
-          shared_from_this(), _1));
+          shared_from_this(), boost::placeholders::_1));
     asio::spawn(strand_,
         boost::bind(&session::timeout,
-          shared_from_this(), _1));
+          shared_from_this(), boost::placeholders::_1));
   }
 
 private:
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
     asio::spawn(io_context,
         boost::bind(do_accept,
-          boost::ref(io_context), atoi(argv[1]), _1));
+          boost::ref(io_context), atoi(argv[1]), boost::placeholders::_1));
 
     io_context.run();
   }

@@ -44,6 +44,7 @@ executor
 executor_work_guard
 high_resolution_timer
 io_context
+io_context_strand
 io_service
 is_read_buffered
 is_write_buffered
@@ -58,6 +59,7 @@ serial_port
 serial_port_base
 signal_set
 socket_base
+static_thread_pool
 steady_timer
 strand
 streambuf
@@ -66,6 +68,7 @@ system_executor
 system_timer
 this_coro
 thread
+thread_pool
 time_traits
 use_awaitable
 use_future

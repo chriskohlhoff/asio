@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -7,7 +7,7 @@
 
 [library Asio
     [quickbook 1.4]
-    [copyright 2003 - 2019 Christopher M. Kohlhoff]
+    [copyright 2003 - 2020 Christopher M. Kohlhoff]
     [purpose Networking library]
     [license
         Distributed under the Boost Software License, Version 1.0.
@@ -25,20 +25,23 @@
 [template indexterm2[id term1 term2] '''<indexterm id="'''[id]'''"><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 [template inline_note[text] \[['Note:] [text] '''&mdash;'''['end note]\] ]
 [template ticket[number]'''<ulink url="https://svn.boost.org/trac/boost/ticket/'''[number]'''">'''#[number]'''</ulink>''']
+[template static[] '''<phrase role="silver">'''\[static\]'''</phrase>''']
+[template constructor[] '''<phrase role="silver">'''\[constructor\]'''</phrase>''']
+[template destructor[] '''<phrase role="silver">'''\[destructor\]'''</phrase>''']
 [def __POSIX__ /POSIX/]
 [def __Windows__ /Windows/]
-[def __accept__ [@http://www.opengroup.org/onlinepubs/000095399/functions/accept.html `accept()`]]
-[def __connect__ [@http://www.opengroup.org/onlinepubs/000095399/functions/connect.html `connect()`]]
-[def __getpeername__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getpeername.html `getpeername()`]]
-[def __getsockname__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getsockname.html `getsockname()`]]
-[def __getsockopt__ [@http://www.opengroup.org/onlinepubs/000095399/functions/getsockopt.html `getsockopt()`]]
-[def __ioctl__ [@http://www.opengroup.org/onlinepubs/000095399/functions/ioctl.html `ioctl()`]]
-[def __poll__ [@http://www.opengroup.org/onlinepubs/000095399/functions/poll.html `poll()`]]
-[def __recvfrom__ [@http://www.opengroup.org/onlinepubs/000095399/functions/recvfrom.html `recvfrom()`]]
-[def __sendto__ [@http://www.opengroup.org/onlinepubs/000095399/functions/sendto.html `sendto()`]]
-[def __setsockopt__ [@http://www.opengroup.org/onlinepubs/000095399/functions/setsockopt.html `setsockopt()`]]
-[def __shutdown__ [@http://www.opengroup.org/onlinepubs/000095399/functions/shutdown.html `shutdown()`]]
-[def __socket__ [@http://www.opengroup.org/onlinepubs/000095399/functions/socket.html `socket()`]]
+[def __accept__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/accept.html `accept()`]]
+[def __connect__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/connect.html `connect()`]]
+[def __getpeername__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/getpeername.html `getpeername()`]]
+[def __getsockname__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/getsockname.html `getsockname()`]]
+[def __getsockopt__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/getsockopt.html `getsockopt()`]]
+[def __ioctl__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/ioctl.html `ioctl()`]]
+[def __poll__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/poll.html `poll()`]]
+[def __recvfrom__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/recvfrom.html `recvfrom()`]]
+[def __sendto__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/sendto.html `sendto()`]]
+[def __setsockopt__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/setsockopt.html `setsockopt()`]]
+[def __shutdown__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/shutdown.html `shutdown()`]]
+[def __socket__ [@http://www.opengroup.org/onlinepubs/9699919799/functions/socket.html `socket()`]]
 
 [/=============================================================================]
 
@@ -101,6 +104,15 @@ C++ approach.
   ]
   [
     [
+      [link asio.std_executors Proposed Standard Executors]
+    ]
+    [
+      Description of Asio's support for the proposed standard executors
+      library.
+    ]
+  ]
+  [
+    [
       [link asio.history Revision History]
     ]
     [
@@ -123,5 +135,6 @@ C++ approach.
 [include examples.qbk]
 [include reference.qbk]
 [include net_ts.qbk]
+[include std_executors.qbk]
 [include history.qbk]
 [xinclude index.xml]

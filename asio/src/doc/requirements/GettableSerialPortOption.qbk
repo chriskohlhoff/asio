@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,16 +14,16 @@ implementation-defined type ['[^storage]] (where ['[^storage]] is the type
 identifier.
 
 [table GettableSerialPortOption requirements
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [
-      `const `['[^storage]]`& u = s;`\n
+      `const `['[^storage]]`& u = s;`[br]
       `a.load(u, ec);`
     ]
     [`error_code`]
     [
-      Retrieves the value of the serial port option from the storage.\n
-      \n
+      Retrieves the value of the serial port option from the storage.[br]
+      [br]
       If successful, sets `ec` such that `!ec` is true. If an error occurred,
       sets `ec` such that `!!ec` is true. Returns `ec`.
     ]

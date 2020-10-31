@@ -2,7 +2,7 @@
 // impl/system_context.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,8 +28,19 @@ struct system_context::thread_function
 
   void operator()()
   {
-    asio::error_code ec;
-    scheduler_->run(ec);
+#if !defined(ASIO_NO_EXCEPTIONS)
+    try
+    {
+#endif// !defined(ASIO_NO_EXCEPTIONS)
+      asio::error_code ec;
+      scheduler_->run(ec);
+#if !defined(ASIO_NO_EXCEPTIONS)
+    }
+    catch (...)
+    {
+      std::terminate();
+    }
+#endif// !defined(ASIO_NO_EXCEPTIONS)
   }
 };
 
@@ -39,8 +50,9 @@ system_context::system_context()
   scheduler_.work_started();
 
   thread_function f = { &scheduler_ };
-  std::size_t num_threads = detail::thread::hardware_concurrency() * 2;
-  threads_.create_threads(f, num_threads ? num_threads : 2);
+  num_threads_ = detail::thread::hardware_concurrency() * 2;
+  num_threads_ = num_threads_ ? num_threads_ : 2;
+  threads_.create_threads(f, num_threads_);
 }
 
 system_context::~system_context()

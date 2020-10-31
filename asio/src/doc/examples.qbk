@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,10 @@ facilities. These examples do not make direct use of Boost C++ libraries.
 To show the changes between C++03 and C++11, these examples include a diff
 between the C++03 and C++11 versions.
 [/boostify: non-boost docs end here]
+
+* [link asio.examples.cpp14_examples C++14 Examples]: Contains a limited set of
+the C++03 Asio examples, updated to use only C++14 library and language
+facilities. These examples do not make direct use of Boost C++ libraries.
 
 * [link asio.examples.cpp17_examples C++17 Examples]: Selected examples
 illustrating C++17 usage in conjunction with Technical Specifications.
@@ -398,9 +402,14 @@ Asio's asynchronous operations.
 
 [heading Handler Tracking]
 
-This example shows how to implement custom handler tracking.
+This example header file shows how to implement custom handler tracking.
 
 * [@../src/examples/cpp11/handler_tracking/custom_tracking.hpp]
+
+This example program shows how to include source location information in
+the handler tracking output.
+
+* [@../src/examples/cpp11/handler_tracking/async_tcp_echo_server.cpp]
 
 
 [heading HTTP Server]

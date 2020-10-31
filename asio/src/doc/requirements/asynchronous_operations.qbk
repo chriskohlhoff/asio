@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -251,5 +251,50 @@ handler shall be submitted for execution as if by performing
 Completion handlers are permitted to throw exceptions. The effect of any
 exception propagated from the execution of a completion handler is determined
 by the executor which is executing the completion handler.
+
+[heading Default completion tokens]
+
+Every I/O executor type has an associated default completion token type. This is
+specified via the `default_completion_token` trait. This trait may be used in
+asynchronous operation declarations as follows:
+
+  template <
+      typename IoObject,
+      typename CompletionToken =
+        typename default_completion_token<
+          typename IoObject::executor_type
+        >::type
+    >
+  auto async_xyz(
+      IoObject& io_object,
+      CompletionToken&& token =
+        typename default_completion_token<
+          typename IoObject::executor_type
+        >::type{}
+    );
+
+If not specialised, this trait type is `void`, meaning no default completion
+token type is available for the given I/O executor.
+
+\[['Example:] The `default_completion_token` trait is specialised for the
+`use_awaitable` completion token so that it may be used as shown in the
+following example:
+
+  auto socket = use_awaitable.as_default_on(tcp::socket(my_context));
+  // ...
+  co_await socket.async_connect(my_endpoint); // Defaults to use_awaitable.
+
+In this example, the type of the `socket` object is transformed from
+`tcp::socket` to have an I/O executor with the default completion token set to
+`use_awaitable`.
+
+Alternatively, the socket type may be computed directly:
+
+  using tcp_socket = use_awaitable_t<>::as_default_on_t<tcp::socket>;
+  tcp_socket socket(my_context);
+  // ...
+  co_await socket.async_connect(my_endpoint); // Defaults to use_awaitable.
+
+'''&mdash;'''['end example]\]
 
 [endsect]

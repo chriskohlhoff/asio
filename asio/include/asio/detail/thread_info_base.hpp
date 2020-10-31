@@ -2,7 +2,7 @@
 // detail/thread_info_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,9 +15,17 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/config.hpp"
 #include <climits>
 #include <cstddef>
 #include "asio/detail/noncopyable.hpp"
+
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
+  && !defined(ASIO_NO_EXCEPTIONS)
+# include <exception>
+# include "asio/multiple_exceptions.hpp"
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
+       // && !defined(ASIO_NO_EXCEPTIONS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -44,6 +52,11 @@ public:
   };
 
   thread_info_base()
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
+  && !defined(ASIO_NO_EXCEPTIONS)
+    : has_pending_exception_(0)
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
+       // && !defined(ASIO_NO_EXCEPTIONS)
   {
     for (int i = 0; i < max_mem_index; ++i)
       reusable_memory_[i] = 0;
@@ -52,8 +65,7 @@ public:
   ~thread_info_base()
   {
     for (int i = 0; i < max_mem_index; ++i)
-      if (reusable_memory_[i])
-        ::operator delete(reusable_memory_[i]);
+      ::operator delete(reusable_memory_[i]);
   }
 
   static void* allocate(thread_info_base* this_thread, std::size_t size)
@@ -112,10 +124,55 @@ public:
     ::operator delete(pointer);
   }
 
+  void capture_current_exception()
+  {
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
+  && !defined(ASIO_NO_EXCEPTIONS)
+    switch (has_pending_exception_)
+    {
+    case 0:
+      has_pending_exception_ = 1;
+      pending_exception_ = std::current_exception();
+      break;
+    case 1:
+      has_pending_exception_ = 2;
+      pending_exception_ =
+        std::make_exception_ptr<multiple_exceptions>(
+            multiple_exceptions(pending_exception_));
+    default:
+      break;
+    }
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
+       // && !defined(ASIO_NO_EXCEPTIONS)
+  }
+
+  void rethrow_pending_exception()
+  {
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
+  && !defined(ASIO_NO_EXCEPTIONS)
+    if (has_pending_exception_ > 0)
+    {
+      has_pending_exception_ = 0;
+      std::exception_ptr ex(
+          ASIO_MOVE_CAST(std::exception_ptr)(
+            pending_exception_));
+      std::rethrow_exception(ex);
+    }
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
+       // && !defined(ASIO_NO_EXCEPTIONS)
+  }
+
 private:
   enum { chunk_size = 4 };
   enum { max_mem_index = 3 };
   void* reusable_memory_[max_mem_index];
+
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
+  && !defined(ASIO_NO_EXCEPTIONS)
+  int has_pending_exception_;
+  std::exception_ptr pending_exception_;
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
+       // && !defined(ASIO_NO_EXCEPTIONS)
 };
 
 } // namespace detail

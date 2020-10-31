@@ -2,7 +2,7 @@
 // impl/buffered_read_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -101,19 +101,29 @@ namespace detail
   };
 
   template <typename ReadHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       buffered_fill_handler<ReadHandler>* this_handler)
   {
+#if defined(ASIO_NO_DEPRECATED)
+    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(ASIO_NO_DEPRECATED)
     return asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename ReadHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       buffered_fill_handler<ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename ReadHandler>
@@ -125,19 +135,27 @@ namespace detail
   }
 
   template <typename Function, typename ReadHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       buffered_fill_handler<ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename ReadHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       buffered_fill_handler<ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Stream>
@@ -147,7 +165,8 @@ namespace detail
     typedef typename remove_reference<
       Stream>::type::lowest_layer_type::executor_type executor_type;
 
-    explicit initiate_async_buffered_fill(Stream& next_layer)
+    explicit initiate_async_buffered_fill(
+        typename remove_reference<Stream>::type& next_layer)
       : next_layer_(next_layer)
     {
     }
@@ -177,7 +196,7 @@ namespace detail
     }
 
   private:
-    Stream& next_layer_;
+    typename remove_reference<Stream>::type& next_layer_;
   };
 } // namespace detail
 
@@ -311,21 +330,31 @@ namespace detail
   };
 
   template <typename MutableBufferSequence, typename ReadHandler>
-  inline void* asio_handler_allocate(std::size_t size,
+  inline asio_handler_allocate_is_deprecated
+  asio_handler_allocate(std::size_t size,
       buffered_read_some_handler<
         MutableBufferSequence, ReadHandler>* this_handler)
   {
+#if defined(ASIO_NO_DEPRECATED)
+    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+    return asio_handler_allocate_is_no_longer_used();
+#else // defined(ASIO_NO_DEPRECATED)
     return asio_handler_alloc_helpers::allocate(
         size, this_handler->handler_);
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename MutableBufferSequence, typename ReadHandler>
-  inline void asio_handler_deallocate(void* pointer, std::size_t size,
+  inline asio_handler_deallocate_is_deprecated
+  asio_handler_deallocate(void* pointer, std::size_t size,
       buffered_read_some_handler<
         MutableBufferSequence, ReadHandler>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename MutableBufferSequence, typename ReadHandler>
@@ -339,22 +368,30 @@ namespace detail
 
   template <typename Function, typename MutableBufferSequence,
       typename ReadHandler>
-  inline void asio_handler_invoke(Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(Function& function,
       buffered_read_some_handler<
         MutableBufferSequence, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Function, typename MutableBufferSequence,
       typename ReadHandler>
-  inline void asio_handler_invoke(const Function& function,
+  inline asio_handler_invoke_is_deprecated
+  asio_handler_invoke(const Function& function,
       buffered_read_some_handler<
         MutableBufferSequence, ReadHandler>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
+#if defined(ASIO_NO_DEPRECATED)
+    return asio_handler_invoke_is_no_longer_used();
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Stream>
@@ -364,7 +401,8 @@ namespace detail
     typedef typename remove_reference<
       Stream>::type::lowest_layer_type::executor_type executor_type;
 
-    explicit initiate_async_buffered_read_some(Stream& next_layer)
+    explicit initiate_async_buffered_read_some(
+        typename remove_reference<Stream>::type& next_layer)
       : next_layer_(next_layer)
     {
     }
@@ -403,7 +441,7 @@ namespace detail
     }
 
   private:
-    Stream& next_layer_;
+    typename remove_reference<Stream>::type& next_layer_;
   };
 } // namespace detail
 

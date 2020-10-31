@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,16 +30,16 @@ requirements, and `ec` denotes an object of type `error_code`.
     [`a.write_some_at(o, cb, ec);`]
     [`size_t`]
     [
-      Writes one or more bytes of data to the device `a` at offset `o`.\n
-      \n
+      Writes one or more bytes of data to the device `a` at offset `o`.[br]
+      [br]
       The constant buffer sequence `cb` specifies memory where the data to be
       written is located. The `write_some_at` operation shall always write a
-      buffer in the sequence completely before proceeding to the next.\n
-      \n
+      buffer in the sequence completely before proceeding to the next.[br]
+      [br]
       If successful, returns the number of bytes written and sets `ec` such
       that `!ec` is true. If an error occurred, returns `0` and sets `ec` such
-      that `!!ec` is true.\n
-      \n
+      that `!!ec` is true.[br]
+      [br]
       If the total size of all buffers in the sequence `cb` is `0`, the
       function shall return `0` immediately.
     ]

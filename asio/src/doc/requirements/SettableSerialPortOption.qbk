@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -14,16 +14,16 @@ implementation-defined type ['[^storage]] (where ['[^storage]] is the type
 identifier.
 
 [table SettableSerialPortOption requirements
-  [[expression] [type] [assertion/note\npre/post-conditions]]
+  [[expression] [type] [assertion/note[br]pre/post-conditions]]
   [
     [
-      `const X& u = a;`\n
+      `const X& u = a;`[br]
       `u.store(s, ec);`
     ]
     [`error_code`]
     [
-      Saves the value of the serial port option to the storage.\n
-      \n
+      Saves the value of the serial port option to the storage.[br]
+      [br]
       If successful, sets `ec` such that `!ec` is true. If an error occurred,
       sets `ec` such that `!!ec` is true. Returns `ec`.
     ]

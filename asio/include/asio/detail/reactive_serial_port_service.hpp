@@ -2,7 +2,7 @@
 // detail/reactive_serial_port_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -139,9 +139,8 @@ public:
   asio::error_code send_break(implementation_type& impl,
       asio::error_code& ec)
   {
-    errno = 0;
-    descriptor_ops::error_wrapper(::tcsendbreak(
-          descriptor_service_.native_handle(impl), 0), ec);
+    int result = ::tcsendbreak(descriptor_service_.native_handle(impl), 0);
+    descriptor_ops::get_last_error(ec, result < 0);
     return ec;
   }
 

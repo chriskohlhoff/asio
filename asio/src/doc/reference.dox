@@ -81,6 +81,7 @@ INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio/posix \
                          ./../../include/asio/ssl \
                          ./../../include/asio/windows \
+                         ./../../include/asio/execution \
                          ./noncopyable_dox.txt \
                          ./std_exception_dox.txt
 FILE_PATTERNS          = 
@@ -200,7 +201,13 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_DECL= \
                          ASIO_CONSTEXPR=constexpr \
                          ASIO_NOEXCEPT=noexcept \
+                         ASIO_COMPLETION_SIGNATURE=typename \
+                         ASIO_COMPLETION_HANDLER_FOR(s)=typename \
+                         ASIO_COMPLETION_TOKEN_FOR(s)=typename \
                          ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
+                         ASIO_INITFN_AUTO_RESULT_TYPE(t,a)=void_or_deduced \
+                         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(e)==default_token \
+                         ASIO_DEFAULT_COMPLETION_TOKEN(e)==default_token \
                          ASIO_SVC_TPARAM= \
                          ASIO_SVC_TPARAM_DEF1()= \
                          ASIO_SVC_TPARAM_DEF2()= \
@@ -215,7 +222,10 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_MUTABLE_BUFFER=mutable_buffer \
                          ASIO_SYNC_OP_VOID=void \
                          ASIO_STRING_VIEW_PARAM=string_view \
-                         ASIO_UNUSED_VARIABLE=
+                         ASIO_UNUSED_VARIABLE= \
+                         ASIO_UNSPECIFIED(e)=unspecified \
+                         ASIO_EXECUTION_RECEIVER_ERROR_DEFAULT==std::exception_ptr \
+                         ASIO_EXECUTION_RECEIVER_OF_0=typename
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

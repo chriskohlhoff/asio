@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,16 +30,16 @@ requirements, and `ec` denotes an object of type `error_code`.
     [`a.read_some_at(o, mb, ec);`]
     [`size_t`]
     [
-      Reads one or more bytes of data from the device `a` at offset `o`.\n
-      \n
+      Reads one or more bytes of data from the device `a` at offset `o`.[br]
+      [br]
       The mutable buffer sequence `mb` specifies memory where the data should
       be placed. The `read_some_at` operation shall always fill a buffer in the
-      sequence completely before proceeding to the next.\n
-      \n
+      sequence completely before proceeding to the next.[br]
+      [br]
       If successful, returns the number of bytes read and sets `ec` such that
       `!ec` is true. If an error occurred, returns `0` and sets `ec` such that
-      `!!ec` is true.\n
-      \n
+      `!!ec` is true.[br]
+      [br]
       If the total size of all buffers in the sequence `mb` is `0`, the
       function shall return `0` immediately.
     ]
