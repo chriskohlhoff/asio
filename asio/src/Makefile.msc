@@ -203,6 +203,10 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\udp.exe \
 	tests\unit\ip\unicast.exe \
 	tests\unit\ip\v6_only.exe \
+	tests\unit\local\basic_endpoint.exe \
+	tests\unit\local\connect_pair.exe \
+	tests\unit\local\datagram_protocol.exe \
+	tests\unit\local\stream_protocol.exe \
 	tests\unit\is_read_buffered.exe \
 	tests\unit\is_write_buffered.exe \
 	tests\unit\packaged_task.exe \
@@ -358,6 +362,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ip}.cpp{tests\unit\ip}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{tests\unit\local}.cpp{tests\unit\local}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\ssl}.cpp{tests\unit\ssl}.exe:

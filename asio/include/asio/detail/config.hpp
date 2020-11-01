@@ -1489,13 +1489,9 @@
 // UNIX domain sockets.
 #if !defined(ASIO_HAS_LOCAL_SOCKETS)
 # if !defined(ASIO_DISABLE_LOCAL_SOCKETS)
-#  if !defined(ASIO_WINDOWS) \
-  && !defined(ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+#  if !defined(ASIO_WINDOWS_RUNTIME)
 #   define ASIO_HAS_LOCAL_SOCKETS 1
-#  endif // !defined(ASIO_WINDOWS)
-         //   && !defined(ASIO_WINDOWS_RUNTIME)
-         //   && !defined(__CYGWIN__)
+#  endif // !defined(ASIO_WINDOWS_RUNTIME)
 # endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(ASIO_HAS_LOCAL_SOCKETS)
 
