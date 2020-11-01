@@ -2543,7 +2543,7 @@ int inet_pton(int af, const char* src, void* dest,
     bytes[1] = static_cast<unsigned char>(b1);
     bytes[2] = static_cast<unsigned char>(b2);
     bytes[3] = static_cast<unsigned char>(b3);
-    ec.assign(), ec.category());
+    ec.assign(0, ec.category());
     return 1;
   }
   else if (af == ASIO_OS_DEF(AF_INET6))
