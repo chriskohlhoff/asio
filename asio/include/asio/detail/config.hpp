@@ -443,13 +443,13 @@
 #    endif // __has_feature(__cxx_variable_templates__)
 #   endif // (__cplusplus >= 201402)
 #  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #   if (__GNUC__ >= 6)
 #    if (__cplusplus >= 201402)
 #     define ASIO_HAS_VARIABLE_TEMPLATES 1
 #    endif // (__cplusplus >= 201402)
 #   endif // (__GNUC__ >= 6)
-#  endif // defined(__GNUC__)
+#  endif // defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  if defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
 #    define ASIO_HAS_VARIABLE_TEMPLATES 1
@@ -491,13 +491,13 @@
 #    define ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201402)
 #  endif // defined(__clang__)
-#  if defined(__GNUC__)
+#  if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #   if (__GNUC__ >= 7)
 #    if (__cplusplus >= 201402)
 #     define ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
 #    endif // (__cplusplus >= 201402)
 #   endif // (__GNUC__ >= 7)
-#  endif // defined(__GNUC__)
+#  endif // defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  if defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1901)
 #    define ASIO_HAS_CONSTANT_EXPRESSION_SFINAE 1
@@ -509,11 +509,11 @@
 // Enable workarounds for lack of working expression SFINAE.
 #if !defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # if !defined(ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
-#  if !defined(ASIO_MSVC)
+#  if !defined(ASIO_MSVC) && !defined(__INTEL_COMPILER)
 #   if (__cplusplus >= 201103)
 #    define ASIO_HAS_WORKING_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201103)
-#  endif // !defined(ASIO_MSVC)
+#  endif // !defined(ASIO_MSVC) && !defined(__INTEL_COMPILER)
 # endif // !defined(ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
 #endif // !defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
