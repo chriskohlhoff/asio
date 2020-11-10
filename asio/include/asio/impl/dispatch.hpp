@@ -100,7 +100,8 @@ public:
         execution::is_executor<
           typename conditional<true, executor_type, CompletionHandler>::type
         >::value
-        &&
+      >::type* = 0,
+      typename enable_if<
         !detail::is_work_dispatcher_required<
           typename decay<CompletionHandler>::type,
           Executor
@@ -125,7 +126,8 @@ public:
         execution::is_executor<
           typename conditional<true, executor_type, CompletionHandler>::type
         >::value
-        &&
+      >::type* = 0,
+      typename enable_if<
         detail::is_work_dispatcher_required<
           typename decay<CompletionHandler>::type,
           Executor
@@ -155,7 +157,8 @@ public:
         !execution::is_executor<
           typename conditional<true, executor_type, CompletionHandler>::type
         >::value
-        &&
+      >::type* = 0,
+      typename enable_if<
         !detail::is_work_dispatcher_required<
           typename decay<CompletionHandler>::type,
           Executor
@@ -176,7 +179,8 @@ public:
         !execution::is_executor<
           typename conditional<true, executor_type, CompletionHandler>::type
         >::value
-        &&
+      >::type* = 0,
+      typename enable_if<
         detail::is_work_dispatcher_required<
           typename decay<CompletionHandler>::type,
           Executor

@@ -45,7 +45,7 @@ class executor_binder;
 #if !defined(ASIO_EXECUTOR_WORK_GUARD_DECL)
 #define ASIO_EXECUTOR_WORK_GUARD_DECL
 
-template <typename Executor, typename = void>
+template <typename Executor, typename = void, typename = void>
 class executor_work_guard;
 
 #endif // !defined(ASIO_EXECUTOR_WORK_GUARD_DECL)

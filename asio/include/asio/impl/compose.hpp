@@ -500,7 +500,9 @@ namespace detail
   get_composed_io_executor(IoObject& io_object,
       typename enable_if<
         !is_executor<IoObject>::value
-          && !execution::is_executor<IoObject>::value
+      >::type* = 0,
+      typename enable_if<
+        !execution::is_executor<IoObject>::value
       >::type* = 0)
   {
     return io_object.get_executor();
