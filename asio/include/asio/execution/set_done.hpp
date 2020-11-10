@@ -83,7 +83,7 @@ enum overload_type
   ill_formed
 };
 
-template <typename R, typename = void>
+template <typename R, typename = void, typename = void>
 struct call_traits
 {
   ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
@@ -94,9 +94,7 @@ struct call_traits
 template <typename R>
 struct call_traits<R,
   typename enable_if<
-    (
-      set_done_member<R>::is_valid
-    )
+    set_done_member<R>::is_valid
   >::type> :
   set_done_member<R>
 {
@@ -106,11 +104,10 @@ struct call_traits<R,
 template <typename R>
 struct call_traits<R,
   typename enable_if<
-    (
-      !set_done_member<R>::is_valid
-      &&
-      set_done_free<R>::is_valid
-    )
+    !set_done_member<R>::is_valid
+  >::type,
+  typename enable_if<
+    set_done_free<R>::is_valid
   >::type> :
   set_done_free<R>
 {

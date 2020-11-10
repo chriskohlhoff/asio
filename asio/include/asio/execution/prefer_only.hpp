@@ -92,7 +92,7 @@ struct prefer_only_polymorphic_query_result_type<InnerProperty,
     polymorphic_query_result_type;
 };
 
-template <typename InnerProperty, typename = void>
+template <typename InnerProperty, typename = void, typename = void>
 struct prefer_only_property
 {
   InnerProperty property;
@@ -160,8 +160,12 @@ template <typename InnerProperty>
 struct prefer_only_property<InnerProperty,
     typename enable_if<
       sizeof(prefer_only_value_memfn_helper<InnerProperty>(0)) != 1
-        && !is_same<typename InnerProperty::polymorphic_query_result_type,
-          void>::value
+    >::type,
+    typename enable_if<
+      !is_same<
+        typename InnerProperty::polymorphic_query_result_type,
+        void
+      >::value
     >::type>
 {
   InnerProperty property;
@@ -220,7 +224,9 @@ struct prefer_only :
   prefer(const Executor& ex, const prefer_only<Property>& p,
       typename enable_if<
         is_same<Property, InnerProperty>::value
-          && can_prefer<const Executor&, const InnerProperty&>::value
+      >::type* = 0,
+      typename enable_if<
+        can_prefer<const Executor&, const InnerProperty&>::value
       >::type* = 0)
 #if !defined(ASIO_MSVC) \
   && !defined(__clang__) // Clang crashes if noexcept is used here.
@@ -238,7 +244,9 @@ struct prefer_only :
   query(const Executor& ex, const prefer_only<Property>& p,
       typename enable_if<
         is_same<Property, InnerProperty>::value
-          && can_query<const Executor&, const InnerProperty&>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, const InnerProperty&>::value
       >::type* = 0)
 #if !defined(ASIO_MSVC) \
   && !defined(__clang__) // Clang crashes if noexcept is used here.
