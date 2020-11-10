@@ -120,7 +120,9 @@ struct context_as_t
       const Executor& ex, const context_as_t<U>&,
       typename enable_if<
         is_same<T, U>::value
-          && can_query<const Executor&, const context_t&>::value
+      >::type* = 0,
+      typename enable_if<
+        can_query<const Executor&, const context_t&>::value
       >::type* = 0)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
