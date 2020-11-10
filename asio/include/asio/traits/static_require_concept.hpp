@@ -78,7 +78,7 @@ template <typename T, typename Property>
 true_type static_require_concept_test(T*, Property*,
     typename enable_if<
       Property::value() == traits::static_query<T, Property>::value()
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 template <typename T, typename Property>
 struct has_static_require_concept

@@ -38,7 +38,7 @@ namespace detail
   char (&has_result_type_helper(...))[2];
 
   template <typename T>
-  char has_result_type_helper(T*, typename T::result_type* = 0);
+  char has_result_type_helper(T*, typename T::result_type* = ASIO_NULLPTR);
 
   template <typename T>
   struct has_result_type
@@ -136,7 +136,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -179,7 +179,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -239,7 +239,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -283,7 +283,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX) \
@@ -350,7 +350,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until some part of the data it
 /// contains matches a regular expression.
@@ -395,7 +395,7 @@ std::size_t read_until(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
        // || defined(GENERATING_DOCUMENTATION)
@@ -511,7 +511,7 @@ std::size_t read_until(SyncReadStream& s,
       is_match_condition<MatchCondition>::value
         && is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until a function object indicates a
 /// match.
@@ -575,7 +575,7 @@ std::size_t read_until(SyncReadStream& s,
       is_match_condition<MatchCondition>::value
         && is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_IOSTREAM)
 
@@ -955,7 +955,7 @@ std::size_t read_until(SyncReadStream& s,
 template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, MatchCondition match_condition,
-    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = ASIO_NULLPTR);
 
 /// Read data into a streambuf until a function object indicates a match.
 /**
@@ -1012,7 +1012,7 @@ template <typename SyncReadStream, typename Allocator, typename MatchCondition>
 std::size_t read_until(SyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition, asio::error_code& ec,
-    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = ASIO_NULLPTR);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
 #endif // !defined(ASIO_NO_EXTENSIONS)
@@ -1075,7 +1075,7 @@ template <typename SyncReadStream, typename DynamicBuffer_v2>
 std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -1116,7 +1116,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     char delim, asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -1174,7 +1174,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     ASIO_STRING_VIEW_PARAM delim,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
 /// delimiter.
@@ -1215,7 +1215,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     ASIO_STRING_VIEW_PARAM delim, asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX) \
@@ -1280,7 +1280,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     const boost::regex& expr,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until some part of the data it
 /// contains matches a regular expression.
@@ -1323,7 +1323,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     const boost::regex& expr, asio::error_code& ec,
     typename enable_if<
         is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
        // || defined(GENERATING_DOCUMENTATION)
@@ -1437,7 +1437,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     typename enable_if<
       is_match_condition<MatchCondition>::value
         && is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Read data into a dynamic buffer sequence until a function object indicates a
 /// match.
@@ -1499,7 +1499,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     typename enable_if<
       is_match_condition<MatchCondition>::value
         && is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #endif // !defined(ASIO_NO_EXTENSIONS)
 
@@ -1613,7 +1613,7 @@ async_read_until(AsyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to read data into a dynamic buffer sequence
 /// until it contains a specified delimiter.
@@ -1713,7 +1713,7 @@ async_read_until(AsyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX) \
@@ -1820,7 +1820,7 @@ async_read_until(AsyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
        // || defined(GENERATING_DOCUMENTATION)
@@ -1971,7 +1971,7 @@ async_read_until(AsyncReadStream& s,
       is_match_condition<MatchCondition>::value
         && is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_IOSTREAM)
 
@@ -2395,7 +2395,7 @@ async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(ReadHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
-    typename enable_if<is_match_condition<MatchCondition>::value>::type* = 0);
+    typename enable_if<is_match_condition<MatchCondition>::value>::type* = ASIO_NULLPTR);
 
 #endif // !defined(ASIO_NO_IOSTREAM)
 #endif // !defined(ASIO_NO_EXTENSIONS)
@@ -2496,7 +2496,7 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to read data into a dynamic buffer sequence
 /// until it contains a specified delimiter.
@@ -2594,7 +2594,7 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX) \
@@ -2699,7 +2699,7 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
        // || defined(GENERATING_DOCUMENTATION)
@@ -2848,7 +2848,7 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
     typename enable_if<
       is_match_condition<MatchCondition>::value
         && is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #endif // !defined(ASIO_NO_EXTENSIONS)
 

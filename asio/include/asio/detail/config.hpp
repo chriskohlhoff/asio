@@ -871,6 +871,13 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_NULLPTR)
 #endif // !defined(ASIO_HAS_NULLPTR)
+#if !defined(ASIO_NULLPTR)
+# if defined(ASIO_HAS_NULLPTR)
+#  define ASIO_NULLPTR nullptr
+# else // defined(ASIO_HAS_NULLPTR)
+#  define ASIO_NULLPTR 0
+# endif // defined(ASIO_HAS_NULLPTR)
+#endif // !defined(ASIO_NULLPTR)
 
 // Standard library support for the C++11 allocator additions.
 #if !defined(ASIO_HAS_CXX11_ALLOCATORS)

@@ -89,7 +89,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value,
         basic_stream_handle
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_overlapped_handle<Executor>(context)
   {
   }
@@ -130,7 +130,7 @@ public:
       const native_handle_type& handle,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_overlapped_handle<Executor>(context, handle)
   {
   }

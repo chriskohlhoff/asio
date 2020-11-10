@@ -136,7 +136,7 @@ private:
   static win_iocp_io_context* get_iocp_service(const Executor& ex,
       typename enable_if<
         can_query<const Executor&, execution::context_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return &use_service<win_iocp_io_context>(
         asio::query(ex, execution::context));
@@ -146,7 +146,7 @@ private:
   static win_iocp_io_context* get_iocp_service(const Executor& ex,
       typename enable_if<
         !can_query<const Executor&, execution::context_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return &use_service<win_iocp_io_context>(ex.context());
   }

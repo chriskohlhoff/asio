@@ -111,7 +111,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value,
         basic_serial_port
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -152,7 +152,7 @@ public:
   basic_serial_port(ExecutionContext& context, const char* device,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -196,7 +196,7 @@ public:
   basic_serial_port(ExecutionContext& context, const std::string& device,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -245,7 +245,7 @@ public:
       const native_handle_type& native_serial_port,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;

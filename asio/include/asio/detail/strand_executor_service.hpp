@@ -93,7 +93,7 @@ public:
       ASIO_MOVE_ARG(Function) function,
       typename enable_if<
         can_query<Executor, execution::allocator_t<void> >::value
-      >::type* = 0);
+      >::type* = ASIO_NULLPTR);
 
   // Request invocation of the given function.
   template <typename Executor, typename Function>
@@ -101,7 +101,7 @@ public:
       ASIO_MOVE_ARG(Function) function,
       typename enable_if<
         !can_query<Executor, execution::allocator_t<void> >::value
-      >::type* = 0);
+      >::type* = ASIO_NULLPTR);
 
   // Request invocation of the given function.
   template <typename Executor, typename Function, typename Allocator>

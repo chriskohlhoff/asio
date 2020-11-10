@@ -219,7 +219,7 @@ template <typename Executor>
 inline executor_work_guard<Executor> make_work_guard(const Executor& ex,
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return executor_work_guard<Executor>(ex);
 }
@@ -230,7 +230,7 @@ inline executor_work_guard<typename ExecutionContext::executor_type>
 make_work_guard(ExecutionContext& ctx,
     typename enable_if<
       is_convertible<ExecutionContext&, execution_context&>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return executor_work_guard<typename ExecutionContext::executor_type>(
       ctx.get_executor());
@@ -243,7 +243,7 @@ make_work_guard(const T& t,
     typename enable_if<
       !is_executor<T>::value && !execution::is_executor<T>::value
         && !is_convertible<T&, execution_context&
-    >::value>::type* = 0)
+    >::value>::type* = ASIO_NULLPTR)
 {
   return executor_work_guard<typename associated_executor<T>::type>(
       associated_executor<T>::get(t));
@@ -255,7 +255,7 @@ inline executor_work_guard<typename associated_executor<T, Executor>::type>
 make_work_guard(const T& t, const Executor& ex,
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return executor_work_guard<typename associated_executor<T, Executor>::type>(
       associated_executor<T, Executor>::get(t, ex));
@@ -270,7 +270,7 @@ make_work_guard(const T& t, ExecutionContext& ctx,
       !is_executor<T>::value && !execution::is_executor<T>::value
         && !is_convertible<T&, execution_context&>::value
         && is_convertible<ExecutionContext&, execution_context&>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return executor_work_guard<typename associated_executor<T,
     typename ExecutionContext::executor_type>::type>(

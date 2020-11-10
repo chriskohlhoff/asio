@@ -54,7 +54,7 @@ public:
       ASIO_MOVE_ARG(Handler) handler,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context.get_executor(), ASIO_MOVE_CAST(Handler)(handler))
   {
   }
@@ -66,7 +66,7 @@ public:
       typename enable_if<
         execution::is_executor<Executor>::value
           || is_executor<Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(ex, ASIO_MOVE_CAST(Handler)(handler))
   {
   }
@@ -88,7 +88,7 @@ public:
   void reset(ExecutionContext& context, ASIO_MOVE_ARG(Handler) handler,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     impl_.reset(context.get_executor(), ASIO_MOVE_CAST(Handler)(handler));
   }
@@ -100,7 +100,7 @@ public:
       typename enable_if<
         execution::is_executor<Executor>::value
           || is_executor<Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     impl_.reset(ex, ASIO_MOVE_CAST(Handler)(handler));
   }

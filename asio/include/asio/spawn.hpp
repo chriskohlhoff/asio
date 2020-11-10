@@ -228,7 +228,7 @@ void spawn(ASIO_MOVE_ARG(Handler) handler,
     typename enable_if<
       !is_executor<typename decay<Handler>::type>::value &&
       !execution::is_executor<typename decay<Handler>::type>::value &&
-      !is_convertible<Handler&, execution_context&>::value>::type* = 0);
+      !is_convertible<Handler&, execution_context&>::value>::type* = ASIO_NULLPTR);
 
 /// Start a new stackful coroutine, inheriting the execution context of another.
 /**
@@ -270,7 +270,7 @@ void spawn(const Executor& ex,
       = boost::coroutines::attributes(),
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start a new stackful coroutine that executes on a given strand.
 /**
@@ -331,7 +331,7 @@ void spawn(ExecutionContext& ctx,
     const boost::coroutines::attributes& attributes
       = boost::coroutines::attributes(),
     typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type* = 0);
+      ExecutionContext&, execution_context&>::value>::type* = ASIO_NULLPTR);
 
 /*@}*/
 

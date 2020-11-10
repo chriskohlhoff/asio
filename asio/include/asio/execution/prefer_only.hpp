@@ -221,7 +221,7 @@ struct prefer_only :
       typename enable_if<
         is_same<Property, InnerProperty>::value
           && can_prefer<const Executor&, const InnerProperty&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(ASIO_MSVC) \
   && !defined(__clang__) // Clang crashes if noexcept is used here.
     ASIO_NOEXCEPT_IF((
@@ -239,7 +239,7 @@ struct prefer_only :
       typename enable_if<
         is_same<Property, InnerProperty>::value
           && can_query<const Executor&, const InnerProperty&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(ASIO_MSVC) \
   && !defined(__clang__) // Clang crashes if noexcept is used here.
     ASIO_NOEXCEPT_IF((

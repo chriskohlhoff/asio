@@ -82,7 +82,7 @@ namespace detail
   inline Iterator call_connect_condition(ConnectCondition& connect_condition,
       const asio::error_code& ec, Iterator next, Iterator end,
       typename enable_if<is_legacy_connect_condition<
-        ConnectCondition, Iterator>::value>::type* = 0)
+        ConnectCondition, Iterator>::value>::type* = ASIO_NULLPTR)
   {
     if (next != end)
       return connect_condition(ec, next);
@@ -93,7 +93,7 @@ namespace detail
   inline Iterator call_connect_condition(ConnectCondition& connect_condition,
       const asio::error_code& ec, Iterator next, Iterator end,
       typename enable_if<!is_legacy_connect_condition<
-        ConnectCondition, Iterator>::value>::type* = 0)
+        ConnectCondition, Iterator>::value>::type* = ASIO_NULLPTR)
   {
     for (;next != end; ++next)
       if (connect_condition(ec, *next))

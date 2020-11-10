@@ -110,7 +110,7 @@ inline typename associated_executor<T, Executor>::type
 get_associated_executor(const T& t, const Executor& ex,
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0) ASIO_NOEXCEPT
+    >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
 {
   return associated_executor<T, Executor>::get(t, ex);
 }
@@ -125,7 +125,7 @@ inline typename associated_executor<T,
   typename ExecutionContext::executor_type>::type
 get_associated_executor(const T& t, ExecutionContext& ctx,
     typename enable_if<is_convertible<ExecutionContext&,
-      execution_context&>::value>::type* = 0) ASIO_NOEXCEPT
+      execution_context&>::value>::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
 {
   return associated_executor<T,
     typename ExecutionContext::executor_type>::get(t, ctx.get_executor());

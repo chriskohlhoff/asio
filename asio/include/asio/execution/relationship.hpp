@@ -210,7 +210,7 @@ struct relationship_t
             T, relationship_t>::is_valid
           && !traits::query_member<T, relationship_t>::is_valid
           && traits::static_query<T, fork_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, fork_t>::value();
   }
@@ -225,7 +225,7 @@ struct relationship_t
           && !traits::query_member<T, relationship_t>::is_valid
           && !traits::static_query<T, fork_t>::is_valid
           && traits::static_query<T, continuation_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, continuation_t>::value();
   }
@@ -261,7 +261,7 @@ struct relationship_t
       const Executor& ex, convertible_from_relationship_t,
       typename enable_if<
         can_query<const Executor&, fork_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -281,7 +281,7 @@ struct relationship_t
       typename enable_if<
         !can_query<const Executor&, fork_t>::value
           && can_query<const Executor&, continuation_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -366,7 +366,7 @@ struct fork_t
           && !traits::query_member<T, fork_t>::is_valid
           && !traits::query_free<T, fork_t>::is_valid
           && !can_query<T, continuation_t<I> >::value
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return fork_t();
   }

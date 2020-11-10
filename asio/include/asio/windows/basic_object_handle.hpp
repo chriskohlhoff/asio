@@ -99,7 +99,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value,
         basic_object_handle
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -144,7 +144,7 @@ public:
       const native_handle_type& native_handle,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;

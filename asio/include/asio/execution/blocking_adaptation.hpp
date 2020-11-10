@@ -217,7 +217,7 @@ struct blocking_adaptation_t
             T, blocking_adaptation_t>::is_valid
           && !traits::query_member<T, blocking_adaptation_t>::is_valid
           && traits::static_query<T, disallowed_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, disallowed_t>::value();
   }
@@ -232,7 +232,7 @@ struct blocking_adaptation_t
           && !traits::query_member<T, blocking_adaptation_t>::is_valid
           && !traits::static_query<T, disallowed_t>::is_valid
           && traits::static_query<T, allowed_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, allowed_t>::value();
   }
@@ -269,7 +269,7 @@ struct blocking_adaptation_t
       const Executor& ex, convertible_from_blocking_adaptation_t,
       typename enable_if<
         can_query<const Executor&, disallowed_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -290,7 +290,7 @@ struct blocking_adaptation_t
       typename enable_if<
         !can_query<const Executor&, disallowed_t>::value
           && can_query<const Executor&, allowed_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -375,7 +375,7 @@ struct disallowed_t
           && !traits::query_member<T, disallowed_t>::is_valid
           && !traits::query_free<T, disallowed_t>::is_valid
           && !can_query<T, allowed_t<I> >::value
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return disallowed_t();
   }
@@ -580,7 +580,7 @@ struct allowed_t
       const Executor& e, const allowed_t&,
       typename enable_if<
         is_executor<Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return adapter<Executor>(0, e);
   }

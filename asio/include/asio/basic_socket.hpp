@@ -127,7 +127,7 @@ public:
   explicit basic_socket(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -167,7 +167,7 @@ public:
   basic_socket(ExecutionContext& context, const protocol_type& protocol,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -221,7 +221,7 @@ public:
   basic_socket(ExecutionContext& context, const endpoint_type& endpoint,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -274,7 +274,7 @@ public:
       const native_handle_type& native_socket,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -334,7 +334,7 @@ public:
       typename enable_if<
         is_convertible<Protocol1, Protocol>::value
           && is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(std::move(other.impl_))
   {
   }

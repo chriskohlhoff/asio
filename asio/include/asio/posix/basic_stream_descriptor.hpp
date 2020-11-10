@@ -87,7 +87,7 @@ public:
   explicit basic_stream_descriptor(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_descriptor<Executor>(context)
   {
   }
@@ -129,7 +129,7 @@ public:
       const native_handle_type& native_descriptor,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_descriptor<Executor>(context, native_descriptor)
   {
   }

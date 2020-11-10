@@ -102,7 +102,7 @@ public:
   explicit basic_datagram_socket(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_socket<Protocol, Executor>(context)
   {
   }
@@ -140,7 +140,7 @@ public:
       const protocol_type& protocol,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_socket<Protocol, Executor>(context, protocol)
   {
   }
@@ -186,7 +186,7 @@ public:
       const endpoint_type& endpoint,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_socket<Protocol, Executor>(context, endpoint)
   {
   }
@@ -231,7 +231,7 @@ public:
       const protocol_type& protocol, const native_handle_type& native_socket,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_socket<Protocol, Executor>(context, protocol, native_socket)
   {
   }
@@ -288,7 +288,7 @@ public:
       typename enable_if<
         is_convertible<Protocol1, Protocol>::value
           && is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : basic_socket<Protocol, Executor>(std::move(other))
   {
   }

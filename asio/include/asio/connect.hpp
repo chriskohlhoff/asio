@@ -30,7 +30,7 @@ namespace detail
   char (&has_iterator_helper(...))[2];
 
   template <typename T>
-  char has_iterator_helper(T*, typename T::iterator* = 0);
+  char has_iterator_helper(T*, typename T::iterator* = ASIO_NULLPTR);
 
   template <typename T>
   struct has_iterator_typedef
@@ -91,7 +91,7 @@ template <typename Protocol, typename Executor, typename EndpointSequence>
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints,
     typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type* = 0);
+        EndpointSequence>::value>::type* = ASIO_NULLPTR);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
 /**
@@ -127,7 +127,7 @@ template <typename Protocol, typename Executor, typename EndpointSequence>
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, asio::error_code& ec,
     typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type* = 0);
+        EndpointSequence>::value>::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated: Use range overload.) Establishes a socket connection by trying
@@ -156,7 +156,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
  */
 template <typename Protocol, typename Executor, typename Iterator>
 Iterator connect(basic_socket<Protocol, Executor>& s, Iterator begin,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = ASIO_NULLPTR);
 
 /// (Deprecated: Use range overload.) Establishes a socket connection by trying
 /// each endpoint in a sequence.
@@ -185,7 +185,7 @@ Iterator connect(basic_socket<Protocol, Executor>& s, Iterator begin,
 template <typename Protocol, typename Executor, typename Iterator>
 Iterator connect(basic_socket<Protocol, Executor>& s,
     Iterator begin, asio::error_code& ec,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = ASIO_NULLPTR);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -312,7 +312,7 @@ template <typename Protocol, typename Executor,
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type* = 0);
+        EndpointSequence>::value>::type* = ASIO_NULLPTR);
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
 /**
@@ -380,7 +380,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     asio::error_code& ec,
     typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type* = 0);
+        EndpointSequence>::value>::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated: Use range overload.) Establishes a socket connection by trying
@@ -422,7 +422,7 @@ template <typename Protocol, typename Executor,
     typename Iterator, typename ConnectCondition>
 Iterator connect(basic_socket<Protocol, Executor>& s,
     Iterator begin, ConnectCondition connect_condition,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = ASIO_NULLPTR);
 
 /// (Deprecated: Use range overload.) Establishes a socket connection by trying
 /// each endpoint in a sequence.
@@ -463,7 +463,7 @@ template <typename Protocol, typename Executor,
     typename Iterator, typename ConnectCondition>
 Iterator connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ConnectCondition connect_condition, asio::error_code& ec,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = ASIO_NULLPTR);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Establishes a socket connection by trying each endpoint in a sequence.
@@ -676,7 +676,7 @@ async_connect(basic_socket<Protocol, Executor>& s,
     ASIO_MOVE_ARG(RangeConnectHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type* = 0);
+        EndpointSequence>::value>::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated: Use range overload.) Asynchronously establishes a socket
@@ -723,7 +723,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = ASIO_NULLPTR);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a
@@ -892,7 +892,7 @@ async_connect(basic_socket<Protocol, Executor>& s,
     ASIO_MOVE_ARG(RangeConnectHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type* = 0);
+        EndpointSequence>::value>::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DEPRECATED)
 /// (Deprecated: Use range overload.) Asynchronously establishes a socket
@@ -952,7 +952,7 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ConnectCondition connect_condition,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = 0);
+    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type* = ASIO_NULLPTR);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Asynchronously establishes a socket connection by trying each endpoint in a

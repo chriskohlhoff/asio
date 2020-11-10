@@ -108,7 +108,7 @@ co_spawn(const Executor& ex, awaitable<T, AwaitableExecutor> a,
     typename enable_if<
       (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Spawn a new coroutined-based thread of execution.
 /**
@@ -164,7 +164,7 @@ co_spawn(const Executor& ex, awaitable<void, AwaitableExecutor> a,
     typename enable_if<
       (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Spawn a new coroutined-based thread of execution.
 /**
@@ -231,7 +231,7 @@ co_spawn(ExecutionContext& ctx, awaitable<T, AwaitableExecutor> a,
       is_convertible<ExecutionContext&, execution_context&>::value
         && is_convertible<typename ExecutionContext::executor_type,
           AwaitableExecutor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Spawn a new coroutined-based thread of execution.
 /**
@@ -290,7 +290,7 @@ co_spawn(ExecutionContext& ctx, awaitable<void, AwaitableExecutor> a,
       is_convertible<ExecutionContext&, execution_context&>::value
         && is_convertible<typename ExecutionContext::executor_type,
           AwaitableExecutor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Spawn a new coroutined-based thread of execution.
 /**
@@ -373,7 +373,7 @@ co_spawn(const Executor& ex, F&& f,
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Spawn a new coroutined-based thread of execution.
 /**
@@ -458,7 +458,7 @@ co_spawn(ExecutionContext& ctx, F&& f,
         typename ExecutionContext::executor_type),
     typename enable_if<
       is_convertible<ExecutionContext&, execution_context&>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 } // namespace asio
 

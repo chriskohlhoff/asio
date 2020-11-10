@@ -262,7 +262,7 @@ struct blocking_t
         !traits::query_static_constexpr_member<T, blocking_t>::is_valid
           && !traits::query_member<T, blocking_t>::is_valid
           && traits::static_query<T, possibly_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, possibly_t>::value();
   }
@@ -276,7 +276,7 @@ struct blocking_t
           && !traits::query_member<T, blocking_t>::is_valid
           && !traits::static_query<T, possibly_t>::is_valid
           && traits::static_query<T, always_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, always_t>::value();
   }
@@ -291,7 +291,7 @@ struct blocking_t
           && !traits::static_query<T, possibly_t>::is_valid
           && !traits::static_query<T, always_t>::is_valid
           && traits::static_query<T, never_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, never_t>::value();
   }
@@ -324,7 +324,7 @@ struct blocking_t
       const Executor& ex, convertible_from_blocking_t,
       typename enable_if<
         can_query<const Executor&, possibly_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -344,7 +344,7 @@ struct blocking_t
       typename enable_if<
         !can_query<const Executor&, possibly_t>::value
           && can_query<const Executor&, always_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -365,7 +365,7 @@ struct blocking_t
         !can_query<const Executor&, possibly_t>::value
           && !can_query<const Executor&, always_t>::value
           && can_query<const Executor&, never_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -452,7 +452,7 @@ struct possibly_t
           && !traits::query_free<T, possibly_t>::is_valid
           && !can_query<T, always_t<I> >::value
           && !can_query<T, never_t<I> >::value
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return possibly_t();
   }
@@ -729,7 +729,7 @@ struct always_t
           const Executor&,
           blocking_adaptation::allowed_t<0>
         >::is_valid
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return adapter<Executor>(0, e);
   }

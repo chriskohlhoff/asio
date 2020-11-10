@@ -123,7 +123,7 @@ struct bulk_sender : sender_base
             Sender, Receiver, Function, Number
           >::arg_type
         >::value
-      >::type* = 0) ASIO_RVALUE_REF_QUAL ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_RVALUE_REF_QUAL ASIO_NOEXCEPT
   {
     return execution::connect(
         ASIO_MOVE_OR_LVALUE(typename remove_cvref<Sender>::type)(sender_),
@@ -147,7 +147,7 @@ struct bulk_sender : sender_base
             Sender, Receiver, Function, Number
           >::arg_type
         >::value
-      >::type* = 0) const ASIO_LVALUE_REF_QUAL ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) const ASIO_LVALUE_REF_QUAL ASIO_NOEXCEPT
   {
     return execution::connect(sender_,
         typename bulk_receiver_traits<Sender, Receiver, Function, Number>::type(

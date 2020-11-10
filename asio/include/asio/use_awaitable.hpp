@@ -110,7 +110,7 @@ struct use_awaitable_t
     executor_with_default(const OtherExecutor& ex,
         typename enable_if<
           is_convertible<OtherExecutor, InnerExecutor>::value
-        >::type* = 0) ASIO_NOEXCEPT
+        >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
       : InnerExecutor(ex)
     {
     }

@@ -53,7 +53,7 @@ public:
           is_convertible<Executor1, Executor>,
           false_type
         >::type::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : executor_(e),
       impl_(strand::create_implementation(executor_))
   {
@@ -383,7 +383,7 @@ private:
   static implementation_type create_implementation(const InnerExecutor& ex,
       typename enable_if<
         can_query<InnerExecutor, execution::context_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return use_service<detail::strand_executor_service>(
         asio::query(ex, execution::context)).create_implementation();
@@ -393,7 +393,7 @@ private:
   static implementation_type create_implementation(const InnerExecutor& ex,
       typename enable_if<
         !can_query<InnerExecutor, execution::context_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return use_service<detail::strand_executor_service>(
         ex.context()).create_implementation();
@@ -421,7 +421,7 @@ template <typename Executor>
 inline strand<Executor> make_strand(const Executor& ex,
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return strand<Executor>(ex);
 }
@@ -432,7 +432,7 @@ inline strand<typename ExecutionContext::executor_type>
 make_strand(ExecutionContext& ctx,
     typename enable_if<
       is_convertible<ExecutionContext&, execution_context&>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return strand<typename ExecutionContext::executor_type>(ctx.get_executor());
 }

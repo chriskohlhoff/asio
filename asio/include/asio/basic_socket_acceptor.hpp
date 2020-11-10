@@ -137,7 +137,7 @@ public:
   explicit basic_socket_acceptor(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -179,7 +179,7 @@ public:
       const protocol_type& protocol,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -267,7 +267,7 @@ public:
       const endpoint_type& endpoint, bool reuse_addr = true,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -332,7 +332,7 @@ public:
       const protocol_type& protocol, const native_handle_type& native_acceptor,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -396,7 +396,7 @@ public:
       typename enable_if<
         is_convertible<Protocol1, Protocol>::value
           && is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(std::move(other.impl_))
   {
   }
@@ -1254,7 +1254,7 @@ public:
   void accept(basic_socket<Protocol1, Executor1>& peer,
       typename enable_if<
         is_convertible<Protocol, Protocol1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     asio::error_code ec;
     impl_.get_service().accept(impl_.get_implementation(),
@@ -1290,7 +1290,7 @@ public:
       basic_socket<Protocol1, Executor1>& peer, asio::error_code& ec,
       typename enable_if<
         is_convertible<Protocol, Protocol1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     impl_.get_service().accept(impl_.get_implementation(),
         peer, static_cast<endpoint_type*>(0), ec);
@@ -1345,7 +1345,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_convertible<Protocol, Protocol1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return async_initiate<AcceptHandler, void (asio::error_code)>(
         initiate_async_accept(this), handler,
@@ -1621,7 +1621,7 @@ public:
       typename enable_if<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     asio::error_code ec;
     typename Protocol::socket::template
@@ -1660,7 +1660,7 @@ public:
   accept(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     asio::error_code ec;
     typename Protocol::socket::template rebind_executor<
@@ -1704,7 +1704,7 @@ public:
       typename enable_if<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typename Protocol::socket::template
       rebind_executor<Executor1>::other peer(ex);
@@ -1746,7 +1746,7 @@ public:
   accept(ExecutionContext& context, asio::error_code& ec,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typename Protocol::socket::template rebind_executor<
         typename ExecutionContext::executor_type>::other peer(context);
@@ -1811,7 +1811,7 @@ public:
       typename enable_if<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typedef typename Protocol::socket::template rebind_executor<
       Executor1>::other other_socket_type;
@@ -1880,7 +1880,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typedef typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other other_socket_type;
@@ -2070,7 +2070,7 @@ public:
       typename enable_if<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     asio::error_code ec;
     typename Protocol::socket::template
@@ -2115,7 +2115,7 @@ public:
   accept(ExecutionContext& context, endpoint_type& peer_endpoint,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     asio::error_code ec;
     typename Protocol::socket::template rebind_executor<
@@ -2166,7 +2166,7 @@ public:
       typename enable_if<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typename Protocol::socket::template
       rebind_executor<Executor1>::other peer(ex);
@@ -2215,7 +2215,7 @@ public:
       endpoint_type& peer_endpoint, asio::error_code& ec,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typename Protocol::socket::template rebind_executor<
         typename ExecutionContext::executor_type>::other peer(context);
@@ -2287,7 +2287,7 @@ public:
       typename enable_if<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typedef typename Protocol::socket::template rebind_executor<
       Executor1>::other other_socket_type;
@@ -2363,7 +2363,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     typedef typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other other_socket_type;

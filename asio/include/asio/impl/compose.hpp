@@ -501,7 +501,7 @@ namespace detail
       typename enable_if<
         !is_executor<IoObject>::value
           && !execution::is_executor<IoObject>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return io_object.get_executor();
   }
@@ -511,7 +511,7 @@ namespace detail
       typename enable_if<
         is_executor<Executor>::value
           || execution::is_executor<Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     return ex;
   }

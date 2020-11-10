@@ -103,7 +103,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename enable_if<
       execution::is_executor<Executor>::value || is_executor<Executor>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Submits a completion token or function object for execution.
 /**
@@ -119,7 +119,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename ExecutionContext::executor_type),
     typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type* = 0);
+      ExecutionContext&, execution_context&>::value>::type* = ASIO_NULLPTR);
 
 } // namespace asio
 

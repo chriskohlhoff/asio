@@ -55,7 +55,7 @@ public:
   template <typename ExecutionContext>
   explicit io_object_impl(ExecutionContext& context,
       typename enable_if<is_convertible<
-        ExecutionContext&, execution_context&>::value>::type* = 0)
+        ExecutionContext&, execution_context&>::value>::type* = ASIO_NULLPTR)
     : service_(&asio::use_service<IoObjectService>(context)),
       executor_(context.get_executor())
   {
@@ -140,7 +140,7 @@ private:
   // Helper function to get an executor's context.
   template <typename T>
   static execution_context& get_context(const T& t,
-      typename enable_if<execution::is_executor<T>::value>::type* = 0)
+      typename enable_if<execution::is_executor<T>::value>::type* = ASIO_NULLPTR)
   {
     return asio::query(t, execution::context);
   }
@@ -148,7 +148,7 @@ private:
   // Helper function to get an executor's context.
   template <typename T>
   static execution_context& get_context(const T& t,
-      typename enable_if<!execution::is_executor<T>::value>::type* = 0)
+      typename enable_if<!execution::is_executor<T>::value>::type* = ASIO_NULLPTR)
   {
     return t.context();
   }

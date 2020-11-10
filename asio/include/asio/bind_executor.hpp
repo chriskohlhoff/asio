@@ -490,7 +490,7 @@ inline executor_binder<typename decay<T>::type, Executor>
 bind_executor(const Executor& ex, ASIO_MOVE_ARG(T) t,
     typename enable_if<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0)
+    >::type* = ASIO_NULLPTR)
 {
   return executor_binder<typename decay<T>::type, Executor>(
       executor_arg_t(), ex, ASIO_MOVE_CAST(T)(t));
@@ -502,7 +502,7 @@ inline executor_binder<typename decay<T>::type,
   typename ExecutionContext::executor_type>
 bind_executor(ExecutionContext& ctx, ASIO_MOVE_ARG(T) t,
     typename enable_if<is_convertible<
-      ExecutionContext&, execution_context&>::value>::type* = 0)
+      ExecutionContext&, execution_context&>::value>::type* = ASIO_NULLPTR)
 {
   return executor_binder<typename decay<T>::type,
     typename ExecutionContext::executor_type>(

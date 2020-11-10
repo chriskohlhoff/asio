@@ -699,7 +699,7 @@ protected:
   static const object_fns* object_fns_table(
       typename enable_if<
         is_same<Obj, void>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     static const object_fns fns =
     {
@@ -742,7 +742,7 @@ protected:
   static const object_fns* object_fns_table(
       typename enable_if<
         is_same<Obj, asio::detail::shared_ptr<void> >::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     static const object_fns fns =
     {
@@ -786,7 +786,7 @@ protected:
       typename enable_if<
         !is_same<Obj, void>::value
           && !is_same<Obj, asio::detail::shared_ptr<void> >::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     static const object_fns fns =
     {
@@ -847,7 +847,7 @@ protected:
   static const target_fns* target_fns_table(
       typename enable_if<
         is_same<Ex, void>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     static const target_fns fns =
     {
@@ -898,7 +898,7 @@ protected:
   static const target_fns* target_fns_table(bool is_always_blocking,
       typename enable_if<
         !is_same<Ex, void>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
   {
     static const target_fns fns_with_execute =
     {
@@ -1216,7 +1216,7 @@ public:
           is_executor<Executor>,
           false_type
         >::type::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : detail::any_executor_base(
         ASIO_MOVE_CAST(Executor)(ex), false_type())
   {
@@ -1401,7 +1401,7 @@ public:
             Executor, void(SupportableProperties...)>,
           false_type
         >::type::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : detail::any_executor_base(
         ASIO_MOVE_CAST(Executor)(ex), false_type()),
       prop_fns_(prop_fns_table<Executor>())
@@ -1421,7 +1421,7 @@ public:
               any_executor<OtherSupportableProperties...> >,
           false_type
         >::type::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : detail::any_executor_base(ASIO_MOVE_CAST(
           any_executor<OtherSupportableProperties...>)(other), true_type()),
       prop_fns_(prop_fns_table<any_executor<OtherSupportableProperties...> >())
@@ -1572,7 +1572,7 @@ public:
           typename find_convertible_property<Property>::query_result_type,
           void
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef find_convertible_property<Property> found;
     prop_fns_[found::index].query(0, object_fns_->target(*this),
@@ -1591,7 +1591,7 @@ public:
         is_reference<
           typename find_convertible_property<Property>::query_result_type
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef find_convertible_property<Property> found;
     typename remove_reference<
@@ -1613,7 +1613,7 @@ public:
         is_scalar<
           typename find_convertible_property<Property>::query_result_type
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef find_convertible_property<Property> found;
     typename found::query_result_type result;
@@ -1638,7 +1638,7 @@ public:
         !is_scalar<
           typename find_convertible_property<Property>::query_result_type
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef find_convertible_property<Property> found;
     typename found::query_result_type* result;
@@ -1658,7 +1658,7 @@ public:
   any_executor require(const Property& p,
       typename enable_if<
         find_convertible_requirable_property<Property>::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef find_convertible_requirable_property<Property> found;
     return prop_fns_[found::index].require(object_fns_->target(*this),
@@ -1675,7 +1675,7 @@ public:
   any_executor prefer(const Property& p,
       typename enable_if<
         find_convertible_preferable_property<Property>::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef find_convertible_preferable_property<Property> found;
     return prop_fns_[found::index].prefer(object_fns_->target(*this),
@@ -1833,7 +1833,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
               Executor, void(ASIO_VARIADIC_TARGS(n))>, \
             false_type \
           >::type::value \
-        >::type* = 0) \
+        >::type* = ASIO_NULLPTR) \
       : detail::any_executor_base(ASIO_MOVE_CAST( \
             Executor)(ex), false_type()), \
         prop_fns_(prop_fns_table<Executor>()) \
@@ -1866,7 +1866,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
                 is_valid_target<OtherAnyExecutor>, \
             false_type \
           >::type::value \
-        >::type* = 0) \
+        >::type* = ASIO_NULLPTR) \
       : detail::any_executor_base(ASIO_MOVE_CAST( \
             OtherAnyExecutor)(other), true_type()), \
         prop_fns_(prop_fns_table<OtherAnyExecutor>()) \
@@ -1987,7 +1987,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
             typename find_convertible_property<Property>::query_result_type, \
             void \
           >::value \
-        >::type* = 0) const \
+        >::type* = ASIO_NULLPTR) const \
     { \
       typedef find_convertible_property<Property> found; \
       prop_fns_[found::index].query(0, object_fns_->target(*this), \
@@ -2006,7 +2006,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
           is_reference< \
             typename find_convertible_property<Property>::query_result_type \
           >::value \
-        >::type* = 0) const \
+        >::type* = ASIO_NULLPTR) const \
     { \
       typedef find_convertible_property<Property> found; \
       typename remove_reference< \
@@ -2028,7 +2028,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
           is_scalar< \
             typename find_convertible_property<Property>::query_result_type \
           >::value \
-        >::type* = 0) const \
+        >::type* = ASIO_NULLPTR) const \
     { \
       typedef find_convertible_property<Property> found; \
       typename found::query_result_type result; \
@@ -2053,7 +2053,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
           !is_scalar< \
             typename find_convertible_property<Property>::query_result_type \
           >::value \
-        >::type* = 0) const \
+        >::type* = ASIO_NULLPTR) const \
     { \
       typedef find_convertible_property<Property> found; \
       typename found::query_result_type* result; \
@@ -2073,7 +2073,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
     any_executor require(const Property& p, \
         typename enable_if< \
           find_convertible_requirable_property<Property>::value \
-        >::type* = 0) const \
+        >::type* = ASIO_NULLPTR) const \
     { \
       typedef find_convertible_requirable_property<Property> found; \
       return prop_fns_[found::index].require(object_fns_->target(*this), \
@@ -2090,7 +2090,7 @@ inline void swap(any_executor<SupportableProperties...>& a,
     any_executor prefer(const Property& p, \
         typename enable_if< \
           find_convertible_preferable_property<Property>::value \
-        >::type* = 0) const \
+        >::type* = ASIO_NULLPTR) const \
     { \
       typedef find_convertible_preferable_property<Property> found; \
       return prop_fns_[found::index].prefer(object_fns_->target(*this), \

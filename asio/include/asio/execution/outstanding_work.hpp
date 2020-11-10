@@ -211,7 +211,7 @@ struct outstanding_work_t
             T, outstanding_work_t>::is_valid
           && !traits::query_member<T, outstanding_work_t>::is_valid
           && traits::static_query<T, untracked_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, untracked_t>::value();
   }
@@ -226,7 +226,7 @@ struct outstanding_work_t
           && !traits::query_member<T, outstanding_work_t>::is_valid
           && !traits::static_query<T, untracked_t>::is_valid
           && traits::static_query<T, tracked_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, tracked_t>::value();
   }
@@ -262,7 +262,7 @@ struct outstanding_work_t
       const Executor& ex, convertible_from_outstanding_work_t,
       typename enable_if<
         can_query<const Executor&, untracked_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -283,7 +283,7 @@ struct outstanding_work_t
       typename enable_if<
         !can_query<const Executor&, untracked_t>::value
           && can_query<const Executor&, tracked_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -368,7 +368,7 @@ struct untracked_t
           && !traits::query_member<T, untracked_t>::is_valid
           && !traits::query_free<T, untracked_t>::is_valid
           && !can_query<T, tracked_t<I> >::value
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return untracked_t();
   }

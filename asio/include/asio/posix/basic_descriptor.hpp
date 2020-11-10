@@ -101,7 +101,7 @@ public:
   explicit basic_descriptor(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -147,7 +147,7 @@ public:
       const native_handle_type& native_descriptor,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;

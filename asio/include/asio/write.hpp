@@ -77,7 +77,7 @@ template <typename SyncWriteStream, typename ConstBufferSequence>
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write all of the supplied data to a stream before returning.
 /**
@@ -120,7 +120,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     asio::error_code& ec,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -174,7 +174,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -221,7 +221,7 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
@@ -258,7 +258,7 @@ std::size_t write(SyncWriteStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write all of the supplied data to a stream before returning.
 /**
@@ -294,7 +294,7 @@ std::size_t write(SyncWriteStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -340,7 +340,7 @@ std::size_t write(SyncWriteStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -387,7 +387,7 @@ std::size_t write(SyncWriteStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -567,7 +567,7 @@ template <typename SyncWriteStream, typename DynamicBuffer_v2>
 std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write all of the supplied data to a stream before returning.
 /**
@@ -601,7 +601,7 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -645,7 +645,7 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -690,7 +690,7 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /*@}*/
 /**
@@ -766,7 +766,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
         typename AsyncWriteStream::executor_type),
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -846,7 +846,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
@@ -908,7 +908,7 @@ async_write(AsyncWriteStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -980,7 +980,7 @@ async_write(AsyncWriteStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -1163,7 +1163,7 @@ async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
         typename AsyncWriteStream::executor_type),
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -1233,7 +1233,7 @@ async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
     ASIO_MOVE_ARG(WriteHandler) handler,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /*@}*/
 

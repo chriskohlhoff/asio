@@ -77,7 +77,7 @@ template <typename SyncReadStream, typename MutableBufferSequence>
 std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -120,7 +120,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     asio::error_code& ec,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -174,7 +174,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -221,7 +221,7 @@ std::size_t read(SyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
@@ -258,7 +258,7 @@ std::size_t read(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -293,7 +293,7 @@ std::size_t read(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -339,7 +339,7 @@ std::size_t read(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -386,7 +386,7 @@ std::size_t read(SyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -566,7 +566,7 @@ template <typename SyncReadStream, typename DynamicBuffer_v2>
 std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -599,7 +599,7 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
     asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -643,7 +643,7 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Attempt to read a certain amount of data from a stream before returning.
 /**
@@ -688,7 +688,7 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /*@}*/
 /**
@@ -772,7 +772,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -852,7 +852,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_mutable_buffer_sequence<MutableBufferSequence>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
@@ -921,7 +921,7 @@ async_read(AsyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -998,7 +998,7 @@ async_read(AsyncReadStream& s,
     typename enable_if<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -1200,7 +1200,7 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /// Start an asynchronous operation to read a certain amount of data from a
 /// stream.
@@ -1275,7 +1275,7 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
         typename AsyncReadStream::executor_type),
     typename enable_if<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type* = ASIO_NULLPTR);
 
 /*@}*/
 

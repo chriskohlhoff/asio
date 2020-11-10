@@ -111,7 +111,7 @@ struct context_as_t
       typename enable_if<
         is_same<T, U>::value
           && can_query<const Executor&, const context_t&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((

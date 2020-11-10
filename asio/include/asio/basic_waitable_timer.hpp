@@ -193,7 +193,7 @@ public:
   explicit basic_waitable_timer(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -232,7 +232,7 @@ public:
       const time_point& expiry_time,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -275,7 +275,7 @@ public:
       const duration& expiry_time,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
     asio::error_code ec;
@@ -339,7 +339,7 @@ public:
       basic_waitable_timer<Clock, WaitTraits, Executor1>&& other,
       typename enable_if<
           is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(std::move(other.impl_))
   {
   }

@@ -121,7 +121,7 @@ public:
   explicit basic_resolver(ExecutionContext& context,
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(context)
   {
   }
@@ -160,7 +160,7 @@ public:
   basic_resolver(basic_resolver<InternetProtocol, Executor1>&& other,
       typename enable_if<
           is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
     : impl_(std::move(other.impl_))
   {
   }

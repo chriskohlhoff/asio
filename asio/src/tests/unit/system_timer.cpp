@@ -304,7 +304,7 @@ struct custom_allocation_timer_handler
     {
     }
 
-    pointer allocate(size_type n, const void* = 0)
+    pointer allocate(size_type n, const void* = ASIO_NULLPTR)
     {
       ++(*count_);
       return static_cast<T*>(::operator new(sizeof(T) * n));

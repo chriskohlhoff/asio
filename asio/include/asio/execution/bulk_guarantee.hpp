@@ -251,7 +251,7 @@ struct bulk_guarantee_t
         !traits::query_static_constexpr_member<T, bulk_guarantee_t>::is_valid
           && !traits::query_member<T, bulk_guarantee_t>::is_valid
           && traits::static_query<T, unsequenced_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, unsequenced_t>::value();
   }
@@ -265,7 +265,7 @@ struct bulk_guarantee_t
           && !traits::query_member<T, bulk_guarantee_t>::is_valid
           && !traits::static_query<T, unsequenced_t>::is_valid
           && traits::static_query<T, sequenced_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, sequenced_t>::value();
   }
@@ -280,7 +280,7 @@ struct bulk_guarantee_t
           && !traits::static_query<T, unsequenced_t>::is_valid
           && !traits::static_query<T, sequenced_t>::is_valid
           && traits::static_query<T, parallel_t>::is_valid
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return traits::static_query<T, parallel_t>::value();
   }
@@ -314,7 +314,7 @@ struct bulk_guarantee_t
       const Executor& ex, convertible_from_bulk_guarantee_t,
       typename enable_if<
         can_query<const Executor&, unsequenced_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -335,7 +335,7 @@ struct bulk_guarantee_t
       typename enable_if<
         !can_query<const Executor&, unsequenced_t>::value
           && can_query<const Executor&, sequenced_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -357,7 +357,7 @@ struct bulk_guarantee_t
         !can_query<const Executor&, unsequenced_t>::value
           && !can_query<const Executor&, sequenced_t>::value
           && can_query<const Executor&, parallel_t>::value
-      >::type* = 0)
+      >::type* = ASIO_NULLPTR)
 #if !defined(__clang__) // Clang crashes if noexcept is used here.
 #if defined(ASIO_MSVC) // Visual C++ wants the type to be qualified.
     ASIO_NOEXCEPT_IF((
@@ -447,7 +447,7 @@ struct unsequenced_t
           && !traits::query_free<T, unsequenced_t>::is_valid
           && !can_query<T, sequenced_t<I> >::value
           && !can_query<T, parallel_t<I> >::value
-      >::type* = 0) ASIO_NOEXCEPT
+      >::type* = ASIO_NULLPTR) ASIO_NOEXCEPT
   {
     return unsequenced_t();
   }

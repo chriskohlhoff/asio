@@ -39,7 +39,7 @@ public:
             typename decay<CompletionHandler>::type
           >::type
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef typename decay<CompletionHandler>::type handler_t;
 
@@ -64,7 +64,7 @@ public:
             typename decay<CompletionHandler>::type
           >::type
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef typename decay<CompletionHandler>::type handler_t;
 
@@ -105,7 +105,7 @@ public:
           typename decay<CompletionHandler>::type,
           Executor
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef typename decay<CompletionHandler>::type handler_t;
 
@@ -130,7 +130,7 @@ public:
           typename decay<CompletionHandler>::type,
           Executor
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef typename decay<CompletionHandler>::type handler_t;
 
@@ -160,7 +160,7 @@ public:
           typename decay<CompletionHandler>::type,
           Executor
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef typename decay<CompletionHandler>::type handler_t;
 
@@ -181,7 +181,7 @@ public:
           typename decay<CompletionHandler>::type,
           Executor
         >::value
-      >::type* = 0) const
+      >::type* = ASIO_NULLPTR) const
   {
     typedef typename decay<CompletionHandler>::type handler_t;
 
