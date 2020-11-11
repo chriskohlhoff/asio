@@ -82,7 +82,7 @@ public:
    * object handle.
    */
   explicit basic_object_handle(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -100,7 +100,7 @@ public:
         is_convertible<ExecutionContext&, execution_context&>::value,
         basic_object_handle
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
   }
 
@@ -119,7 +119,7 @@ public:
    */
   basic_object_handle(const executor_type& ex,
       const native_handle_type& native_handle)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(), native_handle, ec);
@@ -145,7 +145,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().assign(impl_.get_implementation(), native_handle, ec);

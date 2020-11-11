@@ -116,7 +116,7 @@ public:
    * signal set.
    */
   explicit basic_signal_set(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -133,7 +133,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
   }
 
@@ -152,7 +152,7 @@ public:
    * signals.add(signal_number_1); @endcode
    */
   basic_signal_set(const executor_type& ex, int signal_number_1)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -178,7 +178,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -204,7 +204,7 @@ public:
    */
   basic_signal_set(const executor_type& ex, int signal_number_1,
       int signal_number_2)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -236,7 +236,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -267,7 +267,7 @@ public:
    */
   basic_signal_set(const executor_type& ex, int signal_number_1,
       int signal_number_2, int signal_number_3)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -304,7 +304,7 @@ public:
       typename enable_if<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type* = 0)
-    : impl_(context)
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);

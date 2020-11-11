@@ -43,7 +43,7 @@ public:
   typedef Executor executor_type;
 
   // Construct an I/O object using an executor.
-  explicit io_object_impl(const executor_type& ex)
+  explicit io_object_impl(int, const executor_type& ex)
     : service_(&asio::use_service<IoObjectService>(
           io_object_impl::get_context(ex))),
       executor_(ex)
@@ -53,9 +53,7 @@ public:
 
   // Construct an I/O object using an execution context.
   template <typename ExecutionContext>
-  explicit io_object_impl(ExecutionContext& context,
-      typename enable_if<is_convertible<
-        ExecutionContext&, execution_context&>::value>::type* = 0)
+  explicit io_object_impl(int, int, ExecutionContext& context)
     : service_(&asio::use_service<IoObjectService>(context)),
       executor_(context.get_executor())
   {
