@@ -56,7 +56,7 @@ template <typename Executor, typename CandidateExecutor = void,
 class handler_work_base
 {
 public:
-  explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
+  explicit handler_work_base(int, int, const Executor& ex) ASIO_NOEXCEPT
     : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
   {
   }
@@ -116,7 +116,7 @@ class handler_work_base<Executor, CandidateExecutor,
     >::type>
 {
 public:
-  explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
+  explicit handler_work_base(int, int, const Executor& ex) ASIO_NOEXCEPT
     : executor_(ex),
       owns_work_(true)
   {
@@ -191,7 +191,7 @@ class handler_work_base<Executor, void, IoContext, PolymorphicExecutor,
     >::type>
 {
 public:
-  explicit handler_work_base(const Executor&)
+  explicit handler_work_base(int, int, const Executor&)
   {
   }
 
@@ -214,7 +214,7 @@ template <typename Executor, typename IoContext>
 class handler_work_base<Executor, void, IoContext, Executor>
 {
 public:
-  explicit handler_work_base(const Executor& ex) ASIO_NOEXCEPT
+  explicit handler_work_base(int, int, const Executor& ex) ASIO_NOEXCEPT
 #if !defined(ASIO_NO_TYPEID)
     : executor_(
         ex.target_type() == typeid(typename IoContext::executor_type)
@@ -304,7 +304,8 @@ public:
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
     executor_type;
 
-  explicit handler_work_base(const executor_type& ex) ASIO_NOEXCEPT
+  explicit handler_work_base(int, int,
+      const executor_type& ex) ASIO_NOEXCEPT
 #if !defined(ASIO_NO_TYPEID)
     : executor_(
         ex.target_type() == typeid(typename IoContext::executor_type)
@@ -372,7 +373,7 @@ public:
     Handler, IoExecutor>::type, IoExecutor> base2_type;
 
   handler_work(Handler& handler, const IoExecutor& io_ex) ASIO_NOEXCEPT
-    : base1_type(io_ex),
+    : base1_type(0, 0, io_ex),
       base2_type(asio::get_associated_executor(handler, io_ex), io_ex)
   {
   }
@@ -409,7 +410,7 @@ public:
   typedef handler_work_base<IoExecutor> base1_type;
 
   handler_work(Handler&, const IoExecutor& io_ex) ASIO_NOEXCEPT
-    : base1_type(io_ex)
+    : base1_type(0, 0, io_ex)
   {
   }
 
