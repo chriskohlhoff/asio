@@ -1824,7 +1824,9 @@ socket_type socket(int af, int type, int protocol,
   return s;
 #elif defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
   socket_type s = ::socket(af, type, protocol);
-  get_last_error(ec, s < 0);
+  get_last_error(ec, s == invalid_socket);
+  if (s == invalid_socket)
+    return s;
 
   int optval = 1;
   int result = ::setsockopt(s, SOL_SOCKET,
