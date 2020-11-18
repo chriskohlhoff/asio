@@ -294,6 +294,8 @@ Asio.
   ]
 ]
 
+[include platform_macros.qbk]
+
 [heading Mailing List]
 
 A mailing list specifically for Asio may be found on
