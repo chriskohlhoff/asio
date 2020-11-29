@@ -558,7 +558,6 @@ Coroutines TS.
 
 * [@../src/examples/cpp17/coroutines_ts/echo_server.cpp]
 * [@../src/examples/cpp17/coroutines_ts/refactored_echo_server.cpp]
-* [@../src/examples/cpp17/coroutines_ts/double_buffered_echo_server.cpp]
 * [@../src/examples/cpp17/coroutines_ts/chat_server.cpp]
 * [@../src/examples/cpp17/coroutines_ts/range_based_for.cpp]
 
