@@ -1766,7 +1766,9 @@
 #if !defined(ASIO_HAS_CO_AWAIT)
 # if !defined(ASIO_DISABLE_CO_AWAIT)
 #  if defined(ASIO_MSVC)
-#   if (_MSC_FULL_VER >= 190023506)
+#   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
+#    define ASIO_HAS_CO_AWAIT 1
+#   elif (_MSC_FULL_VER >= 190023506)
 #    if defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
 #     define ASIO_HAS_CO_AWAIT 1
 #    endif // defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
@@ -1791,6 +1793,11 @@
 // Standard library support for coroutines.
 #if !defined(ASIO_HAS_STD_COROUTINE)
 # if !defined(ASIO_DISABLE_STD_COROUTINE)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
+#    define ASIO_HAS_STD_COROUTINE 1
+#   endif // (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
+#  endif // defined(ASIO_MSVC)
 #  if defined(__GNUC__)
 #   if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
 #    if __has_include(<coroutine>)
