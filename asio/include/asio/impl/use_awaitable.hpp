@@ -236,7 +236,7 @@ T dummy_return()
 }
 
 template <>
-void dummy_return()
+inline void dummy_return()
 {
 }
 #endif // defined(_MSC_VER)
