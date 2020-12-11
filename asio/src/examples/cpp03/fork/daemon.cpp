@@ -2,7 +2,7 @@
 // daemon.cpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -12,7 +12,7 @@
 #include <asio/ip/udp.hpp>
 #include <asio/signal_set.hpp>
 #include <boost/array.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <ctime>
 #include <iostream>
 #include <syslog.h>
@@ -34,7 +34,8 @@ private:
   {
     socket_.async_receive_from(
         asio::buffer(recv_buffer_), remote_endpoint_,
-        boost::bind(&udp_daytime_server::handle_receive, this, _1));
+        boost::bind(&udp_daytime_server::handle_receive,
+          this, boost::placeholders::_1));
   }
 
   void handle_receive(const asio::error_code& ec)

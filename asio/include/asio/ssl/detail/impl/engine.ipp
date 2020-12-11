@@ -2,7 +2,7 @@
 // ssl/detail/impl/engine.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -55,16 +55,29 @@ engine::engine(SSL_CTX* context)
   ::SSL_set_bio(ssl_, int_bio, int_bio);
 }
 
+#if defined(ASIO_HAS_MOVE)
+engine::engine(engine&& other) ASIO_NOEXCEPT
+  : ssl_(other.ssl_),
+    ext_bio_(other.ext_bio_)
+{
+  other.ssl_ = 0;
+  other.ext_bio_ = 0;
+}
+#endif // defined(ASIO_HAS_MOVE)
+
 engine::~engine()
 {
-  if (SSL_get_app_data(ssl_))
+  if (ssl_ && SSL_get_app_data(ssl_))
   {
     delete static_cast<verify_callback_base*>(SSL_get_app_data(ssl_));
     SSL_set_app_data(ssl_, 0);
   }
 
-  ::BIO_free(ext_bio_);
-  ::SSL_free(ssl_);
+  if (ext_bio_)
+    ::BIO_free(ext_bio_);
+
+  if (ssl_)
+    ::SSL_free(ssl_);
 }
 
 SSL* engine::native_handle()

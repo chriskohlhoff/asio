@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,7 +17,7 @@ const) value of type `error_code`, and `ep` denotes a (possibly const) value of
 some type satisfying the [link asio.reference.Endpoint endpoint] requirements.
 
 [table ConnectCondition requirements
-  [[expression] [return type] [assertion/note\npre/post-condition]]
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
   [
     [`x(ec, ep)`]
     [`bool`]

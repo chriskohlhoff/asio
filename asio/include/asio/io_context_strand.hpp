@@ -2,7 +2,7 @@
 // io_context_strand.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,7 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_NO_EXTENSIONS)
+#if !defined(ASIO_NO_EXTENSIONS) \
+  && !defined(ASIO_NO_TS_EXECUTORS)
 
 #include "asio/async_result.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
@@ -370,5 +371,6 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(ASIO_NO_EXTENSIONS)
+       //   && !defined(ASIO_NO_TS_EXECUTORS)
 
 #endif // ASIO_IO_CONTEXT_STRAND_HPP

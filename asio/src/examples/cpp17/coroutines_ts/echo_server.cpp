@@ -2,7 +2,7 @@
 // echo_server.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,6 +22,11 @@ using asio::co_spawn;
 using asio::detached;
 using asio::use_awaitable;
 namespace this_coro = asio::this_coro;
+
+#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+# define use_awaitable \
+  asio::use_awaitable_t(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+#endif
 
 awaitable<void> echo(tcp::socket socket)
 {
@@ -47,12 +52,7 @@ awaitable<void> listener()
   for (;;)
   {
     tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
-    co_spawn(executor,
-        [socket = std::move(socket)]() mutable
-        {
-          return echo(std::move(socket));
-        },
-        detached);
+    co_spawn(executor, echo(std::move(socket)), detached);
   }
 }
 
@@ -65,7 +65,7 @@ int main()
     asio::signal_set signals(io_context, SIGINT, SIGTERM);
     signals.async_wait([&](auto, auto){ io_context.stop(); });
 
-    co_spawn(io_context, listener, detached);
+    co_spawn(io_context, listener(), detached);
 
     io_context.run();
   }

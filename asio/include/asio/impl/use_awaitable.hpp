@@ -2,7 +2,7 @@
 // impl/use_awaitable.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -54,7 +54,7 @@ template <typename, typename...>
 class awaitable_handler;
 
 template <typename Executor>
-class awaitable_handler<Executor, void>
+class awaitable_handler<Executor>
   : public awaitable_handler_base<Executor, void>
 {
 public:
@@ -228,6 +228,19 @@ public:
 
 #if !defined(GENERATING_DOCUMENTATION)
 
+#if defined(_MSC_VER)
+template <typename T>
+T dummy_return()
+{
+  return std::move(*static_cast<T*>(nullptr));
+}
+
+template <>
+void dummy_return()
+{
+}
+#endif // defined(_MSC_VER)
+
 template <typename Executor, typename R, typename... Args>
 class async_result<use_awaitable_t<Executor>, R(Args...)>
 {
@@ -236,25 +249,15 @@ public:
       Executor, typename decay<Args>::type...> handler_type;
   typedef typename handler_type::awaitable_type return_type;
 
-#if defined(_MSC_VER)
-  template <typename T>
-  static T dummy_return()
-  {
-    return std::move(*static_cast<T*>(nullptr));
-  }
-
-  template <>
-  static void dummy_return()
-  {
-  }
-#endif // defined(_MSC_VER)
-
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(Initiation initiation,
-      use_awaitable_t<Executor>, InitArgs... args)
+      use_awaitable_t<Executor> u, InitArgs... args)
   {
+    (void)u;
+
     co_await [&](auto* frame)
       {
+        ASIO_HANDLER_LOCATION((u.file_name_, u.line_, u.function_name_));
         handler_type handler(frame->detach_thread());
         std::move(initiation)(std::move(handler), std::move(args)...);
         return static_cast<handler_type*>(nullptr);

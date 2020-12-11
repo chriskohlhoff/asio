@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -366,6 +366,16 @@ context::context(context::method m)
   set_options(no_compression);
 }
 
+context::context(context::native_handle_type native_handle)
+  : handle_(native_handle)
+{
+  if (!handle_)
+  {
+    asio::detail::throw_error(
+        asio::error::invalid_argument, "context");
+  }
+}
+
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 context::context(context&& other)
 {
@@ -560,11 +570,21 @@ ASIO_SYNC_OP_VOID context::add_certificate_authority(
   {
     if (X509_STORE* store = ::SSL_CTX_get_cert_store(handle_))
     {
-      for (;;)
+      for (bool added = false;; added = true)
       {
         x509_cleanup cert = { ::PEM_read_bio_X509(bio.p, 0, 0, 0) };
         if (!cert.p)
-          break;
+        {
+          unsigned long err = ::ERR_get_error();
+          if (added && ERR_GET_LIB(err) == ERR_LIB_PEM
+              && ERR_GET_REASON(err) == PEM_R_NO_START_LINE)
+            break;
+
+          ec = asio::error_code(
+              static_cast<int>(err),
+              asio::error::get_ssl_category());
+          ASIO_SYNC_OP_VOID_RETURN(ec);
+        }
 
         if (::X509_STORE_add_cert(store, cert.p) != 1)
         {

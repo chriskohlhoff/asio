@@ -2,7 +2,7 @@
 // blocking_udp_client.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -12,7 +12,7 @@
 #include "asio/io_context.hpp"
 #include "asio/ip/udp.hpp"
 #include <cstdlib>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <iostream>
 
 using asio::ip::udp;
@@ -58,7 +58,8 @@ public:
     // callback will update the ec and length variables.
     std::size_t length = 0;
     socket_.async_receive(asio::buffer(buffer),
-        boost::bind(&client::handle_receive, _1, _2, &ec, &length));
+        boost::bind(&client::handle_receive,
+          boost::placeholders::_1, boost::placeholders::_2, &ec, &length));
 
     // Run the operation until it completes, or until the timeout.
     run(timeout);

@@ -9,6 +9,7 @@
 *.tds
 context
 context_base
+host_name_verification
 rfc2818_verification
 stream
 stream_base

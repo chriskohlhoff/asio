@@ -103,6 +103,9 @@ sub copy_source_file
   my $is_test = 0;
   $is_test = 1 if ($from =~ /tests\/unit/);
 
+  my $is_coroutine_related = 0;
+  $is_coroutine_related = 1 if ($from =~ /await/);
+
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
@@ -140,6 +143,7 @@ sub copy_source_file
       $line =~ s/asio\.history/boost_asio.history/g;
       $line =~ s/asio\.index/boost_asio.index/g;
       $line =~ s/asio\.net_ts/boost_asio.net_ts/g;
+      $line =~ s/asio\.std_executors/boost_asio.std_executors/g;
       $line =~ s/asio\.overview/boost_asio.overview/g;
       $line =~ s/asio\.reference/boost_asio.reference/g;
       $line =~ s/asio\.tutorial/boost_asio.tutorial/g;
@@ -270,7 +274,7 @@ sub copy_source_file
         print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
       }
     }
-    elsif ($line =~ /namespace std \{ *$/)
+    elsif ($line =~ /namespace std \{ *$/ && !$is_coroutine_related)
     {
       print_line($output, "namespace boost {", $from, $lineno);
       print_line($output, "namespace system {", $from, $lineno);
@@ -281,7 +285,7 @@ sub copy_source_file
       $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^} \/\/ namespace std/)
+    elsif ($line =~ /^} \/\/ namespace std/ && !$is_coroutine_related)
     {
       print_line($output, "} // namespace system", $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);
@@ -365,6 +369,9 @@ sub copy_include_files
       "include/asio",
       "include/asio/detail",
       "include/asio/detail/impl",
+      "include/asio/execution",
+      "include/asio/execution/detail",
+      "include/asio/execution/impl",
       "include/asio/experimental",
       "include/asio/experimental/impl",
       "include/asio/generic",
@@ -385,6 +392,7 @@ sub copy_include_files
       "include/asio/ssl/impl",
       "include/asio/ssl/old",
       "include/asio/ssl/old/detail",
+      "include/asio/traits",
       "include/asio/ts",
       "include/asio/windows");
 
@@ -428,6 +436,7 @@ sub copy_unit_tests
   my @dirs = (
       "src/tests/unit",
       "src/tests/unit/archetypes",
+      "src/tests/unit/execution",
       "src/tests/unit/generic",
       "src/tests/unit/ip",
       "src/tests/unit/local",
@@ -469,6 +478,27 @@ sub copy_latency_tests
       my $from = $file;
       my $to = $file;
       $to =~ s/^src\/tests\/latency\//$boost_dir\/libs\/asio\/test\/latency\//;
+      copy_source_file($from, $to);
+    }
+  }
+}
+
+sub copy_properties_tests
+{
+  my @dirs = (
+      "src/tests/properties/cpp03",
+      "src/tests/properties/cpp11",
+      "src/tests/properties/cpp14");
+
+  our $boost_dir;
+  foreach my $dir (@dirs)
+  {
+    my @files = ( glob("$dir/*.*pp"), glob("$dir/Jamfile*") );
+    foreach my $file (@files)
+    {
+      my $from = $file;
+      my $to = $file;
+      $to =~ s/^src\/tests\/properties\//$boost_dir\/libs\/asio\/test\/properties\//;
       copy_source_file($from, $to);
     }
   }
@@ -568,6 +598,7 @@ sub copy_doc
       "src/doc/examples.qbk",
       "src/doc/net_ts.qbk",
       "src/doc/reference.xsl",
+      "src/doc/std_executors.qbk",
       "src/doc/tutorial.xsl",
       glob("src/doc/overview/*.qbk"),
       glob("src/doc/requirements/*.qbk"));
@@ -598,6 +629,7 @@ copy_include_files();
 create_lib_directory();
 copy_unit_tests();
 copy_latency_tests();
+copy_properties_tests();
 copy_examples();
 copy_doc();
 copy_tools();

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -9,11 +9,11 @@
 
 The `basic_waitable_timer` template uses wait traits to allow programs to
 customize `wait` and `async_wait` behavior.
-[inline_note Possible uses of wait traits include:\n
-[mdash] To enable timers based on non-realtime clocks.\n
+[inline_note Possible uses of wait traits include:[br]
+[mdash] To enable timers based on non-realtime clocks.[br]
 [mdash] Determining how quickly wallclock-based timers respond to system time
-changes.\n
-[mdash] Correcting for errors or rounding timeouts to boundaries.\n
+changes.[br]
+[mdash] Correcting for errors or rounding timeouts to boundaries.[br]
 [mdash] Preventing duration overflow. That is, a program may set a timer's
 expiry `e` to be `Clock::max()` (meaning never reached) or `Clock::min()`
 (meaning always in the past). As a result, computing the duration until timer
@@ -28,7 +28,7 @@ In the table below, `t` denotes a (possibly const) value of type
 `Clock::duration`.
 
 [table WaitTraits requirements
-  [[expression] [return type] [assertion/note\npre/post-condition]]
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
   [
     [`X::to_wait_duration(d)`]
     [`Clock::duration`]

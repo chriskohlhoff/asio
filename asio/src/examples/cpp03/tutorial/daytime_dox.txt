@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2003-2019 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -23,8 +23,8 @@ so we need the user to specify the server.
 
 \until }
 
-All programs that use asio need to have at least one asio::io_context
-object.
+All programs that use asio need to have at least one I/O execution context,
+such as an asio::io_context object.
 
 \until asio::io_context
 
@@ -34,17 +34,15 @@ asio::ip::tcp::resolver object.
 
 \until tcp::resolver
 
-A resolver takes a query object and turns it into a list of endpoints. We
-construct a query using the name of the server, specified in <tt>argv[1]</tt>,
-and the name of the service, in this case <tt>"daytime"</tt>.
+A resolver takes a host name and service name and turns them into a list of
+endpoints. We perform a resolve call using the name of the server, specified in
+<tt>argv[1]</tt>, and the name of the service, in this case <tt>"daytime"</tt>.
 
-\until tcp::resolver::query
+The list of endpoints is returned using an object of type
+asio::ip::tcp::resolver::results_type. This object is a range, with begin() and
+end() member functions that may be used for iterating over the results.
 
-The list of endpoints is returned using an iterator of type
-asio::ip::tcp::resolver::iterator. (Note that a default constructed
-asio::ip::tcp::resolver::iterator object can be used as an end iterator.)
-
-\until tcp::resolver::iterator
+\until resolver.resolve
 
 Now we create and connect the socket. The list of endpoints obtained above may
 contain both IPv4 and IPv6 endpoints, so we need to try each of them until we
@@ -278,8 +276,6 @@ IPv4 endpoints by the asio::ip::udp::v4() argument.
 The asio::ip::udp::resolver::resolve() function is guaranteed to return at
 least one endpoint in the list if it does not fail. This means it is safe to
 dereference the return value directly.
-
-\until udp::endpoint
 
 Since UDP is datagram-oriented, we will not be using a stream socket. Create an
 asio::ip::udp::socket and initiate contact with the remote endpoint.
