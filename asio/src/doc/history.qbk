@@ -7,6 +7,91 @@
 
 [section:history Revision History]
 
+[heading Asio 1.18.1]
+
+* Enabled support for UNIX domain sockets on Windows. From Windows 10, UNIX
+  domain sockets (a.k.a "local" sockets) are supported on Windows, with the
+  exception of the `connect_pair` function (which will fail with an
+  operation_not_supported error).
+
+* Added executor-converting construction and assignment to `ip::basic_resolver`.
+
+* Added compatibility between polymorphic executors and the (deprecated) handler
+  invocation hook.
+
+* Added the `experimental::as_single` completion token adapter. The `as_single`
+  completion token adapter can be used to specify that the completion handler
+  arguments should be combined into a single argument. For completion signatures
+  with a single parameter, the argument is passed through as-is. For signatures
+  with two or more parameters, the arguments are combined into a tuple. The
+  `as_single` adapter may be used in conjunction with `use_awaitable` and
+  structured bindings as follows:[br]
+  ``
+  auto [e, n] = co_await socket.async_read_some(
+      asio::buffer(data), as_single(use_awaitable));
+  ``[br]
+  Alternatively, it may be used as a default completion token like so:[br]
+  ``
+  using default_token = as_single_t<use_awaitable_t<>>;
+  using tcp_socket = default_token::as_default_on_t<tcp::socket>;
+  // ...
+  awaitable<void> do_read(tcp_socket socket)
+  {
+    // ...
+    auto [e, n] = co_await socket.async_read_some(asio::buffer(data));
+    // ...
+  }
+  ``[br]
+
+* Added support for `MSG_NOSIGNAL` on more platforms by using  `_POSIX_VERSION`
+  to detect whether it is supported.
+
+* Added the ability to compile using libpthread on Windows.
+
+* Added workarounds for the Intel C++ compiler.
+
+* Added more support for detecting and optimising for handlers that have no
+  custom executor.
+
+* Reduced lock contention for timer cancellation on Windows.
+
+* Reinstated a previously removed null-pointer check, as it had a measurable
+  impact on performance.
+
+* Fixed the `executor` concept to test for a const-qualified `execute()`.
+
+* Fixed `any_executor` support for builds without RTTI support.
+
+* Fixed the `thread_pool` unit test to work without RTTI support.
+
+* Fixed C++20 coroutines compatibility with clang on Windows.
+
+* Fixed some compatibility issues with Windows Runtime.
+
+* Fixed shadow name warnings caused by addition of `asio::query`.
+
+* Fixed a "logical ‘or’ of equal expressions" warning on linux.
+
+* Fixed a benign switch fallthrough warning.
+
+* Added missing `push/pop_options.hpp` includes.
+
+* Suppressed zero-as-null-pointer-constant warnings.
+
+* Fixed a comma-operator warning.
+
+* Updated the documentation to clarify when the [^select] reactor is used on
+  Windows.
+
+* Fixed potential ambiguity caused by `any_executor` comparisons and conversion.
+
+* Added detection of non-experimental C++20 coroutines on MSVC 19.8.
+
+* Fixed compatibility with uClibc.
+
+* Fixed `strand<>` adaptation of Networking TS executors when targeting older
+  C++ versions or less conformant compilers.
+
 [heading Asio 1.18.0]
 
 * Marked the `basic_socket_acceptor` move constructor as `noexcept`.
