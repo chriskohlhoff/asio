@@ -81,6 +81,8 @@ public:
       // Perform the blocking endpoint resolution operation.
       char host_name[NI_MAXHOST];
       char service_name[NI_MAXSERV];
+      host_name[0] = '\0';
+      service_name[0] = '\0';
       socket_ops::background_getnameinfo(o->cancel_token_, o->endpoint_.data(),
           o->endpoint_.size(), host_name, NI_MAXHOST, service_name, NI_MAXSERV,
           o->endpoint_.protocol().type(), o->ec_);
