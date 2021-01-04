@@ -37,10 +37,14 @@ posix_event::posix_event()
 #else // (defined(__MACH__) && defined(__APPLE__))
       // || (defined(__ANDROID__) && (__ANDROID_API__ < 21))
   ::pthread_condattr_t attr;
-  ::pthread_condattr_init(&attr);
-  int error = ::pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+  int error = ::pthread_condattr_init(&attr);
   if (error == 0)
-    error = ::pthread_cond_init(&cond_, &attr);
+  {
+    error = ::pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+    if (error == 0)
+      error = ::pthread_cond_init(&cond_, &attr);
+    ::pthread_condattr_destroy(&attr);
+  }
 #endif // (defined(__MACH__) && defined(__APPLE__))
        // || (defined(__ANDROID__) && (__ANDROID_API__ < 21))
 
