@@ -61,6 +61,12 @@ class basic_socket_acceptor;
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
+ * Synchronous @c accept operations are thread safe, if the underlying
+ * operating system calls are also thread safe. This means that it is permitted
+ * to perform concurrent calls to synchronous @c accept operations on a single
+ * socket object. Other synchronous operations, such as @c open or @c close, are
+ * not thread safe.
+ *
  * @par Example
  * Opening a socket acceptor with the SO_REUSEADDR option enabled:
  * @code
