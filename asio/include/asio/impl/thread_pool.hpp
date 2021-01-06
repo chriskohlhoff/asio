@@ -76,11 +76,16 @@ thread_pool::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
+    thread_pool* old_thread_pool = pool_;
     pool_ = other.pool_;
     allocator_ = std::move(other.allocator_);
     bits_ = other.bits_;
     if (Bits & outstanding_work_tracked)
+    {
       other.pool_ = 0;
+      if (old_thread_pool)
+        old_thread_pool->scheduler_.work_finished();
+    }
   }
   return *this;
 }

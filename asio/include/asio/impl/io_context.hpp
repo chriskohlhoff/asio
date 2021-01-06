@@ -244,11 +244,16 @@ io_context::basic_executor_type<Allocator, Bits>::operator=(
 {
   if (this != &other)
   {
+    io_context* old_io_context = io_context_;
     io_context_ = other.io_context_;
     allocator_ = std::move(other.allocator_);
     bits_ = other.bits_;
     if (Bits & outstanding_work_tracked)
+    {
       other.io_context_ = 0;
+      if (old_io_context)
+        old_io_context->impl_.work_finished();
+    }
   }
   return *this;
 }
