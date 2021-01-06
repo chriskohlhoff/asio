@@ -196,20 +196,74 @@ struct outstanding_work_t
   {
   }
 
+  template <typename T>
+  struct proxy
+  {
+#if defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+    struct type
+    {
+      template <typename P>
+      auto query(ASIO_MOVE_ARG(P) p) const
+        noexcept(
+          noexcept(
+            declval<typename conditional<true, T, P>::type>().query(
+              ASIO_MOVE_CAST(P)(p))
+          )
+        )
+        -> decltype(
+          declval<typename conditional<true, T, P>::type>().query(
+            ASIO_MOVE_CAST(P)(p))
+        );
+    };
+#else // defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+    typedef T type;
+#endif // defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+  };
+
+  template <typename T>
+  struct static_proxy
+  {
+#if defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+    struct type
+    {
+      template <typename P>
+      static constexpr auto query(ASIO_MOVE_ARG(P) p)
+        noexcept(
+          noexcept(
+            conditional<true, T, P>::type::query(ASIO_MOVE_CAST(P)(p))
+          )
+        )
+        -> decltype(
+          conditional<true, T, P>::type::query(ASIO_MOVE_CAST(P)(p))
+        )
+      {
+        return T::query(ASIO_MOVE_CAST(P)(p));
+      }
+    };
+#else // defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+    typedef T type;
+#endif // defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+  };
+
+  template <typename T>
+  struct query_member :
+    traits::query_member<typename proxy<T>::type, outstanding_work_t> {};
+
+  template <typename T>
+  struct query_static_constexpr_member :
+    traits::query_static_constexpr_member<
+      typename static_proxy<T>::type, outstanding_work_t> {};
+
 #if defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
   static ASIO_CONSTEXPR
-  typename traits::query_static_constexpr_member<
-      T, outstanding_work_t>::result_type
+  typename query_static_constexpr_member<T>::result_type
   static_query()
     ASIO_NOEXCEPT_IF((
-      traits::query_static_constexpr_member<
-        T, outstanding_work_t
-      >::is_noexcept))
+      query_static_constexpr_member<T>::is_noexcept))
   {
-    return traits::query_static_constexpr_member<
-        T, outstanding_work_t>::value();
+    return query_static_constexpr_member<T>::value();
   }
 
   template <typename T>
@@ -217,11 +271,10 @@ struct outstanding_work_t
   typename traits::static_query<T, untracked_t>::result_type
   static_query(
       typename enable_if<
-        !traits::query_static_constexpr_member<
-            T, outstanding_work_t>::is_valid
+        !query_static_constexpr_member<T>::is_valid
       >::type* = 0,
       typename enable_if<
-        !traits::query_member<T, outstanding_work_t>::is_valid
+        !query_member<T>::is_valid
       >::type* = 0,
       typename enable_if<
         traits::static_query<T, untracked_t>::is_valid
@@ -235,11 +288,10 @@ struct outstanding_work_t
   typename traits::static_query<T, tracked_t>::result_type
   static_query(
       typename enable_if<
-        !traits::query_static_constexpr_member<
-            T, outstanding_work_t>::is_valid
+        !query_static_constexpr_member<T>::is_valid
       >::type* = 0,
       typename enable_if<
-        !traits::query_member<T, outstanding_work_t>::is_valid
+        !query_member<T>::is_valid
       >::type* = 0,
       typename enable_if<
         !traits::static_query<T, untracked_t>::is_valid
@@ -381,25 +433,36 @@ struct untracked_t
   {
   }
 
+  template <typename T>
+  struct query_member :
+    traits::query_member<
+      typename outstanding_work_t<I>::template proxy<T>::type, untracked_t> {};
+
+  template <typename T>
+  struct query_static_constexpr_member :
+    traits::query_static_constexpr_member<
+      typename outstanding_work_t<I>::template static_proxy<T>::type,
+        untracked_t> {};
+
 #if defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
   static ASIO_CONSTEXPR
-  typename traits::query_static_constexpr_member<T, untracked_t>::result_type
+  typename query_static_constexpr_member<T>::result_type
   static_query()
     ASIO_NOEXCEPT_IF((
-      traits::query_static_constexpr_member<T, untracked_t>::is_noexcept))
+      query_static_constexpr_member<T>::is_noexcept))
   {
-    return traits::query_static_constexpr_member<T, untracked_t>::value();
+    return query_static_constexpr_member<T>::value();
   }
 
   template <typename T>
   static ASIO_CONSTEXPR untracked_t static_query(
       typename enable_if<
-        !traits::query_static_constexpr_member<T, untracked_t>::is_valid
+        !query_static_constexpr_member<T>::is_valid
       >::type* = 0,
       typename enable_if<
-        !traits::query_member<T, untracked_t>::is_valid
+        !query_member<T>::is_valid
       >::type* = 0,
       typename enable_if<
         !traits::query_free<T, untracked_t>::is_valid
@@ -470,16 +533,27 @@ struct tracked_t
   {
   }
 
+  template <typename T>
+  struct query_member :
+    traits::query_member<
+      typename outstanding_work_t<I>::template proxy<T>::type, tracked_t> {};
+
+  template <typename T>
+  struct query_static_constexpr_member :
+    traits::query_static_constexpr_member<
+      typename outstanding_work_t<I>::template static_proxy<T>::type,
+        tracked_t> {};
+
 #if defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
   static ASIO_CONSTEXPR
-  typename traits::query_static_constexpr_member<T, tracked_t>::result_type
+  typename query_static_constexpr_member<T>::result_type
   static_query()
     ASIO_NOEXCEPT_IF((
-      traits::query_static_constexpr_member<T, tracked_t>::is_noexcept))
+      query_static_constexpr_member<T>::is_noexcept))
   {
-    return traits::query_static_constexpr_member<T, tracked_t>::value();
+    return query_static_constexpr_member<T>::value();
   }
 
   template <typename E, typename T = decltype(tracked_t::static_query<E>())>
@@ -621,30 +695,30 @@ struct query_free_default<T, execution::outstanding_work_t,
 template <typename T>
 struct static_query<T, execution::outstanding_work_t,
   typename enable_if<
-    traits::query_static_constexpr_member<T,
-      execution::outstanding_work_t>::is_valid
+    execution::detail::outstanding_work_t<0>::
+      query_static_constexpr_member<T>::is_valid
   >::type>
 {
   ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 
-  typedef typename traits::query_static_constexpr_member<T,
-    execution::outstanding_work_t>::result_type result_type;
+  typedef typename execution::detail::outstanding_work_t<0>::
+    query_static_constexpr_member<T>::result_type result_type;
 
   static ASIO_CONSTEXPR result_type value()
   {
-    return traits::query_static_constexpr_member<T,
-      execution::outstanding_work_t>::value();
+    return execution::detail::outstanding_work_t<0>::
+      query_static_constexpr_member<T>::value();
   }
 };
 
 template <typename T>
 struct static_query<T, execution::outstanding_work_t,
   typename enable_if<
-    !traits::query_static_constexpr_member<T,
-        execution::outstanding_work_t>::is_valid
-      && !traits::query_member<T,
-        execution::outstanding_work_t>::is_valid
+    !execution::detail::outstanding_work_t<0>::
+        query_static_constexpr_member<T>::is_valid
+      && !execution::detail::outstanding_work_t<0>::
+        query_member<T>::is_valid
       && traits::static_query<T,
         execution::outstanding_work_t::untracked_t>::is_valid
   >::type>
@@ -665,10 +739,10 @@ struct static_query<T, execution::outstanding_work_t,
 template <typename T>
 struct static_query<T, execution::outstanding_work_t,
   typename enable_if<
-    !traits::query_static_constexpr_member<T,
-        execution::outstanding_work_t>::is_valid
-      && !traits::query_member<T,
-        execution::outstanding_work_t>::is_valid
+    !execution::detail::outstanding_work_t<0>::
+        query_static_constexpr_member<T>::is_valid
+      && !execution::detail::outstanding_work_t<0>::
+        query_member<T>::is_valid
       && !traits::static_query<T,
         execution::outstanding_work_t::untracked_t>::is_valid
       && traits::static_query<T,
@@ -691,30 +765,30 @@ struct static_query<T, execution::outstanding_work_t,
 template <typename T>
 struct static_query<T, execution::outstanding_work_t::untracked_t,
   typename enable_if<
-    traits::query_static_constexpr_member<T,
-      execution::outstanding_work_t::untracked_t>::is_valid
+    execution::detail::outstanding_work::untracked_t<0>::
+      query_static_constexpr_member<T>::is_valid
   >::type>
 {
   ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 
-  typedef typename traits::query_static_constexpr_member<T,
-    execution::outstanding_work_t::untracked_t>::result_type result_type;
+  typedef typename execution::detail::outstanding_work::untracked_t<0>::
+    query_static_constexpr_member<T>::result_type result_type;
 
   static ASIO_CONSTEXPR result_type value()
   {
-    return traits::query_static_constexpr_member<T,
-      execution::outstanding_work_t::untracked_t>::value();
+    return execution::detail::outstanding_work::untracked_t<0>::
+      query_static_constexpr_member<T>::value();
   }
 };
 
 template <typename T>
 struct static_query<T, execution::outstanding_work_t::untracked_t,
   typename enable_if<
-    !traits::query_static_constexpr_member<T,
-        execution::outstanding_work_t::untracked_t>::is_valid
-      && !traits::query_member<T,
-        execution::outstanding_work_t::untracked_t>::is_valid
+    !execution::detail::outstanding_work::untracked_t<0>::
+        query_static_constexpr_member<T>::is_valid
+      && !execution::detail::outstanding_work::untracked_t<0>::
+          query_member<T>::is_valid
       && !traits::query_free<T,
         execution::outstanding_work_t::untracked_t>::is_valid
       && !can_query<T, execution::outstanding_work_t::tracked_t>::value
@@ -734,20 +808,20 @@ struct static_query<T, execution::outstanding_work_t::untracked_t,
 template <typename T>
 struct static_query<T, execution::outstanding_work_t::tracked_t,
   typename enable_if<
-    traits::query_static_constexpr_member<T,
-      execution::outstanding_work_t::tracked_t>::is_valid
+    execution::detail::outstanding_work::tracked_t<0>::
+      query_static_constexpr_member<T>::is_valid
   >::type>
 {
   ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 
-  typedef typename traits::query_static_constexpr_member<T,
-    execution::outstanding_work_t::tracked_t>::result_type result_type;
+  typedef typename execution::detail::outstanding_work::tracked_t<0>::
+    query_static_constexpr_member<T>::result_type result_type;
 
   static ASIO_CONSTEXPR result_type value()
   {
-    return traits::query_static_constexpr_member<T,
-      execution::outstanding_work_t::tracked_t>::value();
+    return execution::detail::outstanding_work::tracked_t<0>::
+      query_static_constexpr_member<T>::value();
   }
 };
 
