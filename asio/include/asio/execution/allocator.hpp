@@ -97,16 +97,46 @@ struct allocator_t
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
   ASIO_STATIC_CONSTEXPR(bool, is_preferable = true);
 
+  template <typename T>
+  struct static_proxy
+  {
+#if defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+    struct type
+    {
+      template <typename P>
+      static constexpr auto query(ASIO_MOVE_ARG(P) p)
+        noexcept(
+          noexcept(
+            conditional<true, T, P>::type::query(ASIO_MOVE_CAST(P)(p))
+          )
+        )
+        -> decltype(
+          conditional<true, T, P>::type::query(ASIO_MOVE_CAST(P)(p))
+        )
+      {
+        return T::query(ASIO_MOVE_CAST(P)(p));
+      }
+    };
+#else // defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+    typedef T type;
+#endif // defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+  };
+
+  template <typename T>
+  struct query_static_constexpr_member :
+    traits::query_static_constexpr_member<
+      typename static_proxy<T>::type, allocator_t> {};
+
 #if defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
   static ASIO_CONSTEXPR
-  typename traits::query_static_constexpr_member<T, allocator_t>::result_type
+  typename query_static_constexpr_member<T>::result_type
   static_query()
     ASIO_NOEXCEPT_IF((
-      traits::query_static_constexpr_member<T, allocator_t>::is_noexcept))
+      query_static_constexpr_member<T>::is_noexcept))
   {
-    return traits::query_static_constexpr_member<T, allocator_t>::value();
+    return query_static_constexpr_member<T>::value();
   }
 
   template <typename E, typename T = decltype(allocator_t::static_query<E>())>
@@ -165,16 +195,46 @@ struct allocator_t<void>
   {
   }
 
+  template <typename T>
+  struct static_proxy
+  {
+#if defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+    struct type
+    {
+      template <typename P>
+      static constexpr auto query(ASIO_MOVE_ARG(P) p)
+        noexcept(
+          noexcept(
+            conditional<true, T, P>::type::query(ASIO_MOVE_CAST(P)(p))
+          )
+        )
+        -> decltype(
+          conditional<true, T, P>::type::query(ASIO_MOVE_CAST(P)(p))
+        )
+      {
+        return T::query(ASIO_MOVE_CAST(P)(p));
+      }
+    };
+#else // defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+    typedef T type;
+#endif // defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_MEMBER_TRAIT)
+  };
+
+  template <typename T>
+  struct query_static_constexpr_member :
+    traits::query_static_constexpr_member<
+      typename static_proxy<T>::type, allocator_t> {};
+
 #if defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
   template <typename T>
   static ASIO_CONSTEXPR
-  typename traits::query_static_constexpr_member<T, allocator_t>::result_type
+  typename query_static_constexpr_member<T>::result_type
   static_query()
     ASIO_NOEXCEPT_IF((
-      traits::query_static_constexpr_member<T, allocator_t>::is_noexcept))
+      query_static_constexpr_member<T>::is_noexcept))
   {
-    return traits::query_static_constexpr_member<T, allocator_t>::value();
+    return query_static_constexpr_member<T>::value();
   }
 
   template <typename E, typename T = decltype(allocator_t::static_query<E>())>
@@ -246,20 +306,20 @@ namespace traits {
 template <typename T, typename ProtoAllocator>
 struct static_query<T, execution::allocator_t<ProtoAllocator>,
   typename enable_if<
-    traits::query_static_constexpr_member<T,
-      execution::allocator_t<ProtoAllocator> >::is_valid
+    execution::allocator_t<ProtoAllocator>::template
+      query_static_constexpr_member<T>::is_valid
   >::type>
 {
   ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
 
-  typedef typename traits::query_static_constexpr_member<T,
-    execution::allocator_t<ProtoAllocator> >::result_type result_type;
+  typedef typename execution::allocator_t<ProtoAllocator>::template
+    query_static_constexpr_member<T>::result_type result_type;
 
   static ASIO_CONSTEXPR result_type value()
   {
-    return traits::query_static_constexpr_member<T,
-      execution::allocator_t<ProtoAllocator> >::value();
+    return execution::allocator_t<ProtoAllocator>::template
+      query_static_constexpr_member<T>::value();
   }
 };
 
