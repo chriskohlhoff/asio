@@ -86,6 +86,7 @@ void submit_helper(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r);
 } // namespace asio
 namespace asio_execution_execute_fn {
 
+using asio::conditional;
 using asio::decay;
 using asio::declval;
 using asio::enable_if;
@@ -109,27 +110,27 @@ enum overload_type
   ill_formed
 };
 
-template <typename T, typename F, typename = void, typename = void,
-    typename = void, typename = void, typename = void>
+template <typename Impl, typename T, typename F, typename = void,
+    typename = void, typename = void, typename = void, typename = void>
 struct call_traits
 {
   ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
 };
 
-template <typename T, typename F>
-struct call_traits<T, void(F),
+template <typename Impl, typename T, typename F>
+struct call_traits<Impl, T, void(F),
   typename enable_if<
-      execute_member<T, F>::is_valid
+    execute_member<typename Impl::template proxy<T>::type, F>::is_valid
   >::type> :
-  execute_member<T, F>
+  execute_member<typename Impl::template proxy<T>::type, F>
 {
   ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
 };
 
-template <typename T, typename F>
-struct call_traits<T, void(F),
+template <typename Impl, typename T, typename F>
+struct call_traits<Impl, T, void(F),
   typename enable_if<
-    !execute_member<T, F>::is_valid
+    !execute_member<typename Impl::template proxy<T>, F>::is_valid
   >::type,
   typename enable_if<
     execute_free<T, F>::is_valid
@@ -139,10 +140,10 @@ struct call_traits<T, void(F),
   ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
 };
 
-template <typename T, typename F>
-struct call_traits<T, void(F),
+template <typename Impl, typename T, typename F>
+struct call_traits<Impl, T, void(F),
   typename enable_if<
-    !execute_member<T, F>::is_valid
+    !execute_member<typename Impl::template proxy<T>::type, F>::is_valid
   >::type,
   typename enable_if<
     !execute_free<T, F>::is_valid
@@ -165,44 +166,68 @@ struct call_traits<T, void(F),
 
 struct impl
 {
+  template <typename T>
+  struct proxy
+  {
+#if defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+    struct type
+    {
+      template <typename F>
+      auto execute(ASIO_MOVE_ARG(F) f)
+        noexcept(
+          noexcept(
+            declval<typename conditional<true, T, F>::type>().execute(
+              ASIO_MOVE_CAST(F)(f))
+          )
+        )
+        -> decltype(
+          declval<typename conditional<true, T, F>::type>().execute(
+            ASIO_MOVE_CAST(F)(f))
+        );
+    };
+#else // defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+    typedef T type;
+#endif // defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
+  };
+
   template <typename T, typename F>
   ASIO_CONSTEXPR typename enable_if<
-    call_traits<T, void(F)>::overload == call_member,
-    typename call_traits<T, void(F)>::result_type
+    call_traits<impl, T, void(F)>::overload == call_member,
+    typename call_traits<impl, T, void(F)>::result_type
   >::type
   operator()(
       ASIO_MOVE_ARG(T) t,
       ASIO_MOVE_ARG(F) f) const
     ASIO_NOEXCEPT_IF((
-      call_traits<T, void(F)>::is_noexcept))
+      call_traits<impl, T, void(F)>::is_noexcept))
   {
     return ASIO_MOVE_CAST(T)(t).execute(ASIO_MOVE_CAST(F)(f));
   }
 
   template <typename T, typename F>
   ASIO_CONSTEXPR typename enable_if<
-    call_traits<T, void(F)>::overload == call_free,
-    typename call_traits<T, void(F)>::result_type
+    call_traits<impl, T, void(F)>::overload == call_free,
+    typename call_traits<impl, T, void(F)>::result_type
   >::type
   operator()(
       ASIO_MOVE_ARG(T) t,
       ASIO_MOVE_ARG(F) f) const
     ASIO_NOEXCEPT_IF((
-      call_traits<T, void(F)>::is_noexcept))
+      call_traits<impl, T, void(F)>::is_noexcept))
   {
     return execute(ASIO_MOVE_CAST(T)(t), ASIO_MOVE_CAST(F)(f));
   }
 
   template <typename T, typename F>
   ASIO_CONSTEXPR typename enable_if<
-    call_traits<T, void(F)>::overload == adapter,
-    typename call_traits<T, void(F)>::result_type
+    call_traits<impl, T, void(F)>::overload == adapter,
+    typename call_traits<impl, T, void(F)>::result_type
   >::type
   operator()(
       ASIO_MOVE_ARG(T) t,
       ASIO_MOVE_ARG(F) f) const
     ASIO_NOEXCEPT_IF((
-      call_traits<T, void(F)>::is_noexcept))
+      call_traits<impl, T, void(F)>::is_noexcept))
   {
     return asio::execution::detail::submit_helper(
         ASIO_MOVE_CAST(T)(t),
@@ -230,11 +255,14 @@ static ASIO_CONSTEXPR const asio_execution_execute_fn::impl&
 
 } // namespace
 
+typedef asio_execution_execute_fn::impl execute_t;
+
 template <typename T, typename F>
 struct can_execute :
   integral_constant<bool,
-    asio_execution_execute_fn::call_traits<T, void(F)>::overload !=
-      asio_execution_execute_fn::ill_formed>
+    asio_execution_execute_fn::call_traits<
+      execute_t, T, void(F)>::overload !=
+        asio_execution_execute_fn::ill_formed>
 {
 };
 
