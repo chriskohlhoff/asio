@@ -70,6 +70,11 @@ void test()
     (void)static_cast<bool>(no_delay1);
     (void)static_cast<bool>(!no_delay1);
     (void)static_cast<bool>(no_delay1.value());
+
+#if defined(ASIO_HAS_STD_HASH)
+    ip::tcp::endpoint ep;
+    (void)static_cast<std::size_t>(std::hash<ip::tcp::endpoint>()(ep));
+#endif // defined(ASIO_HAS_STD_HASH)
   }
   catch (std::exception&)
   {
