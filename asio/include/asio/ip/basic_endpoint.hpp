@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/cstdint.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/detail/endpoint.hpp"
 
@@ -27,6 +28,9 @@
 
 namespace asio {
 namespace ip {
+
+/// Type used for storing port numbers.
+typedef uint_least16_t port_type;
 
 /// Describes an endpoint for a version-independent IP socket.
 /**
@@ -78,7 +82,7 @@ public:
    * @endcode
    */
   basic_endpoint(const InternetProtocol& internet_protocol,
-      unsigned short port_num) ASIO_NOEXCEPT
+      port_type port_num) ASIO_NOEXCEPT
     : impl_(internet_protocol.family(), port_num)
   {
   }
@@ -87,7 +91,7 @@ public:
   /// constructor may be used for accepting connections on a specific interface
   /// or for making a connection to a remote endpoint.
   basic_endpoint(const asio::ip::address& addr,
-      unsigned short port_num) ASIO_NOEXCEPT
+      port_type port_num) ASIO_NOEXCEPT
     : impl_(addr, port_num)
   {
   }
@@ -162,14 +166,14 @@ public:
 
   /// Get the port associated with the endpoint. The port number is always in
   /// the host's byte order.
-  unsigned short port() const ASIO_NOEXCEPT
+  port_type port() const ASIO_NOEXCEPT
   {
     return impl_.port();
   }
 
   /// Set the port associated with the endpoint. The port number is always in
   /// the host's byte order.
-  void port(unsigned short port_num) ASIO_NOEXCEPT
+  void port(port_type port_num) ASIO_NOEXCEPT
   {
     impl_.port(port_num);
   }
