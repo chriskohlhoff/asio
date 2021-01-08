@@ -434,6 +434,13 @@ needs.
     [`ASIO_DISABLE_STD_FUTURE`]
   ]
   [
+    [`ASIO_HAS_STD_HASH`]
+    [
+      Standard library support for std::hash.
+    ]
+    [`ASIO_DISABLE_STD_HASH`]
+  ]
+  [
     [`ASIO_HAS_STD_INVOKE_RESULT`]
     [
       Standard library has invoke_result (which supersedes result_of).
