@@ -399,7 +399,7 @@ sub copy_include_files
   foreach my $dir (@dirs)
   {
     our $boost_dir;
-    my @files = ( glob("$dir/*.hpp"), glob("$dir/*.ipp"), glob("$dir/*cpp") );
+    my @files = ( glob("$dir/*.hpp"), glob("$dir/*.ipp") );
     foreach my $file (@files)
     {
       if ($file ne "include/asio/thread.hpp"
