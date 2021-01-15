@@ -272,11 +272,11 @@ template <typename InternetProtocol>
 struct hash<asio::ip::basic_endpoint<InternetProtocol> >
 {
   std::size_t operator()(
-      const asio::ip::basic_endpoint<InternetProtocol>& endpoint)
+      const asio::ip::basic_endpoint<InternetProtocol>& ep)
     const ASIO_NOEXCEPT
   {
-    std::size_t hash1 = std::hash<asio::ip::address>()(endpoint.address());
-    std::size_t hash2 = std::hash<unsigned short>()(endpoint.port());
+    std::size_t hash1 = std::hash<asio::ip::address>()(ep.address());
+    std::size_t hash2 = std::hash<unsigned short>()(ep.port());
     return hash1 ^ (hash2 + 0x9e3779b9 + (hash1 << 6) + (hash1 >> 2));
   }
 };
