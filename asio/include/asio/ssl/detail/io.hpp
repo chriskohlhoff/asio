@@ -248,10 +248,26 @@ public:
         if (bytes_transferred == ~std::size_t(0)) {
           bytes_transferred = 0; // Timer cancellation, no data transferred.
           // If a write has occurred and buffered additional data to the
-          // stream, cancel the timer and rerun the send which will flush it
-          // to the socket before calling the completion handler.
-          if (want_ == engine::want_output)
-             want_ = engine::want_output_and_retry;
+          // stream, reset the timer and write it to the underlying socket
+          // before calling the completion handler.
+          if (want_ == engine::want_output) {
+            const auto& buffer =
+              core_.engine_.get_output(core_.output_buffer_);
+
+            if (buffer.size() > 0) {
+              // Prevent other write operations from being started while the
+              // buffer is being flushed.
+              core_.pending_write_.expires_at(core_.pos_infin());
+
+              ASIO_HANDLER_LOCATION((
+                    __FILE__, __LINE__, Operation::tracking_name()));
+
+              asio::async_write(next_layer_,
+                  buffer, ASIO_MOVE_CAST(io_op)(*this));
+
+              return;
+            }
+          }
         }
         else if (!ec_)
           ec_ = ec;
