@@ -245,8 +245,14 @@ public:
         }
 
         default:
-        if (bytes_transferred == ~std::size_t(0))
+        if (bytes_transferred == ~std::size_t(0)) {
           bytes_transferred = 0; // Timer cancellation, no data transferred.
+          // If a write has occurred and buffered additional data to the
+          // stream, cancel the timer and rerun the send which will flush it
+          // to the socket before calling the completion handler.
+          if (want_ == engine::want_output)
+             want_ = engine::want_output_and_retry;
+        }
         else if (!ec_)
           ec_ = ec;
 
