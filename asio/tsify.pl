@@ -286,6 +286,13 @@ sub copy_source_file
           or $line =~ /\/local\//
           or $line =~ /\/generic\//
           or $line =~ /signal_set/
+          or $line =~ /thread_pool/
+          or $line =~ /descriptor_ops/
+          or $line =~ /reactive_descriptor_service/
+          or $line =~ /strand_service/
+          or $line =~ /win_iocp_handle_service/
+          or $line =~ /win_object_handle_service/
+          or $line =~ /winrt_ssocket_service_base/
         );
     }
 
