@@ -106,6 +106,9 @@ sub copy_source_file
   my $is_coroutine_related = 0;
   $is_coroutine_related = 1 if ($from =~ /await/);
 
+  my $is_hash_related = 0;
+  $is_hash_related = 1 if ($from =~ /ip\/address/ || $from =~ /ip\/basic_endpoint/);
+
   # Open the files.
   open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
@@ -274,7 +277,7 @@ sub copy_source_file
         print_line($output, $1 . "boost::thread" . $2, $from, $lineno);
       }
     }
-    elsif ($line =~ /namespace std \{ *$/ && !$is_coroutine_related)
+    elsif ($line =~ /namespace std \{ *$/ && !$is_coroutine_related && !$is_hash_related)
     {
       print_line($output, "namespace boost {", $from, $lineno);
       print_line($output, "namespace system {", $from, $lineno);
@@ -285,7 +288,7 @@ sub copy_source_file
       $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^} \/\/ namespace std/ && !$is_coroutine_related)
+    elsif ($line =~ /^} \/\/ namespace std/ && !$is_coroutine_related && !$is_hash_related)
     {
       print_line($output, "} // namespace system", $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);
