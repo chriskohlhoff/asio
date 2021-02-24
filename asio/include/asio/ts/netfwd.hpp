@@ -90,15 +90,7 @@ struct prefer_only;
 
 } // namespace execution
 
-typedef execution::any_executor<
-    execution::context_as_t<execution_context&>,
-    execution::blocking_t::never_t,
-    execution::prefer_only<execution::blocking_t::possibly_t>,
-    execution::prefer_only<execution::outstanding_work_t::tracked_t>,
-    execution::prefer_only<execution::outstanding_work_t::untracked_t>,
-    execution::prefer_only<execution::relationship_t::fork_t>,
-    execution::prefer_only<execution::relationship_t::continuation_t>
-  > any_io_executor;
+class any_io_executor;
 
 #endif // defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
