@@ -20,7 +20,6 @@
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
-#include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution_context.hpp"
 

@@ -287,6 +287,11 @@ void win_iocp_io_context::stop()
   }
 }
 
+bool win_iocp_io_context::can_dispatch()
+{
+  return thread_call_stack::contains(this) != 0;
+}
+
 void win_iocp_io_context::capture_current_exception()
 {
   if (thread_info_base* this_thread = thread_call_stack::contains(this))

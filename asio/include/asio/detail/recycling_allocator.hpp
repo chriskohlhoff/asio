@@ -48,17 +48,15 @@ public:
 
   T* allocate(std::size_t n)
   {
-    typedef thread_context::thread_call_stack call_stack;
     void* p = thread_info_base::allocate(Purpose(),
-        call_stack::top(), sizeof(T) * n);
+        thread_context::top_of_thread_call_stack(), sizeof(T) * n);
     return static_cast<T*>(p);
   }
 
   void deallocate(T* p, std::size_t n)
   {
-    typedef thread_context::thread_call_stack call_stack;
     thread_info_base::deallocate(Purpose(),
-        call_stack::top(), p, sizeof(T) * n);
+        thread_context::top_of_thread_call_stack(), p, sizeof(T) * n);
   }
 };
 

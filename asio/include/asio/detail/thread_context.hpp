@@ -30,6 +30,11 @@ class thread_info_base;
 class thread_context
 {
 public:
+  // Obtain a pointer to the top of the thread call stack. Returns null when
+  // not running inside a thread context.
+  ASIO_DECL static thread_info_base* top_of_thread_call_stack();
+
+protected:
   // Per-thread call stack to track the state of each thread in the context.
   typedef call_stack<thread_context, thread_info_base> thread_call_stack;
 };
@@ -38,5 +43,9 @@ public:
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#if defined(ASIO_HEADER_ONLY)
+# include "asio/detail/impl/thread_context.ipp"
+#endif // defined(ASIO_HEADER_ONLY)
 
 #endif // ASIO_DETAIL_THREAD_CONTEXT_HPP

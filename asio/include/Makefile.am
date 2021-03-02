@@ -119,6 +119,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/strand_executor_service.ipp \
 	asio/detail/impl/strand_service.hpp \
 	asio/detail/impl/strand_service.ipp \
+	asio/detail/impl/thread_context.ipp \
 	asio/detail/impl/throw_error.ipp \
 	asio/detail/impl/timer_queue_ptime.ipp \
 	asio/detail/impl/timer_queue_set.ipp \

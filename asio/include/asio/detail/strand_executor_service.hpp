@@ -131,6 +131,13 @@ private:
   ASIO_DECL static bool enqueue(const implementation_type& impl,
       scheduler_operation* op);
 
+  // Transfers waiting handlers to the ready queue. Returns true if one or more
+  // handlers were transferred.
+  ASIO_DECL static bool push_waiting_to_ready(implementation_type& impl);
+
+  // Invokes all ready-to-run handlers.
+  ASIO_DECL static void run_ready_handlers(implementation_type& impl);
+
   // Helper function to request invocation of the given function.
   template <typename Executor, typename Function, typename Allocator>
   static void do_execute(const implementation_type& impl, Executor& ex,

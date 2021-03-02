@@ -17,7 +17,6 @@
 
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/global.hpp"
-#include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/system_context.hpp"
 

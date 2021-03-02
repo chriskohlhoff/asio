@@ -22,7 +22,6 @@
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/global.hpp"
 #include "asio/detail/memory.hpp"
-#include "asio/detail/recycling_allocator.hpp"
 #include "asio/executor.hpp"
 #include "asio/system_executor.hpp"
 

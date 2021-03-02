@@ -324,6 +324,11 @@ void scheduler::compensating_work_started()
   ++static_cast<thread_info*>(this_thread)->private_outstanding_work;
 }
 
+bool scheduler::can_dispatch()
+{
+  return thread_call_stack::contains(this) != 0;
+}
+
 void scheduler::capture_current_exception()
 {
   if (thread_info_base* this_thread = thread_call_stack::contains(this))

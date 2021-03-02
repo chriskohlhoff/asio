@@ -54,6 +54,7 @@
 #include "asio/detail/impl/socket_select_interrupter.ipp"
 #include "asio/detail/impl/strand_executor_service.ipp"
 #include "asio/detail/impl/strand_service.ipp"
+#include "asio/detail/impl/thread_context.ipp"
 #include "asio/detail/impl/throw_error.ipp"
 #include "asio/detail/impl/timer_queue_ptime.ipp"
 #include "asio/detail/impl/timer_queue_set.ipp"
