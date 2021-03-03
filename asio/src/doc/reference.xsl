@@ -831,6 +831,8 @@
   <xsl:variable name="class-file" select="location/@file"/>
 [section:<xsl:value-of select="$class-id"/><xsl:text> </xsl:text><xsl:value-of select="$class-name"/>]
 
+[indexterm1 asio.indexterm.<xsl:value-of select="$class-id"/>..<xsl:value-of select="$class-name"/>]
+
 <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>
 
 </xsl:text>
