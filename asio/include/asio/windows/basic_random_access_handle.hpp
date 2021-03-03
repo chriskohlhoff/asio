@@ -84,10 +84,10 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_random_access_handle(ExecutionContext& context,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value,
-        basic_random_access_handle
-      >::type* = 0)
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : basic_overlapped_handle<Executor>(context)
   {
   }
@@ -127,9 +127,9 @@ public:
   template <typename ExecutionContext>
   basic_random_access_handle(ExecutionContext& context,
       const native_handle_type& handle,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : basic_overlapped_handle<Executor>(context, handle)
   {
   }

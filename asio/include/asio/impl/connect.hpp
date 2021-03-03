@@ -105,8 +105,8 @@ namespace detail
 template <typename Protocol, typename Executor, typename EndpointSequence>
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints,
-    typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type*)
+    typename constraint<is_endpoint_sequence<
+        EndpointSequence>::value>::type)
 {
   asio::error_code ec;
   typename Protocol::endpoint result = connect(s, endpoints, ec);
@@ -117,8 +117,8 @@ typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
 template <typename Protocol, typename Executor, typename EndpointSequence>
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, asio::error_code& ec,
-    typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type*)
+    typename constraint<is_endpoint_sequence<
+        EndpointSequence>::value>::type)
 {
   return detail::deref_connect_result<Protocol>(
       connect(s, endpoints.begin(), endpoints.end(),
@@ -128,7 +128,7 @@ typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
 #if !defined(ASIO_NO_DEPRECATED)
 template <typename Protocol, typename Executor, typename Iterator>
 Iterator connect(basic_socket<Protocol, Executor>& s, Iterator begin,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
+    typename constraint<!is_endpoint_sequence<Iterator>::value>::type)
 {
   asio::error_code ec;
   Iterator result = connect(s, begin, ec);
@@ -139,7 +139,7 @@ Iterator connect(basic_socket<Protocol, Executor>& s, Iterator begin,
 template <typename Protocol, typename Executor, typename Iterator>
 inline Iterator connect(basic_socket<Protocol, Executor>& s,
     Iterator begin, asio::error_code& ec,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
+    typename constraint<!is_endpoint_sequence<Iterator>::value>::type)
 {
   return connect(s, begin, Iterator(), detail::default_connect_condition(), ec);
 }
@@ -166,8 +166,8 @@ template <typename Protocol, typename Executor,
     typename EndpointSequence, typename ConnectCondition>
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
-    typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type*)
+    typename constraint<is_endpoint_sequence<
+        EndpointSequence>::value>::type)
 {
   asio::error_code ec;
   typename Protocol::endpoint result = connect(
@@ -181,8 +181,8 @@ template <typename Protocol, typename Executor,
 typename Protocol::endpoint connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     asio::error_code& ec,
-    typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type*)
+    typename constraint<is_endpoint_sequence<
+        EndpointSequence>::value>::type)
 {
   return detail::deref_connect_result<Protocol>(
       connect(s, endpoints.begin(), endpoints.end(),
@@ -194,7 +194,7 @@ template <typename Protocol, typename Executor,
     typename Iterator, typename ConnectCondition>
 Iterator connect(basic_socket<Protocol, Executor>& s,
     Iterator begin, ConnectCondition connect_condition,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
+    typename constraint<!is_endpoint_sequence<Iterator>::value>::type)
 {
   asio::error_code ec;
   Iterator result = connect(s, begin, connect_condition, ec);
@@ -207,7 +207,7 @@ template <typename Protocol, typename Executor,
 inline Iterator connect(basic_socket<Protocol, Executor>& s,
     Iterator begin, ConnectCondition connect_condition,
     asio::error_code& ec,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
+    typename constraint<!is_endpoint_sequence<Iterator>::value>::type)
 {
   return connect(s, begin, Iterator(), connect_condition, ec);
 }
@@ -816,8 +816,8 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(RangeConnectHandler,
 async_connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints,
     ASIO_MOVE_ARG(RangeConnectHandler) handler,
-    typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type*)
+    typename constraint<is_endpoint_sequence<
+        EndpointSequence>::value>::type)
 {
   return async_initiate<RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint)>(
@@ -833,7 +833,7 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
     void (asio::error_code, Iterator))
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
+    typename constraint<!is_endpoint_sequence<Iterator>::value>::type)
 {
   return async_initiate<IteratorConnectHandler,
     void (asio::error_code, Iterator)>(
@@ -865,8 +865,8 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(RangeConnectHandler,
 async_connect(basic_socket<Protocol, Executor>& s,
     const EndpointSequence& endpoints, ConnectCondition connect_condition,
     ASIO_MOVE_ARG(RangeConnectHandler) handler,
-    typename enable_if<is_endpoint_sequence<
-        EndpointSequence>::value>::type*)
+    typename constraint<is_endpoint_sequence<
+        EndpointSequence>::value>::type)
 {
   return async_initiate<RangeConnectHandler,
     void (asio::error_code, typename Protocol::endpoint)>(
@@ -884,7 +884,7 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(IteratorConnectHandler,
 async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
     ConnectCondition connect_condition,
     ASIO_MOVE_ARG(IteratorConnectHandler) handler,
-    typename enable_if<!is_endpoint_sequence<Iterator>::value>::type*)
+    typename constraint<!is_endpoint_sequence<Iterator>::value>::type)
 {
   return async_initiate<IteratorConnectHandler,
     void (asio::error_code, Iterator)>(

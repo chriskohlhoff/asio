@@ -75,9 +75,9 @@ namespace asio {
  */
 template <typename SyncWriteStream, typename ConstBufferSequence>
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
-    typename enable_if<
+    typename constraint<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write all of the supplied data to a stream before returning.
 /**
@@ -118,9 +118,9 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
 template <typename SyncWriteStream, typename ConstBufferSequence>
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     asio::error_code& ec,
-    typename enable_if<
+    typename constraint<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -172,9 +172,9 @@ template <typename SyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
-    typename enable_if<
+    typename constraint<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -219,9 +219,9 @@ template <typename SyncWriteStream, typename ConstBufferSequence,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
-    typename enable_if<
+    typename constraint<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type = 0);
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
@@ -255,10 +255,10 @@ std::size_t write(SyncWriteStream& s, const ConstBufferSequence& buffers,
 template <typename SyncWriteStream, typename DynamicBuffer_v1>
 std::size_t write(SyncWriteStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write all of the supplied data to a stream before returning.
 /**
@@ -291,10 +291,10 @@ template <typename SyncWriteStream, typename DynamicBuffer_v1>
 std::size_t write(SyncWriteStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     asio::error_code& ec,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -337,10 +337,10 @@ template <typename SyncWriteStream, typename DynamicBuffer_v1,
 std::size_t write(SyncWriteStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     CompletionCondition completion_condition,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -384,10 +384,10 @@ template <typename SyncWriteStream, typename DynamicBuffer_v1,
 std::size_t write(SyncWriteStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -565,9 +565,9 @@ std::size_t write(SyncWriteStream& s, basic_streambuf<Allocator>& b,
  */
 template <typename SyncWriteStream, typename DynamicBuffer_v2>
 std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write all of the supplied data to a stream before returning.
 /**
@@ -599,9 +599,9 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
 template <typename SyncWriteStream, typename DynamicBuffer_v2>
 std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     asio::error_code& ec,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -643,9 +643,9 @@ template <typename SyncWriteStream, typename DynamicBuffer_v2,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Write a certain amount of data to a stream before returning.
 /**
@@ -688,9 +688,9 @@ template <typename SyncWriteStream, typename DynamicBuffer_v2,
     typename CompletionCondition>
 std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition, asio::error_code& ec,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type = 0);
 
 /*@}*/
 /**
@@ -764,9 +764,9 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncWriteStream::executor_type),
-    typename enable_if<
+    typename constraint<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -844,9 +844,9 @@ ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler,
-    typename enable_if<
+    typename constraint<
       is_const_buffer_sequence<ConstBufferSequence>::value
-    >::type* = 0);
+    >::type = 0);
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 
@@ -905,10 +905,10 @@ async_write(AsyncWriteStream& s,
     ASIO_MOVE_ARG(WriteHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncWriteStream::executor_type),
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -977,10 +977,10 @@ async_write(AsyncWriteStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
         && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
-    >::type* = 0);
+    >::type = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if !defined(ASIO_NO_IOSTREAM)
@@ -1161,9 +1161,9 @@ async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
     ASIO_MOVE_ARG(WriteHandler) handler
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncWriteStream::executor_type),
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type = 0);
 
 /// Start an asynchronous operation to write a certain amount of data to a
 /// stream.
@@ -1231,9 +1231,9 @@ ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
 async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
     CompletionCondition completion_condition,
     ASIO_MOVE_ARG(WriteHandler) handler,
-    typename enable_if<
+    typename constraint<
       is_dynamic_buffer_v2<DynamicBuffer_v2>::value
-    >::type* = 0);
+    >::type = 0);
 
 /*@}*/
 

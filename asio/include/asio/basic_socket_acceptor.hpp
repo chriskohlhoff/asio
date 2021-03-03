@@ -141,9 +141,9 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_socket_acceptor(ExecutionContext& context,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
   }
@@ -183,9 +183,10 @@ public:
   template <typename ExecutionContext>
   basic_socket_acceptor(ExecutionContext& context,
       const protocol_type& protocol,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -271,9 +272,9 @@ public:
   template <typename ExecutionContext>
   basic_socket_acceptor(ExecutionContext& context,
       const endpoint_type& endpoint, bool reuse_addr = true,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -336,9 +337,9 @@ public:
   template <typename ExecutionContext>
   basic_socket_acceptor(ExecutionContext& context,
       const protocol_type& protocol, const native_handle_type& native_acceptor,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -399,10 +400,10 @@ public:
    */
   template <typename Protocol1, typename Executor1>
   basic_socket_acceptor(basic_socket_acceptor<Protocol1, Executor1>&& other,
-      typename enable_if<
+      typename constraint<
         is_convertible<Protocol1, Protocol>::value
           && is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(std::move(other.impl_))
   {
   }
@@ -420,7 +421,7 @@ public:
    * constructor.
    */
   template <typename Protocol1, typename Executor1>
-  typename enable_if<
+  typename constraint<
     is_convertible<Protocol1, Protocol>::value
       && is_convertible<Executor1, Executor>::value,
     basic_socket_acceptor&
@@ -1258,9 +1259,9 @@ public:
    */
   template <typename Protocol1, typename Executor1>
   void accept(basic_socket<Protocol1, Executor1>& peer,
-      typename enable_if<
+      typename constraint<
         is_convertible<Protocol, Protocol1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     asio::error_code ec;
     impl_.get_service().accept(impl_.get_implementation(),
@@ -1294,9 +1295,9 @@ public:
   template <typename Protocol1, typename Executor1>
   ASIO_SYNC_OP_VOID accept(
       basic_socket<Protocol1, Executor1>& peer, asio::error_code& ec,
-      typename enable_if<
+      typename constraint<
         is_convertible<Protocol, Protocol1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     impl_.get_service().accept(impl_.get_implementation(),
         peer, static_cast<endpoint_type*>(0), ec);
@@ -1349,9 +1350,9 @@ public:
   async_accept(basic_socket<Protocol1, Executor1>& peer,
       ASIO_MOVE_ARG(AcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
-      typename enable_if<
+      typename constraint<
         is_convertible<Protocol, Protocol1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     return async_initiate<AcceptHandler, void (asio::error_code)>(
         initiate_async_accept(this), handler,
@@ -1624,10 +1625,10 @@ public:
   template <typename Executor1>
   typename Protocol::socket::template rebind_executor<Executor1>::other
   accept(const Executor1& ex,
-      typename enable_if<
+      typename constraint<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     asio::error_code ec;
     typename Protocol::socket::template
@@ -1664,9 +1665,9 @@ public:
   typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other
   accept(ExecutionContext& context,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
   {
     asio::error_code ec;
     typename Protocol::socket::template rebind_executor<
@@ -1707,10 +1708,10 @@ public:
   template <typename Executor1>
   typename Protocol::socket::template rebind_executor<Executor1>::other
   accept(const Executor1& ex, asio::error_code& ec,
-      typename enable_if<
+      typename constraint<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typename Protocol::socket::template
       rebind_executor<Executor1>::other peer(ex);
@@ -1750,9 +1751,9 @@ public:
   typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other
   accept(ExecutionContext& context, asio::error_code& ec,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typename Protocol::socket::template rebind_executor<
         typename ExecutionContext::executor_type>::other peer(context);
@@ -1814,10 +1815,10 @@ public:
   async_accept(const Executor1& ex,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
-      typename enable_if<
+      typename constraint<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
       Executor1>::other other_socket_type;
@@ -1884,9 +1885,9 @@ public:
   async_accept(ExecutionContext& context,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other other_socket_type;
@@ -2073,10 +2074,10 @@ public:
   template <typename Executor1>
   typename Protocol::socket::template rebind_executor<Executor1>::other
   accept(const Executor1& ex, endpoint_type& peer_endpoint,
-      typename enable_if<
+      typename constraint<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     asio::error_code ec;
     typename Protocol::socket::template
@@ -2119,9 +2120,9 @@ public:
   typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other
   accept(ExecutionContext& context, endpoint_type& peer_endpoint,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
   {
     asio::error_code ec;
     typename Protocol::socket::template rebind_executor<
@@ -2169,10 +2170,10 @@ public:
   typename Protocol::socket::template rebind_executor<Executor1>::other
   accept(const executor_type& ex,
       endpoint_type& peer_endpoint, asio::error_code& ec,
-      typename enable_if<
+      typename constraint<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typename Protocol::socket::template
       rebind_executor<Executor1>::other peer(ex);
@@ -2219,9 +2220,9 @@ public:
       typename ExecutionContext::executor_type>::other
   accept(ExecutionContext& context,
       endpoint_type& peer_endpoint, asio::error_code& ec,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typename Protocol::socket::template rebind_executor<
         typename ExecutionContext::executor_type>::other peer(context);
@@ -2290,10 +2291,10 @@ public:
   async_accept(const Executor1& ex, endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
-      typename enable_if<
+      typename constraint<
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
       Executor1>::other other_socket_type;
@@ -2367,9 +2368,9 @@ public:
       endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(MoveAcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
   {
     typedef typename Protocol::socket::template rebind_executor<
       typename ExecutionContext::executor_type>::other other_socket_type;

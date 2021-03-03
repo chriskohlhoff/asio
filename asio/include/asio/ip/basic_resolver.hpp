@@ -119,9 +119,9 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_resolver(ExecutionContext& context,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
   }
@@ -158,9 +158,9 @@ public:
    */
   template <typename Executor1>
   basic_resolver(basic_resolver<InternetProtocol, Executor1>&& other,
-      typename enable_if<
+      typename constraint<
           is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(std::move(other.impl_))
   {
   }
@@ -196,7 +196,7 @@ public:
    * constructed using the @c basic_resolver(const executor_type&) constructor.
    */
   template <typename Executor1>
-  typename enable_if<
+  typename constraint<
     is_convertible<Executor1, Executor>::value,
     basic_resolver&
   >::type operator=(basic_resolver<InternetProtocol, Executor1>&& other)

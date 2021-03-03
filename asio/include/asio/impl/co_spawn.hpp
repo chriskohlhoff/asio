@@ -198,10 +198,10 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr, T))
 co_spawn(const Executor& ex,
     awaitable<T, AwaitableExecutor> a, CompletionToken&& token,
-    typename enable_if<
+    typename constraint<
       (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
-    >::type*)
+    >::type)
 {
   return async_initiate<CompletionToken, void(std::exception_ptr, T)>(
       detail::initiate_co_spawn<AwaitableExecutor>(AwaitableExecutor(ex)),
@@ -215,10 +215,10 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr))
 co_spawn(const Executor& ex,
     awaitable<void, AwaitableExecutor> a, CompletionToken&& token,
-    typename enable_if<
+    typename constraint<
       (is_executor<Executor>::value || execution::is_executor<Executor>::value)
         && is_convertible<Executor, AwaitableExecutor>::value
-    >::type*)
+    >::type)
 {
   return async_initiate<CompletionToken, void(std::exception_ptr)>(
       detail::initiate_co_spawn<AwaitableExecutor>(AwaitableExecutor(ex)),
@@ -233,11 +233,11 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr, T))
 co_spawn(ExecutionContext& ctx,
     awaitable<T, AwaitableExecutor> a, CompletionToken&& token,
-    typename enable_if<
+    typename constraint<
       is_convertible<ExecutionContext&, execution_context&>::value
         && is_convertible<typename ExecutionContext::executor_type,
           AwaitableExecutor>::value
-    >::type*)
+    >::type)
 {
   return (co_spawn)(ctx.get_executor(), std::move(a),
       std::forward<CompletionToken>(token));
@@ -250,11 +250,11 @@ inline ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr))
 co_spawn(ExecutionContext& ctx,
     awaitable<void, AwaitableExecutor> a, CompletionToken&& token,
-    typename enable_if<
+    typename constraint<
       is_convertible<ExecutionContext&, execution_context&>::value
         && is_convertible<typename ExecutionContext::executor_type,
           AwaitableExecutor>::value
-    >::type*)
+    >::type)
 {
   return (co_spawn)(ctx.get_executor(), std::move(a),
       std::forward<CompletionToken>(token));
@@ -266,9 +266,9 @@ template <typename Executor, typename F,
 inline ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(const Executor& ex, F&& f, CompletionToken&& token,
-    typename enable_if<
+    typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type*)
+    >::type)
 {
   return async_initiate<CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type>(
@@ -283,9 +283,9 @@ template <typename ExecutionContext, typename F,
 inline ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken,
     typename detail::awaitable_signature<typename result_of<F()>::type>::type)
 co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
-    typename enable_if<
+    typename constraint<
       is_convertible<ExecutionContext&, execution_context&>::value
-    >::type*)
+    >::type)
 {
   return (co_spawn)(ctx.get_executor(), std::forward<F>(f),
       std::forward<CompletionToken>(token));

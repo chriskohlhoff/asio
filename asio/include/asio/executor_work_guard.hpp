@@ -220,9 +220,9 @@ private:
 /// Create an @ref executor_work_guard object.
 template <typename Executor>
 inline executor_work_guard<Executor> make_work_guard(const Executor& ex,
-    typename enable_if<
+    typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0)
+    >::type = 0)
 {
   return executor_work_guard<Executor>(ex);
 }
@@ -231,9 +231,9 @@ inline executor_work_guard<Executor> make_work_guard(const Executor& ex,
 template <typename ExecutionContext>
 inline executor_work_guard<typename ExecutionContext::executor_type>
 make_work_guard(ExecutionContext& ctx,
-    typename enable_if<
+    typename constraint<
       is_convertible<ExecutionContext&, execution_context&>::value
-    >::type* = 0)
+    >::type = 0)
 {
   return executor_work_guard<typename ExecutionContext::executor_type>(
       ctx.get_executor());
@@ -243,15 +243,15 @@ make_work_guard(ExecutionContext& ctx,
 template <typename T>
 inline executor_work_guard<typename associated_executor<T>::type>
 make_work_guard(const T& t,
-    typename enable_if<
+    typename constraint<
       !is_executor<T>::value
-    >::type* = 0,
-    typename enable_if<
+    >::type = 0,
+    typename constraint<
       !execution::is_executor<T>::value
-    >::type* = 0,
-    typename enable_if<
+    >::type = 0,
+    typename constraint<
       !is_convertible<T&, execution_context&>::value
-    >::type* = 0)
+    >::type = 0)
 {
   return executor_work_guard<typename associated_executor<T>::type>(
       associated_executor<T>::get(t));
@@ -261,9 +261,9 @@ make_work_guard(const T& t,
 template <typename T, typename Executor>
 inline executor_work_guard<typename associated_executor<T, Executor>::type>
 make_work_guard(const T& t, const Executor& ex,
-    typename enable_if<
+    typename constraint<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >::type* = 0)
+    >::type = 0)
 {
   return executor_work_guard<typename associated_executor<T, Executor>::type>(
       associated_executor<T, Executor>::get(t, ex));
@@ -274,18 +274,18 @@ template <typename T, typename ExecutionContext>
 inline executor_work_guard<typename associated_executor<T,
   typename ExecutionContext::executor_type>::type>
 make_work_guard(const T& t, ExecutionContext& ctx,
-    typename enable_if<
+    typename constraint<
       !is_executor<T>::value
-    >::type* = 0,
-    typename enable_if<
+    >::type = 0,
+    typename constraint<
       !execution::is_executor<T>::value
-    >::type* = 0,
-    typename enable_if<
+    >::type = 0,
+    typename constraint<
       !is_convertible<T&, execution_context&>::value
-    >::type* = 0,
-    typename enable_if<
+    >::type = 0,
+    typename constraint<
       is_convertible<ExecutionContext&, execution_context&>::value
-    >::type* = 0)
+    >::type = 0)
 {
   return executor_work_guard<typename associated_executor<T,
     typename ExecutionContext::executor_type>::type>(

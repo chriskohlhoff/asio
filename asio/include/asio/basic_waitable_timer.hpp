@@ -191,9 +191,9 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_waitable_timer(ExecutionContext& context,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
   }
@@ -230,9 +230,9 @@ public:
   template <typename ExecutionContext>
   explicit basic_waitable_timer(ExecutionContext& context,
       const time_point& expiry_time,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -273,9 +273,9 @@ public:
   template <typename ExecutionContext>
   explicit basic_waitable_timer(ExecutionContext& context,
       const duration& expiry_time,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -337,9 +337,9 @@ public:
   template <typename Executor1>
   basic_waitable_timer(
       basic_waitable_timer<Clock, WaitTraits, Executor1>&& other,
-      typename enable_if<
+      typename constraint<
           is_convertible<Executor1, Executor>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(std::move(other.impl_))
   {
   }
@@ -357,7 +357,7 @@ public:
    * constructor.
    */
   template <typename Executor1>
-  typename enable_if<
+  typename constraint<
     is_convertible<Executor1, Executor>::value,
     basic_waitable_timer&
   >::type operator=(basic_waitable_timer<Clock, WaitTraits, Executor1>&& other)

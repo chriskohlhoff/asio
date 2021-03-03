@@ -99,9 +99,10 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_descriptor(ExecutionContext& context,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : impl_(0, 0, context)
   {
   }
@@ -145,9 +146,9 @@ public:
   template <typename ExecutionContext>
   basic_descriptor(ExecutionContext& context,
       const native_handle_type& native_descriptor,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;

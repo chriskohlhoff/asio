@@ -175,9 +175,9 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_deadline_timer(ExecutionContext& context,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
   }
@@ -213,9 +213,9 @@ public:
    */
   template <typename ExecutionContext>
   basic_deadline_timer(ExecutionContext& context, const time_type& expiry_time,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -257,9 +257,9 @@ public:
   template <typename ExecutionContext>
   basic_deadline_timer(ExecutionContext& context,
       const duration_type& expiry_time,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : impl_(0, 0, context)
   {
     asio::error_code ec;

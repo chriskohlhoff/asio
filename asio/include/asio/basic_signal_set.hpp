@@ -130,9 +130,10 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_signal_set(ExecutionContext& context,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : impl_(0, 0, context)
   {
   }
@@ -175,9 +176,10 @@ public:
    */
   template <typename ExecutionContext>
   basic_signal_set(ExecutionContext& context, int signal_number_1,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -233,9 +235,10 @@ public:
   template <typename ExecutionContext>
   basic_signal_set(ExecutionContext& context, int signal_number_1,
       int signal_number_2,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : impl_(0, 0, context)
   {
     asio::error_code ec;
@@ -301,9 +304,10 @@ public:
   template <typename ExecutionContext>
   basic_signal_set(ExecutionContext& context, int signal_number_1,
       int signal_number_2, int signal_number_3,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : impl_(0, 0, context)
   {
     asio::error_code ec;

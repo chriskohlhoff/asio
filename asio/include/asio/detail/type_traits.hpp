@@ -143,6 +143,14 @@ template <typename Head, typename... Tail> struct conjunction<Head, Tail...> :
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+struct defaulted_constraint
+{
+  ASIO_CONSTEXPR defaulted_constraint() {}
+};
+
+template <bool Condition, typename Type = int>
+struct constraint : enable_if<Condition, Type> {};
+
 } // namespace asio
 
 #endif // ASIO_DETAIL_TYPE_TRAITS_HPP

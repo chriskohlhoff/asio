@@ -91,9 +91,10 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_stream_descriptor(ExecutionContext& context,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
     : basic_descriptor<Executor>(context)
   {
   }
@@ -133,9 +134,9 @@ public:
   template <typename ExecutionContext>
   basic_stream_descriptor(ExecutionContext& context,
       const native_handle_type& native_descriptor,
-      typename enable_if<
+      typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
+      >::type = 0)
     : basic_descriptor<Executor>(context, native_descriptor)
   {
   }
