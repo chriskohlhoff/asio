@@ -96,8 +96,7 @@ public:
       service_->move_assign(implementation_,
           *other.service_, other.implementation_);
       executor_.~executor_type();
-      new (&executor_) executor_type(
-          std::move(other.executor_));
+      new (&executor_) executor_type(other.executor_);
       service_ = other.service_;
     }
     return *this;
