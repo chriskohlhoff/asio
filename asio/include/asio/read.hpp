@@ -257,7 +257,9 @@ std::size_t read(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -292,7 +294,9 @@ std::size_t read(SyncReadStream& s,
     asio::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -338,7 +342,9 @@ std::size_t read(SyncReadStream& s,
     CompletionCondition completion_condition,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Attempt to read a certain amount of data from a stream before returning.
@@ -385,7 +391,9 @@ std::size_t read(SyncReadStream& s,
     CompletionCondition completion_condition, asio::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -920,7 +928,9 @@ async_read(AsyncReadStream& s,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Start an asynchronous operation to read a certain amount of data from a
@@ -997,7 +1007,9 @@ async_read(AsyncReadStream& s,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
