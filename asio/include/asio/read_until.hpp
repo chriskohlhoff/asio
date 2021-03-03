@@ -135,7 +135,9 @@ std::size_t read_until(SyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers, char delim,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
@@ -178,7 +180,9 @@ std::size_t read_until(SyncReadStream& s,
     char delim, asio::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
@@ -238,7 +242,9 @@ std::size_t read_until(SyncReadStream& s,
     ASIO_STRING_VIEW_PARAM delim,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Read data into a dynamic buffer sequence until it contains a specified
@@ -282,7 +288,9 @@ std::size_t read_until(SyncReadStream& s,
     asio::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -349,7 +357,9 @@ std::size_t read_until(SyncReadStream& s,
     const boost::regex& expr,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Read data into a dynamic buffer sequence until some part of the data it
@@ -394,7 +404,9 @@ std::size_t read_until(SyncReadStream& s,
     const boost::regex& expr, asio::error_code& ec,
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
@@ -509,8 +521,12 @@ std::size_t read_until(SyncReadStream& s,
     MatchCondition match_condition,
     typename constraint<
       is_match_condition<MatchCondition>::value
-        && is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Read data into a dynamic buffer sequence until a function object indicates a
@@ -573,8 +589,12 @@ std::size_t read_until(SyncReadStream& s,
     MatchCondition match_condition, asio::error_code& ec,
     typename constraint<
       is_match_condition<MatchCondition>::value
-        && is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(ASIO_NO_IOSTREAM)
@@ -1436,7 +1456,9 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     MatchCondition match_condition,
     typename constraint<
       is_match_condition<MatchCondition>::value
-        && is_dynamic_buffer_v2<DynamicBuffer_v2>::value
+    >::type = 0,
+    typename constraint<
+      is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >::type = 0);
 
 /// Read data into a dynamic buffer sequence until a function object indicates a
@@ -1498,7 +1520,9 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
     MatchCondition match_condition, asio::error_code& ec,
     typename constraint<
       is_match_condition<MatchCondition>::value
-        && is_dynamic_buffer_v2<DynamicBuffer_v2>::value
+    >::type = 0,
+    typename constraint<
+      is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >::type = 0);
 
 #endif // !defined(ASIO_NO_EXTENSIONS)
@@ -1612,7 +1636,9 @@ async_read_until(AsyncReadStream& s,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 /// Start an asynchronous operation to read data into a dynamic buffer sequence
@@ -1712,7 +1738,9 @@ async_read_until(AsyncReadStream& s,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(ASIO_NO_EXTENSIONS)
@@ -1819,7 +1847,9 @@ async_read_until(AsyncReadStream& s,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #endif // defined(ASIO_HAS_BOOST_REGEX)
@@ -1969,8 +1999,12 @@ async_read_until(AsyncReadStream& s,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_match_condition<MatchCondition>::value
-        && is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
-        && !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      is_dynamic_buffer_v1<typename decay<DynamicBuffer_v1>::type>::value
+    >::type = 0,
+    typename constraint<
+      !is_dynamic_buffer_v2<typename decay<DynamicBuffer_v1>::type>::value
     >::type = 0);
 
 #if !defined(ASIO_NO_IOSTREAM)
@@ -2847,7 +2881,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
         typename AsyncReadStream::executor_type),
     typename constraint<
       is_match_condition<MatchCondition>::value
-        && is_dynamic_buffer_v2<DynamicBuffer_v2>::value
+    >::type = 0,
+    typename constraint<
+      is_dynamic_buffer_v2<DynamicBuffer_v2>::value
     >::type = 0);
 
 #endif // !defined(ASIO_NO_EXTENSIONS)
