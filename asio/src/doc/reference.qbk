@@ -5206,7 +5206,7 @@ The return type of the initiating function.
 
 [section:async_result_lt__std__packaged_task_lt__Result_lp_Args_ellipsis__rp__gt__comma__Signature__gt_ async_result< std::packaged_task< Result(Args...)>, Signature >]
 
-[indexterm1 asio.indexterm.async_result_lt__std__packaged_task_lt__Result_lp_Args_ellipsis__rp__gt__comma__Signature__gt_..async_result< std::packaged_task< Result(Args...)>, Signature >]
+[indexterm1 asio.indexterm.async_result_lt__std__packaged_task_lt__Result_lp_Args_ellipsis__rp__gt__comma__Signature__gt_..async_result< std::packaged_task< Result(Args\.\.\.)>, Signature >]
 
 
 Partial specialisation of `async_result` for `std::packaged_task`. 
