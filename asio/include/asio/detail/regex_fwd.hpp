@@ -18,7 +18,16 @@
 #if defined(ASIO_HAS_BOOST_REGEX)
 
 #include <boost/regex_fwd.hpp>
-#include <boost/regex/v4/match_flags.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 107600
+# if defined(BOOST_REGEX_CXX03)
+#  include <boost/regex/v4/match_flags.hpp>
+# else // defined(BOOST_REGEX_CXX03)
+#  include <boost/regex/v5/match_flags.hpp>
+# endif // defined(BOOST_REGEX_CXX03)
+#else // BOOST_VERSION >= 107600
+# include <boost/regex/v4/match_flags.hpp>
+#endif // BOOST_VERSION >= 107600
 
 namespace boost {
 
