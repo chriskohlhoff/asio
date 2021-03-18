@@ -415,7 +415,11 @@
 # if !defined(ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 #  if (__cplusplus >= 201103)
 #   define ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS 1
-#  endif // (__cplusplus >= 201103)
+#  elif defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#    define ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 #endif // !defined(ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 
