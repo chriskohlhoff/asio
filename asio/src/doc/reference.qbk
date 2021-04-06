@@ -125496,6 +125496,11 @@ Provides serialised function invocation for any executor type.
   [[Name][Description]]
 
   [
+    [[link asio.reference.strand.context [*context]]]
+    [Obtain the underlying execution context. ]
+  ]
+  
+  [
     [[link asio.reference.strand.defer [*defer]]]
     [Request the strand to invoke the given function object. ]
   ]
@@ -125507,12 +125512,22 @@ Provides serialised function invocation for any executor type.
   
   [
     [[link asio.reference.strand.execute [*execute]]]
-    []
+    [Request the strand to invoke the given function object. ]
   ]
   
   [
     [[link asio.reference.strand.get_inner_executor [*get_inner_executor]]]
     [Obtain the underlying executor. ]
+  ]
+  
+  [
+    [[link asio.reference.strand.on_work_finished [*on_work_finished]]]
+    [Inform the strand that some work is no longer outstanding. ]
+  ]
+  
+  [
+    [[link asio.reference.strand.on_work_started [*on_work_started]]]
+    [Inform the strand that it has some outstanding work to do. ]
   ]
   
   [
@@ -125533,7 +125548,7 @@ Provides serialised function invocation for any executor type.
   
   [
     [[link asio.reference.strand.prefer [*prefer]]]
-    []
+    [Forward a preference to the underlying executor. ]
   ]
   
   [
@@ -125543,7 +125558,7 @@ Provides serialised function invocation for any executor type.
   
   [
     [[link asio.reference.strand.require [*require]]]
-    []
+    [Forward a requirement to the underlying executor. ]
   ]
   
   [
@@ -125594,6 +125609,20 @@ Provides serialised function invocation for any executor type.
 ['Header: ][^asio/strand.hpp]
 
 ['Convenience header: ][^asio.hpp]
+
+
+[section:context strand::context]
+
+[indexterm2 asio.indexterm.strand.context..context..strand] 
+Obtain the underlying execution context. 
+
+
+  execution_context & context() const;
+
+
+
+[endsect]
+
 
 
 [section:defer strand::defer]
@@ -125677,9 +125706,41 @@ This function is used to ask the strand to execute the given function object on 
 [section:execute strand::execute]
 
 [indexterm2 asio.indexterm.strand.execute..execute..strand] 
+Request the strand to invoke the given function object. 
 
-  Function void::type execute(
+
+  template<
+      typename Function>
+  constraint< execution::can_execute< const Executor &, Function >::value, void >::type execute(
       Function && f) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.execution__execute `execution::execute`] customisation point.
+
+For example: 
+
+   asio::strand<my_executor_type> ex = ...;
+   execution::execute(ex, my_function_object); 
+
+
+
+
+This function is used to ask the strand to execute the given function object on its underlying executor. The function object will be executed according to the properties of the underlying executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[f][The function object to be called. The executor will make a copy of the handler object as required. The function signature of the function object must be:
+``
+   void function(); 
+``
+]]
+
+]
+
 
 
 
@@ -125716,6 +125777,38 @@ The type of the underlying executor.
 ['Header: ][^asio/strand.hpp]
 
 ['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:on_work_finished strand::on_work_finished]
+
+[indexterm2 asio.indexterm.strand.on_work_finished..on_work_finished..strand] 
+Inform the strand that some work is no longer outstanding. 
+
+
+  void on_work_finished() const;
+
+
+The strand delegates this call to its underlying executor. 
+
+
+[endsect]
+
+
+
+[section:on_work_started strand::on_work_started]
+
+[indexterm2 asio.indexterm.strand.on_work_started..on_work_started..strand] 
+Inform the strand that it has some outstanding work to do. 
+
+
+  void on_work_started() const;
+
+
+The strand delegates this call to its underlying executor. 
 
 
 [endsect]
@@ -125920,9 +126013,24 @@ This function is used to ask the executor to execute the given function object. 
 [section:prefer strand::prefer]
 
 [indexterm2 asio.indexterm.strand.prefer..prefer..strand] 
+Forward a preference to the underlying executor. 
 
-  Property strand< typename decay< typename prefer_result< const Executor &, Property >::type >::type >::type prefer(
+
+  template<
+      typename Property>
+  constraint< can_prefer< const Executor &, Property >::value &&!is_convertible< Property, execution::blocking_t::always_t >::value, strand< typename decay< typename prefer_result< const Executor &, Property >::type >::type > >::type prefer(
       const Property & p) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.prefer `prefer`] customisation point.
+
+For example: 
+
+   asio::strand<my_executor_type> ex1 = ...;
+   auto ex2 = asio::prefer(ex1,
+       asio::execution::blocking.never); 
+
+
 
 
 
@@ -125938,11 +126046,11 @@ Forward a query to the underlying executor.
 
   template<
       typename Property>
-  constraint< can_query< const Executor &, Property >::value, typename query_result< const Executor &, Property >::type >::type query(
+  constraint< can_query< const Executor &, Property >::value, typename conditional< is_convertible< Property, execution::blocking_t >::value, execution::blocking_t, typename query_result< const Executor &, Property >::type >::type >::type query(
       const Property & p) const;
 
 
-Do not call this function directly. It is intended for use with the [link asio.reference.execution__execute `execution::execute`] customisation point.
+Do not call this function directly. It is intended for use with the [link asio.reference.query `query`] customisation point.
 
 For example: 
 
@@ -125962,9 +126070,24 @@ For example:
 [section:require strand::require]
 
 [indexterm2 asio.indexterm.strand.require..require..strand] 
+Forward a requirement to the underlying executor. 
 
-  Property strand< typename decay< typename require_result< const Executor &, Property >::type >::type >::type require(
+
+  template<
+      typename Property>
+  constraint< can_require< const Executor &, Property >::value &&!is_convertible< Property, execution::blocking_t::always_t >::value, strand< typename decay< typename require_result< const Executor &, Property >::type >::type > >::type require(
       const Property & p) const;
+
+
+Do not call this function directly. It is intended for use with the [link asio.reference.require `require`] customisation point.
+
+For example: 
+
+   asio::strand<my_executor_type> ex1 = ...;
+   auto ex2 = asio::require(ex1,
+       asio::execution::blocking.never); 
+
+
 
 
 
