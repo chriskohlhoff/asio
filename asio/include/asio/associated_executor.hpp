@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/associator.hpp"
 #include "asio/detail/functional.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
@@ -25,9 +26,25 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+
+template <typename T, typename Executor>
+struct associated_executor;
+
 namespace detail {
 
-template <typename T, typename E, typename = void>
+template <typename T, typename = void>
+struct has_executor_type : false_type
+{
+};
+
+template <typename T>
+struct has_executor_type<T,
+  typename void_type<typename T::executor_type>::type>
+    : true_type
+{
+};
+
+template <typename T, typename E, typename = void, typename = void>
 struct associated_executor_impl
 {
   typedef void asio_associated_executor_is_unspecialised;
@@ -50,6 +67,17 @@ struct associated_executor_impl<T, E,
   {
     return t.get_executor();
   }
+};
+
+template <typename T, typename E>
+struct associated_executor_impl<T, E,
+  typename enable_if<
+    !has_executor_type<T>::value
+  >::type,
+  typename void_type<
+    typename associator<associated_executor, T, E>::type
+  >::type> : associator<associated_executor, T, E>
+{
 };
 
 } // namespace detail

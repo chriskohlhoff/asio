@@ -17,6 +17,7 @@
 
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
+#include "asio/associator.hpp"
 #include "asio/async_result.hpp"
 #include "asio/awaitable.hpp"
 #include "asio/basic_datagram_socket.hpp"
