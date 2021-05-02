@@ -43,6 +43,7 @@
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffered_write_stream.hpp"
 #include "asio/buffers_iterator.hpp"
+#include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_type.hpp"
 #include "asio/co_spawn.hpp"
 #include "asio/completion_condition.hpp"

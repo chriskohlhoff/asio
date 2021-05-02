@@ -68,7 +68,16 @@ public:
     };
   };
 
-  enum { max_mem_index = executor_function_tag::end_mem_index };
+  struct cancellation_signal_tag
+  {
+    enum
+    {
+      begin_mem_index = executor_function_tag::end_mem_index,
+      end_mem_index = begin_mem_index + 1
+    };
+  };
+
+  enum { max_mem_index = cancellation_signal_tag::end_mem_index };
 
   thread_info_base()
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
