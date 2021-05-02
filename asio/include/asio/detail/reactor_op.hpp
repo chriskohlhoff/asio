@@ -30,6 +30,9 @@ public:
   // The error code to be passed to the completion handler.
   asio::error_code ec_;
 
+  // The operation key used for targeted cancellation.
+  void* cancellation_key_;
+
   // The number of bytes transferred, to be passed to the completion handler.
   std::size_t bytes_transferred_;
 
@@ -50,6 +53,7 @@ protected:
       perform_func_type perform_func, func_type complete_func)
     : operation(complete_func),
       ec_(success_ec),
+      cancellation_key_(0),
       bytes_transferred_(0),
       perform_func_(perform_func)
   {
