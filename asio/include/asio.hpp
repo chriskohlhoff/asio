@@ -17,6 +17,7 @@
 
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
+#include "asio/associated_cancellation_slot.hpp"
 #include "asio/associator.hpp"
 #include "asio/async_result.hpp"
 #include "asio/awaitable.hpp"
