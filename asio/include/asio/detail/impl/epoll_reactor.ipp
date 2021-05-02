@@ -343,6 +343,35 @@ void epoll_reactor::cancel_ops(socket_type,
   scheduler_.post_deferred_completions(ops);
 }
 
+void epoll_reactor::cancel_ops_by_key(socket_type,
+    epoll_reactor::per_descriptor_data& descriptor_data,
+    int op_type, void* cancellation_key)
+{
+  if (!descriptor_data)
+    return;
+
+  mutex::scoped_lock descriptor_lock(descriptor_data->mutex_);
+
+  op_queue<operation> ops;
+  op_queue<reactor_op> other_ops;
+  while (reactor_op* op = descriptor_data->op_queue_[op_type].front())
+  {
+    if (op->cancellation_key_ == cancellation_key)
+    {
+      op->ec_ = asio::error::operation_aborted;
+      descriptor_data->op_queue_[op_type].pop();
+      ops.push(op);
+    }
+    else
+      other_ops.push(op);
+  }
+  descriptor_data->op_queue_[op_type].push(other_ops);
+
+  descriptor_lock.unlock();
+
+  scheduler_.post_deferred_completions(ops);
+}
+
 void epoll_reactor::deregister_descriptor(socket_type descriptor,
     epoll_reactor::per_descriptor_data& descriptor_data, bool closing)
 {
