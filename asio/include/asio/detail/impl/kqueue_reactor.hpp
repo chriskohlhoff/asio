@@ -28,7 +28,7 @@ namespace asio {
 namespace detail {
 
 inline void kqueue_reactor::post_immediate_completion(
-    reactor_op* op, bool is_continuation)
+    operation* op, bool is_continuation)
 {
   scheduler_.post_immediate_completion(op, is_continuation);
 }
@@ -76,6 +76,18 @@ std::size_t kqueue_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
   lock.unlock();
   scheduler_.post_deferred_completions(ops);
   return n;
+}
+
+template <typename Time_Traits>
+void kqueue_reactor::cancel_timer_by_key(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data* timer,
+    void* cancellation_key)
+{
+  mutex::scoped_lock lock(mutex_);
+  op_queue<operation> ops;
+  queue.cancel_timer_by_key(timer, ops, cancellation_key);
+  lock.unlock();
+  scheduler_.post_deferred_completions(ops);
 }
 
 template <typename Time_Traits>

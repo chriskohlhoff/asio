@@ -114,7 +114,7 @@ public:
       per_descriptor_data& source_descriptor_data);
 
   // Post a reactor operation for immediate completion.
-  void post_immediate_completion(reactor_op* op, bool is_continuation);
+  void post_immediate_completion(operation* op, bool is_continuation);
 
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.
@@ -166,6 +166,12 @@ public:
   std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
       typename timer_queue<Time_Traits>::per_timer_data& timer,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
+
+  // Cancel the timer operations associated with the given key.
+  template <typename Time_Traits>
+  void cancel_timer_by_key(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data* timer,
+      void* cancellation_key);
 
   // Move the timer operations associated with the given timer.
   template <typename Time_Traits>

@@ -77,6 +77,10 @@ public:
       per_timer_data& timer, op_queue<operation>& ops,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
+  // Cancel and dequeue operations for the given timer and key.
+  ASIO_DECL void cancel_timer_by_key(per_timer_data* timer,
+      op_queue<operation>& ops, void* cancellation_key);
+
   // Move operations from one timer to another, empty timer.
   ASIO_DECL void move_timer(per_timer_data& target,
       per_timer_data& source);

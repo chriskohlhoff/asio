@@ -150,7 +150,12 @@ public:
       while (!heap_.empty() && !Time_Traits::less_than(now, heap_[0].time_))
       {
         per_timer_data* timer = heap_[0].timer_;
-        ops.push(timer->op_queue_);
+        while (wait_op* op = timer->op_queue_.front())
+        {
+          timer->op_queue_.pop();
+          op->ec_ = asio::error_code();
+          ops.push(op);
+        }
         remove_timer(*timer);
       }
     }
@@ -190,6 +195,30 @@ public:
         remove_timer(timer);
     }
     return num_cancelled;
+  }
+
+  // Cancel and dequeue a specific operation for the given timer.
+  void cancel_timer_by_key(per_timer_data* timer,
+      op_queue<operation>& ops, void* cancellation_key)
+  {
+    if (timer->prev_ != 0 || timer == timers_)
+    {
+      op_queue<wait_op> other_ops;
+      while (wait_op* op = timer->op_queue_.front())
+      {
+        if (op->cancellation_key_ == cancellation_key)
+        {
+          op->ec_ = asio::error::operation_aborted;
+          timer->op_queue_.pop();
+          ops.push(op);
+        }
+        else
+          other_ops.push(op);
+      }
+      timer->op_queue_.push(other_ops);
+      if (timer->op_queue_.empty())
+        remove_timer(*timer);
+    }
   }
 
   // Move operations from one timer to another, empty timer.
