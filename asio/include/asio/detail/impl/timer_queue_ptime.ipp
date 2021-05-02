@@ -75,6 +75,12 @@ std::size_t timer_queue<time_traits<boost::posix_time::ptime> >::cancel_timer(
   return impl_.cancel_timer(timer, ops, max_cancelled);
 }
 
+void timer_queue<time_traits<boost::posix_time::ptime> >::cancel_timer_by_key(
+    per_timer_data* timer, op_queue<operation>& ops, void* cancellation_key)
+{
+  impl_.cancel_timer_by_key(timer, ops, cancellation_key);
+}
+
 void timer_queue<time_traits<boost::posix_time::ptime> >::move_timer(
     per_timer_data& target, per_timer_data& source)
 {
