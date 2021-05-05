@@ -26,6 +26,7 @@
 
 // boostify: non-boost code ends here
 #if defined(ASIO_STANDALONE)
+# define ASIO_DISABLE_BOOST_ALIGN 1
 # define ASIO_DISABLE_BOOST_ARRAY 1
 # define ASIO_DISABLE_BOOST_ASSERT 1
 # define ASIO_DISABLE_BOOST_BIND 1
@@ -558,6 +559,40 @@
 #  define ASIO_RVALUE_REF_QUAL
 # endif // !defined(ASIO_RVALUE_REF_QUAL)
 #endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+// Support for the alignof operator.
+#if !defined(ASIO_HAS_ALIGNOF)
+# if !defined(ASIO_DISABLE_ALIGNOF)
+#  if (__cplusplus >= 201103)
+#   define ASIO_HAS_ALIGNOF 1
+#  endif // (__cplusplus >= 201103)
+# endif // !defined(ASIO_DISABLE_ALIGNOF)
+#endif // !defined(ASIO_HAS_ALIGNOF)
+
+#if defined(ASIO_HAS_ALIGNOF)
+# define ASIO_ALIGNOF(T) alignof(T)
+# if defined(__GNUC__)
+#  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#   define ASIO_DEFAULT_ALIGN alignof(std::max_align_t)
+#  else // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+#   define ASIO_DEFAULT_ALIGN alignof(max_align_t)
+#  endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
+# else // defined(__GNUC__)
+#  define ASIO_DEFAULT_ALIGN alignof(std::max_align_t)
+# endif // defined(__GNUC__)
+#else // defined(ASIO_HAS_ALIGNOF)
+# define ASIO_ALIGNOF(T) 1
+# define ASIO_DEFAULT_ALIGN 1
+#endif // defined(ASIO_HAS_ALIGNOF)
+
+// Support for operator new with alignment argument.
+#if !defined(ASIO_HAS_ALIGNED_NEW)
+# if !defined(ASIO_DISABLE_ALIGNED_NEW)
+#  if (__cplusplus >= 201703)
+#   define ASIO_HAS_ALIGNED_NEW 1
+#  endif // (__cplusplus >= 201703)
+# endif // !defined(ASIO_DISABLE_ALIGNED_NEW)
+#endif // !defined(ASIO_HAS_ALIGNED_NEW)
 
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
@@ -1640,6 +1675,15 @@
     static const type assignment
 # endif // !defined(ASIO_DISABLE_BOOST_STATIC_CONSTANT)
 #endif // !defined(ASIO_STATIC_CONSTANT)
+
+// Boost align library.
+#if !defined(ASIO_HAS_BOOST_ALIGN)
+# if !defined(ASIO_DISABLE_BOOST_ALIGN)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 105600)
+#   define ASIO_HAS_BOOST_ALIGN 1
+#  endif // defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 105600)
+# endif // !defined(ASIO_DISABLE_BOOST_ALIGN)
+#endif // !defined(ASIO_HAS_BOOST_ALIGN)
 
 // Boost array library.
 #if !defined(ASIO_HAS_BOOST_ARRAY)

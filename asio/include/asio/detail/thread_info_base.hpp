@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <climits>
 #include <cstddef>
+#include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
 
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR) \
@@ -70,13 +71,14 @@ public:
       // it is significantly faster when using a tight io_context::poll() loop
       // in latency sensitive applications.
       if (reusable_memory_[i])
-        ::operator delete(reusable_memory_[i]);
+        aligned_delete(reusable_memory_[i]);
     }
   }
 
-  static void* allocate(thread_info_base* this_thread, std::size_t size)
+  static void* allocate(thread_info_base* this_thread,
+      std::size_t size, std::size_t align = ASIO_DEFAULT_ALIGN)
   {
-    return allocate(default_tag(), this_thread, size);
+    return allocate(default_tag(), this_thread, size, align);
   }
 
   static void deallocate(thread_info_base* this_thread,
@@ -87,7 +89,7 @@ public:
 
   template <typename Purpose>
   static void* allocate(Purpose, thread_info_base* this_thread,
-      std::size_t size)
+      std::size_t size, std::size_t align = ASIO_DEFAULT_ALIGN)
   {
     std::size_t chunks = (size + chunk_size - 1) / chunk_size;
 
@@ -97,16 +99,17 @@ public:
       this_thread->reusable_memory_[Purpose::mem_index] = 0;
 
       unsigned char* const mem = static_cast<unsigned char*>(pointer);
-      if (static_cast<std::size_t>(mem[0]) >= chunks)
+      if (static_cast<std::size_t>(mem[0]) >= chunks
+          && reinterpret_cast<std::size_t>(pointer) % align == 0)
       {
         mem[size] = mem[0];
         return pointer;
       }
 
-      ::operator delete(pointer);
+      aligned_delete(pointer);
     }
 
-    void* const pointer = ::operator new(chunks * chunk_size + 1);
+    void* const pointer = aligned_new(align, chunks * chunk_size + 1);
     unsigned char* const mem = static_cast<unsigned char*>(pointer);
     mem[size] = (chunks <= UCHAR_MAX) ? static_cast<unsigned char>(chunks) : 0;
     return pointer;
@@ -127,7 +130,7 @@ public:
       }
     }
 
-    ::operator delete(pointer);
+    aligned_delete(pointer);
   }
 
   void capture_current_exception()
