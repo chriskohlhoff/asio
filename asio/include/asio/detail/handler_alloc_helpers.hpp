@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/aligned_alloc.hpp"
 #include "asio/detail/config.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
@@ -51,21 +52,24 @@ inline void error_if_hooks_are_defined(Handler& h)
 #endif // defined(ASIO_NO_DEPRECATED)
 
 template <typename Handler>
-inline void* allocate(std::size_t s, Handler& h)
+inline void* allocate(std::size_t s, Handler& h,
+    std::size_t align = ASIO_DEFAULT_ALIGN)
 {
 #if !defined(ASIO_HAS_HANDLER_HOOKS)
-  return ::operator new(s);
+  return aligned_alloc(align, s);
 #elif defined(ASIO_NO_DEPRECATED)
   // The asio_handler_allocate hook is no longer used to obtain memory.
   (void)&error_if_hooks_are_defined<Handler>;
   (void)h;
-#if !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
+# if !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   return asio::detail::thread_info_base::allocate(
-      asio::detail::thread_context::top_of_thread_call_stack(), s);
-#else // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
-  return ::operator new(size);
-#endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
+      asio::detail::thread_context::top_of_thread_call_stack(), s,
+      align);
+# else // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
+  return aligned_alloc(align, s);
+# endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
 #else
+  (void)align;
   using asio::asio_handler_allocate;
   return asio_handler_allocate(s, asio::detail::addressof(h));
 #endif
@@ -75,7 +79,7 @@ template <typename Handler>
 inline void deallocate(void* p, std::size_t s, Handler& h)
 {
 #if !defined(ASIO_HAS_HANDLER_HOOKS)
-  ::operator delete(p);
+  aligned_free(p);
 #elif defined(ASIO_NO_DEPRECATED)
   // The asio_handler_allocate hook is no longer used to obtain memory.
   (void)&error_if_hooks_are_defined<Handler>;
@@ -85,7 +89,7 @@ inline void deallocate(void* p, std::size_t s, Handler& h)
       asio::detail::thread_context::top_of_thread_call_stack(), p, s);
 #else // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   (void)s;
-  ::operator delete(p);
+  aligned_free(p);
 #endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
 #else
   using asio::asio_handler_deallocate;
@@ -124,7 +128,7 @@ public:
   T* allocate(std::size_t n)
   {
     return static_cast<T*>(
-        asio_handler_alloc_helpers::allocate(sizeof(T) * n, handler_));
+        asio_handler_alloc_helpers::allocate(sizeof(T) * n, handler_, ASIO_ALIGNOF(T)));
   }
 
   void deallocate(T* p, std::size_t n)

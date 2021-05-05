@@ -4491,6 +4491,7 @@
 /include/asio/defer.hpp
 /include/asio/detached.hpp
 /include/asio/detail/
+/include/asio/detail/aligned_alloc.hpp
 /include/asio/detail/array_fwd.hpp
 /include/asio/detail/array.hpp
 /include/asio/detail/assert.hpp

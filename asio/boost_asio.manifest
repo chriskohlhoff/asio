@@ -39,6 +39,7 @@
 /boost/asio/defer.hpp
 /boost/asio/detached.hpp
 /boost/asio/detail/
+/boost/asio/detail/aligned_alloc.hpp
 /boost/asio/detail/array_fwd.hpp
 /boost/asio/detail/array.hpp
 /boost/asio/detail/assert.hpp
