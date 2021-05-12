@@ -39,13 +39,32 @@ struct is_completion_signature<R(Args...)> : true_type
 {
 };
 
+template <typename... T>
+struct are_completion_signatures : false_type
+{
+};
+
+template <typename T0>
+struct are_completion_signatures<T0>
+  : is_completion_signature<T0>
+{
+};
+
+template <typename T0, typename... TN>
+struct are_completion_signatures<T0, TN...>
+  : integral_constant<bool, (
+      is_completion_signature<T0>::value
+        && are_completion_signatures<TN...>::value)>
+{
+};
+
 template <typename T, typename... Args>
 ASIO_CONCEPT callable_with = requires(T&& t, Args&&... args)
 {
   static_cast<T&&>(t)(static_cast<Args&&>(args)...);
 };
 
-template <typename T, typename Signature>
+template <typename T, typename... Signatures>
 struct is_completion_handler_for : false_type
 {
 };
@@ -53,6 +72,14 @@ struct is_completion_handler_for : false_type
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...)>
   : integral_constant<bool, (callable_with<T, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args, typename... Signatures>
+struct is_completion_handler_for<T, R(Args...), Signatures...>
+  : integral_constant<bool, (
+      callable_with<T, Args...>
+        && is_completion_handler_for<T, Signatures...>::value)>
 {
 };
 
@@ -65,24 +92,59 @@ ASIO_CONCEPT completion_signature =
 #define ASIO_COMPLETION_SIGNATURE \
   ::asio::completion_signature
 
-template <typename T, typename Signature>
+template <typename T, typename... Signatures>
 ASIO_CONCEPT completion_handler_for =
-  detail::is_completion_signature<Signature>::value
-    && detail::is_completion_handler_for<T, Signature>::value;
+  detail::are_completion_signatures<Signatures...>::value
+    && detail::is_completion_handler_for<T, Signatures...>::value;
 
-#define ASIO_COMPLETION_HANDLER_FOR(s) \
-  ::asio::completion_handler_for<s>
+#define ASIO_COMPLETION_HANDLER_FOR(sig) \
+  ::asio::completion_handler_for<sig>
+#define ASIO_COMPLETION_HANDLER_FOR2(sig0, sig1) \
+  ::asio::completion_handler_for<sig0, sig1>
+#define ASIO_COMPLETION_HANDLER_FOR3(sig0, sig1, sig2) \
+  ::asio::completion_handler_for<sig0, sig1, sig2>
 
 #else // defined(ASIO_HAS_CONCEPTS)
       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
       //   && defined(ASIO_HAS_DECLTYPE)
 
 #define ASIO_COMPLETION_SIGNATURE typename
-#define ASIO_COMPLETION_HANDLER_FOR(s) typename
+#define ASIO_COMPLETION_HANDLER_FOR(sig) typename
+#define ASIO_COMPLETION_HANDLER_FOR2(sig0, sig1) typename
+#define ASIO_COMPLETION_HANDLER_FOR3(sig0, sig1, sig2) typename
 
 #endif // defined(ASIO_HAS_CONCEPTS)
        //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
        //   && defined(ASIO_HAS_DECLTYPE)
+
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES) \
+  || defined(GENERATING_DOCUMENTATION)
+
+# define ASIO_COMPLETION_SIGNATURES_TPARAMS \
+    ASIO_COMPLETION_SIGNATURE... Signatures
+
+# define ASIO_COMPLETION_SIGNATURES_TSPECPARAMS \
+    ASIO_COMPLETION_SIGNATURE... Signatures
+
+# define ASIO_COMPLETION_SIGNATURES_TARGS Signatures...
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+      //   || defined(GENERATING_DOCUMENTATION)
+
+# define ASIO_COMPLETION_SIGNATURES_TPARAMS \
+    typename Sig0 = void, \
+    typename Sig1 = void, \
+    typename Sig2 = void
+
+# define ASIO_COMPLETION_SIGNATURES_TSPECPARAMS \
+    typename Sig0, \
+    typename Sig1, \
+    typename Sig2
+
+# define ASIO_COMPLETION_SIGNATURES_TARGS Sig0, Sig1, Sig2
+
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 /// An interface for customising the behaviour of an initiating function.
 /**
@@ -102,7 +164,7 @@ ASIO_CONCEPT completion_handler_for =
  * The primary template assumes that the CompletionToken is the completion
  * handler.
  */
-template <typename CompletionToken, ASIO_COMPLETION_SIGNATURE Signature>
+template <typename CompletionToken, ASIO_COMPLETION_SIGNATURES_TPARAMS>
 class async_result
 {
 public:
@@ -141,7 +203,7 @@ public:
 #elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename Initiation,
-      ASIO_COMPLETION_HANDLER_FOR(Signature) RawCompletionToken,
+      ASIO_COMPLETION_HANDLER_FOR(Signatures...) RawCompletionToken,
       typename... Args>
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
@@ -155,8 +217,7 @@ public:
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-  template <typename Initiation,
-      ASIO_COMPLETION_HANDLER_FOR(Signature) RawCompletionToken>
+  template <typename Initiation, typename RawCompletionToken>
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token)
@@ -167,7 +228,7 @@ public:
 
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
   template <typename Initiation, \
-      ASIO_COMPLETION_HANDLER_FOR(Signature) RawCompletionToken, \
+      typename RawCompletionToken, \
       ASIO_VARIADIC_TPARAMS(n)> \
   static return_type initiate( \
       ASIO_MOVE_ARG(Initiation) initiation, \
@@ -191,8 +252,8 @@ private:
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <ASIO_COMPLETION_SIGNATURE Signature>
-class async_result<void, Signature>
+template <ASIO_COMPLETION_SIGNATURES_TSPECPARAMS>
+class async_result<void, ASIO_COMPLETION_SIGNATURES_TARGS>
 {
   // Empty.
 };
@@ -202,13 +263,14 @@ class async_result<void, Signature>
 /// Helper template to deduce the handler type from a CompletionToken, capture
 /// a local copy of the handler, and then create an async_result for the
 /// handler.
-template <typename CompletionToken, ASIO_COMPLETION_SIGNATURE Signature>
+template <typename CompletionToken, ASIO_COMPLETION_SIGNATURES_TPARAMS>
 struct async_completion
 {
   /// The real handler type to be used for the asynchronous operation.
   typedef typename asio::async_result<
     typename decay<CompletionToken>::type,
-      Signature>::completion_handler_type completion_handler_type;
+      ASIO_COMPLETION_SIGNATURES_TARGS>::completion_handler_type
+        completion_handler_type;
 
 #if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   /// Constructor.
@@ -247,14 +309,16 @@ struct async_completion
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// The result of the asynchronous operation's initiating function.
-  async_result<typename decay<CompletionToken>::type, Signature> result;
+  async_result<typename decay<CompletionToken>::type,
+    ASIO_COMPLETION_SIGNATURES_TARGS> result;
 };
 
 namespace detail {
 
-template <typename CompletionToken, typename Signature>
+template <typename CompletionToken, ASIO_COMPLETION_SIGNATURES_TPARAMS>
 struct async_result_helper
-  : async_result<typename decay<CompletionToken>::type, Signature>
+  : async_result<typename decay<CompletionToken>::type,
+      ASIO_COMPLETION_SIGNATURES_TARGS>
 {
 };
 
@@ -283,10 +347,11 @@ char async_result_initiate_memfn_helper(
       void (async_result_memfns_base::*)(),
       &async_result_memfns_derived<T>::initiate>*);
 
-template <typename CompletionToken, typename Signature>
+template <typename CompletionToken, ASIO_COMPLETION_SIGNATURES_TPARAMS>
 struct async_result_has_initiate_memfn
   : integral_constant<bool, sizeof(async_result_initiate_memfn_helper<
-      async_result<typename decay<CompletionToken>::type, Signature>
+      async_result<typename decay<CompletionToken>::type,
+        ASIO_COMPLETION_SIGNATURES_TARGS>
     >(0)) != 1>
 {
 };
@@ -296,48 +361,102 @@ struct async_result_has_initiate_memfn
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_INITFN_RESULT_TYPE(ct, sig) \
   void_or_deduced
+# define ASIO_INITFN_RESULT_TYPE2(ct, sig0, sig1) \
+  void_or_deduced
+# define ASIO_INITFN_RESULT_TYPE3(ct, sig0, sig1, sig2) \
+  void_or_deduced
 #elif defined(_MSC_VER) && (_MSC_VER < 1500)
 # define ASIO_INITFN_RESULT_TYPE(ct, sig) \
   typename ::asio::detail::async_result_helper< \
     ct, sig>::return_type
+# define ASIO_INITFN_RESULT_TYPE2(ct, sig0, sig1) \
+  typename ::asio::detail::async_result_helper< \
+    ct, sig0, sig1>::return_type
+# define ASIO_INITFN_RESULT_TYPE3(ct, sig0, sig1, sig2) \
+  typename ::asio::detail::async_result_helper< \
+    ct, sig0, sig1, sig2>::return_type
 #define ASIO_HANDLER_TYPE(ct, sig) \
   typename ::asio::detail::async_result_helper< \
     ct, sig>::completion_handler_type
+#define ASIO_HANDLER_TYPE2(ct, sig0, sig1) \
+  typename ::asio::detail::async_result_helper< \
+    ct, sig0, sig1>::completion_handler_type
+#define ASIO_HANDLER_TYPE3(ct, sig0, sig1, sig2) \
+  typename ::asio::detail::async_result_helper< \
+    ct, sig0, sig1, sig2>::completion_handler_type
 #else
 # define ASIO_INITFN_RESULT_TYPE(ct, sig) \
   typename ::asio::async_result< \
     typename ::asio::decay<ct>::type, sig>::return_type
+# define ASIO_INITFN_RESULT_TYPE2(ct, sig0, sig1) \
+  typename ::asio::async_result< \
+    typename ::asio::decay<ct>::type, sig0, sig1>::return_type
+# define ASIO_INITFN_RESULT_TYPE3(ct, sig0, sig1, sig2) \
+  typename ::asio::async_result< \
+    typename ::asio::decay<ct>::type, sig0, sig1, sig2>::return_type
 #define ASIO_HANDLER_TYPE(ct, sig) \
   typename ::asio::async_result< \
     typename ::asio::decay<ct>::type, sig>::completion_handler_type
+#define ASIO_HANDLER_TYPE2(ct, sig0, sig1) \
+  typename ::asio::async_result< \
+    typename ::asio::decay<ct>::type, \
+      sig0, sig1>::completion_handler_type
+#define ASIO_HANDLER_TYPE3(ct, sig0, sig1, sig2) \
+  typename ::asio::async_result< \
+    typename ::asio::decay<ct>::type, \
+      sig0, sig1, sig2>::completion_handler_type
 #endif
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
   auto
+# define ASIO_INITFN_AUTO_RESULT_TYPE2(ct, sig0, sig1) \
+  auto
+# define ASIO_INITFN_AUTO_RESULT_TYPE3(ct, sig0, sig1, sig2) \
+  auto
 #elif defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
 # define ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
+  auto
+# define ASIO_INITFN_AUTO_RESULT_TYPE2(ct, sig0, sig1) \
+  auto
+# define ASIO_INITFN_AUTO_RESULT_TYPE3(ct, sig0, sig1, sig2) \
   auto
 #else
 # define ASIO_INITFN_AUTO_RESULT_TYPE(ct, sig) \
   ASIO_INITFN_RESULT_TYPE(ct, sig)
+# define ASIO_INITFN_AUTO_RESULT_TYPE2(ct, sig0, sig1) \
+  ASIO_INITFN_RESULT_TYPE2(ct, sig0, sig1)
+# define ASIO_INITFN_AUTO_RESULT_TYPE3(ct, sig0, sig1, sig2) \
+  ASIO_INITFN_RESULT_TYPE3(ct, sig0, sig1, sig2)
 #endif
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
   void_or_deduced
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE2(ct, sig0, sig1, expr) \
+  void_or_deduced
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE3(ct, sig0, sig1, sig2, expr) \
+  void_or_deduced
 #elif defined(ASIO_HAS_DECLTYPE)
 # define ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
+  decltype expr
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE2(ct, sig0, sig1, expr) \
+  decltype expr
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE3(ct, sig0, sig1, sig2, expr) \
   decltype expr
 #else
 # define ASIO_INITFN_DEDUCED_RESULT_TYPE(ct, sig, expr) \
   ASIO_INITFN_RESULT_TYPE(ct, sig)
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE2(ct, sig0, sig1, expr) \
+  ASIO_INITFN_RESULT_TYPE2(ct, sig0, sig1)
+# define ASIO_INITFN_DEDUCED_RESULT_TYPE3(ct, sig0, sig1, sig2, expr) \
+  ASIO_INITFN_RESULT_TYPE3(ct, sig0, sig1, sig2)
 #endif
 
 #if defined(GENERATING_DOCUMENTATION)
 
 template <typename CompletionToken,
-    completion_signature Signature,
+    completion_signature... Signatures,
     typename Initiation, typename... Args>
 void_or_deduced async_initiate(
     ASIO_MOVE_ARG(Initiation) initiation,
@@ -347,13 +466,14 @@ void_or_deduced async_initiate(
 #elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename CompletionToken,
-    ASIO_COMPLETION_SIGNATURE Signature,
+    ASIO_COMPLETION_SIGNATURE... Signatures,
     typename Initiation, typename... Args>
 inline typename constraint<
-    detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
-    ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature,
+    detail::async_result_has_initiate_memfn<
+      CompletionToken, Signatures...>::value,
+    ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signatures...,
       (async_result<typename decay<CompletionToken>::type,
-        Signature>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
+        Signatures...>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
           declval<ASIO_MOVE_ARG(CompletionToken)>(),
           declval<ASIO_MOVE_ARG(Args)>()...)))>::type
 async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
@@ -361,26 +481,27 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_MOVE_ARG(Args)... args)
 {
   return async_result<typename decay<CompletionToken>::type,
-    Signature>::initiate(ASIO_MOVE_CAST(Initiation)(initiation),
+    Signatures...>::initiate(ASIO_MOVE_CAST(Initiation)(initiation),
       ASIO_MOVE_CAST(CompletionToken)(token),
       ASIO_MOVE_CAST(Args)(args)...);
 }
 
 template <typename CompletionToken,
-    ASIO_COMPLETION_SIGNATURE Signature,
+    ASIO_COMPLETION_SIGNATURE... Signatures,
     typename Initiation, typename... Args>
 inline typename constraint<
-    !detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
-    ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type
+    !detail::async_result_has_initiate_memfn<
+      CompletionToken, Signatures...>::value,
+    ASIO_INITFN_RESULT_TYPE(CompletionToken, Signatures...)>::type
 async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token,
     ASIO_MOVE_ARG(Args)... args)
 {
-  async_completion<CompletionToken, Signature> completion(token);
+  async_completion<CompletionToken, Signatures...> completion(token);
 
   ASIO_MOVE_CAST(Initiation)(initiation)(
       ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(CompletionToken,
-        Signature))(completion.completion_handler),
+        Signatures...))(completion.completion_handler),
       ASIO_MOVE_CAST(Args)(args)...);
 
   return completion.result.get();
@@ -389,50 +510,134 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename CompletionToken,
-    ASIO_COMPLETION_SIGNATURE Signature,
+    ASIO_COMPLETION_SIGNATURE Sig0,
     typename Initiation>
 inline typename constraint<
-    detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
-    ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature,
+    detail::async_result_has_initiate_memfn<
+      CompletionToken, Sig0>::value,
+    ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Sig0,
       (async_result<typename decay<CompletionToken>::type,
-        Signature>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
+        Sig0>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
           declval<ASIO_MOVE_ARG(CompletionToken)>())))>::type
 async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
 {
   return async_result<typename decay<CompletionToken>::type,
-    Signature>::initiate(ASIO_MOVE_CAST(Initiation)(initiation),
+    Sig0>::initiate(ASIO_MOVE_CAST(Initiation)(initiation),
       ASIO_MOVE_CAST(CompletionToken)(token));
 }
 
 template <typename CompletionToken,
-    ASIO_COMPLETION_SIGNATURE Signature,
+    ASIO_COMPLETION_SIGNATURE Sig0,
+    ASIO_COMPLETION_SIGNATURE Sig1,
     typename Initiation>
 inline typename constraint<
-    !detail::async_result_has_initiate_memfn<CompletionToken, Signature>::value,
-    ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type
+    detail::async_result_has_initiate_memfn<
+      CompletionToken, Sig0, Sig1>::value,
+    ASIO_INITFN_DEDUCED_RESULT_TYPE2(CompletionToken, Sig0, Sig1,
+      (async_result<typename decay<CompletionToken>::type,
+        Sig0, Sig1>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
+          declval<ASIO_MOVE_ARG(CompletionToken)>())))>::type
 async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
 {
-  async_completion<CompletionToken, Signature> completion(token);
+  return async_result<typename decay<CompletionToken>::type,
+    Sig0, Sig1>::initiate(ASIO_MOVE_CAST(Initiation)(initiation),
+      ASIO_MOVE_CAST(CompletionToken)(token));
+}
+
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Sig0,
+    ASIO_COMPLETION_SIGNATURE Sig1,
+    ASIO_COMPLETION_SIGNATURE Sig2,
+    typename Initiation>
+inline typename constraint<
+    detail::async_result_has_initiate_memfn<
+      CompletionToken, Sig0, Sig1, Sig2>::value,
+    ASIO_INITFN_DEDUCED_RESULT_TYPE3(CompletionToken, Sig0, Sig1, Sig2,
+      (async_result<typename decay<CompletionToken>::type,
+        Sig0, Sig1, Sig2>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(),
+          declval<ASIO_MOVE_ARG(CompletionToken)>())))>::type
+async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
+    ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
+{
+  return async_result<typename decay<CompletionToken>::type,
+    Sig0, Sig1, Sig2>::initiate(ASIO_MOVE_CAST(Initiation)(initiation),
+      ASIO_MOVE_CAST(CompletionToken)(token));
+}
+
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Sig0,
+    typename Initiation>
+inline typename constraint<
+    !detail::async_result_has_initiate_memfn<
+      CompletionToken, Sig0>::value,
+    ASIO_INITFN_RESULT_TYPE(CompletionToken, Sig0)>::type
+async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
+    ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
+{
+  async_completion<CompletionToken, Sig0> completion(token);
 
   ASIO_MOVE_CAST(Initiation)(initiation)(
       ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(CompletionToken,
-        Signature))(completion.completion_handler));
+        Sig0))(completion.completion_handler));
+
+  return completion.result.get();
+}
+
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Sig0,
+    ASIO_COMPLETION_SIGNATURE Sig1,
+    typename Initiation>
+inline typename constraint<
+    !detail::async_result_has_initiate_memfn<
+      CompletionToken, Sig0, Sig1>::value,
+    ASIO_INITFN_RESULT_TYPE2(CompletionToken, Sig0, Sig1)>::type
+async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
+    ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
+{
+  async_completion<CompletionToken, Sig0, Sig1> completion(token);
+
+  ASIO_MOVE_CAST(Initiation)(initiation)(
+      ASIO_MOVE_CAST(ASIO_HANDLER_TYPE2(CompletionToken,
+        Sig0, Sig1))(completion.completion_handler));
+
+  return completion.result.get();
+}
+
+template <typename CompletionToken,
+    ASIO_COMPLETION_SIGNATURE Sig0,
+    ASIO_COMPLETION_SIGNATURE Sig1,
+    ASIO_COMPLETION_SIGNATURE Sig2,
+    typename Initiation>
+inline typename constraint<
+    !detail::async_result_has_initiate_memfn<
+      CompletionToken, Sig0, Sig1, Sig2>::value,
+    ASIO_INITFN_RESULT_TYPE3(CompletionToken, Sig0, Sig1, Sig2)>::type
+async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
+    ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
+{
+  async_completion<CompletionToken, Sig0, Sig1, Sig2> completion(token);
+
+  ASIO_MOVE_CAST(Initiation)(initiation)(
+      ASIO_MOVE_CAST(ASIO_HANDLER_TYPE3(CompletionToken,
+        Sig0, Sig1, Sig2))(completion.completion_handler));
 
   return completion.result.get();
 }
 
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
   template <typename CompletionToken, \
-      ASIO_COMPLETION_SIGNATURE Signature, \
+      ASIO_COMPLETION_SIGNATURE Sig0, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
   inline typename constraint< \
       detail::async_result_has_initiate_memfn< \
-        CompletionToken, Signature>::value, \
-      ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken, Signature, \
+        CompletionToken, Sig0>::value, \
+      ASIO_INITFN_DEDUCED_RESULT_TYPE( \
+        CompletionToken, Sig0, \
         (async_result<typename decay<CompletionToken>::type, \
-          Signature>::initiate(declval<ASIO_MOVE_ARG(Initiation)>(), \
+          Sig0>::initiate( \
+            declval<ASIO_MOVE_ARG(Initiation)>(), \
             declval<ASIO_MOVE_ARG(CompletionToken)>(), \
             ASIO_VARIADIC_MOVE_DECLVAL(n))))>::type \
   async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
@@ -440,27 +645,127 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     return async_result<typename decay<CompletionToken>::type, \
-      Signature>::initiate(ASIO_MOVE_CAST(Initiation)(initiation), \
+      Sig0>::initiate( \
+        ASIO_MOVE_CAST(Initiation)(initiation), \
         ASIO_MOVE_CAST(CompletionToken)(token), \
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
   template <typename CompletionToken, \
-      ASIO_COMPLETION_SIGNATURE Signature, \
+      ASIO_COMPLETION_SIGNATURE Sig0, \
+      ASIO_COMPLETION_SIGNATURE Sig1, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
   inline typename constraint< \
-      !detail::async_result_has_initiate_memfn< \
-        CompletionToken, Signature>::value, \
-      ASIO_INITFN_RESULT_TYPE(CompletionToken, Signature)>::type \
+      detail::async_result_has_initiate_memfn< \
+        CompletionToken, Sig0, Sig1>::value, \
+      ASIO_INITFN_DEDUCED_RESULT_TYPE2( \
+        CompletionToken, Sig0, Sig1, \
+        (async_result<typename decay<CompletionToken>::type, \
+          Sig0, Sig1>::initiate( \
+            declval<ASIO_MOVE_ARG(Initiation)>(), \
+            declval<ASIO_MOVE_ARG(CompletionToken)>(), \
+            ASIO_VARIADIC_MOVE_DECLVAL(n))))>::type \
   async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    async_completion<CompletionToken, Signature> completion(token); \
+    return async_result<typename decay<CompletionToken>::type, \
+      Sig0, Sig1>::initiate( \
+        ASIO_MOVE_CAST(Initiation)(initiation), \
+        ASIO_MOVE_CAST(CompletionToken)(token), \
+        ASIO_VARIADIC_MOVE_ARGS(n)); \
+  } \
+  \
+  template <typename CompletionToken, \
+      ASIO_COMPLETION_SIGNATURE Sig0, \
+      ASIO_COMPLETION_SIGNATURE Sig1, \
+      ASIO_COMPLETION_SIGNATURE Sig2, \
+      typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  inline typename constraint< \
+      detail::async_result_has_initiate_memfn< \
+        CompletionToken, Sig0, Sig1, Sig2>::value, \
+      ASIO_INITFN_DEDUCED_RESULT_TYPE3( \
+        CompletionToken, Sig0, Sig1, Sig2, \
+        (async_result<typename decay<CompletionToken>::type, \
+          Sig0, Sig1, Sig2>::initiate( \
+            declval<ASIO_MOVE_ARG(Initiation)>(), \
+            declval<ASIO_MOVE_ARG(CompletionToken)>(), \
+            ASIO_VARIADIC_MOVE_DECLVAL(n))))>::type \
+  async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
+      ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
+      ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    return async_result<typename decay<CompletionToken>::type, \
+      Sig0, Sig1, Sig2>::initiate( \
+        ASIO_MOVE_CAST(Initiation)(initiation), \
+        ASIO_MOVE_CAST(CompletionToken)(token), \
+        ASIO_VARIADIC_MOVE_ARGS(n)); \
+  } \
+  \
+  template <typename CompletionToken, \
+      ASIO_COMPLETION_SIGNATURE Sig0, \
+      typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  inline typename constraint< \
+      !detail::async_result_has_initiate_memfn< \
+        CompletionToken, Sig0>::value, \
+      ASIO_INITFN_RESULT_TYPE(CompletionToken, Sig0)>::type \
+  async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
+      ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
+      ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    async_completion<CompletionToken, \
+      Sig0> completion(token); \
   \
     ASIO_MOVE_CAST(Initiation)(initiation)( \
         ASIO_MOVE_CAST(ASIO_HANDLER_TYPE(CompletionToken, \
-          Signature))(completion.completion_handler), \
+          Sig0))(completion.completion_handler), \
+        ASIO_VARIADIC_MOVE_ARGS(n)); \
+  \
+    return completion.result.get(); \
+  } \
+  \
+  template <typename CompletionToken, \
+      ASIO_COMPLETION_SIGNATURE Sig0, \
+      ASIO_COMPLETION_SIGNATURE Sig1, \
+      typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  inline typename constraint< \
+      !detail::async_result_has_initiate_memfn< \
+        CompletionToken, Sig0, Sig1>::value, \
+      ASIO_INITFN_RESULT_TYPE2(CompletionToken, Sig0, Sig1)>::type \
+  async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
+      ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
+      ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    async_completion<CompletionToken, \
+      Sig0, Sig1> completion(token); \
+  \
+    ASIO_MOVE_CAST(Initiation)(initiation)( \
+        ASIO_MOVE_CAST(ASIO_HANDLER_TYPE2(CompletionToken, \
+          Sig0, Sig1))(completion.completion_handler), \
+        ASIO_VARIADIC_MOVE_ARGS(n)); \
+  \
+    return completion.result.get(); \
+  } \
+  \
+  template <typename CompletionToken, \
+      ASIO_COMPLETION_SIGNATURE Sig0, \
+      ASIO_COMPLETION_SIGNATURE Sig1, \
+      ASIO_COMPLETION_SIGNATURE Sig2, \
+      typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  inline typename constraint< \
+      !detail::async_result_has_initiate_memfn< \
+        CompletionToken, Sig0, Sig1, Sig2>::value, \
+      ASIO_INITFN_RESULT_TYPE3(CompletionToken, Sig0, Sig1, Sig2)>::type \
+  async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
+      ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
+      ASIO_VARIADIC_MOVE_PARAMS(n)) \
+  { \
+    async_completion<CompletionToken, \
+      Sig0, Sig1, Sig2> completion(token); \
+  \
+    ASIO_MOVE_CAST(Initiation)(initiation)( \
+        ASIO_MOVE_CAST(ASIO_HANDLER_TYPE3(CompletionToken, \
+          Sig0, Sig1, Sig2))(completion.completion_handler), \
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   \
     return completion.result.get(); \
@@ -477,10 +782,10 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 
 namespace detail {
 
-template <typename Signature>
+template <typename... Signatures>
 struct initiation_archetype
 {
-  template <completion_handler_for<Signature> CompletionHandler>
+  template <completion_handler_for<Signatures...> CompletionHandler>
   void operator()(CompletionHandler&&) const
   {
   }
@@ -488,23 +793,30 @@ struct initiation_archetype
 
 } // namespace detail
 
-template <typename T, typename Signature>
+template <typename T, typename... Signatures>
 ASIO_CONCEPT completion_token_for =
-  detail::is_completion_signature<Signature>::value
+  detail::are_completion_signatures<Signatures...>::value
   &&
   requires(T&& t)
   {
-    async_initiate<T, Signature>(detail::initiation_archetype<Signature>{}, t);
+    async_initiate<T, Signatures...>(
+        detail::initiation_archetype<Signatures...>{}, t);
   };
 
-#define ASIO_COMPLETION_TOKEN_FOR(s) \
-  ::asio::completion_token_for<s>
+#define ASIO_COMPLETION_TOKEN_FOR(sig) \
+  ::asio::completion_token_for<sig>
+#define ASIO_COMPLETION_TOKEN_FOR2(sig0, sig1) \
+  ::asio::completion_token_for<sig0, sig1>
+#define ASIO_COMPLETION_TOKEN_FOR3(sig0, sig1, sig2) \
+  ::asio::completion_token_for<sig0, sig1, sig2>
 
 #else // defined(ASIO_HAS_CONCEPTS)
       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
       //   && defined(ASIO_HAS_DECLTYPE)
 
-#define ASIO_COMPLETION_TOKEN_FOR(s) typename
+#define ASIO_COMPLETION_TOKEN_FOR(sig) typename
+#define ASIO_COMPLETION_TOKEN_FOR2(sig0, sig1) typename
+#define ASIO_COMPLETION_TOKEN_FOR3(sig0, sig1, sig2) typename
 
 #endif // defined(ASIO_HAS_CONCEPTS)
        //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)

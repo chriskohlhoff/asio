@@ -206,6 +206,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_COMPLETION_SIGNATURE=typename \
                          ASIO_COMPLETION_HANDLER_FOR(s)=typename \
                          ASIO_COMPLETION_TOKEN_FOR(s)=typename \
+                         ASIO_COMPLETION_SIGNATURES_TPARAMS="typename... Signatures" \
+                         ASIO_COMPLETION_SIGNATURES_TARGS=Signatures... \
                          ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
                          ASIO_INITFN_AUTO_RESULT_TYPE(t,a)=void_or_deduced \
                          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(e)==default_token \
