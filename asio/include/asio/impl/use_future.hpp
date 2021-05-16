@@ -834,7 +834,8 @@ use_future_t<Allocator>::operator()(ASIO_MOVE_ARG(Function) f) const
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename Allocator, typename Result, typename... Args>
-class async_result<use_future_t<Allocator>, Result(Args...)>
+class async_result<use_future_t<Allocator>,
+    Result(Args...) ASIO_RVALUE_REF_QUAL>
   : public detail::promise_async_result<
       void(typename decay<Args>::type...), Allocator>
 {
@@ -850,7 +851,8 @@ public:
 
 template <typename Function, typename Allocator,
     typename Result, typename... Args>
-class async_result<detail::packaged_token<Function, Allocator>, Result(Args...)>
+class async_result<detail::packaged_token<Function, Allocator>,
+    Result(Args...) ASIO_RVALUE_REF_QUAL>
   : public detail::packaged_async_result<Function, Allocator,
       typename result_of<Function(Args...)>::type>
 {
@@ -867,7 +869,7 @@ public:
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename Allocator, typename Result>
-class async_result<use_future_t<Allocator>, Result()>
+class async_result<use_future_t<Allocator>, Result() ASIO_RVALUE_REF_QUAL>
   : public detail::promise_async_result<void(), Allocator>
 {
 public:
@@ -880,7 +882,8 @@ public:
 };
 
 template <typename Function, typename Allocator, typename Result>
-class async_result<detail::packaged_token<Function, Allocator>, Result()>
+class async_result<detail::packaged_token<Function, Allocator>,
+    Result() ASIO_RVALUE_REF_QUAL>
   : public detail::packaged_async_result<Function, Allocator,
       typename result_of<Function()>::type>
 {
@@ -898,7 +901,7 @@ public:
   template <typename Allocator, \
       typename Result, ASIO_VARIADIC_TPARAMS(n)> \
   class async_result<use_future_t<Allocator>, \
-      Result(ASIO_VARIADIC_TARGS(n))> \
+      Result(ASIO_VARIADIC_TARGS(n)) ASIO_RVALUE_REF_QUAL> \
     : public detail::promise_async_result< \
         void(ASIO_VARIADIC_DECAY(n)), Allocator> \
   { \
@@ -916,7 +919,7 @@ public:
   template <typename Function, typename Allocator, \
       typename Result, ASIO_VARIADIC_TPARAMS(n)> \
   class async_result<detail::packaged_token<Function, Allocator>, \
-      Result(ASIO_VARIADIC_TARGS(n))> \
+      Result(ASIO_VARIADIC_TARGS(n)) ASIO_RVALUE_REF_QUAL> \
     : public detail::packaged_async_result<Function, Allocator, \
         typename result_of<Function(ASIO_VARIADIC_TARGS(n))>::type> \
   { \
