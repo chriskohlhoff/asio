@@ -55,7 +55,8 @@ public:
   template <typename... Args>
   void operator()(ASIO_MOVE_ARG(Args)... args)
   {
-    handler_(std::make_tuple(ASIO_MOVE_CAST(Args)(args)...));
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        std::make_tuple(ASIO_MOVE_CAST(Args)(args)...));
   }
 
 //private:

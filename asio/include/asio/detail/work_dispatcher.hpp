@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/associated_allocator.hpp"
@@ -81,7 +82,8 @@ public:
         asio::prefer(executor_,
           execution::blocking.possibly,
           execution::allocator((get_associated_allocator)(handler_))),
-        ASIO_MOVE_CAST(Handler)(handler_));
+        asio::detail::bind_handler(
+          ASIO_MOVE_CAST(Handler)(handler_)));
   }
 
 private:
@@ -129,7 +131,8 @@ public:
     typename associated_allocator<Handler>::type alloc(
         (get_associated_allocator)(handler_));
     work_.get_executor().dispatch(
-        ASIO_MOVE_CAST(Handler)(handler_), alloc);
+        asio::detail::bind_handler(
+          ASIO_MOVE_CAST(Handler)(handler_)), alloc);
     work_.reset();
   }
 

@@ -40,9 +40,9 @@ struct is_completion_signature<R(Args...)> : true_type
 };
 
 template <typename T, typename... Args>
-ASIO_CONCEPT callable_with = requires(T t, Args&&... args)
+ASIO_CONCEPT callable_with = requires(T&& t, Args&&... args)
 {
-  t(static_cast<Args&&>(args)...);
+  static_cast<T&&>(t)(static_cast<Args&&>(args)...);
 };
 
 template <typename T, typename Signature>

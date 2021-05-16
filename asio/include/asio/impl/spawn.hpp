@@ -344,7 +344,7 @@ namespace detail {
 
       (data->function_)(yield);
       if (data->call_handler_)
-        (data->handler_)();
+        ASIO_MOVE_OR_LVALUE(Handler)(data->handler_)();
     }
 
     shared_ptr<spawn_data<Handler, Function> > data_;

@@ -76,7 +76,7 @@ namespace detail
         const std::size_t bytes_written)
     {
       storage_.consume(bytes_written);
-      handler_(ec, bytes_written);
+      ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(ec, bytes_written);
     }
 
   //private:
@@ -280,7 +280,7 @@ namespace detail
       if (ec)
       {
         const std::size_t length = 0;
-        handler_(ec, length);
+        ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(ec, length);
       }
       else
       {
@@ -293,7 +293,7 @@ namespace detail
         storage_.resize(orig_size + length);
         const std::size_t bytes_copied = asio::buffer_copy(
             storage_.data() + orig_size, buffers_, length);
-        handler_(ec, bytes_copied);
+        ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(ec, bytes_copied);
       }
     }
 

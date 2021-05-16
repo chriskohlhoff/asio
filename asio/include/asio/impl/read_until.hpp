@@ -915,7 +915,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -1205,7 +1205,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -1503,7 +1503,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -1794,7 +1794,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -2151,7 +2151,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -2444,7 +2444,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -2747,7 +2747,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 
@@ -3042,7 +3042,7 @@ namespace detail
           (ec || search_position_ == not_found)
           ? 0 : search_position_;
 
-        handler_(result_ec, result_n);
+        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(result_ec, result_n);
       }
     }
 

@@ -348,7 +348,8 @@ namespace detail
     void complete(Args... args)
     {
       this->work_.reset();
-      this->handler_(ASIO_MOVE_CAST(Args)(args)...);
+      ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)(
+          ASIO_MOVE_CAST(Args)(args)...);
     }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -363,7 +364,7 @@ namespace detail
     void complete()
     {
       this->work_.reset();
-      this->handler_();
+      ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)();
     }
 
 #define ASIO_PRIVATE_COMPOSED_OP_DEF(n) \
@@ -379,7 +380,8 @@ namespace detail
     void complete(ASIO_VARIADIC_MOVE_PARAMS(n)) \
     { \
       this->work_.reset(); \
-      this->handler_(ASIO_VARIADIC_MOVE_ARGS(n)); \
+      ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)( \
+          ASIO_VARIADIC_MOVE_ARGS(n)); \
     } \
     /**/
     ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_COMPOSED_OP_DEF)

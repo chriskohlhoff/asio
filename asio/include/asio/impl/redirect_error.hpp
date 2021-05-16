@@ -54,7 +54,7 @@ public:
 
   void operator()()
   {
-    handler_();
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)();
   }
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -65,7 +65,8 @@ public:
   >::type
   operator()(ASIO_MOVE_ARG(Arg) arg, ASIO_MOVE_ARG(Args)... args)
   {
-    handler_(ASIO_MOVE_CAST(Arg)(arg),
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        ASIO_MOVE_CAST(Arg)(arg),
         ASIO_MOVE_CAST(Args)(args)...);
   }
 
@@ -74,7 +75,8 @@ public:
       ASIO_MOVE_ARG(Args)... args)
   {
     ec_ = ec;
-    handler_(ASIO_MOVE_CAST(Args)(args)...);
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        ASIO_MOVE_CAST(Args)(args)...);
   }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -85,13 +87,14 @@ public:
   >::type
   operator()(ASIO_MOVE_ARG(Arg) arg)
   {
-    handler_(ASIO_MOVE_CAST(Arg)(arg));
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+        ASIO_MOVE_CAST(Arg)(arg));
   }
 
   void operator()(const asio::error_code& ec)
   {
     ec_ = ec;
-    handler_();
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)();
   }
 
 #define ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
@@ -101,7 +104,8 @@ public:
   >::type \
   operator()(ASIO_MOVE_ARG(Arg) arg, ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    handler_(ASIO_MOVE_CAST(Arg)(arg), \
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)( \
+        ASIO_MOVE_CAST(Arg)(arg), \
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
@@ -110,7 +114,8 @@ public:
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
     ec_ = ec; \
-    handler_(ASIO_VARIADIC_MOVE_ARGS(n)); \
+    ASIO_MOVE_OR_LVALUE(Handler)(handler_)( \
+        ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   /**/
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_REDIRECT_ERROR_DEF)
