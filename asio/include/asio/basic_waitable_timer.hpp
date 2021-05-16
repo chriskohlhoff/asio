@@ -748,15 +748,17 @@ public:
    * manner equivalent to using asio::post().
    */
   template <
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
-        WaitHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+      ASIO_COMPLETION_TOKEN_FOR(
+        void (asio::error_code) ASIO_RVALUE_REF_QUAL)
+          WaitHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
-      void (asio::error_code))
+      void (asio::error_code) ASIO_RVALUE_REF_QUAL)
   async_wait(
       ASIO_MOVE_ARG(WaitHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<WaitHandler, void (asio::error_code)>(
+    return async_initiate<WaitHandler,
+      void (asio::error_code) ASIO_RVALUE_REF_QUAL>(
         initiate_async_wait(this), handler);
   }
 
