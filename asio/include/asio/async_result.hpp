@@ -39,6 +39,61 @@ struct is_completion_signature<R(Args...)> : true_type
 {
 };
 
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) &> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) &&> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) & noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...)&& noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) const> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) const &> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) const &&> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) const noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) const & noexcept> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) const && noexcept> : true_type
+{
+};
+
 template <typename... T>
 struct are_completion_signatures : false_type
 {
@@ -53,7 +108,7 @@ struct are_completion_signatures<T0>
 template <typename T0, typename... TN>
 struct are_completion_signatures<T0, TN...>
   : integral_constant<bool, (
-      is_completion_signature<T0>::value
+      are_completion_signatures<T0>::value
         && are_completion_signatures<TN...>::value)>
 {
 };
@@ -75,11 +130,77 @@ struct is_completion_handler_for<T, R(Args...)>
 {
 };
 
-template <typename T, typename R, typename... Args, typename... Signatures>
-struct is_completion_handler_for<T, R(Args...), Signatures...>
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) &>
+  : integral_constant<bool, (callable_with<T&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) &&>
+  : integral_constant<bool, (callable_with<T&&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) const>
+  : integral_constant<bool, (callable_with<const T, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) const &>
+  : integral_constant<bool, (callable_with<const T&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) const &&>
+  : integral_constant<bool, (callable_with<const T&&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) noexcept>
+  : integral_constant<bool, (callable_with<T, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...)& noexcept>
+  : integral_constant<bool, (callable_with<T&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...)&& noexcept>
+  : integral_constant<bool, (callable_with<T&&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) const noexcept>
+  : integral_constant<bool, (callable_with<const T, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) const & noexcept>
+  : integral_constant<bool, (callable_with<const T&, Args...>)>
+{
+};
+
+template <typename T, typename R, typename... Args>
+struct is_completion_handler_for<T, R(Args...) const && noexcept>
+  : integral_constant<bool, (callable_with<const T&&, Args...>)>
+{
+};
+
+template <typename T, typename Signature0, typename... SignatureN>
+struct is_completion_handler_for<T, Signature0, SignatureN...>
   : integral_constant<bool, (
-      callable_with<T, Args...>
-        && is_completion_handler_for<T, Signatures...>::value)>
+      is_completion_handler_for<T, Signature0>::value
+        && is_completion_handler_for<T, SignatureN...>::value)>
 {
 };
 
