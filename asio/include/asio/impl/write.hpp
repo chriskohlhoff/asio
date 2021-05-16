@@ -346,7 +346,8 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
         } while (max_size > 0);
 
-        handler_(ec, buffers_.total_consumed());
+        ASIO_MOVE_CAST(WriteHandler)(handler_)(
+            ec, buffers_.total_consumed());
       }
     }
 
@@ -617,7 +618,8 @@ namespace detail
             ASIO_MOVE_CAST(write_dynbuf_v1_op)(*this));
         return; default:
         buffers_.consume(bytes_transferred);
-        handler_(ec, static_cast<const std::size_t&>(bytes_transferred));
+        ASIO_MOVE_CAST(WriteHandler)(handler_)(ec,
+            static_cast<const std::size_t&>(bytes_transferred));
       }
     }
 
@@ -910,7 +912,8 @@ namespace detail
             ASIO_MOVE_CAST(write_dynbuf_v2_op)(*this));
         return; default:
         buffers_.consume(bytes_transferred);
-        handler_(ec, static_cast<const std::size_t&>(bytes_transferred));
+        ASIO_MOVE_CAST(WriteHandler)(handler_)(ec,
+            static_cast<const std::size_t&>(bytes_transferred));
       }
     }
 

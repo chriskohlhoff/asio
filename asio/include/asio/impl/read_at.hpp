@@ -239,7 +239,8 @@ namespace detail
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
         } while (max_size > 0);
 
-        handler_(ec, buffers_.total_consumed());
+        ASIO_MOVE_CAST(ReadHandler)(handler_)(
+            ec, buffers_.total_consumed());
       }
     }
 
@@ -538,7 +539,8 @@ namespace detail
             break;
         }
 
-        handler_(ec, static_cast<const std::size_t&>(total_transferred_));
+        ASIO_MOVE_CAST(ReadHandler)(handler_)(ec,
+            static_cast<const std::size_t&>(total_transferred_));
       }
     }
 

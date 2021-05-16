@@ -51,7 +51,7 @@ public:
       const asio::error_code& ec,
       const std::size_t&) const
   {
-    handler(ec);
+    ASIO_MOVE_CAST(Handler)(handler)(ec);
   }
 
 private:
