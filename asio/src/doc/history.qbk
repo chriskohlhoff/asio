@@ -7,6 +7,49 @@
 
 [section:history Revision History]
 
+[heading Asio 1.18.2]
+
+* Added `ip::scope_id_type` type alias.
+
+* Added `ip::port_type` type alias.
+
+* Added `std::hash` specialisations for IP addresses.
+
+* Added `std::hash` specialisations for `ip::basic_endpoint<>`.
+
+* Refactored SFINAE usage to improve compile times.
+
+* Added friendship support to customisation points, and made most
+  customisations private.
+
+* Changed `any_io_executor` to a "strong typedef"-style class.
+
+* Fixed `experimental::as_single` to work with handler hook deprecation.
+
+* Ensured pthread condition variable attributes are cleaned up on all
+  platforms.
+
+* Clarified thread safety notes on sockets and descriptors.
+
+* Ensured `errno` is not overwritten if `socket()` fails on macOS/FreeBSD.
+
+* Fixed work tracking for `io_context` and `thread_pool` executors when
+  move-assigned.
+
+* Ensured internal `call_stack` objects are accessed only from implementation
+  files.
+
+* Fixed I/O object move-assignment to ensure the executor is left in a valid
+  state.
+
+* Fixed detection of compiler support for defaulted template argument on
+  functions with MSVC.
+
+* Prevented the `blocking.always` property from being used with `strand<>`, as
+  it did not produce the correct semantics.
+
+* Removed deprecated file [^asio/impl/src.cpp].
+
 [heading Asio 1.18.1]
 
 * Enabled support for UNIX domain sockets on Windows. From Windows 10, UNIX
