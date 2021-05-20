@@ -27,6 +27,7 @@ check_PROGRAMS = \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
 	unit/basic_waitable_timer \
+	unit/bind_cancellation_slot \
 	unit/bind_executor \
 	unit/buffered_read_stream \
 	unit/buffered_stream \
@@ -194,6 +195,7 @@ TESTS = \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
 	unit/basic_waitable_timer \
+	unit/bind_cancellation_slot \
 	unit/bind_executor \
 	unit/buffered_read_stream \
 	unit/buffered_stream \
@@ -359,6 +361,7 @@ unit_basic_socket_acceptor_SOURCES = unit/basic_socket_acceptor.cpp
 unit_basic_stream_socket_SOURCES = unit/basic_stream_socket.cpp
 unit_basic_streambuf_SOURCES = unit/basic_streambuf.cpp
 unit_basic_waitable_timer_SOURCES = unit/basic_waitable_timer.cpp
+unit_bind_cancellation_slot_SOURCES = unit/bind_cancellation_slot.cpp
 unit_bind_executor_SOURCES = unit/bind_executor.cpp
 unit_buffer_SOURCES = unit/buffer.cpp
 unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp
