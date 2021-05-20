@@ -35,6 +35,7 @@
 #include "asio/basic_stream_socket.hpp"
 #include "asio/basic_streambuf.hpp"
 #include "asio/basic_waitable_timer.hpp"
+#include "asio/bind_cancellation_slot.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/buffer.hpp"
 #include "asio/buffered_read_stream_fwd.hpp"
