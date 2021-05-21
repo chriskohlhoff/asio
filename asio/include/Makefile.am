@@ -47,6 +47,7 @@ nobase_include_HEADERS = \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
 	asio/detail/atomic_count.hpp \
+	asio/detail/base_from_cancellation_state.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/blocking_executor_op.hpp \
