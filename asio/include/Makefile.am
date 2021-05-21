@@ -33,6 +33,7 @@ nobase_include_HEADERS = \
 	asio/buffer.hpp \
 	asio/buffers_iterator.hpp \
 	asio/cancellation_signal.hpp \
+	asio/cancellation_state.hpp \
 	asio/cancellation_type.hpp \
 	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
