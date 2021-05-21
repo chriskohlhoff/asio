@@ -20,6 +20,8 @@
 #include <new>
 #include <tuple>
 #include <utility>
+#include "asio/cancellation_signal.hpp"
+#include "asio/cancellation_state.hpp"
 #include "asio/detail/thread_context.hpp"
 #include "asio/detail/thread_info_base.hpp"
 #include "asio/detail/type_traits.hpp"
@@ -146,6 +148,11 @@ public:
     }
   }
 
+  void clear_cancellation_slot()
+  {
+    this->attached_thread_->cancellation_state_.slot().clear();
+  }
+
   template <typename T>
   auto await_transform(awaitable<T, Executor> a) const
   {
@@ -176,6 +183,120 @@ public:
     };
 
     return result{this};
+  }
+
+  // This await transformation obtains the associated cancellation state of the
+  // thread of execution.
+  auto await_transform(this_coro::cancellation_state_t) noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const noexcept
+      {
+        return this_->attached_thread_->get_cancellation_state();
+      }
+    };
+
+    return result{this};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  auto await_transform(this_coro::reset_cancellation_state_0_t) noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const
+      {
+        return this_->attached_thread_->reset_cancellation_state();
+      }
+    };
+
+    return result{this};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  template <typename Filter>
+  auto await_transform(
+      this_coro::reset_cancellation_state_1_t<Filter> reset) noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+      Filter filter_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return this_->attached_thread_->reset_cancellation_state(
+            ASIO_MOVE_CAST(Filter)(filter_));
+      }
+    };
+
+    return result{this, ASIO_MOVE_CAST(Filter)(reset.filter)};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  template <typename InFilter, typename OutFilter>
+  auto await_transform(
+      this_coro::reset_cancellation_state_2_t<InFilter, OutFilter> reset)
+    noexcept
+  {
+    struct result
+    {
+      awaitable_frame_base* this_;
+      InFilter in_filter_;
+      OutFilter out_filter_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return this_->attached_thread_->reset_cancellation_state(
+            ASIO_MOVE_CAST(InFilter)(in_filter_),
+            ASIO_MOVE_CAST(OutFilter)(out_filter_));
+      }
+    };
+
+    return result{this,
+        ASIO_MOVE_CAST(InFilter)(reset.in_filter),
+        ASIO_MOVE_CAST(OutFilter)(reset.out_filter)};
   }
 
   // This await transformation is used to run an async operation's initiation
@@ -336,12 +457,16 @@ class awaitable_thread
 {
 public:
   typedef Executor executor_type;
+  typedef cancellation_slot cancellation_slot_type;
 
   // Construct from the entry point of a new thread of execution.
-  awaitable_thread(awaitable<void, Executor> p, const Executor& ex)
+  awaitable_thread(awaitable<void, Executor> p, const Executor& ex,
+      cancellation_slot parent_cancel_slot, cancellation_state cancel_state)
     : bottom_of_stack_(std::move(p)),
       top_of_stack_(bottom_of_stack_.frame_),
-      executor_(ex)
+      executor_(ex),
+      parent_cancellation_slot_(parent_cancel_slot),
+      cancellation_state_(cancel_state)
   {
   }
 
@@ -349,7 +474,9 @@ public:
   awaitable_thread(awaitable_thread&& other) noexcept
     : bottom_of_stack_(std::move(other.bottom_of_stack_)),
       top_of_stack_(std::exchange(other.top_of_stack_, nullptr)),
-      executor_(std::move(other.executor_))
+      executor_(std::move(other.executor_)),
+      parent_cancellation_slot_(std::move(other.parent_cancellation_slot_)),
+      cancellation_state_(std::move(other.cancellation_state_))
   {
   }
 
@@ -371,6 +498,39 @@ public:
   executor_type get_executor() const noexcept
   {
     return executor_;
+  }
+
+  cancellation_state get_cancellation_state() const noexcept
+  {
+    return cancellation_state_;
+  }
+
+  void reset_cancellation_state()
+  {
+    cancellation_state_ = cancellation_state(parent_cancellation_slot_);
+  }
+
+  template <typename Filter>
+  void reset_cancellation_state(ASIO_MOVE_ARG(Filter) filter)
+  {
+    cancellation_state_ = cancellation_state(
+        parent_cancellation_slot_,
+        ASIO_MOVE_CAST(Filter)(filter));
+  }
+
+  template <typename InFilter, typename OutFilter>
+  void reset_cancellation_state(ASIO_MOVE_ARG(InFilter) in_filter,
+      ASIO_MOVE_ARG(OutFilter) out_filter)
+  {
+    cancellation_state_ = cancellation_state(
+        parent_cancellation_slot_,
+        ASIO_MOVE_CAST(InFilter)(in_filter),
+        ASIO_MOVE_CAST(OutFilter)(out_filter));
+  }
+
+  cancellation_slot_type get_cancellation_slot() const noexcept
+  {
+    return cancellation_state_.slot();
   }
 
   // Launch a new thread of execution.
@@ -398,6 +558,8 @@ protected:
   awaitable<void, Executor> bottom_of_stack_;
   awaitable_frame_base<Executor>* top_of_stack_;
   executor_type executor_;
+  asio::cancellation_slot parent_cancellation_slot_;
+  asio::cancellation_state cancellation_state_;
 };
 
 } // namespace detail
