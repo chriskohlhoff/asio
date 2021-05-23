@@ -16,8 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/associated_executor.hpp"
-#include "asio/associated_allocator.hpp"
+#include "asio/associator.hpp"
 #include "asio/async_result.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
@@ -355,30 +354,17 @@ struct async_result<redirect_error_t<CompletionToken>, Signature>
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 };
 
-template <typename Handler, typename Executor>
-struct associated_executor<detail::redirect_error_handler<Handler>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
+template <template <typename, typename> class Associator,
+    typename Handler, typename DefaultCandidate>
+struct associator<Associator,
+    detail::redirect_error_handler<Handler>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_executor<Handler, Executor>::type type;
-
-  static type get(
+  static typename Associator<Handler, DefaultCandidate>::type get(
       const detail::redirect_error_handler<Handler>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
-  }
-};
-
-template <typename Handler, typename Allocator>
-struct associated_allocator<detail::redirect_error_handler<Handler>, Allocator>
-{
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(
-      const detail::redirect_error_handler<Handler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
-  {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
