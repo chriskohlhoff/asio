@@ -19,6 +19,7 @@
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/detail/array_fwd.hpp"
+#include "asio/detail/base_from_cancellation_state.hpp"
 #include "asio/detail/base_from_completion_cond.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
@@ -160,14 +161,16 @@ namespace detail
       typename ConstBufferSequence, typename ConstBufferIterator,
       typename CompletionCondition, typename WriteHandler>
   class write_at_op
-    : detail::base_from_completion_cond<CompletionCondition>
+    : public base_from_cancellation_state<WriteHandler>,
+      base_from_completion_cond<CompletionCondition>
   {
   public:
     write_at_op(AsyncRandomAccessWriteDevice& device,
         uint64_t offset, const ConstBufferSequence& buffers,
         CompletionCondition& completion_condition, WriteHandler& handler)
-      : detail::base_from_completion_cond<
-          CompletionCondition>(completion_condition),
+      : base_from_cancellation_state<WriteHandler>(
+          handler, enable_partial_cancellation()),
+        base_from_completion_cond<CompletionCondition>(completion_condition),
         device_(device),
         offset_(offset),
         buffers_(buffers),
@@ -178,7 +181,8 @@ namespace detail
 
 #if defined(ASIO_HAS_MOVE)
     write_at_op(const write_at_op& other)
-      : detail::base_from_completion_cond<CompletionCondition>(other),
+      : base_from_cancellation_state<WriteHandler>(other),
+        base_from_completion_cond<CompletionCondition>(other),
         device_(other.device_),
         offset_(other.offset_),
         buffers_(other.buffers_),
@@ -188,8 +192,11 @@ namespace detail
     }
 
     write_at_op(write_at_op&& other)
-      : detail::base_from_completion_cond<CompletionCondition>(
-          ASIO_MOVE_CAST(detail::base_from_completion_cond<
+      : base_from_cancellation_state<WriteHandler>(
+          ASIO_MOVE_CAST(base_from_cancellation_state<
+            WriteHandler>)(other)),
+        base_from_completion_cond<CompletionCondition>(
+          ASIO_MOVE_CAST(base_from_completion_cond<
             CompletionCondition>)(other)),
         device_(other.device_),
         offset_(other.offset_),
@@ -200,7 +207,7 @@ namespace detail
     }
 #endif // defined(ASIO_HAS_MOVE)
 
-    void operator()(const asio::error_code& ec,
+    void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
     {
       std::size_t max_size;
@@ -208,7 +215,7 @@ namespace detail
       {
         case 1:
         max_size = this->check_for_completion(ec, buffers_.total_consumed());
-        do
+        for (;;)
         {
           {
             ASIO_HANDLER_LOCATION((__FILE__, __LINE__, "async_write_at"));
@@ -221,10 +228,18 @@ namespace detail
           if ((!ec && bytes_transferred == 0) || buffers_.empty())
             break;
           max_size = this->check_for_completion(ec, buffers_.total_consumed());
-        } while (max_size > 0);
+          if (max_size == 0)
+            break;
+          if (this->cancelled() != cancellation_type::none)
+          {
+            ec = asio::error::operation_aborted;
+            break;
+          }
+        }
 
         ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(
-            ec, buffers_.total_consumed());
+            static_cast<const asio::error_code&>(ec),
+            static_cast<const std::size_t&>(buffers_.total_consumed()));
       }
     }
 
