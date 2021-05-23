@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
+#include "asio/detail/base_from_cancellation_state.hpp"
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/ssl/detail/engine.hpp"
 #include "asio/ssl/detail/stream_core.hpp"
@@ -94,11 +95,13 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
 template <typename Stream, typename Operation, typename Handler>
 class io_op
+  : public asio::detail::base_from_cancellation_state<Handler>
 {
 public:
   io_op(Stream& next_layer, stream_core& core,
       const Operation& op, Handler& handler)
-    : next_layer_(next_layer),
+    : asio::detail::base_from_cancellation_state<Handler>(handler),
+      next_layer_(next_layer),
       core_(core),
       op_(op),
       start_(0),
@@ -110,7 +113,8 @@ public:
 
 #if defined(ASIO_HAS_MOVE)
   io_op(const io_op& other)
-    : next_layer_(other.next_layer_),
+    : asio::detail::base_from_cancellation_state<Handler>(other),
+      next_layer_(other.next_layer_),
       core_(other.core_),
       op_(other.op_),
       start_(other.start_),
@@ -122,7 +126,11 @@ public:
   }
 
   io_op(io_op&& other)
-    : next_layer_(other.next_layer_),
+    : asio::detail::base_from_cancellation_state<Handler>(
+        ASIO_MOVE_CAST(
+          asio::detail::base_from_cancellation_state<Handler>)(
+            other)),
+      next_layer_(other.next_layer_),
       core_(other.core_),
       op_(ASIO_MOVE_CAST(Operation)(other.op_)),
       start_(other.start_),
@@ -262,6 +270,13 @@ public:
           // Release any waiting read operations.
           core_.pending_read_.expires_at(core_.neg_infin());
 
+          // Check for cancellation before continuing.
+          if (this->cancelled() != cancellation_type::none)
+          {
+            ec_ = asio::error::operation_aborted;
+            break;
+          }
+
           // Try the operation again.
           continue;
 
@@ -269,6 +284,13 @@ public:
 
           // Release any waiting write operations.
           core_.pending_write_.expires_at(core_.neg_infin());
+
+          // Check for cancellation before continuing.
+          if (this->cancelled() != cancellation_type::none)
+          {
+            ec_ = asio::error::operation_aborted;
+            break;
+          }
 
           // Try the operation again.
           continue;
