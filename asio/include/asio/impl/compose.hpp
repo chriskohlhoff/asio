@@ -520,6 +520,23 @@ namespace detail
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
+
+template <template <typename, typename> class Associator,
+    typename Impl, typename Work, typename Handler,
+    typename Signature, typename DefaultCandidate>
+struct associator<Associator,
+    detail::composed_op<Impl, Work, Handler, Signature>,
+    DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
+{
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::composed_op<Impl, Work, Handler, Signature>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  {
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
+  }
+};
+
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename CompletionToken, typename Signature,
