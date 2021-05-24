@@ -15,8 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
+#include "asio/associator.hpp"
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/detail/array_fwd.hpp"
@@ -487,42 +486,22 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncWriteStream, typename ConstBufferSequence,
+template <template <typename, typename> class Associator,
+    typename AsyncWriteStream, typename ConstBufferSequence,
     typename ConstBufferIterator, typename CompletionCondition,
-    typename WriteHandler, typename Allocator>
-struct associated_allocator<
+    typename WriteHandler, typename DefaultCandidate>
+struct associator<Associator,
     detail::write_op<AsyncWriteStream, ConstBufferSequence,
       ConstBufferIterator, CompletionCondition, WriteHandler>,
-    Allocator>
+    DefaultCandidate>
+  : Associator<WriteHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
-
-  static type get(
+  static typename Associator<WriteHandler, DefaultCandidate>::type get(
       const detail::write_op<AsyncWriteStream, ConstBufferSequence,
         ConstBufferIterator, CompletionCondition, WriteHandler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename AsyncWriteStream, typename ConstBufferSequence,
-    typename ConstBufferIterator, typename CompletionCondition,
-    typename WriteHandler, typename Executor>
-struct associated_executor<
-    detail::write_op<AsyncWriteStream, ConstBufferSequence,
-      ConstBufferIterator, CompletionCondition, WriteHandler>,
-    Executor>
-  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
-{
-  typedef typename associated_executor<WriteHandler, Executor>::type type;
-
-  static type get(
-      const detail::write_op<AsyncWriteStream, ConstBufferSequence,
-        ConstBufferIterator, CompletionCondition, WriteHandler>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
-  {
-    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
@@ -741,40 +720,22 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncWriteStream, typename DynamicBuffer_v1,
-    typename CompletionCondition, typename WriteHandler, typename Allocator>
-struct associated_allocator<
+template <template <typename, typename> class Associator,
+    typename AsyncWriteStream, typename DynamicBuffer_v1,
+    typename CompletionCondition, typename WriteHandler,
+    typename DefaultCandidate>
+struct associator<Associator,
     detail::write_dynbuf_v1_op<AsyncWriteStream,
       DynamicBuffer_v1, CompletionCondition, WriteHandler>,
-    Allocator>
+    DefaultCandidate>
+  : Associator<WriteHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
-
-  static type get(
+  static typename Associator<WriteHandler, DefaultCandidate>::type get(
       const detail::write_dynbuf_v1_op<AsyncWriteStream,
         DynamicBuffer_v1, CompletionCondition, WriteHandler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename AsyncWriteStream, typename DynamicBuffer_v1,
-    typename CompletionCondition, typename WriteHandler, typename Executor>
-struct associated_executor<
-    detail::write_dynbuf_v1_op<AsyncWriteStream,
-      DynamicBuffer_v1, CompletionCondition, WriteHandler>,
-    Executor>
-  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
-{
-  typedef typename associated_executor<WriteHandler, Executor>::type type;
-
-  static type get(
-      const detail::write_dynbuf_v1_op<AsyncWriteStream,
-        DynamicBuffer_v1, CompletionCondition, WriteHandler>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
-  {
-    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
@@ -1034,40 +995,22 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename WriteHandler, typename Allocator>
-struct associated_allocator<
+template <template <typename, typename> class Associator,
+    typename AsyncWriteStream, typename DynamicBuffer_v2,
+    typename CompletionCondition, typename WriteHandler,
+    typename DefaultCandidate>
+struct associator<Associator,
     detail::write_dynbuf_v2_op<AsyncWriteStream,
       DynamicBuffer_v2, CompletionCondition, WriteHandler>,
-    Allocator>
+    DefaultCandidate>
+  : Associator<WriteHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<WriteHandler, Allocator>::type type;
-
-  static type get(
+  static typename Associator<WriteHandler, DefaultCandidate>::type get(
       const detail::write_dynbuf_v2_op<AsyncWriteStream,
         DynamicBuffer_v2, CompletionCondition, WriteHandler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<WriteHandler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename WriteHandler, typename Executor>
-struct associated_executor<
-    detail::write_dynbuf_v2_op<AsyncWriteStream,
-      DynamicBuffer_v2, CompletionCondition, WriteHandler>,
-    Executor>
-  : detail::associated_executor_forwarding_base<WriteHandler, Executor>
-{
-  typedef typename associated_executor<WriteHandler, Executor>::type type;
-
-  static type get(
-      const detail::write_dynbuf_v2_op<AsyncWriteStream,
-        DynamicBuffer_v2, CompletionCondition, WriteHandler>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
-  {
-    return associated_executor<WriteHandler, Executor>::get(h.handler_, ex);
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
