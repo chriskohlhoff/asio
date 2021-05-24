@@ -16,8 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
+#include "asio/associator.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -826,106 +825,108 @@ asio_handler_invoke(ASIO_MOVE_ARG(Function) function,
 
 } // namespace detail
 
-template <typename Handler, typename Arg1, typename Allocator>
-struct associated_allocator<detail::binder1<Handler, Arg1>, Allocator>
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename DefaultCandidate>
+struct associator<Associator,
+    detail::binder1<Handler, Arg1>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(const detail::binder1<Handler, Arg1>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::binder1<Handler, Arg1>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
-template <typename Handler, typename Arg1, typename Arg2, typename Allocator>
-struct associated_allocator<detail::binder2<Handler, Arg1, Arg2>, Allocator>
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename Arg2,
+    typename DefaultCandidate>
+struct associator<Associator,
+    detail::binder2<Handler, Arg1, Arg2>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(const detail::binder2<Handler, Arg1, Arg2>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::binder2<Handler, Arg1, Arg2>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
-template <typename Handler, typename Arg1, typename Executor>
-struct associated_executor<detail::binder1<Handler, Arg1>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename DefaultCandidate>
+struct associator<Associator,
+    detail::binder3<Handler, Arg1, Arg2, Arg3>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_executor<Handler, Executor>::type type;
-
-  static type get(const detail::binder1<Handler, Arg1>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::binder3<Handler, Arg1, Arg2, Arg3>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
-template <typename Handler, typename Arg1, typename Arg2, typename Executor>
-struct associated_executor<detail::binder2<Handler, Arg1, Arg2>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename DefaultCandidate>
+struct associator<Associator,
+    detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_executor<Handler, Executor>::type type;
-
-  static type get(const detail::binder2<Handler, Arg1, Arg2>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::binder4<Handler, Arg1, Arg2, Arg3, Arg4>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
+  }
+};
+
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename Arg2, typename Arg3,
+    typename Arg4, typename Arg5, typename DefaultCandidate>
+struct associator<Associator,
+    detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
+{
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  {
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
 #if defined(ASIO_HAS_MOVE)
 
-template <typename Handler, typename Arg1, typename Allocator>
-struct associated_allocator<detail::move_binder1<Handler, Arg1>, Allocator>
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename DefaultCandidate>
+struct associator<Associator,
+    detail::move_binder1<Handler, Arg1>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(const detail::move_binder1<Handler, Arg1>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::move_binder1<Handler, Arg1>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
-template <typename Handler, typename Arg1, typename Arg2, typename Allocator>
-struct associated_allocator<
-    detail::move_binder2<Handler, Arg1, Arg2>, Allocator>
+template <template <typename, typename> class Associator,
+    typename Handler, typename Arg1, typename Arg2,
+    typename DefaultCandidate>
+struct associator<Associator,
+    detail::move_binder2<Handler, Arg1, Arg2>, DefaultCandidate>
+  : Associator<Handler, DefaultCandidate>
 {
-  typedef typename associated_allocator<Handler, Allocator>::type type;
-
-  static type get(const detail::move_binder2<Handler, Arg1, Arg2>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type get(
+      const detail::move_binder2<Handler, Arg1, Arg2>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename Handler, typename Arg1, typename Executor>
-struct associated_executor<detail::move_binder1<Handler, Arg1>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
-{
-  typedef typename associated_executor<Handler, Executor>::type type;
-
-  static type get(const detail::move_binder1<Handler, Arg1>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
-  {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
-  }
-};
-
-template <typename Handler, typename Arg1, typename Arg2, typename Executor>
-struct associated_executor<detail::move_binder2<Handler, Arg1, Arg2>, Executor>
-  : detail::associated_executor_forwarding_base<Handler, Executor>
-{
-  typedef typename associated_executor<Handler, Executor>::type type;
-
-  static type get(const detail::move_binder2<Handler, Arg1, Arg2>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
-  {
-    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
