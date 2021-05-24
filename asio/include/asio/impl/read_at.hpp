@@ -16,8 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <algorithm>
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
+#include "asio/associator.hpp"
 #include "asio/buffer.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/detail/array_fwd.hpp"
@@ -383,44 +382,23 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessReadDevice,
-    typename MutableBufferSequence, typename MutableBufferIterator,
-    typename CompletionCondition, typename ReadHandler, typename Allocator>
-struct associated_allocator<
+template <template <typename, typename> class Associator,
+    typename AsyncRandomAccessReadDevice, typename MutableBufferSequence,
+    typename MutableBufferIterator, typename CompletionCondition,
+    typename ReadHandler, typename DefaultCandidate>
+struct associator<Associator,
     detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
-    MutableBufferIterator, CompletionCondition, ReadHandler>,
-    Allocator>
+      MutableBufferIterator, CompletionCondition, ReadHandler>,
+    DefaultCandidate>
+  : Associator<ReadHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<ReadHandler, Allocator>::type type;
-
-  static type get(
+  static typename Associator<ReadHandler, DefaultCandidate>::type get(
       const detail::read_at_op<AsyncRandomAccessReadDevice,
-      MutableBufferSequence, MutableBufferIterator,
-      CompletionCondition, ReadHandler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+        MutableBufferSequence, MutableBufferIterator,
+        CompletionCondition, ReadHandler>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<ReadHandler, Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename AsyncRandomAccessReadDevice,
-    typename MutableBufferSequence, typename MutableBufferIterator,
-    typename CompletionCondition, typename ReadHandler, typename Executor>
-struct associated_executor<
-    detail::read_at_op<AsyncRandomAccessReadDevice, MutableBufferSequence,
-    MutableBufferIterator, CompletionCondition, ReadHandler>,
-    Executor>
-  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
-{
-  typedef typename associated_executor<ReadHandler, Executor>::type type;
-
-  static type get(
-      const detail::read_at_op<AsyncRandomAccessReadDevice,
-      MutableBufferSequence, MutableBufferIterator,
-      CompletionCondition, ReadHandler>& h,
-      const Executor& ex = Executor()) ASIO_NOEXCEPT
-  {
-    return associated_executor<ReadHandler, Executor>::get(h.handler_, ex);
+    return Associator<ReadHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
@@ -662,40 +640,22 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename AsyncRandomAccessReadDevice, typename Allocator,
-    typename CompletionCondition, typename ReadHandler, typename Allocator1>
-struct associated_allocator<
-    detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
-      Allocator, CompletionCondition, ReadHandler>,
-    Allocator1>
-{
-  typedef typename associated_allocator<ReadHandler, Allocator1>::type type;
-
-  static type get(
-      const detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
-        Allocator, CompletionCondition, ReadHandler>& h,
-      const Allocator1& a = Allocator1()) ASIO_NOEXCEPT
-  {
-    return associated_allocator<ReadHandler, Allocator1>::get(h.handler_, a);
-  }
-};
-
-template <typename AsyncRandomAccessReadDevice, typename Executor,
-    typename CompletionCondition, typename ReadHandler, typename Executor1>
-struct associated_executor<
+template <template <typename, typename> class Associator,
+    typename AsyncRandomAccessReadDevice, typename Executor,
+    typename CompletionCondition, typename ReadHandler,
+    typename DefaultCandidate>
+struct associator<Associator,
     detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
       Executor, CompletionCondition, ReadHandler>,
-    Executor1>
-  : detail::associated_executor_forwarding_base<ReadHandler, Executor>
+    DefaultCandidate>
+  : Associator<ReadHandler, DefaultCandidate>
 {
-  typedef typename associated_executor<ReadHandler, Executor1>::type type;
-
-  static type get(
+  static typename Associator<ReadHandler, DefaultCandidate>::type get(
       const detail::read_at_streambuf_op<AsyncRandomAccessReadDevice,
         Executor, CompletionCondition, ReadHandler>& h,
-      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_executor<ReadHandler, Executor1>::get(h.handler_, ex);
+    return Associator<ReadHandler, DefaultCandidate>::get(h.handler_, c);
   }
 };
 
