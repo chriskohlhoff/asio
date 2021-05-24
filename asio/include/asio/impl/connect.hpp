@@ -16,8 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include <algorithm>
-#include "asio/associated_allocator.hpp"
-#include "asio/associated_executor.hpp"
+#include "asio/associator.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
@@ -723,86 +722,44 @@ namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename Protocol, typename Executor, typename EndpointSequence,
-    typename ConnectCondition, typename RangeConnectHandler, typename Allocator>
-struct associated_allocator<
-    detail::range_connect_op<Protocol, Executor, EndpointSequence,
-      ConnectCondition, RangeConnectHandler>, Allocator>
+template <template <typename, typename> class Associator,
+    typename Protocol, typename Executor, typename EndpointSequence,
+    typename ConnectCondition, typename RangeConnectHandler,
+    typename DefaultCandidate>
+struct associator<Associator,
+    detail::range_connect_op<Protocol, Executor,
+      EndpointSequence, ConnectCondition, RangeConnectHandler>,
+    DefaultCandidate>
+  : Associator<RangeConnectHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<
-      RangeConnectHandler, Allocator>::type type;
-
-  static type get(
-      const detail::range_connect_op<Protocol, Executor, EndpointSequence,
-        ConnectCondition, RangeConnectHandler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  static typename Associator<RangeConnectHandler, DefaultCandidate>::type get(
+      const detail::range_connect_op<Protocol, Executor,
+        EndpointSequence, ConnectCondition, RangeConnectHandler>& h,
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<RangeConnectHandler,
-        Allocator>::get(h.handler_, a);
+    return Associator<RangeConnectHandler, DefaultCandidate>::get(
+        h.handler_, c);
   }
 };
 
-template <typename Protocol, typename Executor, typename EndpointSequence,
-    typename ConnectCondition, typename RangeConnectHandler, typename Executor1>
-struct associated_executor<
-    detail::range_connect_op<Protocol, Executor, EndpointSequence,
-      ConnectCondition, RangeConnectHandler>, Executor1>
-  : detail::associated_executor_forwarding_base<RangeConnectHandler, Executor1>
-{
-  typedef typename associated_executor<
-      RangeConnectHandler, Executor1>::type type;
-
-  static type get(
-      const detail::range_connect_op<Protocol, Executor, EndpointSequence,
-      ConnectCondition, RangeConnectHandler>& h,
-      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
-  {
-    return associated_executor<RangeConnectHandler,
-        Executor1>::get(h.handler_, ex);
-  }
-};
-
-template <typename Protocol, typename Executor, typename Iterator,
+template <template <typename, typename> class Associator,
+    typename Protocol, typename Executor, typename Iterator,
     typename ConnectCondition, typename IteratorConnectHandler,
-    typename Allocator>
-struct associated_allocator<
+    typename DefaultCandidate>
+struct associator<Associator,
     detail::iterator_connect_op<Protocol, Executor,
       Iterator, ConnectCondition, IteratorConnectHandler>,
-    Allocator>
+    DefaultCandidate>
+  : Associator<IteratorConnectHandler, DefaultCandidate>
 {
-  typedef typename associated_allocator<
-      IteratorConnectHandler, Allocator>::type type;
-
-  static type get(
+  static typename Associator<IteratorConnectHandler, DefaultCandidate>::type
+  get(
       const detail::iterator_connect_op<Protocol, Executor,
         Iterator, ConnectCondition, IteratorConnectHandler>& h,
-      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
-    return associated_allocator<IteratorConnectHandler,
-        Allocator>::get(h.handler_, a);
-  }
-};
-
-template <typename Protocol, typename Executor, typename Iterator,
-    typename ConnectCondition, typename IteratorConnectHandler,
-    typename Executor1>
-struct associated_executor<
-    detail::iterator_connect_op<Protocol, Executor,
-      Iterator, ConnectCondition, IteratorConnectHandler>,
-    Executor1>
-  : detail::associated_executor_forwarding_base<
-      IteratorConnectHandler, Executor1>
-{
-  typedef typename associated_executor<
-      IteratorConnectHandler, Executor1>::type type;
-
-  static type get(
-      const detail::iterator_connect_op<Protocol, Executor,
-        Iterator, ConnectCondition, IteratorConnectHandler>& h,
-      const Executor1& ex = Executor1()) ASIO_NOEXCEPT
-  {
-    return associated_executor<IteratorConnectHandler,
-        Executor1>::get(h.handler_, ex);
+    return Associator<IteratorConnectHandler, DefaultCandidate>::get(
+        h.handler_, c);
   }
 };
 
