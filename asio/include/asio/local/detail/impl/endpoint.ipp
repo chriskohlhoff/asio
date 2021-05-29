@@ -121,7 +121,7 @@ void endpoint::init(const char* path_name, std::size_t path_length)
 
   // NUL-terminate normal path names. Names that start with a NUL are in the
   // UNIX domain protocol's "abstract namespace" and are not NUL-terminated.
-  if (path_length > 0 && data_.local.sun_path[0] == 0)
+  if (path_length > 0 && data_.local.sun_path[0] != 0)
     data_.local.sun_path[path_length] = 0;
 }
 
