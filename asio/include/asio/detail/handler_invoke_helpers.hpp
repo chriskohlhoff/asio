@@ -44,15 +44,17 @@ inline void invoke(Function& function, Context& context)
 #if !defined(ASIO_HAS_HANDLER_HOOKS)
   Function tmp(function);
   tmp();
-#elif defined(ASIO_NO_DEPRECATED)
+#else // !defined(ASIO_HAS_HANDLER_HOOKS)
+#if defined(ASIO_NO_DEPRECATED)
   // The asio_handler_invoke hook is no longer used to invoke the function.
   (void)&error_if_hook_is_defined<Function, Context>;
   (void)context;
   function();
-#else
+#else // defined(ASIO_NO_DEPRECATED)
   using asio::asio_handler_invoke;
   asio_handler_invoke(function, asio::detail::addressof(context));
-#endif
+#endif // defined(ASIO_NO_DEPRECATED)
+#endif // !defined(ASIO_HAS_HANDLER_HOOKS)
 }
 
 template <typename Function, typename Context>
@@ -61,16 +63,18 @@ inline void invoke(const Function& function, Context& context)
 #if !defined(ASIO_HAS_HANDLER_HOOKS)
   Function tmp(function);
   tmp();
-#elif defined(ASIO_NO_DEPRECATED)
+#else // !defined(ASIO_HAS_HANDLER_HOOKS)
+#if defined(ASIO_NO_DEPRECATED)
   // The asio_handler_invoke hook is no longer used to invoke the function.
   (void)&error_if_hook_is_defined<const Function, Context>;
   (void)context;
   Function tmp(function);
   tmp();
-#else
+#else // defined(ASIO_NO_DEPRECATED)
   using asio::asio_handler_invoke;
   asio_handler_invoke(function, asio::detail::addressof(context));
-#endif
+#endif // defined(ASIO_NO_DEPRECATED)
+#endif // !defined(ASIO_HAS_HANDLER_HOOKS)
 }
 
 } // namespace asio_handler_invoke_helpers

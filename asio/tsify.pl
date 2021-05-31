@@ -286,6 +286,13 @@ sub copy_source_file
           or $line =~ /\/local\//
           or $line =~ /\/generic\//
           or $line =~ /signal_set/
+          or $line =~ /thread_pool/
+          or $line =~ /descriptor_ops/
+          or $line =~ /reactive_descriptor_service/
+          or $line =~ /strand_service/
+          or $line =~ /win_iocp_handle_service/
+          or $line =~ /win_object_handle_service/
+          or $line =~ /winrt_ssocket_service_base/
         );
     }
 
@@ -455,18 +462,12 @@ sub find_include_files
       "asio/basic_deadline_timer.hpp",
       "asio/basic_streambuf.hpp",
       "asio/basic_streambuf_fwd.hpp",
-      "asio/datagram_socket_service.hpp",
       "asio/deadline_timer.hpp",
-      "asio/deadline_timer_service.hpp",
       "asio/io_context_strand.hpp",
       "asio/detail/strand_service.hpp",
       "asio/detail/impl/strand_service.hpp",
       "asio/detail/impl/strand_service.ipp",
-      "asio/socket_acceptor_service.hpp",
-      "asio/seq_packet_socket_service.hpp",
-      "asio/stream_socket_service.hpp",
-      "asio/time_traits.hpp",
-      "asio/waitable_timer_service.hpp");
+      "asio/time_traits.hpp");
 
   my @include_files = ();
   my %known_includes = ();
