@@ -337,7 +337,9 @@ nobase_include_HEADERS = \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
 	asio/experimental/as_single.hpp \
+	asio/experimental/as_tuple.hpp \
 	asio/experimental/impl/as_single.hpp \
+	asio/experimental/impl/as_tuple.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
