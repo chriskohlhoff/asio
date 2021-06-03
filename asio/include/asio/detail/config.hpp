@@ -827,6 +827,31 @@
 # endif // !defined(ASIO_DISABLE_STD_FUNCTION)
 #endif // !defined(ASIO_HAS_STD_FUNCTION)
 
+// Standard library support for the reference_wrapper class.
+#if !defined(ASIO_HAS_STD_REFERENCE_WRAPPER)
+# if !defined(ASIO_DISABLE_STD_REFERENCE_WRAPPER)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(__clang__)
+#  if defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5)) || (__GNUC__ > 4)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_REFERENCE_WRAPPER 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_REFERENCE_WRAPPER)
+#endif // !defined(ASIO_HAS_STD_REFERENCE_WRAPPER)
+
 // Standard library support for type traits.
 #if !defined(ASIO_HAS_STD_TYPE_TRAITS)
 # if !defined(ASIO_DISABLE_STD_TYPE_TRAITS)

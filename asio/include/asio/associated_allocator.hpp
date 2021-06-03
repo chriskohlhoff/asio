@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <memory>
+#include "asio/detail/functional.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -117,6 +118,29 @@ using associated_allocator_t
   = typename associated_allocator<T, Allocator>::type;
 
 #endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
+
+#if defined(ASIO_HAS_STD_REFERENCE_WRAPPER) \
+  || defined(GENERATING_DOCUMENTATION)
+
+/// Specialisation of associated_allocator for @c std::reference_wrapper.
+template <typename T, typename Allocator>
+struct associated_allocator<reference_wrapper<T>, Allocator>
+{
+  /// Forwards @c type to the associator specialisation for the unwrapped type
+  /// @c T.
+  typedef typename associated_allocator<T, Allocator>::type type;
+
+  /// Forwards the request to get the allocator to the associator specialisation
+  /// for the unwrapped type @c T.
+  static type get(reference_wrapper<T> t,
+      const Allocator& a = Allocator()) ASIO_NOEXCEPT
+  {
+    return associated_allocator<T, Allocator>::get(t.get(), a);
+  }
+};
+
+#endif // defined(ASIO_HAS_STD_REFERENCE_WRAPPER)
+       //   || defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

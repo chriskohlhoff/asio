@@ -33,6 +33,12 @@ using boost::function;
 #endif // defined(ASIO_HAS_STD_FUNCTION)
 
 } // namespace detail
+
+#if defined(ASIO_HAS_STD_REFERENCE_WRAPPER)
+using std::ref;
+using std::reference_wrapper;
+#endif // defined(ASIO_HAS_STD_REFERENCE_WRAPPER)
+
 } // namespace asio
 
 #endif // ASIO_DETAIL_FUNCTIONAL_HPP
