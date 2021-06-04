@@ -31,6 +31,27 @@ needs.
     [`ASIO_DISABLE_ALIAS_TEMPLATES`]
   ]
   [
+    [`ASIO_HAS_ALIGNED_NEW`]
+    [
+      Support for operator new with alignment argument.
+    ]
+    [`ASIO_DISABLE_ALIGNED_NEW`]
+  ]
+  [
+    [`ASIO_HAS_ALIGNOF`]
+    [
+      Support for the alignof operator.
+    ]
+    [`ASIO_DISABLE_ALIGNOF`]
+  ]
+  [
+    [`ASIO_HAS_BOOST_ALIGN`]
+    [
+      Boost align library.
+    ]
+    [`ASIO_DISABLE_BOOST_ALIGN`]
+  ]
+  [
     [`ASIO_HAS_BOOST_ARRAY`]
     [
       Boost array library.
@@ -467,6 +488,13 @@ needs.
       Standard library support for std::nested_exception.
     ]
     [`ASIO_DISABLE_STD_NESTED_EXCEPTION`]
+  ]
+  [
+    [`ASIO_HAS_STD_REFERENCE_WRAPPER`]
+    [
+      Standard library support for the reference_wrapper class.
+    ]
+    [`ASIO_DISABLE_STD_REFERENCE_WRAPPER`]
   ]
   [
     [`ASIO_HAS_STD_SHARED_PTR`]
