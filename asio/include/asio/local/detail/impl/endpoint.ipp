@@ -112,17 +112,12 @@ void endpoint::init(const char* path_name, std::size_t path_length)
     asio::detail::throw_error(ec);
   }
 
-  using namespace std; // For memcpy.
-  data_.local = asio::detail::sockaddr_un_type();
+  using namespace std; // For memset and memcpy.
+  memset(&data_.local, 0, sizeof(asio::detail::sockaddr_un_type));
   data_.local.sun_family = AF_UNIX;
   if (path_length > 0)
     memcpy(data_.local.sun_path, path_name, path_length);
   path_length_ = path_length;
-
-  // NUL-terminate normal path names. Names that start with a NUL are in the
-  // UNIX domain protocol's "abstract namespace" and are not NUL-terminated.
-  if (path_length > 0 && data_.local.sun_path[0] == 0)
-    data_.local.sun_path[path_length] = 0;
 }
 
 } // namespace detail
