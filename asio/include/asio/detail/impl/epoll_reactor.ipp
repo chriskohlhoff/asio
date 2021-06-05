@@ -22,6 +22,7 @@
 #include <cstddef>
 #include <sys/epoll.h>
 #include "asio/detail/epoll_reactor.hpp"
+#include "asio/detail/scheduler.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 

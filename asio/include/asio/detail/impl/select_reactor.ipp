@@ -28,6 +28,12 @@
 #include "asio/detail/signal_blocker.hpp"
 #include "asio/detail/socket_ops.hpp"
 
+#if defined(ASIO_HAS_IOCP)
+# include "asio/detail/win_iocp_io_context.hpp"
+#else // defined(ASIO_HAS_IOCP)
+# include "asio/detail/scheduler.hpp"
+#endif // defined(ASIO_HAS_IOCP)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
