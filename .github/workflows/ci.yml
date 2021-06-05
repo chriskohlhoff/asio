@@ -132,7 +132,7 @@ jobs:
             cxx-std: c++17
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_73_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.73.0/boost_1_73_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.tar.bz2
           #
           # Linux / g++-9 -std=c++14 / -O0 / standalone / separate compilation
           #
@@ -197,7 +197,7 @@ jobs:
             cxx-std: c++14
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
           #
           # Linux / g++-6 / -O0 / boost 1.64 / epoll disabled
           #
@@ -207,7 +207,7 @@ jobs:
             cxx-std: c++14
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
             select-reactor: -DASIO_DISABLE_EPOLL
           #
           # Linux / g++-6 / -O0 / boost 1.64 / separate compilation
@@ -219,7 +219,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
           #
           # Linux / g++-4.8 / -O2 / standalone
           #
@@ -247,7 +247,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
           #
           # Linux / g++-4.8 -std=c++11 / -O2 / boost 1.64
           #
@@ -258,7 +258,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
           #
           # Linux / clang++-10 -std=c++2a / -O2 / standalone
           #
@@ -294,7 +294,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
           #
           # macOS / c++2a -fcoroutines-ts / -O2 / standalone
           #
@@ -338,7 +338,7 @@ jobs:
             cxx-std: c++03
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
           #
           # macOS / c++03 / -O2 / boost 1.64 / separate compilation
           #
@@ -349,7 +349,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_64_0
-            boost-url: https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2/download
+            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.64.0/source/boost_1_64_0.tar.bz2
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
