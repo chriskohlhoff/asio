@@ -203,7 +203,11 @@ public:
 
       void await_suspend(coroutine_handle<void>) noexcept
       {
-        function_(this_);
+        (dispatch)(this_->attached_thread_->get_executor(),
+          [f = std::move(function_), t = this_]() mutable 
+          { 
+            f(t); 
+          });
       }
 
       void await_resume() const noexcept
