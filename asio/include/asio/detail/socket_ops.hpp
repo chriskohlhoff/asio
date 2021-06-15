@@ -103,7 +103,8 @@ ASIO_DECL int shutdown(socket_type s,
 ASIO_DECL int connect(socket_type s, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 
-ASIO_DECL void sync_connect(socket_type s, const socket_addr_type* addr,
+ASIO_DECL void sync_connect(socket_type s, state_type state,
+    const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec);
 
 #if defined(ASIO_HAS_IOCP)
