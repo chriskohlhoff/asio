@@ -19,7 +19,7 @@
 
 #if !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__) || defined(ASIO_USE_SOCKET_SELECT)
 # include "asio/detail/socket_select_interrupter.hpp"
 #elif defined(ASIO_HAS_EVENTFD)
 # include "asio/detail/eventfd_select_interrupter.hpp"
@@ -30,8 +30,8 @@
 namespace asio {
 namespace detail {
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
-typedef socket_select_interrupter select_interrupter;
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__) || defined(ASIO_USE_SOCKET_SELECT)
+	typedef socket_select_interrupter select_interrupter;
 #elif defined(ASIO_HAS_EVENTFD)
 typedef eventfd_select_interrupter select_interrupter;
 #else
