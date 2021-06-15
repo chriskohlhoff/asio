@@ -17,8 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS_RUNTIME)
-# include <thread>
+#if defined(ASIO_WINDOWS_RUNTIME) || defined(ASIO_DONT_USE_PAUSE)
+	# include <thread>
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 # include "asio/detail/socket_types.hpp"
 #else
@@ -38,7 +38,7 @@ namespace detail {
 
 void null_event::do_wait()
 {
-#if defined(ASIO_WINDOWS_RUNTIME)
+#if defined(ASIO_WINDOWS_RUNTIME) || defined(ASIO_DONT_USE_PAUSE)
   std::this_thread::sleep_until((std::chrono::steady_clock::time_point::max)());
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   ::Sleep(INFINITE);
@@ -49,7 +49,7 @@ void null_event::do_wait()
 
 void null_event::do_wait_for_usec(long usec)
 {
-#if defined(ASIO_WINDOWS_RUNTIME)
+#if defined(ASIO_WINDOWS_RUNTIME) || defined(ASIO_DONT_USE_PAUSE)
   std::this_thread::sleep_for(std::chrono::microseconds(usec));
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   ::Sleep(usec / 1000);
