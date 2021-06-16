@@ -585,14 +585,26 @@
 # define ASIO_DEFAULT_ALIGN 1
 #endif // defined(ASIO_HAS_ALIGNOF)
 
-// Support for operator new with alignment argument.
-#if !defined(ASIO_HAS_ALIGNED_NEW)
-# if !defined(ASIO_DISABLE_ALIGNED_NEW)
-#  if (__cplusplus >= 201703) && defined(__cpp_aligned_new)
-#   define ASIO_HAS_ALIGNED_NEW 1
-#  endif // (__cplusplus >= 201703) && defined(__cpp_aligned_new)
-# endif // !defined(ASIO_DISABLE_ALIGNED_NEW)
-#endif // !defined(ASIO_HAS_ALIGNED_NEW)
+// Standard library support for aligned allocation.
+#if !defined(ASIO_HAS_STD_ALIGNED_ALLOC)
+# if !defined(ASIO_DISABLE_STD_ALIGNED_ALLOC)
+#  if (__cplusplus >= 201703)
+#   if defined(__clang__)
+#    if defined(ASIO_HAS_CLANG_LIBCXX)
+#     if (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC)
+#      define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#     endif // (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC)
+#    elif defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#     define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#   elif defined(__GNUC__)
+#    if defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#     define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
+#   endif // defined(__GNUC__)
+#  endif // (__cplusplus >= 201703)
+# endif // !defined(ASIO_DISABLE_STD_ALIGNED_ALLOC)
+#endif // !defined(ASIO_HAS_STD_ALIGNED_ALLOC)
 
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
