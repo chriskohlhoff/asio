@@ -98,7 +98,7 @@ inline void* aligned_new(std::size_t align, std::size_t size)
     asio::detail::throw_exception(ex);
   }
   return ptr;
-#elif defined(ASIO_HAS_MSVC) && defined(ASIO_HAS_ALIGNOF)
+#elif defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
   void* ptr = _aligned_malloc(align, size);
   if (!ptr)
   {
@@ -106,10 +106,10 @@ inline void* aligned_new(std::size_t align, std::size_t size)
     asio::detail::throw_exception(ex);
   }
   return ptr;
-#else // defined(ASIO_HAS_MSVC) && defined(ASIO_HAS_ALIGNOF)
+#else // defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
   (void)align;
   return ::operator new(size);
-#endif // defined(ASIO_HAS_MSVC) && defined(ASIO_HAS_ALIGNOF)
+#endif // defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
 }
 
 inline void aligned_delete(void* ptr)
@@ -118,11 +118,11 @@ inline void aligned_delete(void* ptr)
   std::free(ptr);
 #elif defined(ASIO_HAS_BOOST_ALIGN) && defined(ASIO_HAS_ALIGNOF)
   boost::alignment::aligned_free(ptr);
-#elif defined(ASIO_HAS_MSVC) && defined(ASIO_HAS_ALIGNOF)
+#elif defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
   _aligned_free(ptr);
-#else // defined(ASIO_HAS_MSVC) && defined(ASIO_HAS_ALIGNOF)
+#else // defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
   ::operator delete(ptr);
-#endif // defined(ASIO_HAS_MSVC) && defined(ASIO_HAS_ALIGNOF)
+#endif // defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
 }
 
 } // namespace asio
