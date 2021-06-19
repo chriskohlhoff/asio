@@ -346,6 +346,7 @@ nobase_include_HEADERS = \
 	asio/experimental/as_tuple.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/as_tuple.hpp \
+	asio/experimental/lazy.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
