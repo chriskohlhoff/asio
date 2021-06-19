@@ -10,6 +10,13 @@ LDADD = libasio.a
 endif
 
 noinst_PROGRAMS = \
+	deferred/deferred_1 \
+	deferred/deferred_2 \
+	deferred/deferred_3 \
+	deferred/deferred_4 \
+	deferred/deferred_5 \
+	deferred/deferred_6 \
+	deferred/deferred_7 \
 	echo/async_tcp_echo_server \
 	echo/async_udp_echo_server \
 	echo/blocking_tcp_echo_client \
@@ -36,6 +43,13 @@ noinst_PROGRAMS = \
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
+deferred_deferred_1_SOURCES = deferred/deferred_1.cpp
+deferred_deferred_2_SOURCES = deferred/deferred_2.cpp
+deferred_deferred_3_SOURCES = deferred/deferred_3.cpp
+deferred_deferred_4_SOURCES = deferred/deferred_4.cpp
+deferred_deferred_5_SOURCES = deferred/deferred_5.cpp
+deferred_deferred_6_SOURCES = deferred/deferred_6.cpp
+deferred_deferred_7_SOURCES = deferred/deferred_7.cpp
 echo_async_tcp_echo_server_SOURCES = echo/async_tcp_echo_server.cpp
 echo_async_udp_echo_server_SOURCES = echo/async_udp_echo_server.cpp
 echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp

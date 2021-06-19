@@ -346,11 +346,13 @@ nobase_include_HEADERS = \
 	asio/experimental/as_single.hpp \
 	asio/experimental/as_tuple.hpp \
 	asio/experimental/cancellation_condition.hpp \
+	asio/experimental/deferred.hpp \
 	asio/experimental/parallel_group.hpp \
 	asio/experimental/prepend.hpp \
 	asio/experimental/impl/append.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/as_tuple.hpp \
+	asio/experimental/impl/deferred.hpp \
 	asio/experimental/impl/parallel_group.hpp \
 	asio/experimental/impl/prepend.hpp \
 	asio/generic/basic_endpoint.hpp \
