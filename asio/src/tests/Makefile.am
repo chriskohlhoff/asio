@@ -115,6 +115,7 @@ check_PROGRAMS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+	unit/promise \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
@@ -277,6 +278,7 @@ TESTS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+    unit/promise \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
@@ -449,6 +451,7 @@ unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
 unit_post_SOURCES = unit/post.cpp
+unit_promise_SOURCES = unit/promise.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
