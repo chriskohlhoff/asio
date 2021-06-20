@@ -35,6 +35,12 @@ check_PROGRAMS = \
 	unit/buffer \
 	unit/buffers_iterator \
 	unit/co_spawn \
+    unit/coro/cancel \
+    unit/coro/exception \
+    unit/coro/partial \
+    unit/coro/simple_test \
+    unit/coro/stack_test \
+    unit/coro/use_coro \
 	unit/completion_condition \
 	unit/compose \
 	unit/connect \
@@ -204,6 +210,12 @@ TESTS = \
 	unit/buffer \
 	unit/buffers_iterator \
 	unit/co_spawn \
+	unit/coro/cancel \
+	unit/coro/exception \
+	unit/coro/partial \
+	unit/coro/simple_test \
+	unit/coro/stack_test \
+	unit/coro/use_coro \
 	unit/completion_condition \
 	unit/compose \
 	unit/connect \
@@ -371,6 +383,12 @@ unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
 unit_co_spawn_SOURCES = unit/co_spawn.cpp
+unit_coro_cancel_SOURCES       = unit/coro/cancel.cpp
+unit_coro_exception_SOURCES    = unit/coro/exception.cpp
+unit_coro_partial_SOURCES      = unit/coro/partial.cpp
+unit_coro_simple_test_SOURCES  = unit/coro/simple_test.cpp
+unit_coro_stack_test_SOURCES   = unit/coro/stack_test.cpp
+unit_coro_use_coro_SOURCES     = unit/coro/use_coro.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp
 unit_connect_SOURCES = unit/connect.cpp
