@@ -104,6 +104,17 @@ public:
   }
 };
 
+template <typename Impl, typename CompletionToken>
+auto operator|(lazy_operation<Impl> head,
+    ASIO_MOVE_ARG(CompletionToken) tail)
+  -> decltype(
+    ASIO_MOVE_OR_LVALUE(lazy_operation<Impl>)(head)(
+        ASIO_MOVE_CAST(CompletionToken)(tail)))
+{
+  return ASIO_MOVE_OR_LVALUE(lazy_operation<Impl>)(head)(
+      ASIO_MOVE_CAST(CompletionToken)(tail));
+}
+
 template <typename T>
 struct is_lazy_operation : false_type
 {
