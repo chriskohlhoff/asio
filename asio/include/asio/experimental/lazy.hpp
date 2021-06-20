@@ -104,6 +104,100 @@ public:
   }
 };
 
+namespace detail {
+
+struct lazy_empty_branch
+{
+  template <typename... Args>
+  void operator()(ASIO_MOVE_ARG(Args)...) ASIO_RVALUE_REF_QUAL
+  {
+  }
+};
+
+} // namespace detail
+
+/// Class used to make conditional lazy branches.
+template <typename OnTrue, typename OnFalse>
+class lazy_condition
+{
+public:
+  template <typename T, typename F>
+  explicit lazy_condition(bool b, ASIO_MOVE_ARG(T) on_true,
+      ASIO_MOVE_ARG(F) on_false)
+    : on_true_(ASIO_MOVE_CAST(T)(on_true)),
+      on_false_(ASIO_MOVE_CAST(F)(on_false)),
+      bool_(b)
+  {
+  }
+
+  template <typename... Args>
+  auto operator()(ASIO_MOVE_ARG(Args)... args) ASIO_RVALUE_REF_QUAL
+  {
+    if (bool_)
+    {
+      return ASIO_MOVE_OR_LVALUE(OnTrue)(on_true_)(
+          ASIO_MOVE_CAST(Args)(args)...);
+    }
+    else
+    {
+      return ASIO_MOVE_OR_LVALUE(OnFalse)(on_false_)(
+          ASIO_MOVE_CAST(Args)(args)...);
+    }
+  }
+
+  template <typename Impl>
+  lazy_operation<lazy_condition<Impl, OnFalse>> then(
+      lazy_operation<Impl> op,
+      typename constraint<
+        is_same<
+          typename conditional<true, OnTrue, Impl>::type,
+          detail::lazy_empty_branch
+        >::value
+      >::type* = 0) ASIO_RVALUE_REF_QUAL
+  {
+    return lazy_operation<lazy_condition<Impl, OnFalse>>(
+        lazy_condition<Impl, OnFalse>(bool_,
+          ASIO_MOVE_CAST(Impl)(op),
+          ASIO_MOVE_CAST(OnFalse)(on_false_)));
+  }
+
+  template <typename Impl>
+  lazy_operation<lazy_condition<OnTrue, Impl>> otherwise(
+      lazy_operation<Impl> op,
+      typename constraint<
+        !is_same<
+          typename conditional<true, OnTrue, Impl>::type,
+          detail::lazy_empty_branch
+        >::value
+      >::type* = 0,
+      typename constraint<
+        is_same<
+          typename conditional<true, OnFalse, Impl>::type,
+          detail::lazy_empty_branch
+        >::value
+      >::type* = 0) ASIO_RVALUE_REF_QUAL
+  {
+    return lazy_operation<lazy_condition<OnTrue, Impl>>(
+        lazy_condition<OnTrue, Impl>(bool_,
+          ASIO_MOVE_CAST(OnTrue)(on_true_),
+          ASIO_MOVE_CAST(Impl)(op)));
+  }
+
+private:
+  OnTrue on_true_;
+  OnFalse on_false_;
+  bool bool_;
+};
+
+/// Helper function to create a lazy condition.
+inline lazy_condition<detail::lazy_empty_branch, detail::lazy_empty_branch>
+when(bool b)
+{
+  return lazy_condition<detail::lazy_empty_branch, detail::lazy_empty_branch>(
+      b, detail::lazy_empty_branch(), detail::lazy_empty_branch());
+}
+
+/// Pipe operator used to chain lazy operations.
 template <typename Impl, typename CompletionToken>
 auto operator|(lazy_operation<Impl> head,
     ASIO_MOVE_ARG(CompletionToken) tail)
