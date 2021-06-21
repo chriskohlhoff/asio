@@ -2,7 +2,6 @@
 #define CORO_TRAITS_HPP
 
 #include <variant>
-#include <concepts>
 #include <optional>
 #include <asio/any_io_executor.hpp>
 #include <asio/experimental/promise.hpp> // just for the  any_executor contept
