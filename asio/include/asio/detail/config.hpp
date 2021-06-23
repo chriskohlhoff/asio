@@ -424,6 +424,19 @@
 # endif // !defined(ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 #endif // !defined(ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS)
 
+// Support enum classes on compilers known to allow them.
+#if !defined(ASIO_HAS_ENUM_CLASS)
+# if !defined(ASIO_DISABLE_ENUM_CLASS)
+#  if (__cplusplus >= 201103)
+#   define ASIO_HAS_ENUM_CLASS 1
+#  elif defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#    define ASIO_HAS_ENUM_CLASS 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201103)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_ENUM_CLASS)
+#endif // !defined(ASIO_HAS_ENUM_CLASS)
+
 // Support concepts on compilers known to allow them.
 #if !defined(ASIO_HAS_CONCEPTS)
 # if !defined(ASIO_DISABLE_CONCEPTS)
