@@ -227,7 +227,7 @@ public:
   }
 
   /// Assign an existing native descriptor to the descriptor.
-  /*
+  /**
    * This function opens the descriptor to hold an existing native descriptor.
    *
    * @param native_descriptor A native descriptor.
@@ -243,7 +243,7 @@ public:
   }
 
   /// Assign an existing native descriptor to the descriptor.
-  /*
+  /**
    * This function opens the descriptor to hold an existing native descriptor.
    *
    * @param native_descriptor A native descriptor.
@@ -301,7 +301,7 @@ public:
    * descriptor. This is intended to allow access to native descriptor
    * functionality that is not otherwise provided.
    */
-  native_handle_type native_handle()
+  native_handle_type native_handle() const
   {
     return impl_.get_service().native_handle(impl_.get_implementation());
   }
@@ -674,7 +674,7 @@ private:
     {
     }
 
-    executor_type get_executor() const ASIO_NOEXCEPT
+    executor_type get_executor() ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
