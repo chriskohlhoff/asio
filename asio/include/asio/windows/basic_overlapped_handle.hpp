@@ -295,7 +295,7 @@ public:
    * handle. This is intended to allow access to native handle functionality
    * that is not otherwise provided.
    */
-  native_handle_type native_handle()
+  native_handle_type native_handle() const
   {
     return impl_.get_service().native_handle(impl_.get_implementation());
   }
@@ -348,6 +348,9 @@ private:
   basic_overlapped_handle& operator=(
       const basic_overlapped_handle&) ASIO_DELETED;
 };
+
+
+
 
 } // namespace windows
 } // namespace asio

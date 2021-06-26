@@ -20,6 +20,7 @@ check_PROGRAMS = \
 	unit/awaitable \
 	unit/basic_datagram_socket \
 	unit/basic_deadline_timer \
+	unit/basic_pipe \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
 	unit/basic_serial_port \
@@ -214,6 +215,7 @@ TESTS = \
 	unit/awaitable \
 	unit/basic_datagram_socket \
 	unit/basic_deadline_timer \
+    unit/basic_pipe \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
 	unit/basic_serial_port \
@@ -406,6 +408,7 @@ unit_async_result_SOURCES = unit/async_result.cpp
 unit_awaitable_SOURCES = unit/awaitable.cpp
 unit_basic_datagram_socket_SOURCES = unit/basic_datagram_socket.cpp
 unit_basic_deadline_timer_SOURCES = unit/basic_deadline_timer.cpp
+unit_basic_pipe_SOURCES = unit/basic_pipe.cpp
 unit_basic_raw_socket_SOURCES = unit/basic_raw_socket.cpp
 unit_basic_seq_packet_socket_SOURCES = unit/basic_seq_packet_socket.cpp
 unit_basic_serial_port_SOURCES = unit/basic_serial_port.cpp

@@ -1,0 +1,46 @@
+[/
+ / Copyright (c) 2021 Klemens D. Morgenstern klemens dot morgenstern at gmx dot net
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:pipes Pipes]
+
+Asio supports [link asio.reference.pipe pipes] for local communication using [link
+asio.reference.signal_set pipe]. They behave like any stream object,
+i.e. they can be used with [link asio.reference.async_read async_read] and [link asio.reference.async_write async_write].
+so that you can use
+
+  io_context ioc;
+
+  pipe p{ioc};
+  async_write(p, net::buffer("Hello world!"), net::detached);
+
+  ...
+
+  io_context ioc;
+
+  pipe p{ioc, "./pipe-name"};
+  async_write(p, net::buffer("Hello world!"), net::detached);
+
+Pipes can be named, although the allowed naming scheme is platform specific.
+The pipe consists of a [link asio.reference.read_pipe_end read_pipe_end] and
+a [link asio.reference.write_pipe_end write_pipe_end]. In C++17 those can be obtained using structured bindings
+
+  io_context ioc;
+
+  auto [read, write] = pipe p{ioc};
+  async_write(write, net::buffer("Hello world!"), net::detached);
+
+Furthermore, asio provided pipe-ends local to the current process to open the stdio handles.
+Note that the calls may only succeed the first time due to operating system limitations.
+
+* [link asio.reference.open_stdin open_stdin] Open stdin device for reading.
+* [link asio.reference.open_stdout open_stdout] Open stdout device for writing.
+* [link asio.reference.open_stderr open_stderr] Open stderr device for writing.
+
+Additionally, you can open the systems null device as follows:
+
+* [link asio.reference.open_read_null open_read_null] Open a null device for reading.
+* [link asio.reference.open_write_null open_write_null] Open a null device for writing.

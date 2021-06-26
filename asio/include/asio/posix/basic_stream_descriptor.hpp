@@ -422,7 +422,7 @@ public:
         initiate_async_read_some(this), handler, buffers);
   }
 
-private:
+  private:
   class initiate_async_write_some
   {
   public:
@@ -433,7 +433,7 @@ private:
     {
     }
 
-    executor_type get_executor() const ASIO_NOEXCEPT
+    executor_type get_executor() ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
@@ -466,7 +466,7 @@ private:
     {
     }
 
-    executor_type get_executor() const ASIO_NOEXCEPT
+    executor_type get_executor() ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
