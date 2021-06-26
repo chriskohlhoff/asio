@@ -73,7 +73,12 @@ public:
     enum
     {
       begin_mem_index = executor_function_tag::end_mem_index,
-      end_mem_index = begin_mem_index + 1
+#ifdef ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index =
+        begin_mem_index + ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+#else // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = begin_mem_index + 2
+#endif // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
     };
   };
 
