@@ -108,9 +108,9 @@ struct coro_with_arg
 
                     typename coro_t::promise_type *coro;
 
-                    void operator()()
+                    void operator()(cancellation_type ct)
                     {
-                        coro->cancel.signal.emit();
+                        coro->cancel.signal.emit(ct);
                     }
                 };
 
@@ -131,10 +131,10 @@ struct coro_with_arg
                     E e;
                     typename coro_t::promise_type *coro;
 
-                    void operator()()
+                    void operator()(cancellation_type ct)
                     {
-                        dispatch(e, [p = coro]() mutable
-                        { p->cancel.signal.emit(); });
+                        dispatch(e, [ct, p = coro]() mutable
+                        { p->cancel.signal.emit(ct); });
                     }
                 };
                 hp.cancel.state.slot().template emplace<cancel_handler>(coro.get_executor(), coro);
@@ -293,11 +293,11 @@ struct coro
     explicit operator bool() const
     { return is_open(); }
 
-    void cancel()
+    void cancel(cancellation_type ct = cancellation_type::all)
     {
         if (is_open() && !coro_->cancel.state.cancelled())
-            dispatch(get_executor(), [coro = coro_]
-            { coro->cancel.signal.emit(); });
+            dispatch(get_executor(), [ct, coro = coro_]
+            { coro->cancel.signal.emit(ct); });
     }
 
   private:
@@ -324,9 +324,9 @@ struct coro
 
                     typename coro::promise_type *coro_;
 
-                    void operator()()
+                    void operator()(cancellation_type ct)
                     {
-                        coro_->cancel.signal.emit();
+                        coro_->cancel.signal.emit(ct);
                     }
                 };
 
@@ -346,10 +346,10 @@ struct coro
                     E e;
                     typename coro::promise_type *coro;
 
-                    void operator()()
+                    void operator()(cancellation_type ct)
                     {
-                        dispatch(e, [p = coro]() mutable
-                        { p->cancel.signal.emit(); });
+                        dispatch(e, [ct, p = coro]() mutable
+                        { p->cancel.signal.emit(ct); });
                     }
                 };
                 hp.cancel.state.slot().template emplace<cancel_handler>(coro_.get_executor(), coro_);
@@ -506,10 +506,10 @@ struct coro
             cancel_handler(promise_type *coro) : coro(coro)
             {}
 
-            void operator()()
+            void operator()(cancellation_type ct)
             {
-                dispatch(coro->get_executor(), [k = coro]
-                { k->cancel.signal.emit(); });
+                dispatch(coro->get_executor(), [ct, k = coro]
+                { k->cancel.signal.emit(ct); });
             }
         };
 

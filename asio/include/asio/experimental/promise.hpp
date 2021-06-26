@@ -10,6 +10,7 @@
 #ifndef ASIO_EXPERIMENTAL_PROMISE_HPP
 #define ASIO_EXPERIMENTAL_PROMISE_HPP
 
+#include <asio/detail/type_traits.hpp>
 #include <asio/experimental/impl/promise.hpp>
 #include <asio/experimental/impl/completion_handler_erasure.hpp>
 
@@ -65,10 +66,10 @@ struct promise<void(Ts...), Executor>
             return {};
     }
 
-    void cancel()
+    void cancel(cancellation_type level = cancellation_type::all)
     {
         if (impl_)
-            dispatch(impl_->executor, [impl = impl_]{impl->cancel.emit();});
+            dispatch(impl_->executor, [level, impl = impl_]{impl->cancel.emit(level);});
 
     }
 
@@ -104,11 +105,11 @@ struct promise<void(Ts...), Executor>
             {
                 impl_t * self;
                 cancel_handler(impl_t * self) : self(self) {}
-                void operator()()
+                void operator()(cancellation_type ct)
                 {
-                    [s=self]<std::size_t... Idx>(std::index_sequence<Idx...>)
+                    [ct, s=self]<std::size_t... Idx>(std::index_sequence<Idx...>)
                     {
-                        (get<Idx>(s->tup).cancel(), ... );
+                        (get<Idx>(s->tup).cancel(ct), ... );
                     }(std::make_index_sequence<sizeof...(Ps)>{});
                 }
             };
@@ -166,11 +167,11 @@ struct promise<void(Ts...), Executor>
             {
                 impl_t * self;
                 cancel_handler(impl_t * self) : self(self) {}
-                void operator()()
+                void operator()(cancellation_type level)
                 {
-                    [s=self]<std::size_t... Idx>(std::index_sequence<Idx...>)
+                    [level, s=self]<std::size_t... Idx>(std::index_sequence<Idx...>)
                     {
-                        (get<Idx>(s->tup).cancel(), ... );
+                        (get<Idx>(s->tup).cancel(level), ... );
                     }(std::make_index_sequence<sizeof...(Ps)>{});
                 }
             };
@@ -246,10 +247,10 @@ struct promise<void(Ts...), Executor>
             {
                 impl_t * self;
                 cancel_handler(impl_t * self) : self(self) {}
-                void operator()()
+                void operator()(asio::cancellation_type ct)
                 {
                     for (auto & r : self->range)
-                        r.cancel();
+                        r.cancel(ct);
                 }
             };
             Range range;
@@ -323,10 +324,10 @@ struct promise<void(Ts...), Executor>
             {
                 impl_t * self;
                 cancel_handler(impl_t * self) : self(self) {}
-                void operator()()
+                void operator()(cancellation_type ct)
                 {
                     for (auto & r : self->range)
-                        r.cancel();
+                        r.cancel(ct);
                 }
             };
 
@@ -432,10 +433,10 @@ private:
                     {
                         std::weak_ptr<detail::promise_impl<void(Ts...), Executor>> self;
                         cancel_handler(std::weak_ptr<detail::promise_impl<void(Ts...), Executor>> self) : self(std::move(self)) {}
-                        void operator()() const
+                        void operator()(cancellation_type level) const
                         {
                             if (auto p = self.lock(); p != nullptr)
-                                p->cancel.emit();
+                                p->cancel.emit(level);
 
                         }
                     };
