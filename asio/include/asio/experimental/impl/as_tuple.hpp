@@ -130,18 +130,55 @@ struct as_tuple_signature<R(Args...)>
   typedef R type(std::tuple<typename decay<Args>::type...>);
 };
 
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R, typename... Args>
+struct as_tuple_signature<R(Args...) &>
+{
+  typedef R type(std::tuple<typename decay<Args>::type...>) &;
+};
+
+template <typename R, typename... Args>
+struct as_tuple_signature<R(Args...) &&>
+{
+  typedef R type(std::tuple<typename decay<Args>::type...>) &&;
+};
+
+# if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct as_tuple_signature<R(Args...) noexcept>
+{
+  typedef R type(std::tuple<typename decay<Args>::type...>) noexcept;
+};
+
+template <typename R, typename... Args>
+struct as_tuple_signature<R(Args...) & noexcept>
+{
+  typedef R type(std::tuple<typename decay<Args>::type...>) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct as_tuple_signature<R(Args...) && noexcept>
+{
+  typedef R type(std::tuple<typename decay<Args>::type...>) && noexcept;
+};
+
+# endif // defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
 } // namespace detail
 } // namespace experimental
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename CompletionToken, typename Signature>
-struct async_result<experimental::as_tuple_t<CompletionToken>, Signature>
+template <typename CompletionToken, typename... Signatures>
+struct async_result<experimental::as_tuple_t<CompletionToken>, Signatures...>
   : async_result<CompletionToken,
-      typename experimental::detail::as_tuple_signature<Signature>::type>
+      typename experimental::detail::as_tuple_signature<Signatures>::type...>
 {
   typedef async_result<CompletionToken,
-    typename experimental::detail::as_tuple_signature<Signature>::type>
+    typename experimental::detail::as_tuple_signature<Signatures>::type...>
       base_async_result;
 
   template <typename Initiation>
@@ -169,7 +206,7 @@ struct async_result<experimental::as_tuple_t<CompletionToken>, Signature>
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
   static ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken,
-      typename experimental::detail::as_tuple_signature<Signature>::type,
+      typename experimental::detail::as_tuple_signature<Signatures>::type...,
       (base_async_result::initiate(
         declval<init_wrapper<typename decay<Initiation>::type> >(),
         declval<CompletionToken>(),
