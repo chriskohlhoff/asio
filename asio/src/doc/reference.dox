@@ -202,6 +202,7 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_DECL= \
                          ASIO_CONSTEXPR=constexpr \
                          ASIO_NOEXCEPT=noexcept \
+                         ASIO_NODISCARD= \
                          ASIO_COMPLETION_SIGNATURE=typename \
                          ASIO_COMPLETION_HANDLER_FOR(s)=typename \
                          ASIO_COMPLETION_TOKEN_FOR(s)=typename \
