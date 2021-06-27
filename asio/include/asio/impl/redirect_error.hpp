@@ -206,6 +206,78 @@ struct redirect_error_signature<R(const asio::error_code&, Args...)>
   typedef R type(Args...);
 };
 
+# if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(asio::error_code, Args...) &>
+{
+  typedef R type(Args...) &;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(const asio::error_code&, Args...) &>
+{
+  typedef R type(Args...) &;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(asio::error_code, Args...) &&>
+{
+  typedef R type(Args...) &&;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<R(const asio::error_code&, Args...) &&>
+{
+  typedef R type(Args...) &&;
+};
+
+#  if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(asio::error_code, Args...) noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(const asio::error_code&, Args...) noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(asio::error_code, Args...) & noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(const asio::error_code&, Args...) & noexcept>
+{
+  typedef R type(Args...) & noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(asio::error_code, Args...) && noexcept>
+{
+  typedef R type(Args...) && noexcept;
+};
+
+template <typename R, typename... Args>
+struct redirect_error_signature<
+  R(const asio::error_code&, Args...) && noexcept>
+{
+  typedef R type(Args...) && noexcept;
+};
+
+#  endif // defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+# endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename R>
@@ -238,6 +310,161 @@ struct redirect_error_signature<R(const asio::error_code&)>
   ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_REDIRECT_ERROR_DEF)
 #undef ASIO_PRIVATE_REDIRECT_ERROR_DEF
 
+# if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R>
+struct redirect_error_signature<R(asio::error_code) &>
+{
+  typedef R type() &;
+};
+
+template <typename R>
+struct redirect_error_signature<R(const asio::error_code&) &>
+{
+  typedef R type() &;
+};
+
+template <typename R>
+struct redirect_error_signature<R(asio::error_code) &&>
+{
+  typedef R type() &&;
+};
+
+template <typename R>
+struct redirect_error_signature<R(const asio::error_code&) &&>
+{
+  typedef R type() &&;
+};
+
+#define ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(asio::error_code, ASIO_VARIADIC_TARGS(n)) &> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) &; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const asio::error_code&, ASIO_VARIADIC_TARGS(n)) &> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) &; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(asio::error_code, ASIO_VARIADIC_TARGS(n)) &&> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) &&; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const asio::error_code&, ASIO_VARIADIC_TARGS(n)) &&> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) &&; \
+  }; \
+  /**/
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_REDIRECT_ERROR_DEF)
+#undef ASIO_PRIVATE_REDIRECT_ERROR_DEF
+
+#  if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R>
+struct redirect_error_signature<
+  R(asio::error_code) noexcept>
+{
+  typedef R type() noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(const asio::error_code&) noexcept>
+{
+  typedef R type() noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(asio::error_code) & noexcept>
+{
+  typedef R type() & noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(const asio::error_code&) & noexcept>
+{
+  typedef R type() & noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(asio::error_code) && noexcept>
+{
+  typedef R type() && noexcept;
+};
+
+template <typename R>
+struct redirect_error_signature<
+  R(const asio::error_code&) && noexcept>
+{
+  typedef R type() && noexcept;
+};
+
+#define ASIO_PRIVATE_REDIRECT_ERROR_DEF(n) \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(asio::error_code, ASIO_VARIADIC_TARGS(n)) noexcept> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) noexcept; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const asio::error_code&, \
+        ASIO_VARIADIC_TARGS(n)) noexcept> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) noexcept; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(asio::error_code, \
+        ASIO_VARIADIC_TARGS(n)) & noexcept> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) & noexcept; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const asio::error_code&, \
+        ASIO_VARIADIC_TARGS(n)) & noexcept> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) & noexcept; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(asio::error_code, \
+        ASIO_VARIADIC_TARGS(n)) && noexcept> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) && noexcept; \
+  }; \
+  \
+  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
+  struct redirect_error_signature< \
+      R(const asio::error_code&, \
+        ASIO_VARIADIC_TARGS(n)) && noexcept> \
+  { \
+    typedef R type(ASIO_VARIADIC_TARGS(n)) && noexcept; \
+  }; \
+  /**/
+  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_REDIRECT_ERROR_DEF)
+#undef ASIO_PRIVATE_REDIRECT_ERROR_DEF
+
+#  endif // defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+# endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 } // namespace detail
