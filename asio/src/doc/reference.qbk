@@ -20,6 +20,8 @@
 [include requirements/AsyncReadStream.qbk]
 [include requirements/AsyncWriteStream.qbk]
 [include requirements/BufferedHandshakeHandler.qbk]
+[include requirements/CancellationHandler.qbk]
+[include requirements/CancellationSlot.qbk]
 [include requirements/CompletionCondition.qbk]
 [include requirements/CompletionHandler.qbk]
 [include requirements/ConnectCondition.qbk]
@@ -1307,6 +1309,228 @@ If `T` has a nested type `allocator_type`, `T::allocator_type`. Otherwise `Alloc
 
 [endsect]
 
+[section:associated_allocator_lt__reference_wrapper_lt__T__gt__comma__Allocator__gt_ associated_allocator< reference_wrapper< T >, Allocator >]
+
+[indexterm1 asio.indexterm.associated_allocator_lt__reference_wrapper_lt__T__gt__comma__Allocator__gt_..associated_allocator< reference_wrapper< T >, Allocator >]
+
+
+Specialisation of [link asio.reference.associated_allocator `associated_allocator`] for `std::reference_wrapper`. 
+
+
+  template<
+      typename T,
+      typename Allocator>
+  struct associated_allocator< reference_wrapper< T >, Allocator >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.associated_allocator_lt__reference_wrapper_lt__T__gt__comma__Allocator__gt_.type [*type]]]
+    [Forwards type to the associator specialisation for the unwrapped type T. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.associated_allocator_lt__reference_wrapper_lt__T__gt__comma__Allocator__gt_.get [*get]] [static]]
+    [Forwards the request to get the allocator to the associator specialisation for the unwrapped type T. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/associated_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:get associated_allocator< reference_wrapper< T >, Allocator >::get]
+
+[indexterm2 asio.indexterm.associated_allocator_lt__reference_wrapper_lt__T__gt__comma__Allocator__gt_.get..get..associated_allocator< reference_wrapper< T >, Allocator >] 
+Forwards the request to get the allocator to the associator specialisation for the unwrapped type `T`. 
+
+
+  static type get(
+      reference_wrapper< T > t,
+      const Allocator & a = Allocator());
+
+
+
+[endsect]
+
+
+
+[section:type associated_allocator< reference_wrapper< T >, Allocator >::type]
+
+[indexterm2 asio.indexterm.associated_allocator_lt__reference_wrapper_lt__T__gt__comma__Allocator__gt_.type..type..associated_allocator< reference_wrapper< T >, Allocator >] 
+Forwards `type` to the associator specialisation for the unwrapped type `T`. 
+
+
+  typedef associated_allocator< T, Allocator >::type type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.associated_allocator.type [*type]]]
+    [If T has a nested type allocator_type, T::allocator_type. Otherwise Allocator. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.associated_allocator.get [*get]] [static]]
+    [If T has a nested type allocator_type, returns t.get_allocator(). Otherwise returns a. ]
+  ]
+  
+]
+
+A program may specialise this traits type if the `T` template parameter in the specialisation is a user-defined type. The template parameter `Allocator` shall be a type meeting the Allocator requirements.
+
+Specialisations shall meet the following requirements, where `t` is a const reference to an object of type `T`, and `a` is an object of type `Allocator`.
+
+
+* Provide a nested typedef `type` that identifies a type meeting the Allocator requirements.
+
+
+* Provide a noexcept static member function named `get`, callable as `get(t)` and with return type `type`.
+
+
+* Provide a noexcept static member function named `get`, callable as `get(t,a)` and with return type `type`. 
+
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/associated_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:associated_cancellation_slot associated_cancellation_slot]
+
+[indexterm1 asio.indexterm.associated_cancellation_slot..associated_cancellation_slot]
+
+
+Traits type used to obtain the [link asio.reference.cancellation_slot `cancellation_slot`] associated with an object. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]`` = cancellation_slot>
+  struct associated_cancellation_slot
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.associated_cancellation_slot.type [*type]]]
+    [If T has a nested type cancellation_slot_type, T::cancellation_slot_type. Otherwise CancellationSlot. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.associated_cancellation_slot.get [*get]] [static]]
+    [If T has a nested type cancellation_slot_type, returns t.get_cancellation_slot(). Otherwise returns s. ]
+  ]
+  
+]
+
+A program may specialise this traits type if the `T` template parameter in the specialisation is a user-defined type. The template parameter `CancellationSlot` shall be a type meeting the CancellationSlot requirements.
+
+Specialisations shall meet the following requirements, where `t` is a const reference to an object of type `T`, and `s` is an object of type `CancellationSlot`.
+
+
+* Provide a nested typedef `type` that identifies a type meeting the CancellationSlot requirements.
+
+
+* Provide a noexcept static member function named `get`, callable as `get(t)` and with return type `type`.
+
+
+* Provide a noexcept static member function named `get`, callable as `get(t,s)` and with return type `type`. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/associated_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:get associated_cancellation_slot::get]
+
+[indexterm2 asio.indexterm.associated_cancellation_slot.get..get..associated_cancellation_slot] 
+If `T` has a nested type `cancellation_slot_type`, returns `t.get_cancellation_slot()`. Otherwise returns `s`. 
+
+
+  static type get(
+      const T & t,
+      const CancellationSlot & s = CancellationSlot());
+
+
+
+[endsect]
+
+
+
+[section:type associated_cancellation_slot::type]
+
+[indexterm2 asio.indexterm.associated_cancellation_slot.type..type..associated_cancellation_slot] 
+If `T` has a nested type `cancellation_slot_type`, `T::cancellation_slot_type`. Otherwise `CancellationSlot`. 
+
+
+  typedef see_below type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/associated_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:associated_executor associated_executor]
 
 [indexterm1 asio.indexterm.associated_executor..associated_executor]
@@ -1402,6 +1626,153 @@ If `T` has a nested type `executor_type`, `T::executor_type`. Otherwise `Executo
 
 [endsect]
 
+
+
+[endsect]
+
+[section:associated_executor_lt__reference_wrapper_lt__T__gt__comma__Executor__gt_ associated_executor< reference_wrapper< T >, Executor >]
+
+[indexterm1 asio.indexterm.associated_executor_lt__reference_wrapper_lt__T__gt__comma__Executor__gt_..associated_executor< reference_wrapper< T >, Executor >]
+
+
+Specialisation of [link asio.reference.associated_executor `associated_executor`] for `std::reference_wrapper`. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  struct associated_executor< reference_wrapper< T >, Executor >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.associated_executor_lt__reference_wrapper_lt__T__gt__comma__Executor__gt_.type [*type]]]
+    [Forwards type to the associator specialisation for the unwrapped type T. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.associated_executor_lt__reference_wrapper_lt__T__gt__comma__Executor__gt_.get [*get]] [static]]
+    [Forwards the request to get the executor to the associator specialisation for the unwrapped type T. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/associated_executor.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:get associated_executor< reference_wrapper< T >, Executor >::get]
+
+[indexterm2 asio.indexterm.associated_executor_lt__reference_wrapper_lt__T__gt__comma__Executor__gt_.get..get..associated_executor< reference_wrapper< T >, Executor >] 
+Forwards the request to get the executor to the associator specialisation for the unwrapped type `T`. 
+
+
+  static type get(
+      reference_wrapper< T > t,
+      const Executor & ex = Executor());
+
+
+
+[endsect]
+
+
+
+[section:type associated_executor< reference_wrapper< T >, Executor >::type]
+
+[indexterm2 asio.indexterm.associated_executor_lt__reference_wrapper_lt__T__gt__comma__Executor__gt_.type..type..associated_executor< reference_wrapper< T >, Executor >] 
+Forwards `type` to the associator specialisation for the unwrapped type `T`. 
+
+
+  typedef associated_executor< T, Executor >::type type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.associated_executor.type [*type]]]
+    [If T has a nested type executor_type, T::executor_type. Otherwise Executor. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.associated_executor.get [*get]] [static]]
+    [If T has a nested type executor_type, returns t.get_executor(). Otherwise returns ex. ]
+  ]
+  
+]
+
+A program may specialise this traits type if the `T` template parameter in the specialisation is a user-defined type. The template parameter `Executor` shall be a type meeting the Executor requirements.
+
+Specialisations shall meet the following requirements, where `t` is a const reference to an object of type `T`, and `e` is an object of type `Executor`.
+
+
+* Provide a nested typedef `type` that identifies a type meeting the Executor requirements.
+
+
+* Provide a noexcept static member function named `get`, callable as `get(t)` and with return type `type`.
+
+
+* Provide a noexcept static member function named `get`, callable as `get(t,e)` and with return type `type`. 
+
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/associated_executor.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:associator associator]
+
+[indexterm1 asio.indexterm.associator..associator]
+
+
+Used to generically specialise associators for a type. 
+
+
+  template<
+      template< typename, typename > class Associator,
+      typename T,
+      typename DefaultCandidate>
+  struct associator
+
+
+[heading Requirements]
+
+['Header: ][^asio/associator.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -12663,7 +13034,6 @@ Shutting down the send side of the socket:
 [indexterm2 asio.indexterm.basic_datagram_socket.shutdown_type..shutdown_type..basic_datagram_socket] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.basic_datagram_socket.shutdown_type.shutdown_receive..shutdown_receive..basic_datagram_socket]
@@ -12812,7 +13182,6 @@ Waiting for a socket to become readable.
 
 [indexterm2 asio.indexterm.basic_datagram_socket.wait_type..wait_type..basic_datagram_socket] 
 Wait types. 
-
 
   enum wait_type
 
@@ -21375,7 +21744,6 @@ Shutting down the send side of the socket:
 [indexterm2 asio.indexterm.basic_raw_socket.shutdown_type..shutdown_type..basic_raw_socket] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.basic_raw_socket.shutdown_type.shutdown_receive..shutdown_receive..basic_raw_socket]
@@ -21524,7 +21892,6 @@ Waiting for a socket to become readable.
 
 [indexterm2 asio.indexterm.basic_raw_socket.wait_type..wait_type..basic_raw_socket] 
 Wait types. 
-
 
   enum wait_type
 
@@ -27307,7 +27674,6 @@ Shutting down the send side of the socket:
 [indexterm2 asio.indexterm.basic_seq_packet_socket.shutdown_type..shutdown_type..basic_seq_packet_socket] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.basic_seq_packet_socket.shutdown_type.shutdown_receive..shutdown_receive..basic_seq_packet_socket]
@@ -27456,7 +27822,6 @@ Waiting for a socket to become readable.
 
 [indexterm2 asio.indexterm.basic_seq_packet_socket.wait_type..wait_type..basic_seq_packet_socket] 
 Wait types. 
-
 
   enum wait_type
 
@@ -35821,7 +36186,6 @@ Shutting down the send side of the socket:
 [indexterm2 asio.indexterm.basic_socket.shutdown_type..shutdown_type..basic_socket] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.basic_socket.shutdown_type.shutdown_receive..shutdown_receive..basic_socket]
@@ -35964,7 +36328,6 @@ Waiting for a socket to become readable.
 
 [indexterm2 asio.indexterm.basic_socket.wait_type..wait_type..basic_socket] 
 Wait types. 
-
 
   enum wait_type
 
@@ -41522,7 +41885,6 @@ Setting the SOL\_SOCKET/SO\_REUSEADDR option:
 [indexterm2 asio.indexterm.basic_socket_acceptor.shutdown_type..shutdown_type..basic_socket_acceptor] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.basic_socket_acceptor.shutdown_type.shutdown_receive..shutdown_receive..basic_socket_acceptor]
@@ -41665,7 +42027,6 @@ Waiting for an acceptor to become readable.
 
 [indexterm2 asio.indexterm.basic_socket_acceptor.wait_type..wait_type..basic_socket_acceptor] 
 Wait types. 
-
 
   enum wait_type
 
@@ -49340,7 +49701,6 @@ Shutting down the send side of the socket:
 [indexterm2 asio.indexterm.basic_stream_socket.shutdown_type..shutdown_type..basic_stream_socket] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.basic_stream_socket.shutdown_type.shutdown_receive..shutdown_receive..basic_stream_socket]
@@ -49489,7 +49849,6 @@ Waiting for a socket to become readable.
 
 [indexterm2 asio.indexterm.basic_stream_socket.wait_type..wait_type..basic_stream_socket] 
 Wait types. 
-
 
   enum wait_type
 
@@ -54103,6 +54462,31 @@ By default, when a yield context is used with an asynchronous operation, a non-s
 
 
 [endsect]
+
+
+[section:bind_cancellation_slot bind_cancellation_slot]
+
+[indexterm1 asio.indexterm.bind_cancellation_slot..bind_cancellation_slot] 
+Associate an object of type `T` with a cancellation slot of type `CancellationSlot`. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``,
+      typename T>
+  cancellation_slot_binder< typename decay< T >::type, CancellationSlot > bind_cancellation_slot(
+      const CancellationSlot & s,
+      T && t);
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
 
 [section:bind_executor bind_executor]
 
@@ -59307,6 +59691,1369 @@ Class template `can_require_concept` is a trait that is derived from `true_type`
 
 [endsect]
 
+[section:cancellation_filter cancellation_filter]
+
+[indexterm1 asio.indexterm.cancellation_filter..cancellation_filter]
+
+
+A simple cancellation signal propagation filter. 
+
+
+  template<
+      cancellation_type_t Mask>
+  struct cancellation_filter
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_filter.operator_lp__rp_ [*operator()]]]
+    [Returns type & Mask. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_state.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:operator_lp__rp_ cancellation_filter::operator()]
+
+[indexterm2 asio.indexterm.cancellation_filter.operator_lp__rp_..operator()..cancellation_filter] 
+Returns `type & Mask`. 
+
+
+  cancellation_type_t operator()(
+      cancellation_type_t type) const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:cancellation_signal cancellation_signal]
+
+[indexterm1 asio.indexterm.cancellation_signal..cancellation_signal]
+
+
+A cancellation signal with a single slot. 
+
+
+  class cancellation_signal
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_signal.cancellation_signal [*cancellation_signal]] [constructor]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.cancellation_signal.emit [*emit]]]
+    [Emits the signal and causes invocation of the slot's handler, if any. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_signal.slot [*slot]]]
+    [Returns the single slot associated with the signal. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_signal._cancellation_signal [*~cancellation_signal]] [destructor]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_signal.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:cancellation_signal cancellation_signal::cancellation_signal]
+
+[indexterm2 asio.indexterm.cancellation_signal.cancellation_signal..cancellation_signal..cancellation_signal] 
+
+  constexpr cancellation_signal();
+
+
+
+[endsect]
+
+
+
+[section:emit cancellation_signal::emit]
+
+[indexterm2 asio.indexterm.cancellation_signal.emit..emit..cancellation_signal] 
+Emits the signal and causes invocation of the slot's handler, if any. 
+
+
+  void emit(
+      cancellation_type_t type);
+
+
+
+[endsect]
+
+
+
+[section:slot cancellation_signal::slot]
+
+[indexterm2 asio.indexterm.cancellation_signal.slot..slot..cancellation_signal] 
+Returns the single slot associated with the signal. 
+
+
+  cancellation_slot slot();
+
+
+The signal object must remain valid for as long the slot may be used. Destruction of the signal invalidates the slot. 
+
+
+[endsect]
+
+
+
+[section:_cancellation_signal cancellation_signal::~cancellation_signal]
+
+[indexterm2 asio.indexterm.cancellation_signal._cancellation_signal..~cancellation_signal..cancellation_signal] 
+
+  ~cancellation_signal();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:cancellation_slot cancellation_slot]
+
+[indexterm1 asio.indexterm.cancellation_slot..cancellation_slot]
+
+
+A slot associated with a cancellation signal. 
+
+
+  class cancellation_slot
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_slot.assign [*assign]]]
+    [Installs a handler into the slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.cancellation_slot [*cancellation_slot]] [constructor]]
+    [Creates a slot that is not connected to any cancellation signal. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.clear [*clear]]]
+    [Clears the slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.emplace [*emplace]]]
+    [Installs a handler into the slot, constructing the new object directly. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.has_handler [*has_handler]]]
+    [Returns whether the slow is connected and has an installed handler. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.is_connected [*is_connected]]]
+    [Returns whether the slot is connected to a signal. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_slot.operator_not__eq_ [*operator!=]]]
+    [Compare two slots for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.operator_eq__eq_ [*operator==]]]
+    [Compare two slots for equality. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_signal.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:assign cancellation_slot::assign]
+
+[indexterm2 asio.indexterm.cancellation_slot.assign..assign..cancellation_slot] 
+Installs a handler into the slot. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationHandler CancellationHandler]``>
+  decay< CancellationHandler >::type & assign(
+      CancellationHandler && handler);
+
+
+Destroys any existing handler in the slot, then installs the new handler, constructing it as a decay-copy of the supplied handler.
+
+The handler is a function object to be called when the signal is emitted. The signature of the handler must be 
+
+   void handler(asio::cancellation_type_t); 
+
+
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[handler][The handler to be installed.]]
+
+]
+
+
+[heading Return Value]
+      
+A reference to the newly installed handler. 
+
+
+
+
+[endsect]
+
+
+
+[section:cancellation_slot cancellation_slot::cancellation_slot]
+
+[indexterm2 asio.indexterm.cancellation_slot.cancellation_slot..cancellation_slot..cancellation_slot] 
+Creates a slot that is not connected to any cancellation signal. 
+
+
+  constexpr cancellation_slot();
+
+
+
+[endsect]
+
+
+
+[section:clear cancellation_slot::clear]
+
+[indexterm2 asio.indexterm.cancellation_slot.clear..clear..cancellation_slot] 
+Clears the slot. 
+
+
+  void clear();
+
+
+Destroys any existing handler in the slot. 
+
+
+[endsect]
+
+
+
+[section:emplace cancellation_slot::emplace]
+
+[indexterm2 asio.indexterm.cancellation_slot.emplace..emplace..cancellation_slot] 
+Installs a handler into the slot, constructing the new object directly. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationHandler CancellationHandler]``,
+      typename... Args>
+  CancellationHandler & emplace(
+      Args &&... args);
+
+
+Destroys any existing handler in the slot, then installs the new handler, constructing it with the supplied `args`.
+
+The handler is a function object to be called when the signal is emitted. The signature of the handler must be 
+
+   void handler(asio::cancellation_type_t); 
+
+
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[args][Arguments to be passed to the `CancellationHandler` object's constructor.]]
+
+]
+
+
+[heading Return Value]
+      
+A reference to the newly installed handler.
+
+
+[heading Remarks]
+      
+Handlers installed into the slot via `emplace` are not required to be copy constructible or move constructible. 
+
+
+
+
+[endsect]
+
+
+
+[section:has_handler cancellation_slot::has_handler]
+
+[indexterm2 asio.indexterm.cancellation_slot.has_handler..has_handler..cancellation_slot] 
+Returns whether the slow is connected and has an installed handler. 
+
+
+  constexpr bool has_handler() const;
+
+
+
+[endsect]
+
+
+
+[section:is_connected cancellation_slot::is_connected]
+
+[indexterm2 asio.indexterm.cancellation_slot.is_connected..is_connected..cancellation_slot] 
+Returns whether the slot is connected to a signal. 
+
+
+  constexpr bool is_connected() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ cancellation_slot::operator!=]
+
+[indexterm2 asio.indexterm.cancellation_slot.operator_not__eq_..operator!=..cancellation_slot] 
+Compare two slots for inequality. 
+
+
+  friend constexpr bool operator!=(
+      const cancellation_slot & lhs,
+      const cancellation_slot & rhs);
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_signal.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ cancellation_slot::operator==]
+
+[indexterm2 asio.indexterm.cancellation_slot.operator_eq__eq_..operator==..cancellation_slot] 
+Compare two slots for equality. 
+
+
+  friend constexpr bool operator==(
+      const cancellation_slot & lhs,
+      const cancellation_slot & rhs);
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_signal.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:cancellation_slot_binder cancellation_slot_binder]
+
+[indexterm1 asio.indexterm.cancellation_slot_binder..cancellation_slot_binder]
+
+
+A call wrapper type to bind a cancellation slot of type `CancellationSlot` to an object of type `T`. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``>
+  class cancellation_slot_binder
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.cancellation_slot_binder.argument_type [*argument_type]]]
+    [The type of the function's argument. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.cancellation_slot_binder.cancellation_slot_type [*cancellation_slot_type]]]
+    [The type of the associated cancellation slot. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.cancellation_slot_binder.first_argument_type [*first_argument_type]]]
+    [The type of the function's first argument. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.cancellation_slot_binder.result_type [*result_type]]]
+    [The return type if a function. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.cancellation_slot_binder.second_argument_type [*second_argument_type]]]
+    [The type of the function's second argument. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.cancellation_slot_binder.target_type [*target_type]]]
+    [The type of the target object. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_slot_binder.cancellation_slot_binder [*cancellation_slot_binder]] [constructor]]
+    [Construct a cancellation slot wrapper for the specified object. 
+     [hr]
+     Copy constructor. 
+     [hr]
+     Construct a copy, but specify a different cancellation slot. 
+     [hr]
+     Construct a copy of a different cancellation slot wrapper type. 
+     [hr]
+     Construct a copy of a different cancellation slot wrapper type, but specify a different cancellation slot. 
+     [hr]
+     Move constructor. 
+     [hr]
+     Move construct the target object, but specify a different cancellation slot. 
+     [hr]
+     Move construct from a different cancellation slot wrapper type. 
+     [hr]
+     Move construct from a different cancellation slot wrapper type, but specify a different cancellation slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot_binder.get [*get]]]
+    [Obtain a reference to the target object. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot_binder.get_cancellation_slot [*get_cancellation_slot]]]
+    [Obtain the associated cancellation slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot_binder.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot_binder._cancellation_slot_binder [*~cancellation_slot_binder]] [destructor]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:argument_type cancellation_slot_binder::argument_type]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.argument_type..argument_type..cancellation_slot_binder] 
+The type of the function's argument. 
+
+
+  typedef see_below argument_type;
+
+
+
+The type of `argument_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to a function type accepting a single argument, `argument_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `argument_type`, then `argument_type` is a synonym for `T::argument_type`;
+
+
+* otherwise `argument_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:cancellation_slot_binder cancellation_slot_binder::cancellation_slot_binder]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.cancellation_slot_binder..cancellation_slot_binder..cancellation_slot_binder] 
+Construct a cancellation slot wrapper for the specified object. 
+
+
+  template<
+      typename U>
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload1 cancellation_slot_binder]``(
+      const cancellation_slot_type & s,
+      U && u);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload1 more...]]``
+
+
+Copy constructor. 
+
+
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload2 cancellation_slot_binder]``(
+      const cancellation_slot_binder & other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload2 more...]]``
+
+
+Construct a copy, but specify a different cancellation slot. 
+
+
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload3 cancellation_slot_binder]``(
+      const cancellation_slot_type & s,
+      const cancellation_slot_binder & other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload3 more...]]``
+
+
+Construct a copy of a different cancellation slot wrapper type. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload4 cancellation_slot_binder]``(
+      const cancellation_slot_binder< U, OtherCancellationSlot > & other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload4 more...]]``
+
+
+Construct a copy of a different cancellation slot wrapper type, but specify a different cancellation slot. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload5 cancellation_slot_binder]``(
+      const cancellation_slot_type & s,
+      const cancellation_slot_binder< U, OtherCancellationSlot > & other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload5 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload6 cancellation_slot_binder]``(
+      cancellation_slot_binder && other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload6 more...]]``
+
+
+Move construct the target object, but specify a different cancellation slot. 
+
+
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload7 cancellation_slot_binder]``(
+      const cancellation_slot_type & s,
+      cancellation_slot_binder && other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload7 more...]]``
+
+
+Move construct from a different cancellation slot wrapper type. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload8 cancellation_slot_binder]``(
+      cancellation_slot_binder< U, OtherCancellationSlot > && other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload8 more...]]``
+
+
+Move construct from a different cancellation slot wrapper type, but specify a different cancellation slot. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  ``[link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload9 cancellation_slot_binder]``(
+      const cancellation_slot_type & s,
+      cancellation_slot_binder< U, OtherCancellationSlot > && other);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.cancellation_slot_binder.overload9 more...]]``
+
+
+[section:overload1 cancellation_slot_binder::cancellation_slot_binder (1 of 9 overloads)]
+
+
+Construct a cancellation slot wrapper for the specified object. 
+
+
+  template<
+      typename U>
+  cancellation_slot_binder(
+      const cancellation_slot_type & s,
+      U && u);
+
+
+This constructor is only valid if the type `T` is constructible from type `U`. 
+
+
+[endsect]
+
+
+
+[section:overload2 cancellation_slot_binder::cancellation_slot_binder (2 of 9 overloads)]
+
+
+Copy constructor. 
+
+
+  cancellation_slot_binder(
+      const cancellation_slot_binder & other);
+
+
+
+[endsect]
+
+
+
+[section:overload3 cancellation_slot_binder::cancellation_slot_binder (3 of 9 overloads)]
+
+
+Construct a copy, but specify a different cancellation slot. 
+
+
+  cancellation_slot_binder(
+      const cancellation_slot_type & s,
+      const cancellation_slot_binder & other);
+
+
+
+[endsect]
+
+
+
+[section:overload4 cancellation_slot_binder::cancellation_slot_binder (4 of 9 overloads)]
+
+
+Construct a copy of a different cancellation slot wrapper type. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  cancellation_slot_binder(
+      const cancellation_slot_binder< U, OtherCancellationSlot > & other);
+
+
+This constructor is only valid if the `CancellationSlot` type is constructible from type `OtherCancellationSlot`, and the type `T` is constructible from type `U`. 
+
+
+[endsect]
+
+
+
+[section:overload5 cancellation_slot_binder::cancellation_slot_binder (5 of 9 overloads)]
+
+
+Construct a copy of a different cancellation slot wrapper type, but specify a different cancellation slot. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  cancellation_slot_binder(
+      const cancellation_slot_type & s,
+      const cancellation_slot_binder< U, OtherCancellationSlot > & other);
+
+
+This constructor is only valid if the type `T` is constructible from type `U`. 
+
+
+[endsect]
+
+
+
+[section:overload6 cancellation_slot_binder::cancellation_slot_binder (6 of 9 overloads)]
+
+
+Move constructor. 
+
+
+  cancellation_slot_binder(
+      cancellation_slot_binder && other);
+
+
+
+[endsect]
+
+
+
+[section:overload7 cancellation_slot_binder::cancellation_slot_binder (7 of 9 overloads)]
+
+
+Move construct the target object, but specify a different cancellation slot. 
+
+
+  cancellation_slot_binder(
+      const cancellation_slot_type & s,
+      cancellation_slot_binder && other);
+
+
+
+[endsect]
+
+
+
+[section:overload8 cancellation_slot_binder::cancellation_slot_binder (8 of 9 overloads)]
+
+
+Move construct from a different cancellation slot wrapper type. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  cancellation_slot_binder(
+      cancellation_slot_binder< U, OtherCancellationSlot > && other);
+
+
+
+[endsect]
+
+
+
+[section:overload9 cancellation_slot_binder::cancellation_slot_binder (9 of 9 overloads)]
+
+
+Move construct from a different cancellation slot wrapper type, but specify a different cancellation slot. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.CancellationSlot OtherCancellationSlot]``>
+  cancellation_slot_binder(
+      const cancellation_slot_type & s,
+      cancellation_slot_binder< U, OtherCancellationSlot > && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancellation_slot_type cancellation_slot_binder::cancellation_slot_type]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.cancellation_slot_type..cancellation_slot_type..cancellation_slot_binder] 
+The type of the associated cancellation slot. 
+
+
+  typedef CancellationSlot cancellation_slot_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:first_argument_type cancellation_slot_binder::first_argument_type]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.first_argument_type..first_argument_type..cancellation_slot_binder] 
+The type of the function's first argument. 
+
+
+  typedef see_below first_argument_type;
+
+
+
+The type of `first_argument_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to a function type accepting two arguments, `first_argument_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `first_argument_type`, then `first_argument_type` is a synonym for `T::first_argument_type`;
+
+
+* otherwise `first_argument_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:get cancellation_slot_binder::get]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.get..get..cancellation_slot_binder] 
+Obtain a reference to the target object. 
+
+
+  target_type & ``[link asio.reference.cancellation_slot_binder.get.overload1 get]``();
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.get.overload1 more...]]``
+
+  const target_type & ``[link asio.reference.cancellation_slot_binder.get.overload2 get]``() const;
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.get.overload2 more...]]``
+
+
+[section:overload1 cancellation_slot_binder::get (1 of 2 overloads)]
+
+
+Obtain a reference to the target object. 
+
+
+  target_type & get();
+
+
+
+[endsect]
+
+
+
+[section:overload2 cancellation_slot_binder::get (2 of 2 overloads)]
+
+
+Obtain a reference to the target object. 
+
+
+  const target_type & get() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_cancellation_slot cancellation_slot_binder::get_cancellation_slot]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.get_cancellation_slot..get_cancellation_slot..cancellation_slot_binder] 
+Obtain the associated cancellation slot. 
+
+
+  cancellation_slot_type get_cancellation_slot() const;
+
+
+
+[endsect]
+
+
+[section:operator_lp__rp_ cancellation_slot_binder::operator()]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.operator_lp__rp_..operator()..cancellation_slot_binder] 
+
+  template<
+      typename... Args>
+  auto ``[link asio.reference.cancellation_slot_binder.operator_lp__rp_.overload1 operator()]``(
+      Args && ...);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.operator_lp__rp_.overload1 more...]]``
+
+  template<
+      typename... Args>
+  auto ``[link asio.reference.cancellation_slot_binder.operator_lp__rp_.overload2 operator()]``(
+      Args && ...) const;
+  ``  [''''&raquo;''' [link asio.reference.cancellation_slot_binder.operator_lp__rp_.overload2 more...]]``
+
+
+[section:overload1 cancellation_slot_binder::operator() (1 of 2 overloads)]
+
+
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args && ...);
+
+
+
+[endsect]
+
+
+
+[section:overload2 cancellation_slot_binder::operator() (2 of 2 overloads)]
+
+
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:result_type cancellation_slot_binder::result_type]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.result_type..result_type..cancellation_slot_binder] 
+The return type if a function. 
+
+
+  typedef see_below result_type;
+
+
+
+The type of `result_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to function type, `result_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `result_type`, then `result_type` is a synonym for `T::result_type`;
+
+
+* otherwise `result_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:second_argument_type cancellation_slot_binder::second_argument_type]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.second_argument_type..second_argument_type..cancellation_slot_binder] 
+The type of the function's second argument. 
+
+
+  typedef see_below second_argument_type;
+
+
+
+The type of `second_argument_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to a function type accepting two arguments, `second_argument_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `first_argument_type`, then `second_argument_type` is a synonym for `T::second_argument_type`;
+
+
+* otherwise `second_argument_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:target_type cancellation_slot_binder::target_type]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder.target_type..target_type..cancellation_slot_binder] 
+The type of the target object. 
+
+
+  typedef T target_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:_cancellation_slot_binder cancellation_slot_binder::~cancellation_slot_binder]
+
+[indexterm2 asio.indexterm.cancellation_slot_binder._cancellation_slot_binder..~cancellation_slot_binder..cancellation_slot_binder] 
+Destructor. 
+
+
+  ~cancellation_slot_binder();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:cancellation_state cancellation_state]
+
+[indexterm1 asio.indexterm.cancellation_state..cancellation_state]
+
+
+A cancellation state is used for chaining signals and slots in compositions. 
+
+
+  class cancellation_state
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_state.cancellation_state [*cancellation_state]] [constructor]]
+    [Construct a disconnected cancellation state. 
+     [hr]
+     Construct and attach to a parent slot to create a new child slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_state.cancelled [*cancelled]]]
+    [Returns specified cancellation types have been triggered. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_state.clear [*clear]]]
+    [Clears the specified cancellation types, if they have been triggered. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_state.slot [*slot]]]
+    [Returns the single child slot associated with the state. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_state.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+[section:cancellation_state cancellation_state::cancellation_state]
+
+[indexterm2 asio.indexterm.cancellation_state.cancellation_state..cancellation_state..cancellation_state] 
+Construct a disconnected cancellation state. 
+
+
+  constexpr ``[link asio.reference.cancellation_state.cancellation_state.overload1 cancellation_state]``();
+  ``  [''''&raquo;''' [link asio.reference.cancellation_state.cancellation_state.overload1 more...]]``
+
+
+Construct and attach to a parent slot to create a new child slot. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``>
+  explicit constexpr ``[link asio.reference.cancellation_state.cancellation_state.overload2 cancellation_state]``(
+      CancellationSlot slot);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_state.cancellation_state.overload2 more...]]``
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``,
+      typename Filter>
+  constexpr ``[link asio.reference.cancellation_state.cancellation_state.overload3 cancellation_state]``(
+      CancellationSlot slot,
+      Filter filter);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_state.cancellation_state.overload3 more...]]``
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``,
+      typename InFilter,
+      typename OutFilter>
+  constexpr ``[link asio.reference.cancellation_state.cancellation_state.overload4 cancellation_state]``(
+      CancellationSlot slot,
+      InFilter in_filter,
+      OutFilter out_filter);
+  ``  [''''&raquo;''' [link asio.reference.cancellation_state.cancellation_state.overload4 more...]]``
+
+
+[section:overload1 cancellation_state::cancellation_state (1 of 4 overloads)]
+
+
+Construct a disconnected cancellation state. 
+
+
+  constexpr cancellation_state();
+
+
+
+[endsect]
+
+
+
+[section:overload2 cancellation_state::cancellation_state (2 of 4 overloads)]
+
+
+Construct and attach to a parent slot to create a new child slot. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``>
+  constexpr cancellation_state(
+      CancellationSlot slot);
+
+
+
+[endsect]
+
+
+
+[section:overload3 cancellation_state::cancellation_state (3 of 4 overloads)]
+
+
+Construct and attach to a parent slot to create a new child slot. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``,
+      typename Filter>
+  constexpr cancellation_state(
+      CancellationSlot slot,
+      Filter filter);
+
+
+
+[endsect]
+
+
+
+[section:overload4 cancellation_state::cancellation_state (4 of 4 overloads)]
+
+
+Construct and attach to a parent slot to create a new child slot. 
+
+
+  template<
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``,
+      typename InFilter,
+      typename OutFilter>
+  constexpr cancellation_state(
+      CancellationSlot slot,
+      InFilter in_filter,
+      OutFilter out_filter);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancelled cancellation_state::cancelled]
+
+[indexterm2 asio.indexterm.cancellation_state.cancelled..cancelled..cancellation_state] 
+Returns specified cancellation types have been triggered. 
+
+
+  cancellation_type_t cancelled() const;
+
+
+
+[endsect]
+
+
+
+[section:clear cancellation_state::clear]
+
+[indexterm2 asio.indexterm.cancellation_state.clear..clear..cancellation_state] 
+Clears the specified cancellation types, if they have been triggered. 
+
+
+  void clear(
+      cancellation_type_t mask = cancellation_type::all);
+
+
+
+[endsect]
+
+
+
+[section:slot cancellation_state::slot]
+
+[indexterm2 asio.indexterm.cancellation_state.slot..slot..cancellation_state] 
+Returns the single child slot associated with the state. 
+
+
+  constexpr cancellation_slot slot() const;
+
+
+This sub-slot is used with the operations that are being composed. 
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:cancellation_type cancellation_type]
+
+[indexterm1 asio.indexterm.cancellation_type..cancellation_type] 
+Enumeration representing the different types of cancellation that may be requested from or implemented by an asynchronous operation. 
+
+  enum class cancellation_type : unsigned int
+
+[indexterm2 asio.indexterm.cancellation_type.none..none..cancellation_type]
+[indexterm2 asio.indexterm.cancellation_type.terminal..terminal..cancellation_type]
+[indexterm2 asio.indexterm.cancellation_type.partial..partial..cancellation_type]
+[indexterm2 asio.indexterm.cancellation_type.total..total..cancellation_type]
+[indexterm2 asio.indexterm.cancellation_type.all..all..cancellation_type]
+
+[heading Values]
+[variablelist
+
+  [
+    [none]
+    [Bitmask representing no types of cancellation. ]
+  ]
+
+  [
+    [terminal]
+    [Requests cancellation where, following a successful cancellation, the only safe operations on the I/O object are closure or destruction. ]
+  ]
+
+  [
+    [partial]
+    [Requests cancellation where a successful cancellation may result in partial side effects or no side effects. Following cancellation, the I/O object is in a well-known state, and may be used for further operations. ]
+  ]
+
+  [
+    [total]
+    [Requests cancellation where a successful cancellation results in no apparent side effects. Following cancellation, the I/O object is in the same observable state as it was prior to the operation. ]
+  ]
+
+  [
+    [all]
+    [Bitmask representing all types of cancellation. ]
+  ]
+
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_type.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:cancellation_type_t cancellation_type_t]
+
+[indexterm1 asio.indexterm.cancellation_type_t..cancellation_type_t] 
+Portability typedef. 
+
+
+  typedef cancellation_type cancellation_type_t;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_type.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
 [section:co_spawn co_spawn]
 
 [indexterm1 asio.indexterm.co_spawn..co_spawn] 
@@ -62676,6 +64423,38 @@ Convert the specified executor to the inner executor type, then use that to cons
 
 [endsect]
 
+
+[section:disable_cancellation disable_cancellation]
+
+[indexterm1 asio.indexterm.disable_cancellation..disable_cancellation] 
+A cancellation filter that disables cancellation. 
+
+
+  typedef cancellation_filter< cancellation_type::none > disable_cancellation;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_filter.operator_lp__rp_ [*operator()]]]
+    [Returns type & Mask. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_state.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
 [section:dispatch dispatch]
 
 [indexterm1 asio.indexterm.dispatch..dispatch] 
@@ -64373,6 +66152,102 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 [endsect]
 
 
+[section:enable_partial_cancellation enable_partial_cancellation]
+
+[indexterm1 asio.indexterm.enable_partial_cancellation..enable_partial_cancellation] 
+A cancellation filter that enables terminal and partial cancellation. 
+
+
+  typedef cancellation_filter< cancellation_type::terminal|cancellation_type::partial > enable_partial_cancellation;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_filter.operator_lp__rp_ [*operator()]]]
+    [Returns type & Mask. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_state.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:enable_terminal_cancellation enable_terminal_cancellation]
+
+[indexterm1 asio.indexterm.enable_terminal_cancellation..enable_terminal_cancellation] 
+A cancellation filter that enables terminal cancellation only. 
+
+
+  typedef cancellation_filter< cancellation_type::terminal > enable_terminal_cancellation;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_filter.operator_lp__rp_ [*operator()]]]
+    [Returns type & Mask. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_state.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:enable_total_cancellation enable_total_cancellation]
+
+[indexterm1 asio.indexterm.enable_total_cancellation..enable_total_cancellation] 
+A cancellation filter that enables terminal, partial and total cancellation. 
+
+
+  typedef cancellation_filter< cancellation_type::terminal|cancellation_type::partial|cancellation_type::total > enable_total_cancellation;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_filter.operator_lp__rp_ [*operator()]]]
+    [Returns type & Mask. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/cancellation_state.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
 [section:error__addrinfo_category error::addrinfo_category]
 
 [indexterm1 asio.indexterm.error__addrinfo_category..error::addrinfo_category] 
@@ -64394,7 +66269,6 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 [section:error__addrinfo_errors error::addrinfo_errors]
 
 [indexterm1 asio.indexterm.error__addrinfo_errors..error::addrinfo_errors] 
-
   enum addrinfo_errors
 
 [indexterm2 asio.indexterm.error__addrinfo_errors.service_not_found..service_not_found..error::addrinfo_errors]
@@ -64430,7 +66304,6 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 [section:error__basic_errors error::basic_errors]
 
 [indexterm1 asio.indexterm.error__basic_errors..error::basic_errors] 
-
   enum basic_errors
 
 [indexterm2 asio.indexterm.error__basic_errors.access_denied..access_denied..error::basic_errors]
@@ -64862,7 +66735,6 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 [section:error__misc_errors error::misc_errors]
 
 [indexterm1 asio.indexterm.error__misc_errors..error::misc_errors] 
-
   enum misc_errors
 
 [indexterm2 asio.indexterm.error__misc_errors.already_open..already_open..error::misc_errors]
@@ -64928,7 +66800,6 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 [section:error__netdb_errors error::netdb_errors]
 
 [indexterm1 asio.indexterm.error__netdb_errors..error::netdb_errors] 
-
   enum netdb_errors
 
 [indexterm2 asio.indexterm.error__netdb_errors.host_not_found..host_not_found..error::netdb_errors]
@@ -64994,7 +66865,6 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 [section:error__ssl_errors error::ssl_errors]
 
 [indexterm1 asio.indexterm.error__ssl_errors..error::ssl_errors] 
-
   enum ssl_errors
 
 
@@ -73135,7 +75005,6 @@ Constructor.
 [indexterm2 asio.indexterm.execution_context.fork_event..fork_event..execution_context] 
 Fork-related event notifications. 
 
-
   enum fork_event
 
 [indexterm2 asio.indexterm.execution_context.fork_event.fork_prepare..fork_prepare..execution_context]
@@ -75777,6 +77646,345 @@ Convert the specified executor to the inner executor type, then use that to cons
 
 
 [endsect]
+
+
+[endsect]
+
+
+[section:experimental__as_tuple experimental::as_tuple]
+
+[indexterm1 asio.indexterm.experimental__as_tuple..experimental::as_tuple] 
+Create a completion token to specify that the completion handler arguments should be combined into a single tuple argument. 
+
+
+  template<
+      typename CompletionToken>
+  constexpr as_tuple_t< typename decay< CompletionToken >::type > as_tuple(
+      CompletionToken && completion_token);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:experimental__as_tuple_t experimental::as_tuple_t]
+
+[indexterm1 asio.indexterm.experimental__as_tuple_t..experimental::as_tuple_t]
+
+
+Completion token type used to specify that the completion handler arguments should be combined into a single tuple argument. 
+
+
+  template<
+      typename CompletionToken>
+  class as_tuple_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__as_tuple_t__default_constructor_tag [*default_constructor_tag]]]
+    [Tag type used to prevent the "default" constructor from being used for conversions. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__as_tuple_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the as_tuple_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_tuple_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use as_tuple_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__as_tuple_t.as_tuple_t [*as_tuple_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_tuple_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.experimental__as_tuple_t `experimental::as_tuple_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single tuple argument. The arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:as_default_on experimental::as_tuple_t::as_default_on]
+
+[indexterm2 asio.indexterm.experimental__as_tuple_t.as_default_on..as_default_on..experimental::as_tuple_t] 
+Function helper to adapt an I/O object to use `as_tuple_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+[section:as_tuple_t experimental::as_tuple_t::as_tuple_t]
+
+[indexterm2 asio.indexterm.experimental__as_tuple_t.as_tuple_t..as_tuple_t..experimental::as_tuple_t] 
+Default constructor. 
+
+
+  constexpr ``[link asio.reference.experimental__as_tuple_t.as_tuple_t.overload1 as_tuple_t]``(
+      default_constructor_tag  = default_constructor_tag(),
+      CompletionToken token = CompletionToken());
+  ``  [''''&raquo;''' [link asio.reference.experimental__as_tuple_t.as_tuple_t.overload1 more...]]``
+
+
+Constructor. 
+
+
+  template<
+      typename T>
+  explicit constexpr ``[link asio.reference.experimental__as_tuple_t.as_tuple_t.overload2 as_tuple_t]``(
+      T && completion_token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__as_tuple_t.as_tuple_t.overload2 more...]]``
+
+
+[section:overload1 experimental::as_tuple_t::as_tuple_t (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr as_tuple_t(
+      default_constructor_tag  = default_constructor_tag(),
+      CompletionToken token = CompletionToken());
+
+
+This constructor is only valid if the underlying completion token is default constructible and move constructible. The underlying completion token is itself defaulted as an argument to allow it to capture a source location. 
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::as_tuple_t::as_tuple_t (2 of 2 overloads)]
+
+
+Constructor. 
+
+
+  template<
+      typename T>
+  constexpr as_tuple_t(
+      T && completion_token);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:token_ experimental::as_tuple_t::token_]
+
+[indexterm2 asio.indexterm.experimental__as_tuple_t.token_..token_..experimental::as_tuple_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__as_tuple_t__default_constructor_tag experimental::as_tuple_t::default_constructor_tag]
+
+[indexterm1 asio.indexterm.experimental__as_tuple_t__default_constructor_tag..experimental::as_tuple_t::default_constructor_tag]
+
+
+Tag type used to prevent the "default" constructor from being used for conversions. 
+
+
+  struct default_constructor_tag
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+[section:experimental__as_tuple_t__executor_with_default experimental::as_tuple_t::executor_with_default]
+
+[indexterm1 asio.indexterm.experimental__as_tuple_t__executor_with_default..experimental::as_tuple_t::executor_with_default]
+
+
+Adapts an executor to add the `as_tuple_t` completion token as the default. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__as_tuple_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify as_tuple_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_tuple_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:default_completion_token_type experimental::as_tuple_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 asio.indexterm.experimental__as_tuple_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::as_tuple_t::executor_with_default] 
+Specify `as_tuple_t` as the default completion token type. 
+
+
+  typedef as_tuple_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__as_tuple_t__default_constructor_tag [*default_constructor_tag]]]
+    [Tag type used to prevent the "default" constructor from being used for conversions. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__as_tuple_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the as_tuple_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_tuple_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use as_tuple_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__as_tuple_t.as_tuple_t [*as_tuple_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__as_tuple_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.experimental__as_tuple_t `experimental::as_tuple_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single tuple argument. The arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:executor_with_default experimental::as_tuple_t::executor_with_default::executor_with_default]
+
+[indexterm2 asio.indexterm.experimental__as_tuple_t__executor_with_default.executor_with_default..executor_with_default..experimental::as_tuple_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
+  executor_with_default(
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
 
 
 [endsect]
@@ -79858,6 +82066,83 @@ Helper function to obtain an object's associated allocator.
 
 [endsect]
 
+[section:get_associated_cancellation_slot get_associated_cancellation_slot]
+
+[indexterm1 asio.indexterm.get_associated_cancellation_slot..get_associated_cancellation_slot] 
+Helper function to obtain an object's associated [link asio.reference.cancellation_slot `cancellation_slot`]. 
+
+  template<
+      typename T>
+  associated_cancellation_slot< T >::type ``[link asio.reference.get_associated_cancellation_slot.overload1 get_associated_cancellation_slot]``(
+      const T & t);
+  ``  [''''&raquo;''' [link asio.reference.get_associated_cancellation_slot.overload1 more...]]``
+
+  template<
+      typename T,
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``>
+  associated_cancellation_slot< T, CancellationSlot >::type ``[link asio.reference.get_associated_cancellation_slot.overload2 get_associated_cancellation_slot]``(
+      const T & t,
+      const CancellationSlot & st);
+  ``  [''''&raquo;''' [link asio.reference.get_associated_cancellation_slot.overload2 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/associated_cancellation_slot.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:overload1 get_associated_cancellation_slot (1 of 2 overloads)]
+
+
+Helper function to obtain an object's associated [link asio.reference.cancellation_slot `cancellation_slot`]. 
+
+
+  template<
+      typename T>
+  associated_cancellation_slot< T >::type get_associated_cancellation_slot(
+      const T & t);
+
+
+
+[heading Return Value]
+      
+`associated_cancellation_slot<T>::get(t)` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 get_associated_cancellation_slot (2 of 2 overloads)]
+
+
+Helper function to obtain an object's associated [link asio.reference.cancellation_slot `cancellation_slot`]. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.CancellationSlot CancellationSlot]``>
+  associated_cancellation_slot< T, CancellationSlot >::type get_associated_cancellation_slot(
+      const T & t,
+      const CancellationSlot & st);
+
+
+
+[heading Return Value]
+      
+`associated_cancellation_slot<T, CancellationSlot>get(t, st)` 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:get_associated_executor get_associated_executor]
 
 [indexterm1 asio.indexterm.get_associated_executor..get_associated_executor] 
@@ -80954,7 +83239,6 @@ Executor used to submit functions to an [link asio.reference.io_context `io_cont
 
 [indexterm2 asio.indexterm.io_context.fork_event..fork_event..io_context] 
 Fork-related event notifications. 
-
 
   enum fork_event
 
@@ -102529,7 +104813,6 @@ Getting the current option value:
 [indexterm1 asio.indexterm.ip__v4_mapped_t..ip::v4_mapped_t] 
 Tag type used for distinguishing overloads that deal in IPv4-mapped IPv6 addresses. 
 
-
   enum v4_mapped_t
 
 [indexterm2 asio.indexterm.ip__v4_mapped_t.v4_mapped..v4_mapped..ip::v4_mapped_t]
@@ -108514,7 +110797,6 @@ Waiting for a descriptor to become readable.
 [indexterm2 asio.indexterm.posix__basic_descriptor.wait_type..wait_type..posix::basic_descriptor] 
 Wait types. 
 
-
   enum wait_type
 
 [indexterm2 asio.indexterm.posix__basic_descriptor.wait_type.wait_read..wait_read..posix::basic_descriptor]
@@ -110852,7 +113134,6 @@ Waiting for a descriptor to become readable.
 [indexterm2 asio.indexterm.posix__basic_stream_descriptor.wait_type..wait_type..posix::basic_stream_descriptor] 
 Wait types. 
 
-
   enum wait_type
 
 [indexterm2 asio.indexterm.posix__basic_stream_descriptor.wait_type.wait_read..wait_read..posix::basic_stream_descriptor]
@@ -111519,7 +113800,6 @@ Implements the FIONREAD IO control command.
 
 [indexterm2 asio.indexterm.posix__descriptor_base.wait_type..wait_type..posix::descriptor_base] 
 Wait types. 
-
 
   enum wait_type
 
@@ -117320,7 +119600,6 @@ Implements changing the flow control for a given serial port.
 [section:type serial_port_base::flow_control::type]
 
 [indexterm2 asio.indexterm.serial_port_base__flow_control.type..type..serial_port_base::flow_control] 
-
   enum type
 
 [indexterm2 asio.indexterm.serial_port_base__flow_control.type.none..none..serial_port_base::flow_control]
@@ -117470,7 +119749,6 @@ Implements changing the parity for a given serial port.
 [section:type serial_port_base::parity::type]
 
 [indexterm2 asio.indexterm.serial_port_base__parity.type..type..serial_port_base::parity] 
-
   enum type
 
 [indexterm2 asio.indexterm.serial_port_base__parity.type.none..none..serial_port_base::parity]
@@ -117620,7 +119898,6 @@ Implements changing the number of stop bits for a given serial port.
 [section:type serial_port_base::stop_bits::type]
 
 [indexterm2 asio.indexterm.serial_port_base__stop_bits.type..type..serial_port_base::stop_bits] 
-
   enum type
 
 [indexterm2 asio.indexterm.serial_port_base__stop_bits.type.one..one..serial_port_base::stop_bits]
@@ -118809,7 +121086,6 @@ Getting the current option value:
 [indexterm2 asio.indexterm.socket_base.shutdown_type..shutdown_type..socket_base] 
 Different ways a socket may be shutdown. 
 
-
   enum shutdown_type
 
 [indexterm2 asio.indexterm.socket_base.shutdown_type.shutdown_receive..shutdown_receive..socket_base]
@@ -118846,7 +121122,6 @@ Different ways a socket may be shutdown.
 
 [indexterm2 asio.indexterm.socket_base.wait_type..wait_type..socket_base] 
 Wait types. 
-
 
   enum wait_type
 
@@ -119965,7 +122240,6 @@ Implement various bug workarounds.
 [indexterm2 asio.indexterm.ssl__context.file_format..file_format..ssl::context] 
 File format types. 
 
-
   enum file_format
 
 [indexterm2 asio.indexterm.ssl__context.file_format.asn1..asn1..ssl::context]
@@ -120094,7 +122368,6 @@ Calls `SSL_CTX_load_verify_locations`.
 
 [indexterm2 asio.indexterm.ssl__context.method..method..ssl::context] 
 Different methods supported by a context. 
-
 
   enum method
 
@@ -120453,7 +122726,6 @@ Bitmask type for SSL options.
 
 [indexterm2 asio.indexterm.ssl__context.password_purpose..password_purpose..ssl::context] 
 Purpose of PEM password. 
-
 
   enum password_purpose
 
@@ -122288,7 +124560,6 @@ Implement various bug workarounds.
 [indexterm2 asio.indexterm.ssl__context_base.file_format..file_format..ssl::context_base] 
 File format types. 
 
-
   enum file_format
 
 [indexterm2 asio.indexterm.ssl__context_base.file_format.asn1..asn1..ssl::context_base]
@@ -122319,7 +124590,6 @@ File format types.
 
 [indexterm2 asio.indexterm.ssl__context_base.method..method..ssl::context_base] 
 Different methods supported by a context. 
-
 
   enum method
 
@@ -122603,7 +124873,6 @@ Bitmask type for SSL options.
 [indexterm2 asio.indexterm.ssl__context_base.password_purpose..password_purpose..ssl::context_base] 
 Purpose of PEM password. 
 
-
   enum password_purpose
 
 [indexterm2 asio.indexterm.ssl__context_base.password_purpose.for_reading..for_reading..ssl::context_base]
@@ -122719,7 +124988,6 @@ Protected destructor to prevent deletion through this type.
 [section:ssl__error__stream_errors ssl::error::stream_errors]
 
 [indexterm1 asio.indexterm.ssl__error__stream_errors..ssl::error::stream_errors] 
-
   enum stream_errors
 
 [indexterm2 asio.indexterm.ssl__error__stream_errors.stream_truncated..stream_truncated..ssl::error::stream_errors]
@@ -123684,7 +125952,6 @@ This function is used to perform SSL handshaking on the stream. The function cal
 
 [indexterm2 asio.indexterm.ssl__stream.handshake_type..handshake_type..ssl::stream] 
 Different handshake types. 
-
 
   enum handshake_type
 
@@ -124749,7 +127016,6 @@ The [link asio.reference.ssl__stream_base `ssl::stream_base`] class is used as a
 
 [indexterm2 asio.indexterm.ssl__stream_base.handshake_type..handshake_type..ssl::stream_base] 
 Different handshake types. 
-
 
   enum handshake_type
 
@@ -126806,7 +129072,6 @@ The system executor represents an execution context where functions are permitte
 [indexterm2 asio.indexterm.system_context.fork_event..fork_event..system_context] 
 Fork-related event notifications. 
 
-
   enum fork_event
 
 [indexterm2 asio.indexterm.system_context.fork_event.fork_prepare..fork_prepare..system_context]
@@ -127786,6 +130051,69 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 
 
+[section:this_coro__cancellation_state this_coro::cancellation_state]
+
+[indexterm1 asio.indexterm.this_coro__cancellation_state..this_coro::cancellation_state] 
+Awaitable object that returns the cancellation state of the current coroutine. 
+
+
+  constexpr cancellation_state_t cancellation_state;
+
+
+[heading Requirements]
+
+['Header: ][^asio/this_coro.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:this_coro__cancellation_state_t this_coro::cancellation_state_t]
+
+[indexterm1 asio.indexterm.this_coro__cancellation_state_t..this_coro::cancellation_state_t]
+
+
+Awaitable type that returns the cancellation state of the current coroutine. 
+
+
+  struct cancellation_state_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.this_coro__cancellation_state_t.cancellation_state_t [*cancellation_state_t]] [constructor]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/this_coro.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:cancellation_state_t this_coro::cancellation_state_t::cancellation_state_t]
+
+[indexterm2 asio.indexterm.this_coro__cancellation_state_t.cancellation_state_t..cancellation_state_t..this_coro::cancellation_state_t] 
+
+  constexpr cancellation_state_t();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
 [section:this_coro__executor this_coro::executor]
 
 [indexterm1 asio.indexterm.this_coro__executor..this_coro::executor] 
@@ -127844,6 +130172,86 @@ Awaitable type that returns the executor of the current coroutine.
 
 [endsect]
 
+
+
+[endsect]
+
+[section:this_coro__reset_cancellation_state this_coro::reset_cancellation_state]
+
+[indexterm1 asio.indexterm.this_coro__reset_cancellation_state..this_coro::reset_cancellation_state] 
+Returns an awaitable object that may be used to reset the cancellation state of the current coroutine. 
+
+  constexpr unspecified ``[link asio.reference.this_coro__reset_cancellation_state.overload1 reset_cancellation_state]``();
+  ``  [''''&raquo;''' [link asio.reference.this_coro__reset_cancellation_state.overload1 more...]]``
+
+  template<
+      typename Filter>
+  constexpr unspecified ``[link asio.reference.this_coro__reset_cancellation_state.overload2 reset_cancellation_state]``(
+      Filter && filter);
+  ``  [''''&raquo;''' [link asio.reference.this_coro__reset_cancellation_state.overload2 more...]]``
+
+  template<
+      typename InFilter,
+      typename OutFilter>
+  constexpr unspecified ``[link asio.reference.this_coro__reset_cancellation_state.overload3 reset_cancellation_state]``(
+      InFilter && in_filter,
+      OutFilter && out_filter);
+  ``  [''''&raquo;''' [link asio.reference.this_coro__reset_cancellation_state.overload3 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/this_coro.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:overload1 this_coro::reset_cancellation_state (1 of 3 overloads)]
+
+
+Returns an awaitable object that may be used to reset the cancellation state of the current coroutine. 
+
+
+  constexpr unspecified reset_cancellation_state();
+
+
+
+[endsect]
+
+
+
+[section:overload2 this_coro::reset_cancellation_state (2 of 3 overloads)]
+
+
+Returns an awaitable object that may be used to reset the cancellation state of the current coroutine. 
+
+
+  template<
+      typename Filter>
+  constexpr unspecified reset_cancellation_state(
+      Filter && filter);
+
+
+
+[endsect]
+
+
+
+[section:overload3 this_coro::reset_cancellation_state (3 of 3 overloads)]
+
+
+Returns an awaitable object that may be used to reset the cancellation state of the current coroutine. 
+
+
+  template<
+      typename InFilter,
+      typename OutFilter>
+  constexpr unspecified reset_cancellation_state(
+      InFilter && in_filter,
+      OutFilter && out_filter);
+
+
+
+[endsect]
 
 
 [endsect]
@@ -128484,7 +130892,6 @@ Executor used to submit functions to a thread pool.
 
 [indexterm2 asio.indexterm.thread_pool.fork_event..fork_event..thread_pool] 
 Fork-related event notifications. 
-
 
   enum fork_event
 
@@ -131169,9 +133576,7 @@ Adapts an executor to add the `use_awaitable_t` completion token as the default.
 
   [
     [[link asio.reference.use_awaitable_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
-    [Construct the adapted executor from the inner executor type. 
-     [hr]
-     Convert the specified executor to the inner executor type, then use that to construct the adapted executor. ]
+    [Construct the adapted executor from the inner executor type. ]
   ]
   
 ]
@@ -131249,61 +133654,23 @@ When used with co\_await, the initiating function (`async_read_some` in the abov
 [endsect]
 
 
+
 [section:executor_with_default use_awaitable_t::executor_with_default::executor_with_default]
 
 [indexterm2 asio.indexterm.use_awaitable_t__executor_with_default.executor_with_default..executor_with_default..use_awaitable_t::executor_with_default] 
 Construct the adapted executor from the inner executor type. 
 
 
-  ``[link asio.reference.use_awaitable_t__executor_with_default.executor_with_default.overload1 executor_with_default]``(
-      const InnerExecutor & ex);
-  ``  [''''&raquo;''' [link asio.reference.use_awaitable_t__executor_with_default.executor_with_default.overload1 more...]]``
-
-
-Convert the specified executor to the inner executor type, then use that to construct the adapted executor. 
-
-
   template<
-      typename ``[link asio.reference.Executor1 OtherExecutor]``>
-  ``[link asio.reference.use_awaitable_t__executor_with_default.executor_with_default.overload2 executor_with_default]``(
-      const OtherExecutor & ex,
-      typename constraint< is_convertible< OtherExecutor, InnerExecutor >::value >::type  = 0);
-  ``  [''''&raquo;''' [link asio.reference.use_awaitable_t__executor_with_default.executor_with_default.overload2 more...]]``
-
-
-[section:overload1 use_awaitable_t::executor_with_default::executor_with_default (1 of 2 overloads)]
-
-
-Construct the adapted executor from the inner executor type. 
-
-
+      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
   executor_with_default(
-      const InnerExecutor & ex);
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
 
 
 
 [endsect]
 
-
-
-[section:overload2 use_awaitable_t::executor_with_default::executor_with_default (2 of 2 overloads)]
-
-
-Convert the specified executor to the inner executor type, then use that to construct the adapted executor. 
-
-
-  template<
-      typename ``[link asio.reference.Executor1 OtherExecutor]``>
-  executor_with_default(
-      const OtherExecutor & ex,
-      typename constraint< is_convertible< OtherExecutor, InnerExecutor >::value >::type  = 0);
-
-
-
-[endsect]
-
-
-[endsect]
 
 
 [endsect]
