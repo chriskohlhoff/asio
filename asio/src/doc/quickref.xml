@@ -312,6 +312,8 @@
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.asynchronous_operations">Asynchronous operations</link></member>
+            <member><link linkend="asio.reference.CancellationHandler">CancellationHandler</link></member>
+            <member><link linkend="asio.reference.CancellationSlot">CancellationSlot</link></member>
             <member><link linkend="asio.reference.CompletionHandler">CompletionHandler</link></member>
             <member><link linkend="asio.reference.ExecutionContext">ExecutionContext</link></member>
             <member><link linkend="asio.reference.Executor1">Executor</link></member>
