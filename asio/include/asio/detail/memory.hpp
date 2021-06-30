@@ -92,6 +92,7 @@ inline void* aligned_new(std::size_t align, std::size_t size)
   }
   return ptr;
 #elif defined(ASIO_HAS_BOOST_ALIGN) && defined(ASIO_HAS_ALIGNOF)
+  size = (size % align == 0) ? size : size + (align - size % align);
   void* ptr = boost::alignment::aligned_alloc(align, size);
   if (!ptr)
   {
@@ -100,6 +101,7 @@ inline void* aligned_new(std::size_t align, std::size_t size)
   }
   return ptr;
 #elif defined(ASIO_MSVC) && defined(ASIO_HAS_ALIGNOF)
+  size = (size % align == 0) ? size : size + (align - size % align);
   void* ptr = _aligned_malloc(align, size);
   if (!ptr)
   {
