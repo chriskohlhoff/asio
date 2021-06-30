@@ -39,7 +39,12 @@ noinst_PROGRAMS = \
 	operations/composed_5 \
 	operations/composed_6 \
 	operations/composed_7 \
-	operations/composed_8
+	operations/composed_8 \
+  parallel_group/parallel_sort \
+  parallel_group/wait_for_all \
+  parallel_group/wait_for_one \
+  parallel_group/wait_for_one_error \
+  parallel_group/wait_for_one_success
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
@@ -73,6 +78,11 @@ operations_composed_5_SOURCES = operations/composed_5.cpp
 operations_composed_6_SOURCES = operations/composed_6.cpp
 operations_composed_7_SOURCES = operations/composed_7.cpp
 operations_composed_8_SOURCES = operations/composed_8.cpp
+parallel_group_parallel_sort_SOURCES = parallel_group/parallel_sort.cpp
+parallel_group_wait_for_all_SOURCES = parallel_group/wait_for_all.cpp
+parallel_group_wait_for_one_SOURCES = parallel_group/wait_for_one.cpp
+parallel_group_wait_for_one_error_SOURCES = parallel_group/wait_for_one_error.cpp
+parallel_group_wait_for_one_success_SOURCES = parallel_group/wait_for_one_success.cpp
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

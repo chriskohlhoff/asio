@@ -82,7 +82,7 @@ auto parallel_sort(
   return asio::async_compose<CompletionToken, void()>(
       [=](auto& self, auto... args)
       {
-        if constexpr (sizeof...(args) == 0)
+        if (sizeof...(args) == 0)
         {
           using self_type = std::decay_t<decltype(self)>;
           parallel_sort_impl(executor, begin, end,

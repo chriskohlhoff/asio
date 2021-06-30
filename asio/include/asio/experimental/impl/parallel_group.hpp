@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 #include <atomic>
 #include <memory>
-#include <optional>
+#include <new>
 #include <tuple>
 #include "asio/detail/type_traits.hpp"
 
@@ -27,6 +27,51 @@
 namespace asio {
 namespace experimental {
 namespace detail {
+
+// Stores the result from an individual asynchronous operation.
+template <typename T, typename = void>
+struct parallel_group_op_result
+{
+public:
+  parallel_group_op_result()
+    : has_value_(false)
+  {
+  }
+
+  parallel_group_op_result(parallel_group_op_result&& other)
+    : has_value_(other.has_value_)
+  {
+    if (has_value_)
+      new (&u_.value_) T(std::move(other.get()));
+  }
+
+  ~parallel_group_op_result()
+  {
+    if (has_value_)
+      u_.value_.~T();
+  }
+
+  T& get() noexcept
+  {
+    return u_.value_;
+  }
+
+  template <typename... Args>
+  void emplace(Args&&... args)
+  {
+    new (&u_.value_) T(std::forward<Args>(args)...);
+    has_value_ = true;
+  }
+
+private:
+  union u
+  {
+    u() {}
+    char c_;
+    T value_;
+  } u_;
+  bool has_value_;
+};
 
 // Proxy completion handler for the group of parallel operatations. Unpacks and
 // concatenates the individual operations' results, and invokes the user's
@@ -63,7 +108,7 @@ struct parallel_group_completion_handler
   template <std::size_t... I>
   void invoke(std::index_sequence<I...>)
   {
-    this->invoke(std::tuple_cat(std::move(*std::get<I>(args_))...));
+    this->invoke(std::tuple_cat(std::move(std::get<I>(args_).get())...));
   }
 
   template <typename... Args>
@@ -82,7 +127,7 @@ struct parallel_group_completion_handler
   executor_type executor_;
   std::array<std::size_t, sizeof...(Ops)> completion_order_{};
   std::tuple<
-      std::optional<
+      parallel_group_op_result<
         typename parallel_op_signature_as_tuple<
           typename parallel_op_signature<Ops>::type
         >::type
@@ -220,11 +265,12 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
       std::move(cancellation_condition), std::move(handler));
 
   // Initiate each individual operation in the group.
-  (
-    std::move(std::get<I>(ops))(
+  int fold[] = { 0,
+    ( std::move(std::get<I>(ops))(
         parallel_group_op_handler<I, Condition, Handler, Ops...>{state}),
-    ...
-  );
+      0 )...
+  };
+  (void)fold;
 
   // Check if any of the operations has already requested cancellation, and if
   // so, emit a signal for each operation in the group.

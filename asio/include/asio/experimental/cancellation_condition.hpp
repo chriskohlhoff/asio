@@ -16,7 +16,10 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <exception>
 #include "asio/cancellation_type.hpp"
+#include "asio/error_code.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -78,7 +81,7 @@ public:
 
   template <typename E, typename... Args>
   ASIO_CONSTEXPR typename constraint<
-    !is_same<typename decay<E>::type, error_code>::value
+    !is_same<typename decay<E>::type, asio::error_code>::value
       && !is_same<typename decay<E>::type, std::exception_ptr>::value,
     cancellation_type_t
   >::type operator()(const E&, Args&&...) const ASIO_NOEXCEPT
@@ -88,7 +91,7 @@ public:
 
   template <typename E, typename... Args>
   ASIO_CONSTEXPR typename constraint<
-      is_same<typename decay<E>::type, error_code>::value
+      is_same<typename decay<E>::type, asio::error_code>::value
         || is_same<typename decay<E>::type, std::exception_ptr>::value,
       cancellation_type_t
   >::type operator()(const E& e, Args&&...) const ASIO_NOEXCEPT
@@ -122,7 +125,7 @@ public:
 
   template <typename E, typename... Args>
   ASIO_CONSTEXPR typename constraint<
-    !is_same<typename decay<E>::type, error_code>::value
+    !is_same<typename decay<E>::type, asio::error_code>::value
       && !is_same<typename decay<E>::type, std::exception_ptr>::value,
     cancellation_type_t
   >::type operator()(const E&, Args&&...) const ASIO_NOEXCEPT
@@ -132,7 +135,7 @@ public:
 
   template <typename E, typename... Args>
   ASIO_CONSTEXPR typename constraint<
-      is_same<typename decay<E>::type, error_code>::value
+      is_same<typename decay<E>::type, asio::error_code>::value
         || is_same<typename decay<E>::type, std::exception_ptr>::value,
       cancellation_type_t
   >::type operator()(const E& e, Args&&...) const ASIO_NOEXCEPT

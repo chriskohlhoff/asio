@@ -569,8 +569,10 @@ sub copy_examples
       "src/examples/cpp11/ssl",
       "src/examples/cpp11/timeouts",
       "src/examples/cpp11/timers",
+      "src/examples/cpp14/deferred",
       "src/examples/cpp14/executors",
       "src/examples/cpp14/operations",
+      "src/examples/cpp14/parallel_group",
       "src/examples/cpp17/coroutines_ts");
 
   our $boost_dir;
