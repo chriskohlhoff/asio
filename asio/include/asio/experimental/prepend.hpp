@@ -1,6 +1,6 @@
 //
-// experimental/append.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// experimental/prepend.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_EXPERIMENTAL_APPEND_HPP
-#define ASIO_EXPERIMENTAL_APPEND_HPP
+#ifndef ASIO_EXPERIMENTAL_PREPEND_HPP
+#define ASIO_EXPERIMENTAL_PREPEND_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -25,15 +25,15 @@ namespace asio {
 namespace experimental {
 
 /// Completion token type used to specify that the completion handler
-/// arguments should be passed additional values after the results of the
+/// arguments should be passed additional values before the results of the
 /// operation.
 template <typename CompletionToken, typename... Values>
-class append_t
+class prepend_t
 {
 public:
   /// Constructor.
   template <typename T, typename... V>
-  ASIO_CONSTEXPR explicit append_t(
+  ASIO_CONSTEXPR explicit prepend_t(
       ASIO_MOVE_ARG(T) completion_token,
       ASIO_MOVE_ARG(V)... values)
     : token_(ASIO_MOVE_CAST(T)(completion_token)),
@@ -47,15 +47,15 @@ public:
 };
 
 /// Completion token type used to specify that the completion handler
-/// arguments should be passed additional values after the results of the
+/// arguments should be passed additional values before the results of the
 /// operation.
 template <typename CompletionToken, typename... Values>
-inline ASIO_CONSTEXPR append_t<
+inline ASIO_CONSTEXPR prepend_t<
   typename decay<CompletionToken>::type, typename decay<Values>::type...>
-append(ASIO_MOVE_ARG(CompletionToken) completion_token,
+prepend(ASIO_MOVE_ARG(CompletionToken) completion_token,
     ASIO_MOVE_ARG(Values)... values)
 {
-  return append_t<
+  return prepend_t<
     typename decay<CompletionToken>::type, typename decay<Values>::type...>(
       ASIO_MOVE_CAST(CompletionToken)(completion_token),
       ASIO_MOVE_CAST(Values)(values)...);
@@ -66,6 +66,6 @@ append(ASIO_MOVE_ARG(CompletionToken) completion_token,
 
 #include "asio/detail/pop_options.hpp"
 
-#include "asio/experimental/impl/append.hpp"
+#include "asio/experimental/impl/prepend.hpp"
 
-#endif // ASIO_EXPERIMENTAL_APPEND_HPP
+#endif // ASIO_EXPERIMENTAL_PREPEND_HPP
