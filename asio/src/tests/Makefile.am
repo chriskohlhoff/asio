@@ -13,7 +13,9 @@ SUBDIRS = properties
 
 check_PROGRAMS = \
 	unit/associated_allocator \
+	unit/associated_cancellation_slot \
 	unit/associated_executor \
+	unit/associator \
 	unit/async_result \
 	unit/awaitable \
 	unit/basic_datagram_socket \
@@ -34,6 +36,9 @@ check_PROGRAMS = \
 	unit/buffered_write_stream \
 	unit/buffer \
 	unit/buffers_iterator \
+	unit/cancellation_signal \
+	unit/cancellation_state \
+	unit/cancellation_type \
 	unit/co_spawn \
 	unit/completion_condition \
 	unit/compose \
@@ -181,7 +186,9 @@ endif
 
 TESTS = \
 	unit/associated_allocator \
+	unit/associated_cancellation_slot \
 	unit/associated_executor \
+	unit/associator \
 	unit/async_result \
 	unit/awaitable \
 	unit/basic_datagram_socket \
@@ -202,6 +209,9 @@ TESTS = \
 	unit/buffered_write_stream \
 	unit/buffer \
 	unit/buffers_iterator \
+	unit/cancellation_signal \
+	unit/cancellation_state \
+	unit/cancellation_type \
 	unit/co_spawn \
 	unit/completion_condition \
 	unit/compose \
@@ -347,7 +357,9 @@ performance_server_SOURCES = performance/server.cpp
 endif
 
 unit_associated_allocator_SOURCES = unit/associated_allocator.cpp
+unit_associated_cancellation_slot_SOURCES = unit/associated_cancellation_slot.cpp
 unit_associated_executor_SOURCES = unit/associated_executor.cpp
+unit_associator_SOURCES = unit/associator.cpp
 unit_async_result_SOURCES = unit/async_result.cpp
 unit_awaitable_SOURCES = unit/awaitable.cpp
 unit_basic_datagram_socket_SOURCES = unit/basic_datagram_socket.cpp
@@ -368,6 +380,9 @@ unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp
 unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
+unit_cancellation_signal_SOURCES = unit/cancellation_signal.cpp
+unit_cancellation_state_SOURCES = unit/cancellation_state.cpp
+unit_cancellation_type_SOURCES = unit/cancellation_type.cpp
 unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp

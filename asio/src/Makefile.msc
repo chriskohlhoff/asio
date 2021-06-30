@@ -116,7 +116,9 @@ PERFORMANCE_TEST_EXES = \
 
 UNIT_TEST_EXES = \
 	tests\unit\associated_allocator.exe \
+	tests\unit\associated_cancellation_slot.exe \
 	tests\unit\associated_executor.exe \
+	tests\unit\associator.exe \
 	tests\unit\async_result.exe \
 	tests\unit\awaitable.exe \
 	tests\unit\basic_datagram_socket.exe \
@@ -137,6 +139,9 @@ UNIT_TEST_EXES = \
 	tests\unit\buffered_write_stream.exe \
 	tests\unit\buffer.exe \
 	tests\unit\buffers_iterator.exe \
+	tests\unit\cancellation_signal.exe \
+	tests\unit\cancellation_state.exe \
+	tests\unit\cancellation_type.exe \
 	tests\unit\co_spawn.exe \
 	tests\unit\completion_condition.exe \
 	tests\unit\compose.exe \
