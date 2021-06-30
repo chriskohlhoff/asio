@@ -70,7 +70,8 @@ public:
   {
   }
 
-  ASIO_CONSTEXPR cancellation_type_t operator()() const ASIO_NOEXCEPT
+  ASIO_CONSTEXPR cancellation_type_t
+  operator()() const ASIO_NOEXCEPT
   {
     return cancel_type_;
   }
@@ -113,7 +114,8 @@ public:
   {
   }
 
-  ASIO_CONSTEXPR cancellation_type_t operator()() const ASIO_NOEXCEPT
+  ASIO_CONSTEXPR cancellation_type_t
+  operator()() const ASIO_NOEXCEPT
   {
     return cancellation_type::none;
   }
