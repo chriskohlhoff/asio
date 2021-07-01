@@ -123,6 +123,8 @@ struct coro_init_handler
         static auto resume_impl(std::tuple<Arg> &&tup)
         { return get<0>(std::move(tup)); }
 
+        static void resume_impl(std::tuple<> &&tup) { }
+
 
         auto await_resume() const noexcept
         {
@@ -151,6 +153,8 @@ struct coro_init_handler
         static auto resume_impl(std::tuple<Args...> &&tup)
         { return std::move(tup); }
 
+        static void resume_impl(std::tuple<> &&tup) { }
+
         template<typename Arg>
         static auto resume_impl(std::tuple<Arg> &&tup)
         { return get<0>(std::move(tup)); }
@@ -162,7 +166,9 @@ struct coro_init_handler
             if (ex)
                 std::rethrow_exception(ex);
 
-            if constexpr (sizeof ... (Args) == 2u)
+            if constexpr (sizeof ... (Args) == 0u)
+                return ;
+            else if constexpr (sizeof ... (Args) == 1u)
                 return get<1>(std::move(tup));
             else
                 return [&]<std::size_t ... Idx>(std::index_sequence<Idx...>)
@@ -178,7 +184,9 @@ struct coro_init_handler
             if (ec)
                 asio::detail::throw_exception(system_error(ec, "error_code in use_coro"));
 
-            if constexpr (sizeof ... (Args) == 2u)
+            if constexpr (sizeof ... (Args) == 0u)
+                return ;
+            else if constexpr (sizeof ... (Args) == 1u)
                 return get<1>(std::move(tup));
             else
                 return [&]<std::size_t ... Idx>(std::index_sequence<Idx...>)
