@@ -176,6 +176,16 @@ endif
 if HAVE_CXX20
 check_PROGRAMS += \
 	unit/experimental/promise
+
+if HAVE_COROUTINES
+check_PROGRAMS += \
+	unit/experimental/coro/cancel \
+	unit/experimental/coro/exception \
+	unit/experimental/coro/partial \
+	unit/experimental/coro/simple_test \
+	unit/experimental/coro/stack_test \
+	unit/experimental/coro/use_coro
+endif
 endif
 
 if HAVE_OPENSSL
@@ -338,6 +348,16 @@ TESTS = \
 if HAVE_CXX20
 TESTS += \
 	unit/experimental/promise
+
+if HAVE_COROUTINES
+TESTS += \
+	unit/experimental/coro/cancel \
+	unit/experimental/coro/exception \
+	unit/experimental/coro/partial \
+	unit/experimental/coro/simple_test \
+	unit/experimental/coro/stack_test \
+	unit/experimental/coro/use_coro
+endif
 endif
 
 if HAVE_OPENSSL
@@ -519,6 +539,15 @@ unit_write_at_SOURCES = unit/write_at.cpp
 
 if HAVE_CXX20
 unit_experimental_promise_SOURCES = unit/experimental/promise.cpp
+
+if HAVE_COROUTINES
+unit_experimental_coro_cancel_SOURCES = unit/experimental/coro/cancel.cpp
+unit_experimental_coro_exception_SOURCES = unit/experimental/coro/exception.cpp
+unit_experimental_coro_partial_SOURCES = unit/experimental/coro/partial.cpp
+unit_experimental_coro_simple_test_SOURCES = unit/experimental/coro/simple_test.cpp
+unit_experimental_coro_stack_test_SOURCES = unit/experimental/coro/stack_test.cpp
+unit_experimental_coro_use_coro_SOURCES = unit/experimental/coro/use_coro.cpp
+endif
 endif
 
 if HAVE_OPENSSL

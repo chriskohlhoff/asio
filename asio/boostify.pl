@@ -104,7 +104,7 @@ sub copy_source_file
   $is_test = 1 if ($from =~ /tests\/unit/);
 
   my $is_coroutine_related = 0;
-  $is_coroutine_related = 1 if ($from =~ /await/);
+  $is_coroutine_related = 1 if ($from =~ /await/ || $from =~ /partial_promise/);
 
   my $is_hash_related = 0;
   $is_hash_related = 1 if ($from =~ /ip\/address/ || $from =~ /ip\/basic_endpoint/);
@@ -442,6 +442,7 @@ sub copy_unit_tests
       "src/tests/unit/archetypes",
       "src/tests/unit/execution",
       "src/tests/unit/experimental",
+      "src/tests/unit/experimental/coro",
       "src/tests/unit/generic",
       "src/tests/unit/ip",
       "src/tests/unit/local",
