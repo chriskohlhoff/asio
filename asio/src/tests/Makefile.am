@@ -40,6 +40,12 @@ check_PROGRAMS = \
 	unit/cancellation_state \
 	unit/cancellation_type \
 	unit/co_spawn \
+    unit/coro/cancel \
+    unit/coro/exception \
+    unit/coro/partial \
+    unit/coro/simple_test \
+    unit/coro/stack_test \
+    unit/coro/use_coro \
 	unit/completion_condition \
 	unit/compose \
 	unit/connect \
@@ -120,6 +126,7 @@ check_PROGRAMS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+	unit/promise \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
@@ -213,6 +220,12 @@ TESTS = \
 	unit/cancellation_state \
 	unit/cancellation_type \
 	unit/co_spawn \
+	unit/coro/cancel \
+	unit/coro/exception \
+	unit/coro/partial \
+	unit/coro/simple_test \
+	unit/coro/stack_test \
+	unit/coro/use_coro \
 	unit/completion_condition \
 	unit/compose \
 	unit/connect \
@@ -287,6 +300,7 @@ TESTS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+    unit/promise \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
@@ -384,6 +398,12 @@ unit_cancellation_signal_SOURCES = unit/cancellation_signal.cpp
 unit_cancellation_state_SOURCES = unit/cancellation_state.cpp
 unit_cancellation_type_SOURCES = unit/cancellation_type.cpp
 unit_co_spawn_SOURCES = unit/co_spawn.cpp
+unit_coro_cancel_SOURCES       = unit/coro/cancel.cpp
+unit_coro_exception_SOURCES    = unit/coro/exception.cpp
+unit_coro_partial_SOURCES      = unit/coro/partial.cpp
+unit_coro_simple_test_SOURCES  = unit/coro/simple_test.cpp
+unit_coro_stack_test_SOURCES   = unit/coro/stack_test.cpp
+unit_coro_use_coro_SOURCES     = unit/coro/use_coro.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp
 unit_connect_SOURCES = unit/connect.cpp
@@ -464,6 +484,7 @@ unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
 unit_post_SOURCES = unit/post.cpp
+unit_promise_SOURCES = unit/promise.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
