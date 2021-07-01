@@ -169,6 +169,17 @@ AC_COMPILE_IFELSE(
   [AC_MSG_RESULT([no])
     HAVE_CXX17=no;])
 
+AC_MSG_CHECKING([whether C++20 is enabled])
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[#if __cplusplus < 202002L]]
+    [[#error C++20 not available]]
+    [[#endif]])],
+  [AC_MSG_RESULT([yes])
+    HAVE_CXX20=yes;],
+  [AC_MSG_RESULT([no])
+    HAVE_CXX20=no;])
+
 AC_MSG_CHECKING([whether coroutines are enabled])
 AC_COMPILE_IFELSE(
   [AC_LANG_PROGRAM(
@@ -215,6 +226,8 @@ AM_CONDITIONAL(HAVE_CXX11,test x$HAVE_CXX11 = xyes)
 AM_CONDITIONAL(HAVE_CXX14,test x$HAVE_CXX14 = xyes)
 
 AM_CONDITIONAL(HAVE_CXX17,test x$HAVE_CXX17 = xyes)
+
+AM_CONDITIONAL(HAVE_CXX20,test x$HAVE_CXX20 = xyes)
 
 AM_CONDITIONAL(HAVE_COROUTINES,test x$HAVE_COROUTINES = xyes)
 
