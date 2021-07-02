@@ -84,9 +84,11 @@ awaitable<void, Executor> co_spawn_entry_point(
   auto handler_work = make_co_spawn_work_guard(
       asio::get_associated_executor(handler, ex));
 
-  (void) co_await (post)(spawn_work.get_executor(),
-      use_awaitable_t<Executor>{});
+  (void) co_await (dispatch)(
+      use_awaitable_t<Executor>{__FILE__, __LINE__, "co_spawn_entry_point"});
 
+  (co_await awaitable_thread_has_context_switched{}) = false;
+  std::exception_ptr e = nullptr;
   bool done = false;
   try
   {
@@ -94,19 +96,45 @@ awaitable<void, Executor> co_spawn_entry_point(
 
     done = true;
 
-    (dispatch)(handler_work.get_executor(),
-        [handler = std::move(handler), t = std::move(t)]() mutable
-        {
-          std::move(handler)(std::exception_ptr(), std::move(t));
-        });
+    if (co_await awaitable_thread_has_context_switched{})
+    {
+      (dispatch)(handler_work.get_executor(),
+          [handler = std::move(handler), t = std::move(t)]() mutable
+          {
+            std::move(handler)(std::exception_ptr(), std::move(t));
+          });
+    }
+    else
+    {
+      (post)(handler_work.get_executor(),
+          [handler = std::move(handler), t = std::move(t)]() mutable
+          {
+            std::move(handler)(std::exception_ptr(), std::move(t));
+          });
+    }
+
+    co_return;
   }
   catch (...)
   {
     if (done)
       throw;
 
+    e = std::current_exception();
+  }
+
+  if (co_await awaitable_thread_has_context_switched{})
+  {
     (dispatch)(handler_work.get_executor(),
-        [handler = std::move(handler), e = std::current_exception()]() mutable
+        [handler = std::move(handler), e]() mutable
+        {
+          std::move(handler)(e, T());
+        });
+  }
+  else
+  {
+    (post)(handler_work.get_executor(),
+        [handler = std::move(handler), e]() mutable
         {
           std::move(handler)(e, T());
         });
@@ -121,9 +149,10 @@ awaitable<void, Executor> co_spawn_entry_point(
   auto handler_work = make_co_spawn_work_guard(
       asio::get_associated_executor(handler, ex));
 
-  (void) co_await (post)(spawn_work.get_executor(),
+  (void) co_await (dispatch)(
       use_awaitable_t<Executor>{__FILE__, __LINE__, "co_spawn_entry_point"});
 
+  (co_await awaitable_thread_has_context_switched{}) = false;
   std::exception_ptr e = nullptr;
   try
   {
@@ -134,11 +163,22 @@ awaitable<void, Executor> co_spawn_entry_point(
     e = std::current_exception();
   }
 
-  (dispatch)(handler_work.get_executor(),
-      [handler = std::move(handler), e]() mutable
-      {
-        std::move(handler)(e);
-      });
+  if (co_await awaitable_thread_has_context_switched{})
+  {
+    (dispatch)(handler_work.get_executor(),
+        [handler = std::move(handler), e]() mutable
+        {
+          std::move(handler)(e);
+        });
+  }
+  else
+  {
+    (post)(handler_work.get_executor(),
+        [handler = std::move(handler), e]() mutable
+        {
+          std::move(handler)(e);
+        });
+  }
 }
 
 template <typename T, typename Executor>
