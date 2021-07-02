@@ -8,7 +8,9 @@
 *.pdb
 *.tds
 associated_allocator
+associated_cancellation_slot
 associated_executor
+associator
 async_result
 awaitable
 basic_datagram_socket
@@ -22,12 +24,16 @@ basic_socket_acceptor
 basic_stream_socket
 basic_streambuf
 basic_waitable_timer
+bind_cancellation_slot
 bind_executor
 buffer
 buffered_read_stream
 buffered_stream
 buffered_write_stream
 buffers_iterator
+cancellation_signal
+cancellation_state
+cancellation_type
 co_spawn
 completion_condition
 compose
