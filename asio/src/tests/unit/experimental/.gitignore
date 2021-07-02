@@ -7,4 +7,5 @@
 *.manifest
 *.pdb
 *.tds
+awaitable_operators
 promise*
