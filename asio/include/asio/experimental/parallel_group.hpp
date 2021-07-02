@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <utility>
+#include "asio/detail/array.hpp"
 #include "asio/experimental/cancellation_condition.hpp"
 
 #include "asio/detail/push_options.hpp"
