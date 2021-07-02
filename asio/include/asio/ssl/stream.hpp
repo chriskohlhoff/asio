@@ -115,12 +115,29 @@ public:
    * @param other The other stream object from which the move will occur. Must
    * have no outstanding asynchronous operations associated with it. Following
    * the move, @c other has a valid but unspecified state where the only safe
-   * operation is destruction.
+   * operation is destruction, or use as the target of a move assignment.
    */
   stream(stream&& other)
     : next_layer_(ASIO_MOVE_CAST(Stream)(other.next_layer_)),
       core_(ASIO_MOVE_CAST(detail::stream_core)(other.core_))
   {
+  }
+
+  /// Move-assign a stream from another.
+  /**
+   * @param other The other stream object from which the move will occur. Must
+   * have no outstanding asynchronous operations associated with it. Following
+   * the move, @c other has a valid but unspecified state where the only safe
+   * operation is destruction, or use as the target of a move assignment.
+   */
+  stream& operator=(stream&& other)
+  {
+    if (this != &other)
+    {
+      next_layer_ = ASIO_MOVE_CAST(Stream)(other.next_layer_);
+      core_ = ASIO_MOVE_CAST(detail::stream_core)(other.core_);
+    }
+    return *this;
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 

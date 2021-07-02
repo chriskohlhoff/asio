@@ -81,6 +81,12 @@ void test()
     ssl::stream<ip::tcp::socket> stream4(std::move(stream3));
 #endif // defined(ASIO_HAS_MOVE)
 
+    // ssl::stream assignment.
+
+#if defined(ASIO_HAS_MOVE)
+    stream3 = std::move(stream4);
+#endif // defined(ASIO_HAS_MOVE)
+
     // basic_io_object functions.
 
     ssl::stream<ip::tcp::socket>::executor_type ex = stream1.get_executor();

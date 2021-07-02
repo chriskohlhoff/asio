@@ -80,6 +80,20 @@ engine::~engine()
     ::SSL_free(ssl_);
 }
 
+#if defined(ASIO_HAS_MOVE)
+engine& engine::operator=(engine&& other) ASIO_NOEXCEPT
+{
+  if (this != &other)
+  {
+    ssl_ = other.ssl_;
+    ext_bio_ = other.ext_bio_;
+    other.ssl_ = 0;
+    other.ext_bio_ = 0;
+  }
+  return *this;
+}
+#endif // defined(ASIO_HAS_MOVE)
+
 SSL* engine::native_handle()
 {
   return ssl_;
