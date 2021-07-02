@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
       std::cerr << "  For IPv4, try:\n";
       std::cerr << "    receiver 0.0.0.0 239.255.0.1\n";
       std::cerr << "  For IPv6, try:\n";
-      std::cerr << "    receiver 0::0 ff31::8000:1234\n";
+      std::cerr << "    receiver 0::0 ff13::8000:1234\n";
       return 1;
     }
 
