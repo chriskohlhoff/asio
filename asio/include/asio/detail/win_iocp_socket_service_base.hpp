@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include "asio/associated_cancellation_slot.hpp"
 #include "asio/error.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/socket_base.hpp"
@@ -275,12 +276,16 @@ public:
       const ConstBufferSequence& buffers, socket_base::message_flags flags,
       Handler& handler, const IoExecutor& io_ex)
   {
+    typename associated_cancellation_slot<Handler>::type slot
+      = asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_send_op<
         ConstBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.cancel_token_, buffers, handler, io_ex);
+    operation* o = p.p = new (p.v) op(
+        impl.cancel_token_, buffers, handler, io_ex);
 
     ASIO_HANDLER_CREATION((context_, *p.p, "socket",
           &impl, impl.socket_, "async_send"));
@@ -288,9 +293,13 @@ public:
     buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence> bufs(buffers);
 
+    // Optionally register for per-operation cancellation.
+    if (slot.is_connected())
+      o = &slot.template emplace<iocp_op_cancellation>(impl.socket_, o);
+
     start_send_op(impl, bufs.buffers(), bufs.count(), flags,
         (impl.state_ & socket_ops::stream_oriented) != 0 && bufs.all_empty(),
-        p.p);
+        o);
     p.v = p.p = 0;
   }
 
@@ -343,13 +352,16 @@ public:
       const MutableBufferSequence& buffers, socket_base::message_flags flags,
       Handler& handler, const IoExecutor& io_ex)
   {
+    typename associated_cancellation_slot<Handler>::type slot
+      = asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recv_op<
         MutableBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.state_, impl.cancel_token_,
-        buffers, handler, io_ex);
+    operation* o = p.p = new (p.v) op(impl.state_,
+        impl.cancel_token_, buffers, handler, io_ex);
 
     ASIO_HANDLER_CREATION((context_, *p.p, "socket",
           &impl, impl.socket_, "async_receive"));
@@ -357,9 +369,13 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
+    // Optionally register for per-operation cancellation.
+    if (slot.is_connected())
+      o = &slot.template emplace<iocp_op_cancellation>(impl.socket_, o);
+
     start_receive_op(impl, bufs.buffers(), bufs.count(), flags,
         (impl.state_ & socket_ops::stream_oriented) != 0 && bufs.all_empty(),
-        p.p);
+        o);
     p.v = p.p = 0;
   }
 
@@ -421,12 +437,15 @@ public:
       socket_base::message_flags& out_flags, Handler& handler,
       const IoExecutor& io_ex)
   {
+    typename associated_cancellation_slot<Handler>::type slot
+      = asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_recvmsg_op<
         MutableBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(impl.cancel_token_,
+    operation* o = p.p = new (p.v) op(impl.cancel_token_,
         buffers, out_flags, handler, io_ex);
 
     ASIO_HANDLER_CREATION((context_, *p.p, "socket",
@@ -435,7 +454,11 @@ public:
     buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence> bufs(buffers);
 
-    start_receive_op(impl, bufs.buffers(), bufs.count(), in_flags, false, p.p);
+    // Optionally register for per-operation cancellation.
+    if (slot.is_connected())
+      o = &slot.template emplace<iocp_op_cancellation>(impl.socket_, o);
+
+    start_receive_op(impl, bufs.buffers(), bufs.count(), in_flags, false, o);
     p.v = p.p = 0;
   }
 
@@ -561,6 +584,46 @@ protected:
   // - very old Platform SDKs; and
   // - platform SDKs where MSVC's /Wp64 option causes spurious warnings.
   ASIO_DECL void* interlocked_exchange_pointer(void** dest, void* val);
+
+  // Helper class used to implement per operation cancellation.
+  class iocp_op_cancellation : public operation
+  {
+  public:
+    iocp_op_cancellation(SOCKET s, operation* target)
+      : operation(&iocp_op_cancellation::do_complete),
+        socket_(s),
+        target_(target)
+    {
+    }
+
+    static void do_complete(void* owner, operation* base,
+        const asio::error_code& result_ec,
+        std::size_t bytes_transferred)
+    {
+      iocp_op_cancellation* o = static_cast<iocp_op_cancellation*>(base);
+      o->target_->complete(owner, result_ec, bytes_transferred);
+    }
+
+    void operator()(cancellation_type_t type)
+    {
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+      if (!!(type &
+            (cancellation_type::terminal
+              | cancellation_type::partial
+              | cancellation_type::total)))
+      {
+        HANDLE sock_as_handle = reinterpret_cast<HANDLE>(socket_);
+        ::CancelIoEx(sock_as_handle, this);
+      }
+#else // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+      (void)type;
+#endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+    }
+
+  private:
+    SOCKET socket_;
+    operation* target_;
+  };
 
   // The execution context used to obtain the reactor, if required.
   execution_context& context_;
