@@ -216,31 +216,31 @@ asio::awaitable<void> symmetrical_test()
   ASIO_CHECK(0  == (co_await g.async_resume(0,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(0  == (co_await g.async_resume(1,
+  ASIO_CHECK(1  == (co_await g.async_resume(1,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(1  == (co_await g.async_resume(2,
+  ASIO_CHECK(3  == (co_await g.async_resume(2,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(3  == (co_await g.async_resume(3,
+  ASIO_CHECK(6  == (co_await g.async_resume(3,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(6  == (co_await g.async_resume(4,
+  ASIO_CHECK(10  == (co_await g.async_resume(4,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(10 == (co_await g.async_resume(5,
+  ASIO_CHECK(15 == (co_await g.async_resume(5,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(15 == (co_await g.async_resume(6,
+  ASIO_CHECK(21 == (co_await g.async_resume(6,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(21 == (co_await g.async_resume(7,
+  ASIO_CHECK(28 == (co_await g.async_resume(7,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(28 == (co_await g.async_resume(8,
+  ASIO_CHECK(36 == (co_await g.async_resume(8,
           asio::use_awaitable)).value_or(-1));
 
-  ASIO_CHECK(36 == (co_await g.async_resume(9,
+  ASIO_CHECK(45 == (co_await g.async_resume(9,
           asio::use_awaitable)).value_or(-1));
 };
 

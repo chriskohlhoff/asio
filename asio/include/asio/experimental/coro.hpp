@@ -691,7 +691,7 @@ struct coro_promise_error<true>
 template <typename T = void>
 struct yield_input
 {
-  T value;
+  T& value;
   coroutine_handle<> awaited_from{noop_coroutine()};
 
   bool await_ready() const noexcept
@@ -842,14 +842,14 @@ struct coro_promise_exchange<Yield, Input, void> : coro_awaited_from
   auto yield_value(Yield&& y)
   {
     result_ = std::move(y);
-    return yield_input<Input>{std::move(input_),
+    return yield_input<Input>{input_,
       std::exchange(awaited_from, noop_coroutine())};
   }
 
   auto yield_value(const Yield& y)
   {
     result_ = y;
-    return yield_input<Input>{std::move(input_),
+    return yield_input<Input>{input_,
       std::exchange(awaited_from, noop_coroutine())};
   }
 
