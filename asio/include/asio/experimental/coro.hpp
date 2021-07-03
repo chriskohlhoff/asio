@@ -539,7 +539,6 @@ private:
         std::false_type  /* result is void */) const
     {
       return [self = self_, h = std::forward<WaitHandler>(handler),
-          cancel = get_associated_cancellation_slot(handler),
           exec = std::move(exec)]() mutable
       {
         if (!self)
