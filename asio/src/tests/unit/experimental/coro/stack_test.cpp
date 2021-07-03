@@ -52,15 +52,15 @@ main_stack_coro(asio::io_context&, bool & done)
 
   ASIO_CHECK(g.is_open());
   ASIO_CHECK(1    == (co_await g(1000)).value_or(-1));
-  ASIO_CHECK(1002 == (co_await g(2000)).value_or(-1));
-  ASIO_CHECK(2004 == (co_await g(3000)).value_or(-1));
-  ASIO_CHECK(3008 == (co_await g(4000)).value_or(-1));
-  ASIO_CHECK(4016 == (co_await g(5000)).value_or(-1));
-  ASIO_CHECK(5032 == (co_await g(6000)).value_or(-1));
-  ASIO_CHECK(6064 == (co_await g(7000)).value_or(-1));
-  ASIO_CHECK(7128 == (co_await g(8000)).value_or(-1));
-  ASIO_CHECK(8256 == (co_await g(9000)).value_or(-1));
-  ASIO_CHECK(9512 == (co_await g(-1)).value_or(-1));
+  ASIO_CHECK(2002 == (co_await g(2000)).value_or(-1));
+  ASIO_CHECK(3004 == (co_await g(3000)).value_or(-1));
+  ASIO_CHECK(4008 == (co_await g(4000)).value_or(-1));
+  ASIO_CHECK(5016 == (co_await g(5000)).value_or(-1));
+  ASIO_CHECK(6032 == (co_await g(6000)).value_or(-1));
+  ASIO_CHECK(7064 == (co_await g(7000)).value_or(-1));
+  ASIO_CHECK(8128 == (co_await g(8000)).value_or(-1));
+  ASIO_CHECK(9256 == (co_await g(9000)).value_or(-1));
+  ASIO_CHECK(511 == (co_await g(-1)).value_or(-1));
   done = true;
 }
 
