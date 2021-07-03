@@ -77,7 +77,7 @@ make_co_spawn_work_guard(const Executor& ex)
 }
 
 template <typename T, typename Executor, typename F, typename Handler>
-awaitable<void, Executor> co_spawn_entry_point(
+awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
     awaitable<T, Executor>*, Executor ex, F f, Handler handler)
 {
   auto spawn_work = make_co_spawn_work_guard(ex);
@@ -142,7 +142,7 @@ awaitable<void, Executor> co_spawn_entry_point(
 }
 
 template <typename Executor, typename F, typename Handler>
-awaitable<void, Executor> co_spawn_entry_point(
+awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
     awaitable<void, Executor>*, Executor ex, F f, Handler handler)
 {
   auto spawn_work = make_co_spawn_work_guard(ex);

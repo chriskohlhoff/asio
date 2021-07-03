@@ -152,7 +152,7 @@ public:
 
   void clear_cancellation_slot()
   {
-    this->attached_thread_->cancellation_state_.slot().clear();
+    this->attached_thread_->entry_point()->cancellation_state_.slot().clear();
   }
 
   template <typename T>
@@ -355,7 +355,7 @@ public:
 
       bool& await_resume() const noexcept
       {
-        return this_->attached_thread_->has_context_switched_;
+        return this_->attached_thread_->entry_point()->has_context_switched_;
       }
     };
 
@@ -369,6 +369,7 @@ public:
 
   awaitable_thread<Executor>* detach_thread() noexcept
   {
+    attached_thread_->entry_point()->has_context_switched_ = true;
     return std::exchange(attached_thread_, nullptr);
   }
 
@@ -376,7 +377,7 @@ public:
   {
     caller_ = caller;
     attached_thread_ = caller_->attached_thread_;
-    attached_thread_->top_of_stack_ = this;
+    attached_thread_->entry_point()->top_of_stack_ = this;
     caller_->attached_thread_ = nullptr;
   }
 
@@ -384,7 +385,7 @@ public:
   {
     if (caller_)
       caller_->attached_thread_ = attached_thread_;
-    attached_thread_->top_of_stack_ = caller_;
+    attached_thread_->entry_point()->top_of_stack_ = caller_;
     attached_thread_ = nullptr;
     caller_ = nullptr;
   }
@@ -479,6 +480,62 @@ public:
   }
 };
 
+struct awaitable_thread_entry_point {};
+
+template <typename Executor>
+class awaitable_frame<awaitable_thread_entry_point, Executor>
+  : public awaitable_frame_base<Executor>
+{
+public:
+  awaitable_frame()
+    : top_of_stack_(0),
+      has_executor_(false),
+      has_context_switched_(false)
+  {
+  }
+
+  ~awaitable_frame()
+  {
+    if (has_executor_)
+      u_.executor_.~Executor();
+  }
+
+  awaitable<awaitable_thread_entry_point, Executor> get_return_object()
+  {
+    this->coro_ = coroutine_handle<awaitable_frame>::from_promise(*this);
+    return awaitable<awaitable_thread_entry_point, Executor>(this);
+  };
+
+  void return_void()
+  {
+  }
+
+  void get()
+  {
+    this->caller_ = nullptr;
+    this->rethrow_exception();
+  }
+
+private:
+  template <typename> friend class awaitable_frame_base;
+  template <typename, typename> friend class awaitable_handler_base;
+  template <typename> friend class awaitable_thread;
+
+  union u
+  {
+    u() {}
+    ~u() {}
+    char c_;
+    Executor executor_;
+  } u_;
+
+  awaitable_frame_base<Executor>* top_of_stack_;
+  asio::cancellation_slot parent_cancellation_slot_;
+  asio::cancellation_state cancellation_state_;
+  bool has_executor_;
+  bool has_context_switched_;
+};
+
 template <typename Executor>
 class awaitable_thread
 {
@@ -487,25 +544,21 @@ public:
   typedef cancellation_slot cancellation_slot_type;
 
   // Construct from the entry point of a new thread of execution.
-  awaitable_thread(awaitable<void, Executor> p, const Executor& ex,
-      cancellation_slot parent_cancel_slot, cancellation_state cancel_state)
-    : bottom_of_stack_(std::move(p)),
-      top_of_stack_(bottom_of_stack_.frame_),
-      executor_(ex),
-      parent_cancellation_slot_(parent_cancel_slot),
-      cancellation_state_(cancel_state),
-      has_context_switched_(false)
+  awaitable_thread(awaitable<awaitable_thread_entry_point, Executor> p,
+      const Executor& ex, cancellation_slot parent_cancel_slot,
+      cancellation_state cancel_state)
+    : bottom_of_stack_(std::move(p))
   {
+    bottom_of_stack_.frame_->top_of_stack_ = bottom_of_stack_.frame_;
+    new (&bottom_of_stack_.frame_->u_.executor_) Executor(ex);
+    bottom_of_stack_.frame_->has_executor_ = true;
+    bottom_of_stack_.frame_->parent_cancellation_slot_ = parent_cancel_slot;
+    bottom_of_stack_.frame_->cancellation_state_ = cancel_state;
   }
 
   // Transfer ownership from another awaitable_thread.
   awaitable_thread(awaitable_thread&& other) noexcept
-    : bottom_of_stack_(std::move(other.bottom_of_stack_)),
-      top_of_stack_(std::exchange(other.top_of_stack_, nullptr)),
-      executor_(std::move(other.executor_)),
-      parent_cancellation_slot_(std::move(other.parent_cancellation_slot_)),
-      cancellation_state_(std::move(other.cancellation_state_)),
-      has_context_switched_(true)
+    : bottom_of_stack_(std::move(other.bottom_of_stack_))
   {
   }
 
@@ -516,34 +569,41 @@ public:
     if (bottom_of_stack_.valid())
     {
       // Coroutine "stack unwinding" must be performed through the executor.
-      (post)(executor_,
+      (post)(bottom_of_stack_.frame_->u_.executor_,
           [a = std::move(bottom_of_stack_)]() mutable
           {
-            (void)awaitable<void, Executor>(std::move(a));
+            (void)awaitable<awaitable_thread_entry_point, Executor>(
+                std::move(a));
           });
     }
   }
 
+  awaitable_frame<awaitable_thread_entry_point, Executor>* entry_point()
+  {
+    return bottom_of_stack_.frame_;
+  }
+
   executor_type get_executor() const noexcept
   {
-    return executor_;
+    return bottom_of_stack_.frame_->u_.executor_;
   }
 
   cancellation_state get_cancellation_state() const noexcept
   {
-    return cancellation_state_;
+    return bottom_of_stack_.frame_->cancellation_state_;
   }
 
   void reset_cancellation_state()
   {
-    cancellation_state_ = cancellation_state(parent_cancellation_slot_);
+    bottom_of_stack_.frame_->cancellation_state_ =
+      cancellation_state(bottom_of_stack_.frame_->parent_cancellation_slot_);
   }
 
   template <typename Filter>
   void reset_cancellation_state(ASIO_MOVE_ARG(Filter) filter)
   {
-    cancellation_state_ = cancellation_state(
-        parent_cancellation_slot_,
+    bottom_of_stack_.frame_->cancellation_state_ =
+      cancellation_state(bottom_of_stack_.frame_->parent_cancellation_slot_,
         ASIO_MOVE_CAST(Filter)(filter));
   }
 
@@ -551,21 +611,21 @@ public:
   void reset_cancellation_state(ASIO_MOVE_ARG(InFilter) in_filter,
       ASIO_MOVE_ARG(OutFilter) out_filter)
   {
-    cancellation_state_ = cancellation_state(
-        parent_cancellation_slot_,
+    bottom_of_stack_.frame_->cancellation_state_ =
+      cancellation_state(bottom_of_stack_.frame_->parent_cancellation_slot_,
         ASIO_MOVE_CAST(InFilter)(in_filter),
         ASIO_MOVE_CAST(OutFilter)(out_filter));
   }
 
   cancellation_slot_type get_cancellation_slot() const noexcept
   {
-    return cancellation_state_.slot();
+    return bottom_of_stack_.frame_->cancellation_state_.slot();
   }
 
   // Launch a new thread of execution.
   void launch()
   {
-    top_of_stack_->attach_thread(this);
+    bottom_of_stack_.frame_->top_of_stack_->attach_thread(this);
     pump();
   }
 
@@ -576,20 +636,19 @@ protected:
   // has been transferred to another resumable_thread object.
   void pump()
   {
-    do top_of_stack_->resume(); while (top_of_stack_);
-    if (bottom_of_stack_.valid())
+    do
+      bottom_of_stack_.frame_->top_of_stack_->resume();
+    while (bottom_of_stack_.frame_ && bottom_of_stack_.frame_->top_of_stack_);
+
+    if (bottom_of_stack_.frame_)
     {
-      awaitable<void, Executor> a(std::move(bottom_of_stack_));
+      awaitable<awaitable_thread_entry_point, Executor> a(
+          std::move(bottom_of_stack_));
       a.frame_->rethrow_exception();
     }
   }
 
-  awaitable<void, Executor> bottom_of_stack_;
-  awaitable_frame_base<Executor>* top_of_stack_;
-  executor_type executor_;
-  asio::cancellation_slot parent_cancellation_slot_;
-  asio::cancellation_state cancellation_state_;
-  bool has_context_switched_;
+  awaitable<awaitable_thread_entry_point, Executor> bottom_of_stack_;
 };
 
 } // namespace detail

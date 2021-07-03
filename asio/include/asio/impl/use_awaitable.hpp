@@ -33,7 +33,7 @@ public:
   typedef awaitable<T, Executor> awaitable_type;
 
   // Construct from the entry point of a new thread of execution.
-  awaitable_handler_base(awaitable<void, Executor> a,
+  awaitable_handler_base(awaitable<awaitable_thread_entry_point, Executor> a,
       const Executor& ex, cancellation_slot pcs, cancellation_state cs)
     : awaitable_thread<Executor>(std::move(a), ex, pcs, cs)
   {
@@ -48,7 +48,8 @@ public:
 protected:
   awaitable_frame<T, Executor>* frame() noexcept
   {
-    return static_cast<awaitable_frame<T, Executor>*>(this->top_of_stack_);
+    return static_cast<awaitable_frame<T, Executor>*>(
+        this->entry_point()->top_of_stack_);
   }
 };
 
