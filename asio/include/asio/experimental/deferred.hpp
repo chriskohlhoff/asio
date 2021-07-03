@@ -16,8 +16,11 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
+#include <tuple>
+#include "asio/associator.hpp"
+#include "asio/async_result.hpp"
 #include "asio/detail/push_options.hpp"
+#include "asio/detail/type_traits.hpp"
 
 namespace asio {
 namespace experimental {

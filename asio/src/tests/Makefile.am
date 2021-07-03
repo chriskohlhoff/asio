@@ -173,6 +173,11 @@ noinst_PROGRAMS = \
 	performance/server
 endif
 
+if HAVE_CXX14
+check_PROGRAMS += \
+	unit/experimental/deferred
+endif
+
 if HAVE_CXX20
 check_PROGRAMS += \
 	unit/experimental/promise
@@ -345,6 +350,11 @@ TESTS = \
 	unit/windows/stream_handle \
 	unit/write \
 	unit/write_at
+
+if HAVE_CXX14
+TESTS += \
+	unit/experimental/deferred
+endif
 
 if HAVE_CXX20
 TESTS += \
@@ -538,6 +548,10 @@ unit_windows_random_access_handle_SOURCES = unit/windows/random_access_handle.cp
 unit_windows_stream_handle_SOURCES = unit/windows/stream_handle.cpp
 unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
+
+if HAVE_CXX14
+unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
+endif
 
 if HAVE_CXX20
 unit_experimental_promise_SOURCES = unit/experimental/promise.cpp

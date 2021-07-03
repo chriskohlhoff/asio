@@ -8,4 +8,5 @@
 *.pdb
 *.tds
 awaitable_operators
-promise*
+deferred
+promise
