@@ -852,7 +852,7 @@ struct coro_promise_exchange<Yield, Input, void> : coro_awaited_from
       std::exchange(awaited_from, noop_coroutine())};
   }
 
-  void return_void() {}
+  void return_void() { result_.reset(); }
 };
 
 template <typename Return>
@@ -897,7 +897,7 @@ struct coro_promise_exchange<Yield, void, void> : coro_awaited_from
     return yield_input<void>{std::exchange(awaited_from, noop_coroutine())};
   }
 
-  void return_void() {}
+  void return_void() { result_.reset(); }
 };
 
 template <typename Yield, typename Return, typename Executor>
