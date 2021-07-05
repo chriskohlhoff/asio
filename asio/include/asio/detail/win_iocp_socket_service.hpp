@@ -469,8 +469,24 @@ public:
     // Reset endpoint since it can be given no sensible value at this time.
     sender_endpoint = endpoint_type();
 
-    start_null_buffers_receive_op(impl, flags, p.p);
+    // Optionally register for per-operation cancellation.
+    operation* iocp_op = p.p;
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ = iocp_op =
+        &slot.template emplace<reactor_op_cancellation>(
+            impl.socket_, iocp_op);
+    }
+
+    int op_type = start_null_buffers_receive_op(impl, flags, p.p, iocp_op);
     p.v = p.p = 0;
+
+    // Update cancellation method if the reactor was used.
+    if (slot.is_connected() && op_type != -1)
+    {
+      static_cast<reactor_op_cancellation*>(iocp_op)->use_reactor(
+          &get_reactor(), &impl.reactor_data_, op_type);
+    }
   }
 
   // Accept a new connection.
@@ -588,6 +604,9 @@ public:
       const endpoint_type& peer_endpoint, Handler& handler,
       const IoExecutor& io_ex)
   {
+    typename associated_cancellation_slot<Handler>::type slot
+      = asio::get_associated_cancellation_slot(handler);
+
     // Allocate and construct an operation to wrap the handler.
     typedef win_iocp_socket_connect_op<Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
@@ -597,9 +616,26 @@ public:
     ASIO_HANDLER_CREATION((context_, *p.p, "socket",
           &impl, impl.socket_, "async_connect"));
 
-    start_connect_op(impl, impl.protocol_.family(), impl.protocol_.type(),
-        peer_endpoint.data(), static_cast<int>(peer_endpoint.size()), p.p);
+    // Optionally register for per-operation cancellation.
+    operation* iocp_op = p.p;
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ = iocp_op =
+        &slot.template emplace<reactor_op_cancellation>(
+            impl.socket_, iocp_op);
+    }
+
+    int op_type = start_connect_op(impl, impl.protocol_.family(),
+        impl.protocol_.type(), peer_endpoint.data(),
+        static_cast<int>(peer_endpoint.size()), p.p, iocp_op);
     p.v = p.p = 0;
+
+    // Update cancellation method if the reactor was used.
+    if (slot.is_connected() && op_type != -1)
+    {
+      static_cast<reactor_op_cancellation*>(iocp_op)->use_reactor(
+          &get_reactor(), &impl.reactor_data_, op_type);
+    }
   }
 };
 
