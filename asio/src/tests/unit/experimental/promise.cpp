@@ -32,8 +32,9 @@ void promise_tester()
 
   steady_timer timer1{ctx}, timer2{ctx};
 
-  timer1.expires_after(milliseconds(100));
-  timer2.expires_after(milliseconds(50));
+  const auto started_when = steady_clock::now();
+  timer1.expires_at(started_when + milliseconds(2000));
+  timer2.expires_at(started_when + milliseconds(1000));
   auto p = timer1.async_wait(experimental::use_promise);
 
   steady_clock::time_point completed_when;
@@ -71,10 +72,9 @@ void promise_race_tester()
 
   steady_timer timer1{ctx}, timer2{ctx};
 
-  timer1.expires_after(milliseconds(100));
-  timer2.expires_after(milliseconds(50));
-
   const auto started_when = steady_clock::now();
+  timer1.expires_at(started_when + milliseconds(2000));
+  timer2.expires_at(started_when + milliseconds(1000));
 
   experimental::promise<void(std::variant<error_code, error_code>)> p =
     experimental::promise<>::race(
@@ -95,8 +95,8 @@ void promise_race_tester()
 
   ctx.run();
 
-  ASIO_CHECK(started_when + milliseconds(50) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(55) > completed_when);
+  ASIO_CHECK(started_when + milliseconds(1000) <= completed_when);
+  ASIO_CHECK(started_when + milliseconds(1500) > completed_when);
   ASIO_CHECK(called);
   ASIO_CHECK(!ec);
 }
@@ -112,10 +112,9 @@ void promise_all_tester()
   steady_timer timer1{ctx},
          timer2{ctx};
 
-  timer1.expires_after(milliseconds(100));
-  timer2.expires_after(milliseconds(50));
-
   const auto started_when = steady_clock::now();
+  timer1.expires_at(started_when + milliseconds(2000));
+  timer2.expires_at(started_when + milliseconds(1000));
 
   experimental::promise<void(error_code, error_code)> p =
     experimental::promise<>::all(
@@ -136,8 +135,8 @@ void promise_all_tester()
 
   ctx.run();
 
-  ASIO_CHECK(started_when + milliseconds(100) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(105) > completed_when);
+  ASIO_CHECK(started_when + milliseconds(2000) <= completed_when);
+  ASIO_CHECK(started_when + milliseconds(2500) > completed_when);
   ASIO_CHECK(called);
 }
 
@@ -151,10 +150,9 @@ void promise_race_ranged_tester()
 
   steady_timer timer1{ctx}, timer2{ctx};
 
-  timer1.expires_after(milliseconds(100));
-  timer2.expires_after(milliseconds(50));
-
   const auto started_when = steady_clock::now();
+  timer1.expires_at(started_when + milliseconds(2000));
+  timer2.expires_at(started_when + milliseconds(1000));
 
   // promise<
   //   std::variant<
@@ -188,8 +186,8 @@ void promise_race_ranged_tester()
 
   ctx.run();
 
-  ASIO_CHECK(started_when + milliseconds(50) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(55) > completed_when);
+  ASIO_CHECK(started_when + milliseconds(1000) <= completed_when);
+  ASIO_CHECK(started_when + milliseconds(1500) > completed_when);
   ASIO_CHECK(called);
 
   std::exception_ptr ex;
@@ -216,10 +214,9 @@ void promise_all_ranged_tester()
 
   steady_timer timer1{ctx}, timer2{ctx};
 
-  timer1.expires_after(milliseconds(100));
-  timer2.expires_after(milliseconds(50));
-
   const auto started_when = steady_clock::now();
+  timer1.expires_at(started_when + milliseconds(2000));
+  timer2.expires_at(started_when + milliseconds(1000));
 
   // promise<
   //   std::variant<
@@ -253,8 +250,8 @@ void promise_all_ranged_tester()
 
   ctx.run();
 
-  ASIO_CHECK(started_when + milliseconds(100) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(105) > completed_when);
+  ASIO_CHECK(started_when + milliseconds(2000) <= completed_when);
+  ASIO_CHECK(started_when + milliseconds(2500) > completed_when);
   ASIO_CHECK(called == true);
 
   std::exception_ptr ex;
@@ -280,8 +277,9 @@ void promise_cancel_tester()
 
   steady_timer timer1{ctx}, timer2{ctx};
 
-  timer1.expires_after(milliseconds(100));
-  timer2.expires_after(milliseconds(50));
+  const auto started_when = steady_clock::now();
+  timer1.expires_at(started_when + milliseconds(2000));
+  timer2.expires_at(started_when + milliseconds(1000));
 
   // promise<
   //   std::variant<
