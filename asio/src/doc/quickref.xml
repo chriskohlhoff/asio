@@ -226,6 +226,11 @@
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution_context.add_service">add_service</link></member>
+            <member><link linkend="asio.reference.experimental__append">experimental::append</link></member>
+            <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
+            <member><link linkend="asio.reference.experimental__as_tuple">experimental::as_tuple</link></member>
+            <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
+            <member><link linkend="asio.reference.experimental__prepend">experimental::prepend</link></member>
             <member><link linkend="asio.reference.asio_handler_allocate">asio_handler_allocate</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link> (deprecated)</member>
@@ -247,6 +252,7 @@
             <member><link linkend="asio.reference.redirect_error">redirect_error</link></member>
             <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
+            <member><link linkend="asio.reference.this_coro__throw_if_error">this_coro::throw_if_error</link></member>
             <member><link linkend="asio.reference.execution_context.use_service">use_service</link></member>
           </simplelist>
         </entry>
@@ -260,9 +266,21 @@
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.cancellation_filter">cancellation_filter</link></member>
             <member><link linkend="asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
+            <member><link linkend="asio.reference.experimental__deferred_t">experimental::deferred_t</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
+            <member><link linkend="asio.reference.experimental__append_t">experimental::append_t</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
+            <member><link linkend="asio.reference.experimental__as_tuple_t">experimental::as_tuple_t</link></member>
+            <member><link linkend="asio.reference.experimental__coro">experimental::coro</link></member>
+            <member><link linkend="asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
+            <member><link linkend="asio.reference.experimental__prepend_t">experimental::prepend_t</link></member>
+            <member><link linkend="asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_">experimental::promise</link></member>
+            <member><link linkend="asio.reference.experimental__use_coro_t">experimental::use_coro_t</link></member>
+            <member><link linkend="asio.reference.experimental__wait_for_all">experimental::wait_for_all</link></member>
+            <member><link linkend="asio.reference.experimental__wait_for_one">experimental::wait_for_one</link></member>
+            <member><link linkend="asio.reference.experimental__wait_for_one_error">experimental::wait_for_one_error</link></member>
+            <member><link linkend="asio.reference.experimental__wait_for_one_success">experimental::wait_for_one_success</link></member>
             <member><link linkend="asio.reference.io_context__basic_executor_type">io_context::basic_executor_type</link></member>
             <member><link linkend="asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>
@@ -274,20 +292,12 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.detached">detached</link></member>
             <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
-            <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
+            <member><link linkend="asio.reference.experimental__deferred">experimental::deferred</link></member>
+            <member><link linkend="asio.reference.experimental__use_coro">experimental::use_coro</link></member>
             <member><link linkend="asio.reference.this_coro__cancellation_state">this_coro::cancellation_state</link></member>
             <member><link linkend="asio.reference.this_coro__executor">this_coro::executor</link></member>
             <member><link linkend="asio.reference.use_future">use_future</link></member>
             <member><link linkend="asio.reference.use_awaitable">use_awaitable</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Boost.Bind Placeholders</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></member>
-            <member><link linkend="asio.reference.placeholders__endpoint">placeholders::endpoint</link></member>
-            <member><link linkend="asio.reference.placeholders__error">placeholders::error</link></member>
-            <member><link linkend="asio.reference.placeholders__iterator">placeholders::iterator</link></member>
-            <member><link linkend="asio.reference.placeholders__results">placeholders::results</link></member>
-            <member><link linkend="asio.reference.placeholders__signal_number">placeholders::signal_number</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -297,6 +307,15 @@
             <member><link linkend="asio.reference.error__netdb_errors">error::netdb_errors</link></member>
             <member><link linkend="asio.reference.error__addrinfo_errors">error::addrinfo_errors</link></member>
             <member><link linkend="asio.reference.error__misc_errors">error::misc_errors</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Boost.Bind Placeholders</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></member>
+            <member><link linkend="asio.reference.placeholders__endpoint">placeholders::endpoint</link></member>
+            <member><link linkend="asio.reference.placeholders__error">placeholders::error</link></member>
+            <member><link linkend="asio.reference.placeholders__iterator">placeholders::iterator</link></member>
+            <member><link linkend="asio.reference.placeholders__results">placeholders::results</link></member>
+            <member><link linkend="asio.reference.placeholders__signal_number">placeholders::signal_number</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <simplelist type="vert" columns="1">
