@@ -253,6 +253,8 @@ struct coro_init_handler
 } // namespace detail
 } // namespace experimental
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Executor, typename R, typename... Args>
 struct async_result<experimental::use_coro_t<Executor>, R(Args...)>
 {
@@ -266,6 +268,8 @@ struct async_result<experimental::use_coro_t<Executor>, R(Args...)>
     std::move(initiation)(co_await return_type::handler, std::move(args)...);
   }
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

@@ -62,6 +62,14 @@ struct promise_value_type<>
   using type = std::monostate;
 };
 
+#if defined(GENERATING_DOCUMENTATION)
+/// The primary template is not defined.
+template<typename Signature = void(), typename Executor = any_io_executor>
+struct promise
+{
+};
+#endif // defined(GENERATING_DOCUMENTATION)
+
 template <typename ... Ts, typename Executor>
 struct promise<void(Ts...), Executor>
 {
@@ -274,11 +282,13 @@ struct promise<void(Ts...), Executor>
   }
 
   template <execution::executor Executor1, typename Range>
+#if !defined(GENERATING_DOCUMENTATION)
     requires requires (Range r)
     {
       {*std::begin(r)} -> is_promise_c;
       {*std::  end(r)} -> is_promise_c;
     }
+#endif // !defined(GENERATING_DOCUMENTATION)
   static auto race(Executor1 exec, Range range)
   {
     using var_t = typename std::decay_t<
@@ -373,11 +383,13 @@ struct promise<void(Ts...), Executor>
 
 
   template <execution::executor Executor1, typename Range>
+#if !defined(GENERATING_DOCUMENTATION)
     requires requires (Range r)
     {
       {*std::begin(r)} -> is_promise_c;
       {*std::  end(r)} -> is_promise_c;
     }
+#endif // !defined(GENERATING_DOCUMENTATION)
   static auto all(Executor1 exec, Range  range)
     -> promise<
         void(
@@ -467,11 +479,13 @@ struct promise<void(Ts...), Executor>
   }
 
   template <typename Range>
+#if !defined(GENERATING_DOCUMENTATION)
     requires requires (Range r)
     {
       {*std::begin(r)} -> is_promise_c;
       {*std::  end(r)} -> is_promise_c;
     }
+#endif // !defined(GENERATING_DOCUMENTATION)
   static auto race(Range range)
   {
     if (std::begin(range) == std::end(range))
@@ -482,11 +496,13 @@ struct promise<void(Ts...), Executor>
   }
 
   template <typename Range>
+#if !defined(GENERATING_DOCUMENTATION)
     requires requires (Range&& r)
     {
       {*std::begin(r)} -> is_promise_c;
       {*std::  end(r)} -> is_promise_c;
     }
+#endif // !defined(GENERATING_DOCUMENTATION)
   static auto all(Range range)
   {
     if (std::begin(range) == std::end(range))
@@ -497,8 +513,10 @@ struct promise<void(Ts...), Executor>
   }
 
 private:
+#if !defined(GENERATING_DOCUMENTATION)
   template <typename, typename> friend struct promise;
   friend struct detail::promise_handler<void(Ts...)>;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
   std::shared_ptr<detail::promise_impl<void(Ts...), Executor>> impl_;
   promise(std::shared_ptr<detail::promise_impl<void(Ts...), Executor>> impl)

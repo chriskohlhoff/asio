@@ -220,13 +220,16 @@ struct coro
 
   using promise_type = detail::coro_promise<Yield, Return, Executor>;
 
+#if !defined(GENERATING_DOCUMENTATION)
   template <typename T, typename Coroutine, typename>
-  friend
-  struct detail::coro_with_arg;
+  friend struct detail::coro_with_arg;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
   using executor_type = Executor;
 
+#if !defined(GENERATING_DOCUMENTATION)
   friend struct detail::coro_promise<Yield, Return, Executor>;
+#endif // !defined(GENERATING_DOCUMENTATION)
 
   coro() = default;
 
