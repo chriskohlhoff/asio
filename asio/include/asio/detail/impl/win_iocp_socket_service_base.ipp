@@ -548,10 +548,16 @@ void win_iocp_socket_service_base::start_accept_op(
 
 void win_iocp_socket_service_base::restart_accept_op(
     socket_type s, socket_holder& new_socket, int family, int type,
-    int protocol, void* output_buffer, DWORD address_length, operation* op)
+    int protocol, void* output_buffer, DWORD address_length,
+    long* cancel_requested, operation* op)
 {
   new_socket.reset();
   iocp_service_.work_started();
+
+  // Check if we were cancelled after the first AcceptEx completed.
+  if (cancel_requested)
+    if (::InterlockedExchangeAdd(cancel_requested, 0) == 1)
+      iocp_service_.on_completion(op, asio::error::operation_aborted);
 
   asio::error_code ec;
   new_socket.reset(socket_ops::socket(family, type, protocol, ec));
@@ -566,7 +572,19 @@ void win_iocp_socket_service_base::restart_accept_op(
     if (!result && last_error != WSA_IO_PENDING)
       iocp_service_.on_completion(op, last_error);
     else
+    {
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+      if (cancel_requested)
+      {
+        if (::InterlockedExchangeAdd(cancel_requested, 0) == 1)
+        {
+          HANDLE sock_as_handle = reinterpret_cast<HANDLE>(s);
+          ::CancelIoEx(sock_as_handle, op);
+        }
+      }
+#endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
       iocp_service_.on_pending(op);
+    }
   }
 }
 

@@ -547,8 +547,9 @@ public:
 
   // Helper function to restart an asynchronous accept operation.
   ASIO_DECL void restart_accept_op(socket_type s,
-      socket_holder& new_socket, int family, int type, int protocol,
-      void* output_buffer, DWORD address_length, operation* op);
+      socket_holder& new_socket, int family, int type,
+      int protocol, void* output_buffer, DWORD address_length,
+      long* cancel_requested, operation* op);
 
 protected:
   // Open a new socket implementation.
@@ -684,6 +685,53 @@ protected:
   private:
     SOCKET socket_;
     operation* target_;
+  };
+
+  // Helper class used to implement per operation cancellation.
+  class accept_op_cancellation : public operation
+  {
+  public:
+    accept_op_cancellation(SOCKET s, operation* target)
+      : operation(&iocp_op_cancellation::do_complete),
+        socket_(s),
+        target_(target),
+        cancel_requested_(0)
+    {
+    }
+
+    static void do_complete(void* owner, operation* base,
+        const asio::error_code& result_ec,
+        std::size_t bytes_transferred)
+    {
+      accept_op_cancellation* o = static_cast<accept_op_cancellation*>(base);
+      o->target_->complete(owner, result_ec, bytes_transferred);
+    }
+
+    long* get_cancel_requested()
+    {
+      return &cancel_requested_;
+    }
+
+    void operator()(cancellation_type_t type)
+    {
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+      if (!!(type &
+            (cancellation_type::terminal
+              | cancellation_type::partial
+              | cancellation_type::total)))
+      {
+        HANDLE sock_as_handle = reinterpret_cast<HANDLE>(socket_);
+        ::CancelIoEx(sock_as_handle, this);
+      }
+#else // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+      (void)type;
+#endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+    }
+
+  private:
+    SOCKET socket_;
+    operation* target_;
+    long cancel_requested_;
   };
 
   // Helper class used to implement per operation cancellation.

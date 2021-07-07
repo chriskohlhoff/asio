@@ -51,6 +51,16 @@ public:
     func_(0, this, asio::error_code(), 0);
   }
 
+  void reset()
+  {
+    Internal = 0;
+    InternalHigh = 0;
+    Offset = 0;
+    OffsetHigh = 0;
+    hEvent = 0;
+    ready_ = 0;
+  }
+
 protected:
   typedef void (*func_type)(
       void*, win_iocp_operation*,
@@ -66,16 +76,6 @@ protected:
   // Prevents deletion through this type.
   ~win_iocp_operation()
   {
-  }
-
-  void reset()
-  {
-    Internal = 0;
-    InternalHigh = 0;
-    Offset = 0;
-    OffsetHigh = 0;
-    hEvent = 0;
-    ready_ = 0;
   }
 
 private:

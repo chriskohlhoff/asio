@@ -543,7 +543,12 @@ public:
 
     // Optionally register for per-operation cancellation.
     if (slot.is_connected())
-      o = &slot.template emplace<iocp_op_cancellation>(impl.socket_, o);
+    {
+      accept_op_cancellation* c =
+        &slot.template emplace<accept_op_cancellation>(impl.socket_, o);
+      p.p->enable_cancellation(c->get_cancel_requested(), c);
+      o = c;
+    }
 
     start_accept_op(impl, peer.is_open(), p.p->new_socket(),
         impl.protocol_.family(), impl.protocol_.type(),
@@ -579,7 +584,12 @@ public:
 
     // Optionally register for per-operation cancellation.
     if (slot.is_connected())
-      o = &slot.template emplace<iocp_op_cancellation>(impl.socket_, o);
+    {
+      accept_op_cancellation* c =
+        &slot.template emplace<accept_op_cancellation>(impl.socket_, o);
+      p.p->enable_cancellation(c->get_cancel_requested(), c);
+      o = c;
+    }
 
     start_accept_op(impl, false, p.p->new_socket(),
         impl.protocol_.family(), impl.protocol_.type(),
