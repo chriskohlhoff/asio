@@ -2,8 +2,8 @@
 nobase_include_HEADERS = \
 	asio/any_io_executor.hpp \
 	asio/associated_allocator.hpp \
-	asio/associated_executor.hpp \
 	asio/associated_cancellation_slot.hpp \
+	asio/associated_executor.hpp \
 	asio/associator.hpp \
 	asio/async_result.hpp \
 	asio/awaitable.hpp \
@@ -317,8 +317,8 @@ nobase_include_HEADERS = \
 	asio/execution/detail/as_operation.hpp \
 	asio/execution/detail/as_receiver.hpp \
 	asio/execution/detail/bulk_sender.hpp \
-	asio/execution/detail/void_receiver.hpp \
 	asio/execution/detail/submit_receiver.hpp \
+	asio/execution/detail/void_receiver.hpp \
 	asio/execution/execute.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/impl/bad_executor.ipp \
@@ -345,16 +345,25 @@ nobase_include_HEADERS = \
 	asio/experimental/append.hpp \
 	asio/experimental/as_single.hpp \
 	asio/experimental/as_tuple.hpp \
+	asio/experimental/awaitable_operators.hpp \
 	asio/experimental/cancellation_condition.hpp \
+	asio/experimental/coro.hpp \
 	asio/experimental/deferred.hpp \
-	asio/experimental/parallel_group.hpp \
-	asio/experimental/prepend.hpp \
+	asio/experimental/detail/completion_handler_erasure.hpp \
+	asio/experimental/detail/coro_promise_allocator.hpp \
+	asio/experimental/detail/coro_traits.hpp \
+	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/append.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/as_tuple.hpp \
 	asio/experimental/impl/deferred.hpp \
 	asio/experimental/impl/parallel_group.hpp \
 	asio/experimental/impl/prepend.hpp \
+	asio/experimental/impl/promise.hpp \
+	asio/experimental/parallel_group.hpp \
+	asio/experimental/prepend.hpp \
+	asio/experimental/promise.hpp \
+	asio/experimental/use_coro.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
