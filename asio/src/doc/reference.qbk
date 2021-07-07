@@ -1787,7 +1787,7 @@ Helper template to deduce the handler type from a CompletionToken, capture a loc
 
   template<
       typename CompletionToken,
-      typename Signature>
+      typename... Signatures>
   struct async_completion
 
 
@@ -1875,7 +1875,7 @@ A copy of, or reference to, a real handler object.
 The real handler type to be used for the asynchronous operation. 
 
 
-  typedef asio::async_result< typename decay< CompletionToken >::type, Signature >::completion_handler_type completion_handler_type;
+  typedef asio::async_result< typename decay< CompletionToken >::type, Signatures... >::completion_handler_type completion_handler_type;
 
 
 [heading Types]
@@ -1952,7 +1952,7 @@ This template may be specialised for user-defined completion token types. The pr
 The result of the asynchronous operation's initiating function. 
 
 
-  async_result< typename decay< CompletionToken >::type, Signature > result;
+  async_result< typename decay< CompletionToken >::type, Signatures... > result;
 
 
 
@@ -2729,7 +2729,7 @@ It would be used with the `asio::connect` function as follows:
 
   template<
       typename CompletionToken,
-      completion_signature Signature,
+      completion_signature... Signatures,
       typename Initiation,
       typename... Args>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_initiate(
@@ -5412,7 +5412,7 @@ An interface for customising the behaviour of an initiating function.
 
   template<
       typename CompletionToken,
-      typename Signature>
+      typename... Signatures>
   class async_result
 
 
@@ -77272,6 +77272,124 @@ Unless the object has already been reset, or is in a moved-from state, calls `on
 [endsect]
 
 
+[section:experimental__append experimental::append]
+
+[indexterm1 asio.indexterm.experimental__append..experimental::append] 
+Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  constexpr append_t< typename decay< CompletionToken >::type, typename decay< Values >::type...> append(
+      CompletionToken && completion_token,
+      Values &&... values);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/append.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__append_t experimental::append_t]
+
+[indexterm1 asio.indexterm.experimental__append_t..experimental::append_t]
+
+
+Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  class append_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__append_t.append_t [*append_t]] [constructor]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__append_t.token_ [*token_]]]
+    []
+  ]
+
+  [
+    [[link asio.reference.experimental__append_t.values_ [*values_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/append.hpp]
+
+['Convenience header: ]None
+
+
+[section:append_t experimental::append_t::append_t]
+
+[indexterm2 asio.indexterm.experimental__append_t.append_t..append_t..experimental::append_t] 
+Constructor. 
+
+
+  template<
+      typename T,
+      typename... V>
+  constexpr append_t(
+      T && completion_token,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[section:token_ experimental::append_t::token_]
+
+[indexterm2 asio.indexterm.experimental__append_t.token_..token_..experimental::append_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[section:values_ experimental::append_t::values_]
+
+[indexterm2 asio.indexterm.experimental__append_t.values_..values_..experimental::append_t] 
+
+  std::tuple< Values...> values_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
 [section:experimental__as_single experimental::as_single]
 
 [indexterm1 asio.indexterm.experimental__as_single..experimental::as_single] 
@@ -77288,7 +77406,7 @@ Create a completion token to specify that the completion handler arguments shoul
 
 ['Header: ][^asio/experimental/as_single.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -77362,7 +77480,7 @@ The [link asio.reference.experimental__as_single_t `experimental::as_single_t`] 
 
 ['Header: ][^asio/experimental/as_single.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:as_default_on experimental::as_single_t::as_default_on]
@@ -77469,7 +77587,7 @@ Tag type used to prevent the "default" constructor from being used for conversio
 
 ['Header: ][^asio/experimental/as_single.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -77517,7 +77635,7 @@ Adapts an executor to add the `as_single_t` completion token as the default.
 
 ['Header: ][^asio/experimental/as_single.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:default_completion_token_type experimental::as_single_t::executor_with_default::default_completion_token_type]
@@ -77585,7 +77703,7 @@ The [link asio.reference.experimental__as_single_t `experimental::as_single_t`] 
 
 ['Header: ][^asio/experimental/as_single.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -77667,7 +77785,7 @@ Create a completion token to specify that the completion handler arguments shoul
 
 ['Header: ][^asio/experimental/as_tuple.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -77741,7 +77859,7 @@ The [link asio.reference.experimental__as_tuple_t `experimental::as_tuple_t`] cl
 
 ['Header: ][^asio/experimental/as_tuple.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:as_default_on experimental::as_tuple_t::as_default_on]
@@ -77848,7 +77966,7 @@ Tag type used to prevent the "default" constructor from being used for conversio
 
 ['Header: ][^asio/experimental/as_tuple.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -77894,7 +78012,7 @@ Adapts an executor to add the `as_tuple_t` completion token as the default.
 
 ['Header: ][^asio/experimental/as_tuple.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [section:default_completion_token_type experimental::as_tuple_t::executor_with_default::default_completion_token_type]
@@ -77962,7 +78080,7 @@ The [link asio.reference.experimental__as_tuple_t `experimental::as_tuple_t`] cl
 
 ['Header: ][^asio/experimental/as_tuple.hpp]
 
-['Convenience header: ][^asio.hpp]
+['Convenience header: ]None
 
 
 [endsect]
@@ -77980,6 +78098,3047 @@ Construct the adapted executor from the inner executor type.
   executor_with_default(
       const InnerExecutor1 & ex,
       typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__awaitable_operators__operator__amp__amp_ experimental::awaitable_operators::operator &&]
+
+[indexterm1 asio.indexterm.experimental__awaitable_operators__operator__amp__amp_..experimental::awaitable_operators::operator &&] 
+Wait for both operations to succeed. 
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< void, Executor > ``[link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload1 operator &&]``(
+      awaitable< void, Executor > t,
+      awaitable< void, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload1 more...]]``
+
+  template<
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< U, Executor > ``[link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload2 operator &&]``(
+      awaitable< void, Executor > t,
+      awaitable< U, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload2 more...]]``
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< T, Executor > ``[link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload3 operator &&]``(
+      awaitable< T, Executor > t,
+      awaitable< void, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload3 more...]]``
+
+  template<
+      typename T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::tuple< T, U >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload4 operator &&]``(
+      awaitable< T, Executor > t,
+      awaitable< U, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload4 more...]]``
+
+  template<
+      typename... T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::tuple< T..., std::monostate >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload5 operator &&]``(
+      awaitable< std::tuple< T...>, Executor > t,
+      awaitable< void, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload5 more...]]``
+
+  template<
+      typename... T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::tuple< T..., U >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload6 operator &&]``(
+      awaitable< std::tuple< T...>, Executor > t,
+      awaitable< U, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator__amp__amp_.overload6 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/awaitable_operators.hpp]
+
+['Convenience header: ]None
+
+
+[section:overload1 experimental::awaitable_operators::operator && (1 of 6 overloads)]
+
+
+Wait for both operations to succeed. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< void, Executor > operator &&(
+      awaitable< void, Executor > t,
+      awaitable< void, Executor > u);
+
+
+If one operations fails, the other is cancelled as the AND-condition can no longer be satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::awaitable_operators::operator && (2 of 6 overloads)]
+
+
+Wait for both operations to succeed. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< U, Executor > operator &&(
+      awaitable< void, Executor > t,
+      awaitable< U, Executor > u);
+
+
+If one operations fails, the other is cancelled as the AND-condition can no longer be satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::awaitable_operators::operator && (3 of 6 overloads)]
+
+
+Wait for both operations to succeed. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< T, Executor > operator &&(
+      awaitable< T, Executor > t,
+      awaitable< void, Executor > u);
+
+
+If one operations fails, the other is cancelled as the AND-condition can no longer be satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::awaitable_operators::operator && (4 of 6 overloads)]
+
+
+Wait for both operations to succeed. 
+
+
+  template<
+      typename T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::tuple< T, U >, Executor > operator &&(
+      awaitable< T, Executor > t,
+      awaitable< U, Executor > u);
+
+
+If one operations fails, the other is cancelled as the AND-condition can no longer be satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload5 experimental::awaitable_operators::operator && (5 of 6 overloads)]
+
+
+Wait for both operations to succeed. 
+
+
+  template<
+      typename... T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::tuple< T..., std::monostate >, Executor > operator &&(
+      awaitable< std::tuple< T...>, Executor > t,
+      awaitable< void, Executor > u);
+
+
+If one operations fails, the other is cancelled as the AND-condition can no longer be satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload6 experimental::awaitable_operators::operator && (6 of 6 overloads)]
+
+
+Wait for both operations to succeed. 
+
+
+  template<
+      typename... T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::tuple< T..., U >, Executor > operator &&(
+      awaitable< std::tuple< T...>, Executor > t,
+      awaitable< U, Executor > u);
+
+
+If one operations fails, the other is cancelled as the AND-condition can no longer be satisfied. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:experimental__awaitable_operators__operator_pipe__pipe_ experimental::awaitable_operators::operator||]
+
+[indexterm1 asio.indexterm.experimental__awaitable_operators__operator_pipe__pipe_..experimental::awaitable_operators::operator||] 
+Wait for one operation to succeed. 
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< std::monostate, std::monostate >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload1 operator||]``(
+      awaitable< void, Executor > t,
+      awaitable< void, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload1 more...]]``
+
+  template<
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< std::monostate, U >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload2 operator||]``(
+      awaitable< void, Executor > t,
+      awaitable< U, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload2 more...]]``
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T, std::monostate >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload3 operator||]``(
+      awaitable< T, Executor > t,
+      awaitable< void, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload3 more...]]``
+
+  template<
+      typename T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T, U >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload4 operator||]``(
+      awaitable< T, Executor > t,
+      awaitable< U, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload4 more...]]``
+
+  template<
+      typename... T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T..., std::monostate >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload5 operator||]``(
+      awaitable< std::variant< T...>, Executor > t,
+      awaitable< void, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload5 more...]]``
+
+  template<
+      typename... T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T..., U >, Executor > ``[link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload6 operator||]``(
+      awaitable< std::variant< T...>, Executor > t,
+      awaitable< U, Executor > u);
+  ``  [''''&raquo;''' [link asio.reference.experimental__awaitable_operators__operator_pipe__pipe_.overload6 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/awaitable_operators.hpp]
+
+['Convenience header: ]None
+
+
+[section:overload1 experimental::awaitable_operators::operator|| (1 of 6 overloads)]
+
+
+Wait for one operation to succeed. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< std::monostate, std::monostate >, Executor > operator||(
+      awaitable< void, Executor > t,
+      awaitable< void, Executor > u);
+
+
+If one operations succeeds, the other is cancelled as the OR-condition is already satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::awaitable_operators::operator|| (2 of 6 overloads)]
+
+
+Wait for one operation to succeed. 
+
+
+  template<
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< std::monostate, U >, Executor > operator||(
+      awaitable< void, Executor > t,
+      awaitable< U, Executor > u);
+
+
+If one operations succeeds, the other is cancelled as the OR-condition is already satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::awaitable_operators::operator|| (3 of 6 overloads)]
+
+
+Wait for one operation to succeed. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T, std::monostate >, Executor > operator||(
+      awaitable< T, Executor > t,
+      awaitable< void, Executor > u);
+
+
+If one operations succeeds, the other is cancelled as the OR-condition is already satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::awaitable_operators::operator|| (4 of 6 overloads)]
+
+
+Wait for one operation to succeed. 
+
+
+  template<
+      typename T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T, U >, Executor > operator||(
+      awaitable< T, Executor > t,
+      awaitable< U, Executor > u);
+
+
+If one operations succeeds, the other is cancelled as the OR-condition is already satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload5 experimental::awaitable_operators::operator|| (5 of 6 overloads)]
+
+
+Wait for one operation to succeed. 
+
+
+  template<
+      typename... T,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T..., std::monostate >, Executor > operator||(
+      awaitable< std::variant< T...>, Executor > t,
+      awaitable< void, Executor > u);
+
+
+If one operations succeeds, the other is cancelled as the OR-condition is already satisfied. 
+
+
+[endsect]
+
+
+
+[section:overload6 experimental::awaitable_operators::operator|| (6 of 6 overloads)]
+
+
+Wait for one operation to succeed. 
+
+
+  template<
+      typename... T,
+      typename U,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  awaitable< std::variant< T..., U >, Executor > operator||(
+      awaitable< std::variant< T...>, Executor > t,
+      awaitable< U, Executor > u);
+
+
+If one operations succeeds, the other is cancelled as the OR-condition is already satisfied. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:experimental__coro experimental::coro]
+
+[indexterm1 asio.indexterm.experimental__coro..experimental::coro]
+
+
+
+  template<
+      typename Yield = void,
+      typename Return = void,
+      typename ``[link asio.reference.Executor1 Executor]`` = any_io_executor>
+  struct coro
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__coro.async_resume [*async_resume]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.cancel [*cancel]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.coro [*coro]] [constructor]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.get_executor [*get_executor]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.is_open [*is_open]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.operator_bool [*operator bool]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.operator_co_await [*operator co_await]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro.operator_eq_ [*operator=]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro._coro [*~coro]] [destructor]]
+    []
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__coro.is_noexcept [*is_noexcept]] [static]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/coro.hpp]
+
+['Convenience header: ]None
+
+[section:async_resume experimental::coro::async_resume]
+
+[indexterm2 asio.indexterm.experimental__coro.async_resume..async_resume..experimental::coro] 
+
+  template<
+      typename CompletionToken>
+  requires std::is_void_v< input_type > auto ``[link asio.reference.experimental__coro.async_resume.overload1 async_resume]``(
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.async_resume.overload1 more...]]``
+
+  template<
+      typename CompletionToken,
+      detail::convertible_to< input_type > T>
+  auto ``[link asio.reference.experimental__coro.async_resume.overload2 async_resume]``(
+      T && ip,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.async_resume.overload2 more...]]``
+
+
+[section:overload1 experimental::coro::async_resume (1 of 2 overloads)]
+
+
+
+  template<
+      typename CompletionToken>
+  requires std::is_void_v< input_type > auto async_resume(
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::coro::async_resume (2 of 2 overloads)]
+
+
+
+  template<
+      typename CompletionToken,
+      detail::convertible_to< input_type > T>
+  auto async_resume(
+      T && ip,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancel experimental::coro::cancel]
+
+[indexterm2 asio.indexterm.experimental__coro.cancel..cancel..experimental::coro] 
+
+  void cancel(
+      cancellation_type ct = cancellation_type::all);
+
+
+
+[endsect]
+
+
+[section:coro experimental::coro::coro]
+
+[indexterm2 asio.indexterm.experimental__coro.coro..coro..experimental::coro] 
+
+  ``[link asio.reference.experimental__coro.coro.overload1 coro]``();
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.coro.overload1 more...]]``
+
+  ``[link asio.reference.experimental__coro.coro.overload2 coro]``(
+      coro && lhs);
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.coro.overload2 more...]]``
+
+  ``[link asio.reference.experimental__coro.coro.overload3 coro]``(
+      const coro & );
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.coro.overload3 more...]]``
+
+
+[section:overload1 experimental::coro::coro (1 of 3 overloads)]
+
+
+
+  coro();
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::coro::coro (2 of 3 overloads)]
+
+
+
+  coro(
+      coro && lhs);
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::coro::coro (3 of 3 overloads)]
+
+
+
+  coro(
+      const coro & );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_executor experimental::coro::get_executor]
+
+[indexterm2 asio.indexterm.experimental__coro.get_executor..get_executor..experimental::coro] 
+
+  executor_type get_executor() const;
+
+
+
+[endsect]
+
+
+
+[section:is_noexcept experimental::coro::is_noexcept]
+
+[indexterm2 asio.indexterm.experimental__coro.is_noexcept..is_noexcept..experimental::coro] 
+
+  static constexpr bool is_noexcept = traits::is_noexcept;
+
+
+
+[endsect]
+
+
+
+[section:is_open experimental::coro::is_open]
+
+[indexterm2 asio.indexterm.experimental__coro.is_open..is_open..experimental::coro] 
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_bool experimental::coro::operator bool]
+
+[indexterm2 asio.indexterm.experimental__coro.operator_bool..operator bool..experimental::coro] 
+
+  operator bool() const;
+
+
+
+[endsect]
+
+
+
+[section:operator_co_await experimental::coro::operator co_await]
+
+[indexterm2 asio.indexterm.experimental__coro.operator_co_await..operator co_await..experimental::coro] 
+
+  auto operator co_await();
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ experimental::coro::operator()]
+
+[indexterm2 asio.indexterm.experimental__coro.operator_lp__rp_..operator()..experimental::coro] 
+
+  template<
+      detail::convertible_to< input_type > T>
+  auto operator()(
+      T && ip);
+
+
+
+[endsect]
+
+
+[section:operator_eq_ experimental::coro::operator=]
+
+[indexterm2 asio.indexterm.experimental__coro.operator_eq_..operator=..experimental::coro] 
+
+  coro & ``[link asio.reference.experimental__coro.operator_eq_.overload1 operator=]``(
+      coro && lhs);
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.operator_eq_.overload1 more...]]``
+
+  coro & ``[link asio.reference.experimental__coro.operator_eq_.overload2 operator=]``(
+      const coro & );
+  ``  [''''&raquo;''' [link asio.reference.experimental__coro.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 experimental::coro::operator= (1 of 2 overloads)]
+
+
+
+  coro & operator=(
+      coro && lhs);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::coro::operator= (2 of 2 overloads)]
+
+
+
+  coro & operator=(
+      const coro & );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:_coro experimental::coro::~coro]
+
+[indexterm2 asio.indexterm.experimental__coro._coro..~coro..experimental::coro] 
+
+  ~coro();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__coro__awaitable_t experimental::coro::awaitable_t]
+
+[indexterm1 asio.indexterm.experimental__coro__awaitable_t..experimental::coro::awaitable_t]
+
+
+
+  struct awaitable_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__coro__awaitable_t.await_ready [*await_ready]] [static]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro__awaitable_t.await_resume [*await_resume]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__coro__awaitable_t.await_suspend [*await_suspend]]]
+    []
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__coro__awaitable_t.coro_ [*coro_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/coro.hpp]
+
+['Convenience header: ]None
+
+
+[section:await_ready experimental::coro::awaitable_t::await_ready]
+
+[indexterm2 asio.indexterm.experimental__coro__awaitable_t.await_ready..await_ready..experimental::coro::awaitable_t] 
+
+  static constexpr bool await_ready();
+
+
+
+[endsect]
+
+
+
+[section:await_resume experimental::coro::awaitable_t::await_resume]
+
+[indexterm2 asio.indexterm.experimental__coro__awaitable_t.await_resume..await_resume..experimental::coro::awaitable_t] 
+
+  auto await_resume();
+
+
+
+[endsect]
+
+
+
+[section:await_suspend experimental::coro::awaitable_t::await_suspend]
+
+[indexterm2 asio.indexterm.experimental__coro__awaitable_t.await_suspend..await_suspend..experimental::coro::awaitable_t] 
+
+  template<
+      typename Y,
+      typename R,
+      typename E>
+  auto await_suspend(
+      detail::coroutine_handle< detail::coro_promise< Y, R, E >> h);
+
+
+
+[endsect]
+
+
+
+[section:coro_ experimental::coro::awaitable_t::coro_]
+
+[indexterm2 asio.indexterm.experimental__coro__awaitable_t.coro_..coro_..experimental::coro::awaitable_t] 
+
+  coro & coro_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:experimental__deferred experimental::deferred]
+
+[indexterm1 asio.indexterm.experimental__deferred..experimental::deferred] 
+A special value, similar to std::nothrow. 
+
+
+  constexpr deferred_t deferred;
+
+
+See the documentation for [link asio.reference.experimental__deferred_t `experimental::deferred_t`] for a usage example. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__deferred_async_operation experimental::deferred_async_operation]
+
+[indexterm1 asio.indexterm.experimental__deferred_async_operation..experimental::deferred_async_operation]
+
+
+Encapsulates a deferred asynchronous operation. 
+
+
+  template<
+      typename Signature,
+      typename Initiation,
+      typename... InitArgs>
+  class deferred_async_operation
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__deferred_conditional experimental::deferred_conditional]
+
+[indexterm1 asio.indexterm.experimental__deferred_conditional..experimental::deferred_conditional]
+
+
+Used to represent a deferred conditional branch. 
+
+
+  template<
+      typename OnTrue = deferred_noop,
+      typename OnFalse = deferred_noop>
+  class deferred_conditional
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_conditional.deferred_conditional [*deferred_conditional]] [constructor]]
+    [Construct a deferred conditional with the value to determine which branch will be executed. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_conditional.operator_lp__rp_ [*operator()]]]
+    [Invoke the conditional branch bsaed on the stored alue. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_conditional.otherwise [*otherwise]]]
+    [Set the false branch of the conditional. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_conditional.then [*then]]]
+    [Set the true branch of the conditional. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:deferred_conditional experimental::deferred_conditional::deferred_conditional]
+
+[indexterm2 asio.indexterm.experimental__deferred_conditional.deferred_conditional..deferred_conditional..experimental::deferred_conditional] 
+Construct a deferred conditional with the value to determine which branch will be executed. 
+
+
+  constexpr deferred_conditional(
+      bool b);
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ experimental::deferred_conditional::operator()]
+
+[indexterm2 asio.indexterm.experimental__deferred_conditional.operator_lp__rp_..operator()..experimental::deferred_conditional] 
+Invoke the conditional branch bsaed on the stored alue. 
+
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args &&... args);
+
+
+
+[endsect]
+
+
+
+[section:otherwise experimental::deferred_conditional::otherwise]
+
+[indexterm2 asio.indexterm.experimental__deferred_conditional.otherwise..otherwise..experimental::deferred_conditional] 
+Set the false branch of the conditional. 
+
+
+  template<
+      typename T>
+  deferred_conditional< OnTrue, T > otherwise(
+      T on_false,
+      typename constraint< is_deferred< T >::value >::type *  = 0,
+      typename constraint< !is_same< typename conditional< true, OnTrue, T >::type, deferred_noop >::value >::type *  = 0,
+      typename constraint< is_same< typename conditional< true, OnFalse, T >::type, deferred_noop >::value >::type *  = 0);
+
+
+
+[endsect]
+
+
+
+[section:then experimental::deferred_conditional::then]
+
+[indexterm2 asio.indexterm.experimental__deferred_conditional.then..then..experimental::deferred_conditional] 
+Set the true branch of the conditional. 
+
+
+  template<
+      typename T>
+  deferred_conditional< T, OnFalse > then(
+      T on_true,
+      typename constraint< is_deferred< T >::value >::type *  = 0,
+      typename constraint< is_same< typename conditional< true, OnTrue, T >::type, deferred_noop >::value >::type *  = 0);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_function experimental::deferred_function]
+
+[indexterm1 asio.indexterm.experimental__deferred_function..experimental::deferred_function]
+
+
+Wraps a function object so that it may be used as an element in a deferred composition. 
+
+
+  template<
+      typename Function>
+  class deferred_function
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_function.decltype [*decltype]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_function.deferred_function [*deferred_function]] [constructor]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_function.function_ [*function_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:decltype experimental::deferred_function::decltype]
+
+[indexterm2 asio.indexterm.experimental__deferred_function.decltype..decltype..experimental::deferred_function] 
+
+  template<
+      typename... Args>
+  decltype(
+      auto );
+
+
+
+[endsect]
+
+
+
+[section:deferred_function experimental::deferred_function::deferred_function]
+
+[indexterm2 asio.indexterm.experimental__deferred_function.deferred_function..deferred_function..experimental::deferred_function] 
+Constructor. 
+
+
+  template<
+      typename F>
+  constexpr deferred_function(
+      F && function);
+
+
+
+[endsect]
+
+
+
+[section:function_ experimental::deferred_function::function_]
+
+[indexterm2 asio.indexterm.experimental__deferred_function.function_..function_..experimental::deferred_function] 
+
+  Function function_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_noop experimental::deferred_noop]
+
+[indexterm1 asio.indexterm.experimental__deferred_noop..experimental::deferred_noop]
+
+
+Used to represent an empty deferred action. 
+
+
+  struct deferred_noop
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_noop.operator_lp__rp_ [*operator()]]]
+    [No effect. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:operator_lp__rp_ experimental::deferred_noop::operator()]
+
+[indexterm2 asio.indexterm.experimental__deferred_noop.operator_lp__rp_..operator()..experimental::deferred_noop] 
+No effect. 
+
+
+  template<
+      typename... Args>
+  void operator()(
+      Args && ...);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_sequence experimental::deferred_sequence]
+
+[indexterm1 asio.indexterm.experimental__deferred_sequence..experimental::deferred_sequence]
+
+
+Defines a link between two consecutive operations in a sequence. 
+
+
+  template<
+      typename Head,
+      typename Tail>
+  class deferred_sequence
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_sequence.decltype [*decltype]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_sequence.deferred_sequence [*deferred_sequence]] [constructor]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:decltype experimental::deferred_sequence::decltype]
+
+[indexterm2 asio.indexterm.experimental__deferred_sequence.decltype..decltype..experimental::deferred_sequence] 
+
+  template<
+      typename CompletionToken>
+  decltype(
+      auto );
+
+
+
+[endsect]
+
+
+
+[section:deferred_sequence experimental::deferred_sequence::deferred_sequence]
+
+[indexterm2 asio.indexterm.experimental__deferred_sequence.deferred_sequence..deferred_sequence..experimental::deferred_sequence] 
+
+  template<
+      typename H,
+      typename T>
+  constexpr deferred_sequence(
+      H && head,
+      T && tail);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_sequence__initiate experimental::deferred_sequence::initiate]
+
+[indexterm1 asio.indexterm.experimental__deferred_sequence__initiate..experimental::deferred_sequence::initiate]
+
+
+
+  struct initiate
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_sequence__initiate.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:operator_lp__rp_ experimental::deferred_sequence::initiate::operator()]
+
+[indexterm2 asio.indexterm.experimental__deferred_sequence__initiate.operator_lp__rp_..operator()..experimental::deferred_sequence::initiate] 
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  void operator()(
+      Handler && handler,
+      Head head,
+      Tail && tail);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_t experimental::deferred_t]
+
+[indexterm1 asio.indexterm.experimental__deferred_t..experimental::deferred_t]
+
+
+Class used to specify that an asynchronous operation should return a function object to lazily launch the operation. 
+
+
+  class deferred_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__deferred_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the deferred_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use deferred_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.deferred_t [*deferred_t]] [constructor]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.operator_lp__rp_ [*operator()]]]
+    [Creates a new deferred from a function. 
+     [hr]
+     Passes through anything that is already deferred. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.values [*values]] [static]]
+    [Returns a deferred operation that returns the provided values. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.when [*when]] [static]]
+    [Creates a conditional object for branching deferred operations. ]
+  ]
+  
+]
+
+The [link asio.reference.experimental__deferred_t `experimental::deferred_t`] class is used to indicate that an asynchronous operation should return a function object which is itself an initiation function. A [link asio.reference.experimental__deferred_t `experimental::deferred_t`] object may be passed as a completion token to an asynchronous operation, typically using the special value `asio::deferred`. For example:
+
+
+
+   auto my_sender
+     = my_socket.async_read_some(my_buffer,
+         asio::experimental::deferred); 
+
+
+
+
+The initiating function (async\_read\_some in the above example) returns a function object that will lazily initiate the operation. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:as_default_on experimental::deferred_t::as_default_on]
+
+[indexterm2 asio.indexterm.experimental__deferred_t.as_default_on..as_default_on..experimental::deferred_t] 
+Function helper to adapt an I/O object to use `deferred_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+
+[section:deferred_t experimental::deferred_t::deferred_t]
+
+[indexterm2 asio.indexterm.experimental__deferred_t.deferred_t..deferred_t..experimental::deferred_t] 
+Default constructor. 
+
+
+  constexpr deferred_t();
+
+
+
+[endsect]
+
+
+[section:operator_lp__rp_ experimental::deferred_t::operator()]
+
+[indexterm2 asio.indexterm.experimental__deferred_t.operator_lp__rp_..operator()..experimental::deferred_t] 
+Creates a new deferred from a function. 
+
+
+  template<
+      typename Function>
+  constraint< !is_deferred< typename decay< Function >::type >::value, deferred_function< typename decay< Function >::type > >::type ``[link asio.reference.experimental__deferred_t.operator_lp__rp_.overload1 operator()]``(
+      Function && function) const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__deferred_t.operator_lp__rp_.overload1 more...]]``
+
+
+Passes through anything that is already deferred. 
+
+
+  template<
+      typename T>
+  constraint< is_deferred< typename decay< T >::type >::value, typename decay< T >::type >::type ``[link asio.reference.experimental__deferred_t.operator_lp__rp_.overload2 operator()]``(
+      T && t) const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__deferred_t.operator_lp__rp_.overload2 more...]]``
+
+
+[section:overload1 experimental::deferred_t::operator() (1 of 2 overloads)]
+
+
+Creates a new deferred from a function. 
+
+
+  template<
+      typename Function>
+  constraint< !is_deferred< typename decay< Function >::type >::value, deferred_function< typename decay< Function >::type > >::type operator()(
+      Function && function) const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::deferred_t::operator() (2 of 2 overloads)]
+
+
+Passes through anything that is already deferred. 
+
+
+  template<
+      typename T>
+  constraint< is_deferred< typename decay< T >::type >::value, typename decay< T >::type >::type operator()(
+      T && t) const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:values experimental::deferred_t::values]
+
+[indexterm2 asio.indexterm.experimental__deferred_t.values..values..experimental::deferred_t] 
+Returns a deferred operation that returns the provided values. 
+
+
+  template<
+      typename... Args>
+  static constexpr deferred_values< typename decay< Args >::type...> values(
+      Args &&... args);
+
+
+
+[endsect]
+
+
+
+[section:when experimental::deferred_t::when]
+
+[indexterm2 asio.indexterm.experimental__deferred_t.when..when..experimental::deferred_t] 
+Creates a conditional object for branching deferred operations. 
+
+
+  static constexpr deferred_conditional when(
+      bool b);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_t__executor_with_default experimental::deferred_t::executor_with_default]
+
+[indexterm1 asio.indexterm.experimental__deferred_t__executor_with_default..experimental::deferred_t::executor_with_default]
+
+
+Adapts an executor to add the `deferred_t` completion token as the default. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__deferred_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify deferred_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:default_completion_token_type experimental::deferred_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 asio.indexterm.experimental__deferred_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::deferred_t::executor_with_default] 
+Specify `deferred_t` as the default completion token type. 
+
+
+  typedef deferred_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__deferred_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the deferred_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use deferred_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.deferred_t [*deferred_t]] [constructor]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.operator_lp__rp_ [*operator()]]]
+    [Creates a new deferred from a function. 
+     [hr]
+     Passes through anything that is already deferred. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.values [*values]] [static]]
+    [Returns a deferred operation that returns the provided values. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__deferred_t.when [*when]] [static]]
+    [Creates a conditional object for branching deferred operations. ]
+  ]
+  
+]
+
+The [link asio.reference.experimental__deferred_t `experimental::deferred_t`] class is used to indicate that an asynchronous operation should return a function object which is itself an initiation function. A [link asio.reference.experimental__deferred_t `experimental::deferred_t`] object may be passed as a completion token to an asynchronous operation, typically using the special value `asio::deferred`. For example:
+
+
+
+   auto my_sender
+     = my_socket.async_read_some(my_buffer,
+         asio::experimental::deferred); 
+
+
+
+
+The initiating function (async\_read\_some in the above example) returns a function object that will lazily initiate the operation. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:executor_with_default experimental::deferred_t::executor_with_default::executor_with_default]
+
+[indexterm2 asio.indexterm.experimental__deferred_t__executor_with_default.executor_with_default..executor_with_default..experimental::deferred_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
+  executor_with_default(
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__deferred_values experimental::deferred_values]
+
+[indexterm1 asio.indexterm.experimental__deferred_values..experimental::deferred_values]
+
+
+Encapsulates deferred values. 
+
+
+  template<
+      typename... Values>
+  class deferred_values
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__deferred_values__initiate experimental::deferred_values::initiate]
+
+[indexterm1 asio.indexterm.experimental__deferred_values__initiate..experimental::deferred_values::initiate]
+
+
+
+  struct initiate
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__deferred_values__initiate.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[section:operator_lp__rp_ experimental::deferred_values::initiate::operator()]
+
+[indexterm2 asio.indexterm.experimental__deferred_values__initiate.operator_lp__rp_..operator()..experimental::deferred_values::initiate] 
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``,
+      typename... V>
+  void operator()(
+      Handler handler,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__is_deferred experimental::is_deferred]
+
+[indexterm1 asio.indexterm.experimental__is_deferred..experimental::is_deferred]
+
+
+Trait for detecting objects that are usable as deferred operations. 
+
+
+  template<
+      typename T>
+  struct is_deferred :
+    public false_type
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_deferred_lt__deferred_async_operation_lt__Signature_comma__Initiation_comma__InitArgs_ellipsis__gt___gt_ experimental::is_deferred< deferred_async_operation< Signature, Initiation, InitArgs...> >]
+
+[indexterm1 asio.indexterm.experimental__is_deferred_lt__deferred_async_operation_lt__Signature_comma__Initiation_comma__InitArgs_ellipsis__gt___gt_..experimental::is_deferred< deferred_async_operation< Signature, Initiation, InitArgs\.\.\.> >]
+
+
+
+  template<
+      typename Signature,
+      typename Initiation,
+      typename... InitArgs>
+  struct is_deferred< deferred_async_operation< Signature, Initiation, InitArgs...> >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_deferred_lt__deferred_conditional_lt__OnTrue_comma__OnFalse__gt___gt_ experimental::is_deferred< deferred_conditional< OnTrue, OnFalse > >]
+
+[indexterm1 asio.indexterm.experimental__is_deferred_lt__deferred_conditional_lt__OnTrue_comma__OnFalse__gt___gt_..experimental::is_deferred< deferred_conditional< OnTrue, OnFalse > >]
+
+
+
+  template<
+      typename OnTrue,
+      typename OnFalse>
+  struct is_deferred< deferred_conditional< OnTrue, OnFalse > >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_deferred_lt__deferred_function_lt__Function__gt___gt_ experimental::is_deferred< deferred_function< Function > >]
+
+[indexterm1 asio.indexterm.experimental__is_deferred_lt__deferred_function_lt__Function__gt___gt_..experimental::is_deferred< deferred_function< Function > >]
+
+
+
+  template<
+      typename Function>
+  struct is_deferred< deferred_function< Function > >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_deferred_lt__deferred_noop__gt_ experimental::is_deferred< deferred_noop >]
+
+[indexterm1 asio.indexterm.experimental__is_deferred_lt__deferred_noop__gt_..experimental::is_deferred< deferred_noop >]
+
+
+
+  template<>
+  struct is_deferred< deferred_noop >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_deferred_lt__deferred_sequence_lt__Head_comma__Tail__gt___gt_ experimental::is_deferred< deferred_sequence< Head, Tail > >]
+
+[indexterm1 asio.indexterm.experimental__is_deferred_lt__deferred_sequence_lt__Head_comma__Tail__gt___gt_..experimental::is_deferred< deferred_sequence< Head, Tail > >]
+
+
+
+  template<
+      typename Head,
+      typename Tail>
+  struct is_deferred< deferred_sequence< Head, Tail > >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_deferred_lt__deferred_values_lt__Values_ellipsis__gt___gt_ experimental::is_deferred< deferred_values< Values...> >]
+
+[indexterm1 asio.indexterm.experimental__is_deferred_lt__deferred_values_lt__Values_ellipsis__gt___gt_..experimental::is_deferred< deferred_values< Values\.\.\.> >]
+
+
+
+  template<
+      typename... Values>
+  struct is_deferred< deferred_values< Values...> >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_promise experimental::is_promise]
+
+[indexterm1 asio.indexterm.experimental__is_promise..experimental::is_promise]
+
+
+
+  template<
+      typename T>
+  struct is_promise
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__is_promise_lt__promise_lt__Ts_ellipsis__gt__gt_ experimental::is_promise< promise< Ts...>>]
+
+[indexterm1 asio.indexterm.experimental__is_promise_lt__promise_lt__Ts_ellipsis__gt__gt_..experimental::is_promise< promise< Ts\.\.\.>>]
+
+
+
+  template<
+      typename... Ts>
+  struct is_promise< promise< Ts...>>
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__is_promise_c experimental::is_promise_c]
+
+[indexterm1 asio.indexterm.experimental__is_promise_c..experimental::is_promise_c] 
+
+  concept is_promise_c =is_promise_v<std::remove_reference_t<T>>;
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__is_promise_v experimental::is_promise_v]
+
+[indexterm1 asio.indexterm.experimental__is_promise_v..experimental::is_promise_v] 
+
+  constexpr bool is_promise_v =is_promise<T>::value;
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__make_parallel_group experimental::make_parallel_group]
+
+[indexterm1 asio.indexterm.experimental__make_parallel_group..experimental::make_parallel_group] 
+Create a group of operations that may be launched in parallel. 
+
+
+  template<
+      typename... Ops>
+  parallel_group< Ops...> make_parallel_group(
+      Ops... ops);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/parallel_group.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__operator_pipe_ experimental::operator|]
+
+[indexterm1 asio.indexterm.experimental__operator_pipe_..experimental::operator|] 
+Pipe operator used to chain deferred operations. 
+
+
+  template<
+      typename Head,
+      typename Tail>
+  auto operator|(
+      Head head,
+      Tail && tail) const;
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__parallel_group experimental::parallel_group]
+
+[indexterm1 asio.indexterm.experimental__parallel_group..experimental::parallel_group]
+
+
+A group of asynchronous operations that may be launched in parallel. 
+
+
+  template<
+      typename... Ops>
+  class parallel_group
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__parallel_group.signature [*signature]]]
+    [The completion signature for the group of operations. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__parallel_group.async_wait [*async_wait]]]
+    [Initiate an asynchronous wait for the group of operations. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__parallel_group.parallel_group [*parallel_group]] [constructor]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/parallel_group.hpp]
+
+['Convenience header: ]None
+
+
+[section:async_wait experimental::parallel_group::async_wait]
+
+[indexterm2 asio.indexterm.experimental__parallel_group.async_wait..async_wait..experimental::parallel_group] 
+Initiate an asynchronous wait for the group of operations. 
+
+
+  template<
+      typename CancellationCondition,
+      typename CompletionToken>
+  auto async_wait(
+      CancellationCondition cancellation_condition,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:parallel_group experimental::parallel_group::parallel_group]
+
+[indexterm2 asio.indexterm.experimental__parallel_group.parallel_group..parallel_group..experimental::parallel_group] 
+Constructor. 
+
+
+  parallel_group(
+      Ops... ops);
+
+
+
+[endsect]
+
+
+
+[section:signature experimental::parallel_group::signature]
+
+[indexterm2 asio.indexterm.experimental__parallel_group.signature..signature..experimental::parallel_group] 
+The completion signature for the group of operations. 
+
+
+  typedef detail::parallel_group_signature< sizeof...(Ops), typename detail::parallel_op_signature< Ops >::type...>::type signature;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/parallel_group.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:experimental__prepend experimental::prepend]
+
+[indexterm1 asio.indexterm.experimental__prepend..experimental::prepend] 
+Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  constexpr prepend_t< typename decay< CompletionToken >::type, typename decay< Values >::type...> prepend(
+      CompletionToken && completion_token,
+      Values &&... values);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/prepend.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__prepend_t experimental::prepend_t]
+
+[indexterm1 asio.indexterm.experimental__prepend_t..experimental::prepend_t]
+
+
+Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  class prepend_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__prepend_t.prepend_t [*prepend_t]] [constructor]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__prepend_t.token_ [*token_]]]
+    []
+  ]
+
+  [
+    [[link asio.reference.experimental__prepend_t.values_ [*values_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/prepend.hpp]
+
+['Convenience header: ]None
+
+
+[section:prepend_t experimental::prepend_t::prepend_t]
+
+[indexterm2 asio.indexterm.experimental__prepend_t.prepend_t..prepend_t..experimental::prepend_t] 
+Constructor. 
+
+
+  template<
+      typename T,
+      typename... V>
+  constexpr prepend_t(
+      T && completion_token,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[section:token_ experimental::prepend_t::token_]
+
+[indexterm2 asio.indexterm.experimental__prepend_t.token_..token_..experimental::prepend_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[section:values_ experimental::prepend_t::values_]
+
+[indexterm2 asio.indexterm.experimental__prepend_t.values_..values_..experimental::prepend_t] 
+
+  std::tuple< Values...> values_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__promise experimental::promise]
+
+[indexterm1 asio.indexterm.experimental__promise..experimental::promise]
+
+
+The primary template is not defined. 
+
+
+  template<
+      typename Signature = void(),
+      typename ``[link asio.reference.Executor1 Executor]`` = any_io_executor>
+  struct promise
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_ experimental::promise< void(Ts...), Executor >]
+
+[indexterm1 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_..experimental::promise< void(Ts\.\.\.), Executor >]
+
+
+
+  template<
+      typename... Ts,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  struct promise< void(Ts...), Executor >
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all [*all]] [static]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.async_wait [*async_wait]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.cancel [*cancel]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.complete [*complete]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.get_executor [*get_executor]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise [*promise]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race [*race]] [static]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_._promise [*~promise]] [destructor]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+[section:all experimental::promise< void(Ts...), Executor >::all]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all..all..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      is_promise_c... Ps>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload1 all]``(
+      Executor1 exec,
+      Ps... ps);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload1 more...]]``
+
+  template<
+      is_promise_c... Ps>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload2 all]``(
+      Ps... ps);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload2 more...]]``
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      typename Range>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload3 all]``(
+      Executor1 exec,
+      Range range);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload3 more...]]``
+
+  template<
+      typename Range>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload4 all]``(
+      Range range);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.all.overload4 more...]]``
+
+
+[section:overload1 experimental::promise< void(Ts...), Executor >::all (1 of 4 overloads)]
+
+
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      is_promise_c... Ps>
+  static auto all(
+      Executor1 exec,
+      Ps... ps);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::promise< void(Ts...), Executor >::all (2 of 4 overloads)]
+
+
+
+  template<
+      is_promise_c... Ps>
+  static auto all(
+      Ps... ps);
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::promise< void(Ts...), Executor >::all (3 of 4 overloads)]
+
+
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      typename Range>
+  static auto all(
+      Executor1 exec,
+      Range range);
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::promise< void(Ts...), Executor >::all (4 of 4 overloads)]
+
+
+
+  template<
+      typename Range>
+  static auto all(
+      Range range);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:async_wait experimental::promise< void(Ts...), Executor >::async_wait]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.async_wait..async_wait..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  template<
+      typename CompletionToken>
+  auto async_wait(
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[section:cancel experimental::promise< void(Ts...), Executor >::cancel]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.cancel..cancel..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  void cancel(
+      cancellation_type level = cancellation_type::all);
+
+
+
+[endsect]
+
+
+
+[section:complete experimental::promise< void(Ts...), Executor >::complete]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.complete..complete..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  bool complete() const;
+
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::promise< void(Ts...), Executor >::get_executor]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.get_executor..get_executor..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  executor_type get_executor() const;
+
+
+
+[endsect]
+
+
+[section:promise experimental::promise< void(Ts...), Executor >::promise]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise..promise..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise.overload1 promise]``();
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise.overload1 more...]]``
+
+  ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise.overload2 promise]``(
+      const promise & );
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise.overload2 more...]]``
+
+  ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise.overload3 promise]``(
+      promise && );
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.promise.overload3 more...]]``
+
+
+[section:overload1 experimental::promise< void(Ts...), Executor >::promise (1 of 3 overloads)]
+
+
+
+  promise();
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::promise< void(Ts...), Executor >::promise (2 of 3 overloads)]
+
+
+
+  promise(
+      const promise & );
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::promise< void(Ts...), Executor >::promise (3 of 3 overloads)]
+
+
+
+  promise(
+      promise && );
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:race experimental::promise< void(Ts...), Executor >::race]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race..race..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      is_promise_c... Ps>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload1 race]``(
+      Executor1 exec,
+      Ps... ps);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload1 more...]]``
+
+  template<
+      is_promise_c... Ps>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload2 race]``(
+      Ps... ps);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload2 more...]]``
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      typename Range>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload3 race]``(
+      Executor1 exec,
+      Range range);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload3 more...]]``
+
+  template<
+      typename Range>
+  static auto ``[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload4 race]``(
+      Range range);
+  ``  [''''&raquo;''' [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_.race.overload4 more...]]``
+
+
+[section:overload1 experimental::promise< void(Ts...), Executor >::race (1 of 4 overloads)]
+
+
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      is_promise_c... Ps>
+  static auto race(
+      Executor1 exec,
+      Ps... ps);
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::promise< void(Ts...), Executor >::race (2 of 4 overloads)]
+
+
+
+  template<
+      is_promise_c... Ps>
+  static auto race(
+      Ps... ps);
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::promise< void(Ts...), Executor >::race (3 of 4 overloads)]
+
+
+
+  template<
+      execution::executor ``[link asio.reference.Executor1 Executor1]``,
+      typename Range>
+  static auto race(
+      Executor1 exec,
+      Range range);
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::promise< void(Ts...), Executor >::race (4 of 4 overloads)]
+
+
+
+  template<
+      typename Range>
+  static auto race(
+      Range range);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:_promise experimental::promise< void(Ts...), Executor >::~promise]
+
+[indexterm2 asio.indexterm.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_._promise..~promise..experimental::promise< void(Ts\.\.\.), Executor >] 
+
+  ~promise();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__promise_value_type experimental::promise_value_type]
+
+[indexterm1 asio.indexterm.experimental__promise_value_type..experimental::promise_value_type]
+
+
+
+  template<
+      typename... Ts>
+  struct promise_value_type
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__promise_value_type_lt__T__gt_ experimental::promise_value_type< T >]
+
+[indexterm1 asio.indexterm.experimental__promise_value_type_lt__T__gt_..experimental::promise_value_type< T >]
+
+
+
+  template<
+      typename T>
+  struct promise_value_type< T >
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__promise_value_type_lt__gt_ experimental::promise_value_type<>]
+
+[indexterm1 asio.indexterm.experimental__promise_value_type_lt__gt_..experimental::promise_value_type<>]
+
+
+
+  template<>
+  struct promise_value_type<>
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__use_coro experimental::use_coro]
+
+[indexterm1 asio.indexterm.experimental__use_coro..experimental::use_coro] 
+
+  constexpr use_coro_t use_coro;
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/use_coro.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__use_coro_t experimental::use_coro_t]
+
+[indexterm1 asio.indexterm.experimental__use_coro_t..experimental::use_coro_t]
+
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]`` = any_io_executor>
+  struct use_coro_t
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/use_coro.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__use_promise experimental::use_promise]
+
+[indexterm1 asio.indexterm.experimental__use_promise..experimental::use_promise] 
+
+  constexpr use_promise_t use_promise;
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+[section:experimental__use_promise_t experimental::use_promise_t]
+
+[indexterm1 asio.indexterm.experimental__use_promise_t..experimental::use_promise_t]
+
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]`` = any_io_executor>
+  struct use_promise_t
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/promise.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+[section:experimental__wait_for_all experimental::wait_for_all]
+
+[indexterm1 asio.indexterm.experimental__wait_for_all..experimental::wait_for_all]
+
+
+Wait for all operations to complete. 
+
+
+  class wait_for_all
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__wait_for_all.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/cancellation_condition.hpp]
+
+['Convenience header: ]None
+
+
+[section:operator_lp__rp_ experimental::wait_for_all::operator()]
+
+[indexterm2 asio.indexterm.experimental__wait_for_all.operator_lp__rp_..operator()..experimental::wait_for_all] 
+
+  template<
+      typename... Args>
+  constexpr cancellation_type_t operator()(
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__wait_for_one experimental::wait_for_one]
+
+[indexterm1 asio.indexterm.experimental__wait_for_one..experimental::wait_for_one]
+
+
+Wait until an operation completes, then cancel the others. 
+
+
+  class wait_for_one
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__wait_for_one.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__wait_for_one.wait_for_one [*wait_for_one]] [constructor]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/cancellation_condition.hpp]
+
+['Convenience header: ]None
+
+
+[section:operator_lp__rp_ experimental::wait_for_one::operator()]
+
+[indexterm2 asio.indexterm.experimental__wait_for_one.operator_lp__rp_..operator()..experimental::wait_for_one] 
+
+  template<
+      typename... Args>
+  constexpr cancellation_type_t operator()(
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+
+[section:wait_for_one experimental::wait_for_one::wait_for_one]
+
+[indexterm2 asio.indexterm.experimental__wait_for_one.wait_for_one..wait_for_one..experimental::wait_for_one] 
+
+  constexpr wait_for_one(
+      cancellation_type_t cancel_type = cancellation_type::all);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__wait_for_one_error experimental::wait_for_one_error]
+
+[indexterm1 asio.indexterm.experimental__wait_for_one_error..experimental::wait_for_one_error]
+
+
+Wait until an operation completes with an error, then cancel the others. 
+
+
+  class wait_for_one_error
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__wait_for_one_error.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__wait_for_one_error.wait_for_one_error [*wait_for_one_error]] [constructor]]
+    []
+  ]
+  
+]
+
+If no operation completes with an error, waits for completion of all operations. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/cancellation_condition.hpp]
+
+['Convenience header: ]None
+
+[section:operator_lp__rp_ experimental::wait_for_one_error::operator()]
+
+[indexterm2 asio.indexterm.experimental__wait_for_one_error.operator_lp__rp_..operator()..experimental::wait_for_one_error] 
+
+  constexpr cancellation_type_t ``[link asio.reference.experimental__wait_for_one_error.operator_lp__rp_.overload1 operator()]``() const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__wait_for_one_error.operator_lp__rp_.overload1 more...]]``
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< !is_same< typename decay< E >::type, asio::error_code >::value &&!is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type ``[link asio.reference.experimental__wait_for_one_error.operator_lp__rp_.overload2 operator()]``(
+      const E & ,
+      Args && ...) const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__wait_for_one_error.operator_lp__rp_.overload2 more...]]``
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< is_same< typename decay< E >::type, asio::error_code >::value||is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type ``[link asio.reference.experimental__wait_for_one_error.operator_lp__rp_.overload3 operator()]``(
+      const E & e,
+      Args && ...) const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__wait_for_one_error.operator_lp__rp_.overload3 more...]]``
+
+
+[section:overload1 experimental::wait_for_one_error::operator() (1 of 3 overloads)]
+
+
+
+  constexpr cancellation_type_t operator()() const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::wait_for_one_error::operator() (2 of 3 overloads)]
+
+
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< !is_same< typename decay< E >::type, asio::error_code >::value &&!is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type operator()(
+      const E & ,
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::wait_for_one_error::operator() (3 of 3 overloads)]
+
+
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< is_same< typename decay< E >::type, asio::error_code >::value||is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type operator()(
+      const E & e,
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:wait_for_one_error experimental::wait_for_one_error::wait_for_one_error]
+
+[indexterm2 asio.indexterm.experimental__wait_for_one_error.wait_for_one_error..wait_for_one_error..experimental::wait_for_one_error] 
+
+  constexpr wait_for_one_error(
+      cancellation_type_t cancel_type = cancellation_type::all);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__wait_for_one_success experimental::wait_for_one_success]
+
+[indexterm1 asio.indexterm.experimental__wait_for_one_success..experimental::wait_for_one_success]
+
+
+Wait until an operation completes without an error, then cancel the others. 
+
+
+  class wait_for_one_success
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__wait_for_one_success.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.experimental__wait_for_one_success.wait_for_one_success [*wait_for_one_success]] [constructor]]
+    []
+  ]
+  
+]
+
+If no operation completes without an error, waits for completion of all operations. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/cancellation_condition.hpp]
+
+['Convenience header: ]None
+
+[section:operator_lp__rp_ experimental::wait_for_one_success::operator()]
+
+[indexterm2 asio.indexterm.experimental__wait_for_one_success.operator_lp__rp_..operator()..experimental::wait_for_one_success] 
+
+  constexpr cancellation_type_t ``[link asio.reference.experimental__wait_for_one_success.operator_lp__rp_.overload1 operator()]``() const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__wait_for_one_success.operator_lp__rp_.overload1 more...]]``
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< !is_same< typename decay< E >::type, asio::error_code >::value &&!is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type ``[link asio.reference.experimental__wait_for_one_success.operator_lp__rp_.overload2 operator()]``(
+      const E & ,
+      Args && ...) const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__wait_for_one_success.operator_lp__rp_.overload2 more...]]``
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< is_same< typename decay< E >::type, asio::error_code >::value||is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type ``[link asio.reference.experimental__wait_for_one_success.operator_lp__rp_.overload3 operator()]``(
+      const E & e,
+      Args && ...) const;
+  ``  [''''&raquo;''' [link asio.reference.experimental__wait_for_one_success.operator_lp__rp_.overload3 more...]]``
+
+
+[section:overload1 experimental::wait_for_one_success::operator() (1 of 3 overloads)]
+
+
+
+  constexpr cancellation_type_t operator()() const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::wait_for_one_success::operator() (2 of 3 overloads)]
+
+
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< !is_same< typename decay< E >::type, asio::error_code >::value &&!is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type operator()(
+      const E & ,
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::wait_for_one_success::operator() (3 of 3 overloads)]
+
+
+
+  template<
+      typename E,
+      typename... Args>
+  constexpr constraint< is_same< typename decay< E >::type, asio::error_code >::value||is_same< typename decay< E >::type, std::exception_ptr >::value, cancellation_type_t >::type operator()(
+      const E & e,
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:wait_for_one_success experimental::wait_for_one_success::wait_for_one_success]
+
+[indexterm2 asio.indexterm.experimental__wait_for_one_success.wait_for_one_success..wait_for_one_success..experimental::wait_for_one_success] 
+
+  constexpr wait_for_one_success(
+      cancellation_type_t cancel_type = cancellation_type::all);
 
 
 
@@ -125406,6 +128565,11 @@ Provides stream-oriented functionality using SSL.
   ]
   
   [
+    [[link asio.reference.ssl__stream.operator_eq_ [*operator=]]]
+    [Move-assign a stream from another. ]
+  ]
+  
+  [
     [[link asio.reference.ssl__stream.read_some [*read_some]]]
     [Read some data from the stream. ]
   ]
@@ -126199,6 +129363,33 @@ The type of the next layer.
 [endsect]
 
 
+
+[section:operator_eq_ ssl::stream::operator=]
+
+[indexterm2 asio.indexterm.ssl__stream.operator_eq_..operator=..ssl::stream] 
+Move-assign a stream from another. 
+
+
+  stream & operator=(
+      stream && other);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other stream object from which the move will occur. Must have no outstanding asynchronous operations associated with it. Following the move, `other` has a valid but unspecified state where the only safe operation is destruction, or use as the target of a move assignment. ]]
+
+]
+
+
+
+
+[endsect]
+
+
 [section:read_some ssl::stream::read_some]
 
 [indexterm2 asio.indexterm.ssl__stream.read_some..read_some..ssl::stream] 
@@ -126775,7 +129966,7 @@ Move-construct a stream from another.
 
 [variablelist
   
-[[other][The other stream object from which the move will occur. Must have no outstanding asynchronous operations associated with it. Following the move, `other` has a valid but unspecified state where the only safe operation is destruction. ]]
+[[other][The other stream object from which the move will occur. Must have no outstanding asynchronous operations associated with it. Following the move, `other` has a valid but unspecified state where the only safe operation is destruction, or use as the target of a move assignment. ]]
 
 ]
 
@@ -130248,6 +133439,57 @@ Returns an awaitable object that may be used to reset the cancellation state of 
   constexpr unspecified reset_cancellation_state(
       InFilter && in_filter,
       OutFilter && out_filter);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:this_coro__throw_if_cancelled this_coro::throw_if_cancelled]
+
+[indexterm1 asio.indexterm.this_coro__throw_if_cancelled..this_coro::throw_if_cancelled] 
+Returns an awaitable object that may be used to determine whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+  constexpr unspecified ``[link asio.reference.this_coro__throw_if_cancelled.overload1 throw_if_cancelled]``();
+  ``  [''''&raquo;''' [link asio.reference.this_coro__throw_if_cancelled.overload1 more...]]``
+
+Returns an awaitable object that may be used to specify whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+  constexpr unspecified ``[link asio.reference.this_coro__throw_if_cancelled.overload2 throw_if_cancelled]``(
+      bool value);
+  ``  [''''&raquo;''' [link asio.reference.this_coro__throw_if_cancelled.overload2 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/this_coro.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:overload1 this_coro::throw_if_cancelled (1 of 2 overloads)]
+
+
+Returns an awaitable object that may be used to determine whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+
+  constexpr unspecified throw_if_cancelled();
+
+
+
+[endsect]
+
+
+
+[section:overload2 this_coro::throw_if_cancelled (2 of 2 overloads)]
+
+
+Returns an awaitable object that may be used to specify whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+
+  constexpr unspecified throw_if_cancelled(
+      bool value);
 
 
 
@@ -142181,6 +145423,25 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 [heading Requirements]
 
 ['Header: ][^asio/spawn.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:std__move std::move]
+
+[indexterm1 asio.indexterm.std__move..std::move] 
+
+  else return move(
+      kr );
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/coro.hpp]
 
 ['Convenience header: ]None
 
