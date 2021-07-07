@@ -1603,6 +1603,9 @@
         <xsl:when test="declname = 'C'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'CancellationCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Clock'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1660,6 +1663,12 @@
         <xsl:when test="declname = 'Function'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'H'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Head'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'IoObjectService1'">
           <xsl:value-of select="concat('``[link asio.reference.IoObjectService ', declname, ']``')"/>
         </xsl:when>
@@ -1670,6 +1679,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'InFilter'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'InitArgs'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Initiation'">
@@ -1697,6 +1709,15 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'N'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'OnFalse'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'OnTrue'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Ops'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'OtherAllocator'">
@@ -1741,6 +1762,15 @@
         <xsl:when test="declname = 'Protocol1'">
           <xsl:value-of select="concat('``[link asio.reference.Protocol ', declname, ']``')"/>
         </xsl:when>
+        <xsl:when test="declname = 'Ps'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'R'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Range'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'RawCompletionToken'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1756,10 +1786,19 @@
         <xsl:when test="declname = 'Result'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Return'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'S'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'SeqPacketSocketService1'">
           <xsl:value-of select="concat('``[link asio.reference.SeqPacketSocketService ', declname, ']``')"/>
         </xsl:when>
         <xsl:when test="declname = 'Signature'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Signatures'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'SocketAcceptorService1' or declname = 'SocketAcceptorService2'">
@@ -1777,13 +1816,13 @@
         <xsl:when test="declname = 'SupportableProperties'">
           <xsl:value-of select="declname"/>
         </xsl:when>
-        <xsl:when test="declname = 'R'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
-        <xsl:when test="declname = 'S'">
-          <xsl:value-of select="declname"/>
-        </xsl:when>
         <xsl:when test="declname = 'T'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Tail'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Ts'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'T1'">
@@ -1804,10 +1843,22 @@
         <xsl:when test="declname = 'U'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'V'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Values'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Vs'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'VerifyCallback'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Y'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Yield'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="count(declname) = 0">
