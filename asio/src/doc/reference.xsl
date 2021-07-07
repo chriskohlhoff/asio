@@ -819,6 +819,9 @@
     <xsl:when test="contains($file, 'include/asio/spawn')">
       <xsl:text>None</xsl:text>
     </xsl:when>
+    <xsl:when test="contains($file, 'include/asio/experimental')">
+      <xsl:text>None</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:text>[^asio.hpp]</xsl:text>
     </xsl:otherwise>
