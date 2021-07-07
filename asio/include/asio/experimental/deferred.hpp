@@ -106,10 +106,12 @@ struct deferred_noop
   }
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
 template <>
 struct is_deferred<deferred_noop> : true_type
 {
 };
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Wraps a function object so that it may be used as an element in a deferred
 /// composition.
@@ -137,10 +139,12 @@ public:
   Function function_;
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
 template <typename Function>
 struct is_deferred<deferred_function<Function> > : true_type
 {
 };
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Encapsulates deferred values.
 template <typename... Values>
@@ -190,10 +194,12 @@ public:
   }
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
 template <typename... Values>
 struct is_deferred<deferred_values<Values...> > : true_type
 {
 };
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Encapsulates a deferred asynchronous operation.
 template <typename Signature, typename Initiation, typename... InitArgs>
@@ -237,11 +243,13 @@ public:
   }
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
 template <typename Signature, typename Initiation, typename... InitArgs>
 struct is_deferred<
     deferred_async_operation<Signature, Initiation, InitArgs...> > : true_type
 {
 };
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Defines a link between two consecutive operations in a sequence.
 template <typename Head, typename Tail>
@@ -289,10 +297,12 @@ private:
   Tail tail_;
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
 template <typename Head, typename Tail>
 struct is_deferred<deferred_sequence<Head, Tail> > : true_type
 {
 };
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Used to represent a deferred conditional branch.
 template <typename OnTrue = deferred_noop,
@@ -385,10 +395,12 @@ private:
   bool bool_;
 };
 
+#if !defined(GENERATING_DOCUMENTATION)
 template <typename OnTrue, typename OnFalse>
 struct is_deferred<deferred_conditional<OnTrue, OnFalse> > : true_type
 {
 };
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Class used to specify that an asynchronous operation should return a
 /// function object to lazily launch the operation.
