@@ -22,6 +22,7 @@
 #include "asio/io_context.hpp"
 #include "asio/use_awaitable.hpp"
 #include <iostream>
+#include <vector>
 #include "../../unit_test.hpp"
 
 using namespace asio::experimental;
