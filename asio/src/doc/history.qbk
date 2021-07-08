@@ -7,6 +7,417 @@
 
 [section:history Revision History]
 
+[heading Asio 1.19.0]
+
+* Added support for cancellation of individual asynchonrous operations.
+  Cancellation is implemented by having each completion handler carry an
+  associated `CancellationSlot`, a lightweight cancellation channel that is
+  specified through the new `associated_cancellation_slot` associator. A
+  concrete `CancellationSlot` implementation is provided in the form of the
+  `cancellation_signal` and `cancellation_slot` classes. In conjunction with
+  the `bind_cancellation_slot` helper function, these may be used to hook
+  cancellation into asynchronous operations. However, it should be noted that
+  these classes are the low-level building blocks of cancellation, and most use
+  cases should use a higher level abstraction for cancellation, such as
+  `experimental::parallel_group` or the new logical operators for `awaitable`
+  (see below). The ability to cancel individual operations, or composed
+  operations, is currently supported by:
+  * timers
+  * sockets on POSIX and Windows
+  * POSIX descriptors
+  * Windows HANDLEs
+  * SSL streams
+  * all Asio-provided composed operations such as `async_read` and `async_write`
+  * compositions based on `async_compose`
+  * C++20 coroutines that use `awaitable`
+  * C++20 coroutines that use the new `experimental::coro` (see below)
+  * the new `experimental::parallel_group` operation (see below)
+  * the new `experimental::promise` class (see below)
+
+* Added the `associator` trait. The `associator` trait is used to generically
+  forward associators, such as `associated_executor` and `associated_allocator`,
+  through intermediate completion handlers. For example:[br]
+  ``
+  template <typename Handler>
+  struct intermediate_handler
+  {
+    Handler handler_;
+
+    template <typename... Args>
+    void operator()(Args&... args)
+    {
+      // ...
+    }
+  };
+
+  namespace asio {
+    template <
+        template <typename, typename> class Associator,
+        typename Handler,
+        typename DefaultCandidate>
+    struct associator<
+        Associator,
+        intermediate_handler<Handler>,
+        DefaultCandidate>
+    {
+      using type =
+        typename Associator<Handler, DefaultCandidate>::type;
+
+      static type get(
+          const intermediate_handler<Handler>& h,
+          const DefaultCandidate& c = DefaultCandidate()) noexcept
+      {
+        return Associator<Handler, DefaultCandidate>::get(
+            h.handler_, c);
+      }
+    };
+  } // namespace asio
+  ``[br]
+
+* Changed all asynchronous operations implemented in Asio to invoke their
+  completion handlers as rvalue references. This allows an rvalue reference
+  qualifier to be added to the function call operator.
+
+* Added support for asynchronous operations with multiple completion signatures.
+  Completion signatures may also specify that they are `noexcept`, and whether
+  they are lvalue-invocable (and thus do not "consume" the completion handler)
+  or rvalue-invocable (and thus do "consume" the handler, indicating an end to
+  the asynchronous operation). For example:[br]
+  ``
+  auto my_async_operation(...,
+      asio::completion_token_for<
+        void(intermediate_result_type) & noexcept,
+        void(final_result_type) &&
+      > auto&& token)
+  {
+    // ...
+  }
+  ``[br]
+
+* Added `operator&&` and `operator||` for `awaitable<>`. The logical operators
+  `||` and `&&` have been overloaded for `awaitable<>`, to allow coroutines to
+  be trivially awaited in parallel.[br]
+  [br]
+  When awaited using `&&`, the `co_await` expression waits until both operations
+  have completed successfully. As a "short-circuit" evaluation, if one
+  operation fails with an exception, the other is immediately cancelled.
+  For example:[br]
+  ``
+  std::tuple<std::size_t, std::size_t> results =
+    co_await (
+      async_read(socket, input_buffer, use_awaitable)
+        && async_write(socket, output_buffer, use_awaitable)
+    );
+  ``[br]
+  When awaited using `||`, the `co_await` expression waits until either
+  operation succeeds. As a "short-circuit" evaluation, if one operation
+  succeeds without throwing an exception, the other is immediately cancelled.
+  For example:[br]
+  ``
+  std::variant<std::size_t, std::monostate> results =
+    co_await (
+      async_read(socket, input_buffer, use_awaitable)
+        || timer.async_wait(use_awaitable)
+    );
+  ``[br]
+  The operators may be enabled by adding the `#include`:[br]
+  ``
+  #include <asio/experimental/awaitable_operators.hpp>
+  ``[br]
+  and then bringing the contents of the `experimental::awaitable_operators`
+  namespace into scope:[br]
+  ``
+  using namespace asio::experimental::awaitable_operators;
+  ``[br]
+
+* Added the `experimental::as_tuple` completion token adapter. The `as_tuple`
+  completion token adapter can be used to specify that the completion handler
+  arguments should be combined into a single tuple argument. The `as_tuple`
+  adapter may be used in conjunction with `use_awaitable` and structured
+  bindings as follows:[br]
+  ``
+  auto [e, n] = co_await socket.async_read_some(
+      asio::buffer(data), as_tuple(use_awaitable));
+  ``[br]
+  Alternatively, it may be used as a default completion token like so:[br]
+  ``
+  using default_token = as_tuple_t<use_awaitable_t<>>;
+  using tcp_socket = default_token::as_default_on_t<tcp::socket>;
+  // ...
+  awaitable<void> do_read(tcp_socket socket)
+  {
+    // ...
+    auto [e, n] = co_await socket.async_read_some(asio::buffer(data));
+    // ...
+  }
+  ``[br]
+
+* Added the `experimental::append` completion token adapter. The `append`
+  completion token adapter can be used to pass additional completion handler
+  arguments at the end of the completion signature. For example:[br]
+  ``
+  timer.async_wait(
+      asio::experimental::append(
+        [](std::error_code ec, int i)
+        {
+          // ...
+        },
+      42)
+    );
+
+  std::future<int> f = timer.async_wait(
+      asio::experimental::append(
+        asio::use_future,
+        42
+      )
+    );
+  ``[br]
+
+* Added the `experimental::prepend` completion token adapter. The `prepend`
+  completion token adapter can be used to pass additional arguments before the
+  existing completion handler arguments. For example:[br]
+  ``
+  timer.async_wait(
+      asio::experimental::prepend(
+        [](int i, std::error_code ec)
+        {
+          // ...
+        },
+      42)
+    );
+
+  std::future<std::tuple<int, std::error_code>> f = timer.async_wait(
+      asio::experimental::prepend(
+        asio::use_future,
+        42
+      )
+    );
+  ``[br]
+
+* Added the `experimental::deferred` completion token. The `deferred`
+  completion token takes a call to an asynchronous operation's initiating
+  function and turns it into a function object that accepts a completion token.
+  For example:[br]
+  ``
+  auto deferred_op =
+    timer.async_wait(
+      asio::experimental::deferred);
+  ...
+  std::move(deferred_op)(
+      [](std::error_code ec){ ... });
+  ``[br]
+  or:[br]
+  ``
+  auto deferred_op =
+    timer.async_wait(
+      asio::experimental::deferred);
+  ...
+  std::future<void> =
+    std::move(deferred_op)(
+      asio::use_future);
+  ``[br]
+  The deferred token also supports chaining, to create simple compositions:[br]
+  ``
+  auto deferred_op =
+    timer.async_wait(
+      asio::experimental::deferred(
+        [&](std::error_code ec)
+        {
+          timer.expires_after(
+              std::chrono::seconds(1));
+
+          return timer.async_wait(
+              asio::experimental::deferred);
+        });
+  ...
+  std::future<void> = std::move(deferred_op)(asio::use_future);
+  ``[br]
+
+* Added the `experimental::parallel_group` class and
+  `experimental::make_parallel_group` function. This utility may be used to
+  launch work that is performed in parallel, and wait for one or all of the
+  operations to complete. A `parallel_group` implements automatic cancellation
+  of incomplete operations. For example:[br]
+  ``
+  experimental::make_parallel_group(
+      [&](auto token)
+      {
+        return stream.async_read_some(asio::buffer(data), token);
+      },
+      [&](auto token)
+      {
+        return timer.async_wait(token);
+      }
+    ).async_wait(
+      experimental::wait_for_one(),
+      [](
+          std::array<std::size_t, 2> completion_order,
+          std::error_code ec1, std::size_t n1,
+          std::error_code ec2
+      )
+      {
+        // ...
+      }
+    );
+  ``[br]
+  The conditions for completion of the group may be specified using one of the
+  four provided function objects `wait_for_all`, `wait_for_one`,
+  `wait_for_one_success`, and `wait_for_one_error`, or with a custom function.
+  The `parallel_group` class can also be combined with `deferred` as
+  follows:[br]
+  ``
+  experimental::make_parallel_group(
+      stream.async_read_some(asio::buffer(data), experimental::deferred),
+      timer.async_wait(experimental::deferred)
+    ).async_wait(
+      // ...
+    );
+  ``[br]
+  Note: for maximum flexibility, `parallel_group` does not propagate the
+  executor automatically to the operations within the group.
+
+* Added `experimental::promise`. The `promise` type allows eager execution and
+  synchronisation of async operations. For example:[br]
+  ``
+  auto promise = async_read(
+      stream, asio::buffer(my_buffer),
+      asio::experimental::use_promise);
+
+  ... do other stuff while the read is going on ...
+
+  promise.async_wait( // completion the operation
+      [](error_code ec, std::size_t bytes_read)
+      {
+        ...
+      });
+  ``[br]
+  Promises can be safely disregarded if the result is no longer required.
+  Different operations can be combined to either wait for all to complete
+  or for one to complete (and cancel the rest). For example, to wait for
+  one to complete:[br]
+  ``
+  auto timeout_promise =
+    timer.async_wait(
+      asio::experimental::use_promise);
+
+  auto read_promise = async_read(
+      stream, asio::buffer(my_buffer),
+      asio::experimental::use_promise);
+
+  auto promise =
+    asio::experimental::promise<>::race(
+      timeout_promise, read_promise);
+
+  promise.async_wait(
+      [](std::variant<error_code, std::tuple<error_code, std::size_t>> v)
+      {
+        if (v.index() == 0) {} //timed out
+        else if (v.index() == 1) // completed in time
+      });
+  ``[br]
+  or to wait for all to complete:[br]
+  ``
+  auto write_promise = async_write(
+      stream, asio::buffer(my_write_buffer),
+      asio::experimental::use_promise);
+
+  auto read_promise = async_read(
+      stream, asio::buffer(my_buffer),
+      asio::experimental::use_promise);
+
+  auto promise =
+    asio::experimental::promise<>::all(
+      write_promise, read_promise);
+
+  promise.async_wait(
+      [](std::tuple<error_code, std::size_t> write_result,
+        std::tuple<error_code, std::size_t> read_result)
+      {
+      });
+  ``[br]
+  Thanks go to Klemens Morgenstern for contributing this feature.
+
+* Added the `experimental::coro` class template. The `coro` type is a C++20
+  coroutine primitive for resumable functions, with the ability to combine both
+  asynchronous waiting (`co_await`) and yielding (`co_yield`) into a single,
+  stateful control flow. For example:[br]
+  ``
+  #include <asio.hpp>
+  #include <asio/experimental/coro.hpp>
+
+  using asio::ip::tcp;
+
+  asio::experimental::coro<std::string> reader(tcp::socket& sock)
+  {
+    std::string buf;
+    while (sock.is_open())
+    {
+      std::size_t n = co_await asio::async_read_until(
+          sock, asio::dynamic_buffer(buf), '\n',
+          asio::experimental::use_coro);
+      co_yield buf.substr(0, n);
+      buf.erase(0, n);
+    }
+  }
+
+  asio::awaitable<void> consumer(tcp::socket sock)
+  {
+    auto r = reader(sock);
+    auto msg1 = co_await r.async_resume(asio::use_awaitable);
+    std::cout << "Message 1: " << msg1.value_or("\n");
+    auto msg2 = co_await r.async_resume(asio::use_awaitable);
+    std::cout << "Message 2: " << msg2.value_or("\n");
+  }
+
+  asio::awaitable<void> listen(tcp::acceptor& acceptor)
+  {
+    for (;;)
+    {
+      co_spawn(
+          acceptor.get_executor(),
+          consumer(co_await acceptor.async_accept(asio::use_awaitable)),
+          asio::detached);
+    }
+  }
+
+  int main()
+  {
+    asio::io_context ctx;
+    tcp::acceptor acceptor(ctx, {tcp::v4(), 54321});
+    co_spawn(ctx, listen(acceptor), asio::detached);
+    ctx.run();
+  }
+  ``[br]
+  Thanks go to Klemens Morgenstern for contributing this feature.
+
+* Added move assignment to `ssl::stream<>`.
+
+* Changed `co_spawn` to `dispatch` the coroutine's initial step to the executor,
+  and to only `post` the completion handler if the coroutine did not otherwise
+  perform a context switch (i.e. a `co_await` on an asynchronous operation).
+
+* Enabled additional optimisations for `any_executor` and `any_io_executor`
+  when used with asynchronous operations.
+
+* Added the `nodiscard` attribute to `awaitable<>`.
+
+* Increased the number of cached slots in the default recycling allocator.
+  This number defaults to 2, but may also be specified by defining the
+  `ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE` macro.
+
+* Disabled the `std::system_error` message workaround for recent MSVC.
+
+* Changed the default allocator behaviour to respect alignment requirements,
+  to support over-aligned types. Requires C++17 or later, or Boost.
+
+* Ensured the result strings are always initialised in reverse name resolution.
+
+* Fixed recursive template instantiation issues in
+  `use_awaitable_t::executor_with_default`.
+
+* Fixed the `any_io_executor` equality operators to correctly return a result
+  based on the target executor.
+
 [heading Asio 1.18.2]
 
 * Added `ip::scope_id_type` type alias.
@@ -146,12 +557,12 @@
 * Added missing compatibility macros for the `execution::receiver_of` concept.
 
 * Added short-circuited evaluation to `execution::executor`,
-	`execution::operation_state`,`execution::sender`, `execution::receiver`,
-	`execution::receiver_of`, and `execution::scheduler` concepts and the
-	corresponding traits. These now test first for well-formed CPO expressions
-	(or, in the case of senders, a specialised `sender_traits` template) and, if
-	not valid, short-circuit the remainder of the evaluation. This helps prevent
-	recursive template instantiations that can occur in some contexts.
+  `execution::operation_state`,`execution::sender`, `execution::receiver`,
+  `execution::receiver_of`, and `execution::scheduler` concepts and the
+  corresponding traits. These now test first for well-formed CPO expressions
+  (or, in the case of senders, a specialised `sender_traits` template) and, if
+  not valid, short-circuit the remainder of the evaluation. This helps prevent
+  recursive template instantiations that can occur in some contexts.
 
 * Added constraints to the `strand` template's constructor, to prevent template
   instantiation recursion.
