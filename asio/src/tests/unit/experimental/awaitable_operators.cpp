@@ -30,6 +30,16 @@
 using asio::awaitable;
 using namespace asio::experimental::awaitable_operators;
 
+struct move_only
+{
+  move_only(int i) : value(i) {}
+  move_only(const move_only&) = delete;
+  move_only(move_only&&) {}
+  move_only& operator=(const move_only&) = delete;
+  move_only& operator=(move_only&&) { return *this; }
+  int value;
+};
+
 awaitable<void> void_ok()
 {
   co_return;
@@ -66,6 +76,27 @@ awaitable<int> int_ex()
 {
   throw std::runtime_error("exception");
   co_return -1;
+}
+
+awaitable<move_only> move_only_0()
+{
+  co_return move_only(0);
+}
+
+awaitable<move_only> move_only_1()
+{
+  co_return move_only(1);
+}
+
+awaitable<move_only> move_only_2()
+{
+  co_return move_only(2);
+}
+
+awaitable<move_only> move_only_ex()
+{
+  throw std::runtime_error("exception");
+  co_return move_only(-1);
 }
 
 awaitable<void> do_test_and_awaitable_operator()
@@ -219,6 +250,36 @@ awaitable<void> do_test_or_awaitable_operator()
   iii = co_await (int_ex() || int_ex() || int_2());
   ASIO_CHECK(iii.index() == 2);
   ASIO_CHECK(std::get<2>(iii) == 2);
+
+  std::variant<move_only, int> mi = co_await (move_only_0() || int_1());
+  ASIO_CHECK(mi.index() == 0);
+  ASIO_CHECK(std::get<0>(mi).value == 0);
+
+  mi = co_await (move_only_ex() || int_1());
+  ASIO_CHECK(mi.index() == 1);
+  ASIO_CHECK(std::get<1>(mi) == 1);
+
+  std::variant<move_only, move_only> mm =
+    co_await (move_only_0() || move_only_1());
+  ASIO_CHECK(mm.index() == 0);
+  ASIO_CHECK(std::get<0>(mm).value == 0);
+
+  mm = co_await (move_only_ex() || move_only_1());
+  ASIO_CHECK(mm.index() == 1);
+  ASIO_CHECK(std::get<1>(mm).value == 1);
+
+  std::variant<move_only, move_only, move_only> mmm =
+    co_await (move_only_0() || move_only_1() || move_only_2());
+  ASIO_CHECK(mmm.index() == 0);
+  ASIO_CHECK(std::get<0>(mmm).value == 0);
+
+  mmm = co_await (move_only_ex() || move_only_1() || move_only_2());
+  ASIO_CHECK(mmm.index() == 1);
+  ASIO_CHECK(std::get<1>(mmm).value == 1);
+
+  mmm = co_await (move_only_ex() || move_only_ex() || move_only_2());
+  ASIO_CHECK(mmm.index() == 2);
+  ASIO_CHECK(std::get<2>(mmm).value == 2);
 }
 
 void test_or_awaitable_operator()
