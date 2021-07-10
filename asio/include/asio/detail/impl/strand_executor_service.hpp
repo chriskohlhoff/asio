@@ -105,9 +105,10 @@ public:
       if (push_waiting_to_ready(this_->impl_))
       {
         recycling_allocator<void> allocator;
+        executor_type ex = this_->executor_;
         execution::execute(
             asio::prefer(
-              asio::require(this_->executor_,
+              asio::require(ex,
                 execution::blocking.never),
             execution::allocator(allocator)),
             ASIO_MOVE_CAST(invoker)(*this_));
