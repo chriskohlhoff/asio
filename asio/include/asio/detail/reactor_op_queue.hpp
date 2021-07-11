@@ -115,10 +115,10 @@ public:
       op_queue<reactor_op> other_ops;
       while (reactor_op* op = i->second.front())
       {
+        i->second.pop();
         if (op->cancellation_key_ == cancellation_key)
         {
           op->ec_ = ec;
-          i->second.pop();
           ops.push(op);
           result = true;
         }

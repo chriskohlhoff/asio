@@ -299,10 +299,10 @@ void kqueue_reactor::cancel_ops_by_key(socket_type,
   op_queue<reactor_op> other_ops;
   while (reactor_op* op = descriptor_data->op_queue_[op_type].front())
   {
+    descriptor_data->op_queue_[op_type].pop();
     if (op->cancellation_key_ == cancellation_key)
     {
       op->ec_ = asio::error::operation_aborted;
-      descriptor_data->op_queue_[op_type].pop();
       ops.push(op);
     }
     else
