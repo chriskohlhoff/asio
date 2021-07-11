@@ -622,6 +622,16 @@ public:
    *     asio::posix::stream_descriptor::wait_read,
    *     wait_handler);
    * @endcode
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))

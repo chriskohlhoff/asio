@@ -461,6 +461,17 @@ public:
    * @code void handler(
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * if they are also supported by the @c Stream type's @c async_read_some and
+   * @c async_write_some operations.
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
@@ -497,6 +508,17 @@ public:
    *   const asio::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred // Amount of buffers used in handshake.
    * ); @endcode
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * if they are also supported by the @c Stream type's @c async_read_some and
+   * @c async_write_some operations.
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -551,6 +573,17 @@ public:
    * @code void handler(
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * if they are also supported by the @c Stream type's @c async_read_some and
+   * @c async_write_some operations.
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
@@ -638,6 +671,17 @@ public:
    * the peer. Consider using the @ref async_write function if you need to
    * ensure that all data is written before the asynchronous operation
    * completes.
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * if they are also supported by the @c Stream type's @c async_read_some and
+   * @c async_write_some operations.
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -725,6 +769,17 @@ public:
    * number of bytes. Consider using the @ref async_read function if you need to
    * ensure that the requested amount of data is read before the asynchronous
    * operation completes.
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * if they are also supported by the @c Stream type's @c async_read_some and
+   * @c async_write_some operations.
    */
   template <typename MutableBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,

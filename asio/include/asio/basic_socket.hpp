@@ -939,6 +939,16 @@ public:
    *     asio::ip::address::from_string("1.2.3.4"), 12345);
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
@@ -1772,6 +1782,16 @@ public:
    * ...
    * socket.async_wait(asio::ip::tcp::socket::wait_read, wait_handler);
    * @endcode
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))

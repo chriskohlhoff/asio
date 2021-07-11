@@ -469,6 +469,16 @@ public:
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -522,6 +532,16 @@ public:
    * See the @ref buffer documentation for information on sending multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -680,6 +700,16 @@ public:
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <typename MutableBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -735,6 +765,16 @@ public:
    * See the @ref buffer documentation for information on receiving into
    * multiple buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <typename MutableBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -847,6 +887,16 @@ public:
    * See the @ref buffer documentation for information on writing multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -962,6 +1012,16 @@ public:
    * See the @ref buffer documentation for information on reading into multiple
    * buffers in one go, and how to use it with arrays, boost::array or
    * std::vector.
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <typename MutableBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,

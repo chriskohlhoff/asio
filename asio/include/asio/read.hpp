@@ -766,6 +766,17 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  *     s, buffers,
  *     asio::transfer_all(),
  *     handler); @endcode
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -844,6 +855,17 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  * See the @ref buffer documentation for information on reading into multiple
  * buffers in one go, and how to use it with arrays, boost::array or
  * std::vector.
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream,
     typename MutableBufferSequence, typename CompletionCondition,
@@ -913,6 +935,17 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  *     s, buffers,
  *     asio::transfer_all(),
  *     handler); @endcode
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v1,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -990,6 +1023,17 @@ async_read(AsyncReadStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream,
     typename DynamicBuffer_v1, typename CompletionCondition,
@@ -1062,6 +1106,17 @@ async_read(AsyncReadStream& s,
  *     s, b,
  *     asio::transfer_all(),
  *     handler); @endcode
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream, typename Allocator,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -1130,6 +1185,17 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream,
     typename Allocator, typename CompletionCondition,
@@ -1198,6 +1264,17 @@ async_read(AsyncReadStream& s, basic_streambuf<Allocator>& b,
  *     s, buffers,
  *     asio::transfer_all(),
  *     handler); @endcode
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v2,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -1271,6 +1348,17 @@ async_read(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Per-Operation Cancellation
+ * This asynchronous operation supports cancellation for the following
+ * asio::cancellation_type values:
+ *
+ * @li @c cancellation_type::terminal
+ *
+ * @li @c cancellation_type::partial
+ *
+ * if they are also supported by the @c AsyncReadStream type's
+ * @c async_read_some operation.
  */
 template <typename AsyncReadStream,
     typename DynamicBuffer_v2, typename CompletionCondition,

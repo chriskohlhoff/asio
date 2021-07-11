@@ -627,6 +627,16 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Per-Operation Cancellation
+   * On POSIX or Windows operating systems, this asynchronous operation supports
+   * cancellation for the following asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))

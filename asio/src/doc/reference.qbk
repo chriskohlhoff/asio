@@ -2255,6 +2255,17 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the socket's `async_connect` operation. 
 
 
 [endsect]
@@ -2311,9 +2322,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-This overload assumes that a default constructed object of type `Iterator` represents the end of the sequence. This is a valid assumption for iterator types such as `asio::ip::tcp::resolver::iterator`. 
+This overload assumes that a default constructed object of type `Iterator` represents the end of the sequence. This is a valid assumption for iterator types such as `asio::ip::tcp::resolver::iterator`.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the socket's `async_connect` operation. 
 
 
 [endsect]
@@ -2393,6 +2415,17 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the socket's `async_connect` operation. 
 
 
 [endsect]
@@ -2518,6 +2551,17 @@ It would be used with the `asio::connect` function as follows:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the socket's `async_connect` operation. 
 
 
 [endsect]
@@ -2584,9 +2628,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-This overload assumes that a default constructed object of type `Iterator` represents the end of the sequence. This is a valid assumption for iterator types such as `asio::ip::tcp::resolver::iterator`. 
+This overload assumes that a default constructed object of type `Iterator` represents the end of the sequence. This is a valid assumption for iterator types such as `asio::ip::tcp::resolver::iterator`.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the socket's `async_connect` operation. 
 
 
 [endsect]
@@ -2715,6 +2770,17 @@ It would be used with the `asio::connect` function as follows:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the socket's `async_connect` operation. 
 
 
 [endsect]
@@ -2936,6 +3002,17 @@ This overload is equivalent to calling:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3018,9 +3095,20 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
        handler); 
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3095,6 +3183,17 @@ This overload is equivalent to calling:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3165,11 +3264,22 @@ A return value of 0 indicates that the read operation is complete. A non-zero re
                                              // prior to the error.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3242,6 +3352,17 @@ This overload is equivalent to calling:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3310,11 +3431,22 @@ A return value of 0 indicates that the read operation is complete. A non-zero re
                                              // prior to the error.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3388,6 +3520,17 @@ This overload is equivalent to calling:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3457,11 +3600,22 @@ A return value of 0 indicates that the read operation is complete. A non-zero re
                                              // prior to the error.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -3611,6 +3765,17 @@ This overload is equivalent to calling:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessReadDevice` type's async\_read\_some\_at operation. 
 
 
 [endsect]
@@ -3695,9 +3860,20 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
        handler); 
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessReadDevice` type's async\_read\_some\_at operation. 
 
 
 [endsect]
@@ -3770,6 +3946,17 @@ This overload is equivalent to calling:
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessReadDevice` type's async\_read\_some\_at operation. 
 
 
 [endsect]
@@ -3838,11 +4025,22 @@ A return value of 0 indicates that the read operation is complete. A non-zero re
      std::size_t bytes_transferred
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessReadDevice` type's async\_read\_some\_at operation. 
 
 
 [endsect]
@@ -4128,9 +4326,20 @@ After the call to `erase`, the remaining data is left in the buffer `data` as fo
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -4234,9 +4443,20 @@ After the call to `erase`, the remaining data is left in the string `data` as fo
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -4342,9 +4562,20 @@ After the call to `erase`, the remaining data is left in the string `data` as fo
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -4487,6 +4718,19 @@ To asynchronously read data into a `std::string` until a matching character is f
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
+
+
 [endsect]
 
 
@@ -4587,9 +4831,20 @@ The remaining data is left in the buffer `b` as follows:
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -4692,9 +4947,20 @@ The remaining data is left in the buffer `b` as follows:
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -4798,9 +5064,20 @@ The remaining data is left in the buffer `b` as follows:
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -4941,6 +5218,19 @@ To asynchronously read data into a streambuf until a matching character is found
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
+
+
 [endsect]
 
 
@@ -5041,9 +5331,20 @@ After the call to `erase`, the remaining data is left in the buffer `data` as fo
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -5146,9 +5447,20 @@ After the call to `erase`, the remaining data is left in the string `data` as fo
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -5253,9 +5565,20 @@ After the call to `erase`, the remaining data is left in the string `data` as fo
    { 'd', 'e', ... } 
 
 
-This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation. 
+This data may be the start of a new line, to be extracted by a subsequent `async_read_until` operation.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -5395,6 +5718,19 @@ To asynchronously read data into a `std::string` until a matching character is f
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncReadStream` type's `async_read_some` operation. 
 
 
 [endsect]
@@ -5891,9 +6227,20 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
    asio::async_write(s, asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -5977,9 +6324,20 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
        handler); 
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6035,11 +6393,22 @@ This operation is implemented in terms of zero or more calls to the stream's asy
                                              // of the buffer sizes.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6109,11 +6478,22 @@ A return value of 0 indicates that the write operation is complete. A non-zero r
                                              // of the buffer sizes.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6167,11 +6547,22 @@ This operation is implemented in terms of zero or more calls to the stream's asy
                                              // of the buffer sizes.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6239,11 +6630,22 @@ A return value of 0 indicates that the write operation is complete. A non-zero r
                                              // of the buffer sizes.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6298,11 +6700,22 @@ This operation is implemented in terms of zero or more calls to the stream's asy
                                              // of the buffer sizes.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6371,11 +6784,22 @@ A return value of 0 indicates that the write operation is complete. A non-zero r
                                              // of the buffer sizes.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncWriteStream` type's `async_write_some` operation. 
 
 
 [endsect]
@@ -6514,9 +6938,20 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
    asio::async_write_at(d, 42, asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessWriteDevice` type's async\_write\_some\_at operation. 
 
 
 [endsect]
@@ -6602,9 +7037,20 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
        handler); 
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessWriteDevice` type's async\_write\_some\_at operation. 
 
 
 [endsect]
@@ -6661,11 +7107,22 @@ This operation is implemented in terms of zero or more calls to the device's asy
      std::size_t bytes_transferred
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessWriteDevice` type's async\_write\_some\_at operation. 
 
 
 [endsect]
@@ -6736,11 +7193,22 @@ A return value of 0 indicates that the write operation is complete. A non-zero r
      std::size_t bytes_transferred
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `AsyncRandomAccessWriteDevice` type's async\_write\_some\_at operation. 
 
 
 [endsect]
@@ -7545,6 +8013,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -7622,7 +8104,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
    socket.async_receive(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -7672,7 +8168,21 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-The async\_receive operation can only be used with a connected socket. Use the async\_receive\_from function to receive data on an unconnected datagram socket. 
+The async\_receive operation can only be used with a connected socket. Use the async\_receive\_from function to receive data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -7755,7 +8265,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
        asio::buffer(data, size), sender_endpoint, handler); 
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -7801,9 +8325,23 @@ This function is used to asynchronously receive a datagram. The function call al
      std::size_t bytes_transferred           // Number of bytes received.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -7885,7 +8423,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
    socket.async_send(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -7935,7 +8487,21 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-The async\_send operation can only be used with a connected socket. Use the async\_send\_to function to send data on an unconnected datagram socket. 
+The async\_send operation can only be used with a connected socket. Use the async\_send\_to function to send data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -8020,7 +8586,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
        asio::buffer(data, size), destination, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -8066,9 +8646,23 @@ This function is used to asynchronously send a datagram to the specified remote 
      std::size_t bytes_transferred           // Number of bytes sent.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -8136,6 +8730,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -13954,9 +14562,23 @@ For each call to `async_wait()`, the supplied handler will be called exactly onc
      const asio::error_code& error // Result of operation.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16255,6 +16877,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -16332,7 +16968,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
    socket.async_receive(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16382,7 +17032,21 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-The async\_receive operation can only be used with a connected socket. Use the async\_receive\_from function to receive data on an unconnected raw socket. 
+The async\_receive operation can only be used with a connected socket. Use the async\_receive\_from function to receive data on an unconnected raw socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16465,7 +17129,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
        asio::buffer(data, size), 0, sender_endpoint, handler); 
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16511,9 +17189,23 @@ This function is used to asynchronously receive raw data. The function call alwa
      std::size_t bytes_transferred           // Number of bytes received.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16595,7 +17287,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
    socket.async_send(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16645,7 +17351,21 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 [heading Remarks]
       
-The async\_send operation can only be used with a connected socket. Use the async\_send\_to function to send data on an unconnected raw socket. 
+The async\_send operation can only be used with a connected socket. Use the async\_send\_to function to send data on an unconnected raw socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16730,7 +17450,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
        asio::buffer(data, size), destination, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16776,9 +17510,23 @@ This function is used to asynchronously send raw data to the specified remote en
      std::size_t bytes_transferred           // Number of bytes sent.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -16846,6 +17594,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -22937,6 +23699,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -23014,7 +23790,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
    socket.async_receive(asio::buffer(data, size), out_flags, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -23074,7 +23864,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
        0, out_flags, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -23131,7 +23935,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
    socket.async_send(asio::buffer(data, size), 0, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -23197,6 +24015,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -32110,6 +32942,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -32170,6 +33016,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -38433,6 +39293,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -38472,9 +39346,23 @@ This function is used to asynchronously accept a new connection into a socket, a
      const asio::error_code& error // Result of operation.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -38541,6 +39429,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -38610,6 +39512,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -38682,6 +39598,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -38750,6 +39680,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -38823,6 +39767,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -38899,6 +39857,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -38963,6 +39935,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -44572,6 +45558,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -44626,7 +45626,21 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
    socket.async_read_some(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -44706,7 +45720,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
    socket.async_receive(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -44766,7 +45794,21 @@ To receive into a single data buffer use the [link asio.reference.buffer `buffer
    socket.async_receive(asio::buffer(data, size), 0, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on receiving into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -44848,7 +45890,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
    socket.async_send(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -44908,7 +45964,21 @@ To send a single data buffer use the [link asio.reference.buffer `buffer`]  func
    socket.async_send(asio::buffer(data, size), 0, handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on sending multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -44978,6 +46048,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -45032,7 +46116,21 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
    socket.async_write_some(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -52712,9 +53810,23 @@ For each call to `async_wait()`, the supplied handler will be called exactly onc
      const asio::error_code& error // Result of operation.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -112538,6 +113650,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -114398,7 +115524,21 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
    descriptor.async_read_some(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -114468,6 +115608,20 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
 
 
 [endsect]
@@ -114522,7 +115676,21 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
    descriptor.async_write_some(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -128577,6 +129745,17 @@ This function is used to asynchronously perform an SSL handshake on the stream. 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `Stream` type's `async_read_some` and `async_write_some` operations. 
 
 
 [endsect]
@@ -128622,6 +129801,17 @@ This function is used to asynchronously perform an SSL handshake on the stream. 
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `Stream` type's `async_read_some` and `async_write_some` operations. 
 
 
 [endsect]
@@ -128668,9 +129858,20 @@ This function is used to asynchronously read one or more bytes of data from the 
 
 [heading Remarks]
       
-The async\_read\_some operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes. 
+The async\_read\_some operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `Stream` type's `async_read_some` and `async_write_some` operations. 
 
 
 [endsect]
@@ -128708,6 +129909,17 @@ This function is used to asynchronously shut down SSL on the stream. This functi
 ]
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `Stream` type's `async_read_some` and `async_write_some` operations. 
 
 
 [endsect]
@@ -128752,9 +129964,20 @@ This function is used to asynchronously write one or more bytes of data to the s
 
 [heading Remarks]
       
-The async\_write\_some operation may not transmit all of the data to the peer. Consider using the [link asio.reference.async_write `async_write`]  function if you need to ensure that all data is written before the asynchronous operation completes. 
+The async\_write\_some operation may not transmit all of the data to the peer. Consider using the [link asio.reference.async_write `async_write`]  function if you need to ensure that all data is written before the asynchronous operation completes.
 
 
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+if they are also supported by the `Stream` type's `async_read_some` and `async_write_some` operations. 
 
 
 [endsect]
@@ -139620,7 +140843,21 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
    handle.async_read_some_at(42, asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -139680,7 +140917,21 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
    handle.async_write_some_at(42, asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -141101,7 +142352,21 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
    handle.async_read_some(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -141158,7 +142423,21 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
    handle.async_write_some(asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
