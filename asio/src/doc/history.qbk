@@ -7,6 +7,29 @@
 
 [section:history Revision History]
 
+[heading Asio 1.19.1]
+
+* Fixed handling of move-only results with awaitable operators `&&` and `||`.
+
+* Fixed `strand<>` to avoid using a potentially moved-from executor.
+
+* Fixed order of `_aligned_malloc` arguments for MSVC.
+
+* Ensured handler alignment requirements are respected by `cancellation_signal`.
+
+* Ensured [^gcc] tests are not used for [^clang] when detecting compiler
+  features.
+
+* Disabled coroutines support for the [^clang] shipped with MSVC.
+
+* Fixed compatibility with recent LibreSSL when `OPENSSL_NO_SSL_INTERN` is
+  defined.
+
+* Documented supported cancellation types for individual asynchronous
+  operations.
+
+* Ensured un-cancelled ops are correctly placed back in the queue.
+
 [heading Asio 1.19.0]
 
 * Added support for cancellation of individual asynchonrous operations.
