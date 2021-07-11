@@ -1857,15 +1857,14 @@
 #if !defined(ASIO_HAS_CO_AWAIT)
 # if !defined(ASIO_DISABLE_CO_AWAIT)
 #  if defined(ASIO_MSVC)
-#   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
+#   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705) && !defined(__clang__)
 #    define ASIO_HAS_CO_AWAIT 1
 #   elif (_MSC_FULL_VER >= 190023506)
 #    if defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
 #     define ASIO_HAS_CO_AWAIT 1
 #    endif // defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
 #   endif // (_MSC_FULL_VER >= 190023506)
-#  endif // defined(ASIO_MSVC)
-#  if defined(__clang__)
+#  elif defined(__clang__)
 #   if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
 #    if __has_include(<experimental/coroutine>)
 #     define ASIO_HAS_CO_AWAIT 1
