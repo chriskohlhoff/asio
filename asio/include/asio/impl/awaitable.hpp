@@ -631,7 +631,8 @@ public:
     if (bottom_of_stack_.valid())
     {
       // Coroutine "stack unwinding" must be performed through the executor.
-      (post)(bottom_of_stack_.frame_->u_.executor_,
+      const executor_type& ex = bottom_of_stack_.frame_->u_.executor_;
+      (post)(ex,
           [a = std::move(bottom_of_stack_)]() mutable
           {
             (void)awaitable<awaitable_thread_entry_point, Executor>(
