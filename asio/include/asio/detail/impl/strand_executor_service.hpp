@@ -120,8 +120,8 @@ public:
               execution::blocking.never),
             execution::allocator(allocator));
 
-        execution::execute(BOOST_ASIO_MOVE_CAST(new_executor_type)(ex),
-            BOOST_ASIO_MOVE_CAST(invoker)(*this_));
+        execution::execute(ASIO_MOVE_CAST(new_executor_type)(ex),
+            ASIO_MOVE_CAST(invoker)(*this_));
       }
     }
   };
