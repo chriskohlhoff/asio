@@ -107,18 +107,18 @@ public:
         recycling_allocator<void> allocator;
 	typedef typename decay<
             typename prefer_result<
-	      typename require_result<
-		executor_type,
-		execution::blocking_t::never_t
-	      >::type,
+              typename require_result<
+                executor_type,
+                execution::blocking_t::never_t
+              >::type,
               execution::allocator_t<recycling_allocator<void>>
             >::type
           >::type new_executor_type;
 
-	new_executor_type ex = boost::asio::prefer(
-	    boost::asio::require(this_->executor_,
+        new_executor_type ex = boost::asio::prefer(
+            boost::asio::require(this_->executor_,
               execution::blocking.never),
-	    execution::allocator(allocator));
+            execution::allocator(allocator));
 
         execution::execute(BOOST_ASIO_MOVE_CAST(new_executor_type)(ex),
             BOOST_ASIO_MOVE_CAST(invoker)(*this_));
