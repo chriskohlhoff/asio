@@ -115,8 +115,8 @@ public:
             >::type
           >::type new_executor_type;
 
-        new_executor_type ex = boost::asio::prefer(
-            boost::asio::require(this_->executor_,
+        new_executor_type ex = asio::prefer(
+            asio::require(this_->executor_,
               execution::blocking.never),
             execution::allocator(allocator));
 
