@@ -322,6 +322,16 @@ sub copy_source_file
       $line =~ s/asio_handler_invoke_helpers/boost_asio_handler_invoke_helpers/g;
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /asio_(prefer|query|require|require_concept)_fn/)
+    {
+      $line =~ s/asio_(prefer|query|require|require_concept)_fn/boost_asio_$1_fn/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /asio_execution_/ && !($line =~ /_is_unspecialised/))
+    {
+      $line =~ s/asio_execution_/boost_asio_execution_/g;
+      print_line($output, $line, $from, $lineno);
+    }
     elsif ($line =~ /[\\@]ref boost_bind/)
     {
       $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
