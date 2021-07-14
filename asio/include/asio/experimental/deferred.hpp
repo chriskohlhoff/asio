@@ -121,6 +121,9 @@ struct is_deferred<deferred_noop> : true_type
 };
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+/// Tag type to disambiguate deferred constructors.
+struct deferred_init_tag {};
+
 /// Wraps a function object so that it may be used as an element in a deferred
 /// composition.
 template <typename Function>
@@ -130,7 +133,7 @@ public:
   /// Constructor. 
   template <typename F>
   ASIO_CONSTEXPR explicit deferred_function(
-      ASIO_MOVE_ARG(F) function)
+      deferred_init_tag, ASIO_MOVE_ARG(F) function)
     : function_(ASIO_MOVE_CAST(F)(function))
   {
   }
@@ -196,7 +199,7 @@ public:
   /// initiation function object.
   template <typename... V>
   ASIO_CONSTEXPR explicit deferred_values(
-      ASIO_MOVE_ARG(V)... values)
+      deferred_init_tag, ASIO_MOVE_ARG(V)... values)
     : values_(ASIO_MOVE_CAST(V)(values)...)
   {
   }
@@ -253,7 +256,7 @@ public:
   /// initiation function object.
   template <typename I, typename... A>
   ASIO_CONSTEXPR explicit deferred_async_operation(
-      ASIO_MOVE_ARG(I) initiation,
+      deferred_init_tag, ASIO_MOVE_ARG(I) initiation,
       ASIO_MOVE_ARG(A)... init_args)
     : initiation_(ASIO_MOVE_CAST(I)(initiation)),
       init_args_(ASIO_MOVE_CAST(A)(init_args)...)
@@ -300,7 +303,7 @@ private:
 
 public:
   template <typename H, typename T>
-  ASIO_CONSTEXPR explicit deferred_sequence(
+  ASIO_CONSTEXPR explicit deferred_sequence(deferred_init_tag,
       ASIO_MOVE_ARG(H) head, ASIO_MOVE_ARG(T) tail)
     : head_(ASIO_MOVE_CAST(H)(head)),
       tail_(ASIO_MOVE_CAST(T)(tail))
@@ -538,7 +541,7 @@ public:
   >::type operator()(ASIO_MOVE_ARG(Function) function) const
   {
     return deferred_function<typename decay<Function>::type>(
-        ASIO_MOVE_CAST(Function)(function));
+        deferred_init_tag{}, ASIO_MOVE_CAST(Function)(function));
   }
 
   /// Passes through anything that is already deferred.
@@ -557,7 +560,7 @@ public:
   values(ASIO_MOVE_ARG(Args)... args)
   {
     return deferred_values<typename decay<Args>::type...>(
-        ASIO_MOVE_CAST(Args)(args)...);
+        deferred_init_tag{}, ASIO_MOVE_CAST(Args)(args)...);
   }
 
   /// Creates a conditional object for branching deferred operations.
