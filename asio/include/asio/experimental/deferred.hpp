@@ -19,8 +19,9 @@
 #include <tuple>
 #include "asio/associator.hpp"
 #include "asio/async_result.hpp"
-#include "asio/detail/push_options.hpp"
 #include "asio/detail/type_traits.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace experimental {
