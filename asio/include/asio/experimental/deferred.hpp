@@ -104,6 +104,14 @@ struct deferred_noop
   void operator()(ASIO_MOVE_ARG(Args)...) ASIO_RVALUE_REF_QUAL
   {
   }
+
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  /// No effect.
+  template <typename... Args>
+  decltype(auto) operator()(ASIO_MOVE_ARG(Args)...) const &
+  {
+  }
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -134,6 +142,16 @@ public:
     return ASIO_MOVE_CAST(Function)(function_)(
         ASIO_MOVE_CAST(Args)(args)...);
   }
+
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <typename... Args>
+  decltype(auto) operator()(
+      ASIO_MOVE_ARG(Args)... args) const &
+  {
+    return deferred_function(*this)(
+        ASIO_MOVE_CAST(Args)(args)...);
+  }
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 //private:
   Function function_;
@@ -192,6 +210,16 @@ public:
         ASIO_MOVE_CAST(CompletionToken)(token),
         std::index_sequence_for<Values...>());
   }
+
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <ASIO_COMPLETION_TOKEN_FOR(void(Values...)) CompletionToken>
+  decltype(auto) operator()(
+      ASIO_MOVE_ARG(CompletionToken) token) const &
+  {
+    return deferred_values(*this)(
+        ASIO_MOVE_CAST(CompletionToken)(token));
+  }
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -241,6 +269,16 @@ public:
         ASIO_MOVE_CAST(CompletionToken)(token),
         std::index_sequence_for<InitArgs...>());
   }
+
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
+  decltype(auto) operator()(
+      ASIO_MOVE_ARG(CompletionToken) token) const &
+  {
+    return deferred_async_operation(*this)(
+        ASIO_MOVE_CAST(CompletionToken)(token));
+  }
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 };
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -270,12 +308,23 @@ public:
   }
 
   template <ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
-  decltype(auto) operator()(ASIO_MOVE_ARG(CompletionToken) token)
+  decltype(auto) operator()(
+      ASIO_MOVE_ARG(CompletionToken) token) ASIO_RVALUE_REF_QUAL
   {
     return asio::async_initiate<CompletionToken, signature>(
         initiate(), token, ASIO_MOVE_OR_LVALUE(Head)(head_),
         ASIO_MOVE_OR_LVALUE(Tail)(tail_));
   }
+
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
+  decltype(auto) operator()(
+      ASIO_MOVE_ARG(CompletionToken) token) const &
+  {
+    return deferred_sequence(*this)(
+        ASIO_MOVE_CAST(CompletionToken)(token));
+  }
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
 private:
   struct initiate
@@ -334,6 +383,15 @@ public:
           ASIO_MOVE_CAST(Args)(args)...);
     }
   }
+
+#if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  template <typename... Args>
+  auto operator()(ASIO_MOVE_ARG(Args)... args) const &
+  {
+    return deferred_conditional(*this)(
+        ASIO_MOVE_CAST(Args)(args)...);
+  }
+#endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
   /// Set the true branch of the conditional.
   template <typename T>
