@@ -3156,9 +3156,9 @@ void test_4_arg_boost_array_buffers_async_write_at()
 #if defined(ASIO_HAS_BOOST_ARRAY)
   asio::io_context ioc;
   test_random_access_device s(ioc);
-  boost::array<asio::const_buffer, 2> buffers = { {
+  boost::array<asio::const_buffer, 2> buffers = {
     asio::buffer(write_data, 32),
-    asio::buffer(write_data) + 32 } };
+    asio::buffer(write_data) + 32 };
 
   s.reset();
   bool called = false;
@@ -3258,9 +3258,9 @@ void test_4_arg_std_array_buffers_async_write_at()
 #if defined(ASIO_HAS_STD_ARRAY)
   asio::io_context ioc;
   test_random_access_device s(ioc);
-  std::array<asio::const_buffer, 2> buffers = { {
+  std::array<asio::const_buffer, 2> buffers = {
     asio::buffer(write_data, 32),
-    asio::buffer(write_data) + 32 } };
+    asio::buffer(write_data) + 32 };
 
   s.reset();
   bool called = false;
@@ -4860,9 +4860,9 @@ void test_5_arg_boost_array_buffers_async_write_at()
 #if defined(ASIO_HAS_BOOST_ARRAY)
   asio::io_context ioc;
   test_random_access_device s(ioc);
-  boost::array<asio::const_buffer, 2> buffers = { {
+  boost::array<asio::const_buffer, 2> buffers = {
     asio::buffer(write_data, 32),
-    asio::buffer(write_data) + 32 } };
+    asio::buffer(write_data) + 32 };
 
   s.reset();
   bool called = false;
@@ -5505,9 +5505,9 @@ void test_5_arg_std_array_buffers_async_write_at()
 #if defined(ASIO_HAS_STD_ARRAY)
   asio::io_context ioc;
   test_random_access_device s(ioc);
-  std::array<asio::const_buffer, 2> buffers = { {
+  std::array<asio::const_buffer, 2> buffers = {
     asio::buffer(write_data, 32),
-    asio::buffer(write_data) + 32 } };
+    asio::buffer(write_data) + 32 };
 
   s.reset();
   bool called = false;

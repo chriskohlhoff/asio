@@ -225,12 +225,12 @@ void test()
     const io_context::executor_type ioc_ex = ioc.get_executor();
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
-    array<asio::mutable_buffer, 2> mutable_buffers = {{
+    array<asio::mutable_buffer, 2> mutable_buffers = {
         asio::buffer(mutable_char_buffer, 10),
-        asio::buffer(mutable_char_buffer + 10, 10) }};
-    array<asio::const_buffer, 2> const_buffers = {{
+        asio::buffer(mutable_char_buffer + 10, 10) };
+    array<asio::const_buffer, 2> const_buffers = {
         asio::buffer(const_char_buffer, 10),
-        asio::buffer(const_char_buffer + 10, 10) }};
+        asio::buffer(const_char_buffer + 10, 10) };
     socket_base::message_flags in_flags = 0;
     archetypes::settable_socket_option<void> settable_socket_option1;
     archetypes::settable_socket_option<int> settable_socket_option2;

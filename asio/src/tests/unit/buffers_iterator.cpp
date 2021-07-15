@@ -51,11 +51,11 @@ void test()
     char data1[16], data2[16];
     const char cdata1[16] = "", cdata2[16] = "";
     mutable_buffer mb1 = buffer(data1);
-    array<mutable_buffer, 2> mb2 = {{ buffer(data1), buffer(data2) }};
+    array<mutable_buffer, 2> mb2 = { buffer(data1), buffer(data2) };
     std::vector<mutable_buffer> mb3;
     mb3.push_back(buffer(data1));
     const_buffer cb1 = buffer(cdata1);
-    array<const_buffer, 2> cb2 = {{ buffer(cdata1), buffer(cdata2) }};
+    array<const_buffer, 2> cb2 = { buffer(cdata1), buffer(cdata2) };
     vector<const_buffer> cb3;
     cb3.push_back(buffer(cdata1));
 

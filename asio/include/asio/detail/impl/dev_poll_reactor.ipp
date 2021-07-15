@@ -285,7 +285,7 @@ void dev_poll_reactor::run(long usec, op_queue<operation>& ops)
   lock.unlock();
 
   // Block on the /dev/poll descriptor.
-  ::pollfd events[128] = { { 0, 0, 0 } };
+  ::pollfd events[128] = { 0, 0, 0 };
   ::dvpoll dp = { 0, 0, 0 };
   dp.dp_fds = events;
   dp.dp_nfds = 128;

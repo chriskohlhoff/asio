@@ -291,8 +291,8 @@ public:
   // Get the buffer for a single transfer, with a size.
   boost::array<Buffer, 2> prepare(std::size_t max_size)
   {
-    boost::array<Buffer, 2> result = {{
-      Buffer(buffers_[0]), Buffer(buffers_[1]) }};
+    boost::array<Buffer, 2> result = {
+      Buffer(buffers_[0]), Buffer(buffers_[1]) };
     std::size_t buffer0_size = result[0].size();
     result[0] = asio::buffer(result[0] + total_consumed_, max_size);
     result[1] = asio::buffer(
@@ -343,8 +343,8 @@ public:
   // Get the buffer for a single transfer, with a size.
   std::array<Buffer, 2> prepare(std::size_t max_size)
   {
-    std::array<Buffer, 2> result = {{
-      Buffer(buffers_[0]), Buffer(buffers_[1]) }};
+    std::array<Buffer, 2> result = {
+      Buffer(buffers_[0]), Buffer(buffers_[1]) };
     std::size_t buffer0_size = result[0].size();
     result[0] = asio::buffer(result[0] + total_consumed_, max_size);
     result[1] = asio::buffer(
