@@ -33,6 +33,10 @@
 namespace asio {
 namespace detail {
 
+#ifndef ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+# define ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE 2
+#endif // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+
 class thread_info_base
   : private noncopyable
 {
@@ -41,12 +45,9 @@ public:
   {
     enum
     {
+      cache_size = ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE,
       begin_mem_index = 0,
-#ifdef ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-      end_mem_index = ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-#else // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-      end_mem_index = 2
-#endif // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = cache_size
     };
   };
 
@@ -54,13 +55,9 @@ public:
   {
     enum
     {
+      cache_size = ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE,
       begin_mem_index = default_tag::end_mem_index,
-#ifdef ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-      end_mem_index =
-        begin_mem_index + ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-#else // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-      end_mem_index = begin_mem_index + 2
-#endif // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = begin_mem_index + cache_size
     };
   };
 
@@ -68,8 +65,9 @@ public:
   {
     enum
     {
+      cache_size = ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE,
       begin_mem_index = awaitable_frame_tag::end_mem_index,
-      end_mem_index = begin_mem_index + 1
+      end_mem_index = begin_mem_index + cache_size
     };
   };
 
@@ -77,13 +75,9 @@ public:
   {
     enum
     {
+      cache_size = ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE,
       begin_mem_index = executor_function_tag::end_mem_index,
-#ifdef ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-      end_mem_index =
-        begin_mem_index + ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-#else // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
-      end_mem_index = begin_mem_index + 2
-#endif // ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE
+      end_mem_index = begin_mem_index + cache_size
     };
   };
 
