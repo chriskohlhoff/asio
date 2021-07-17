@@ -12,7 +12,7 @@ jobs:
         build-type: ['sanity']
         runs-on: [ubuntu-18.04, ubuntu-20.04, macos-latest]
         compiler: [g++-4.8, g++-5, g++-6, g++-7, g++-8, g++-9, g++-10, clang++-10, g++]
-        cxx-std: ['c++03', 'c++11', 'c++14', 'c++17', 'c++2a']
+        cxx-std: ['c++03', 'c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
         separate-compilation: ['', '--enable-separate-compilation']
         optim-level: ['-O0']
         no-deprecated: ['']
@@ -71,12 +71,30 @@ jobs:
             cxx-std: c++17
           - compiler: g++-4.8
             cxx-std: c++2a
+          - compiler: g++-4.8
+            cxx-std: c++20
           - compiler: g++-5
             cxx-std: c++2a
+          - compiler: g++-5
+            cxx-std: c++20
           - compiler: g++-6
             cxx-std: c++2a
+          - compiler: g++-6
+            cxx-std: c++20
           - compiler: g++-7
             cxx-std: c++2a
+          - compiler: g++-7
+            cxx-std: c++20
+          - compiler: g++-8
+            cxx-std: c++20
+          - compiler: g++-9
+            cxx-std: c++20
+          - compiler: g++-10
+            cxx-std: c++2a
+          - compiler: clang++-10
+            cxx-std: c++20
+          - runs-on: macos-latest
+            cxx-std: c++20
           # Specifying the select reactor is OS-specific
           - runs-on: ubuntu-18.04
             select-reactor: -DASIO_DISABLE_KQUEUE
@@ -116,12 +134,12 @@ jobs:
           - cxx-std: c++03
         include:
           #
-          # Linux / g++-10 -std=c++2a / -O2 / standalone
+          # Linux / g++-10 -std=c++20 -fcoroutines / -O2 / standalone
           #
           - build-type: full
             runs-on: ubuntu-20.04
             compiler: g++-10
-            cxx-std: c++2a
+            cxx-std: c++20 -fcoroutines
             optim-level: -O2
           #
           # Linux / g++-10 -std=c++17 / -O2 / boost 1.73
