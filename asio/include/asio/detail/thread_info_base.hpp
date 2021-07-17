@@ -81,7 +81,17 @@ public:
     };
   };
 
-  enum { max_mem_index = cancellation_signal_tag::end_mem_index };
+  struct parallel_group_tag
+  {
+    enum
+    {
+      cache_size = ASIO_RECYCLING_ALLOCATOR_CACHE_SIZE,
+      begin_mem_index = cancellation_signal_tag::end_mem_index,
+      end_mem_index = begin_mem_index + cache_size
+    };
+  };
+
+  enum { max_mem_index = parallel_group_tag::end_mem_index };
 
   thread_info_base()
 #if defined(ASIO_HAS_STD_EXCEPTION_PTR) \

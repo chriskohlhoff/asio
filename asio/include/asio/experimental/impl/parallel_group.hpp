@@ -21,6 +21,7 @@
 #include <new>
 #include <tuple>
 #include "asio/associated_cancellation_slot.hpp"
+#include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/dispatch.hpp"
 
@@ -264,7 +265,9 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
 
   // Create the shared state for the operation.
   typedef parallel_group_state<Condition, Handler, Ops...> state_type;
-  std::shared_ptr<state_type> state = std::make_shared<state_type>(
+  std::shared_ptr<state_type> state = std::allocate_shared<state_type>(
+      asio::detail::recycling_allocator<state_type,
+        asio::detail::thread_info_base::parallel_group_tag>(),
       std::move(cancellation_condition), std::move(handler));
 
   // Initiate each individual operation in the group.
