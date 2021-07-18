@@ -81,9 +81,9 @@ All of the asio classes can be used by simply including the `"asio.hpp"` header 
 
 
 
-All programs that use asio need to have at least one I/O execution context, such as an 
-[link asio.reference.io_context io_context] or 
-[link asio.reference.thread_pool thread_pool] object. An I/O execution context provides access to I/O functionality. We declare an object of type 
+All programs that use asio need to have at least one I/O execution context, such as an
+[link asio.reference.io_context io_context] or
+[link asio.reference.thread_pool thread_pool] object. An I/O execution context provides access to I/O functionality. We declare an object of type
 [link asio.reference.io_context io_context] first thing in the main function.
 
 
@@ -599,17 +599,17 @@ Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
 
 [section:tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
 
-This tutorial demonstrates the use of the 
+This tutorial demonstrates the use of the
 [link asio.reference.strand strand] class template to synchronise callback handlers in a multithreaded program.
 
 The previous four tutorials avoided the issue of handler synchronisation by calling the [link asio.reference.io_context.run io_context::run()] function from one thread only. As you already know, the asio library provides a guarantee that callback handlers will only be called from threads that are currently calling [link asio.reference.io_context.run io_context::run()]. Consequently, calling [link asio.reference.io_context.run io_context::run()] from only one thread ensures that callback handlers cannot run concurrently.
 
 The single threaded approach is usually the best place to start when developing applications using asio. The downside is the limitations it places on programs, particularly servers, including:
 
-* Poor responsiveness when handlers can take a long time to complete. 
+* Poor responsiveness when handlers can take a long time to complete.
 
 
-* An inability to scale on multiprocessor systems. 
+* An inability to scale on multiprocessor systems.
 
 
 
@@ -639,9 +639,9 @@ We start by defining a class called `printer`, similar to the class in the previ
 
 In addition to initialising a pair of asio::steady\_timer members, the constructor initialises the `strand_` member, an object of type asio::strand<asio::io\_context::executor\_type>.
 
-The 
-[link asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an 
-[link asio.reference.strand strand], or were dispatched through a different 
+The
+[link asio.reference.strand strand] class template is an executor adapter that guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete before the next one is started. This is guaranteed irrespective of the number of threads that are calling [link asio.reference.io_context.run io_context::run()]. Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an
+[link asio.reference.strand strand], or were dispatched through a different
 [link asio.reference.strand strand] object.
 
 
@@ -654,8 +654,8 @@ The
 
 
 
-When initiating the asynchronous operations, each callback handler is "bound" to an asio::strand<asio::io\_context::executor\_type> object. The asio::bind\_executor() function returns a new handler that automatically dispatches its contained handler through the 
-[link asio.reference.strand strand] object. By binding the handlers to the same 
+When initiating the asynchronous operations, each callback handler is "bound" to an asio::strand<asio::io\_context::executor\_type> object. The asio::bind\_executor() function returns a new handler that automatically dispatches its contained handler through the
+[link asio.reference.strand strand] object. By binding the handlers to the same
 [link asio.reference.strand strand], we are ensuring that they cannot execute concurrently.
 
 
@@ -714,7 +714,7 @@ In a multithreaded program, the handlers for asynchronous operations should be s
 
 
 
-The `main` function now causes [link asio.reference.io_context.run io_context::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an 
+The `main` function now causes [link asio.reference.io_context.run io_context::run()] to be called from two threads: the main thread and one additional thread. This is accomplished using an
 [link asio.reference.thread thread] object.
 
 Just as it would with a call from a single thread, concurrent calls to [link asio.reference.io_context.run io_context::run()] will continue to execute while there is "work" left to do. The background thread will not exit until all asynchronous operations have completed.
@@ -869,7 +869,7 @@ The purpose of this application is to access a daytime service, so we need the u
 
 
 
-All programs that use asio need to have at least one I/O execution context, such as an 
+All programs that use asio need to have at least one I/O execution context, such as an
 [link asio.reference.io_context io_context] object.
 
 
@@ -1184,7 +1184,7 @@ Return to [link asio.tutorial.tutdaytime2 Daytime.2 - A synchronous TCP daytime 
 
 
 
-We need to create a server object to accept incoming client connections. The 
+We need to create a server object to accept incoming client connections. The
 [link asio.reference.io_context io_context] object provides I/O services, such as sockets, that the server object will use.
 
 
@@ -1193,7 +1193,7 @@ We need to create a server object to accept incoming client connections. The
 
 
 
-Run the 
+Run the
 [link asio.reference.io_context io_context] object so that it will perform asynchronous operations on your behalf.
 
 
@@ -1797,7 +1797,7 @@ Return to [link asio.tutorial.tutdaytime5 Daytime.5 - A synchronous UDP daytime 
 
 
 
-Create a server object to accept incoming client requests, and run the 
+Create a server object to accept incoming client requests, and run the
 [link asio.reference.io_context io_context] object.
 
 
@@ -1839,8 +1839,8 @@ The constructor initialises a socket to listen on UDP port 13.
 
 
 
-The function [link asio.reference.basic_datagram_socket.async_receive_from ip::udp::socket::async_receive_from()] will cause the application to listen in the background for a new request. When such a request is received, the 
-[link asio.reference.io_context io_context] object will invoke the `handle_receive()` function with two arguments: a value of type 
+The function [link asio.reference.basic_datagram_socket.async_receive_from ip::udp::socket::async_receive_from()] will cause the application to listen in the background for a new request. When such a request is received, the
+[link asio.reference.io_context io_context] object will invoke the `handle_receive()` function with two arguments: a value of type
 [link asio.reference.error_code error_code] indicating whether the operation succeeded or failed, and a `size_t` value `bytes_transferred` specifying the number of bytes received.
 
 
@@ -1863,7 +1863,7 @@ The function `handle_receive()` will service the client request.
 
 
 
-The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the 
+The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the
 [link asio.reference.io_context io_context] object would return an error if the client sent anything larger. We can ignore such an error if it comes up.
 
 
@@ -2064,7 +2064,7 @@ We also need a server object to accept a UDP client request.
 
 
 
-We have created two lots of work for the 
+We have created two lots of work for the
 [link asio.reference.io_context io_context] object to do.
 
 
