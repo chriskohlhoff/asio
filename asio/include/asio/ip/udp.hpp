@@ -22,6 +22,7 @@
 #include "asio/ip/basic_resolver.hpp"
 #include "asio/ip/basic_resolver_iterator.hpp"
 #include "asio/ip/basic_resolver_query.hpp"
+#include "asio/basic_socket_iostream.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -81,6 +82,11 @@ public:
   /// The UDP resolver type.
   typedef basic_resolver<udp> resolver;
 
+#if !defined(ASIO_NO_IOSTREAM)
+  /// The UDP iostream type.
+  typedef basic_socket_iostream<udp> iostream;
+#endif // !defined(ASIO_NO_IOSTREAM)
+  
   /// Compare two protocols for equality.
   friend bool operator==(const udp& p1, const udp& p2)
   {
