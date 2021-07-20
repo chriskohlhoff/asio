@@ -35,6 +35,8 @@ std::size_t io(Stream& next_layer, stream_core& core,
 {
   asio::error_code io_ec;
   std::size_t bytes_transferred = 0;
+  asio::const_buffer out_buf;
+
   do switch (op(core.engine_, ec, bytes_transferred))
   {
   case engine::want_input_and_retry:
@@ -59,8 +61,10 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // Get output data from the engine and write it to the underlying
     // transport.
-    asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), io_ec);
+    out_buf = core.engine_.get_output0(io_ec);
+    if (!io_ec) {
+      asio::write(next_layer, out_buf, io_ec);
+    }
     if (!ec)
       ec = io_ec;
 
@@ -71,8 +75,10 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // Get output data from the engine and write it to the underlying
     // transport.
-    asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), io_ec);
+    out_buf = core.engine_.get_output0(io_ec);
+    if (!io_ec) {
+      asio::write(next_layer, out_buf, io_ec);
+    }
     if (!ec)
       ec = io_ec;
 
