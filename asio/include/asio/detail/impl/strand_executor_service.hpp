@@ -105,12 +105,22 @@ public:
       if (push_waiting_to_ready(this_->impl_))
       {
         recycling_allocator<void> allocator;
-        executor_type ex = this_->executor_;
-        execution::execute(
-            asio::prefer(
-              asio::require(ex,
-                execution::blocking.never),
-            execution::allocator(allocator)),
+	typedef typename decay<
+            typename prefer_result<
+              typename require_result<
+                executor_type,
+                execution::blocking_t::never_t
+              >::type,
+              execution::allocator_t<recycling_allocator<void>>
+            >::type
+          >::type new_executor_type;
+
+        new_executor_type ex = asio::prefer(
+            asio::require(this_->executor_,
+              execution::blocking.never),
+            execution::allocator(allocator));
+
+        execution::execute(ASIO_MOVE_CAST(new_executor_type)(ex),
             ASIO_MOVE_CAST(invoker)(*this_));
       }
     }
