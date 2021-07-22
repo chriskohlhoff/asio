@@ -38,8 +38,6 @@ struct deferred_signatures
 {
 };
 
-namespace detail {
-
 template <typename SignaturePack1, typename SignaturePack2>
 struct cat_deferred_signatures;
 
@@ -130,8 +128,6 @@ struct merge_deferred_signatures<Sigs1, Sigs2, SigsN...> :
 {
 };
 
-} // namespace detail
-
 #if defined(ASIO_HAS_CONCEPTS)
 
 namespace detail {
@@ -184,12 +180,16 @@ struct deferred_signatures_probe_result
   typedef deferred_signatures<Signatures...> type;
 };
 
+} // namespace detail
+
 template <typename T>
 struct deferred_signatures_for
 {
   typedef typename decltype(
-      declval<T>()(declval<deferred_signatures_probe>()))::type type;
+      declval<T>()(declval<detail::deferred_signatures_probe>()))::type type;
 };
+
+namespace detail {
 
 // Helper trait for getting the completion signature of the tail in a sequence
 // when invoked with the specified arguments.
@@ -215,7 +215,7 @@ struct deferred_sequence_signatures;
 template <typename... Signatures, typename Tail>
 struct deferred_sequence_signatures<deferred_signatures<Signatures...>, Tail>
 {
-  typedef typename detail::merge_deferred_signatures<
+  typedef typename merge_deferred_signatures<
       typename deferred_sequence_signatures_1<Signatures, Tail>::type...
     >::type type;
 };
@@ -273,15 +273,11 @@ struct is_deferred<deferred_noop> : true_type
 };
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-namespace detail {
-
 template <>
 struct deferred_signatures_for<deferred_noop>
 {
   typedef deferred_signatures<> type;
 };
-
-} // namespace detail
 
 /// Tag type to disambiguate deferred constructors.
 struct deferred_init_tag {};
@@ -466,7 +462,7 @@ class ASIO_NODISCARD deferred_sequence
 {
 private:
   typedef typename detail::deferred_sequence_signatures<
-    typename detail::deferred_signatures_for<Head>::type, Tail>::type
+    typename deferred_signatures_for<Head>::type, Tail>::type
       signatures;
 
   template <typename... S,
@@ -566,26 +562,26 @@ public:
   /// Invoke the conditional branch bsaed on the stored alue.
   template <
     ASIO_COMPLETION_TOKEN_FOR_DEFERRED_SIGS2(
-      typename detail::merge_deferred_signatures<
-        typename detail::deferred_signatures_for<OnTrue>::type,
-        typename detail::deferred_signatures_for<OnFalse>::type
+      typename merge_deferred_signatures<
+        typename deferred_signatures_for<OnTrue>::type,
+        typename deferred_signatures_for<OnFalse>::type
       >::type) CompletionToken>
   decltype(auto) operator()(
       ASIO_MOVE_ARG(CompletionToken) token) ASIO_RVALUE_REF_QUAL
   {
     return this->invoke_helper(
-        typename detail::merge_deferred_signatures<
-          typename detail::deferred_signatures_for<OnTrue>::type,
-          typename detail::deferred_signatures_for<OnFalse>::type
+        typename merge_deferred_signatures<
+          typename deferred_signatures_for<OnTrue>::type,
+          typename deferred_signatures_for<OnFalse>::type
         >::type(), ASIO_MOVE_CAST(CompletionToken)(token));
   }
 
 #if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
   template <
     ASIO_COMPLETION_TOKEN_FOR_DEFERRED_SIGS2(
-      typename detail::merge_deferred_signatures<
-        typename detail::deferred_signatures_for<OnTrue>::type,
-        typename detail::deferred_signatures_for<OnFalse>::type
+      typename merge_deferred_signatures<
+        typename deferred_signatures_for<OnTrue>::type,
+        typename deferred_signatures_for<OnFalse>::type
       >::type) CompletionToken>
   decltype(auto) operator()(
       ASIO_MOVE_ARG(CompletionToken) token) const &

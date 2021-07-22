@@ -779,11 +779,13 @@ std::size_t read(SyncReadStream& s, DynamicBuffer_v2 buffers,
  * @c async_read_some operation.
  */
 template <typename AsyncReadStream, typename MutableBufferSequence,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) ReadHandler
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler
@@ -869,11 +871,13 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
  */
 template <typename AsyncReadStream,
     typename MutableBufferSequence, typename CompletionCondition,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) ReadHandler
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,

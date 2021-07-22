@@ -1236,15 +1236,16 @@ public:
    * @li @c cancellation_type::total
    */
   template <
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+      ASIO_COMPLETION_TOKEN_FOR2(void (noerror), void (asio::error_code))
         WaitHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WaitHandler,
-      void (asio::error_code))
+  ASIO_INITFN_AUTO_RESULT_TYPE2(WaitHandler,
+      void (noerror), void (asio::error_code))
   async_wait(wait_type w,
       ASIO_MOVE_ARG(WaitHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<WaitHandler, void (asio::error_code)>(
+    return async_initiate<WaitHandler,
+      void (noerror), void (asio::error_code)>(
         initiate_async_wait(this), handler, w);
   }
 
@@ -1363,10 +1364,10 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename Protocol1, typename Executor1,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+      ASIO_COMPLETION_TOKEN_FOR2(void (noerror), void (asio::error_code))
         AcceptHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(AcceptHandler,
-      void (asio::error_code))
+  ASIO_INITFN_AUTO_RESULT_TYPE2(AcceptHandler,
+      void (noerror), void (asio::error_code))
   async_accept(basic_socket<Protocol1, Executor1>& peer,
       ASIO_MOVE_ARG(AcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type),
@@ -1374,7 +1375,8 @@ public:
         is_convertible<Protocol, Protocol1>::value
       >::type = 0)
   {
-    return async_initiate<AcceptHandler, void (asio::error_code)>(
+    return async_initiate<AcceptHandler,
+      void (noerror), void (asio::error_code)>(
         initiate_async_accept(this), handler,
         &peer, static_cast<endpoint_type*>(0));
   }
@@ -1486,16 +1488,17 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename Executor1,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
+      ASIO_COMPLETION_TOKEN_FOR2(void (noerror), void (asio::error_code))
         AcceptHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(AcceptHandler,
-      void (asio::error_code))
+  ASIO_INITFN_AUTO_RESULT_TYPE2(AcceptHandler,
+      void (noerror), void (asio::error_code))
   async_accept(basic_socket<protocol_type, Executor1>& peer,
       endpoint_type& peer_endpoint,
       ASIO_MOVE_ARG(AcceptHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<AcceptHandler, void (asio::error_code)>(
+    return async_initiate<AcceptHandler,
+      void (noerror), void (asio::error_code)>(
         initiate_async_accept(this), handler, &peer, &peer_endpoint);
   }
 #endif // !defined(ASIO_NO_EXTENSIONS)
@@ -1618,11 +1621,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        typename Protocol::socket::template rebind_executor<
-          executor_type>::other)) MoveAcceptHandler
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror,
+          typename Protocol::socket::template rebind_executor<
+            executor_type>::other),
+        void (asio::error_code,
+          typename Protocol::socket::template rebind_executor<
+            executor_type>::other))
+        MoveAcceptHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE2(MoveAcceptHandler,
+      void (noerror,
+        typename Protocol::socket::template
+          rebind_executor<executor_type>::other),
       void (asio::error_code,
         typename Protocol::socket::template
           rebind_executor<executor_type>::other))
@@ -1631,6 +1642,8 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<MoveAcceptHandler,
+      void (noerror, typename Protocol::socket::template
+        rebind_executor<executor_type>::other),
       void (asio::error_code, typename Protocol::socket::template
         rebind_executor<executor_type>::other)>(
           initiate_async_move_accept(this), handler,
@@ -1854,11 +1867,17 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename Executor1,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror,
+          typename Protocol::socket::template rebind_executor<Executor1>::other),
+        void (asio::error_code,
+          typename Protocol::socket::template rebind_executor<Executor1>::other))
+        MoveAcceptHandler
+          ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE2(MoveAcceptHandler,
+      void (noerror,
         typename Protocol::socket::template rebind_executor<
-          Executor1>::other)) MoveAcceptHandler
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
+          Executor1>::other),
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           Executor1>::other))
@@ -1874,6 +1893,7 @@ public:
       Executor1>::other other_socket_type;
 
     return async_initiate<MoveAcceptHandler,
+      void (noerror, other_socket_type),
       void (asio::error_code, other_socket_type)>(
         initiate_async_move_accept(this), handler,
         ex, static_cast<endpoint_type*>(0),
@@ -1934,11 +1954,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename ExecutionContext,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror,
+          typename Protocol::socket::template rebind_executor<
+          typename ExecutionContext::executor_type>::other),
+        void (asio::error_code,
+          typename Protocol::socket::template rebind_executor<
+          typename ExecutionContext::executor_type>::other))
+      MoveAcceptHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE2(MoveAcceptHandler,
+      void (noerror,
         typename Protocol::socket::template rebind_executor<
-          typename ExecutionContext::executor_type>::other)) MoveAcceptHandler
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
+          typename ExecutionContext::executor_type>::other),
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other))
@@ -1953,6 +1981,7 @@ public:
       typename ExecutionContext::executor_type>::other other_socket_type;
 
     return async_initiate<MoveAcceptHandler,
+      void (noerror, other_socket_type),
       void (asio::error_code, other_socket_type)>(
         initiate_async_move_accept(this), handler,
         context.get_executor(), static_cast<endpoint_type*>(0),
@@ -2092,11 +2121,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        typename Protocol::socket::template rebind_executor<
-          executor_type>::other)) MoveAcceptHandler
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror,
+          typename Protocol::socket::template rebind_executor<
+            executor_type>::other),
+        void (asio::error_code,
+          typename Protocol::socket::template rebind_executor<
+            executor_type>::other))
+      MoveAcceptHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE2(MoveAcceptHandler,
+      void (noerror,
+        typename Protocol::socket::template
+          rebind_executor<executor_type>::other),
       void (asio::error_code,
         typename Protocol::socket::template
           rebind_executor<executor_type>::other))
@@ -2105,6 +2142,8 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<MoveAcceptHandler,
+      void (noerror, typename Protocol::socket::template
+        rebind_executor<executor_type>::other),
       void (asio::error_code, typename Protocol::socket::template
         rebind_executor<executor_type>::other)>(
           initiate_async_move_accept(this), handler,
@@ -2360,11 +2399,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename Executor1,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror,
+          typename Protocol::socket::template rebind_executor<
+            Executor1>::other),
+        void (asio::error_code,
+          typename Protocol::socket::template rebind_executor<
+            Executor1>::other))
+      MoveAcceptHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE2(MoveAcceptHandler,
+      void (noerror,
         typename Protocol::socket::template rebind_executor<
-          Executor1>::other)) MoveAcceptHandler
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
+          Executor1>::other),
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           Executor1>::other))
@@ -2380,6 +2427,7 @@ public:
       Executor1>::other other_socket_type;
 
     return async_initiate<MoveAcceptHandler,
+      void (noerror, other_socket_type),
       void (asio::error_code, other_socket_type)>(
         initiate_async_move_accept(this), handler,
         ex, &peer_endpoint,
@@ -2446,11 +2494,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename ExecutionContext,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror,
+          typename Protocol::socket::template rebind_executor<
+            typename ExecutionContext::executor_type>::other),
+        void (asio::error_code,
+          typename Protocol::socket::template rebind_executor<
+            typename ExecutionContext::executor_type>::other))
+      MoveAcceptHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE2(MoveAcceptHandler,
+      void (noerror,
         typename Protocol::socket::template rebind_executor<
-          typename ExecutionContext::executor_type>::other)) MoveAcceptHandler
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptHandler,
+          typename ExecutionContext::executor_type>::other),
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other))
@@ -2466,6 +2522,7 @@ public:
       typename ExecutionContext::executor_type>::other other_socket_type;
 
     return async_initiate<MoveAcceptHandler,
+      void (noerror, other_socket_type),
       void (asio::error_code, other_socket_type)>(
         initiate_async_move_accept(this), handler,
         context.get_executor(), &peer_endpoint,

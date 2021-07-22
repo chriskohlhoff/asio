@@ -394,9 +394,14 @@ namespace detail
           }
         }
 
-        ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(
-            static_cast<const asio::error_code&>(ec),
-            static_cast<const std::size_t&>(buffers_.total_consumed()));
+        if (!ec)
+          ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(
+              static_cast<const noerror&>(success),
+              static_cast<const std::size_t&>(buffers_.total_consumed()));
+        else
+          ASIO_MOVE_OR_LVALUE(ReadHandler)(handler_)(
+              static_cast<const asio::error_code&>(ec),
+              static_cast<const std::size_t&>(buffers_.total_consumed()));
       }
     }
 
@@ -560,9 +565,11 @@ struct associator<Associator,
 
 template <typename AsyncReadStream,
     typename MutableBufferSequence, typename CompletionCondition,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler>
-inline ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) ReadHandler>
+ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     CompletionCondition completion_condition,
@@ -572,15 +579,18 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     >::type)
 {
   return async_initiate<ReadHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_read_buffer_sequence<AsyncReadStream>(s), handler,
       buffers, ASIO_MOVE_CAST(CompletionCondition)(completion_condition));
 }
 
 template <typename AsyncReadStream, typename MutableBufferSequence,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler>
-inline ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) ReadHandler>
+inline ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     ASIO_MOVE_ARG(ReadHandler) handler,
@@ -589,6 +599,7 @@ async_read(AsyncReadStream& s, const MutableBufferSequence& buffers,
     >::type)
 {
   return async_initiate<ReadHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_read_buffer_sequence<AsyncReadStream>(s),
       handler, buffers, transfer_all());

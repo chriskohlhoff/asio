@@ -181,6 +181,60 @@ public:
   Arg1 arg1_;
 };
 
+template <typename Handler>
+class binder1<Handler, asio::error_code>
+{
+public:
+  template <typename T>
+  binder1(int, ASIO_MOVE_ARG(T) handler, const asio::error_code& arg1)
+    : handler_(ASIO_MOVE_CAST(T)(handler)),
+      arg1_(arg1)
+  {
+  }
+
+  binder1(Handler& handler, const asio::error_code& arg1)
+    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      arg1_(arg1)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  binder1(const binder1& other)
+    : handler_(other.handler_),
+      arg1_(other.arg1_)
+  {
+  }
+
+  binder1(binder1&& other)
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      arg1_(ASIO_MOVE_CAST(asio::error_code)(other.arg1_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  void operator()()
+  {
+    if (!arg1_)
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          static_cast<const noerror&>(success));
+    else
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          static_cast<const asio::error_code&>(arg1_));
+  }
+
+  void operator()() const
+  {
+    if (!arg1_)
+      handler_(success);
+    else
+      handler_(arg1_);
+  }
+
+//private:
+  Handler handler_;
+  asio::error_code arg1_;
+};
+
 template <typename Handler, typename Arg1>
 inline asio_handler_allocate_is_deprecated
 asio_handler_allocate(std::size_t size,
@@ -298,6 +352,68 @@ public:
 //private:
   Handler handler_;
   Arg1 arg1_;
+  Arg2 arg2_;
+};
+
+template <typename Handler, typename Arg2>
+class binder2<Handler, asio::error_code, Arg2>
+{
+public:
+  template <typename T>
+  binder2(int, ASIO_MOVE_ARG(T) handler,
+      const asio::error_code& arg1, const Arg2& arg2)
+    : handler_(ASIO_MOVE_CAST(T)(handler)),
+      arg1_(arg1),
+      arg2_(arg2)
+  {
+  }
+
+  binder2(Handler& handler, const asio::error_code& arg1, const Arg2& arg2)
+    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      arg1_(arg1),
+      arg2_(arg2)
+  {
+  }
+
+#if defined(ASIO_HAS_MOVE)
+  binder2(const binder2& other)
+    : handler_(other.handler_),
+      arg1_(other.arg1_),
+      arg2_(other.arg2_)
+  {
+  }
+
+  binder2(binder2&& other)
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      arg1_(ASIO_MOVE_CAST(asio::error_code)(other.arg1_)),
+      arg2_(ASIO_MOVE_CAST(Arg2)(other.arg2_))
+  {
+  }
+#endif // defined(ASIO_HAS_MOVE)
+
+  void operator()()
+  {
+    if (!arg1_)
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          static_cast<const noerror&>(success),
+          static_cast<const Arg2&>(arg2_));
+    else
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          static_cast<const asio::error_code&>(arg1_),
+          static_cast<const Arg2&>(arg2_));
+  }
+
+  void operator()() const
+  {
+    if (!arg1_)
+      handler_(success, arg2_);
+    else
+      handler_(arg1_, arg2_);
+  }
+
+//private:
+  Handler handler_;
+  asio::error_code arg1_;
   Arg2 arg2_;
 };
 
@@ -815,6 +931,37 @@ public:
   Arg1 arg1_;
 };
 
+template <typename Handler>
+class move_binder1<Handler, asio::error_code>
+{
+public:
+  move_binder1(int, ASIO_MOVE_ARG(Handler) handler,
+      ASIO_MOVE_ARG(asio::error_code) arg1)
+    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      arg1_(ASIO_MOVE_CAST(asio::error_code)(arg1))
+  {
+  }
+
+  move_binder1(move_binder1&& other)
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      arg1_(ASIO_MOVE_CAST(asio::error_code)(other.arg1_))
+  {
+  }
+
+  void operator()()
+  {
+    if (!arg1_)
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(success);
+    else
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          ASIO_MOVE_CAST(asio::error_code)(arg1_));
+  }
+
+//private:
+  Handler handler_;
+  asio::error_code arg1_;
+};
+
 template <typename Handler, typename Arg1>
 inline asio_handler_allocate_is_deprecated
 asio_handler_allocate(std::size_t size,
@@ -890,6 +1037,43 @@ public:
 //private:
   Handler handler_;
   Arg1 arg1_;
+  Arg2 arg2_;
+};
+
+template <typename Handler, typename Arg2>
+class move_binder2<Handler, asio::error_code, Arg2>
+{
+public:
+  move_binder2(int, ASIO_MOVE_ARG(Handler) handler,
+      const asio::error_code& arg1, ASIO_MOVE_ARG(Arg2) arg2)
+    : handler_(ASIO_MOVE_CAST(Handler)(handler)),
+      arg1_(arg1),
+      arg2_(ASIO_MOVE_CAST(Arg2)(arg2))
+  {
+  }
+
+  move_binder2(move_binder2&& other)
+    : handler_(ASIO_MOVE_CAST(Handler)(other.handler_)),
+      arg1_(ASIO_MOVE_CAST(asio::error_code)(other.arg1_)),
+      arg2_(ASIO_MOVE_CAST(Arg2)(other.arg2_))
+  {
+  }
+
+  void operator()()
+  {
+    if (!arg1_)
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          static_cast<const noerror&>(success),
+          ASIO_MOVE_CAST(Arg2)(arg2_));
+    else
+      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
+          static_cast<const asio::error_code&>(arg1_),
+          ASIO_MOVE_CAST(Arg2)(arg2_));
+  }
+
+//private:
+  Handler handler_;
+  asio::error_code arg1_;
   Arg2 arg2_;
 };
 

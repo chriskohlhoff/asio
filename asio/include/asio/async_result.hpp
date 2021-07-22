@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/variadic_templates.hpp"
+#include "asio/disposition.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -34,12 +35,40 @@ struct is_completion_signature : false_type
 {
 };
 
+template <typename R>
+struct is_completion_signature<R()> : true_type
+{
+};
+
+#if defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
+
 template <typename R, typename... Args>
 struct is_completion_signature<R(Args...)> : true_type
 {
 };
 
+#else // defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
+
+template <typename R, disposition Arg0, typename... Args>
+struct is_completion_signature<R(Arg0, Args...)> : true_type
+{
+};
+
+#endif // defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
+
 #if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+
+template <typename R>
+struct is_completion_signature<R() &> : true_type
+{
+};
+
+template <typename R>
+struct is_completion_signature<R() &&> : true_type
+{
+};
+
+# if defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
 
 template <typename R, typename... Args>
 struct is_completion_signature<R(Args...) &> : true_type
@@ -51,7 +80,38 @@ struct is_completion_signature<R(Args...) &&> : true_type
 {
 };
 
+# else // defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) &> : true_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_completion_signature<R(Args...) &&> : true_type
+{
+};
+
+# endif // defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
+
 # if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R>
+struct is_completion_signature<R() noexcept> : true_type
+{
+};
+
+template <typename R>
+struct is_completion_signature<R() & noexcept> : true_type
+{
+};
+
+template <typename R>
+struct is_completion_signature<R() && noexcept> : true_type
+{
+};
+
+#  if defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
 
 template <typename R, typename... Args>
 struct is_completion_signature<R(Args...) noexcept> : true_type
@@ -67,6 +127,25 @@ template <typename R, typename... Args>
 struct is_completion_signature<R(Args...) && noexcept> : true_type
 {
 };
+
+#  else // defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
+
+template <typename R, disposition Arg0, typename... Args>
+struct is_completion_signature<R(Arg0, Args...) noexcept> : true_type
+{
+};
+
+template <typename R, disposition Arg0, typename... Args>
+struct is_completion_signature<R(Arg0, Args...) & noexcept> : true_type
+{
+};
+
+template <typename R, disposition Arg0, typename... Args>
+struct is_completion_signature<R(Arg0, Args...) && noexcept> : true_type
+{
+};
+
+#  endif // defined(ASIO_NO_STRICT_COMPLETION_SIGNATURES)
 
 # endif // defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
 #endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
@@ -447,6 +526,50 @@ struct simple_completion_signature<R() && noexcept>
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
        //   || defined(GENERATING_DOCUMENTATION)
 
+template <typename... Signatures>
+struct is_error_completion_signature_pair
+  : false_type
+{
+};
+
+template <>
+struct is_error_completion_signature_pair<
+    void (noerror),
+    void (asio::error_code)>
+  : true_type
+{
+};
+
+template <typename T>
+struct is_error_completion_signature_pair<
+    void (noerror, T),
+    void (asio::error_code, T)>
+  : true_type
+{
+};
+
+template <typename... Signatures>
+struct error_completion_signature
+{
+  typedef void type();
+};
+
+template <>
+struct error_completion_signature<
+    void (noerror),
+    void (asio::error_code)>
+{
+  typedef void type(asio::error_code);
+};
+
+template <typename T>
+struct error_completion_signature<
+    void (noerror, T),
+    void (asio::error_code, T)>
+{
+  typedef void type(asio::error_code, T);
+};
+
 template <typename CompletionToken, ASIO_COMPLETION_SIGNATURES_TPARAMS>
 class completion_handler_async_result
 {
@@ -579,8 +702,15 @@ class async_result :
   public conditional<
       detail::are_simple_completion_signatures<
         ASIO_COMPLETION_SIGNATURES_TARGS>::value,
-      detail::completion_handler_async_result<
-        CompletionToken, ASIO_COMPLETION_SIGNATURES_TARGS>,
+      typename conditional<
+        detail::is_error_completion_signature_pair<
+          ASIO_COMPLETION_SIGNATURES_TARGS>::value,
+        async_result<CompletionToken,
+          typename detail::error_completion_signature<
+            ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS>::type>,
+        detail::completion_handler_async_result<
+          CompletionToken, ASIO_COMPLETION_SIGNATURES_TARGS>
+      >::type,
       async_result<CompletionToken,
         ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS>
     >::type
@@ -589,8 +719,15 @@ public:
   typedef typename conditional<
       detail::are_simple_completion_signatures<
         ASIO_COMPLETION_SIGNATURES_TARGS>::value,
-      detail::completion_handler_async_result<
-        CompletionToken, ASIO_COMPLETION_SIGNATURES_TARGS>,
+      typename conditional<
+        detail::is_error_completion_signature_pair<
+          ASIO_COMPLETION_SIGNATURES_TARGS>::value,
+        async_result<CompletionToken,
+          typename detail::error_completion_signature<
+            ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS>::type>,
+        detail::completion_handler_async_result<
+          CompletionToken, ASIO_COMPLETION_SIGNATURES_TARGS>
+      >::type,
       async_result<CompletionToken,
         ASIO_COMPLETION_SIGNATURES_TSIMPLEARGS>
     >::type base_type;

@@ -19,9 +19,9 @@ auto async_wait_twice(asio::steady_timer& timer, CompletionToken&& token)
 {
   return timer.async_wait(
       deferred(
-        [&](std::error_code ec)
+        [&](auto ec)
         {
-          std::cout << "first timer wait finished: " << ec.message() << "\n";
+          std::cout << "first timer wait finished\n";
           timer.expires_after(std::chrono::seconds(1));
           return deferred.when(!ec)
             .then(timer.async_wait(deferred))
@@ -30,12 +30,12 @@ auto async_wait_twice(asio::steady_timer& timer, CompletionToken&& token)
       )
     )(
       deferred(
-        [&](std::error_code ec)
+        [&](auto ec)
         {
-          std::cout << "second timer wait finished: " << ec.message() << "\n";
+          std::cout << "second timer wait finished\n";
           return deferred.when(!ec)
-            .then(deferred.values(42))
-            .otherwise(deferred.values(0));
+            .then(deferred.values(asio::success, 42))
+            .otherwise(deferred.values(ec, 0));
         }
       )
     )(
@@ -52,7 +52,7 @@ int main()
 
   async_wait_twice(
       timer,
-      [](int result)
+      [](std::error_code, int result)
       {
         std::cout << "result is " << result << "\n";
       }

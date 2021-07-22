@@ -773,11 +773,13 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
  * @c async_write_some operation.
  */
 template <typename AsyncWriteStream, typename ConstBufferSequence,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) WriteHandler
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncWriteStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler
@@ -867,9 +869,13 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  */
 template <typename AsyncWriteStream,
     typename ConstBufferSequence, typename CompletionCondition,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
-ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) WriteHandler
+        ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
+          typename AsyncWriteStream::executor_type)>
+ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,

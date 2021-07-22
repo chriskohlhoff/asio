@@ -848,6 +848,16 @@ public:
   }
 };
 
+template <typename Allocator, typename Result, typename... Args>
+class async_result<use_future_t<Allocator>, Result(noerror, Args...)>
+  : public async_result<use_future_t<Allocator>,
+      Result(asio::error_code, Args...)>
+{
+public:
+  using async_result<use_future_t<Allocator>,
+    Result(asio::error_code, Args...)>::async_result;
+};
+
 template <typename Function, typename Allocator,
     typename Result, typename... Args>
 class async_result<detail::packaged_token<Function, Allocator>, Result(Args...)>

@@ -481,16 +481,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename ConstBufferSequence,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) WriteHandler
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror, std::size_t),
+        void (asio::error_code, std::size_t)) WriteHandler
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<WriteHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t)>(
         initiate_async_send(this), handler,
         buffers, socket_base::message_flags(0));
@@ -544,10 +547,12 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename ConstBufferSequence,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) WriteHandler
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror, std::size_t),
+        void (asio::error_code, std::size_t)) WriteHandler
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags,
@@ -555,6 +560,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<WriteHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t)>(
         initiate_async_send(this), handler, buffers, flags);
   }
@@ -712,16 +718,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename MutableBufferSequence,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) ReadHandler
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror, std::size_t),
+        void (asio::error_code, std::size_t)) ReadHandler
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<ReadHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t)>(
         initiate_async_receive(this), handler,
         buffers, socket_base::message_flags(0));
@@ -777,10 +786,12 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename MutableBufferSequence,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) ReadHandler
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror, std::size_t),
+        void (asio::error_code, std::size_t)) ReadHandler
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags,
@@ -788,6 +799,7 @@ public:
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<ReadHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t)>(
         initiate_async_receive(this), handler, buffers, flags);
   }
@@ -899,16 +911,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename ConstBufferSequence,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) WriteHandler
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror, std::size_t),
+        void (asio::error_code, std::size_t)) WriteHandler
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<WriteHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t)>(
         initiate_async_send(this), handler,
         buffers, socket_base::message_flags(0));
@@ -1024,16 +1039,19 @@ public:
    * @li @c cancellation_type::total
    */
   template <typename MutableBufferSequence,
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) ReadHandler
+      ASIO_COMPLETION_TOKEN_FOR2(
+        void (noerror, std::size_t),
+        void (asio::error_code, std::size_t)) ReadHandler
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE2(ReadHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadHandler) handler
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
     return async_initiate<ReadHandler,
+      void (noerror, std::size_t),
       void (asio::error_code, std::size_t)>(
         initiate_async_receive(this), handler,
         buffers, socket_base::message_flags(0));

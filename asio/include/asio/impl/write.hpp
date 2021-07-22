@@ -359,9 +359,14 @@ namespace detail
           }
         }
 
-        ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(
-            static_cast<const asio::error_code&>(ec),
-            static_cast<const std::size_t&>(buffers_.total_consumed()));
+        if (!ec)
+          ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(
+              static_cast<const noerror&>(success),
+              static_cast<const std::size_t&>(buffers_.total_consumed()));
+        else
+          ASIO_MOVE_OR_LVALUE(WriteHandler)(handler_)(
+              static_cast<const asio::error_code&>(ec),
+              static_cast<const std::size_t&>(buffers_.total_consumed()));
       }
     }
 
@@ -525,9 +530,11 @@ struct associator<Associator,
 
 template <typename AsyncWriteStream,
     typename ConstBufferSequence, typename CompletionCondition,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
-inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) WriteHandler>
+ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
@@ -537,6 +544,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     >::type)
 {
   return async_initiate<WriteHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_write_buffer_sequence<AsyncWriteStream>(s),
       handler, buffers,
@@ -544,9 +552,11 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
 }
 
 template <typename AsyncWriteStream, typename ConstBufferSequence,
-    ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler>
-inline ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+    ASIO_COMPLETION_TOKEN_FOR2(
+      void (noerror, std::size_t),
+      void (asio::error_code, std::size_t)) WriteHandler>
+inline ASIO_INITFN_AUTO_RESULT_TYPE2(WriteHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t))
 async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     ASIO_MOVE_ARG(WriteHandler) handler,
@@ -555,6 +565,7 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
     >::type)
 {
   return async_initiate<WriteHandler,
+    void (noerror, std::size_t),
     void (asio::error_code, std::size_t)>(
       detail::initiate_async_write_buffer_sequence<AsyncWriteStream>(s),
       handler, buffers, transfer_all());

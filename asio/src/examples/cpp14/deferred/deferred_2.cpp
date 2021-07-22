@@ -23,9 +23,9 @@ int main()
 
   auto deferred_op = timer.async_wait(
       deferred(
-        [&](std::error_code ec)
+        [&](auto ec)
         {
-          std::cout << "first timer wait finished: " << ec.message() << "\n";
+          std::cout << "first timer wait finished\n";
           timer.expires_after(std::chrono::seconds(1));
           return timer.async_wait(deferred);
         }
