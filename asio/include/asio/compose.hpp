@@ -98,9 +98,10 @@ namespace asio {
  *       token, socket);
  * } @endcode
  */
-template <typename CompletionToken, typename Signature,
+template <typename CompletionToken, typename... Signatures,
     typename Implementation, typename... IoObjectsOrExecutors>
-ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
+ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken, Signatures ASIO_ELLIPSIS)
 async_compose(ASIO_MOVE_ARG(Implementation) implementation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token,
     ASIO_MOVE_ARG(IoObjectsOrExecutors)... io_objects_or_executors);
@@ -108,15 +109,16 @@ async_compose(ASIO_MOVE_ARG(Implementation) implementation,
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
       //   || defined(GENERATING_DOCUMENTATION)
 
-template <typename CompletionToken, typename Signature, typename Implementation>
-ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
+template <typename CompletionToken, typename Signatures,
+    typename Implementation>
+ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signatures)
 async_compose(ASIO_MOVE_ARG(Implementation) implementation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token);
 
 #define ASIO_PRIVATE_ASYNC_COMPOSE_DEF(n) \
-  template <typename CompletionToken, typename Signature, \
+  template <typename CompletionToken, typename Signatures, \
       typename Implementation, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature) \
+  ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signatures) \
   async_compose(ASIO_MOVE_ARG(Implementation) implementation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n));

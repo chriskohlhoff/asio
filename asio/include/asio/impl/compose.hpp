@@ -283,17 +283,9 @@ namespace detail
 
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
-  template <typename Impl, typename Work, typename Handler, typename Signature>
-  class composed_op;
-
-  template <typename Impl, typename Work, typename Handler,
-      typename R, typename... Args>
-  class composed_op<Impl, Work, Handler, R(Args...)>
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-  template <typename Impl, typename Work, typename Handler, typename Signature>
+  template <typename Impl, typename Work,
+      typename Handler, typename ASIO_ELLIPSIS Signatures>
   class composed_op
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
     : public base_from_cancellation_state<Handler>
   {
   public:
@@ -353,11 +345,12 @@ namespace detail
       impl_(*this, ASIO_MOVE_CAST(T)(t)...);
     }
 
-    void complete(Args... args)
+    template<typename... T>
+    void complete(ASIO_MOVE_ARG(T)... t)
     {
       this->work_.reset();
-      ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)(
-          ASIO_MOVE_CAST(Args)(args)...);
+      return ASIO_MOVE_OR_LVALUE(Handler)(this->handler_)(
+          ASIO_MOVE_CAST(T)(t)...);
     }
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
@@ -427,10 +420,12 @@ namespace detail
     unsigned invocations_;
   };
 
-  template <typename Impl, typename Work, typename Handler, typename Signature>
+  template <typename Impl, typename Work,
+      typename Handler, typename ASIO_ELLIPSIS Signatures>
   inline asio_handler_allocate_is_deprecated
   asio_handler_allocate(std::size_t size,
-      composed_op<Impl, Work, Handler, Signature>* this_handler)
+      composed_op<Impl, Work, Handler,
+        Signatures ASIO_ELLIPSIS>* this_handler)
   {
 #if defined(ASIO_NO_DEPRECATED)
     asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
@@ -441,10 +436,12 @@ namespace detail
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
-  template <typename Impl, typename Work, typename Handler, typename Signature>
+  template <typename Impl, typename Work,
+      typename Handler, typename ASIO_ELLIPSIS Signatures>
   inline asio_handler_deallocate_is_deprecated
   asio_handler_deallocate(void* pointer, std::size_t size,
-      composed_op<Impl, Work, Handler, Signature>* this_handler)
+      composed_op<Impl, Work, Handler,
+        Signatures ASIO_ELLIPSIS>* this_handler)
   {
     asio_handler_alloc_helpers::deallocate(
         pointer, size, this_handler->handler_);
@@ -453,20 +450,23 @@ namespace detail
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
-  template <typename Impl, typename Work, typename Handler, typename Signature>
+  template <typename Impl, typename Work,
+      typename Handler, typename ASIO_ELLIPSIS Signatures>
   inline bool asio_handler_is_continuation(
-      composed_op<Impl, Work, Handler, Signature>* this_handler)
+      composed_op<Impl, Work, Handler,
+        Signatures ASIO_ELLIPSIS>* this_handler)
   {
     return this_handler->invocations_ > 1 ? true
       : asio_handler_cont_helpers::is_continuation(
           this_handler->handler_);
   }
 
-  template <typename Function, typename Impl,
-      typename Work, typename Handler, typename Signature>
+  template <typename Function, typename Impl, typename Work,
+      typename Handler, typename ASIO_ELLIPSIS Signatures>
   inline asio_handler_invoke_is_deprecated
   asio_handler_invoke(Function& function,
-      composed_op<Impl, Work, Handler, Signature>* this_handler)
+      composed_op<Impl, Work, Handler,
+        Signatures ASIO_ELLIPSIS>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
@@ -475,11 +475,12 @@ namespace detail
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
-  template <typename Function, typename Impl,
-      typename Work, typename Handler, typename Signature>
+  template <typename Function, typename Impl, typename Work,
+      typename Handler, typename ASIO_ELLIPSIS Signatures>
   inline asio_handler_invoke_is_deprecated
   asio_handler_invoke(const Function& function,
-      composed_op<Impl, Work, Handler, Signature>* this_handler)
+      composed_op<Impl, Work, Handler,
+        Signatures ASIO_ELLIPSIS>* this_handler)
   {
     asio_handler_invoke_helpers::invoke(
         function, this_handler->handler_);
@@ -488,7 +489,7 @@ namespace detail
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
-  template <typename Signature, typename Executors>
+  template <typename Executors, typename ASIO_ELLIPSIS Signatures>
   class initiate_composed_op
   {
   public:
@@ -510,7 +511,7 @@ namespace detail
         ASIO_MOVE_ARG(Impl) impl) const
     {
       composed_op<typename decay<Impl>::type, composed_work<Executors>,
-        typename decay<Handler>::type, Signature>(
+        typename decay<Handler>::type, Signatures ASIO_ELLIPSIS>(
           ASIO_MOVE_CAST(Impl)(impl),
           composed_work<Executors>(executors_),
           ASIO_MOVE_CAST(Handler)(handler))();
@@ -520,11 +521,12 @@ namespace detail
     composed_io_executors<Executors> executors_;
   };
 
-  template <typename Signature, typename Executors>
-  inline initiate_composed_op<Signature, Executors> make_initiate_composed_op(
+  template <typename ASIO_ELLIPSIS Signatures, typename Executors>
+  inline initiate_composed_op<Executors, Signatures ASIO_ELLIPSIS>
+  make_initiate_composed_op(
       ASIO_MOVE_ARG(composed_io_executors<Executors>) executors)
   {
-    return initiate_composed_op<Signature, Executors>(0,
+    return initiate_composed_op<Executors, Signatures ASIO_ELLIPSIS>(0,
         ASIO_MOVE_CAST(composed_io_executors<Executors>)(executors));
   }
 
@@ -556,14 +558,15 @@ namespace detail
 
 template <template <typename, typename> class Associator,
     typename Impl, typename Work, typename Handler,
-    typename Signature, typename DefaultCandidate>
+    typename ASIO_ELLIPSIS Signatures, typename DefaultCandidate>
 struct associator<Associator,
-    detail::composed_op<Impl, Work, Handler, Signature>,
+    detail::composed_op<Impl, Work, Handler, Signatures ASIO_ELLIPSIS>,
     DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
   static typename Associator<Handler, DefaultCandidate>::type get(
-      const detail::composed_op<Impl, Work, Handler, Signature>& h,
+      const detail::composed_op<Impl, Work,
+        Handler, Signatures ASIO_ELLIPSIS>& h,
       const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
@@ -572,15 +575,15 @@ struct associator<Associator,
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-template <typename CompletionToken, typename Signature,
+template <typename CompletionToken, typename... Signatures,
     typename Implementation, typename... IoObjectsOrExecutors>
-ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
+ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signatures...)
 async_compose(ASIO_MOVE_ARG(Implementation) implementation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token,
     ASIO_MOVE_ARG(IoObjectsOrExecutors)... io_objects_or_executors)
 {
-  return async_initiate<CompletionToken, Signature>(
-      detail::make_initiate_composed_op<Signature>(
+  return async_initiate<CompletionToken, Signatures...>(
+      detail::make_initiate_composed_op<Signatures...>(
         detail::make_composed_io_executors(
           detail::get_composed_io_executor(
             ASIO_MOVE_CAST(IoObjectsOrExecutors)(
@@ -590,13 +593,14 @@ async_compose(ASIO_MOVE_ARG(Implementation) implementation,
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
-template <typename CompletionToken, typename Signature, typename Implementation>
-ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature)
+template <typename CompletionToken,
+    typename Signatures, typename Implementation>
+ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signatures)
 async_compose(ASIO_MOVE_ARG(Implementation) implementation,
     ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token)
 {
-  return async_initiate<CompletionToken, Signature>(
-      detail::make_initiate_composed_op<Signature>(
+  return async_initiate<CompletionToken, Signatures>(
+      detail::make_initiate_composed_op<Signatures>(
         detail::make_composed_io_executors()),
       token, ASIO_MOVE_CAST(Implementation)(implementation));
 }
@@ -650,15 +654,15 @@ async_compose(ASIO_MOVE_ARG(Implementation) implementation,
   detail::get_composed_io_executor(ASIO_MOVE_CAST(T8)(x8))
 
 #define ASIO_PRIVATE_ASYNC_COMPOSE_DEF(n) \
-  template <typename CompletionToken, typename Signature, \
+  template <typename CompletionToken, typename Signatures, \
       typename Implementation, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signature) \
+  ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, Signatures) \
   async_compose(ASIO_MOVE_ARG(Implementation) implementation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
   { \
-    return async_initiate<CompletionToken, Signature>( \
-        detail::make_initiate_composed_op<Signature>( \
+    return async_initiate<CompletionToken, Signatures>( \
+        detail::make_initiate_composed_op<Signatures>( \
           detail::make_composed_io_executors( \
             ASIO_PRIVATE_GET_COMPOSED_IO_EXECUTOR(n))), \
         token, ASIO_MOVE_CAST(Implementation)(implementation)); \
