@@ -21,45 +21,47 @@ namespace asio {
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename R, typename... Args>
+template <typename... Signatures>
 class async_result<
-    experimental::detail::deferred_signature_probe, R(Args...)>
+    experimental::detail::deferred_signatures_probe, Signatures...>
 {
 public:
-  typedef experimental::detail::deferred_signature_probe_result<void(Args...)>
-    return_type;
+  typedef experimental::detail::deferred_signatures_probe_result<
+      Signatures...> return_type;
 
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation),
-      experimental::detail::deferred_signature_probe,
+      experimental::detail::deferred_signatures_probe,
       ASIO_MOVE_ARG(InitArgs)...)
   {
     return return_type{};
   }
 };
 
-template <typename Signature>
-class async_result<experimental::deferred_t, Signature>
+template <typename... Signatures>
+class async_result<experimental::deferred_t, Signatures...>
 {
 public:
   template <typename Initiation, typename... InitArgs>
   static experimental::deferred_async_operation<
-      Signature, Initiation, InitArgs...>
+      experimental::deferred_signatures<Signatures...>,
+      Initiation, InitArgs...>
   initiate(ASIO_MOVE_ARG(Initiation) initiation,
       experimental::deferred_t, ASIO_MOVE_ARG(InitArgs)... args)
   {
     return experimental::deferred_async_operation<
-        Signature, Initiation, InitArgs...>(
+        experimental::deferred_signatures<Signatures...>,
+        Initiation, InitArgs...>(
           experimental::deferred_init_tag{},
           ASIO_MOVE_CAST(Initiation)(initiation),
           ASIO_MOVE_CAST(InitArgs)(args)...);
     }
 };
 
-template <typename Function, typename R, typename... Args>
+template <typename Function, typename... Signatures>
 class async_result<
-    experimental::deferred_function<Function>, R(Args...)>
+    experimental::deferred_function<Function>, Signatures...>
 {
 public:
   template <typename Initiation, typename... InitArgs>
@@ -69,10 +71,12 @@ public:
   {
     return experimental::deferred_sequence<
         experimental::deferred_async_operation<
-          R(Args...), Initiation, InitArgs...>,
+          experimental::deferred_signatures<Signatures...>,
+          Initiation, InitArgs...>,
         Function>(experimental::deferred_init_tag{},
           experimental::deferred_async_operation<
-            R(Args...), Initiation, InitArgs...>(
+            experimental::deferred_signatures<Signatures...>,
+            Initiation, InitArgs...>(
               experimental::deferred_init_tag{},
               ASIO_MOVE_CAST(Initiation)(initiation),
               ASIO_MOVE_CAST(InitArgs)(init_args)...),
