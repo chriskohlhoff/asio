@@ -64,7 +64,7 @@ struct parallel_group_signature<N, R0(Args0...)>
 {
   typedef asio::detail::array<std::size_t, N> order_type;
   typedef R0 raw_type(Args0...);
-  typedef R0 type(order_type, Args0...);
+  typedef R0 type(noerror, order_type, Args0...);
 };
 
 template <std::size_t N,
@@ -74,7 +74,7 @@ struct parallel_group_signature<N, R0(Args0...), R1(Args1...)>
 {
   typedef asio::detail::array<std::size_t, N> order_type;
   typedef R0 raw_type(Args0..., Args1...);
-  typedef R0 type(order_type, Args0..., Args1...);
+  typedef R0 type(noerror, order_type, Args0..., Args1...);
 };
 
 template <std::size_t N, typename Sig0,

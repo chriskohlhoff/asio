@@ -124,7 +124,8 @@ struct parallel_group_completion_handler
   template <typename... Args, std::size_t... I>
   void invoke(std::tuple<Args...>&& args, std::index_sequence<I...>)
   {
-    std::move(handler_)(completion_order_, std::move(std::get<I>(args))...);
+    std::move(handler_)(success, completion_order_,
+        std::move(std::get<I>(args))...);
   }
 
   Handler handler_;
