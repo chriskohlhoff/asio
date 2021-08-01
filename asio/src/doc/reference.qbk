@@ -60989,7 +60989,7 @@ A slot associated with a cancellation signal.
   
   [
     [[link asio.reference.cancellation_slot.has_handler [*has_handler]]]
-    [Returns whether the slow is connected and has an installed handler. ]
+    [Returns whether the slot is connected and has an installed handler. ]
   ]
   
   [
@@ -61147,7 +61147,7 @@ Handlers installed into the slot via `emplace` are not required to be copy const
 [section:has_handler cancellation_slot::has_handler]
 
 [indexterm2 asio.indexterm.cancellation_slot.has_handler..has_handler..cancellation_slot] 
-Returns whether the slow is connected and has an installed handler. 
+Returns whether the slot is connected and has an installed handler. 
 
 
   constexpr bool has_handler() const;
@@ -80273,6 +80273,7 @@ Constructor.
   template<
       typename F>
   constexpr deferred_function(
+      deferred_init_tag ,
       F && function);
 
 
@@ -80291,6 +80292,26 @@ Constructor.
 
 [endsect]
 
+
+
+[endsect]
+
+[section:experimental__deferred_init_tag experimental::deferred_init_tag]
+
+[indexterm1 asio.indexterm.experimental__deferred_init_tag..experimental::deferred_init_tag]
+
+
+Tag type to disambiguate deferred constructors. 
+
+
+  struct deferred_init_tag
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/deferred.hpp]
+
+['Convenience header: ]None
 
 
 [endsect]
@@ -80403,6 +80424,7 @@ Defines a link between two consecutive operations in a sequence.
       typename H,
       typename T>
   constexpr deferred_sequence(
+      deferred_init_tag ,
       H && head,
       T && tail);
 
