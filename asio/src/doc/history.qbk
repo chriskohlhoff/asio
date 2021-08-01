@@ -7,6 +7,41 @@
 
 [section:history Revision History]
 
+[heading Asio 1.19.2]
+
+* Cleaned up memory recycling to ensure the cache size is used consistently.
+
+* Changed `parallel_group` to use the recycling allocator for shared state.
+
+* Changed `awaitable` memory recycling to use the configurable cache size.
+
+* Ensured `parallel_group` respects operations' associated executors.
+
+* Added defence against macros defined by Qt.
+
+* Added missing `boost_` prefix to namespaces during boostification.
+
+* Added missing lvalue-qualified overloads for `deferred` operator().
+
+* Added a tag to disambiguate `deferred` constructors.
+
+* Added missing `push`/`pop_options` includes.
+
+* Fixed argument evaluation order issue with a potentially moved-from variable
+  in `awaitable` implementation.
+
+* Enabled "expression SFINAE" for recent MSVC using `/std:c++latest`.
+
+* Fixed compilation errors when `dev_poll_reactor` backend is used.
+
+* Fixed handler type requirements checking to reflect rvalue completion handler
+  invocation.
+
+* Fixed `posix::basic_stream_descriptor` move operations to work with
+  non-defaulted executors.
+
+* Added missing move of executor in strand implementation.
+
 [heading Asio 1.19.1]
 
 * Fixed handling of move-only results with awaitable operators `&&` and `||`.
