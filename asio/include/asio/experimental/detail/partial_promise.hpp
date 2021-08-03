@@ -94,9 +94,10 @@ namespace std {
 
 template<typename ... Args>
 struct coroutine_traits<
-    std::experimental::coroutine_handle<coro::partial_promise>, Args...>
+    coroutine_handle<asio::experimental::detail::partial_promise>,
+    Args...>
 {
-  using promise_type = coro::partial_promise;
+  using promise_type = asio::experimental::detail::partial_promise;
 };
 
 } // namespace std
