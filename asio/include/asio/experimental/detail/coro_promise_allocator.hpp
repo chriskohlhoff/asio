@@ -42,7 +42,7 @@ struct coro_promise_allocator
   }
 
   template <execution_context Context, typename... Args>
-  void* operator new(const std::size_t size, Context& ctx, Args&&... args)
+  void* operator new(const std::size_t size, Context&& ctx, Args&&... args)
   {
     return coro_promise_allocator::operator new(size,
         ctx.get_executor(), std::forward<Args>(args)...);
@@ -89,7 +89,7 @@ struct coro_promise_allocator<Coroutine, Executor, Allocator, true>
 
   template <execution_context Context, typename... Args>
   void* operator new(const std::size_t size,
-      Context& ctx, Args&&... args) noexcept
+      Context&& ctx, Args&&... args) noexcept
   {
     return coro_promise_allocator::operator new(size,
         ctx.get_executor(), std::forward<Args>(args)...);
