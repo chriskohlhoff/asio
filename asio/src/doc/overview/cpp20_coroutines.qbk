@@ -78,6 +78,35 @@ Where a handler signature has the form:
 the `co_await` expression produces a `void` result. As above, an error is
 passed back to the coroutine as a `system_error` exception.
 
+[heading Coroutines and Per-Operation Cancellation]
+
+All threads of execution created by `co_spawn` have a cancellation state that
+records the current state of any cancellation requests made to the coroutine.
+To access this state, use [link asio.reference.this_coro__cancellation_state
+`this_coro::cancellation_state`] as follows:
+
+  asio::awaitable<void> my_coroutine()
+  {
+    asio::cancellation_state cs
+      = co_await asio::this_coro::cancellation_state;
+
+    // ...
+
+    if (cs.cancelled() != asio::cancellation_type::none)
+      // ...
+  }
+
+When first created by `co_spawn`, the thread of execution has a cancellation
+state that supports `cancellation_type::terminal` values only. To change the
+cancellation state, call [link
+asio.reference.this_coro__reset_cancellation_state
+`this_coro::reset_cancellation_state`].
+
+By default, continued execution of a cancelled coroutine will trigger an
+exception from any subsequent `co_await` of an `awaitable<>` object. This
+behaviour can be changed by using [link
+asio.reference.this_coro__throw_if_cancelled `this_coro::throw_if_cancelled`].
+
 [heading Co-ordinating Parallel Coroutines]
 
 [note This is an experimental feature.]

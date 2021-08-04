@@ -61911,7 +61911,7 @@ A cancellation state is used for chaining signals and slots in compositions.
   
   [
     [[link asio.reference.cancellation_state.cancelled [*cancelled]]]
-    [Returns specified cancellation types have been triggered. ]
+    [Returns the cancellation types that have been triggered. ]
   ]
   
   [
@@ -61996,6 +61996,20 @@ Construct and attach to a parent slot to create a new child slot.
       CancellationSlot slot);
 
 
+Initialises the cancellation state so that it allows terminal cancellation only. Equivalent to `cancellation_state(slot, enable_terminal_cancellation())`.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[slot][The parent cancellation slot to which the state will be attached. ]]
+
+]
+
+
+
 
 [endsect]
 
@@ -62013,6 +62027,36 @@ Construct and attach to a parent slot to create a new child slot.
   constexpr cancellation_state(
       CancellationSlot slot,
       Filter filter);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[slot][The parent cancellation slot to which the state will be attached.]]
+
+[[filter][A function object that is used to transform incoming cancellation signals as they are received from the parent slot. This function object must have the signature: 
+``
+   asio::cancellation_type_t filter(
+       asio::cancellation_type_t); 
+``
+]]
+
+]
+
+The library provides the following pre-defined cancellation filters:
+
+
+* [link asio.reference.disable_cancellation `disable_cancellation`] 
+
+* [link asio.reference.enable_terminal_cancellation `enable_terminal_cancellation`] 
+
+* [link asio.reference.enable_partial_cancellation `enable_partial_cancellation`] 
+
+* [link asio.reference.enable_total_cancellation `enable_total_cancellation`] 
+
 
 
 
@@ -62037,6 +62081,43 @@ Construct and attach to a parent slot to create a new child slot.
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[slot][The parent cancellation slot to which the state will be attached.]]
+
+[[in_filter][A function object that is used to transform incoming cancellation signals as they are received from the parent slot. This function object must have the signature: 
+``
+   asio::cancellation_type_t in_filter(
+       asio::cancellation_type_t); 
+``
+]]
+
+[[out_filter][A function object that is used to transform outcoming cancellation signals as they are relayed to the child slot. This function object must have the signature: 
+``
+   asio::cancellation_type_t out_filter(
+       asio::cancellation_type_t); 
+``
+]]
+
+]
+
+The library provides the following pre-defined cancellation filters:
+
+
+* [link asio.reference.disable_cancellation `disable_cancellation`] 
+
+* [link asio.reference.enable_terminal_cancellation `enable_terminal_cancellation`] 
+
+* [link asio.reference.enable_partial_cancellation `enable_partial_cancellation`] 
+
+* [link asio.reference.enable_total_cancellation `enable_total_cancellation`] 
+
+
+
+
 [endsect]
 
 
@@ -62046,7 +62127,7 @@ Construct and attach to a parent slot to create a new child slot.
 [section:cancelled cancellation_state::cancelled]
 
 [indexterm2 asio.indexterm.cancellation_state.cancelled..cancelled..cancellation_state] 
-Returns specified cancellation types have been triggered. 
+Returns the cancellation types that have been triggered. 
 
 
   cancellation_type_t cancelled() const;
@@ -62325,6 +62406,11 @@ Spawn a new coroutined-based thread of execution.
 
 
 
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call [link asio.reference.this_coro__reset_cancellation_state `this_coro::reset_cancellation_state`]. 
+
+
 
 
 [endsect]
@@ -62399,6 +62485,11 @@ Spawn a new coroutined-based thread of execution.
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call [link asio.reference.this_coro__reset_cancellation_state `this_coro::reset_cancellation_state`]. 
 
 
 
@@ -62486,6 +62577,11 @@ Spawn a new coroutined-based thread of execution.
 
 
 
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call [link asio.reference.this_coro__reset_cancellation_state `this_coro::reset_cancellation_state`]. 
+
+
 
 
 [endsect]
@@ -62560,6 +62656,11 @@ Spawn a new coroutined-based thread of execution.
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call [link asio.reference.this_coro__reset_cancellation_state `this_coro::reset_cancellation_state`]. 
 
 
 
@@ -62669,6 +62770,11 @@ Otherwise, the function signature of the completion handler must be:
 
 
 
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call [link asio.reference.this_coro__reset_cancellation_state `this_coro::reset_cancellation_state`]. 
+
+
 
 
 [endsect]
@@ -62774,6 +62880,11 @@ Otherwise, the function signature of the completion handler must be:
 
 
 
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call [link asio.reference.this_coro__reset_cancellation_state `this_coro::reset_cancellation_state`]. 
 
 
 
@@ -134440,6 +134551,27 @@ Awaitable object that returns the cancellation state of the current coroutine.
   constexpr cancellation_state_t cancellation_state;
 
 
+
+[heading Example]
+  
+
+
+   asio::awaitable<void> my_coroutine()
+   {
+     asio::cancellation_state cs
+       = co_await asio::this_coro::cancellation_state;
+
+     // ...
+
+     if (cs.cancelled() != asio::cancellation_type::none)
+       // ...
+   } 
+
+
+
+
+
+
 [heading Requirements]
 
 ['Header: ][^asio/this_coro.hpp]
@@ -134594,6 +134726,30 @@ Returns an awaitable object that may be used to reset the cancellation state of 
   constexpr unspecified reset_cancellation_state();
 
 
+Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P)`, into the current coroutine's cancellation state object.
+
+
+[heading Example]
+  
+
+
+   asio::awaitable<void> my_coroutine()
+   {
+     co_await asio::this_coro::reset_cancellation_state();
+
+     // ...
+   } 
+
+
+
+
+
+[heading Remarks]
+      
+The cancellation state is shared by all coroutines in the same "thread of execution" that was created using [link asio.reference.co_spawn `co_spawn`]. 
+
+
+
 
 [endsect]
 
@@ -134609,6 +134765,31 @@ Returns an awaitable object that may be used to reset the cancellation state of 
       typename Filter>
   constexpr unspecified reset_cancellation_state(
       Filter && filter);
+
+
+Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<Filter>(filter))`, into the current coroutine's cancellation state object.
+
+
+[heading Example]
+  
+
+
+   asio::awaitable<void> my_coroutine()
+   {
+     co_await asio::this_coro::reset_cancellation_state(
+         asio::enable_partial_cancellation());
+
+     // ...
+   } 
+
+
+
+
+
+[heading Remarks]
+      
+The cancellation state is shared by all coroutines in the same "thread of execution" that was created using [link asio.reference.co_spawn `co_spawn`]. 
+
 
 
 
@@ -134628,6 +134809,32 @@ Returns an awaitable object that may be used to reset the cancellation state of 
   constexpr unspecified reset_cancellation_state(
       InFilter && in_filter,
       OutFilter && out_filter);
+
+
+Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<InFilter>(in_filter), std::forward<OutFilter>(out_filter))`, into the current coroutine's cancellation state object.
+
+
+[heading Example]
+  
+
+
+   asio::awaitable<void> my_coroutine()
+   {
+     co_await asio::this_coro::reset_cancellation_state(
+         asio::enable_partial_cancellation(),
+         asio::disable_cancellation());
+
+     // ...
+   } 
+
+
+
+
+
+[heading Remarks]
+      
+The cancellation state is shared by all coroutines in the same "thread of execution" that was created using [link asio.reference.co_spawn `co_spawn`]. 
+
 
 
 
@@ -134667,6 +134874,24 @@ Returns an awaitable object that may be used to determine whether the coroutine 
 
 
 
+[heading Example]
+  
+
+
+   asio::awaitable<void> my_coroutine()
+   {
+     if (co_await asio::this_coro::throw_if_cancelled)
+       // ...
+
+     // ...
+   } 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -134679,6 +134904,23 @@ Returns an awaitable object that may be used to specify whether the coroutine th
 
   constexpr unspecified throw_if_cancelled(
       bool value);
+
+
+
+[heading Example]
+  
+
+
+   asio::awaitable<void> my_coroutine()
+   {
+     co_await asio::this_coro::throw_if_cancelled(false);
+
+     // ...
+   } 
+
+
+
+
 
 
 
