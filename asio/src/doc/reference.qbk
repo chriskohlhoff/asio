@@ -81006,6 +81006,44 @@ Create a group of operations that may be launched in parallel.
       Ops... ops);
 
 
+For example: 
+
+   asio::experimental::make_parallel_group(
+      [&](auto token)
+      {
+        return in.async_read_some(asio::buffer(data), token);
+      },
+      [&](auto token)
+      {
+        return timer.async_wait(token);
+      }
+    ).async_wait(
+      asio::experimental::wait_for_all(),
+      [](
+          std::array<std::size_t, 2> completion_order,
+          std::error_code ec1, std::size_t n1,
+          std::error_code ec2
+      )
+      {
+        switch (completion_order[0])
+        {
+        case 0:
+          {
+            std::cout << "descriptor finished: " << ec1 << ", " << n1 << "\n";
+          }
+          break;
+        case 1:
+          {
+            std::cout << "timer finished: " << ec2 << "\n";
+          }
+          break;
+        }
+      }
+    );
+
+
+
+
 [heading Requirements]
 
 ['Header: ][^asio/experimental/parallel_group.hpp]
@@ -81083,6 +81121,8 @@ A group of asynchronous operations that may be launched in parallel.
   
 ]
 
+See the documentation for [link asio.reference.experimental__make_parallel_group `experimental::make_parallel_group`] for a usage example. 
+
 [heading Requirements]
 
 ['Header: ][^asio/experimental/parallel_group.hpp]
@@ -81102,6 +81142,33 @@ Initiate an asynchronous wait for the group of operations.
   auto async_wait(
       CancellationCondition cancellation_condition,
       CompletionToken && token);
+
+
+Launches the group and asynchronously waits for completion.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[cancellation_condition][A function object, called on completion of an operation within the group, that is used to determine whether to cancel the remaining operations. The function object is passed the arguments of the completed operation's handler. To trigger cancellation of the remaining operations, it must return a [link asio.reference.cancellation_type `cancellation_type`] value other than `asio::cancellation_type::none`.]]
+
+[[token][A completion token whose signature is comprised of a `std::array<std::size_t, N>` indicating the completion order of the operations, followed by all operations' completion handler arguments.]]
+
+]
+
+The library provides the following `cancellation_condition` types:
+
+
+* [link asio.reference.experimental__wait_for_all `experimental::wait_for_all`] 
+
+* [link asio.reference.experimental__wait_for_one `experimental::wait_for_one`] 
+
+* [link asio.reference.experimental__wait_for_one_error `experimental::wait_for_one_error`] 
+
+* [link asio.reference.experimental__wait_for_one_success `experimental::wait_for_one_success`] 
+
 
 
 
