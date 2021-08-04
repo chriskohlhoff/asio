@@ -5,14 +5,14 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:coroutines_ts Coroutines TS Support]
+[section:cpp20_coroutines C++20 Coroutines Support]
 
-Support for the Coroutines TS is provided via the [link
-asio.reference.awaitable `awaitable`] class template, the [link
-asio.reference.use_awaitable_t `use_awaitable`] completion token, and the [link
-asio.reference.co_spawn `co_spawn()`] function. These facilities allow programs
-to implement asynchronous logic in a synchronous manner, in conjunction with
-the `co_await` keyword, as shown in the following example:
+Support for C++20 Coroutines is provided via the [link asio.reference.awaitable
+`awaitable`] class template, the [link asio.reference.use_awaitable_t
+`use_awaitable`] completion token, and the [link asio.reference.co_spawn
+`co_spawn()`] function. These facilities allow programs to implement
+asynchronous logic in a synchronous manner, in conjunction with the `co_await`
+keyword, as shown in the following example:
 
   asio::co_spawn(executor, echo(std::move(socket)), asio::detached);
 
@@ -78,6 +78,54 @@ Where a handler signature has the form:
 the `co_await` expression produces a `void` result. As above, an error is
 passed back to the coroutine as a `system_error` exception.
 
+[heading Co-ordinating Parallel Coroutines]
+
+[note This is an experimental feature.]
+
+The logical operators `||` and `&&` have been overloaded for `awaitable<>`, to
+allow coroutines to be trivially awaited in parallel.
+
+When awaited using `&&`, the `co_await` expression waits until both operations
+have completed successfully. As a "short-circuit" evaluation, if one
+operation fails with an exception, the other is immediately cancelled.
+For example:
+
+  std::tuple<std::size_t, std::size_t> results =
+    co_await (
+      async_read(socket, input_buffer, use_awaitable)
+        && async_write(socket, output_buffer, use_awaitable)
+    );
+
+Following completion of a `&&` operation, the results of all operations are
+concatenated into a tuple. In the above example, the first `size_t` represents
+the non-exceptional component of the `async_read` result, and the second
+`size_t` is the result of the `async_write`.
+
+When awaited using `||`, the `co_await` expression waits until either
+operation succeeds. As a "short-circuit" evaluation, if one operation
+succeeds without throwing an exception, the other is immediately cancelled.
+For example:
+
+  std::variant<std::size_t, std::monostate> results =
+    co_await (
+      async_read(socket, input_buffer, use_awaitable)
+        || timer.async_wait(use_awaitable)
+    );
+
+Following completion of a `||` operation, the result of the first operation to
+complete non-exceptionally is placed into a `std::variant`. The active index
+of the variant reflects which of the operations completed first.
+In the above example, index `0` corresponds to the `async_read` operation.
+
+These operators may be enabled by adding the `#include`:
+
+  #include <asio/experimental/awaitable_operators.hpp>
+
+and then bringing the contents of the `experimental::awaitable_operators`
+namespace into scope:
+
+  using namespace asio::experimental::awaitable_operators;
+
 [heading See Also]
 
 [link asio.reference.co_spawn co_spawn],
@@ -87,7 +135,7 @@ passed back to the coroutine as a `system_error` exception.
 [link asio.reference.use_awaitable_t use_awaitable_t],
 [link asio.reference.use_awaitable use_awaitable],
 [link asio.reference.this_coro__executor this_coro::executor],
-[link asio.examples.cpp17_examples.coroutines_ts_support Coroutines TS examples],
+[link asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
 [link asio.overview.core.spawn Stackful Coroutines],
 [link asio.overview.core.coroutine Stackless Coroutines].
 
