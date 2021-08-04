@@ -126,6 +126,61 @@ namespace into scope:
 
   using namespace asio::experimental::awaitable_operators;
 
+[heading Coroutines that Await and Yield]
+
+[note This is an experimental feature.]
+
+The [link asio.reference.experimental__coro `coro`] type is a C++20 coroutine
+primitive for resumable functions, with the ability to combine both
+asynchronous waiting (`co_await`) and yielding (`co_yield`) into a single,
+stateful control flow. For example:
+
+  #include <asio.hpp>
+  #include <asio/experimental/coro.hpp>
+
+  using asio::ip::tcp;
+
+  asio::experimental::coro<std::string> reader(tcp::socket& sock)
+  {
+    std::string buf;
+    while (sock.is_open())
+    {
+      std::size_t n = co_await asio::async_read_until(
+          sock, asio::dynamic_buffer(buf), '\n',
+          asio::experimental::use_coro);
+      co_yield buf.substr(0, n);
+      buf.erase(0, n);
+    }
+  }
+
+  asio::awaitable<void> consumer(tcp::socket sock)
+  {
+    auto r = reader(sock);
+    auto msg1 = co_await r.async_resume(asio::use_awaitable);
+    std::cout << "Message 1: " << msg1.value_or("\n");
+    auto msg2 = co_await r.async_resume(asio::use_awaitable);
+    std::cout << "Message 2: " << msg2.value_or("\n");
+  }
+
+  asio::awaitable<void> listen(tcp::acceptor& acceptor)
+  {
+    for (;;)
+    {
+      co_spawn(
+          acceptor.get_executor(),
+          consumer(co_await acceptor.async_accept(asio::use_awaitable)),
+          asio::detached);
+    }
+  }
+
+  int main()
+  {
+    asio::io_context ctx;
+    tcp::acceptor acceptor(ctx, {tcp::v4(), 54321});
+    co_spawn(ctx, listen(acceptor), asio::detached);
+    ctx.run();
+  }
+
 [heading See Also]
 
 [link asio.reference.co_spawn co_spawn],
@@ -135,6 +190,7 @@ namespace into scope:
 [link asio.reference.use_awaitable_t use_awaitable_t],
 [link asio.reference.use_awaitable use_awaitable],
 [link asio.reference.this_coro__executor this_coro::executor],
+[link asio.reference.experimental__coro experimental::coro],
 [link asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
 [link asio.overview.core.spawn Stackful Coroutines],
 [link asio.overview.core.coroutine Stackless Coroutines].
