@@ -531,6 +531,55 @@ Examples showing how to use UNIX domain (local) sockets.
 [section:cpp14_examples C++14 Examples]
 
 
+[heading Deferred]
+
+Examples showing how to use the [link asio.reference.experimental__deferred
+`experimental::deferred`] completion token.
+
+* [@../src/examples/cpp14/deferred/deferred_1.cpp]
+* [@../src/examples/cpp14/deferred/deferred_2.cpp]
+* [@../src/examples/cpp14/deferred/deferred_3.cpp]
+* [@../src/examples/cpp14/deferred/deferred_4.cpp]
+* [@../src/examples/cpp14/deferred/deferred_5.cpp]
+* [@../src/examples/cpp14/deferred/deferred_6.cpp]
+* [@../src/examples/cpp14/deferred/deferred_7.cpp]
+
+
+[heading Echo]
+
+A collection of simple clients and servers, showing the use of both synchronous
+and asynchronous operations.
+
+* [@../src/examples/cpp14/echo/async_tcp_echo_server.cpp]
+* [@../src/examples/cpp14/echo/async_udp_echo_server.cpp]
+* [@../src/examples/cpp14/echo/blocking_tcp_echo_client.cpp]
+* [@../src/examples/cpp14/echo/blocking_tcp_echo_server.cpp]
+* [@../src/examples/cpp14/echo/blocking_udp_echo_client.cpp]
+* [@../src/examples/cpp14/echo/blocking_udp_echo_server.cpp]
+
+
+[heading Executors]
+
+Examples showing how to use the executor-related facilities.
+
+* [@../src/examples/cpp14/executors/actor.cpp]
+* [@../src/examples/cpp14/executors/async_1.cpp]
+* [@../src/examples/cpp14/executors/async_2.cpp]
+* [@../src/examples/cpp14/executors/bank_account_1.cpp]
+* [@../src/examples/cpp14/executors/bank_account_2.cpp]
+* [@../src/examples/cpp14/executors/fork_join.cpp]
+* [@../src/examples/cpp14/executors/pipeline.cpp]
+* [@../src/examples/cpp14/executors/priority_scheduler.cpp]
+
+
+[heading Iostreams]
+
+Two examples showing how to use [link asio.reference.ip__tcp.iostream
+ip::tcp::iostream].
+
+* [@../src/examples/cpp14/iostreams/http_client.cpp]
+
+
 [heading Operations]
 
 Examples showing how to implement composed asynchronous operations as reusable library functions.
@@ -543,6 +592,20 @@ Examples showing how to implement composed asynchronous operations as reusable l
 * [@../src/examples/cpp14/operations/composed_6.cpp]
 * [@../src/examples/cpp14/operations/composed_7.cpp]
 * [@../src/examples/cpp14/operations/composed_8.cpp]
+
+
+[heading Parallel Groups]
+
+Examples showing how to use the [link
+asio.reference.experimental__make_parallel_group
+`experimental::make_parallel_group`] operation.
+
+* [@../src/examples/cpp14/parallel_group/parallel_sort.cpp]
+* [@../src/examples/cpp14/parallel_group/wait_for_all.cpp]
+* [@../src/examples/cpp14/parallel_group/wait_for_one.cpp]
+* [@../src/examples/cpp14/parallel_group/wait_for_one_error.cpp]
+* [@../src/examples/cpp14/parallel_group/wait_for_one_success.cpp]
+
 
 
 [endsect]
