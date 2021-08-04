@@ -616,6 +616,7 @@ sub copy_doc
       "src/doc/asio.qbk",
       "src/doc/examples.qbk",
       "src/doc/net_ts.qbk",
+      "src/doc/overview.qbk",
       "src/doc/reference.xsl",
       "src/doc/std_executors.qbk",
       "src/doc/tutorial.xsl",
