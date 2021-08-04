@@ -67,7 +67,7 @@
 
 [heading Asio 1.19.0]
 
-* Added support for cancellation of individual asynchonrous operations.
+* Added support for cancellation of individual asynchronous operations.
   Cancellation is implemented by having each completion handler carry an
   associated `CancellationSlot`, a lightweight cancellation channel that is
   specified through the new `associated_cancellation_slot` associator. A
