@@ -12,6 +12,8 @@
 #include <asio/experimental/parallel_group.hpp>
 #include <iostream>
 
+#if defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+
 int main()
 {
   asio::io_context ctx;
@@ -56,3 +58,7 @@ int main()
 
   ctx.run();
 }
+
+#else // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
+int main() {}
+#endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)
