@@ -196,7 +196,6 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_service_base.hpp \
 	asio/detail/reactive_socket_service.hpp \
 	asio/detail/reactive_wait_op.hpp \
-	asio/detail/reactor_fwd.hpp \
 	asio/detail/reactor.hpp \
 	asio/detail/reactor_op.hpp \
 	asio/detail/reactor_op_queue.hpp \
@@ -209,6 +208,7 @@ nobase_include_HEADERS = \
 	asio/detail/resolver_service.hpp \
 	asio/detail/scheduler.hpp \
 	asio/detail/scheduler_operation.hpp \
+	asio/detail/scheduler_task.hpp \
 	asio/detail/scheduler_thread_info.hpp \
 	asio/detail/scoped_lock.hpp \
 	asio/detail/scoped_ptr.hpp \
