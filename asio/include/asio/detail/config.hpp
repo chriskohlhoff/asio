@@ -1487,6 +1487,13 @@
 # endif // !defined(ASIO_HAS_TIMERFD)
 #endif // defined(__linux__)
 
+// Linux: io_uring is used instead of epoll.
+#if !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+# if !defined(ASIO_HAS_EPOLL) && defined(ASIO_HAS_IO_URING)
+#  define ASIO_HAS_IO_URING_AS_DEFAULT 1
+# endif // !defined(ASIO_HAS_EPOLL) && defined(ASIO_HAS_IO_URING)
+#endif // !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
 #if (defined(__MACH__) && defined(__APPLE__)) \
   || defined(__FreeBSD__) \
