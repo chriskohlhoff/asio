@@ -1,5 +1,5 @@
 //
-// detail/reactive_descriptor_service.hpp
+// detail/io_uring_descriptor_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP
-#define ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP
+#ifndef ASIO_DETAIL_IO_URING_DESCRIPTOR_SERVICE_HPP
+#define ASIO_DETAIL_IO_URING_DESCRIPTOR_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,26 +17,21 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_WINDOWS) \
-  && !defined(ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__) \
-  && !defined(ASIO_HAS_IO_URING)
+#if defined(ASIO_HAS_IO_URING)
 
 #include "asio/associated_cancellation_slot.hpp"
 #include "asio/buffer.hpp"
 #include "asio/cancellation_type.hpp"
 #include "asio/execution_context.hpp"
-#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
-#include "asio/detail/descriptor_read_op.hpp"
-#include "asio/detail/descriptor_write_op.hpp"
-#include "asio/detail/fenced_block.hpp"
+#include "asio/detail/io_uring_descriptor_read_op.hpp"
+#include "asio/detail/io_uring_descriptor_write_op.hpp"
+#include "asio/detail/io_uring_null_buffers_op.hpp"
+#include "asio/detail/io_uring_service.hpp"
+#include "asio/detail/io_uring_wait_op.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
-#include "asio/detail/reactive_null_buffers_op.hpp"
-#include "asio/detail/reactive_wait_op.hpp"
-#include "asio/detail/reactor.hpp"
 #include "asio/posix/descriptor_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -44,8 +39,8 @@
 namespace asio {
 namespace detail {
 
-class reactive_descriptor_service :
-  public execution_context_service_base<reactive_descriptor_service>
+class io_uring_descriptor_service :
+  public execution_context_service_base<io_uring_descriptor_service>
 {
 public:
   // The native type of a descriptor.
@@ -65,7 +60,7 @@ public:
 
   private:
     // Only this service will have access to the internal values.
-    friend class reactive_descriptor_service;
+    friend class io_uring_descriptor_service;
 
     // The native descriptor representation.
     int descriptor_;
@@ -73,12 +68,12 @@ public:
     // The current state of the descriptor.
     descriptor_ops::state_type state_;
 
-    // Per-descriptor data used by the reactor.
-    reactor::per_descriptor_data reactor_data_;
+    // Per I/O object data used by the io_uring_service.
+    io_uring_service::per_io_object_data io_object_data_;
   };
 
   // Constructor.
-  ASIO_DECL reactive_descriptor_service(execution_context& context);
+  ASIO_DECL io_uring_descriptor_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown();
@@ -92,7 +87,7 @@ public:
 
   // Move-assign from another descriptor implementation.
   ASIO_DECL void move_assign(implementation_type& impl,
-      reactive_descriptor_service& other_service,
+      io_uring_descriptor_service& other_service,
       implementation_type& other_impl);
 
   // Destroy a descriptor implementation.
@@ -203,43 +198,47 @@ public:
     typename associated_cancellation_slot<Handler>::type slot
       = asio::get_associated_cancellation_slot(handler);
 
-    // Allocate and construct an operation to wrap the handler.
-    typedef reactive_wait_op<Handler, IoExecutor> op;
-    typename op::ptr p = { asio::detail::addressof(handler),
-      op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(success_ec_, handler, io_ex);
-
-    ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
-          &impl, impl.descriptor_, "async_wait"));
-
     int op_type;
+    int poll_flags;
     switch (w)
     {
     case posix::descriptor_base::wait_read:
-        op_type = reactor::read_op;
-        break;
+      op_type = io_uring_service::read_op;
+      poll_flags = POLLIN;
+      break;
     case posix::descriptor_base::wait_write:
-        op_type = reactor::write_op;
-        break;
+      op_type = io_uring_service::write_op;
+      poll_flags = POLLOUT;
+      break;
     case posix::descriptor_base::wait_error:
-        op_type = reactor::except_op;
-        break;
-      default:
-        p.p->ec_ = asio::error::invalid_argument;
-        reactor_.post_immediate_completion(p.p, is_continuation);
-        p.v = p.p = 0;
-        return;
+      op_type = io_uring_service::except_op;
+      poll_flags = POLLPRI | POLLERR | POLLHUP;
+      break;
+    default:
+      op_type = -1;
+      poll_flags = -1;
+      return;
     }
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef io_uring_wait_op<Handler, IoExecutor> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(success_ec_, impl.descriptor_,
+        poll_flags, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
-    if (slot.is_connected())
+    if (slot.is_connected() && op_type != -1)
     {
       p.p->cancellation_key_ =
-        &slot.template emplace<reactor_op_cancellation>(
-            &reactor_, &impl.reactor_data_, impl.descriptor_, op_type);
+        &slot.template emplace<io_uring_op_cancellation>(
+            &io_uring_service_, &impl.io_object_data_, op_type);
     }
 
-    start_op(impl, op_type, p.p, is_continuation, false, false);
+    ASIO_HANDLER_CREATION((io_uring_service_.context(), *p.p,
+          "descriptor", &impl, impl.descriptor_, "async_wait"));
+
+    start_op(impl, op_type, p.p, is_continuation, op_type == -1);
     p.v = p.p = 0;
   }
 
@@ -290,24 +289,25 @@ public:
       = asio::get_associated_cancellation_slot(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef descriptor_write_op<ConstBufferSequence, Handler, IoExecutor> op;
+    typedef io_uring_descriptor_write_op<
+      ConstBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(success_ec_, impl.descriptor_, buffers, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.descriptor_,
+        impl.state_, buffers, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
-        &slot.template emplace<reactor_op_cancellation>(
-            &reactor_, &impl.reactor_data_,
-            impl.descriptor_, reactor::write_op);
+        &slot.template emplace<io_uring_op_cancellation>(&io_uring_service_,
+            &impl.io_object_data_, io_uring_service::write_op);
     }
 
-    ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
-          &impl, impl.descriptor_, "async_write_some"));
+    ASIO_HANDLER_CREATION((io_uring_service_.context(), *p.p,
+          "descriptor", &impl, impl.descriptor_, "async_write_some"));
 
-    start_op(impl, reactor::write_op, p.p, is_continuation, true,
+    start_op(impl, io_uring_service::write_op, p.p, is_continuation,
         buffer_sequence_adapter<asio::const_buffer,
           ConstBufferSequence>::all_empty(buffers));
     p.v = p.p = 0;
@@ -325,24 +325,24 @@ public:
       = asio::get_associated_cancellation_slot(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef reactive_null_buffers_op<Handler, IoExecutor> op;
+    typedef io_uring_null_buffers_op<Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(success_ec_, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.descriptor_, POLLOUT, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
-        &slot.template emplace<reactor_op_cancellation>(
-            &reactor_, &impl.reactor_data_,
-            impl.descriptor_, reactor::write_op);
+        &slot.template emplace<io_uring_op_cancellation>(&io_uring_service_,
+            &impl.io_object_data_, io_uring_service::write_op);
     }
 
-    ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
-          &impl, impl.descriptor_, "async_write_some(null_buffers)"));
+    ASIO_HANDLER_CREATION((io_uring_service_.context(),
+          *p.p, "descriptor", &impl, impl.descriptor_,
+          "async_write_some(null_buffers)"));
 
-    start_op(impl, reactor::write_op, p.p, is_continuation, false, false);
+    start_op(impl, io_uring_service::write_op, p.p, is_continuation, false);
     p.v = p.p = 0;
   }
 
@@ -394,24 +394,25 @@ public:
       = asio::get_associated_cancellation_slot(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef descriptor_read_op<MutableBufferSequence, Handler, IoExecutor> op;
+    typedef io_uring_descriptor_read_op<
+      MutableBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(success_ec_, impl.descriptor_, buffers, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.descriptor_,
+        impl.state_, buffers, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
-        &slot.template emplace<reactor_op_cancellation>(
-            &reactor_, &impl.reactor_data_,
-            impl.descriptor_, reactor::read_op);
+        &slot.template emplace<io_uring_op_cancellation>(&io_uring_service_,
+            &impl.io_object_data_, io_uring_service::read_op);
     }
 
-    ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
-          &impl, impl.descriptor_, "async_read_some"));
+    ASIO_HANDLER_CREATION((io_uring_service_.context(), *p.p,
+          "descriptor", &impl, impl.descriptor_, "async_read_some"));
 
-    start_op(impl, reactor::read_op, p.p, is_continuation, true,
+    start_op(impl, io_uring_service::read_op, p.p, is_continuation,
         buffer_sequence_adapter<asio::mutable_buffer,
           MutableBufferSequence>::all_empty(buffers));
     p.v = p.p = 0;
@@ -429,41 +430,40 @@ public:
       = asio::get_associated_cancellation_slot(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef reactive_null_buffers_op<Handler, IoExecutor> op;
+    typedef io_uring_null_buffers_op<Handler, IoExecutor> op;
     typename op::ptr p = { asio::detail::addressof(handler),
       op::ptr::allocate(handler), 0 };
-    p.p = new (p.v) op(success_ec_, handler, io_ex);
+    p.p = new (p.v) op(success_ec_, impl.descriptor_, POLLIN, handler, io_ex);
 
     // Optionally register for per-operation cancellation.
     if (slot.is_connected())
     {
       p.p->cancellation_key_ =
-        &slot.template emplace<reactor_op_cancellation>(
-            &reactor_, &impl.reactor_data_,
-            impl.descriptor_, reactor::read_op);
+        &slot.template emplace<io_uring_op_cancellation>(&io_uring_service_,
+            &impl.io_object_data_, io_uring_service::read_op);
     }
 
-    ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
-          &impl, impl.descriptor_, "async_read_some(null_buffers)"));
+    ASIO_HANDLER_CREATION((io_uring_service_.context(),
+          *p.p, "descriptor", &impl, impl.descriptor_,
+          "async_read_some(null_buffers)"));
 
-    start_op(impl, reactor::read_op, p.p, is_continuation, false, false);
+    start_op(impl, io_uring_service::read_op, p.p, is_continuation, false);
     p.v = p.p = 0;
   }
 
 private:
   // Start the asynchronous operation.
   ASIO_DECL void start_op(implementation_type& impl, int op_type,
-      reactor_op* op, bool is_continuation, bool is_non_blocking, bool noop);
+      io_uring_operation* op, bool is_continuation, bool noop);
 
   // Helper class used to implement per-operation cancellation
-  class reactor_op_cancellation
+  class io_uring_op_cancellation
   {
   public:
-    reactor_op_cancellation(reactor* r,
-        reactor::per_descriptor_data* p, int d, int o)
-      : reactor_(r),
-        reactor_data_(p),
-        descriptor_(d),
+    io_uring_op_cancellation(io_uring_service* s,
+        io_uring_service::per_io_object_data* p, int o)
+      : io_uring_service_(s),
+        io_object_data_(p),
         op_type_(o)
     {
     }
@@ -475,20 +475,18 @@ private:
               | cancellation_type::partial
               | cancellation_type::total)))
       {
-        reactor_->cancel_ops_by_key(descriptor_,
-            *reactor_data_, op_type_, this);
+        io_uring_service_->cancel_ops_by_key(*io_object_data_, op_type_, this);
       }
     }
 
   private:
-    reactor* reactor_;
-    reactor::per_descriptor_data* reactor_data_;
-    int descriptor_;
+    io_uring_service* io_uring_service_;
+    io_uring_service::per_io_object_data* io_object_data_;
     int op_type_;
   };
 
-  // The selector that performs event demultiplexing for the service.
-  reactor& reactor_;
+  // The io_uring_service that performs event demultiplexing for the service.
+  io_uring_service& io_uring_service_;
 
   // Cached success value to avoid accessing category singleton.
   const asio::error_code success_ec_;
@@ -500,12 +498,9 @@ private:
 #include "asio/detail/pop_options.hpp"
 
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/reactive_descriptor_service.ipp"
+# include "asio/detail/impl/io_uring_descriptor_service.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // !defined(ASIO_WINDOWS)
-       //   && !defined(ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
-       //   && !defined(ASIO_HAS_IO_URING)
+#endif // defined(ASIO_HAS_IO_URING)
 
-#endif // ASIO_DETAIL_REACTIVE_DESCRIPTOR_SERVICE_HPP
+#endif // ASIO_DETAIL_IO_URING_DESCRIPTOR_SERVICE_HPP

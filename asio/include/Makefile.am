@@ -150,8 +150,13 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
+	asio/detail/io_uring_descriptor_read_op.hpp \
+	asio/detail/io_uring_descriptor_service.hpp \
+	asio/detail/io_uring_descriptor_write_op.hpp \
+	asio/detail/io_uring_null_buffers_op.hpp \
 	asio/detail/io_uring_operation.hpp \
 	asio/detail/io_uring_service.hpp \
+	asio/detail/io_uring_wait_op.hpp \
 	asio/detail/is_buffer_sequence.hpp \
 	asio/detail/is_executor.hpp \
 	asio/detail/keyword_tss_ptr.hpp \
