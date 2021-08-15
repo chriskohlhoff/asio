@@ -102,6 +102,9 @@ nobase_include_HEADERS = \
 	asio/detail/impl/epoll_reactor.ipp \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
 	asio/detail/impl/handler_tracking.ipp \
+	asio/detail/impl/io_uring_descriptor_service.ipp \
+	asio/detail/impl/io_uring_service.hpp \
+	asio/detail/impl/io_uring_service.ipp \
 	asio/detail/impl/kqueue_reactor.hpp \
 	asio/detail/impl/kqueue_reactor.ipp \
 	asio/detail/impl/null_event.ipp \
@@ -147,6 +150,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
+	asio/detail/io_uring_operation.hpp \
+	asio/detail/io_uring_service.hpp \
 	asio/detail/is_buffer_sequence.hpp \
 	asio/detail/is_executor.hpp \
 	asio/detail/keyword_tss_ptr.hpp \

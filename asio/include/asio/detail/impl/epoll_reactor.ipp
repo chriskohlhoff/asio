@@ -17,7 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_EPOLL)
+#if defined(ASIO_HAS_EPOLL) \
+  && !defined(ASIO_HAS_IO_URING)
 
 #include <cstddef>
 #include <sys/epoll.h>
@@ -813,5 +814,6 @@ void epoll_reactor::descriptor_state::do_complete(
 #include "asio/detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_EPOLL)
+       //   && !defined(ASIO_HAS_IO_URING)
 
 #endif // ASIO_DETAIL_IMPL_EPOLL_REACTOR_IPP

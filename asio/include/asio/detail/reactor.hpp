@@ -19,6 +19,8 @@
 
 #if defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
 # include "asio/detail/null_reactor.hpp"
+#elif defined(ASIO_HAS_IO_URING)
+# include "asio/detail/null_reactor.hpp"
 #elif defined(ASIO_HAS_EPOLL)
 # include "asio/detail/epoll_reactor.hpp"
 #elif defined(ASIO_HAS_KQUEUE)
@@ -33,6 +35,8 @@ namespace asio {
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
+typedef null_reactor reactor;
+#elif defined(ASIO_HAS_IO_URING)
 typedef null_reactor reactor;
 #elif defined(ASIO_HAS_EPOLL)
 typedef epoll_reactor reactor;

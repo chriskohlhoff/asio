@@ -20,10 +20,15 @@
 #include "asio/detail/concurrency_hint.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/limits.hpp"
-#include "asio/detail/reactor.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/scheduler_thread_info.hpp"
 #include "asio/detail/signal_blocker.hpp"
+
+#if defined(ASIO_HAS_IO_URING)
+# include "asio/detail/io_uring_service.hpp"
+#else // defined(ASIO_HAS_IO_URING)
+# include "asio/detail/reactor.hpp"
+#endif // defined(ASIO_HAS_IO_URING)
 
 #include "asio/detail/push_options.hpp"
 
@@ -654,7 +659,11 @@ void scheduler::wake_one_thread_and_unlock(
 
 scheduler_task* scheduler::get_default_task(asio::execution_context& ctx)
 {
+#if defined(ASIO_HAS_IO_URING)
+  return &use_service<io_uring_service>(ctx);
+#else // defined(ASIO_HAS_IO_URING)
   return &use_service<reactor>(ctx);
+#endif // defined(ASIO_HAS_IO_URING)
 }
 
 } // namespace detail
