@@ -105,6 +105,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/io_uring_descriptor_service.ipp \
 	asio/detail/impl/io_uring_service.hpp \
 	asio/detail/impl/io_uring_service.ipp \
+	asio/detail/impl/io_uring_socket_service_base.ipp \
 	asio/detail/impl/kqueue_reactor.hpp \
 	asio/detail/impl/kqueue_reactor.ipp \
 	asio/detail/impl/null_event.ipp \
@@ -156,6 +157,15 @@ nobase_include_HEADERS = \
 	asio/detail/io_uring_null_buffers_op.hpp \
 	asio/detail/io_uring_operation.hpp \
 	asio/detail/io_uring_service.hpp \
+	asio/detail/io_uring_socket_accept_op.hpp \
+	asio/detail/io_uring_socket_connect_op.hpp \
+	asio/detail/io_uring_socket_recvfrom_op.hpp \
+	asio/detail/io_uring_socket_recvmsg_op.hpp \
+	asio/detail/io_uring_socket_recv_op.hpp \
+	asio/detail/io_uring_socket_send_op.hpp \
+	asio/detail/io_uring_socket_sendto_op.hpp \
+	asio/detail/io_uring_socket_service_base.hpp \
+	asio/detail/io_uring_socket_service.hpp \
 	asio/detail/io_uring_wait_op.hpp \
 	asio/detail/is_buffer_sequence.hpp \
 	asio/detail/is_executor.hpp \

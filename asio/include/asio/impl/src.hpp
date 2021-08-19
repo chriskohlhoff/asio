@@ -38,6 +38,7 @@
 #include "asio/detail/impl/eventfd_select_interrupter.ipp"
 #include "asio/detail/impl/handler_tracking.ipp"
 #include "asio/detail/impl/io_uring_descriptor_service.ipp"
+#include "asio/detail/impl/io_uring_socket_service_base.ipp"
 #include "asio/detail/impl/io_uring_service.ipp"
 #include "asio/detail/impl/kqueue_reactor.ipp"
 #include "asio/detail/impl/null_event.ipp"
