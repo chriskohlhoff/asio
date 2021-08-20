@@ -112,10 +112,10 @@ nobase_include_HEADERS = \
 	asio/detail/impl/pipe_select_interrupter.ipp \
 	asio/detail/impl/posix_event.ipp \
 	asio/detail/impl/posix_mutex.ipp \
+	asio/detail/impl/posix_serial_port_service.ipp \
 	asio/detail/impl/posix_thread.ipp \
 	asio/detail/impl/posix_tss_ptr.ipp \
 	asio/detail/impl/reactive_descriptor_service.ipp \
-	asio/detail/impl/reactive_serial_port_service.ipp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/resolver_service_base.ipp \
 	asio/detail/impl/scheduler.ipp \
@@ -198,6 +198,7 @@ nobase_include_HEADERS = \
 	asio/detail/posix_fd_set_adapter.hpp \
 	asio/detail/posix_global.hpp \
 	asio/detail/posix_mutex.hpp \
+	asio/detail/posix_serial_port_service.hpp \
 	asio/detail/posix_signal_blocker.hpp \
 	asio/detail/posix_static_mutex.hpp \
 	asio/detail/posix_thread.hpp \
@@ -205,7 +206,6 @@ nobase_include_HEADERS = \
 	asio/detail/push_options.hpp \
 	asio/detail/reactive_descriptor_service.hpp \
 	asio/detail/reactive_null_buffers_op.hpp \
-	asio/detail/reactive_serial_port_service.hpp \
 	asio/detail/reactive_socket_accept_op.hpp \
 	asio/detail/reactive_socket_connect_op.hpp \
 	asio/detail/reactive_socket_recvfrom_op.hpp \
