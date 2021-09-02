@@ -380,6 +380,7 @@ nobase_include_HEADERS = \
 	asio/impl/awaitable.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
+	asio/impl/cancellation_signal.ipp \
 	asio/impl/co_spawn.hpp \
 	asio/impl/compose.hpp \
 	asio/impl/connect.hpp \
