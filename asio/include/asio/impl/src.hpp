@@ -19,6 +19,7 @@
 # error Do not compile Asio library source with ASIO_HEADER_ONLY defined
 #endif
 
+#include "asio/impl/any_io_executor.ipp"
 #include "asio/impl/error.ipp"
 #include "asio/impl/error_code.ipp"
 #include "asio/impl/execution_context.ipp"
