@@ -481,6 +481,11 @@ struct is_valid_target_executor :
 {
 };
 
+template <typename Props>
+struct is_valid_target_executor<int, Props> : false_type
+{
+};
+
 class any_executor_base
 {
 public:
