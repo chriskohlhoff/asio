@@ -558,6 +558,11 @@ struct prefer_member<strand<Executor>, Property,
 
 #include "asio/detail/pop_options.hpp"
 
+#if !defined(ASIO_HEADER_ONLY)
+# define ASIO_STRAND_DEFINED 1
+# include "asio/impl/any_io_executor_constructors.hpp"
+#endif // !defined(ASIO_HEADER_ONLY)
+
 // If both io_context.hpp and strand.hpp have been included, automatically
 // include the header file needed for the io_context::strand class.
 #if !defined(ASIO_NO_EXTENSIONS)

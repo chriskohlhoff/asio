@@ -298,4 +298,9 @@ struct prefer_member<any_io_executor, Prop> :
 # include "asio/impl/any_io_executor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
+#if !defined(ASIO_HEADER_ONLY)
+# define ASIO_ANY_IO_EXECUTOR_DEFINED 1
+# include "asio/impl/any_io_executor_constructors.hpp"
+#endif // !defined(ASIO_HEADER_ONLY)
+
 #endif // ASIO_ANY_IO_EXECUTOR_HPP

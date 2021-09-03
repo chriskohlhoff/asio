@@ -377,6 +377,8 @@ nobase_include_HEADERS = \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
 	asio/impl/any_io_executor.ipp \
+	asio/impl/any_io_executor_constructors.hpp \
+	asio/impl/any_io_executor_constructors.ipp \
 	asio/impl/awaitable.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \

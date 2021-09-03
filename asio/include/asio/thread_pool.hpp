@@ -1128,4 +1128,9 @@ struct query_member<
 # include "asio/impl/thread_pool.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
+#if !defined(ASIO_HEADER_ONLY)
+# define ASIO_THREAD_POOL_DEFINED 1
+# include "asio/impl/any_io_executor_constructors.hpp"
+#endif // !defined(ASIO_HEADER_ONLY)
+
 #endif // ASIO_THREAD_POOL_HPP

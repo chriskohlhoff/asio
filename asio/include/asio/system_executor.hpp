@@ -681,4 +681,9 @@ struct query_member<
 
 #include "asio/impl/system_executor.hpp"
 
+#if !defined(ASIO_HEADER_ONLY)
+# define ASIO_SYSTEM_EXECUTOR_DEFINED 1
+# include "asio/impl/any_io_executor_constructors.hpp"
+#endif // !defined(ASIO_HEADER_ONLY)
+
 #endif // ASIO_SYSTEM_EXECUTOR_HPP

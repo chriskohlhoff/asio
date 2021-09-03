@@ -1539,6 +1539,11 @@ struct query_member<
 # include "asio/impl/io_context.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
+#if !defined(ASIO_HEADER_ONLY)
+# define ASIO_IO_CONTEXT_DEFINED 1
+# include "asio/impl/any_io_executor_constructors.hpp"
+#endif // !defined(ASIO_HEADER_ONLY)
+
 // If both io_context.hpp and strand.hpp have been included, automatically
 // include the header file needed for the io_context::strand class.
 #if !defined(ASIO_NO_EXTENSIONS)

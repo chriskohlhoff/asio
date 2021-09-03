@@ -20,6 +20,7 @@
 #endif
 
 #include "asio/impl/any_io_executor.ipp"
+#include "asio/impl/any_io_executor_constructors.ipp"
 #include "asio/impl/cancellation_signal.ipp"
 #include "asio/impl/error.ipp"
 #include "asio/impl/error_code.ipp"
