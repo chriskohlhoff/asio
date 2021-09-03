@@ -1528,6 +1528,15 @@ struct query_member<
 
 } // namespace traits
 
+namespace execution {
+
+template <>
+struct is_executor<io_context> : false_type
+{
+};
+
+} // namespace execution
+
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
