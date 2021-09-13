@@ -87042,7 +87042,7 @@ Provides core I/O functionality.
     [[link asio.reference.io_context.run_one [*run_one]]]
     [Run the io_context object's event processing loop to execute at most one handler. 
      [hr]
-     (Deprecated: Use non-error_code overlaod.) Run the io_context object's event processing loop to execute at most one handler. ]
+     (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop to execute at most one handler. ]
   ]
   
   [
@@ -88236,7 +88236,7 @@ Run the [link asio.reference.io_context `io_context`] object's event processing 
   ``  [''''&raquo;''' [link asio.reference.io_context.run_one.overload1 more...]]``
 
 
-(Deprecated: Use non-error\_code overlaod.) Run the [link asio.reference.io_context `io_context`] object's event processing loop to execute at most one handler. 
+(Deprecated: Use non-error\_code overload.) Run the [link asio.reference.io_context `io_context`] object's event processing loop to execute at most one handler. 
 
 
   count_type ``[link asio.reference.io_context.run_one.overload2 run_one]``(
@@ -88275,7 +88275,7 @@ Calling the `run_one()` function from a thread that is currently calling one of 
 [section:overload2 io_context::run_one (2 of 2 overloads)]
 
 
-(Deprecated: Use non-error\_code overlaod.) Run the [link asio.reference.io_context `io_context`] object's event processing loop to execute at most one handler. 
+(Deprecated: Use non-error\_code overload.) Run the [link asio.reference.io_context `io_context`] object's event processing loop to execute at most one handler. 
 
 
   count_type run_one(
@@ -90704,7 +90704,7 @@ Typedef for backwards compatibility.
     [[link asio.reference.io_context.run_one [*run_one]]]
     [Run the io_context object's event processing loop to execute at most one handler. 
      [hr]
-     (Deprecated: Use non-error_code overlaod.) Run the io_context object's event processing loop to execute at most one handler. ]
+     (Deprecated: Use non-error_code overload.) Run the io_context object's event processing loop to execute at most one handler. ]
   ]
   
   [
