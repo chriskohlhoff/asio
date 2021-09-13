@@ -400,7 +400,7 @@ public:
   ASIO_DECL count_type run_one();
 
 #if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use non-error_code overlaod.) Run the io_context object's
+  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
   /// event processing loop to execute at most one handler.
   /**
    * The run_one() function blocks until one handler has been dispatched, or
