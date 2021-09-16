@@ -50,6 +50,25 @@ if test "$STANDALONE" != yes; then
   ],[])
 fi
 
+# wolfSSL support
+AC_ARG_WITH(wolfssl,
+  AC_HELP_STRING([--with-wolfssl=DIR],[location of wolfssl]),
+[
+  CPPFLAGS="$CPPFLAGS -I${withval}/include/wolfssl -DASIO_USE_WOLFSSL"
+  LIBS="$LIBS -L${withval}/lib"
+],
+[
+  WOLFSSL_USE=no
+])
+
+if test x$WOLFSSL_USE != xno; then
+    AC_CHECK_HEADER([wolfssl/options.h],,
+    [
+      WOLFSSL_FOUND=no
+    ],[])
+fi
+
+# openssl support
 AC_ARG_WITH(openssl,
   AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
 [
@@ -62,11 +81,17 @@ AC_CHECK_HEADER([openssl/ssl.h],,
   OPENSSL_FOUND=no
 ],[])
 
-if test x$OPENSSL_FOUND != xno; then
-  LIBS="$LIBS -lssl -lcrypto"
+if test x$WOLFSSL_USE != xno; then
+  if test x$WOLFSSL_FOUND != xno; then
+    LIBS="$LIBS -lwolfssl"
+  fi
+else
+  if test x$OPENSSL_FOUND != xno; then
+    LIBS="$LIBS -lssl -lcrypto"
+  fi
 fi
 
-AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
+AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno || x$WOLFSSL_FOUND != xno)
 
 WINDOWS=no
 case $host in
