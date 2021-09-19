@@ -7,6 +7,22 @@
 
 [section:history Revision History]
 
+[heading Asio 1.20.0]
+
+* Fixed `experimental::coro` compatibility with [^gcc].
+
+* Fixed `experimental::promise` compatibility with [^gcc].
+
+* Added documentation for per-operation cancellation.
+
+* Added documentation for `parallel_group`.
+
+* Added overview documentation for `experimental::coro`.
+
+* Added some missing C++14 examples.
+
+* Updated C++20 coroutines overview documentation.
+
 [heading Asio 1.19.2]
 
 * Cleaned up memory recycling to ensure the cache size is used consistently.
