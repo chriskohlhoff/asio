@@ -190,7 +190,9 @@ struct impl
 #endif // defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
   };
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename F>
+  ASIO_HOST_DEVICE
   ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(F)>::overload == call_member,
     typename call_traits<impl, T, void(F)>::result_type
@@ -204,7 +206,9 @@ struct impl
     return ASIO_MOVE_CAST(T)(t).execute(ASIO_MOVE_CAST(F)(f));
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename F>
+  ASIO_HOST_DEVICE
   ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(F)>::overload == call_free,
     typename call_traits<impl, T, void(F)>::result_type
@@ -218,7 +222,9 @@ struct impl
     return execute(ASIO_MOVE_CAST(T)(t), ASIO_MOVE_CAST(F)(f));
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename F>
+  ASIO_HOST_DEVICE
   ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(F)>::overload == adapter,
     typename call_traits<impl, T, void(F)>::result_type
@@ -250,8 +256,16 @@ namespace asio {
 namespace execution {
 namespace {
 
+#if defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
+
+ASIO_INLINE_CONSTEXPR asio_execution_execute_fn::impl execute{};
+
+#else // defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
+
 static ASIO_CONSTEXPR const asio_execution_execute_fn::impl&
   execute = asio_execution_execute_fn::static_instance<>::instance;
+
+#endif // defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
 
 } // namespace
 
