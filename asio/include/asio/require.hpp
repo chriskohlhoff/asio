@@ -306,7 +306,9 @@ struct impl
 #endif // defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
   };
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename Property>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(Property)>::overload == identity,
     typename call_traits<impl, T, void(Property)>::result_type
@@ -320,7 +322,9 @@ struct impl
     return ASIO_MOVE_CAST(T)(t);
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename Property>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(Property)>::overload == call_member,
     typename call_traits<impl, T, void(Property)>::result_type
@@ -335,7 +339,9 @@ struct impl
         ASIO_MOVE_CAST(Property)(p));
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename Property>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(Property)>::overload == call_free,
     typename call_traits<impl, T, void(Property)>::result_type
@@ -351,7 +357,9 @@ struct impl
         ASIO_MOVE_CAST(Property)(p));
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename P0, typename P1>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(P0, P1)>::overload == two_props,
     typename call_traits<impl, T, void(P0, P1)>::result_type
@@ -370,8 +378,10 @@ struct impl
         ASIO_MOVE_CAST(P1)(p1));
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename P0, typename P1,
     typename ASIO_ELLIPSIS PN>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T,
       void(P0, P1, PN ASIO_ELLIPSIS)>::overload == n_props,
@@ -408,8 +418,16 @@ const T static_instance<T>::instance = {};
 namespace asio {
 namespace {
 
+#if defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
+
+ASIO_INLINE_CONSTEXPR asio_require_fn::impl require{};
+
+#else // defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
+
 static ASIO_CONSTEXPR const asio_require_fn::impl&
   require = asio_require_fn::static_instance<>::instance;
+
+#endif // defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
 
 } // namespace
 
