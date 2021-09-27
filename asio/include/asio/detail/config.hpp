@@ -473,7 +473,9 @@
 #     define ASIO_HAS_VARIABLE_TEMPLATES 1
 #    endif // __has_feature(__cxx_variable_templates__)
 #   endif // (__cplusplus >= 201402)
-#  elif defined(__GNUC__) && !defined(__INTEL_COMPILER)
+#  elif defined(__GNUC__) \
+     && !defined(__INTEL_COMPILER) \
+     && !defined(__CUDACC__)
 #   if (__GNUC__ >= 6)
 #    if (__cplusplus >= 201402)
 #     define ASIO_HAS_VARIABLE_TEMPLATES 1
@@ -537,7 +539,9 @@
 // Enable workarounds for lack of working expression SFINAE.
 #if !defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # if !defined(ASIO_DISABLE_WORKING_EXPRESSION_SFINAE)
-#  if !defined(ASIO_MSVC) && !defined(__INTEL_COMPILER)
+#  if !defined(ASIO_MSVC) \
+    && !defined(__INTEL_COMPILER) \
+    && !defined(__CUDACC__)
 #   if (__cplusplus >= 201103)
 #    define ASIO_HAS_WORKING_EXPRESSION_SFINAE 1
 #   endif // (__cplusplus >= 201103)
