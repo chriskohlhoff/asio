@@ -211,7 +211,9 @@ struct impl
 #endif // defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
   };
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename Property>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(Property)>::overload == static_value,
     typename call_traits<impl, T, void(Property)>::result_type
@@ -228,7 +230,9 @@ struct impl
     >::value();
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename Property>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(Property)>::overload == call_member,
     typename call_traits<impl, T, void(Property)>::result_type
@@ -242,7 +246,9 @@ struct impl
     return ASIO_MOVE_CAST(T)(t).query(ASIO_MOVE_CAST(Property)(p));
   }
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename T, typename Property>
+  ASIO_HOST_DEVICE
   ASIO_NODISCARD ASIO_CONSTEXPR typename enable_if<
     call_traits<impl, T, void(Property)>::overload == call_free,
     typename call_traits<impl, T, void(Property)>::result_type
@@ -270,8 +276,17 @@ const T static_instance<T>::instance = {};
 namespace asio {
 namespace {
 
+
+#if defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
+
+ASIO_INLINE_CONSTEXPR asio_query_fn::impl query{};
+
+#else // defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
+
 static ASIO_CONSTEXPR const asio_query_fn::impl&
   query = asio_query_fn::static_instance<>::instance;
+
+#endif // defined(ASIO_HAS_INLINE_CONSTEXPR_VARIABLES)
 
 } // namespace
 

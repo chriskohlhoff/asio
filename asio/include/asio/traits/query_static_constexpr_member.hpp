@@ -77,6 +77,7 @@ struct query_static_constexpr_member_trait<T, Property,
   ASIO_STATIC_CONSTEXPR(bool, is_noexcept =
     noexcept(T::query(Property{})));
 
+  ASIO_HOST_DEVICE
   static ASIO_CONSTEXPR result_type value() noexcept(is_noexcept)
   {
     return T::query(Property{});
