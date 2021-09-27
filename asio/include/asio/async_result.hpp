@@ -454,19 +454,25 @@ public:
   typedef CompletionToken completion_handler_type;
   typedef void return_type;
 
+  ASIO_EXEC_CHECK_DISABLE
+  ASIO_HOST_DEVICE
   explicit completion_handler_async_result(completion_handler_type&)
   {
   }
 
+  ASIO_EXEC_CHECK_DISABLE
+  ASIO_HOST_DEVICE
   return_type get()
   {
   }
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename Initiation,
       ASIO_COMPLETION_HANDLER_FOR(Signatures...) RawCompletionToken,
       typename... Args>
+  ASIO_HOST_DEVICE
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token,
@@ -479,7 +485,9 @@ public:
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename Initiation, typename RawCompletionToken>
+  ASIO_HOST_DEVICE
   static return_type initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token)
@@ -489,9 +497,11 @@ public:
   }
 
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename Initiation, \
       typename RawCompletionToken, \
       ASIO_VARIADIC_TPARAMS(n)> \
+  ASIO_HOST_DEVICE \
   static return_type initiate( \
       ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_MOVE_ARG(RawCompletionToken) token, \
@@ -649,6 +659,8 @@ struct async_completion
    * The constructor creates the concrete completion handler and makes the link
    * between the handler and the asynchronous result.
    */
+  ASIO_EXEC_CHECK_DISABLE
+  ASIO_HOST_DEVICE
   explicit async_completion(CompletionToken& token)
     : completion_handler(static_cast<typename conditional<
         is_same<CompletionToken, completion_handler_type>::value,
@@ -657,12 +669,16 @@ struct async_completion
   {
   }
 #else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+  ASIO_EXEC_CHECK_DISABLE
+  ASIO_HOST_DEVICE
   explicit async_completion(typename decay<CompletionToken>::type& token)
     : completion_handler(token),
       result(completion_handler)
   {
   }
 
+  ASIO_EXEC_CHECK_DISABLE
+  ASIO_HOST_DEVICE
   explicit async_completion(const typename decay<CompletionToken>::type& token)
     : completion_handler(token),
       result(completion_handler)
@@ -836,9 +852,11 @@ void_or_deduced async_initiate(
 
 #elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE... Signatures,
     typename Initiation, typename... Args>
+ASIO_HOST_DEVICE
 inline typename constraint<
     detail::async_result_has_initiate_memfn<
       CompletionToken, Signatures...>::value,
@@ -857,9 +875,11 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_CAST(Args)(args)...);
 }
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE... Signatures,
     typename Initiation, typename... Args>
+ASIO_HOST_DEVICE
 inline typename constraint<
     !detail::async_result_has_initiate_memfn<
       CompletionToken, Signatures...>::value,
@@ -880,9 +900,11 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE Sig0,
     typename Initiation>
+ASIO_HOST_DEVICE
 inline typename constraint<
     detail::async_result_has_initiate_memfn<
       CompletionToken, Sig0>::value,
@@ -898,10 +920,12 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_CAST(CompletionToken)(token));
 }
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE Sig0,
     ASIO_COMPLETION_SIGNATURE Sig1,
     typename Initiation>
+ASIO_HOST_DEVICE
 inline typename constraint<
     detail::async_result_has_initiate_memfn<
       CompletionToken, Sig0, Sig1>::value,
@@ -917,11 +941,13 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_CAST(CompletionToken)(token));
 }
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE Sig0,
     ASIO_COMPLETION_SIGNATURE Sig1,
     ASIO_COMPLETION_SIGNATURE Sig2,
     typename Initiation>
+ASIO_HOST_DEVICE
 inline typename constraint<
     detail::async_result_has_initiate_memfn<
       CompletionToken, Sig0, Sig1, Sig2>::value,
@@ -937,9 +963,11 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_CAST(CompletionToken)(token));
 }
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE Sig0,
     typename Initiation>
+ASIO_HOST_DEVICE
 inline typename constraint<
     !detail::async_result_has_initiate_memfn<
       CompletionToken, Sig0>::value,
@@ -956,10 +984,12 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
   return completion.result.get();
 }
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE Sig0,
     ASIO_COMPLETION_SIGNATURE Sig1,
     typename Initiation>
+ASIO_HOST_DEVICE
 inline typename constraint<
     !detail::async_result_has_initiate_memfn<
       CompletionToken, Sig0, Sig1>::value,
@@ -976,11 +1006,13 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
   return completion.result.get();
 }
 
+ASIO_EXEC_CHECK_DISABLE
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE Sig0,
     ASIO_COMPLETION_SIGNATURE Sig1,
     ASIO_COMPLETION_SIGNATURE Sig2,
     typename Initiation>
+ASIO_HOST_DEVICE
 inline typename constraint<
     !detail::async_result_has_initiate_memfn<
       CompletionToken, Sig0, Sig1, Sig2>::value,
@@ -998,9 +1030,11 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
 }
 
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename CompletionToken, \
       ASIO_COMPLETION_SIGNATURE Sig0, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  ASIO_HOST_DEVICE \
   inline typename constraint< \
       detail::async_result_has_initiate_memfn< \
         CompletionToken, Sig0>::value, \
@@ -1022,10 +1056,12 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename CompletionToken, \
       ASIO_COMPLETION_SIGNATURE Sig0, \
       ASIO_COMPLETION_SIGNATURE Sig1, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  ASIO_HOST_DEVICE \
   inline typename constraint< \
       detail::async_result_has_initiate_memfn< \
         CompletionToken, Sig0, Sig1>::value, \
@@ -1047,11 +1083,13 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename CompletionToken, \
       ASIO_COMPLETION_SIGNATURE Sig0, \
       ASIO_COMPLETION_SIGNATURE Sig1, \
       ASIO_COMPLETION_SIGNATURE Sig2, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
+  ASIO_HOST_DEVICE \
   inline typename constraint< \
       detail::async_result_has_initiate_memfn< \
         CompletionToken, Sig0, Sig1, Sig2>::value, \
@@ -1073,6 +1111,7 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
         ASIO_VARIADIC_MOVE_ARGS(n)); \
   } \
   \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename CompletionToken, \
       ASIO_COMPLETION_SIGNATURE Sig0, \
       typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
@@ -1080,6 +1119,7 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       !detail::async_result_has_initiate_memfn< \
         CompletionToken, Sig0>::value, \
       ASIO_INITFN_RESULT_TYPE(CompletionToken, Sig0)>::type \
+  ASIO_HOST_DEVICE \
   async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
@@ -1095,6 +1135,7 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     return completion.result.get(); \
   } \
   \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename CompletionToken, \
       ASIO_COMPLETION_SIGNATURE Sig0, \
       ASIO_COMPLETION_SIGNATURE Sig1, \
@@ -1103,6 +1144,7 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       !detail::async_result_has_initiate_memfn< \
         CompletionToken, Sig0, Sig1>::value, \
       ASIO_INITFN_RESULT_TYPE2(CompletionToken, Sig0, Sig1)>::type \
+  ASIO_HOST_DEVICE \
   async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
@@ -1118,6 +1160,7 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
     return completion.result.get(); \
   } \
   \
+  ASIO_EXEC_CHECK_DISABLE \
   template <typename CompletionToken, \
       ASIO_COMPLETION_SIGNATURE Sig0, \
       ASIO_COMPLETION_SIGNATURE Sig1, \
@@ -1127,6 +1170,7 @@ async_initiate(ASIO_MOVE_ARG(Initiation) initiation,
       !detail::async_result_has_initiate_memfn< \
         CompletionToken, Sig0, Sig1, Sig2>::value, \
       ASIO_INITFN_RESULT_TYPE3(CompletionToken, Sig0, Sig1, Sig2)>::type \
+  ASIO_HOST_DEVICE \
   async_initiate(ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_NONDEDUCED_MOVE_ARG(CompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
@@ -1157,6 +1201,7 @@ template <typename... Signatures>
 struct initiation_archetype
 {
   template <completion_handler_for<Signatures...> CompletionHandler>
+  ASIO_HOST_DEVICE
   void operator()(CompletionHandler&&) const
   {
   }
