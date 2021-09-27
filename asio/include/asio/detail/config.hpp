@@ -1955,4 +1955,23 @@
 # endif // !defined(ASIO_DISABLE_STD_HASH)
 #endif // !defined(ASIO_HAS_STD_HASH)
 
+// Support CUDA __host__ __device__ on compilers known to support it.
+#if !defined(ASIO_HAS_HOST_DEVICE)
+# if !defined(ASIO_DISABLE_HOST_DEVICE)
+#  if defined(__CUDACC__)
+#    define ASIO_HAS_HOST_DEVICE 1
+#  endif // defined(__CUDACC__)
+# endif // ASIO_DISABLE_HOST_DEVICE
+#endif // ASIO_HAS_HOST_DEVICE
+#if !defined(ASIO_HOST_DEVICE)
+# if defined(ASIO_HAS_HOST_DEVICE)
+#  define ASIO_HOST_DEVICE __host__ __device__
+#  define ASIO_EXEC_CHECK_DISABLE \
+#  pragma nv_exec_check_disable
+# else // defined(ASIO_HAS_HOST_DEVICE)
+#  define ASIO_HOST_DEVICE
+#  define ASIO_EXEC_CHECK_DISABLE
+# endif // defined(ASIO_HAS_HOST_DEVICE)
+#endif // !defined(ASIO_HOST_DEVICE)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
