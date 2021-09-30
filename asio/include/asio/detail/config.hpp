@@ -1213,6 +1213,13 @@
 #    define ASIO_HAS_STD_INVOKE_RESULT 1
 #   endif // (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
 #  endif // defined(ASIO_MSVC)
+#  if defined(ASIO_HAS_CLANG_LIBCXX)
+#   if (_LIBCPP_VERSION >= 13000)
+#    if (__cplusplus >= 202002)
+#     define ASIO_HAS_STD_INVOKE_RESULT 1
+#    endif // (__cplusplus >= 202002)
+#   endif // (_LIBCPP_VERSION >= 13000)
+#  endif // defined(ASIO_HAS_CLANG_LIBCXX)
 # endif // !defined(ASIO_DISABLE_STD_INVOKE_RESULT)
 #endif // !defined(ASIO_HAS_STD_INVOKE_RESULT)
 
