@@ -242,7 +242,9 @@ private:
   typedef std::tuple<typename decay<InitArgs>::type...> init_args_t;
   init_args_t init_args_;
 
+  ASIO_EXEC_CHECK_DISABLE
   template <typename CompletionToken, std::size_t... I>
+  ASIO_HOST_DEVICE
   decltype(auto) invoke_helper(
       ASIO_MOVE_ARG(CompletionToken) token,
       std::index_sequence<I...>)
@@ -255,7 +257,9 @@ private:
 public:
   /// Construct a deferred asynchronous operation from the arguments to an
   /// initiation function object.
+  ASIO_EXEC_CHECK_DISABLE
   template <typename I, typename... A>
+  ASIO_HOST_DEVICE
   ASIO_CONSTEXPR explicit deferred_async_operation(
       deferred_init_tag, ASIO_MOVE_ARG(I) initiation,
       ASIO_MOVE_ARG(A)... init_args)
@@ -265,7 +269,9 @@ public:
   }
 
   /// Initiate the asynchronous operation using the supplied completion token.
+  ASIO_EXEC_CHECK_DISABLE
   template <ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
+  ASIO_HOST_DEVICE
   decltype(auto) operator()(
       ASIO_MOVE_ARG(CompletionToken) token) ASIO_RVALUE_REF_QUAL
   {
@@ -275,7 +281,9 @@ public:
   }
 
 #if defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
+  ASIO_EXEC_CHECK_DISABLE
   template <ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
+  ASIO_HOST_DEVICE
   decltype(auto) operator()(
       ASIO_MOVE_ARG(CompletionToken) token) const &
   {
