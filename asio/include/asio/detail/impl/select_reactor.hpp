@@ -86,6 +86,19 @@ std::size_t select_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
 }
 
 template <typename Time_Traits>
+std::size_t select_reactor::notify_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& timer,
+    std::size_t max_notified)
+{
+  mutex::scoped_lock lock(mutex_);
+  op_queue<operation> ops;
+  std::size_t n = queue.notify_timer(timer, ops, max_notified);
+  lock.unlock();
+  scheduler_.post_deferred_completions(ops);
+  return n;
+}
+
+template <typename Time_Traits>
 void select_reactor::cancel_timer_by_key(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data* timer,
     void* cancellation_key)

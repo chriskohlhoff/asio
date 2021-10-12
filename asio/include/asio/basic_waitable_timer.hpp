@@ -383,6 +383,36 @@ public:
     return impl_.get_executor();
   }
 
+  /// Notify any asynchronous operations that are waiting on the timer.
+  /**
+   * This function forces the completion of any pending asynchronous wait
+   * operations against the timer. The handler for each notified operation will
+   * be invoked with no error code.
+   *
+   * Notifying the timer does not change the expiry time.
+   *
+   * @return The number of asynchronous operations that were notified.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note If the timer has already expired notify cancel() is called, then the
+   * handlers for asynchronous wait operations will:
+   *
+   * @li have already been invoked; or
+   *
+   * @li have been queued for invocation in the near future.
+   *
+   * These handlers can no longer be notified, and therefore are passed an
+   * error code that indicates the successful completion of the wait operation.
+   */
+  std::size_t notify()
+  {
+      asio::error_code ec;
+      std::size_t s = impl_.get_service().notify(impl_.get_implementation(), ec);
+      asio::detail::throw_error(ec, "notify");
+      return s;
+  }
+
   /// Cancel any asynchronous operations that are waiting on the timer.
   /**
    * This function forces the completion of any pending asynchronous wait
@@ -474,6 +504,37 @@ public:
         impl_.get_implementation(), ec);
     asio::detail::throw_error(ec, "cancel_one");
     return s;
+  }
+  /// Notify one asynchronous operation that is waiting on the timer.
+  /**
+   * This function forces the completion of one pending asynchronous wait
+   * operation against the timer. Handlers are cancelled in FIFO order.
+   * Unlike cancel, notify will not assign anything to the error_code.
+   *
+   * Notifying the timer does not change the expiry time.
+   *
+   * @return The number of asynchronous operations that were notified. That is,
+   * either 0 or 1.
+   *
+   * @throws asio::system_error Thrown on failure.
+   *
+   * @note If the timer has already expired when cancel_one() is called, then
+   * the handlers for asynchronous wait operations will:
+   *
+   * @li have already been invoked; or
+   *
+   * @li have been queued for invocation in the near future.
+   *
+   * These handlers can no longer be notified, and therefore are passed an
+   * error code that indicates the successful completion of the wait operation.
+   */
+  std::size_t notify_one()
+  {
+      asio::error_code ec;
+      std::size_t s = impl_.get_service().notify_one(
+              impl_.get_implementation(), ec);
+      asio::detail::throw_error(ec, "notify_one");
+      return s;
   }
 
 #if !defined(ASIO_NO_DEPRECATED)

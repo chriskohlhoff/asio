@@ -196,6 +196,27 @@ public:
     }
     return num_cancelled;
   }
+  // Cancel and dequeue operations for the given timer.
+  std::size_t notify_timer(per_timer_data& timer, op_queue<operation>& ops,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)())
+  {
+    std::size_t num_cancelled = 0;
+    if (timer.prev_ != 0 || &timer == timers_)
+    {
+      while (wait_op* op = (num_cancelled != max_cancelled)
+          ? timer.op_queue_.front() : 0)
+      {
+        op->ec_.clear();
+        timer.op_queue_.pop();
+        ops.push(op);
+        ++num_cancelled;
+      }
+      if (timer.op_queue_.empty())
+        remove_timer(timer);
+    }
+    return num_cancelled;
+  }
+
 
   // Cancel and dequeue a specific operation for the given timer.
   void cancel_timer_by_key(per_timer_data* timer,

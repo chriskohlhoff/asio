@@ -19,12 +19,36 @@
 #endif // !defined(BOOST_SYSTEM_NO_DEPRECATED)
 
 // Test that header file is self-contained.
+#include "asio/error_code.hpp"
 #include "asio/steady_timer.hpp"
 
 #include "unit_test.hpp"
 
+namespace asio
+{
+template struct basic_waitable_timer<chrono::steady_clock>;
+}
+namespace steady_timer_test
+{
+void test()
+{
+    asio::io_context ctx;
+    asio::error_code ec;
+    bool done = false;
+    asio::steady_timer st{ctx, asio::chrono::steady_clock::now()};
+
+    st.async_wait([&](asio::error_code ec_){ec = ec_; done = true;});
+    st.notify_one();
+    ctx.run();
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(done);
+
+}
+}
+
+
 ASIO_TEST_SUITE
 (
   "steady_timer",
-  ASIO_TEST_CASE(null_test)
+  ASIO_TEST_CASE(steady_timer_test::test)
 )

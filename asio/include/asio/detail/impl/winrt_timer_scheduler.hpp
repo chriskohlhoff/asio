@@ -70,6 +70,19 @@ std::size_t winrt_timer_scheduler::cancel_timer(timer_queue<Time_Traits>& queue,
 }
 
 template <typename Time_Traits>
+std::size_t winrt_timer_scheduler::notify_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& timer,
+    std::size_t max_notified)
+{
+  mutex::scoped_lock lock(mutex_);
+  op_queue<operation> ops;
+  std::size_t n = queue.notify_timer(timer, ops, max_notified);
+  lock.unlock();
+  scheduler_.post_deferred_completions(ops);
+  return n;
+}
+
+template <typename Time_Traits>
 void winrt_timer_scheduler::move_timer(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data& to,
     typename timer_queue<Time_Traits>::per_timer_data& from)

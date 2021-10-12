@@ -142,6 +142,15 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& timer,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
+
+  // Notify the timer operations associated with the given token. Returns the
+  // number of operations that have been posted or dispatched.
+  template <typename Time_Traits>
+  std::size_t notify_timer(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
+      std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
+
+
   // Move the timer operations associated with the given timer.
   template <typename Time_Traits>
   void move_timer(timer_queue<Time_Traits>& queue,

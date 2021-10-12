@@ -82,6 +82,23 @@ std::size_t win_iocp_io_context::cancel_timer(timer_queue<Time_Traits>& queue,
 }
 
 template <typename Time_Traits>
+std::size_t win_iocp_io_context::notify_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& timer,
+    std::size_t max_notified)
+{
+  // If the service has been shut down we silently ignore the cancellation.
+  if (::InterlockedExchangeAdd(&shutdown_, 0) != 0)
+    return 0;
+
+  mutex::scoped_lock lock(dispatch_mutex_);
+  op_queue<win_iocp_operation> ops;
+  std::size_t n = queue.notify_timer(timer, ops, max_notified);
+  lock.unlock();
+  post_deferred_completions(ops);
+  return n;
+}
+
+template <typename Time_Traits>
 void win_iocp_io_context::cancel_timer_by_key(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data* timer,
     void* cancellation_key)

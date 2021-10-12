@@ -77,6 +77,19 @@ std::size_t dev_poll_reactor::cancel_timer(timer_queue<Time_Traits>& queue,
 }
 
 template <typename Time_Traits>
+std::size_t dev_poll_reactor::notify_timer(timer_queue<Time_Traits>& queue,
+    typename timer_queue<Time_Traits>::per_timer_data& timer,
+    std::size_t max_notified)
+{
+  mutex::scoped_lock lock(mutex_);
+  op_queue<operation> ops;
+  std::size_t n = queue.notify_timer(timer, ops, max_notified);
+  lock.unlock();
+  scheduler_.post_deferred_completions(ops);
+  return n;
+}
+
+template <typename Time_Traits>
 void dev_poll_reactor::move_timer(timer_queue<Time_Traits>& queue,
     typename timer_queue<Time_Traits>::per_timer_data& target,
     typename timer_queue<Time_Traits>::per_timer_data& source)

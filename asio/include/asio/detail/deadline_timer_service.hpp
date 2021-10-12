@@ -185,7 +185,48 @@ public:
     return count;
   }
 
-  // Get the expiry time for the timer as an absolute time.
+  // Cancel any asynchronous wait operations associated with the timer.
+  std::size_t notify(implementation_type& impl, asio::error_code& ec)
+  {
+    if (!impl.might_have_pending_waits)
+    {
+      ec = asio::error_code();
+      return 0;
+    }
+
+    ASIO_HANDLER_OPERATION((scheduler_.context(),
+            "deadline_timer", &impl, 0, "notify"));
+
+    std::size_t count = scheduler_.notify_timer(timer_queue_, impl.timer_data);
+    impl.might_have_pending_waits = false;
+    ec = asio::error_code();
+    return count;
+  }
+
+  // Cancels one asynchronous wait operation associated with the timer.
+  std::size_t notify_one(implementation_type& impl,
+                         asio::error_code& ec)
+  {
+    if (!impl.might_have_pending_waits)
+    {
+      ec = asio::error_code();
+      return 0;
+    }
+
+    ASIO_HANDLER_OPERATION((scheduler_.context(),
+            "deadline_timer", &impl, 0, "notify_one"));
+
+    std::size_t count = scheduler_.notify_timer(
+              timer_queue_, impl.timer_data, 1);
+    if (count == 0)
+      impl.might_have_pending_waits = false;
+
+    ec = asio::error_code();
+    return count;
+  }
+
+
+    // Get the expiry time for the timer as an absolute time.
   time_type expiry(const implementation_type& impl) const
   {
     return impl.expiry;
