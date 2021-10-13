@@ -955,6 +955,19 @@ struct coro_promise final :
   {
   }
 
+  template <typename First, typename... Args>
+  coro_promise(First&&, Executor executor, Args &&...) noexcept
+          : executor_(std::move(executor))
+  {
+  }
+
+  template <typename First, execution_context Context, typename... Args>
+  coro_promise(First &&, Context&& ctx, Args&&...) noexcept
+          : executor_(ctx.get_executor())
+  {
+  }
+
+
   template <execution_context Context, typename... Args>
   coro_promise(Context&& ctx, Args&&...) noexcept
     : executor_(ctx.get_executor())
