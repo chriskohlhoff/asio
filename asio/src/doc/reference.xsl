@@ -520,6 +520,10 @@
 [heading Remarks]
       <xsl:apply-templates mode="markup"/>
     </xsl:when>
+    <xsl:when test="@kind='attention'">
+[heading Attention]
+      <xsl:apply-templates mode="markup"/>
+    </xsl:when>
     <xsl:when test="@kind='par'">
       <xsl:if test="not(starts-with(title, 'Concepts:'))">
         <xsl:apply-templates mode="markup"/>
