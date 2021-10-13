@@ -12,6 +12,10 @@
 #ifndef ASIO_EXPERIMENTAL_PROMISE_HPP
 #define ASIO_EXPERIMENTAL_PROMISE_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/any_io_executor.hpp"

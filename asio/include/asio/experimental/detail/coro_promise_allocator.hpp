@@ -13,7 +13,7 @@
 #define ASIO_EXPERIMENTAL_DETAIL_CORO_PROMISE_ALLOCATOR_HPP
 
 #include "asio/detail/config.hpp"
-#include "asio/experimental/detail/coro_traits.hpp"
+#include "asio/experimental/coro_traits.hpp"
 
 namespace asio {
 namespace experimental {

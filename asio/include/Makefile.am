@@ -381,18 +381,20 @@ nobase_include_HEADERS = \
 	asio/experimental/awaitable_operators.hpp \
 	asio/experimental/cancellation_condition.hpp \
 	asio/experimental/coro.hpp \
+	asio/experimental/coro_traits.hpp \
 	asio/experimental/deferred.hpp \
 	asio/experimental/detail/completion_handler_erasure.hpp \
 	asio/experimental/detail/coro_promise_allocator.hpp \
-	asio/experimental/detail/coro_traits.hpp \
 	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/append.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/as_tuple.hpp \
+	asio/experimental/impl/coro.hpp \
 	asio/experimental/impl/deferred.hpp \
 	asio/experimental/impl/parallel_group.hpp \
 	asio/experimental/impl/prepend.hpp \
 	asio/experimental/impl/promise.hpp \
+	asio/experimental/impl/use_coro.hpp \
 	asio/experimental/parallel_group.hpp \
 	asio/experimental/prepend.hpp \
 	asio/experimental/promise.hpp \

@@ -24,6 +24,7 @@
   * [link asio.overview.core.coroutine Stackless Coroutines]
   * [link asio.overview.core.spawn Stackful Coroutines]
   * [link asio.overview.core.cpp20_coroutines C++20 Coroutines Support]
+  * [link asio.overview.core.coro Resumable C++20 Coroutines (experimental)]
 * [link asio.overview.networking Networking]
   * [link asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link asio.overview.networking.other_protocols Support for Other Protocols]
@@ -71,6 +72,7 @@
 * [link asio.overview.core.coroutine Stackless Coroutines]
 * [link asio.overview.core.spawn Stackful Coroutines]
 * [link asio.overview.core.cpp20_coroutines C++20 Coroutines Support]
+* [link asio.overview.core.coro Resumable C++20 Coroutines (experimental)]
 
 [include overview/basics.qbk]
 [include overview/async.qbk]
@@ -87,6 +89,7 @@
 [include overview/coroutine.qbk]
 [include overview/spawn.qbk]
 [include overview/cpp20_coroutines.qbk]
+[include overview/coro.qbk]
 
 [endsect]
 
