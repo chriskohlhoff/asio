@@ -24,9 +24,10 @@
 /doc/asio/overview/core/async.html
 /doc/asio/overview/core/basics.html
 /doc/asio/overview/core/buffers.html
+/doc/asio/overview/core/cancellation.html
 /doc/asio/overview/core/concurrency_hint.html
 /doc/asio/overview/core/coroutine.html
-/doc/asio/overview/core/coroutines_ts.html
+/doc/asio/overview/core/cpp20_coroutines.html
 /doc/asio/overview/core/handler_tracking.html
 /doc/asio/overview/core.html
 /doc/asio/overview/core/line_based.html
