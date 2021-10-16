@@ -298,16 +298,16 @@ jobs:
           # Linux / clang++-3.8 -std=c++11 / -O2 / standalone
           #
           - build-type: full
-            runs-on: ubuntu-16.04
-            compiler: clang++-3.8
+            runs-on: ubuntu-18.04
+            compiler: clang++-3.9
             cxx-std: c++11
             optim-level: -O2
           #
           # Linux / clang++-3.8 -std=c++11 / -O0 / boost 1.64 / separate compilation
           #
           - build-type: full
-            runs-on: ubuntu-16.04
-            compiler: clang++-3.8
+            runs-on: ubuntu-18.04
+            compiler: clang++-3.9
             cxx-std: c++03
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
