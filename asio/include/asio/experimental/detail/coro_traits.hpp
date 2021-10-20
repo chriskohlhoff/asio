@@ -21,6 +21,8 @@ namespace asio {
 namespace experimental {
 namespace detail {
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <class From, class To>
 concept convertible_to = std::is_convertible_v<From, To> &&
   requires(std::add_rvalue_reference_t<From> (&f)()) {static_cast<To>(f()); };
@@ -175,6 +177,37 @@ struct coro_traits<void() noexcept, void, Executor>
   using error_type = std::conditional_t<is_noexcept, void, std::exception_ptr>;
   using completion_handler = coro_handler_t<result_type, is_noexcept>;
 };
+
+#else
+/// The traits describing the coroutine behaviour.
+/**
+ * \tparam Yield The yield value or signature of the coroutine
+ * \tparam Return The return value of the coroutine
+ * \tparam Executor The executor of the coroutine
+ */
+template <typename Yield, typename Return, typename Executor>
+struct coro_traits
+{
+  /// The value that can be passed into a symmetrical cororoutine. Void if assymetrical.
+  using input_type = argument-dependent;
+  /// The type that can be passed out through a co_yield.
+  using yield_type = argument-dependent;
+  /// The type that can be passed out through a co_return.
+  using return_type = argument-dependent;
+  /// The type received by a co_await or async_resume. It's a combination of yield and return.
+  using result_type = argument-dependent;
+  /// The signature used by the async_resume.
+  using signature_type = argument-dependent;
+  /// Whether or not the coroutine is noexcept.
+  constexpr static bool is_noexcept = argument-dependent;
+  /// The error type of the coroutine. Void for noexcept
+  using error_type = argument-dependent;
+  /// Completion handler type used by async_resume.
+  using completion_handler = argument-dependent;
+};
+
+#endif //GENERATING_DOCUMENTATION
+
 
 } // namespace detail
 } // namespace experimental

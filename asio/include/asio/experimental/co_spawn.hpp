@@ -16,14 +16,15 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <queue>
-#include <tuple>
 #include <asio/compose.hpp>
 #include "asio/redirect_error.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 #include "asio/experimental/coro.hpp"
+
+#include <queue>
+#include <tuple>
 
 namespace asio
 {
@@ -55,7 +56,17 @@ struct coro_spawn_initiate
 
 }
 
-
+/// Spawn an asio::experimental::coro.
+/**
+ * This spawns the coroutine off for execution on it's executor. It binds the lifetime of the coroutine to the executor.
+ *
+ * @tparam T The return value of the coroutine
+ * @tparam Executor The executor to be used
+ * @tparam CompletionToken The type of the completion token, with the signature `void(std::exception_ptr, T)`.
+ * @param c The coroutine
+ * @param completion_token The completion token
+ * @return Implementation defined
+ */
 template<typename T, typename Executor, typename CompletionToken>
 auto co_spawn(coro<void, T, Executor> c, CompletionToken && completion_token)
 {
@@ -63,6 +74,18 @@ auto co_spawn(coro<void, T, Executor> c, CompletionToken && completion_token)
   return asio::async_compose<CompletionToken, void(std::exception_ptr, T)>(
           detail::coro_spawn_initiate<void, T, Executor>{std::move(c)}, completion_token, exec);
 }
+
+/// Spawn an asio::experimental::coro.
+/**
+ * This spawns the coroutine off for execution on it's executor. It binds the lifetime of the coroutine to the executor.
+ *
+ * @tparam T The return value of the coroutine
+ * @tparam Executor The executor to be used
+ * @tparam CompletionToken The type of the completion token, with the signature `void(std::exception_ptr, T)`.
+ * @param c The coroutine
+ * @param completion_token The completion token
+ * @return Implementation defined
+ */
 
 template<typename T, typename Executor, typename CompletionToken>
 auto co_spawn(coro<void(), T, Executor> c, CompletionToken && completion_token)
@@ -72,6 +95,17 @@ auto co_spawn(coro<void(), T, Executor> c, CompletionToken && completion_token)
           detail::coro_spawn_initiate<void(), T, Executor>{std::move(c)}, completion_token, exec);
 }
 
+/// Spawn an asio::experimental::coro.
+/**
+ * This spawns the coroutine off for execution on it's executor. It binds the lifetime of the coroutine to the executor.
+ *
+ * @tparam T The return value of the coroutine
+ * @tparam Executor The executor to be used
+ * @tparam CompletionToken The type of the completion token, with the signature `void(T)`.
+ * @param c The coroutine
+ * @param completion_token The completion token
+ * @return Implementation defined
+ */
 template<typename T, typename Executor, typename CompletionToken>
 auto co_spawn(coro<void() noexcept, T, Executor> c, CompletionToken && completion_token)
 {
@@ -81,6 +115,17 @@ auto co_spawn(coro<void() noexcept, T, Executor> c, CompletionToken && completio
 }
 
 
+/// Spawn an asio::experimental::coro.
+/**
+ * This spawns the coroutine off for execution on it's executor. It binds the lifetime of the coroutine to the executor.
+ *
+ * @tparam T The return value of the coroutine
+ * @tparam Executor The executor to be used
+ * @tparam CompletionToken The type of the completion token, with the signature `void(std::exception_ptr)`.
+ * @param c The coroutine
+ * @param completion_token The completion token
+ * @return Implementation defined
+ */
 template<typename Executor, typename CompletionToken>
 auto co_spawn(coro<void, void, Executor> c, CompletionToken && completion_token)
 {
@@ -89,6 +134,17 @@ auto co_spawn(coro<void, void, Executor> c, CompletionToken && completion_token)
           detail::coro_spawn_initiate<void, void, Executor>{std::move(c)}, completion_token, exec);
 }
 
+/// Spawn an asio::experimental::coro.
+/**
+ * This spawns the coroutine off for execution on it's executor. It binds the lifetime of the coroutine to the executor.
+ *
+ * @tparam T The return value of the coroutine
+ * @tparam Executor The executor to be used
+ * @tparam CompletionToken The type of the completion token, with the signature `void(std::exception_ptr)`.
+ * @param c The coroutine
+ * @param completion_token The completion token
+ * @return Implementation defined
+ */
 template<typename Executor, typename CompletionToken>
 auto co_spawn(coro<void(), void, Executor> c, CompletionToken && completion_token)
 {
@@ -97,6 +153,17 @@ auto co_spawn(coro<void(), void, Executor> c, CompletionToken && completion_toke
           detail::coro_spawn_initiate<void(), void, Executor>{std::move(c)}, completion_token, exec);
 }
 
+/// Spawn an asio::experimental::coro.
+/**
+ * This spawns the coroutine off for execution on it's executor. It binds the lifetime of the coroutine to the executor.
+ *
+ * @tparam T The return value of the coroutine
+ * @tparam Executor The executor to be used
+ * @tparam CompletionToken The type of the completion token, with the signature `void()`.
+ * @param c The coroutine
+ * @param completion_token The completion token
+ * @return Implementation defined
+ */
 template<typename Executor, typename CompletionToken>
 auto co_spawn(coro<void() noexcept, void, Executor> c, CompletionToken && completion_token)
 {
