@@ -14,7 +14,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/push_options.hpp"
 
-
 namespace asio
 {
 namespace experimental
@@ -25,6 +24,45 @@ struct coro;
 
 namespace detail
 {
+
+struct coro_cancellation_source
+{
+  cancellation_slot slot;
+  cancellation_state state;
+  bool throw_if_cancelled_ = true;
+
+  void reset_cancellation_state()
+  {
+    state = cancellation_state(slot);
+  }
+
+  template <typename Filter>
+  void reset_cancellation_state(ASIO_MOVE_ARG(Filter) filter)
+  {
+    state = cancellation_state(slot, ASIO_MOVE_CAST(Filter)(filter));
+  }
+
+  template <typename InFilter, typename OutFilter>
+  void reset_cancellation_state(ASIO_MOVE_ARG(InFilter) in_filter,
+                                ASIO_MOVE_ARG(OutFilter) out_filter)
+  {
+    state = cancellation_state(slot,
+                               ASIO_MOVE_CAST(InFilter)(in_filter),
+                               ASIO_MOVE_CAST(OutFilter)(out_filter));
+  }
+
+  bool throw_if_cancelled() const
+  {
+    return throw_if_cancelled_;
+  }
+
+  void throw_if_cancelled(bool value)
+  {
+    throw_if_cancelled_ = value;
+  }
+
+
+};
 
 template <typename Signature, typename Return, typename Executor>
 struct coro_promise;
@@ -122,29 +160,22 @@ struct coro_with_arg
 
     template <typename Y, typename R, typename E>
     auto await_suspend(coroutine_handle<coro_promise<Y, R, E>> h)
-    -> coroutine_handle<>
+      -> coroutine_handle<>
     {
       auto& hp = h.promise();
+      if constexpr (!coro_promise<Y, R, E>::is_noexcept)
+        if ((hp.cancel->state.cancelled() != cancellation_type::none) && hp.cancel->throw_if_cancelled_)
+          asio::detail::throw_error(asio::error::operation_aborted, "coro-cancelled");
+
       if (hp.get_executor() == coro.get_executor())
       {
         coro.coro_->awaited_from = h;
         coro.coro_->reset_error();
         coro.coro_->input_ = std::move(value);
-        struct cancel_handler
-        {
-          cancel_handler(coro_t& coro) : coro(coro.coro_) {}
-
-          typename coro_t::promise_type* coro;
-
-          void operator()(cancellation_type ct)
-          {
-            coro->cancel.signal.emit(ct);
-          }
-        };
-
-        hp.cancel.state.slot().template emplace<cancel_handler>(coro);
+        coro.coro_->cancel = hp.cancel;
         return coro.coro_->get_handle();
-      } else
+      }
+      else
       {
         coro.coro_->awaited_from =
                 dispatch_coroutine(hp.get_executor(), [h]() mutable
@@ -154,22 +185,28 @@ struct coro_with_arg
 
         struct cancel_handler
         {
-          cancel_handler(E e, coro_t& coro) : e(e), coro(coro.coro_) {}
+          using src = std::pair<cancellation_signal, detail::coro_cancellation_source>;
+          std::shared_ptr<src> st = std::make_shared<src>();
+
+          cancel_handler(E e, coro_t& coro) : e(e), coro_(coro.coro_)
+          {
+            st->second.state = cancellation_state(st->second.slot = st->first.slot());
+          }
 
           E e;
-          typename coro_t::promise_type* coro;
+          typename coro_t::promise_type* coro_;
 
           void operator()(cancellation_type ct)
           {
-            asio::dispatch(e,
-                           [ct, p = coro]() mutable
-                           {
-                             p->cancel.signal.emit(ct);
-                           });
+            asio::dispatch(e, [ct, p = coro_, st = st]() mutable
+            {
+              auto & [sig, state] = *st;
+              sig.emit(ct);
+            });
           }
         };
 
-        hp.cancel.state.slot().template emplace<cancel_handler>(
+        hp.cancel->state.slot().template emplace<cancel_handler>(
                 coro.get_executor(), coro);
 
         return dispatch_coroutine(
@@ -180,7 +217,7 @@ struct coro_with_arg
 
     auto await_resume() -> typename coro_t::result_type
     {
-      coro.coro_->cancel.state.slot().clear();
+      coro.coro_->cancel = nullptr;
       coro.coro_->rethrow_if();
       return std::move(coro.coro_->result_);
     }
@@ -233,6 +270,7 @@ struct coro_promise_error<true>
   {}
 };
 
+
 template<typename T = void>
 struct yield_input
 {
@@ -243,14 +281,16 @@ struct yield_input
   {
     return false;
   }
-
-  auto await_suspend(coroutine_handle<>) noexcept
+  template<typename U>
+  coroutine_handle<> await_suspend(coroutine_handle<U>) noexcept
   {
     return std::exchange(awaited_from, noop_coroutine());
   }
 
   T await_resume() const noexcept
-  { return std::move(value); }
+  {
+    return std::move(value);
+  }
 };
 
 template<>
@@ -476,13 +516,9 @@ struct coro_promise final :
   using executor_type = Executor;
 
   executor_type executor_;
-  struct cancel_pair
-  {
-    cancellation_signal signal;
-    asio::cancellation_state state{signal.slot()};
 
-  };
-  cancel_pair cancel;
+  std::optional<coro_cancellation_source> cancel_source;
+  coro_cancellation_source * cancel;
 
   using allocator_type =
   typename std::allocator_traits<associated_allocator_t < Executor>>::
@@ -575,14 +611,158 @@ struct coro_promise final :
       constexpr static void await_suspend(coroutine_handle<>) noexcept
       {}
 
-      const asio::cancellation_state &await_resume() const noexcept
+      asio::cancellation_state await_resume() const noexcept
       {
         return value;
       }
     };
-
-    return exec_helper{cancel.state};
+    assert(cancel);
+    return exec_helper{cancel->state};
   }
+
+  // This await transformation resets the associated cancellation state.
+  auto await_transform(this_coro::reset_cancellation_state_0_t) noexcept
+  {
+    struct result
+    {
+      detail::coro_cancellation_source * src_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const
+      {
+        return src_->reset_cancellation_state();
+      }
+    };
+
+    return result{cancel};
+  }
+
+
+  // This await transformation resets the associated cancellation state.
+  template <typename Filter>
+  auto await_transform(
+          this_coro::reset_cancellation_state_1_t<Filter> reset) noexcept
+  {
+    struct result
+    {
+      detail::coro_cancellation_source* src_;
+      Filter filter_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return src_->reset_cancellation_state(ASIO_MOVE_CAST(Filter)(filter_));
+      }
+    };
+
+    return result{cancel, ASIO_MOVE_CAST(Filter)(reset.filter)};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  template <typename InFilter, typename OutFilter>
+  auto await_transform(
+          this_coro::reset_cancellation_state_2_t<InFilter, OutFilter> reset)
+  noexcept
+  {
+    struct result
+    {
+      detail::coro_cancellation_source* src_;
+      InFilter in_filter_;
+      OutFilter out_filter_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return src_->reset_cancellation_state(
+                ASIO_MOVE_CAST(InFilter)(in_filter_),
+                ASIO_MOVE_CAST(OutFilter)(out_filter_));
+      }
+    };
+
+    return result{cancel,
+                  ASIO_MOVE_CAST(InFilter)(reset.in_filter),
+                  ASIO_MOVE_CAST(OutFilter)(reset.out_filter)};
+  }
+
+  // This await transformation determines whether cancellation is propagated as
+  // an exception.
+  auto await_transform(this_coro::throw_if_cancelled_0_t) noexcept
+     requires (!is_noexcept)
+  {
+    struct result
+    {
+      detail::coro_cancellation_source* src_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return src_->throw_if_cancelled();
+      }
+    };
+
+    return result{cancel};
+  }
+
+  // This await transformation sets whether cancellation is propagated as an
+  // exception.
+  auto await_transform(this_coro::throw_if_cancelled_1_t throw_if_cancelled) noexcept
+    requires (!is_noexcept)
+  {
+    struct result
+    {
+      detail::coro_cancellation_source* src_;
+      bool value_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        src_->throw_if_cancelled(value_);
+      }
+    };
+
+    return result{cancel, throw_if_cancelled.value};
+  }
+
 
   template<typename Yield_, typename Return_, typename Executor_>
   auto await_transform(coro<Yield_, Return_, Executor_> &kr) -> decltype(auto)
@@ -613,10 +793,16 @@ struct coro_promise final :
   template<typename... Ts>
   auto await_transform(coro_init_handler<Executor, Ts...> &&kr) const
   {
+    assert(cancel);
     if constexpr (is_noexcept)
-      return std::move(kr).as_noexcept(cancel.state.slot());
+      return std::move(kr).as_noexcept(cancel->state.slot());
     else
-      return std::move(kr).as_throwing(cancel.state.slot());
+    {
+      if ((cancel->state.cancelled() != cancellation_type::none) && cancel->throw_if_cancelled_)
+        asio::detail::throw_error(asio::error::operation_aborted, "coro-cancelled");
+      return std::move(kr).as_throwing(cancel->state.slot());
+    }
+
   }
 };
 
@@ -630,29 +816,19 @@ struct coro<Yield, Return, Executor>::awaitable_t
   constexpr static bool await_ready() { return false; }
 
   template <typename Y, typename R, typename E>
-  auto await_suspend(
-          detail::coroutine_handle<detail::coro_promise<Y, R, E>> h)
-  -> detail::coroutine_handle<>
+  auto await_suspend(detail::coroutine_handle<detail::coro_promise<Y, R, E>> h) -> detail::coroutine_handle<>
   {
     auto& hp = h.promise();
+    if constexpr (!detail::coro_promise<Y, R, E>::is_noexcept)
+      if ((hp.cancel->state.cancelled() != cancellation_type::none) && hp.cancel->throw_if_cancelled_)
+        asio::detail::throw_error(asio::error::operation_aborted, "coro-cancelled");
+
     if (hp.get_executor() == coro_.get_executor())
     {
-      coro_.coro_->awaited_from = h;
+      coro_.coro_->awaited_from  = h;
+      coro_.coro_->cancel = hp.cancel;
       coro_.coro_->reset_error();
 
-      struct cancel_handler
-      {
-        cancel_handler(coro& coro_) : coro_(coro_.coro_) {}
-
-        typename coro::promise_type* coro_;
-
-        void operator()(cancellation_type ct)
-        {
-          coro_->cancel.signal.emit(ct);
-        }
-      };
-
-      hp.cancel.state.slot().template emplace<cancel_handler>(coro_);
       return coro_.coro_->get_handle();
     }
     else
@@ -663,23 +839,28 @@ struct coro<Yield, Return, Executor>::awaitable_t
 
       struct cancel_handler
       {
-        cancel_handler(E e, coro& coro) : e(e), coro_(coro.coro_) {}
+        using src = std::pair<cancellation_signal, detail::coro_cancellation_source>;
+        std::shared_ptr<src> st = std::make_shared<src>();
+
+        cancel_handler(E e, coro& coro) : e(e), coro_(coro.coro_)
+        {
+          st->second.state = cancellation_state(st->second.slot = st->first.slot());
+        }
 
         E e;
         typename coro::promise_type* coro_;
 
         void operator()(cancellation_type ct)
         {
-          asio::dispatch(e,
-                         [ct, p = coro_]() mutable
+          asio::dispatch(e, [ct, p = coro_, st = st]() mutable
                          {
-                           p->cancel.signal.emit(ct);
+                            auto & [sig, state] = *st;
+                            sig.emit(ct);
                          });
         }
       };
 
-      hp.cancel.state.slot().template emplace<cancel_handler>(
-              coro_.get_executor(), coro_);
+      hp.cancel->state.slot().template emplace<cancel_handler>(coro_.get_executor(), coro_);
 
       return detail::dispatch_coroutine(
               hp.get_executor(), [h]() mutable { h.resume(); });
@@ -688,7 +869,7 @@ struct coro<Yield, Return, Executor>::awaitable_t
 
   auto await_resume() -> result_type
   {
-    coro_.coro_->cancel.state.slot().clear();
+    coro_.coro_->cancel = nullptr;
     coro_.coro_->rethrow_if();
     if constexpr (!std::is_void_v<result_type>)
       return std::move(coro_.coro_->result_);
@@ -713,9 +894,9 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
   template <typename E, typename WaitHandler>
   auto handle(E exec, WaitHandler&& handler,
               std::true_type /* error is noexcept */,
-              std::true_type  /* result is void */) const //noexcept
+              std::true_type  /* result is void */)  //noexcept
   {
-    return [self = self_,
+    return [this, self = self_,
             h = std::forward<WaitHandler>(handler),
             exec = std::move(exec)]() mutable
     {
@@ -736,9 +917,9 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
   requires (!std::is_void_v<result_type>)
   auto handle(E exec, WaitHandler&& handler,
               std::true_type /* error is noexcept */,
-              std::false_type  /* result is void */) const //noexcept
+              std::false_type  /* result is void */)  //noexcept
   {
-    return [self = self_,
+    return [this, self = self_,
             h = std::forward<WaitHandler>(handler),
             exec = std::move(exec)]() mutable
     {
@@ -763,9 +944,9 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
   template <typename E, typename WaitHandler>
   auto handle(E exec, WaitHandler&& handler,
               std::false_type /* error is noexcept */,
-              std::true_type  /* result is void */) const
+              std::true_type  /* result is void */)
   {
-    return [self = self_,
+    return [this, self = self_,
             h = std::forward<WaitHandler>(handler),
             exec = std::move(exec)]() mutable
     {
@@ -815,9 +996,10 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
   template <typename E, typename WaitHandler>
   auto handle(E exec, WaitHandler&& handler,
               std::false_type /* error is noexcept */,
-              std::false_type  /* result is void */) const
+              std::false_type  /* result is void */)
   {
-    return [self = self_, h = std::forward<WaitHandler>(handler),
+    return [this, self = self_,
+            h = std::forward<WaitHandler>(handler),
             exec = std::move(exec)]() mutable
     {
       if (!self)
@@ -864,35 +1046,17 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
     };
   }
 
-  struct cancel_handler
-  {
-    promise_type* coro;
-
-    cancel_handler(promise_type* coro) : coro(coro) {}
-
-    void operator()(cancellation_type ct)
-    {
-      asio::dispatch(coro->get_executor(),
-                     [ct, k = coro] { k->cancel.signal.emit(ct); });
-    }
-  };
-
   template <typename WaitHandler>
-  void operator()(WaitHandler&& handler) const
+  void operator()(WaitHandler&& handler)
   {
     const auto exec =
             asio::prefer(
                     get_associated_executor(handler, get_executor()),
                     execution::outstanding_work.tracked);
 
-    using cancel_t = decltype(self_->coro_->cancel);
-    self_->coro_->cancel.~cancel_t();
-    new(&self_->coro_->cancel) cancel_t();
-
-    auto cancel = get_associated_cancellation_slot(handler);
-    if (cancel.is_connected())
-      cancel.template emplace<cancel_handler>(self_->coro_);
-
+    auto c = self_->coro_;
+    c->cancel = &c->cancel_source.emplace();
+    c->cancel->state = cancellation_state(c->cancel->slot = get_associated_cancellation_slot(handler));
     asio::dispatch(get_executor(),
                    handle(exec, std::forward<WaitHandler>(handler),
                           std::integral_constant<bool, is_noexcept>{},
@@ -900,21 +1064,16 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
   }
 
   template <typename WaitHandler, typename Input>
-  void operator()(WaitHandler&& handler, Input&& input) const
+  void operator()(WaitHandler&& handler, Input&& input)
   {
     const auto exec =
             asio::prefer(
                     get_associated_executor(handler, get_executor()),
                     execution::outstanding_work.tracked);
-    auto cancel = get_associated_cancellation_slot(handler);
 
-    using cancel_t = decltype(self_->coro_->cancel);
-    self_->coro_->cancel.~cancel_t();
-    new(&self_->coro_->cancel) cancel_t();
-
-    if (cancel.is_connected())
-      cancel.template emplace<cancel_handler>(self_->coro_);
-
+    auto c = self_->coro_;
+    c->cancel = &c->cancel_source.emplace();
+    c->cancel->state = cancellation_state(c->cancel->slot = get_associated_cancellation_slot(handler));
     asio::dispatch(get_executor(),
                    [h = handle(exec, std::forward<WaitHandler>(handler),
                                std::integral_constant<bool, is_noexcept>{},

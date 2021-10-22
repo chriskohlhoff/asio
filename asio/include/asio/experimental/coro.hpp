@@ -230,19 +230,27 @@ struct coro
   /// Check whether the coroutine is open, i.e. can be resumed.
   explicit operator bool() const { return is_open(); }
 
-  /// Send a cancel signal to the coroutine.
-  /**
-   * \note There is no guarantee that this actually cancels.
-   * The coroutine might ignore the signal.
-   *
-   * @param ct The canecllation type
-   */
-  void cancel(cancellation_type ct = cancellation_type::all)
-  {
-    if (is_open() && !coro_->cancel.state.cancelled())
-      asio::dispatch(get_executor(),
-          [ct, coro = coro_] { coro->cancel.signal.emit(ct); });
-  }
+// TODO check if cancellation can be done
+//  /// Send a cancel signal to the coroutine.
+//  /**
+//   * \note There is no guarantee that this actually cancels.
+//   * The coroutine might ignore the signal.
+//   *
+//   * @param ct The canecllation type
+//   */
+//  void cancel(cancellation_type ct = cancellation_type::all)
+//  {
+//    if (is_open() && coro_->cancel && !coro_->cancel->state.cancelled())
+//      asio::dispatch(get_executor(),
+//          [ct, coro = coro_]
+//          {
+//            if (coro)
+//            {
+//
+//              coro->cancel->state.force_emit(ct);
+//            }
+//          });
+//  }
 
 private:
   struct awaitable_t;
