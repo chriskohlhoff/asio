@@ -178,8 +178,8 @@ struct coro_with_arg
       else
       {
         coro.coro_->awaited_from =
-                dispatch_coroutine(hp.get_executor(), [h]() mutable
-                { h.resume(); });
+                dispatch_coroutine(asio::prefer(hp.get_executor(), execution::outstanding_work.tracked),
+                [h]() mutable { h.resume(); });
         coro.coro_->reset_error();
         coro.coro_->input_ = std::move(value);
 
@@ -206,11 +206,12 @@ struct coro_with_arg
           }
         };
 
-        hp.cancel->state.slot().template emplace<cancel_handler>(
-                coro.get_executor(), coro);
+        if (hp.cancel->state.slot().is_connected())
+          hp.cancel->state.slot().template emplace<cancel_handler>(coro.get_executor(), coro);
 
+        auto hh = detail::coroutine_handle<detail::coro_promise<Y, R, E>>::from_promise(*coro.coro_);
         return dispatch_coroutine(
-                hp.get_executor(), [h]() mutable { h.resume(); });
+                coro.coro_->get_executor(), [hh]() mutable { hh.resume(); });
       }
 
     }
@@ -834,7 +835,11 @@ struct coro<Yield, Return, Executor>::awaitable_t
     else
     {
       coro_.coro_->awaited_from = detail::dispatch_coroutine(
-              hp.get_executor(), [h]() mutable { h.resume(); });
+              asio::prefer(hp.get_executor(), execution::outstanding_work.tracked),
+              [h]() mutable
+              {
+                h.resume();
+              });
       coro_.coro_->reset_error();
 
       struct cancel_handler
@@ -859,11 +864,12 @@ struct coro<Yield, Return, Executor>::awaitable_t
                          });
         }
       };
+      if (hp.cancel->state.slot().is_connected())
+        hp.cancel->state.slot().template emplace<cancel_handler>(coro_.get_executor(), coro_);
 
-      hp.cancel->state.slot().template emplace<cancel_handler>(coro_.get_executor(), coro_);
-
+      auto hh = detail::coroutine_handle<detail::coro_promise<Yield, Return, Executor>>::from_promise(*coro_.coro_);
       return detail::dispatch_coroutine(
-              hp.get_executor(), [h]() mutable { h.resume(); });
+              coro_.coro_->get_executor(), [hh]() mutable { hh.resume(); });
     }
   }
 

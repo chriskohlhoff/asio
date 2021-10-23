@@ -186,6 +186,7 @@ if HAVE_COROUTINES
 check_PROGRAMS += \
 	unit/experimental/awaitable_operators \
 	unit/experimental/coro/cancel \
+	unit/experimental/coro/executor \
 	unit/experimental/coro/exception \
 	unit/experimental/coro/partial \
 	unit/experimental/coro/simple_test \
@@ -560,6 +561,7 @@ if HAVE_COROUTINES
 unit_experimental_awaitable_operators_SOURCES = unit/experimental/awaitable_operators.cpp
 unit_experimental_coro_cancel_SOURCES = unit/experimental/coro/cancel.cpp
 unit_experimental_coro_exception_SOURCES = unit/experimental/coro/exception.cpp
+unit_experimental_coro_executor_SOURCES = unit/experimental/coro/executor.cpp
 unit_experimental_coro_partial_SOURCES = unit/experimental/coro/partial.cpp
 unit_experimental_coro_simple_test_SOURCES = unit/experimental/coro/simple_test.cpp
 unit_experimental_coro_stack_test_SOURCES = unit/experimental/coro/stack_test.cpp
