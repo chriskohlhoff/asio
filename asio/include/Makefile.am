@@ -9,7 +9,9 @@ nobase_include_HEADERS = \
 	asio/awaitable.hpp \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
+	asio/basic_file.hpp \
 	asio/basic_io_object.hpp \
+	asio/basic_random_access_file.hpp \
 	asio/basic_raw_socket.hpp \
 	asio/basic_seq_packet_socket.hpp \
 	asio/basic_serial_port.hpp \
@@ -20,6 +22,7 @@ nobase_include_HEADERS = \
 	asio/basic_socket_streambuf.hpp \
 	asio/basic_streambuf_fwd.hpp \
 	asio/basic_streambuf.hpp \
+	asio/basic_stream_file.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/basic_waitable_timer.hpp \
 	asio/bind_cancellation_slot.hpp \
@@ -103,6 +106,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
 	asio/detail/impl/handler_tracking.ipp \
 	asio/detail/impl/io_uring_descriptor_service.ipp \
+	asio/detail/impl/io_uring_file_service.ipp \
 	asio/detail/impl/io_uring_service.hpp \
 	asio/detail/impl/io_uring_service.ipp \
 	asio/detail/impl/io_uring_socket_service_base.ipp \
@@ -135,6 +139,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/timer_queue_ptime.ipp \
 	asio/detail/impl/timer_queue_set.ipp \
 	asio/detail/impl/win_event.ipp \
+	asio/detail/impl/win_iocp_file_service.ipp \
 	asio/detail/impl/win_iocp_handle_service.ipp \
 	asio/detail/impl/win_iocp_io_context.hpp \
 	asio/detail/impl/win_iocp_io_context.ipp \
@@ -151,9 +156,12 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_tss_ptr.ipp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
+	asio/detail/io_uring_descriptor_read_at_op.hpp \
 	asio/detail/io_uring_descriptor_read_op.hpp \
 	asio/detail/io_uring_descriptor_service.hpp \
+	asio/detail/io_uring_descriptor_write_at_op.hpp \
 	asio/detail/io_uring_descriptor_write_op.hpp \
+	asio/detail/io_uring_file_service.hpp \
 	asio/detail/io_uring_null_buffers_op.hpp \
 	asio/detail/io_uring_operation.hpp \
 	asio/detail/io_uring_service.hpp \
@@ -280,6 +288,7 @@ nobase_include_HEADERS = \
 	asio/detail/win_fd_set_adapter.hpp \
 	asio/detail/win_fenced_block.hpp \
 	asio/detail/win_global.hpp \
+	asio/detail/win_iocp_file_service.hpp \
 	asio/detail/win_iocp_handle_read_op.hpp \
 	asio/detail/win_iocp_handle_service.hpp \
 	asio/detail/win_iocp_handle_write_op.hpp \
@@ -384,6 +393,7 @@ nobase_include_HEADERS = \
 	asio/experimental/prepend.hpp \
 	asio/experimental/promise.hpp \
 	asio/experimental/use_coro.hpp \
+	asio/file_base.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \
@@ -500,6 +510,7 @@ nobase_include_HEADERS = \
 	asio/post.hpp \
 	asio/prefer.hpp \
 	asio/query.hpp \
+	asio/random_access_file.hpp \
 	asio/read_at.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
@@ -545,6 +556,7 @@ nobase_include_HEADERS = \
 	asio/steady_timer.hpp \
 	asio/strand.hpp \
 	asio/streambuf.hpp \
+	asio/stream_file.hpp \
 	asio/system_context.hpp \
 	asio/system_error.hpp \
 	asio/system_executor.hpp \

@@ -568,6 +568,7 @@ sub copy_examples
       "src/examples/cpp11/echo",
       "src/examples/cpp11/executors",
       "src/examples/cpp11/fork",
+      "src/examples/cpp11/files",
       "src/examples/cpp11/futures",
       "src/examples/cpp11/handler_tracking",
       "src/examples/cpp11/http/server",

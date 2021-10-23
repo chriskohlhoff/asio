@@ -1595,6 +1595,17 @@
 # endif // !defined(ASIO_DISABLE_LOCAL_SOCKETS)
 #endif // !defined(ASIO_HAS_LOCAL_SOCKETS)
 
+// Files.
+#if !defined(ASIO_HAS_FILE)
+# if !defined(ASIO_DISABLE_FILE)
+#  if defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)
+#   define ASIO_HAS_FILE 1
+#  elif defined(ASIO_HAS_IO_URING)
+#   define ASIO_HAS_FILE 1
+#  endif // defined(ASIO_HAS_IO_URING)
+# endif // !defined(ASIO_DISABLE_FILE)
+#endif // !defined(ASIO_HAS_FILE)
+
 // Can use sigaction() instead of signal().
 #if !defined(ASIO_HAS_SIGACTION)
 # if !defined(ASIO_DISABLE_SIGACTION)

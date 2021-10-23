@@ -15,12 +15,15 @@ async_result
 awaitable
 basic_datagram_socket
 basic_deadline_timer
+basic_file
+basic_random_access_file
 basic_raw_socket
 basic_seq_packet_socket
 basic_serial_port
 basic_signal_set
 basic_socket
 basic_socket_acceptor
+basic_stream_file
 basic_stream_socket
 basic_streambuf
 basic_waitable_timer
@@ -48,6 +51,7 @@ error_handler
 execution_context
 executor
 executor_work_guard
+file_base
 high_resolution_timer
 io_context
 io_context_strand
@@ -57,6 +61,7 @@ is_write_buffered
 packaged_task
 placeholders
 post
+random_access_file
 read
 read_at
 read_until
@@ -69,6 +74,7 @@ static_thread_pool
 steady_timer
 strand
 streambuf
+stream_file
 system_context
 system_executor
 system_timer

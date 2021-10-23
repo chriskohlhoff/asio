@@ -123,12 +123,15 @@ UNIT_TEST_EXES = \
 	tests\unit\awaitable.exe \
 	tests\unit\basic_datagram_socket.exe \
 	tests\unit\basic_deadline_timer.exe \
+	tests\unit\basic_file.exe \
+	tests\unit\basic_random_access_file.exe \
 	tests\unit\basic_raw_socket.exe \
 	tests\unit\basic_seq_packet_socket.exe \
 	tests\unit\basic_serial_port.exe \
 	tests\unit\basic_signal_set.exe \
 	tests\unit\basic_socket.exe \
 	tests\unit\basic_socket_acceptor.exe \
+	tests\unit\basic_stream_file.exe \
 	tests\unit\basic_stream_socket.exe \
 	tests\unit\basic_streambuf.exe \
 	tests\unit\basic_waitable_timer.exe \
@@ -179,6 +182,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\submit.exe \
 	tests\unit\executor.exe \
 	tests\unit\executor_work_guard.exe \
+	tests\unit\file_base.exe \
 	tests\unit\generic\basic_endpoint.exe \
 	tests\unit\generic\datagram_protocol.exe \
 	tests\unit\generic\raw_protocol.exe \
@@ -218,6 +222,7 @@ UNIT_TEST_EXES = \
 	tests\unit\packaged_task.exe \
 	tests\unit\placeholders.exe \
 	tests\unit\post.exe \
+	tests\unit\random_access_file.exe \
 	tests\unit\read.exe \
 	tests\unit\read_at.exe \
 	tests\unit\read_until.exe \
@@ -229,6 +234,7 @@ UNIT_TEST_EXES = \
 	tests\unit\static_thread_pool.exe \
 	tests\unit\steady_timer.exe \
 	tests\unit\strand.exe \
+	tests\unit\stream_file.exe \
 	tests\unit\streambuf.exe \
 	tests\unit\system_context.exe \
 	tests\unit\system_executor.exe \

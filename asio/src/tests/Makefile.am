@@ -20,12 +20,15 @@ check_PROGRAMS = \
 	unit/awaitable \
 	unit/basic_datagram_socket \
 	unit/basic_deadline_timer \
+	unit/basic_file \
+	unit/basic_random_access_file \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
 	unit/basic_serial_port \
 	unit/basic_signal_set \
 	unit/basic_socket \
 	unit/basic_socket_acceptor \
+	unit/basic_stream_file \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
 	unit/basic_waitable_timer \
@@ -76,6 +79,7 @@ check_PROGRAMS = \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
+	unit/file_base \
 	unit/generic/basic_endpoint \
 	unit/generic/datagram_protocol \
 	unit/generic/raw_protocol \
@@ -120,6 +124,7 @@ check_PROGRAMS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+	unit/random_access_file \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
@@ -131,6 +136,7 @@ check_PROGRAMS = \
 	unit/static_thread_pool \
 	unit/steady_timer \
 	unit/strand \
+	unit/stream_file \
 	unit/streambuf \
 	unit/system_context \
 	unit/system_executor \
@@ -214,12 +220,15 @@ TESTS = \
 	unit/awaitable \
 	unit/basic_datagram_socket \
 	unit/basic_deadline_timer \
+	unit/basic_file \
+	unit/basic_random_access_file \
 	unit/basic_raw_socket \
 	unit/basic_seq_packet_socket \
 	unit/basic_serial_port \
 	unit/basic_signal_set \
 	unit/basic_socket \
 	unit/basic_socket_acceptor \
+	unit/basic_stream_file \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
 	unit/basic_waitable_timer \
@@ -269,6 +278,7 @@ TESTS = \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
+	unit/file_base \
 	unit/high_resolution_timer \
 	unit/io_context \
 	unit/io_context_strand \
@@ -308,6 +318,7 @@ TESTS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+	unit/random_access_file \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
@@ -319,6 +330,7 @@ TESTS = \
 	unit/static_thread_pool \
 	unit/steady_timer \
 	unit/strand \
+	unit/stream_file \
 	unit/streambuf \
 	unit/system_context \
 	unit/system_executor \
@@ -406,12 +418,15 @@ unit_async_result_SOURCES = unit/async_result.cpp
 unit_awaitable_SOURCES = unit/awaitable.cpp
 unit_basic_datagram_socket_SOURCES = unit/basic_datagram_socket.cpp
 unit_basic_deadline_timer_SOURCES = unit/basic_deadline_timer.cpp
+unit_basic_file_SOURCES = unit/basic_file.cpp
+unit_basic_random_access_file_SOURCES = unit/basic_random_access_file.cpp
 unit_basic_raw_socket_SOURCES = unit/basic_raw_socket.cpp
 unit_basic_seq_packet_socket_SOURCES = unit/basic_seq_packet_socket.cpp
 unit_basic_serial_port_SOURCES = unit/basic_serial_port.cpp
 unit_basic_signal_set_SOURCES = unit/basic_signal_set.cpp
 unit_basic_socket_SOURCES = unit/basic_socket.cpp
 unit_basic_socket_acceptor_SOURCES = unit/basic_socket_acceptor.cpp
+unit_basic_stream_file_SOURCES = unit/basic_stream_file.cpp
 unit_basic_stream_socket_SOURCES = unit/basic_stream_socket.cpp
 unit_basic_streambuf_SOURCES = unit/basic_streambuf.cpp
 unit_basic_waitable_timer_SOURCES = unit/basic_waitable_timer.cpp
@@ -462,6 +477,7 @@ unit_execution_submit_SOURCES = unit/execution/submit.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp
 unit_executor_work_guard_SOURCES = unit/executor_work_guard.cpp
+unit_file_base_SOURCES = unit/file_base.cpp
 unit_generic_basic_endpoint_SOURCES = unit/generic/basic_endpoint.cpp
 unit_generic_datagram_protocol_SOURCES = unit/generic/datagram_protocol.cpp
 unit_generic_raw_protocol_SOURCES = unit/generic/raw_protocol.cpp
@@ -506,6 +522,7 @@ unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
 unit_post_SOURCES = unit/post.cpp
+unit_random_access_file_SOURCES = unit/random_access_file.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
@@ -517,6 +534,7 @@ unit_socket_base_SOURCES = unit/socket_base.cpp
 unit_static_thread_pool_SOURCES = unit/static_thread_pool.cpp
 unit_steady_timer_SOURCES = unit/steady_timer.cpp
 unit_strand_SOURCES = unit/strand.cpp
+unit_stream_file_SOURCES = unit/stream_file.cpp
 unit_streambuf_SOURCES = unit/streambuf.cpp
 unit_system_context_SOURCES = unit/system_context.cpp
 unit_system_executor_SOURCES = unit/system_executor.cpp

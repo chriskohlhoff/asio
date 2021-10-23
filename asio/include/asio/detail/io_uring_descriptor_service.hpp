@@ -25,7 +25,9 @@
 #include "asio/execution_context.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
 #include "asio/detail/descriptor_ops.hpp"
+#include "asio/detail/io_uring_descriptor_read_at_op.hpp"
 #include "asio/detail/io_uring_descriptor_read_op.hpp"
+#include "asio/detail/io_uring_descriptor_write_at_op.hpp"
 #include "asio/detail/io_uring_descriptor_write_op.hpp"
 #include "asio/detail/io_uring_null_buffers_op.hpp"
 #include "asio/detail/io_uring_service.hpp"
@@ -346,6 +348,82 @@ public:
     p.v = p.p = 0;
   }
 
+  // Write some data to the descriptor at the specified offset.
+  template <typename ConstBufferSequence>
+  size_t write_some_at(implementation_type& impl, uint64_t offset,
+      const ConstBufferSequence& buffers, asio::error_code& ec)
+  {
+    typedef buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence> bufs_type;
+
+    if (bufs_type::is_single_buffer)
+    {
+      return descriptor_ops::sync_write_at1(impl.descriptor_,
+          offset, impl.state_, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+
+      return descriptor_ops::sync_write_at(impl.descriptor_, impl.state_,
+          offset, bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
+    }
+  }
+
+  // Wait until data can be written without blocking.
+  size_t write_some_at(implementation_type& impl, uint64_t,
+      const null_buffers& buffers, asio::error_code& ec)
+  {
+    return write_some(impl, buffers, ec);
+  }
+
+  // Start an asynchronous write at the specified offset. The data being sent
+  // must be valid for the lifetime of the asynchronous operation.
+  template <typename ConstBufferSequence, typename Handler, typename IoExecutor>
+  void async_write_some_at(implementation_type& impl, uint64_t offset,
+      const ConstBufferSequence& buffers, Handler& handler,
+      const IoExecutor& io_ex)
+  {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
+    typename associated_cancellation_slot<Handler>::type slot
+      = asio::get_associated_cancellation_slot(handler);
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef io_uring_descriptor_write_at_op<
+      ConstBufferSequence, Handler, IoExecutor> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(success_ec_, impl.descriptor_,
+        impl.state_, offset, buffers, handler, io_ex);
+
+    // Optionally register for per-operation cancellation.
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<io_uring_op_cancellation>(&io_uring_service_,
+            &impl.io_object_data_, io_uring_service::write_op);
+    }
+
+    ASIO_HANDLER_CREATION((io_uring_service_.context(), *p.p,
+          "descriptor", &impl, impl.descriptor_, "async_write_some"));
+
+    start_op(impl, io_uring_service::write_op, p.p, is_continuation,
+        buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence>::all_empty(buffers));
+    p.v = p.p = 0;
+  }
+
+  // Start an asynchronous wait until data can be written without blocking.
+  template <typename Handler, typename IoExecutor>
+  void async_write_some_at(implementation_type& impl,
+      const null_buffers& buffers, Handler& handler, const IoExecutor& io_ex)
+  {
+    return async_write_some(impl, buffers, handler, io_ex);
+  }
+
   // Read some data from the stream. Returns the number of bytes read.
   template <typename MutableBufferSequence>
   size_t read_some(implementation_type& impl,
@@ -449,6 +527,83 @@ public:
 
     start_op(impl, io_uring_service::read_op, p.p, is_continuation, false);
     p.v = p.p = 0;
+  }
+
+  // Read some data at the specified offset. Returns the number of bytes read.
+  template <typename MutableBufferSequence>
+  size_t read_some_at(implementation_type& impl, uint64_t offset,
+      const MutableBufferSequence& buffers, asio::error_code& ec)
+  {
+    typedef buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence> bufs_type;
+
+    if (bufs_type::is_single_buffer)
+    {
+      return descriptor_ops::sync_read_at1(impl.descriptor_,
+          impl.state_, offset, bufs_type::first(buffers).data(),
+          bufs_type::first(buffers).size(), ec);
+    }
+    else
+    {
+      bufs_type bufs(buffers);
+
+      return descriptor_ops::sync_read_at(impl.descriptor_, impl.state_,
+          offset, bufs.buffers(), bufs.count(), bufs.all_empty(), ec);
+    }
+  }
+
+  // Wait until data can be read without blocking.
+  size_t read_some_at(implementation_type& impl, uint64_t,
+      const null_buffers& buffers, asio::error_code& ec)
+  {
+    return read_some(impl, buffers, ec);
+  }
+
+  // Start an asynchronous read. The buffer for the data being read must be
+  // valid for the lifetime of the asynchronous operation.
+  template <typename MutableBufferSequence,
+      typename Handler, typename IoExecutor>
+  void async_read_some_at(implementation_type& impl,
+      uint64_t offset, const MutableBufferSequence& buffers,
+      Handler& handler, const IoExecutor& io_ex)
+  {
+    bool is_continuation =
+      asio_handler_cont_helpers::is_continuation(handler);
+
+    typename associated_cancellation_slot<Handler>::type slot
+      = asio::get_associated_cancellation_slot(handler);
+
+    // Allocate and construct an operation to wrap the handler.
+    typedef io_uring_descriptor_read_at_op<
+      MutableBufferSequence, Handler, IoExecutor> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(success_ec_, impl.descriptor_,
+        impl.state_, offset, buffers, handler, io_ex);
+
+    // Optionally register for per-operation cancellation.
+    if (slot.is_connected())
+    {
+      p.p->cancellation_key_ =
+        &slot.template emplace<io_uring_op_cancellation>(&io_uring_service_,
+            &impl.io_object_data_, io_uring_service::read_op);
+    }
+
+    ASIO_HANDLER_CREATION((io_uring_service_.context(), *p.p,
+          "descriptor", &impl, impl.descriptor_, "async_read_some"));
+
+    start_op(impl, io_uring_service::read_op, p.p, is_continuation,
+        buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence>::all_empty(buffers));
+    p.v = p.p = 0;
+  }
+
+  // Wait until data can be read without blocking.
+  template <typename Handler, typename IoExecutor>
+  void async_read_some_at(implementation_type& impl, uint64_t,
+      const null_buffers& buffers, Handler& handler, const IoExecutor& io_ex)
+  {
+    return async_read_some(impl, buffers, handler, io_ex);
   }
 
 private:
