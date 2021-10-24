@@ -24,6 +24,7 @@
 #include "asio/basic_socket.hpp"
 #include "asio/basic_stream_socket.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/io_context.hpp"
 
@@ -83,28 +84,7 @@ protected:
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
-  socket_streambuf_io_context(socket_streambuf_io_context&& other)
-    : default_io_context_(other.default_io_context_)
-  {
-    other.default_io_context_ = 0;
-  }
-
-  socket_streambuf_io_context& operator=(socket_streambuf_io_context&& other)
-  {
-    delete default_io_context_;
-    default_io_context_ = other.default_io_context_;
-    other.default_io_context_ = 0;
-    return *this;
-  }
-#endif // defined(ASIO_HAS_MOVE)
-
-  io_context* default_io_context_;
-
-private:
-  // Disallow copying and assignment.
-  socket_streambuf_io_context(const socket_streambuf_io_context&);
-  socket_streambuf_io_context& operator=(const socket_streambuf_io_context&);
+  shared_ptr<io_context> default_io_context_;
 };
 
 // A separate base class is used to ensure that the dynamically allocated
@@ -248,7 +228,7 @@ public:
   {
     this->close();
     socket() = std::move(other.socket());
-    detail::socket_streambuf_io_context::operator=(std::move(other));
+    detail::socket_streambuf_io_context::operator=(other);
     ec_ = other.ec_;
     expiry_time_ = other.expiry_time_;
     get_buffer_.swap(other.get_buffer_);
