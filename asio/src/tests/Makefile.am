@@ -51,6 +51,7 @@ check_PROGRAMS = \
 	unit/connect \
 	unit/connect_pipe \
 	unit/coroutine \
+	unit/cstring_view \
 	unit/deadline_timer \
 	unit/defer \
 	unit/detached \
@@ -485,6 +486,7 @@ unit_compose_SOURCES = unit/compose.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
+unit_cstring_view_SOURCES = unit/cstring_view.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
 unit_detached_SOURCES = unit/detached.cpp
