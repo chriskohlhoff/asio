@@ -1995,4 +1995,10 @@
 # endif // !defined(ASIO_DISABLE_STD_HASH)
 #endif // !defined(ASIO_HAS_STD_HASH)
 
+#if !defined(ASIO_HAS_CHAR8_T)
+# if (__cplusplus >= 202002)
+#  define ASIO_HAS_CHAR8_T 1
+# endif
+#endif
+
 #endif // ASIO_DETAIL_CONFIG_HPP
