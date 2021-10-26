@@ -706,7 +706,7 @@
     <thead>
       <row>
         <entry valign="center" namest="a" nameend="a">
-          <bridgehead renderas="sect2">Files</bridgehead>
+          <bridgehead renderas="sect2">Files and Pipes</bridgehead>
         </entry>
         <entry valign="center" namest="b" nameend="c">
           <bridgehead renderas="sect2">POSIX-specific</bridgehead>
@@ -723,13 +723,21 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.basic_file">basic_file</link></member>
             <member><link linkend="asio.reference.basic_random_access_file">basic_random_access_file</link></member>
+            <member><link linkend="asio.reference.basic_readable_pipe">basic_readable_pipe</link></member>
             <member><link linkend="asio.reference.basic_stream_file">basic_stream_file</link></member>
+            <member><link linkend="asio.reference.basic_writable_pipe">basic_writable_pipe</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.file_base">file_base</link></member>
             <member><link linkend="asio.reference.random_access_file">random_access_file</link></member>
+            <member><link linkend="asio.reference.readable_pipe">readable_pipe</link></member>
             <member><link linkend="asio.reference.stream_file">stream_file</link></member>
+            <member><link linkend="asio.reference.writable_pipe">writable_pipe</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Free Functions</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.connect_pipe">connect_pipe</link></member>
           </simplelist>
         </entry>
         <entry valign="top">

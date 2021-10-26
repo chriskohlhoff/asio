@@ -1606,6 +1606,23 @@
 # endif // !defined(ASIO_DISABLE_FILE)
 #endif // !defined(ASIO_HAS_FILE)
 
+// Pipes.
+#if !defined(ASIO_HAS_PIPE)
+# if defined(ASIO_HAS_IOCP) \
+  || !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_WINDOWS_RUNTIME) \
+  && !defined(__CYGWIN__)
+#  if !defined(__SYMBIAN32__)
+#   if !defined(ASIO_DISABLE_PIPE)
+#    define ASIO_HAS_PIPE 1
+#   endif // !defined(ASIO_DISABLE_PIPE)
+#  endif // !defined(__SYMBIAN32__)
+# endif // defined(ASIO_HAS_IOCP)
+        //   || !defined(ASIO_WINDOWS)
+        //   && !defined(ASIO_WINDOWS_RUNTIME)
+        //   && !defined(__CYGWIN__)
+#endif // !defined(ASIO_HAS_PIPE)
+
 // Can use sigaction() instead of signal().
 #if !defined(ASIO_HAS_SIGACTION)
 # if !defined(ASIO_DISABLE_SIGACTION)

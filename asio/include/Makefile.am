@@ -13,6 +13,7 @@ nobase_include_HEADERS = \
 	asio/basic_io_object.hpp \
 	asio/basic_random_access_file.hpp \
 	asio/basic_raw_socket.hpp \
+	asio/basic_readable_pipe.hpp \
 	asio/basic_seq_packet_socket.hpp \
 	asio/basic_serial_port.hpp \
 	asio/basic_signal_set.hpp \
@@ -25,6 +26,7 @@ nobase_include_HEADERS = \
 	asio/basic_stream_file.hpp \
 	asio/basic_stream_socket.hpp \
 	asio/basic_waitable_timer.hpp \
+	asio/basic_writable_pipe.hpp \
 	asio/bind_cancellation_slot.hpp \
 	asio/bind_executor.hpp \
 	asio/buffered_read_stream_fwd.hpp \
@@ -42,6 +44,7 @@ nobase_include_HEADERS = \
 	asio/completion_condition.hpp \
 	asio/compose.hpp \
 	asio/connect.hpp \
+	asio/connect_pipe.hpp \
 	asio/coroutine.hpp \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \
@@ -414,6 +417,8 @@ nobase_include_HEADERS = \
 	asio/impl/co_spawn.hpp \
 	asio/impl/compose.hpp \
 	asio/impl/connect.hpp \
+	asio/impl/connect_pipe.hpp \
+	asio/impl/connect_pipe.ipp \
 	asio/impl/defer.hpp \
 	asio/impl/detached.hpp \
 	asio/impl/dispatch.hpp \
@@ -514,6 +519,7 @@ nobase_include_HEADERS = \
 	asio/read_at.hpp \
 	asio/read.hpp \
 	asio/read_until.hpp \
+	asio/readable_pipe.hpp \
 	asio/redirect_error.hpp \
 	asio/require.hpp \
 	asio/require_concept.hpp \
@@ -619,6 +625,7 @@ nobase_include_HEADERS = \
 	asio/windows/overlapped_ptr.hpp \
 	asio/windows/random_access_handle.hpp \
 	asio/windows/stream_handle.hpp \
+	asio/writable_pipe.hpp \
 	asio/write_at.hpp \
 	asio/write.hpp \
 	asio/yield.hpp

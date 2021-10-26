@@ -18,6 +18,7 @@ basic_deadline_timer
 basic_file
 basic_random_access_file
 basic_raw_socket
+basic_readable_pipe
 basic_seq_packet_socket
 basic_serial_port
 basic_signal_set
@@ -27,6 +28,7 @@ basic_stream_file
 basic_stream_socket
 basic_streambuf
 basic_waitable_timer
+basic_writable_pipe
 bind_cancellation_slot
 bind_executor
 buffer
@@ -41,6 +43,7 @@ co_spawn
 completion_condition
 compose
 connect
+connect_pipe
 coroutine
 deadline_timer
 defer
@@ -65,6 +68,7 @@ random_access_file
 read
 read_at
 read_until
+readable_pipe
 redirect_error
 serial_port
 serial_port_base
@@ -86,5 +90,6 @@ use_awaitable
 use_future
 uses_executor
 wait_traits
+writable_pipe
 write
 write_at

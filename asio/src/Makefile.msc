@@ -126,6 +126,7 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_file.exe \
 	tests\unit\basic_random_access_file.exe \
 	tests\unit\basic_raw_socket.exe \
+	tests\unit\basic_readable_pipe.exe \
 	tests\unit\basic_seq_packet_socket.exe \
 	tests\unit\basic_serial_port.exe \
 	tests\unit\basic_signal_set.exe \
@@ -135,6 +136,7 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_stream_socket.exe \
 	tests\unit\basic_streambuf.exe \
 	tests\unit\basic_waitable_timer.exe \
+	tests\unit\basic_writable_pipe.exe \
 	tests\unit\bind_cancellation_slot.exe \
 	tests\unit\bind_executor.exe \
 	tests\unit\buffered_read_stream.exe \
@@ -149,6 +151,7 @@ UNIT_TEST_EXES = \
 	tests\unit\completion_condition.exe \
 	tests\unit\compose.exe \
 	tests\unit\connect.exe \
+	tests\unit\connect_pipe.exe \
 	tests\unit\coroutine.exe \
 	tests\unit\deadline_timer.exe \
 	tests\unit\defer.exe \
@@ -226,6 +229,7 @@ UNIT_TEST_EXES = \
 	tests\unit\read.exe \
 	tests\unit\read_at.exe \
 	tests\unit\read_until.exe \
+	tests\unit\readable_pipe.exe \
 	tests\unit\redirect_error.exe \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
@@ -264,6 +268,7 @@ UNIT_TEST_EXES = \
 	tests\unit\windows\overlapped_ptr.exe \
 	tests\unit\windows\random_access_handle.exe \
 	tests\unit\windows\stream_handle.exe \
+	tests\unit\writable_pipe.exe \
 	tests\unit\write.exe \
 	tests\unit\write_at.exe
 

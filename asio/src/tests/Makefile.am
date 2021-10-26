@@ -23,6 +23,7 @@ check_PROGRAMS = \
 	unit/basic_file \
 	unit/basic_random_access_file \
 	unit/basic_raw_socket \
+	unit/basic_readable_pipe \
 	unit/basic_seq_packet_socket \
 	unit/basic_serial_port \
 	unit/basic_signal_set \
@@ -32,6 +33,7 @@ check_PROGRAMS = \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
 	unit/basic_waitable_timer \
+	unit/basic_writable_pipe \
 	unit/bind_cancellation_slot \
 	unit/bind_executor \
 	unit/buffered_read_stream \
@@ -46,6 +48,7 @@ check_PROGRAMS = \
 	unit/completion_condition \
 	unit/compose \
 	unit/connect \
+	unit/connect_pipe \
 	unit/coroutine \
 	unit/deadline_timer \
 	unit/defer \
@@ -128,6 +131,7 @@ check_PROGRAMS = \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
+	unit/readable_pipe \
 	unit/redirect_error \
 	unit/serial_port \
 	unit/serial_port_base \
@@ -166,6 +170,7 @@ check_PROGRAMS = \
 	unit/windows/overlapped_ptr \
 	unit/windows/random_access_handle \
 	unit/windows/stream_handle \
+	unit/writable_pipe \
 	unit/write \
 	unit/write_at
 
@@ -223,6 +228,7 @@ TESTS = \
 	unit/basic_file \
 	unit/basic_random_access_file \
 	unit/basic_raw_socket \
+	unit/basic_readable_pipe \
 	unit/basic_seq_packet_socket \
 	unit/basic_serial_port \
 	unit/basic_signal_set \
@@ -232,6 +238,7 @@ TESTS = \
 	unit/basic_stream_socket \
 	unit/basic_streambuf \
 	unit/basic_waitable_timer \
+	unit/basic_writable_pipe \
 	unit/bind_cancellation_slot \
 	unit/bind_executor \
 	unit/buffered_read_stream \
@@ -246,6 +253,7 @@ TESTS = \
 	unit/completion_condition \
 	unit/compose \
 	unit/connect \
+	unit/connect_pipe \
 	unit/deadline_timer \
 	unit/defer \
 	unit/detached \
@@ -322,6 +330,7 @@ TESTS = \
 	unit/read \
 	unit/read_at \
 	unit/read_until \
+	unit/readable_pipe \
 	unit/redirect_error \
 	unit/serial_port \
 	unit/serial_port_base \
@@ -360,6 +369,7 @@ TESTS = \
 	unit/windows/overlapped_ptr \
 	unit/windows/random_access_handle \
 	unit/windows/stream_handle \
+	unit/writable_pipe \
 	unit/write \
 	unit/write_at
 
@@ -421,6 +431,7 @@ unit_basic_deadline_timer_SOURCES = unit/basic_deadline_timer.cpp
 unit_basic_file_SOURCES = unit/basic_file.cpp
 unit_basic_random_access_file_SOURCES = unit/basic_random_access_file.cpp
 unit_basic_raw_socket_SOURCES = unit/basic_raw_socket.cpp
+unit_basic_readable_pipe_SOURCES = unit/basic_readable_pipe.cpp
 unit_basic_seq_packet_socket_SOURCES = unit/basic_seq_packet_socket.cpp
 unit_basic_serial_port_SOURCES = unit/basic_serial_port.cpp
 unit_basic_signal_set_SOURCES = unit/basic_signal_set.cpp
@@ -430,6 +441,7 @@ unit_basic_stream_file_SOURCES = unit/basic_stream_file.cpp
 unit_basic_stream_socket_SOURCES = unit/basic_stream_socket.cpp
 unit_basic_streambuf_SOURCES = unit/basic_streambuf.cpp
 unit_basic_waitable_timer_SOURCES = unit/basic_waitable_timer.cpp
+unit_basic_writable_pipe_SOURCES = unit/basic_writable_pipe.cpp
 unit_bind_cancellation_slot_SOURCES = unit/bind_cancellation_slot.cpp
 unit_bind_executor_SOURCES = unit/bind_executor.cpp
 unit_buffer_SOURCES = unit/buffer.cpp
@@ -444,6 +456,7 @@ unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp
 unit_connect_SOURCES = unit/connect.cpp
+unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
@@ -526,6 +539,7 @@ unit_random_access_file_SOURCES = unit/random_access_file.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
+unit_readable_pipe_SOURCES = unit/readable_pipe.cpp
 unit_redirect_error_SOURCES = unit/redirect_error.cpp
 unit_serial_port_SOURCES = unit/serial_port.cpp
 unit_serial_port_base_SOURCES = unit/serial_port_base.cpp
@@ -564,6 +578,7 @@ unit_windows_overlapped_handle_SOURCES = unit/windows/overlapped_handle.cpp
 unit_windows_overlapped_ptr_SOURCES = unit/windows/overlapped_ptr.cpp
 unit_windows_random_access_handle_SOURCES = unit/windows/random_access_handle.cpp
 unit_windows_stream_handle_SOURCES = unit/windows/stream_handle.cpp
+unit_writable_pipe_SOURCES = unit/writable_pipe.cpp
 unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
 
