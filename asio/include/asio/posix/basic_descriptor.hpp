@@ -30,11 +30,11 @@
 #include "asio/execution_context.hpp"
 #include "asio/posix/descriptor_base.hpp"
 
-#if defined(ASIO_HAS_IO_URING)
+#if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 # include "asio/detail/io_uring_descriptor_service.hpp"
-#else // defined(ASIO_HAS_IO_URING)
+#else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 # include "asio/detail/reactive_descriptor_service.hpp"
-#endif // defined(ASIO_HAS_IO_URING)
+#endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #if defined(ASIO_HAS_MOVE)
 # include <utility>
@@ -73,13 +73,13 @@ public:
   /// The native representation of a descriptor.
 #if defined(GENERATING_DOCUMENTATION)
   typedef implementation_defined native_handle_type;
-#elif defined(ASIO_HAS_IO_URING)
+#elif defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   typedef detail::io_uring_descriptor_service::native_handle_type
     native_handle_type;
-#else // defined(ASIO_HAS_IO_URING)
+#else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   typedef detail::reactive_descriptor_service::native_handle_type
     native_handle_type;
-#endif // defined(ASIO_HAS_IO_URING)
+#endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
   /// A descriptor is always the lowest layer.
   typedef basic_descriptor lowest_layer_type;
@@ -665,11 +665,11 @@ protected:
   {
   }
 
-#if defined(ASIO_HAS_IO_URING)
+#if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   detail::io_object_impl<detail::io_uring_descriptor_service, Executor> impl_;
-#else // defined(ASIO_HAS_IO_URING)
+#else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   detail::io_object_impl<detail::reactive_descriptor_service, Executor> impl_;
-#endif // defined(ASIO_HAS_IO_URING)
+#endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 private:
   // Disallow copying and assignment.
