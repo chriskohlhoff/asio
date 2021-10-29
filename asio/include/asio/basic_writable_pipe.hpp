@@ -32,6 +32,8 @@
 #include "asio/execution_context.hpp"
 #if defined(ASIO_HAS_IOCP)
 # include "asio/detail/win_iocp_handle_service.hpp"
+#elif defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+# include "asio/detail/io_uring_descriptor_service.hpp"
 #else
 # include "asio/detail/reactive_descriptor_service.hpp"
 #endif
@@ -73,6 +75,9 @@ public:
   typedef implementation_defined native_handle_type;
 #elif defined(ASIO_HAS_IOCP)
   typedef detail::win_iocp_handle_service::native_handle_type
+    native_handle_type;
+#elif defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+  typedef detail::io_uring_descriptor_service::native_handle_type
     native_handle_type;
 #else
   typedef detail::reactive_descriptor_service::native_handle_type
@@ -497,6 +502,8 @@ private:
 
 #if defined(ASIO_HAS_IOCP)
   detail::io_object_impl<detail::win_iocp_handle_service, Executor> impl_;
+#elif defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+  detail::io_object_impl<detail::io_uring_descriptor_service, Executor> impl_;
 #else
   detail::io_object_impl<detail::reactive_descriptor_service, Executor> impl_;
 #endif
