@@ -65712,6 +65712,28 @@ Create a new non-modifiable buffer that represents the given string.
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload32 more...]]``
 
+Obtain a buffer representing the entire registered buffer. 
+
+  mutable_registered_buffer ``[link asio.reference.buffer.overload33 buffer]``(
+      const mutable_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload33 more...]]``
+
+  const_registered_buffer ``[link asio.reference.buffer.overload34 buffer]``(
+      const const_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload34 more...]]``
+
+Obtain a buffer representing part of a registered buffer. 
+
+  mutable_registered_buffer ``[link asio.reference.buffer.overload35 buffer]``(
+      const mutable_registered_buffer & b,
+      std::size_t n);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload35 more...]]``
+
+  const_registered_buffer ``[link asio.reference.buffer.overload36 buffer]``(
+      const const_registered_buffer & b,
+      std::size_t n);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload36 more...]]``
+
 A buffer object represents a contiguous region of memory as a 2-tuple consisting of a pointer and size in bytes. A tuple of the form `{void*, size_t}` specifies a mutable (modifiable) region of memory. Similarly, a tuple of the form `{const void*, size_t}` specifies a const (non-modifiable) region of memory. These two forms correspond to the classes [link asio.reference.mutable_buffer `mutable_buffer`] and [link asio.reference.const_buffer `const_buffer`], respectively. To mirror C++'s conversion rules, a [link asio.reference.mutable_buffer `mutable_buffer`] is implicitly convertible to a [link asio.reference.const_buffer `const_buffer`], and the opposite conversion is not permitted.
 
 The simplest use case involves reading or writing a single buffer of a specified size:
@@ -65893,7 +65915,7 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
 ['Convenience header: ][^asio.hpp]
 
 
-[section:overload1 buffer (1 of 32 overloads)]
+[section:overload1 buffer (1 of 36 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -65915,7 +65937,7 @@ Create a new modifiable buffer from an existing buffer.
 
 
 
-[section:overload2 buffer (2 of 32 overloads)]
+[section:overload2 buffer (2 of 36 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -65945,7 +65967,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload3 buffer (3 of 32 overloads)]
+[section:overload3 buffer (3 of 36 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -65967,7 +65989,7 @@ Create a new non-modifiable buffer from an existing buffer.
 
 
 
-[section:overload4 buffer (4 of 32 overloads)]
+[section:overload4 buffer (4 of 36 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -65997,7 +66019,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload5 buffer (5 of 32 overloads)]
+[section:overload5 buffer (5 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given memory range. 
@@ -66020,7 +66042,7 @@ Create a new modifiable buffer that represents the given memory range.
 
 
 
-[section:overload6 buffer (6 of 32 overloads)]
+[section:overload6 buffer (6 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given memory range. 
@@ -66043,7 +66065,7 @@ Create a new non-modifiable buffer that represents the given memory range.
 
 
 
-[section:overload7 buffer (7 of 32 overloads)]
+[section:overload7 buffer (7 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -66075,7 +66097,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload8 buffer (8 of 32 overloads)]
+[section:overload8 buffer (8 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -66108,7 +66130,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload9 buffer (9 of 32 overloads)]
+[section:overload9 buffer (9 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66140,7 +66162,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload10 buffer (10 of 32 overloads)]
+[section:overload10 buffer (10 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66173,7 +66195,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload11 buffer (11 of 32 overloads)]
+[section:overload11 buffer (11 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -66205,7 +66227,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload12 buffer (12 of 32 overloads)]
+[section:overload12 buffer (12 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -66238,7 +66260,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload13 buffer (13 of 32 overloads)]
+[section:overload13 buffer (13 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66270,7 +66292,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload14 buffer (14 of 32 overloads)]
+[section:overload14 buffer (14 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66303,7 +66325,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload15 buffer (15 of 32 overloads)]
+[section:overload15 buffer (15 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66335,7 +66357,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload16 buffer (16 of 32 overloads)]
+[section:overload16 buffer (16 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66368,7 +66390,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload17 buffer (17 of 32 overloads)]
+[section:overload17 buffer (17 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -66400,7 +66422,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload18 buffer (18 of 32 overloads)]
+[section:overload18 buffer (18 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -66433,7 +66455,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload19 buffer (19 of 32 overloads)]
+[section:overload19 buffer (19 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66465,7 +66487,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload20 buffer (20 of 32 overloads)]
+[section:overload20 buffer (20 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66498,7 +66520,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload21 buffer (21 of 32 overloads)]
+[section:overload21 buffer (21 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66530,7 +66552,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload22 buffer (22 of 32 overloads)]
+[section:overload22 buffer (22 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -66563,7 +66585,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload23 buffer (23 of 32 overloads)]
+[section:overload23 buffer (23 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -66600,7 +66622,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload24 buffer (24 of 32 overloads)]
+[section:overload24 buffer (24 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -66638,7 +66660,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload25 buffer (25 of 32 overloads)]
+[section:overload25 buffer (25 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -66675,7 +66697,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload26 buffer (26 of 32 overloads)]
+[section:overload26 buffer (26 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -66713,7 +66735,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload27 buffer (27 of 32 overloads)]
+[section:overload27 buffer (27 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given string. 
@@ -66744,7 +66766,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload28 buffer (28 of 32 overloads)]
+[section:overload28 buffer (28 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given string. 
@@ -66783,7 +66805,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload29 buffer (29 of 32 overloads)]
+[section:overload29 buffer (29 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -66814,7 +66836,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload30 buffer (30 of 32 overloads)]
+[section:overload30 buffer (30 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -66853,7 +66875,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload31 buffer (31 of 32 overloads)]
+[section:overload31 buffer (31 of 36 overloads)]
 
 
 Create a new modifiable buffer that represents the given string\_view. 
@@ -66878,7 +66900,7 @@ Create a new modifiable buffer that represents the given string\_view.
 
 
 
-[section:overload32 buffer (32 of 32 overloads)]
+[section:overload32 buffer (32 of 36 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -66904,6 +66926,68 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
+
+
+
+[endsect]
+
+
+
+[section:overload33 buffer (33 of 36 overloads)]
+
+
+Obtain a buffer representing the entire registered buffer. 
+
+
+  mutable_registered_buffer buffer(
+      const mutable_registered_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:overload34 buffer (34 of 36 overloads)]
+
+
+Obtain a buffer representing the entire registered buffer. 
+
+
+  const_registered_buffer buffer(
+      const const_registered_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:overload35 buffer (35 of 36 overloads)]
+
+
+Obtain a buffer representing part of a registered buffer. 
+
+
+  mutable_registered_buffer buffer(
+      const mutable_registered_buffer & b,
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:overload36 buffer (36 of 36 overloads)]
+
+
+Obtain a buffer representing part of a registered buffer. 
+
+
+  const_registered_buffer buffer(
+      const const_registered_buffer & b,
+      std::size_t n);
 
 
 
@@ -67159,6 +67243,403 @@ This function is implemented in terms of `memcpy`, and consequently it cannot be
 
 [endsect]
 
+[section:buffer_registration buffer_registration]
+
+[indexterm1 asio.indexterm.buffer_registration..buffer_registration]
+
+
+Automatically registers and unregistered buffers with an execution context. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename Allocator = std::allocator<void>>
+  class buffer_registration
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.buffer_registration.allocator_type [*allocator_type]]]
+    [The allocator type used for allocating storage for the buffers container. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.buffer_registration.const_iterator [*const_iterator]]]
+    [The type of a const iterator over the registered buffers. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.buffer_registration.iterator [*iterator]]]
+    [The type of an iterator over the registered buffers. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.buffer_registration.at [*at]]]
+    [Get the buffer at the specified index. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.begin [*begin]]]
+    [Get the begin iterator for the sequence of registered buffers. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.buffer_registration [*buffer_registration]] [constructor]]
+    [Register buffers with an executor's execution context. 
+     [hr]
+     Register buffers with an execution context. 
+     [hr]
+     Move constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.cbegin [*cbegin]]]
+    [Get the begin iterator for the sequence of registered buffers. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.cend [*cend]]]
+    [Get the end iterator for the sequence of registered buffers. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.end [*end]]]
+    [Get the end iterator for the sequence of registered buffers. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.operator_eq_ [*operator=]]]
+    [Move assignment. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.operator_lb__rb_ [*operator\[\]]]]
+    [Get the buffer at the specified index. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration.size [*size]]]
+    [Get the number of registered buffers. ]
+  ]
+  
+  [
+    [[link asio.reference.buffer_registration._buffer_registration [*~buffer_registration]] [destructor]]
+    [Unregisters the buffers. ]
+  ]
+  
+]
+
+For portability, applications should assume that only one registration is permitted per execution context. 
+
+[heading Requirements]
+
+['Header: ][^asio/buffer_registration.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:allocator_type buffer_registration::allocator_type]
+
+[indexterm2 asio.indexterm.buffer_registration.allocator_type..allocator_type..buffer_registration] 
+The allocator type used for allocating storage for the buffers container. 
+
+
+  typedef Allocator allocator_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/buffer_registration.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:at buffer_registration::at]
+
+[indexterm2 asio.indexterm.buffer_registration.at..at..buffer_registration] 
+Get the buffer at the specified index. 
+
+
+  const mutable_registered_buffer & at(
+      std::size_t i);
+
+
+
+[endsect]
+
+
+
+[section:begin buffer_registration::begin]
+
+[indexterm2 asio.indexterm.buffer_registration.begin..begin..buffer_registration] 
+Get the begin iterator for the sequence of registered buffers. 
+
+
+  const_iterator begin() const;
+
+
+
+[endsect]
+
+
+[section:buffer_registration buffer_registration::buffer_registration]
+
+[indexterm2 asio.indexterm.buffer_registration.buffer_registration..buffer_registration..buffer_registration] 
+Register buffers with an executor's execution context. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  ``[link asio.reference.buffer_registration.buffer_registration.overload1 buffer_registration]``(
+      const Executor & ex,
+      const MutableBufferSequence & buffer_sequence,
+      const allocator_type & alloc = allocator_type(),
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.buffer_registration.buffer_registration.overload1 more...]]``
+
+
+Register buffers with an execution context. 
+
+
+  template<
+      typename ExecutionContext>
+  ``[link asio.reference.buffer_registration.buffer_registration.overload2 buffer_registration]``(
+      ExecutionContext & ctx,
+      const MutableBufferSequence & buffer_sequence,
+      const allocator_type & alloc = allocator_type(),
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.buffer_registration.buffer_registration.overload2 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link asio.reference.buffer_registration.buffer_registration.overload3 buffer_registration]``(
+      buffer_registration && other);
+  ``  [''''&raquo;''' [link asio.reference.buffer_registration.buffer_registration.overload3 more...]]``
+
+
+[section:overload1 buffer_registration::buffer_registration (1 of 3 overloads)]
+
+
+Register buffers with an executor's execution context. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``>
+  buffer_registration(
+      const Executor & ex,
+      const MutableBufferSequence & buffer_sequence,
+      const allocator_type & alloc = allocator_type(),
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload2 buffer_registration::buffer_registration (2 of 3 overloads)]
+
+
+Register buffers with an execution context. 
+
+
+  template<
+      typename ExecutionContext>
+  buffer_registration(
+      ExecutionContext & ctx,
+      const MutableBufferSequence & buffer_sequence,
+      const allocator_type & alloc = allocator_type(),
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload3 buffer_registration::buffer_registration (3 of 3 overloads)]
+
+
+Move constructor. 
+
+
+  buffer_registration(
+      buffer_registration && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cbegin buffer_registration::cbegin]
+
+[indexterm2 asio.indexterm.buffer_registration.cbegin..cbegin..buffer_registration] 
+Get the begin iterator for the sequence of registered buffers. 
+
+
+  const_iterator cbegin() const;
+
+
+
+[endsect]
+
+
+
+[section:cend buffer_registration::cend]
+
+[indexterm2 asio.indexterm.buffer_registration.cend..cend..buffer_registration] 
+Get the end iterator for the sequence of registered buffers. 
+
+
+  const_iterator cend() const;
+
+
+
+[endsect]
+
+
+
+[section:const_iterator buffer_registration::const_iterator]
+
+[indexterm2 asio.indexterm.buffer_registration.const_iterator..const_iterator..buffer_registration] 
+The type of a const iterator over the registered buffers. 
+
+
+  typedef unspecified const_iterator;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/buffer_registration.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:end buffer_registration::end]
+
+[indexterm2 asio.indexterm.buffer_registration.end..end..buffer_registration] 
+Get the end iterator for the sequence of registered buffers. 
+
+
+  const_iterator end() const;
+
+
+
+[endsect]
+
+
+
+[section:iterator buffer_registration::iterator]
+
+[indexterm2 asio.indexterm.buffer_registration.iterator..iterator..buffer_registration] 
+The type of an iterator over the registered buffers. 
+
+
+  typedef unspecified iterator;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/buffer_registration.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq_ buffer_registration::operator=]
+
+[indexterm2 asio.indexterm.buffer_registration.operator_eq_..operator=..buffer_registration] 
+Move assignment. 
+
+
+  buffer_registration & operator=(
+      buffer_registration && other);
+
+
+
+[endsect]
+
+
+
+[section:operator_lb__rb_ buffer_registration::operator\[\]]
+
+[indexterm2 asio.indexterm.buffer_registration.operator_lb__rb_..operator\[\]..buffer_registration] 
+Get the buffer at the specified index. 
+
+
+  const mutable_registered_buffer & operator[](
+      std::size_t i);
+
+
+
+[endsect]
+
+
+
+[section:size buffer_registration::size]
+
+[indexterm2 asio.indexterm.buffer_registration.size..size..buffer_registration] 
+Get the number of registered buffers. 
+
+
+  std::size_t size() const;
+
+
+
+[endsect]
+
+
+
+[section:_buffer_registration buffer_registration::~buffer_registration]
+
+[indexterm2 asio.indexterm.buffer_registration._buffer_registration..~buffer_registration..buffer_registration] 
+Unregisters the buffers. 
+
+
+  ~buffer_registration();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:buffer_sequence_begin buffer_sequence_begin]
 
 [indexterm1 asio.indexterm.buffer_sequence_begin..buffer_sequence_begin] 
@@ -67195,6 +67676,16 @@ Get an iterator to the first element in a buffer sequence.
       typename constraint< !is_convertible< const C *, const mutable_buffer * >::value &&!is_convertible< const C *, const const_buffer * >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.buffer_sequence_begin.overload4 more...]]``
 
+Get an iterator to the first element in a buffer sequence. 
+
+  const mutable_buffer * ``[link asio.reference.buffer_sequence_begin.overload5 buffer_sequence_begin]``(
+      const mutable_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer_sequence_begin.overload5 more...]]``
+
+  const const_buffer * ``[link asio.reference.buffer_sequence_begin.overload6 buffer_sequence_begin]``(
+      const const_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer_sequence_begin.overload6 more...]]``
+
 [heading Requirements]
 
 ['Header: ][^asio/buffer.hpp]
@@ -67202,7 +67693,7 @@ Get an iterator to the first element in a buffer sequence.
 ['Convenience header: ][^asio.hpp]
 
 
-[section:overload1 buffer_sequence_begin (1 of 4 overloads)]
+[section:overload1 buffer_sequence_begin (1 of 6 overloads)]
 
 
 Get an iterator to the first element in a buffer sequence. 
@@ -67220,7 +67711,7 @@ Get an iterator to the first element in a buffer sequence.
 
 
 
-[section:overload2 buffer_sequence_begin (2 of 4 overloads)]
+[section:overload2 buffer_sequence_begin (2 of 6 overloads)]
 
 
 Get an iterator to the first element in a buffer sequence. 
@@ -67238,7 +67729,7 @@ Get an iterator to the first element in a buffer sequence.
 
 
 
-[section:overload3 buffer_sequence_begin (3 of 4 overloads)]
+[section:overload3 buffer_sequence_begin (3 of 6 overloads)]
 
 
 Get an iterator to the first element in a buffer sequence. 
@@ -67256,7 +67747,7 @@ Get an iterator to the first element in a buffer sequence.
 
 
 
-[section:overload4 buffer_sequence_begin (4 of 4 overloads)]
+[section:overload4 buffer_sequence_begin (4 of 6 overloads)]
 
 
 Get an iterator to the first element in a buffer sequence. 
@@ -67267,6 +67758,36 @@ Get an iterator to the first element in a buffer sequence.
   auto buffer_sequence_begin(
       const C & c,
       typename constraint< !is_convertible< const C *, const mutable_buffer * >::value &&!is_convertible< const C *, const const_buffer * >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload5 buffer_sequence_begin (5 of 6 overloads)]
+
+
+Get an iterator to the first element in a buffer sequence. 
+
+
+  const mutable_buffer * buffer_sequence_begin(
+      const mutable_registered_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:overload6 buffer_sequence_begin (6 of 6 overloads)]
+
+
+Get an iterator to the first element in a buffer sequence. 
+
+
+  const const_buffer * buffer_sequence_begin(
+      const const_registered_buffer & b);
 
 
 
@@ -67311,6 +67832,16 @@ Get an iterator to one past the end element in a buffer sequence.
       typename constraint< !is_convertible< const C *, const mutable_buffer * >::value &&!is_convertible< const C *, const const_buffer * >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.buffer_sequence_end.overload4 more...]]``
 
+Get an iterator to one past the end element in a buffer sequence. 
+
+  const mutable_buffer * ``[link asio.reference.buffer_sequence_end.overload5 buffer_sequence_end]``(
+      const mutable_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer_sequence_end.overload5 more...]]``
+
+  const const_buffer * ``[link asio.reference.buffer_sequence_end.overload6 buffer_sequence_end]``(
+      const const_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer_sequence_end.overload6 more...]]``
+
 [heading Requirements]
 
 ['Header: ][^asio/buffer.hpp]
@@ -67318,7 +67849,7 @@ Get an iterator to one past the end element in a buffer sequence.
 ['Convenience header: ][^asio.hpp]
 
 
-[section:overload1 buffer_sequence_end (1 of 4 overloads)]
+[section:overload1 buffer_sequence_end (1 of 6 overloads)]
 
 
 Get an iterator to one past the end element in a buffer sequence. 
@@ -67336,7 +67867,7 @@ Get an iterator to one past the end element in a buffer sequence.
 
 
 
-[section:overload2 buffer_sequence_end (2 of 4 overloads)]
+[section:overload2 buffer_sequence_end (2 of 6 overloads)]
 
 
 Get an iterator to one past the end element in a buffer sequence. 
@@ -67354,7 +67885,7 @@ Get an iterator to one past the end element in a buffer sequence.
 
 
 
-[section:overload3 buffer_sequence_end (3 of 4 overloads)]
+[section:overload3 buffer_sequence_end (3 of 6 overloads)]
 
 
 Get an iterator to one past the end element in a buffer sequence. 
@@ -67372,7 +67903,7 @@ Get an iterator to one past the end element in a buffer sequence.
 
 
 
-[section:overload4 buffer_sequence_end (4 of 4 overloads)]
+[section:overload4 buffer_sequence_end (4 of 6 overloads)]
 
 
 Get an iterator to one past the end element in a buffer sequence. 
@@ -67383,6 +67914,36 @@ Get an iterator to one past the end element in a buffer sequence.
   auto buffer_sequence_end(
       const C & c,
       typename constraint< !is_convertible< const C *, const mutable_buffer * >::value &&!is_convertible< const C *, const const_buffer * >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload5 buffer_sequence_end (5 of 6 overloads)]
+
+
+Get an iterator to one past the end element in a buffer sequence. 
+
+
+  const mutable_buffer * buffer_sequence_end(
+      const mutable_registered_buffer & b);
+
+
+
+[endsect]
+
+
+
+[section:overload6 buffer_sequence_end (6 of 6 overloads)]
+
+
+Get an iterator to one past the end element in a buffer sequence. 
+
+
+  const const_buffer * buffer_sequence_end(
+      const const_registered_buffer & b);
 
 
 
@@ -74449,6 +75010,266 @@ The `data()` member function permits violations of type safety, so uses of it in
 ['Header: ][^asio/buffer.hpp]
 
 ['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:const_registered_buffer const_registered_buffer]
+
+[indexterm1 asio.indexterm.const_registered_buffer..const_registered_buffer]
+
+
+Holds a registered buffer over non-modifiable data. 
+
+
+  class const_registered_buffer
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.const_registered_buffer.buffer [*buffer]]]
+    [Get the underlying constant buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.const_registered_buffer.const_registered_buffer [*const_registered_buffer]] [constructor]]
+    [Default constructor creates an invalid registered buffer. 
+     [hr]
+     Construct a non-modifiable buffer from a modifiable one. ]
+  ]
+  
+  [
+    [[link asio.reference.const_registered_buffer.data [*data]]]
+    [Get a pointer to the beginning of the memory range. ]
+  ]
+  
+  [
+    [[link asio.reference.const_registered_buffer.id [*id]]]
+    [Get the registered buffer identifier. ]
+  ]
+  
+  [
+    [[link asio.reference.const_registered_buffer.operator_plus__eq_ [*operator+=]]]
+    [Move the start of the buffer by the specified number of bytes. ]
+  ]
+  
+  [
+    [[link asio.reference.const_registered_buffer.size [*size]]]
+    [Get the size of the memory range. ]
+  ]
+  
+]
+
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.const_registered_buffer.operator_plus_ [*operator+]]]
+    [Create a new non-modifiable registered buffer that is offset from the start of another. 
+
+     Create a new non-modifiable buffer that is offset from the start of another. ]
+  ]
+  
+]
+
+Satisfies the `ConstBufferSequence` type requirements. 
+
+[heading Requirements]
+
+['Header: ][^asio/registered_buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:buffer const_registered_buffer::buffer]
+
+[indexterm2 asio.indexterm.const_registered_buffer.buffer..buffer..const_registered_buffer] 
+Get the underlying constant buffer. 
+
+
+  const const_buffer & buffer() const;
+
+
+
+[endsect]
+
+
+[section:const_registered_buffer const_registered_buffer::const_registered_buffer]
+
+[indexterm2 asio.indexterm.const_registered_buffer.const_registered_buffer..const_registered_buffer..const_registered_buffer] 
+Default constructor creates an invalid registered buffer. 
+
+
+  ``[link asio.reference.const_registered_buffer.const_registered_buffer.overload1 const_registered_buffer]``();
+  ``  [''''&raquo;''' [link asio.reference.const_registered_buffer.const_registered_buffer.overload1 more...]]``
+
+
+Construct a non-modifiable buffer from a modifiable one. 
+
+
+  ``[link asio.reference.const_registered_buffer.const_registered_buffer.overload2 const_registered_buffer]``(
+      const mutable_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.const_registered_buffer.const_registered_buffer.overload2 more...]]``
+
+
+[section:overload1 const_registered_buffer::const_registered_buffer (1 of 2 overloads)]
+
+
+Default constructor creates an invalid registered buffer. 
+
+
+  const_registered_buffer();
+
+
+
+[endsect]
+
+
+
+[section:overload2 const_registered_buffer::const_registered_buffer (2 of 2 overloads)]
+
+
+Construct a non-modifiable buffer from a modifiable one. 
+
+
+  const_registered_buffer(
+      const mutable_registered_buffer & b);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:data const_registered_buffer::data]
+
+[indexterm2 asio.indexterm.const_registered_buffer.data..data..const_registered_buffer] 
+Get a pointer to the beginning of the memory range. 
+
+
+  const void * data() const;
+
+
+
+[heading Return Value]
+      
+`buffer().data()`. 
+
+
+
+
+[endsect]
+
+
+
+[section:id const_registered_buffer::id]
+
+[indexterm2 asio.indexterm.const_registered_buffer.id..id..const_registered_buffer] 
+Get the registered buffer identifier. 
+
+
+  const registered_buffer_id & id() const;
+
+
+
+[endsect]
+
+
+[section:operator_plus_ const_registered_buffer::operator+]
+
+[indexterm2 asio.indexterm.const_registered_buffer.operator_plus_..operator+..const_registered_buffer] 
+Create a new non-modifiable registered buffer that is offset from the start of another. 
+
+
+  const_registered_buffer ``[link asio.reference.const_registered_buffer.operator_plus_.overload1 operator+]``(
+      const const_registered_buffer & b,
+      std::size_t n);
+  ``  [''''&raquo;''' [link asio.reference.const_registered_buffer.operator_plus_.overload1 more...]]``
+
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+
+  const_registered_buffer ``[link asio.reference.const_registered_buffer.operator_plus_.overload2 operator+]``(
+      std::size_t n,
+      const const_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.const_registered_buffer.operator_plus_.overload2 more...]]``
+
+
+[section:overload1 const_registered_buffer::operator+ (1 of 2 overloads)]
+
+
+Create a new non-modifiable registered buffer that is offset from the start of another. 
+
+
+  const_registered_buffer operator+(
+      const const_registered_buffer & b,
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:overload2 const_registered_buffer::operator+ (2 of 2 overloads)]
+
+
+Create a new non-modifiable buffer that is offset from the start of another. 
+
+
+  const_registered_buffer operator+(
+      std::size_t n,
+      const const_registered_buffer & b);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_plus__eq_ const_registered_buffer::operator+=]
+
+[indexterm2 asio.indexterm.const_registered_buffer.operator_plus__eq_..operator+=..const_registered_buffer] 
+Move the start of the buffer by the specified number of bytes. 
+
+
+  const_registered_buffer & operator+=(
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:size const_registered_buffer::size]
+
+[indexterm2 asio.indexterm.const_registered_buffer.size..size..const_registered_buffer] 
+Get the size of the memory range. 
+
+
+  std::size_t size() const;
+
+
+
+[heading Return Value]
+      
+`buffer().size()`. 
+
+
 
 
 [endsect]
@@ -123395,6 +124216,230 @@ The `data()` member function permits violations of type safety, so uses of it in
 
 [endsect]
 
+[section:mutable_registered_buffer mutable_registered_buffer]
+
+[indexterm1 asio.indexterm.mutable_registered_buffer..mutable_registered_buffer]
+
+
+Holds a registered buffer over modifiable data. 
+
+
+  class mutable_registered_buffer
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.mutable_registered_buffer.buffer [*buffer]]]
+    [Get the underlying mutable buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_registered_buffer.data [*data]]]
+    [Get a pointer to the beginning of the memory range. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_registered_buffer.id [*id]]]
+    [Get the registered buffer identifier. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_registered_buffer.mutable_registered_buffer [*mutable_registered_buffer]] [constructor]]
+    [Default constructor creates an invalid registered buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_registered_buffer.operator_plus__eq_ [*operator+=]]]
+    [Move the start of the buffer by the specified number of bytes. ]
+  ]
+  
+  [
+    [[link asio.reference.mutable_registered_buffer.size [*size]]]
+    [Get the size of the memory range. ]
+  ]
+  
+]
+
+[heading Related Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.mutable_registered_buffer.operator_plus_ [*operator+]]]
+    [Create a new modifiable registered buffer that is offset from the start of another. 
+
+     Create a new modifiable buffer that is offset from the start of another. ]
+  ]
+  
+]
+
+Satisfies the `MutableBufferSequence` type requirements. 
+
+[heading Requirements]
+
+['Header: ][^asio/registered_buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:buffer mutable_registered_buffer::buffer]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.buffer..buffer..mutable_registered_buffer] 
+Get the underlying mutable buffer. 
+
+
+  const mutable_buffer & buffer() const;
+
+
+
+[endsect]
+
+
+
+[section:data mutable_registered_buffer::data]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.data..data..mutable_registered_buffer] 
+Get a pointer to the beginning of the memory range. 
+
+
+  void * data() const;
+
+
+
+[heading Return Value]
+      
+`buffer().data()`. 
+
+
+
+
+[endsect]
+
+
+
+[section:id mutable_registered_buffer::id]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.id..id..mutable_registered_buffer] 
+Get the registered buffer identifier. 
+
+
+  const registered_buffer_id & id() const;
+
+
+
+[endsect]
+
+
+
+[section:mutable_registered_buffer mutable_registered_buffer::mutable_registered_buffer]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.mutable_registered_buffer..mutable_registered_buffer..mutable_registered_buffer] 
+Default constructor creates an invalid registered buffer. 
+
+
+  mutable_registered_buffer();
+
+
+
+[endsect]
+
+
+[section:operator_plus_ mutable_registered_buffer::operator+]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.operator_plus_..operator+..mutable_registered_buffer] 
+Create a new modifiable registered buffer that is offset from the start of another. 
+
+
+  mutable_registered_buffer ``[link asio.reference.mutable_registered_buffer.operator_plus_.overload1 operator+]``(
+      const mutable_registered_buffer & b,
+      std::size_t n);
+  ``  [''''&raquo;''' [link asio.reference.mutable_registered_buffer.operator_plus_.overload1 more...]]``
+
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+
+  mutable_registered_buffer ``[link asio.reference.mutable_registered_buffer.operator_plus_.overload2 operator+]``(
+      std::size_t n,
+      const mutable_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.mutable_registered_buffer.operator_plus_.overload2 more...]]``
+
+
+[section:overload1 mutable_registered_buffer::operator+ (1 of 2 overloads)]
+
+
+Create a new modifiable registered buffer that is offset from the start of another. 
+
+
+  mutable_registered_buffer operator+(
+      const mutable_registered_buffer & b,
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:overload2 mutable_registered_buffer::operator+ (2 of 2 overloads)]
+
+
+Create a new modifiable buffer that is offset from the start of another. 
+
+
+  mutable_registered_buffer operator+(
+      std::size_t n,
+      const mutable_registered_buffer & b);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:operator_plus__eq_ mutable_registered_buffer::operator+=]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.operator_plus__eq_..operator+=..mutable_registered_buffer] 
+Move the start of the buffer by the specified number of bytes. 
+
+
+  mutable_registered_buffer & operator+=(
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:size mutable_registered_buffer::size]
+
+[indexterm2 asio.indexterm.mutable_registered_buffer.size..size..mutable_registered_buffer] 
+Get the size of the memory range. 
+
+
+  std::size_t size() const;
+
+
+
+[heading Return Value]
+      
+`buffer().size()`. 
+
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:null_buffers null_buffers]
 
 [indexterm1 asio.indexterm.null_buffers..null_buffers]
@@ -133733,6 +134778,301 @@ Constructor.
 [indexterm2 asio.indexterm.redirect_error_t.token_..token_..redirect_error_t] 
 
   CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:register_buffers register_buffers]
+
+[indexterm1 asio.indexterm.register_buffers..register_buffers] 
+Register buffers with an execution context. 
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  buffer_registration< MutableBufferSequence > ``[link asio.reference.register_buffers.overload1 register_buffers]``(
+      const Executor & ex,
+      const MutableBufferSequence & buffer_sequence,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.register_buffers.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename Allocator>
+  buffer_registration< MutableBufferSequence, Allocator > ``[link asio.reference.register_buffers.overload2 register_buffers]``(
+      const Executor & ex,
+      const MutableBufferSequence & buffer_sequence,
+      const Allocator & alloc,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.register_buffers.overload2 more...]]``
+
+  template<
+      typename ExecutionContext,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  buffer_registration< MutableBufferSequence > ``[link asio.reference.register_buffers.overload3 register_buffers]``(
+      ExecutionContext & ctx,
+      const MutableBufferSequence & buffer_sequence,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.register_buffers.overload3 more...]]``
+
+  template<
+      typename ExecutionContext,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename Allocator>
+  buffer_registration< MutableBufferSequence, Allocator > ``[link asio.reference.register_buffers.overload4 register_buffers]``(
+      ExecutionContext & ctx,
+      const MutableBufferSequence & buffer_sequence,
+      const Allocator & alloc,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.register_buffers.overload4 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/buffer_registration.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:overload1 register_buffers (1 of 4 overloads)]
+
+
+Register buffers with an execution context. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  buffer_registration< MutableBufferSequence > register_buffers(
+      const Executor & ex,
+      const MutableBufferSequence & buffer_sequence,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload2 register_buffers (2 of 4 overloads)]
+
+
+Register buffers with an execution context. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename Allocator>
+  buffer_registration< MutableBufferSequence, Allocator > register_buffers(
+      const Executor & ex,
+      const MutableBufferSequence & buffer_sequence,
+      const Allocator & alloc,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload3 register_buffers (3 of 4 overloads)]
+
+
+Register buffers with an execution context. 
+
+
+  template<
+      typename ExecutionContext,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``>
+  buffer_registration< MutableBufferSequence > register_buffers(
+      ExecutionContext & ctx,
+      const MutableBufferSequence & buffer_sequence,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[section:overload4 register_buffers (4 of 4 overloads)]
+
+
+Register buffers with an execution context. 
+
+
+  template<
+      typename ExecutionContext,
+      typename ``[link asio.reference.MutableBufferSequence MutableBufferSequence]``,
+      typename Allocator>
+  buffer_registration< MutableBufferSequence, Allocator > register_buffers(
+      ExecutionContext & ctx,
+      const MutableBufferSequence & buffer_sequence,
+      const Allocator & alloc,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:registered_buffer_id registered_buffer_id]
+
+[indexterm1 asio.indexterm.registered_buffer_id..registered_buffer_id]
+
+
+Type used to identify a registered buffer. 
+
+
+  class registered_buffer_id
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.registered_buffer_id.native_handle_type [*native_handle_type]]]
+    [The native buffer identifier type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.registered_buffer_id.native_handle [*native_handle]]]
+    [Get the native buffer identifier type. ]
+  ]
+  
+  [
+    [[link asio.reference.registered_buffer_id.registered_buffer_id [*registered_buffer_id]] [constructor]]
+    [Default constructor creates an invalid registered buffer identifier. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.registered_buffer_id.operator_not__eq_ [*operator!=]]]
+    [Compare two IDs for equality. ]
+  ]
+  
+  [
+    [[link asio.reference.registered_buffer_id.operator_eq__eq_ [*operator==]]]
+    [Compare two IDs for equality. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/registered_buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:native_handle registered_buffer_id::native_handle]
+
+[indexterm2 asio.indexterm.registered_buffer_id.native_handle..native_handle..registered_buffer_id] 
+Get the native buffer identifier type. 
+
+
+  native_handle_type native_handle() const;
+
+
+
+[endsect]
+
+
+
+[section:native_handle_type registered_buffer_id::native_handle_type]
+
+[indexterm2 asio.indexterm.registered_buffer_id.native_handle_type..native_handle_type..registered_buffer_id] 
+The native buffer identifier type. 
+
+
+  typedef int native_handle_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/registered_buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ registered_buffer_id::operator!=]
+
+[indexterm2 asio.indexterm.registered_buffer_id.operator_not__eq_..operator!=..registered_buffer_id] 
+Compare two IDs for equality. 
+
+
+  friend bool operator!=(
+      const registered_buffer_id & lhs,
+      const registered_buffer_id & rhs);
+
+
+[heading Requirements]
+
+['Header: ][^asio/registered_buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ registered_buffer_id::operator==]
+
+[indexterm2 asio.indexterm.registered_buffer_id.operator_eq__eq_..operator==..registered_buffer_id] 
+Compare two IDs for equality. 
+
+
+  friend bool operator==(
+      const registered_buffer_id & lhs,
+      const registered_buffer_id & rhs);
+
+
+[heading Requirements]
+
+['Header: ][^asio/registered_buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:registered_buffer_id registered_buffer_id::registered_buffer_id]
+
+[indexterm2 asio.indexterm.registered_buffer_id.registered_buffer_id..registered_buffer_id..registered_buffer_id] 
+Default constructor creates an invalid registered buffer identifier. 
+
+
+  registered_buffer_id();
 
 
 
