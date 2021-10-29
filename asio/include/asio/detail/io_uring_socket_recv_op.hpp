@@ -64,6 +64,13 @@ public:
       bool except_op = (o->flags_ & socket_base::message_out_of_band) != 0;
       ::io_uring_prep_poll_add(sqe, o->socket_, except_op ? POLLPRI : POLLIN);
     }
+    else if (o->bufs_.is_single_buffer
+        && o->bufs_.is_registered_buffer && o->flags_ == 0)
+    {
+      ::io_uring_prep_read_fixed(sqe, o->socket_,
+          o->bufs_.buffers()->iov_base, o->bufs_.buffers()->iov_len,
+          0, o->bufs_.registered_id().native_handle());
+    }
     else
     {
       ::io_uring_prep_recvmsg(sqe, o->socket_, &o->msghdr_, o->flags_);

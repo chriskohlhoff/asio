@@ -32,6 +32,7 @@ basic_writable_pipe
 bind_cancellation_slot
 bind_executor
 buffer
+buffer_registration
 buffered_read_stream
 buffered_stream
 buffered_write_stream
@@ -70,6 +71,7 @@ read_at
 read_until
 readable_pipe
 redirect_error
+registered_buffer
 serial_port
 serial_port_base
 signal_set

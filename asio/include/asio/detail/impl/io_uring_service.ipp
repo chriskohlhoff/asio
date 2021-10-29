@@ -236,6 +236,22 @@ void io_uring_service::register_internal_io_object(
   }
 }
 
+void io_uring_service::register_buffers(const ::iovec* v, unsigned n)
+{
+  int result = ::io_uring_register_buffers(&ring_, v, n);
+  if (result < 0)
+  {
+    asio::error_code ec(-result,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "io_uring_register_buffers");
+  }
+}
+
+void io_uring_service::unregister_buffers()
+{
+  (void)::io_uring_unregister_buffers(&ring_);
+}
+
 void io_uring_service::start_op(int op_type,
     io_uring_service::per_io_object_data& io_obj,
     io_uring_operation* op, bool is_continuation)

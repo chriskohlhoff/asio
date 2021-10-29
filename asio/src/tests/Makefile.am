@@ -40,6 +40,7 @@ check_PROGRAMS = \
 	unit/buffered_stream \
 	unit/buffered_write_stream \
 	unit/buffer \
+	unit/buffer_registration \
 	unit/buffers_iterator \
 	unit/cancellation_signal \
 	unit/cancellation_state \
@@ -133,6 +134,7 @@ check_PROGRAMS = \
 	unit/read_until \
 	unit/readable_pipe \
 	unit/redirect_error \
+	unit/registered_buffer \
 	unit/serial_port \
 	unit/serial_port_base \
 	unit/signal_set \
@@ -245,6 +247,7 @@ TESTS = \
 	unit/buffered_stream \
 	unit/buffered_write_stream \
 	unit/buffer \
+	unit/buffer_registration \
 	unit/buffers_iterator \
 	unit/cancellation_signal \
 	unit/cancellation_state \
@@ -332,6 +335,7 @@ TESTS = \
 	unit/read_until \
 	unit/readable_pipe \
 	unit/redirect_error \
+	unit/registered_buffer \
 	unit/serial_port \
 	unit/serial_port_base \
 	unit/signal_set \
@@ -445,6 +449,7 @@ unit_basic_writable_pipe_SOURCES = unit/basic_writable_pipe.cpp
 unit_bind_cancellation_slot_SOURCES = unit/bind_cancellation_slot.cpp
 unit_bind_executor_SOURCES = unit/bind_executor.cpp
 unit_buffer_SOURCES = unit/buffer.cpp
+unit_buffer_registration_SOURCES = unit/buffer_registration.cpp
 unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp
 unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
@@ -541,6 +546,7 @@ unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
 unit_readable_pipe_SOURCES = unit/readable_pipe.cpp
 unit_redirect_error_SOURCES = unit/redirect_error.cpp
+unit_registered_buffer_SOURCES = unit/registered_buffer.cpp
 unit_serial_port_SOURCES = unit/serial_port.cpp
 unit_serial_port_base_SOURCES = unit/serial_port_base.cpp
 unit_signal_set_SOURCES = unit/signal_set.cpp

@@ -364,12 +364,16 @@
             <member><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></member>
             <member><link linkend="asio.reference.const_buffers_1">const_buffers_1 </link> (deprecated)</member>
             <member><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1 </link> (deprecated)</member>
+            <member><link linkend="asio.reference.const_registered_buffer">const_registered_buffer</link></member>
+            <member><link linkend="asio.reference.mutable_registered_buffer">mutable_registered_buffer</link></member>
             <member><link linkend="asio.reference.null_buffers">null_buffers</link> (deprecated)</member>
             <member><link linkend="asio.reference.streambuf">streambuf</link></member>
+            <member><link linkend="asio.reference.registered_buffer_id">registered_buffer_id</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.basic_streambuf">basic_streambuf</link></member>
+            <member><link linkend="asio.reference.buffer_registration">buffer_registration</link></member>
             <member><link linkend="asio.reference.buffered_read_stream">buffered_read_stream</link></member>
             <member><link linkend="asio.reference.buffered_stream">buffered_stream</link></member>
             <member><link linkend="asio.reference.buffered_write_stream">buffered_write_stream</link></member>
@@ -398,6 +402,7 @@
             <member><link linkend="asio.reference.read">read</link></member>
             <member><link linkend="asio.reference.read_at">read_at</link></member>
             <member><link linkend="asio.reference.read_until">read_until</link></member>
+            <member><link linkend="asio.reference.register_buffers">register_buffers</link></member>
             <member><link linkend="asio.reference.transfer_all">transfer_all</link></member>
             <member><link linkend="asio.reference.transfer_at_least">transfer_at_least</link></member>
             <member><link linkend="asio.reference.transfer_exactly">transfer_exactly</link></member>

@@ -36,6 +36,7 @@ nobase_include_HEADERS = \
 	asio/buffered_write_stream_fwd.hpp \
 	asio/buffered_write_stream.hpp \
 	asio/buffer.hpp \
+	asio/buffer_registration.hpp \
 	asio/buffers_iterator.hpp \
 	asio/cancellation_signal.hpp \
 	asio/cancellation_state.hpp \
@@ -521,6 +522,7 @@ nobase_include_HEADERS = \
 	asio/read_until.hpp \
 	asio/readable_pipe.hpp \
 	asio/redirect_error.hpp \
+	asio/registered_buffer.hpp \
 	asio/require.hpp \
 	asio/require_concept.hpp \
 	asio/serial_port_base.hpp \

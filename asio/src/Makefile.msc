@@ -143,6 +143,7 @@ UNIT_TEST_EXES = \
 	tests\unit\buffered_stream.exe \
 	tests\unit\buffered_write_stream.exe \
 	tests\unit\buffer.exe \
+	tests\unit\buffer_registration.exe \
 	tests\unit\buffers_iterator.exe \
 	tests\unit\cancellation_signal.exe \
 	tests\unit\cancellation_state.exe \
@@ -231,6 +232,7 @@ UNIT_TEST_EXES = \
 	tests\unit\read_until.exe \
 	tests\unit\readable_pipe.exe \
 	tests\unit\redirect_error.exe \
+	tests\unit\registered_buffer.exe \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
 	tests\unit\signal_set.exe \
