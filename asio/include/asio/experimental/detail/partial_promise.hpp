@@ -15,7 +15,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/experimental/detail/coro_traits.hpp"
 #include "asio/awaitable.hpp"
-#include <iostream>
 
 #if defined(ASIO_HAS_STD_COROUTINE)
 # include <coroutine>
