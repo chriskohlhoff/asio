@@ -194,8 +194,8 @@ struct reset_cancellation_state_1_t
 {
   template <typename F>
   ASIO_CONSTEXPR reset_cancellation_state_1_t(
-      ASIO_MOVE_ARG(F) filter)
-    : filter(ASIO_MOVE_CAST(F)(filter))
+      ASIO_MOVE_ARG(F) filt)
+    : filter(ASIO_MOVE_CAST(F)(filt))
   {
   }
 
@@ -216,9 +216,9 @@ struct reset_cancellation_state_2_t
 {
   template <typename F1, typename F2>
   ASIO_CONSTEXPR reset_cancellation_state_2_t(
-      ASIO_MOVE_ARG(F1) in_filter, ASIO_MOVE_ARG(F2) out_filter)
-    : in_filter(ASIO_MOVE_CAST(F1)(in_filter)),
-      out_filter(ASIO_MOVE_CAST(F2)(out_filter))
+      ASIO_MOVE_ARG(F1) in_filt, ASIO_MOVE_ARG(F2) out_filt)
+    : in_filter(ASIO_MOVE_CAST(F1)(in_filt)),
+      out_filter(ASIO_MOVE_CAST(F2)(out_filt))
   {
   }
 
@@ -256,8 +256,8 @@ throw_if_cancelled()
 
 struct throw_if_cancelled_1_t
 {
-  ASIO_CONSTEXPR throw_if_cancelled_1_t(bool value)
-    : value(value)
+  ASIO_CONSTEXPR throw_if_cancelled_1_t(bool val)
+    : value(val)
   {
   }
 
