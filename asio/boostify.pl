@@ -387,6 +387,7 @@ sub copy_include_files
       "include/asio/execution/impl",
       "include/asio/experimental",
       "include/asio/experimental/detail",
+      "include/asio/experimental/detail/impl",
       "include/asio/experimental/impl",
       "include/asio/generic",
       "include/asio/generic/detail",

@@ -90946,6 +90946,1894 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [endsect]
 
+[section:experimental__basic_channel experimental::basic_channel]
+
+[indexterm1 asio.indexterm.experimental__basic_channel..experimental::basic_channel]
+
+
+A channel for messages. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename Traits,
+      typename... Signatures>
+  class basic_channel
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__basic_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.basic_channel [*basic_channel]] [constructor]]
+    [Construct a basic_channel. 
+     [hr]
+     Construct and open a basic_channel. 
+     [hr]
+     Move-construct a basic_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:async_receive experimental::basic_channel::async_receive]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.async_receive..async_receive..experimental::basic_channel] 
+Asynchronously receive a message. 
+
+
+  template<
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_receive(
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[endsect]
+
+
+
+[section:async_send experimental::basic_channel::async_send]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.async_send..async_send..experimental::basic_channel] 
+Asynchronously send a message. 
+
+
+  template<
+      typename... Args,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_send(
+      Args &&... args,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[section:basic_channel experimental::basic_channel::basic_channel]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.basic_channel..basic_channel..experimental::basic_channel] 
+Construct a [link asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  ``[link asio.reference.experimental__basic_channel.basic_channel.overload1 basic_channel]``(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_channel.basic_channel.overload1 more...]]``
+
+
+Construct and open a [link asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  ``[link asio.reference.experimental__basic_channel.basic_channel.overload2 basic_channel]``(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_channel.basic_channel.overload2 more...]]``
+
+
+Move-construct a [link asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  ``[link asio.reference.experimental__basic_channel.basic_channel.overload3 basic_channel]``(
+      basic_channel && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_channel.basic_channel.overload3 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.experimental__basic_channel.basic_channel.overload4 basic_channel]``(
+      basic_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_channel.basic_channel.overload4 more...]]``
+
+
+[section:overload1 experimental::basic_channel::basic_channel (1 of 4 overloads)]
+
+
+Construct a [link asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  basic_channel(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+
+
+This constructor creates and channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_channel::basic_channel (2 of 4 overloads)]
+
+
+Construct and open a [link asio.reference.experimental__basic_channel `experimental::basic_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  basic_channel(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+This constructor creates and opens a channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[context][An execution context which provides the I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::basic_channel::basic_channel (3 of 4 overloads)]
+
+
+Move-construct a [link asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  basic_channel(
+      basic_channel && other);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&) constructor`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::basic_channel::basic_channel (4 of 4 overloads)]
+
+
+Move-construct a [link asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_channel(
+      basic_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancel experimental::basic_channel::cancel]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.cancel..cancel..experimental::basic_channel] 
+Cancel all asynchronous operations waiting on the channel. 
+
+
+  void cancel();
+
+
+All outstanding send operations will complete with the error `asio::experimental::error::channel_canceld`. Outstanding receive operations complete with the result as determined by the channel traits. 
+
+
+[endsect]
+
+
+
+[section:capacity experimental::basic_channel::capacity]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.capacity..capacity..experimental::basic_channel] 
+Get the capacity of the channel's buffer. 
+
+
+  std::size_t capacity();
+
+
+
+[endsect]
+
+
+
+[section:close experimental::basic_channel::close]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.close..close..experimental::basic_channel] 
+Close the channel. 
+
+
+  void close();
+
+
+
+[endsect]
+
+
+
+[section:executor_type experimental::basic_channel::executor_type]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.executor_type..executor_type..experimental::basic_channel] 
+The type of the executor associated with the channel. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::basic_channel::get_executor]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.get_executor..get_executor..experimental::basic_channel] 
+Get the executor associated with the object. 
+
+
+  executor_type get_executor();
+
+
+
+[endsect]
+
+
+
+[section:is_open experimental::basic_channel::is_open]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.is_open..is_open..experimental::basic_channel] 
+Determine whether the channel is open. 
+
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+[section:operator_eq_ experimental::basic_channel::operator=]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.operator_eq_..operator=..experimental::basic_channel] 
+Move-assign a [link asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  basic_channel & ``[link asio.reference.experimental__basic_channel.operator_eq_.overload1 operator=]``(
+      basic_channel && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_channel.operator_eq_.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_channel & >::type ``[link asio.reference.experimental__basic_channel.operator_eq_.overload2 operator=]``(
+      basic_channel< Executor1, Traits, Signatures...> && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_channel.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 experimental::basic_channel::operator= (1 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  basic_channel & operator=(
+      basic_channel && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_channel::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.experimental__basic_channel `experimental::basic_channel`] from another. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_channel & >::type operator=(
+      basic_channel< Executor1, Traits, Signatures...> && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_channel `experimental::basic_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:ready experimental::basic_channel::ready]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.ready..ready..experimental::basic_channel] 
+Determine whether a message can be received without blocking. 
+
+
+  bool ready() const;
+
+
+
+[endsect]
+
+
+
+[section:reset experimental::basic_channel::reset]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.reset..reset..experimental::basic_channel] 
+Reset the channel to its initial state. 
+
+
+  void reset();
+
+
+
+[endsect]
+
+
+
+[section:traits_type experimental::basic_channel::traits_type]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.traits_type..traits_type..experimental::basic_channel] 
+The traits type associated with the channel. 
+
+
+  typedef Traits::template rebind< Signatures...>::other traits_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:try_receive experimental::basic_channel::try_receive]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.try_receive..try_receive..experimental::basic_channel] 
+Try to receive a message without blocking. 
+
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  bool try_receive(
+      Handler && handler);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send experimental::basic_channel::try_send]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.try_send..try_send..experimental::basic_channel] 
+Try to send a message without blocking. 
+
+
+  template<
+      typename... Args>
+  bool try_send(
+      Args &&... args);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send_n experimental::basic_channel::try_send_n]
+
+[indexterm2 asio.indexterm.experimental__basic_channel.try_send_n..try_send_n..experimental::basic_channel] 
+Try to send a number of messages without blocking. 
+
+
+  template<
+      typename... Args>
+  std::size_t try_send_n(
+      std::size_t count,
+      Args &&... args);
+
+
+
+[heading Return Value]
+      
+The number of messages that were sent. 
+
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__basic_channel__rebind_executor experimental::basic_channel::rebind_executor]
+
+[indexterm1 asio.indexterm.experimental__basic_channel__rebind_executor..experimental::basic_channel::rebind_executor]
+
+
+Rebinds the channel type to another executor. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  struct rebind_executor
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel__rebind_executor.other [*other]]]
+    [The channel type when rebound to the specified executor. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:other experimental::basic_channel::rebind_executor::other]
+
+[indexterm2 asio.indexterm.experimental__basic_channel__rebind_executor.other..other..experimental::basic_channel::rebind_executor] 
+The channel type when rebound to the specified executor. 
+
+
+  typedef basic_channel< Executor1, Traits, Signatures...> other;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__basic_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.basic_channel [*basic_channel]] [constructor]]
+    [Construct a basic_channel. 
+     [hr]
+     Construct and open a basic_channel. 
+     [hr]
+     Move-construct a basic_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__basic_concurrent_channel experimental::basic_concurrent_channel]
+
+[indexterm1 asio.indexterm.experimental__basic_concurrent_channel..experimental::basic_concurrent_channel]
+
+
+A channel for messages. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename Traits,
+      typename... Signatures>
+  class basic_concurrent_channel
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel [*basic_concurrent_channel]] [constructor]]
+    [Construct a basic_concurrent_channel. 
+     [hr]
+     Construct and open a basic_concurrent_channel. 
+     [hr]
+     Move-construct a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:async_receive experimental::basic_concurrent_channel::async_receive]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.async_receive..async_receive..experimental::basic_concurrent_channel] 
+Asynchronously receive a message. 
+
+
+  template<
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_receive(
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[endsect]
+
+
+
+[section:async_send experimental::basic_concurrent_channel::async_send]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.async_send..async_send..experimental::basic_concurrent_channel] 
+Asynchronously send a message. 
+
+
+  template<
+      typename... Args,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  auto async_send(
+      Args &&... args,
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+[section:basic_concurrent_channel experimental::basic_concurrent_channel::basic_concurrent_channel]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.basic_concurrent_channel..basic_concurrent_channel..experimental::basic_concurrent_channel] 
+Construct a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  ``[link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload1 basic_concurrent_channel]``(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload1 more...]]``
+
+
+Construct and open a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  ``[link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload2 basic_concurrent_channel]``(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload2 more...]]``
+
+
+Move-construct a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  ``[link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload3 basic_concurrent_channel]``(
+      basic_concurrent_channel && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload3 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload4 basic_concurrent_channel]``(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel.overload4 more...]]``
+
+
+[section:overload1 experimental::basic_concurrent_channel::basic_concurrent_channel (1 of 4 overloads)]
+
+
+Construct a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  basic_concurrent_channel(
+      const executor_type & ex,
+      std::size_t max_buffer_size = 0);
+
+
+This constructor creates and channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_concurrent_channel::basic_concurrent_channel (2 of 4 overloads)]
+
+
+Construct and open a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`]. 
+
+
+  template<
+      typename ExecutionContext>
+  basic_concurrent_channel(
+      ExecutionContext & context,
+      std::size_t max_buffer_size = 0,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+This constructor creates and opens a channel.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[context][An execution context which provides the I/O executor that the channel will use, by default, to dispatch handlers for any asynchronous operations performed on the channel.]]
+
+[[max_buffer_size][The maximum number of messages that may be buffered in the channel. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::basic_concurrent_channel::basic_concurrent_channel (3 of 4 overloads)]
+
+
+Move-construct a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  basic_concurrent_channel(
+      basic_concurrent_channel && other);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::basic_concurrent_channel::basic_concurrent_channel (4 of 4 overloads)]
+
+
+Move-construct a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_concurrent_channel(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other,
+      typename constraint< is_convertible< Executor1, Executor >::value >::type  = 0);
+
+
+This constructor moves a channel from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:cancel experimental::basic_concurrent_channel::cancel]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.cancel..cancel..experimental::basic_concurrent_channel] 
+Cancel all asynchronous operations waiting on the channel. 
+
+
+  void cancel();
+
+
+All outstanding send operations will complete with the error `asio::experimental::error::channel_canceld`. Outstanding receive operations complete with the result as determined by the channel traits. 
+
+
+[endsect]
+
+
+
+[section:capacity experimental::basic_concurrent_channel::capacity]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.capacity..capacity..experimental::basic_concurrent_channel] 
+Get the capacity of the channel's buffer. 
+
+
+  std::size_t capacity();
+
+
+
+[endsect]
+
+
+
+[section:close experimental::basic_concurrent_channel::close]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.close..close..experimental::basic_concurrent_channel] 
+Close the channel. 
+
+
+  void close();
+
+
+
+[endsect]
+
+
+
+[section:executor_type experimental::basic_concurrent_channel::executor_type]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.executor_type..executor_type..experimental::basic_concurrent_channel] 
+The type of the executor associated with the channel. 
+
+
+  typedef Executor executor_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:get_executor experimental::basic_concurrent_channel::get_executor]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.get_executor..get_executor..experimental::basic_concurrent_channel] 
+Get the executor associated with the object. 
+
+
+  executor_type get_executor();
+
+
+
+[endsect]
+
+
+
+[section:is_open experimental::basic_concurrent_channel::is_open]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.is_open..is_open..experimental::basic_concurrent_channel] 
+Determine whether the channel is open. 
+
+
+  bool is_open() const;
+
+
+
+[endsect]
+
+
+[section:operator_eq_ experimental::basic_concurrent_channel::operator=]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.operator_eq_..operator=..experimental::basic_concurrent_channel] 
+Move-assign a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  basic_concurrent_channel & ``[link asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload1 operator=]``(
+      basic_concurrent_channel && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_concurrent_channel & >::type ``[link asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload2 operator=]``(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other);
+  ``  [''''&raquo;''' [link asio.reference.experimental__basic_concurrent_channel.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 experimental::basic_concurrent_channel::operator= (1 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  basic_concurrent_channel & operator=(
+      basic_concurrent_channel && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::basic_concurrent_channel::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] from another. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_concurrent_channel & >::type operator=(
+      basic_concurrent_channel< Executor1, Traits, Signatures...> && other);
+
+
+This assignment operator moves a channel from one object to another. Cancels any outstanding asynchronous operations associated with the target object.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_concurrent_channel(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:ready experimental::basic_concurrent_channel::ready]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.ready..ready..experimental::basic_concurrent_channel] 
+Determine whether a message can be received without blocking. 
+
+
+  bool ready() const;
+
+
+
+[endsect]
+
+
+
+[section:reset experimental::basic_concurrent_channel::reset]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.reset..reset..experimental::basic_concurrent_channel] 
+Reset the channel to its initial state. 
+
+
+  void reset();
+
+
+
+[endsect]
+
+
+
+[section:traits_type experimental::basic_concurrent_channel::traits_type]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.traits_type..traits_type..experimental::basic_concurrent_channel] 
+The traits type associated with the channel. 
+
+
+  typedef Traits::template rebind< Signatures...>::other traits_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:try_receive experimental::basic_concurrent_channel::try_receive]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.try_receive..try_receive..experimental::basic_concurrent_channel] 
+Try to receive a message without blocking. 
+
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  bool try_receive(
+      Handler && handler);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send experimental::basic_concurrent_channel::try_send]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.try_send..try_send..experimental::basic_concurrent_channel] 
+Try to send a message without blocking. 
+
+
+  template<
+      typename... Args>
+  bool try_send(
+      Args &&... args);
+
+
+Fails if the buffer is full and there are no waiting receive operations.
+
+
+[heading Return Value]
+      
+`true` on success, `false` on failure. 
+
+
+
+
+[endsect]
+
+
+
+[section:try_send_n experimental::basic_concurrent_channel::try_send_n]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel.try_send_n..try_send_n..experimental::basic_concurrent_channel] 
+Try to send a number of messages without blocking. 
+
+
+  template<
+      typename... Args>
+  std::size_t try_send_n(
+      std::size_t count,
+      Args &&... args);
+
+
+
+[heading Return Value]
+      
+The number of messages that were sent. 
+
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__basic_concurrent_channel__rebind_executor experimental::basic_concurrent_channel::rebind_executor]
+
+[indexterm1 asio.indexterm.experimental__basic_concurrent_channel__rebind_executor..experimental::basic_concurrent_channel::rebind_executor]
+
+
+Rebinds the channel type to another executor. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  struct rebind_executor
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel__rebind_executor.other [*other]]]
+    [The channel type when rebound to the specified executor. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[section:other experimental::basic_concurrent_channel::rebind_executor::other]
+
+[indexterm2 asio.indexterm.experimental__basic_concurrent_channel__rebind_executor.other..other..experimental::basic_concurrent_channel::rebind_executor] 
+The channel type when rebound to the specified executor. 
+
+
+  typedef basic_concurrent_channel< Executor1, Traits, Signatures...> other;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel__rebind_executor [*rebind_executor]]]
+    [Rebinds the channel type to another executor. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel.executor_type [*executor_type]]]
+    [The type of the executor associated with the channel. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__basic_concurrent_channel.traits_type [*traits_type]]]
+    [The traits type associated with the channel. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.async_receive [*async_receive]]]
+    [Asynchronously receive a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.async_send [*async_send]]]
+    [Asynchronously send a message. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.basic_concurrent_channel [*basic_concurrent_channel]] [constructor]]
+    [Construct a basic_concurrent_channel. 
+     [hr]
+     Construct and open a basic_concurrent_channel. 
+     [hr]
+     Move-construct a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.cancel [*cancel]]]
+    [Cancel all asynchronous operations waiting on the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.capacity [*capacity]]]
+    [Get the capacity of the channel's buffer. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.close [*close]]]
+    [Close the channel. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.get_executor [*get_executor]]]
+    [Get the executor associated with the object. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.is_open [*is_open]]]
+    [Determine whether the channel is open. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.operator_eq_ [*operator=]]]
+    [Move-assign a basic_concurrent_channel from another. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.ready [*ready]]]
+    [Determine whether a message can be received without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.reset [*reset]]]
+    [Reset the channel to its initial state. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.try_receive [*try_receive]]]
+    [Try to receive a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.try_send [*try_send]]]
+    [Try to send a message without blocking. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__basic_concurrent_channel.try_send_n [*try_send_n]]]
+    [Try to send a number of messages without blocking. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/basic_concurrent_channel.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__channel_traits experimental::channel_traits]
+
+[indexterm1 asio.indexterm.experimental__channel_traits..experimental::channel_traits]
+
+
+
+  template<
+      typename... Signatures>
+  struct channel_traits
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.experimental__channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[section:invoke_receive_cancelled experimental::channel_traits::invoke_receive_cancelled]
+
+[indexterm2 asio.indexterm.experimental__channel_traits.invoke_receive_cancelled..invoke_receive_cancelled..experimental::channel_traits] 
+Invoke the specified handler with a cancellation notification. 
+
+
+  template<
+      typename F>
+  static void invoke_receive_cancelled(
+      F f);
+
+
+
+[endsect]
+
+
+
+[section:invoke_receive_closed experimental::channel_traits::invoke_receive_closed]
+
+[indexterm2 asio.indexterm.experimental__channel_traits.invoke_receive_closed..invoke_receive_closed..experimental::channel_traits] 
+Invoke the specified handler with a closed notification. 
+
+
+  template<
+      typename F>
+  static void invoke_receive_closed(
+      F f);
+
+
+
+[endsect]
+
+
+
+[section:receive_cancelled_signature experimental::channel_traits::receive_cancelled_signature]
+
+[indexterm2 asio.indexterm.experimental__channel_traits.receive_cancelled_signature..receive_cancelled_signature..experimental::channel_traits] 
+The signature of a channel cancellation notification. 
+
+
+  typedef void receive_cancelled_signature;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:receive_closed_signature experimental::channel_traits::receive_closed_signature]
+
+[indexterm2 asio.indexterm.experimental__channel_traits.receive_closed_signature..receive_closed_signature..experimental::channel_traits] 
+The signature of a channel closed notification. 
+
+
+  typedef void receive_closed_signature;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__channel_traits__container experimental::channel_traits::container]
+
+[indexterm1 asio.indexterm.experimental__channel_traits__container..experimental::channel_traits::container]
+
+
+Determine the container for the specified elements. 
+
+
+  template<
+      typename Element>
+  struct container
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__channel_traits__container.type [*type]]]
+    []
+  
+  ]
+
+]
+
+This nested structure must have a single nested type `other` that aliases a container type for the specified element type. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[section:type experimental::channel_traits::container::type]
+
+[indexterm2 asio.indexterm.experimental__channel_traits__container.type..type..experimental::channel_traits::container] 
+
+  typedef user_defined type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:experimental__channel_traits__rebind experimental::channel_traits::rebind]
+
+[indexterm1 asio.indexterm.experimental__channel_traits__rebind..experimental::channel_traits::rebind]
+
+
+Rebind the traits to a new set of signatures. 
+
+
+  template<
+      typename... NewSignatures>
+  struct rebind
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__channel_traits__rebind.other [*other]]]
+    []
+  
+  ]
+
+]
+
+This nested structure must have a single nested type `other` that aliases a traits type with the specified set of signatures. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[section:other experimental::channel_traits::rebind::other]
+
+[indexterm2 asio.indexterm.experimental__channel_traits__rebind.other..other..experimental::channel_traits::rebind] 
+
+  typedef user_defined other;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_traits.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:experimental__co_spawn experimental::co_spawn]
 
 [indexterm1 asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
@@ -92599,6 +94487,96 @@ Encapsulates deferred values.
 
 
 [endsect]
+
+
+[section:experimental__error__channel_category experimental::error::channel_category]
+
+[indexterm1 asio.indexterm.experimental__error__channel_category..experimental::error::channel_category] 
+
+  static const asio::error_category & channel_category = asio::experimental::error::get_channel_category();
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__error__channel_errors experimental::error::channel_errors]
+
+[indexterm1 asio.indexterm.experimental__error__channel_errors..experimental::error::channel_errors] 
+  enum channel_errors
+
+[indexterm2 asio.indexterm.experimental__error__channel_errors.channel_closed..channel_closed..experimental::error::channel_errors]
+[indexterm2 asio.indexterm.experimental__error__channel_errors.channel_cancelled..channel_cancelled..experimental::error::channel_errors]
+
+[heading Values]
+[variablelist
+
+  [
+    [channel_closed]
+    [The channel was closed. ]
+  ]
+
+  [
+    [channel_cancelled]
+    [The channel was cancelled. ]
+  ]
+
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__error__get_channel_category experimental::error::get_channel_category]
+
+[indexterm1 asio.indexterm.experimental__error__get_channel_category..experimental::error::get_channel_category] 
+
+  const asio::error_category & get_channel_category();
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:experimental__error__make_error_code experimental::error::make_error_code]
+
+[indexterm1 asio.indexterm.experimental__error__make_error_code..experimental::error::make_error_code] 
+
+  asio::error_code make_error_code(
+      channel_errors e);
+
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/channel_error.hpp]
+
+['Convenience header: ]None
+
+
+[endsect]
+
 
 [section:experimental__is_deferred experimental::is_deferred]
 

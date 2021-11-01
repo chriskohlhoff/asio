@@ -379,16 +379,34 @@ nobase_include_HEADERS = \
 	asio/experimental/as_single.hpp \
 	asio/experimental/as_tuple.hpp \
 	asio/experimental/awaitable_operators.hpp \
+	asio/experimental/basic_channel.hpp \
+	asio/experimental/basic_concurrent_channel.hpp \
 	asio/experimental/cancellation_condition.hpp \
+	asio/experimental/channel.hpp \
+	asio/experimental/channel_error.hpp \
+	asio/experimental/channel_traits.hpp \
+	asio/experimental/co_spawn.hpp \
+	asio/experimental/concurrent_channel.hpp \
 	asio/experimental/coro.hpp \
 	asio/experimental/coro_traits.hpp \
 	asio/experimental/deferred.hpp \
+	asio/experimental/detail/channel_handler.hpp \
+	asio/experimental/detail/channel_message.hpp \
+	asio/experimental/detail/channel_operation.hpp \
+	asio/experimental/detail/channel_payload.hpp \
+	asio/experimental/detail/channel_receive_op.hpp \
+	asio/experimental/detail/channel_send_functions.hpp \
+	asio/experimental/detail/channel_send_op.hpp \
+	asio/experimental/detail/channel_service.hpp \
 	asio/experimental/detail/completion_handler_erasure.hpp \
 	asio/experimental/detail/coro_promise_allocator.hpp \
+	asio/experimental/detail/has_signature.hpp \
+	asio/experimental/detail/impl/channel_service.hpp \
 	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/append.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/as_tuple.hpp \
+	asio/experimental/impl/channel_error.ipp \
 	asio/experimental/impl/coro.hpp \
 	asio/experimental/impl/deferred.hpp \
 	asio/experimental/impl/parallel_group.hpp \

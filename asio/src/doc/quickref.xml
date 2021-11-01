@@ -272,6 +272,9 @@
             <member><link linkend="asio.reference.experimental__append_t">experimental::append_t</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
             <member><link linkend="asio.reference.experimental__as_tuple_t">experimental::as_tuple_t</link></member>
+            <member><link linkend="asio.reference.experimental__basic_channel">experimental::basic_channel</link></member>
+            <member><link linkend="asio.reference.experimental__basic_concurrent_channel">experimental::basic_concurrent_channel</link></member>
+            <member><link linkend="asio.reference.experimental__channel_traits">experimental::channel_traits</link></member>
             <member><link linkend="asio.reference.experimental__coro">experimental::coro</link></member>
             <member><link linkend="asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
             <member><link linkend="asio.reference.experimental__prepend_t">experimental::prepend_t</link></member>

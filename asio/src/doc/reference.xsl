@@ -1634,6 +1634,9 @@
         <xsl:when test="declname = 'E'">
           <xsl:value-of select="declname"/>
         </xsl:when>
+        <xsl:when test="declname = 'Element'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'EndpointIterator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1713,6 +1716,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'N'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'NewSignatures'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'OnFalse'">

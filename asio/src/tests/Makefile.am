@@ -191,6 +191,15 @@ check_PROGRAMS += \
 	unit/experimental/deferred
 endif
 
+if HAVE_CXX17
+check_PROGRAMS += \
+	unit/experimental/basic_channel \
+	unit/experimental/basic_concurrent_channel \
+	unit/experimental/channel \
+	unit/experimental/channel_traits \
+	unit/experimental/concurrent_channel
+endif
+
 if HAVE_CXX20
 check_PROGRAMS += \
 	unit/experimental/promise
@@ -382,6 +391,15 @@ TESTS = \
 if HAVE_CXX14
 TESTS += \
 	unit/experimental/deferred
+endif
+
+if HAVE_CXX17
+TESTS += \
+	unit/experimental/basic_channel \
+	unit/experimental/basic_concurrent_channel \
+	unit/experimental/channel \
+	unit/experimental/channel_traits \
+	unit/experimental/concurrent_channel
 endif
 
 if HAVE_CXX20
@@ -594,6 +612,14 @@ unit_write_at_SOURCES = unit/write_at.cpp
 
 if HAVE_CXX14
 unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
+endif
+
+if HAVE_CXX17
+unit_experimental_basic_channel_SOURCES = unit/experimental/basic_channel.cpp
+unit_experimental_basic_concurrent_channel_SOURCES = unit/experimental/basic_concurrent_channel.cpp
+unit_experimental_channel_SOURCES = unit/experimental/channel.cpp
+unit_experimental_channel_traits_SOURCES = unit/experimental/channel_traits.cpp
+unit_experimental_concurrent_channel_SOURCES = unit/experimental/concurrent_channel.cpp
 endif
 
 if HAVE_CXX20
