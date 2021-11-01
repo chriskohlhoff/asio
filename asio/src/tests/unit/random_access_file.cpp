@@ -70,11 +70,7 @@ void test()
     random_access_file file2(ioc, "", random_access_file::read_only);
     random_access_file file3(ioc, path, random_access_file::read_only);
     random_access_file::native_handle_type native_file1 = file1.native_handle();
-#if defined(ASIO_MSVC) && (_MSC_VER < 1910)
-    // Skip this on older MSVC due to mysterious ambiguous overload errors.
-#else
     random_access_file file4(ioc, native_file1);
-#endif
 
     random_access_file file5(ioc_ex);
     random_access_file file6(ioc_ex, "", random_access_file::read_only);
@@ -131,6 +127,12 @@ void test()
     file1.resize(asio::uint64_t(0));
     file1.resize(asio::uint64_t(0), ec);
 
+    file1.sync_all();
+    file1.sync_all(ec);
+
+    file1.sync_data();
+    file1.sync_data(ec);
+
     file1.write_some_at(0, buffer(mutable_char_buffer));
     file1.write_some_at(0, buffer(const_char_buffer));
     file1.write_some_at(0, buffer(mutable_char_buffer), ec);
@@ -164,5 +166,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "random_access_file",
-  ASIO_TEST_CASE(random_access_file_compile::test)
+  ASIO_COMPILE_TEST_CASE(random_access_file_compile::test)
 )

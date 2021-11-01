@@ -743,6 +743,60 @@ public:
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
+  /// Synchronise the file to disk.
+  /**
+   * This function synchronises the file data and metadata to disk. Note that
+   * the semantics of this synchronisation vary between operation systems.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  void sync_all()
+  {
+    asio::error_code ec;
+    impl_.get_service().sync_all(impl_.get_implementation(), ec);
+    asio::detail::throw_error(ec, "sync_all");
+  }
+
+  /// Synchronise the file to disk.
+  /**
+   * This function synchronises the file data and metadata to disk. Note that
+   * the semantics of this synchronisation vary between operation systems.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  ASIO_SYNC_OP_VOID sync_all(asio::error_code& ec)
+  {
+    impl_.get_service().sync_all(impl_.get_implementation(), ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
+  }
+
+  /// Synchronise the file data to disk.
+  /**
+   * This function synchronises the file data to disk. Note that the semantics
+   * of this synchronisation vary between operation systems.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  void sync_data()
+  {
+    asio::error_code ec;
+    impl_.get_service().sync_data(impl_.get_implementation(), ec);
+    asio::detail::throw_error(ec, "sync_data");
+  }
+
+  /// Synchronise the file data to disk.
+  /**
+   * This function synchronises the file data to disk. Note that the semantics
+   * of this synchronisation vary between operation systems.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  ASIO_SYNC_OP_VOID sync_data(asio::error_code& ec)
+  {
+    impl_.get_service().sync_data(impl_.get_implementation(), ec);
+    ASIO_SYNC_OP_VOID_RETURN(ec);
+  }
+
 protected:
   /// Protected destructor to prevent deletion through this type.
   /**

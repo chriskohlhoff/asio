@@ -142,6 +142,14 @@ public:
   ASIO_DECL asio::error_code resize(implementation_type& impl,
       uint64_t n, asio::error_code& ec);
 
+  // Synchronise the file to disk.
+  ASIO_DECL asio::error_code sync_all(implementation_type& impl,
+      asio::error_code& ec);
+
+  // Synchronise the file data to disk.
+  ASIO_DECL asio::error_code sync_data(implementation_type& impl,
+      asio::error_code& ec);
+
   // Seek to a position in the file.
   ASIO_DECL uint64_t seek(implementation_type& impl, int64_t offset,
       file_base::seek_basis whence, asio::error_code& ec);

@@ -32,8 +32,15 @@ namespace detail {
 win_iocp_file_service::win_iocp_file_service(
     execution_context& context)
   : execution_context_service_base<win_iocp_file_service>(context),
-    handle_service_(context)
+    handle_service_(context),
+    nt_flush_buffers_file_ex_(0)
 {
+  if (FARPROC nt_flush_buffers_file_ex_ptr = ::GetProcAddress(
+        ::GetModuleHandleA("NTDLL"), "NtFlushBuffersFileEx"))
+  {
+    nt_flush_buffers_file_ex_ = reinterpret_cast<nt_flush_buffers_file_ex_fn>(
+        reinterpret_cast<void*>(nt_flush_buffers_file_ex_ptr));
+  }
 }
 
 void win_iocp_file_service::shutdown()
@@ -158,6 +165,41 @@ asio::error_code win_iocp_file_service::resize(
     ec.assign(last_error, asio::error::get_system_category());
     return ec;
   }
+}
+
+asio::error_code win_iocp_file_service::sync_all(
+    win_iocp_file_service::implementation_type& impl,
+    asio::error_code& ec)
+{
+  BOOL result = ::FlushFileBuffers(native_handle(impl));
+  if (result)
+  {
+    ec.assign(0, ec.category());
+    return ec;
+  }
+  else
+  {
+    DWORD last_error = ::GetLastError();
+    ec.assign(last_error, asio::error::get_system_category());
+    return ec;
+  }
+}
+
+asio::error_code win_iocp_file_service::sync_data(
+    win_iocp_file_service::implementation_type& impl,
+    asio::error_code& ec)
+{
+  if (nt_flush_buffers_file_ex_)
+  {
+    io_status_block status = {};
+    if (!nt_flush_buffers_file_ex_(native_handle(impl),
+          flush_flags_file_data_sync_only, 0, 0, &status))
+    {
+      ec.assign(0, ec.category());
+      return ec;
+    }
+  }
+  return sync_all(impl, ec);
 }
 
 uint64_t win_iocp_file_service::seek(

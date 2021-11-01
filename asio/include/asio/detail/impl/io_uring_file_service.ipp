@@ -89,6 +89,28 @@ asio::error_code io_uring_file_service::resize(
   return ec;
 }
 
+asio::error_code io_uring_file_service::sync_all(
+    io_uring_file_service::implementation_type& impl,
+    asio::error_code& ec)
+{
+  int result = ::fsync(native_handle(impl));
+  descriptor_ops::get_last_error(ec, result != 0);
+  return ec;
+}
+
+asio::error_code io_uring_file_service::sync_data(
+    io_uring_file_service::implementation_type& impl,
+    asio::error_code& ec)
+{
+#if defined(_POSIX_SYNCHRONIZED_IO)
+  int result = ::fdatasync(native_handle(impl));
+#else // defined(_POSIX_SYNCHRONIZED_IO)
+  int result = ::fsync(native_handle(impl));
+#endif // defined(_POSIX_SYNCHRONIZED_IO)
+  descriptor_ops::get_last_error(ec, result != 0);
+  return ec;
+}
+
 uint64_t io_uring_file_service::seek(
     io_uring_file_service::implementation_type& impl, int64_t offset,
     file_base::seek_basis whence, asio::error_code& ec)

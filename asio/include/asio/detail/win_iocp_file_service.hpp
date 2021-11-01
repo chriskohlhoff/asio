@@ -145,6 +145,14 @@ public:
   ASIO_DECL asio::error_code resize(implementation_type& impl,
       uint64_t n, asio::error_code& ec);
 
+  // Synchronise the file to disk.
+  ASIO_DECL asio::error_code sync_all(implementation_type& impl,
+      asio::error_code& ec);
+
+  // Synchronise the file data to disk.
+  ASIO_DECL asio::error_code sync_data(implementation_type& impl,
+      asio::error_code& ec);
+
   // Seek to a position in the file.
   ASIO_DECL uint64_t seek(implementation_type& impl, int64_t offset,
       file_base::seek_basis whence, asio::error_code& ec);
@@ -235,6 +243,27 @@ public:
 private:
   // The implementation used for initiating asynchronous operations.
   win_iocp_handle_service handle_service_;
+
+  // Emulation of Windows IO_STATUS_BLOCK structure.
+  struct io_status_block
+  {
+    union u
+    {
+      LONG Status;
+      void* Pointer;
+    };
+    ULONG_PTR Information;
+  };
+
+  // Emulation of flag passed to NtFlushBuffersFileEx.
+  enum { flush_flags_file_data_sync_only = 4 };
+
+  // The type of a NtFlushBuffersFileEx function pointer.
+  typedef LONG (NTAPI *nt_flush_buffers_file_ex_fn)(
+      HANDLE, ULONG, void*, ULONG, io_status_block*);
+
+  // The NTFlushBuffersFileEx function pointer.
+  nt_flush_buffers_file_ex_fn nt_flush_buffers_file_ex_;
 };
 
 } // namespace detail

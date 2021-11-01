@@ -16119,6 +16119,16 @@ Provides file functionality.
     [Get the size of the file. ]
   ]
   
+  [
+    [[link asio.reference.basic_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
 ]
 
 [heading Protected Member Functions]
@@ -17690,6 +17700,150 @@ This function determines the size of the file, in bytes.
 
 [endsect]
 
+[section:sync_all basic_file::sync_all]
+
+[indexterm2 asio.indexterm.basic_file.sync_all..sync_all..basic_file] 
+Synchronise the file to disk. 
+
+
+  void ``[link asio.reference.basic_file.sync_all.overload1 sync_all]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_file.sync_all.overload1 more...]]``
+
+  void ``[link asio.reference.basic_file.sync_all.overload2 sync_all]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_file.sync_all.overload2 more...]]``
+
+
+[section:overload1 basic_file::sync_all (1 of 2 overloads)]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all();
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_file::sync_all (2 of 2 overloads)]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all(
+      asio::error_code & ec);
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:sync_data basic_file::sync_data]
+
+[indexterm2 asio.indexterm.basic_file.sync_data..sync_data..basic_file] 
+Synchronise the file data to disk. 
+
+
+  void ``[link asio.reference.basic_file.sync_data.overload1 sync_data]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_file.sync_data.overload1 more...]]``
+
+  void ``[link asio.reference.basic_file.sync_data.overload2 sync_data]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_file.sync_data.overload2 more...]]``
+
+
+[section:overload1 basic_file::sync_data (1 of 2 overloads)]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data();
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_file::sync_data (2 of 2 overloads)]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data(
+      asio::error_code & ec);
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:truncate basic_file::truncate]
 
@@ -17900,6 +18054,16 @@ The file type when rebound to the specified executor.
   [
     [[link asio.reference.basic_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
 ]
@@ -18594,6 +18758,16 @@ Provides random-access file functionality.
   [
     [[link asio.reference.basic_random_access_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_random_access_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_random_access_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
@@ -20541,6 +20715,162 @@ This function determines the size of the file, in bytes.
 
 [endsect]
 
+[section:sync_all basic_random_access_file::sync_all]
+
+[indexterm2 asio.indexterm.basic_random_access_file.sync_all..sync_all..basic_random_access_file] 
+Synchronise the file to disk. 
+
+
+  void ``[link asio.reference.basic_random_access_file.sync_all.overload1 sync_all]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_random_access_file.sync_all.overload1 more...]]``
+
+  void ``[link asio.reference.basic_random_access_file.sync_all.overload2 sync_all]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_random_access_file.sync_all.overload2 more...]]``
+
+
+[section:overload1 basic_random_access_file::sync_all (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all();
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_random_access_file::sync_all (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all(
+      asio::error_code & ec);
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:sync_data basic_random_access_file::sync_data]
+
+[indexterm2 asio.indexterm.basic_random_access_file.sync_data..sync_data..basic_random_access_file] 
+Synchronise the file data to disk. 
+
+
+  void ``[link asio.reference.basic_random_access_file.sync_data.overload1 sync_data]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_random_access_file.sync_data.overload1 more...]]``
+
+  void ``[link asio.reference.basic_random_access_file.sync_data.overload2 sync_data]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_random_access_file.sync_data.overload2 more...]]``
+
+
+[section:overload1 basic_random_access_file::sync_data (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data();
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_random_access_file::sync_data (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data(
+      asio::error_code & ec);
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:truncate basic_random_access_file::truncate]
 
@@ -20898,6 +21228,16 @@ The file type when rebound to the specified executor.
   [
     [[link asio.reference.basic_random_access_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_random_access_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_random_access_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
@@ -51056,6 +51396,16 @@ Provides stream-oriented file functionality.
   ]
   
   [
+    [[link asio.reference.basic_stream_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
+  [
     [[link asio.reference.basic_stream_file.write_some [*write_some]]]
     [Write some data to the file. ]
   ]
@@ -53093,6 +53443,162 @@ This function determines the size of the file, in bytes.
 
 [endsect]
 
+[section:sync_all basic_stream_file::sync_all]
+
+[indexterm2 asio.indexterm.basic_stream_file.sync_all..sync_all..basic_stream_file] 
+Synchronise the file to disk. 
+
+
+  void ``[link asio.reference.basic_stream_file.sync_all.overload1 sync_all]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_stream_file.sync_all.overload1 more...]]``
+
+  void ``[link asio.reference.basic_stream_file.sync_all.overload2 sync_all]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_stream_file.sync_all.overload2 more...]]``
+
+
+[section:overload1 basic_stream_file::sync_all (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all();
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_stream_file::sync_all (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file to disk. 
+
+
+  void sync_all(
+      asio::error_code & ec);
+
+
+This function synchronises the file data and metadata to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:sync_data basic_stream_file::sync_data]
+
+[indexterm2 asio.indexterm.basic_stream_file.sync_data..sync_data..basic_stream_file] 
+Synchronise the file data to disk. 
+
+
+  void ``[link asio.reference.basic_stream_file.sync_data.overload1 sync_data]``();
+  ``  [''''&raquo;''' [link asio.reference.basic_stream_file.sync_data.overload1 more...]]``
+
+  void ``[link asio.reference.basic_stream_file.sync_data.overload2 sync_data]``(
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_stream_file.sync_data.overload2 more...]]``
+
+
+[section:overload1 basic_stream_file::sync_data (1 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data();
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_stream_file::sync_data (2 of 2 overloads)]
+
+
+['Inherited from basic_file.]
+
+
+Synchronise the file data to disk. 
+
+
+  void sync_data(
+      asio::error_code & ec);
+
+
+This function synchronises the file data to disk. Note that the semantics of this synchronisation vary between operation systems.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ec][Set to indicate what error occurred, if any. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:truncate basic_stream_file::truncate]
 
@@ -53447,6 +53953,16 @@ The file type when rebound to the specified executor.
   [
     [[link asio.reference.basic_stream_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
@@ -130165,6 +130681,16 @@ Typedef for the typical usage of a random-access file.
   ]
   
   [
+    [[link asio.reference.basic_random_access_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_random_access_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
+  ]
+  
+  [
     [[link asio.reference.basic_random_access_file.write_some_at [*write_some_at]]]
     [Write some data to the handle at the specified offset. ]
   ]
@@ -145048,6 +145574,16 @@ Typedef for the typical usage of a stream-oriented file.
   [
     [[link asio.reference.basic_stream_file.size [*size]]]
     [Get the size of the file. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_file.sync_all [*sync_all]]]
+    [Synchronise the file to disk. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_stream_file.sync_data [*sync_data]]]
+    [Synchronise the file data to disk. ]
   ]
   
   [
