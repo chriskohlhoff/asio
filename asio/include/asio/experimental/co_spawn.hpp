@@ -20,6 +20,7 @@
 #include "asio/compose.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/experimental/coro.hpp"
+#include "asio/experimental/prepend.hpp"
 #include "asio/redirect_error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -29,20 +30,18 @@ namespace experimental {
 namespace detail {
 
 template <typename T, typename U, typename Executor>
-struct coro_spawn_initiate
+struct coro_spawn_op
 {
-  coro<T, U, Executor> c;
+  std::shared_ptr<coro<T, U, Executor>> c;
 
   void operator()(auto& self)
   {
-    auto cp = std::make_shared<coro<T, U, Executor>>(std::move(c));
-    cp->async_resume(
-        bind_executor(
-          self.get_executor(),
-          [cp, self = std::move(self)](auto... res) mutable
-          {
-            self.complete(std::move(res)...);
-          }));
+    c->async_resume((prepend)(std::move(self), 0));
+  }
+
+  void operator()(auto& self, int, auto... res)
+  {
+    self.complete(std::move(res)...);
   }
 };
 
@@ -66,7 +65,8 @@ co_spawn(coro<void, T, Executor> c, CompletionToken&& token)
 {
   auto exec = c.get_executor();
   return async_compose<CompletionToken, void(std::exception_ptr, T)>(
-      detail::coro_spawn_initiate<void, T, Executor>{std::move(c)},
+      detail::coro_spawn_op<void, T, Executor>{
+        std::make_shared<coro<void, T, Executor>>(std::move(c))},
       token, exec);
 }
 
@@ -88,7 +88,8 @@ co_spawn(coro<void(), T, Executor> c, CompletionToken&& token)
 {
   auto exec = c.get_executor();
   return async_compose<CompletionToken, void(std::exception_ptr, T)>(
-      detail::coro_spawn_initiate<void(), T, Executor>{std::move(c)},
+      detail::coro_spawn_op<void(), T, Executor>{
+        std::make_shared<coro<void(), T, Executor>>(std::move(c))},
       token, exec);
 }
 
@@ -109,7 +110,8 @@ co_spawn(coro<void() noexcept, T, Executor> c, CompletionToken&& token)
 {
   auto exec = c.get_executor();
   return async_compose<CompletionToken, void(T)>(
-      detail::coro_spawn_initiate<void() noexcept, T, Executor>{std::move(c)},
+      detail::coro_spawn_op<void() noexcept, T, Executor>{
+        std::make_shared<coro<void() noexcept, T, Executor>>(std::move(c))},
       token, exec);
 }
 
@@ -131,7 +133,8 @@ co_spawn(coro<void, void, Executor> c, CompletionToken&& token)
 {
   auto exec = c.get_executor();
   return async_compose<CompletionToken, void(std::exception_ptr)>(
-      detail::coro_spawn_initiate<void, void, Executor>{std::move(c)},
+      detail::coro_spawn_op<void, void, Executor>{
+        std::make_shared<coro<void, void, Executor>>(std::move(c))},
       token, exec);
 }
 
@@ -153,7 +156,8 @@ co_spawn(coro<void(), void, Executor> c, CompletionToken&& token)
 {
   auto exec = c.get_executor();
   return async_compose<CompletionToken, void(std::exception_ptr)>(
-      detail::coro_spawn_initiate<void(), void, Executor>{std::move(c)},
+      detail::coro_spawn_op<void(), void, Executor>{
+        std::make_shared<coro<void(), void, Executor>>(std::move(c))},
       token, exec);
 }
 
@@ -174,8 +178,8 @@ co_spawn(coro<void() noexcept, void, Executor> c, CompletionToken&& token)
 {
   auto exec = c.get_executor();
   return async_compose<CompletionToken, void()>(
-      detail::coro_spawn_initiate<void() noexcept, void, Executor>{
-        std::move(c)},
+      detail::coro_spawn_op<void() noexcept, void, Executor>{
+        std::make_shared<coro<void() noexcept, void, Executor>>(std::move(c))},
       token, exec);
 }
 
