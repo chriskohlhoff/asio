@@ -90946,10 +90946,319 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [endsect]
 
+[section:experimental__co_spawn experimental::co_spawn]
+
+[indexterm1 asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
+Spawn a resumable coroutine. 
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.experimental__co_spawn.overload1 co_spawn]``(
+      coro< void, T, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload1 more...]]``
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.experimental__co_spawn.overload2 co_spawn]``(
+      coro< void(), T, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload2 more...]]``
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.experimental__co_spawn.overload3 co_spawn]``(
+      coro< void() noexcept, T, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload3 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.experimental__co_spawn.overload4 co_spawn]``(
+      coro< void, void, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload4 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.experimental__co_spawn.overload5 co_spawn]``(
+      coro< void(), void, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload5 more...]]``
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.experimental__co_spawn.overload6 co_spawn]``(
+      coro< void() noexcept, void, Executor > c,
+      CompletionToken && token);
+  ``  [''''&raquo;''' [link asio.reference.experimental__co_spawn.overload6 more...]]``
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/co_spawn.hpp]
+
+['Convenience header: ]None
+
+
+[section:overload1 experimental::co_spawn (1 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void, T, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::co_spawn (2 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void(), T, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 experimental::co_spawn (3 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename T,
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void() noexcept, T, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 experimental::co_spawn (4 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void, void, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 experimental::co_spawn (5 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void(), void, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 experimental::co_spawn (6 of 6 overloads)]
+
+
+Spawn a resumable coroutine. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename CompletionToken>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` co_spawn(
+      coro< void() noexcept, void, Executor > c,
+      CompletionToken && token);
+
+
+This function spawns the coroutine for execution on its executor. It binds the lifetime of the coroutine to the executor.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[c][The coroutine]]
+
+[[token][The completion token]]
+
+]
+
+
+[heading Return Value]
+      
+Implementation defined 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:experimental__coro experimental::coro]
 
 [indexterm1 asio.indexterm.experimental__coro..experimental::coro]
 
+
+The main type of a resumable coroutine. 
 
 
   template<
@@ -90965,52 +91274,51 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
   [
     [[link asio.reference.experimental__coro.async_resume [*async_resume]]]
-    []
-  ]
-  
-  [
-    [[link asio.reference.experimental__coro.cancel [*cancel]]]
-    []
+    [Resume the coroutine. ]
   ]
   
   [
     [[link asio.reference.experimental__coro.coro [*coro]] [constructor]]
-    []
+    [The default constructor, gives an invalid coroutine. 
+     [hr]
+     Move constructor. 
+     [hr]
+     ]
   ]
   
   [
     [[link asio.reference.experimental__coro.get_executor [*get_executor]]]
-    []
+    [Get the used executor. ]
   ]
   
   [
     [[link asio.reference.experimental__coro.is_open [*is_open]]]
-    []
+    [Check whether the coroutine is open, i.e. can be resumed. ]
   ]
   
   [
     [[link asio.reference.experimental__coro.operator_bool [*operator bool]]]
-    []
+    [Check whether the coroutine is open, i.e. can be resumed. ]
   ]
   
   [
     [[link asio.reference.experimental__coro.operator_co_await [*operator co_await]]]
-    []
+    [Operator used for coroutines without input value. ]
   ]
   
   [
     [[link asio.reference.experimental__coro.operator_lp__rp_ [*operator()]]]
-    []
+    [Operator used for coroutines with input value. ]
   ]
   
   [
     [[link asio.reference.experimental__coro.operator_eq_ [*operator=]]]
-    []
+    [Move assignment. ]
   ]
   
   [
     [[link asio.reference.experimental__coro._coro [*~coro]] [destructor]]
-    []
+    [Destructor. Destroys the coroutine, if it holds a valid one. ]
   ]
   
 ]
@@ -91021,10 +91329,12 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
   [
     [[link asio.reference.experimental__coro.is_noexcept [*is_noexcept]] [static]]
-    []
+    [Whether or not the coroutine is noexcept. ]
   ]
 
 ]
+
+Template parameter `Yield` specifies type or signature used by co\_yield, `Return` specifies the type used for co\_return, and `Executor` specifies the underlying executor type. 
 
 [heading Requirements]
 
@@ -91035,6 +91345,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:async_resume experimental::coro::async_resume]
 
 [indexterm2 asio.indexterm.experimental__coro.async_resume..async_resume..experimental::coro] 
+Resume the coroutine. 
+
 
   template<
       typename CompletionToken>
@@ -91054,11 +91366,35 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:overload1 experimental::coro::async_resume (1 of 2 overloads)]
 
 
+Resume the coroutine. 
+
 
   template<
       typename CompletionToken>
   requires std::is_void_v< input_type > auto async_resume(
       CompletionToken && token);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The completion token of the async resume.]]
+
+]
+
+
+[heading Attention]
+      
+Calling an invalid coroutine with a noexcept signature is undefined behaviour.
+
+
+[heading Remarks]
+      
+This overload is only available for coroutines without an input value. 
+
 
 
 
@@ -91068,6 +91404,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload2 experimental::coro::async_resume (2 of 2 overloads)]
 
+
+Resume the coroutine. 
 
 
   template<
@@ -91079,34 +91417,51 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 
 
-[endsect]
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The completion token of the async resume.]]
+
+]
+
+
+[heading Attention]
+      
+Calling an invalid coroutine with a noexcept signature is undefined behaviour.
+
+
+[heading Remarks]
+      
+This overload is only available for coroutines with an input value. 
+
+
 
 
 [endsect]
 
 
-[section:cancel experimental::coro::cancel]
-
-[indexterm2 asio.indexterm.experimental__coro.cancel..cancel..experimental::coro] 
-
-  void cancel(
-      cancellation_type ct = cancellation_type::all);
-
-
-
 [endsect]
-
 
 [section:coro experimental::coro::coro]
 
 [indexterm2 asio.indexterm.experimental__coro.coro..coro..experimental::coro] 
+The default constructor, gives an invalid coroutine. 
+
 
   ``[link asio.reference.experimental__coro.coro.overload1 coro]``();
   ``  [''''&raquo;''' [link asio.reference.experimental__coro.coro.overload1 more...]]``
 
+
+Move constructor. 
+
+
   ``[link asio.reference.experimental__coro.coro.overload2 coro]``(
       coro && lhs);
   ``  [''''&raquo;''' [link asio.reference.experimental__coro.coro.overload2 more...]]``
+
+
 
   ``[link asio.reference.experimental__coro.coro.overload3 coro]``(
       const coro & );
@@ -91115,6 +91470,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload1 experimental::coro::coro (1 of 3 overloads)]
 
+
+The default constructor, gives an invalid coroutine. 
 
 
   coro();
@@ -91127,6 +91484,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload2 experimental::coro::coro (2 of 3 overloads)]
 
+
+Move constructor. 
 
 
   coro(
@@ -91156,6 +91515,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:get_executor experimental::coro::get_executor]
 
 [indexterm2 asio.indexterm.experimental__coro.get_executor..get_executor..experimental::coro] 
+Get the used executor. 
+
 
   executor_type get_executor() const;
 
@@ -91168,6 +91529,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:is_noexcept experimental::coro::is_noexcept]
 
 [indexterm2 asio.indexterm.experimental__coro.is_noexcept..is_noexcept..experimental::coro] 
+Whether or not the coroutine is noexcept. 
+
 
   static constexpr bool is_noexcept = traits::is_noexcept;
 
@@ -91180,6 +91543,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:is_open experimental::coro::is_open]
 
 [indexterm2 asio.indexterm.experimental__coro.is_open..is_open..experimental::coro] 
+Check whether the coroutine is open, i.e. can be resumed. 
+
 
   bool is_open() const;
 
@@ -91192,6 +91557,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_bool experimental::coro::operator bool]
 
 [indexterm2 asio.indexterm.experimental__coro.operator_bool..operator bool..experimental::coro] 
+Check whether the coroutine is open, i.e. can be resumed. 
+
 
   operator bool() const;
 
@@ -91204,6 +91571,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_co_await experimental::coro::operator co_await]
 
 [indexterm2 asio.indexterm.experimental__coro.operator_co_await..operator co_await..experimental::coro] 
+Operator used for coroutines without input value. 
+
 
   auto operator co_await();
 
@@ -91216,11 +91585,38 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_lp__rp_ experimental::coro::operator()]
 
 [indexterm2 asio.indexterm.experimental__coro.operator_lp__rp_..operator()..experimental::coro] 
+Operator used for coroutines with input value. 
+
 
   template<
       detail::convertible_to< input_type > T>
   auto operator()(
       T && ip);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ip][The input value]]
+
+]
+
+
+[heading Return Value]
+      
+An awaitable handle.
+
+
+
+   coro<void> push_values(coro<double(int)> c)
+   {
+      std::optional<double> res = co_await c(42);
+   }
+
+
 
 
 
@@ -91230,6 +91626,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:operator_eq_ experimental::coro::operator=]
 
 [indexterm2 asio.indexterm.experimental__coro.operator_eq_..operator=..experimental::coro] 
+Move assignment. 
+
 
   coro & ``[link asio.reference.experimental__coro.operator_eq_.overload1 operator=]``(
       coro && lhs);
@@ -91242,6 +91640,8 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 
 [section:overload1 experimental::coro::operator= (1 of 2 overloads)]
 
+
+Move assignment. 
 
 
   coro & operator=(
@@ -91271,111 +91671,68 @@ If one operations succeeds, the other is cancelled as the OR-condition is alread
 [section:_coro experimental::coro::~coro]
 
 [indexterm2 asio.indexterm.experimental__coro._coro..~coro..experimental::coro] 
+Destructor. Destroys the coroutine, if it holds a valid one. 
+
 
   ~coro();
 
 
 
+[heading Remarks]
+      
+This does not cancel an active coroutine. Destructing a resumable coroutine, i.e. one with a call to async\_resume that has not completed, is undefined behaviour. 
+
+
+
+
 [endsect]
 
 
 
 [endsect]
 
-[section:experimental__coro__awaitable_t experimental::coro::awaitable_t]
+[section:experimental__coro_traits experimental::coro_traits]
 
-[indexterm1 asio.indexterm.experimental__coro__awaitable_t..experimental::coro::awaitable_t]
-
-
-
-  struct awaitable_t
+[indexterm1 asio.indexterm.experimental__coro_traits..experimental::coro_traits]
 
 
-[heading Member Functions]
-[table
-  [[Name][Description]]
+The traits describing the resumable coroutine behaviour. 
 
-  [
-    [[link asio.reference.experimental__coro__awaitable_t.await_ready [*await_ready]] [static]]
-    []
-  ]
-  
-  [
-    [[link asio.reference.experimental__coro__awaitable_t.await_resume [*await_resume]]]
-    []
-  ]
-  
-  [
-    [[link asio.reference.experimental__coro__awaitable_t.await_suspend [*await_suspend]]]
-    []
-  ]
-  
-]
+
+  template<
+      typename Yield,
+      typename Return,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  struct coro_traits
+
 
 [heading Data Members]
 [table
   [[Name][Description]]
 
   [
-    [[link asio.reference.experimental__coro__awaitable_t.coro_ [*coro_]]]
-    []
+    [[link asio.reference.experimental__coro_traits.is_noexcept [*is_noexcept]] [static]]
+    [Whether or not the coroutine is noexcept. ]
   ]
 
 ]
 
+Template parameter `Yield` specifies type or signature used by co\_yield, `Return` specifies the type used for co\_return, and `Executor` specifies the underlying executor type. 
+
 [heading Requirements]
 
-['Header: ][^asio/experimental/coro.hpp]
+['Header: ][^asio/experimental/coro_traits.hpp]
 
 ['Convenience header: ]None
 
 
-[section:await_ready experimental::coro::awaitable_t::await_ready]
+[section:is_noexcept experimental::coro_traits::is_noexcept]
 
-[indexterm2 asio.indexterm.experimental__coro__awaitable_t.await_ready..await_ready..experimental::coro::awaitable_t] 
-
-  static constexpr bool await_ready();
-
+[indexterm2 asio.indexterm.experimental__coro_traits.is_noexcept..is_noexcept..experimental::coro_traits] 
+Whether or not the coroutine is noexcept. 
 
 
-[endsect]
-
-
-
-[section:await_resume experimental::coro::awaitable_t::await_resume]
-
-[indexterm2 asio.indexterm.experimental__coro__awaitable_t.await_resume..await_resume..experimental::coro::awaitable_t] 
-
-  auto await_resume();
-
-
-
-[endsect]
-
-
-
-[section:await_suspend experimental::coro::awaitable_t::await_suspend]
-
-[indexterm2 asio.indexterm.experimental__coro__awaitable_t.await_suspend..await_suspend..experimental::coro::awaitable_t] 
-
-  template<
-      typename Y,
-      typename R,
-      typename E>
-  auto await_suspend(
-      detail::coroutine_handle< detail::coro_promise< Y, R, E >> h);
-
-
-
-[endsect]
-
-
-
-[section:coro_ experimental::coro::awaitable_t::coro_]
-
-[indexterm2 asio.indexterm.experimental__coro__awaitable_t.coro_..coro_..experimental::coro::awaitable_t] 
-
-  coro & coro_;
+  static constexpr bool is_noexcept = argument_dependent;
 
 
 
@@ -93149,9 +93506,13 @@ The primary template is not defined.
 [section:experimental__use_coro experimental::use_coro]
 
 [indexterm1 asio.indexterm.experimental__use_coro..experimental::use_coro] 
+A completion token object that represents the currently executing resumable coroutine. 
+
 
   constexpr use_coro_t use_coro;
 
+
+See the documentation for asio::use\_coro\_t for a usage example. 
 
 [heading Requirements]
 
@@ -93168,10 +93529,236 @@ The primary template is not defined.
 [indexterm1 asio.indexterm.experimental__use_coro_t..experimental::use_coro_t]
 
 
+A completion token that represents the currently executing resumable coroutine. 
+
 
   template<
       typename ``[link asio.reference.Executor1 Executor]`` = any_io_executor>
   struct use_coro_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__use_coro_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the use_coro_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__use_coro_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use use_coro_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__use_coro_t.use_coro_t [*use_coro_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor used to specify file name, line, and function name. ]
+  ]
+  
+]
+
+The `use_coro_t` class, with its value `use_coro`, is used to represent an operation that can be awaited by the current resumable coroutine. This completion token may be passed as a handler to an asynchronous operation. For example:
+
+
+
+   coro<void> my_coroutine(tcp::socket my_socket)
+   {
+     std::size_t n = co_await my_socket.async_read_some(buffer, use_coro);
+     ...
+   } 
+
+
+
+
+When used with co\_await, the initiating function (`async_read_some` in the above example) suspends the current coroutine. The coroutine is resumed when the asynchronous operation completes, and the result of the operation is returned. 
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/use_coro.hpp]
+
+['Convenience header: ]None
+
+
+[section:as_default_on experimental::use_coro_t::as_default_on]
+
+[indexterm2 asio.indexterm.experimental__use_coro_t.as_default_on..as_default_on..experimental::use_coro_t] 
+Function helper to adapt an I/O object to use `use_coro_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+[section:use_coro_t experimental::use_coro_t::use_coro_t]
+
+[indexterm2 asio.indexterm.experimental__use_coro_t.use_coro_t..use_coro_t..experimental::use_coro_t] 
+Default constructor. 
+
+
+  constexpr ``[link asio.reference.experimental__use_coro_t.use_coro_t.overload1 use_coro_t]``();
+  ``  [''''&raquo;''' [link asio.reference.experimental__use_coro_t.use_coro_t.overload1 more...]]``
+
+
+Constructor used to specify file name, line, and function name. 
+
+
+  constexpr ``[link asio.reference.experimental__use_coro_t.use_coro_t.overload2 use_coro_t]``(
+      const char * file_name,
+      int line,
+      const char * function_name);
+  ``  [''''&raquo;''' [link asio.reference.experimental__use_coro_t.use_coro_t.overload2 more...]]``
+
+
+[section:overload1 experimental::use_coro_t::use_coro_t (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr use_coro_t();
+
+
+
+[endsect]
+
+
+
+[section:overload2 experimental::use_coro_t::use_coro_t (2 of 2 overloads)]
+
+
+Constructor used to specify file name, line, and function name. 
+
+
+  constexpr use_coro_t(
+      const char * file_name,
+      int line,
+      const char * function_name);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[endsect]
+
+[section:experimental__use_coro_t__executor_with_default experimental::use_coro_t::executor_with_default]
+
+[indexterm1 asio.indexterm.experimental__use_coro_t__executor_with_default..experimental::use_coro_t::executor_with_default]
+
+
+Adapts an executor to add the `use_coro_t` completion token as the default. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__use_coro_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify use_coro_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__use_coro_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/experimental/use_coro.hpp]
+
+['Convenience header: ]None
+
+
+[section:default_completion_token_type experimental::use_coro_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 asio.indexterm.experimental__use_coro_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::use_coro_t::executor_with_default] 
+Specify `use_coro_t` as the default completion token type. 
+
+
+  typedef use_coro_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.experimental__use_coro_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the use_coro_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.experimental__use_coro_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use use_coro_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.experimental__use_coro_t.use_coro_t [*use_coro_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor used to specify file name, line, and function name. ]
+  ]
+  
+]
+
+The `use_coro_t` class, with its value `use_coro`, is used to represent an operation that can be awaited by the current resumable coroutine. This completion token may be passed as a handler to an asynchronous operation. For example:
+
+
+
+   coro<void> my_coroutine(tcp::socket my_socket)
+   {
+     std::size_t n = co_await my_socket.async_read_some(buffer, use_coro);
+     ...
+   } 
+
+
+
+
+When used with co\_await, the initiating function (`async_read_some` in the above example) suspends the current coroutine. The coroutine is resumed when the asynchronous operation completes, and the result of the operation is returned. 
 
 
 [heading Requirements]
@@ -93179,6 +93766,28 @@ The primary template is not defined.
 ['Header: ][^asio/experimental/use_coro.hpp]
 
 ['Convenience header: ]None
+
+
+[endsect]
+
+
+
+[section:executor_with_default experimental::use_coro_t::executor_with_default::executor_with_default]
+
+[indexterm2 asio.indexterm.experimental__use_coro_t__executor_with_default.executor_with_default..executor_with_default..experimental::use_coro_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
+  executor_with_default(
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
 
 
 [endsect]
@@ -159661,25 +160270,6 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 [heading Requirements]
 
 ['Header: ][^asio/spawn.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-
-[section:std__move std::move]
-
-[indexterm1 asio.indexterm.std__move..std::move] 
-
-  else return move(
-      kr );
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/coro.hpp]
 
 ['Convenience header: ]None
 
