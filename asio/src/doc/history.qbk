@@ -7,6 +7,170 @@
 
 [section:history Revision History]
 
+[heading Asio 1.21.0]
+
+* Added an io_uring backend. This backend may be used for all I/O objects,
+  including sockets, timers, and posix descriptors.[br]
+  [br]
+  The backend is disabled by default, and must be enabled by defining both
+  `ASIO_HAS_IO_URING` and `ASIO_DISABLE_EPOLL`.[br]
+  [br]
+  Simply defining `ASIO_HAS_IO_URING` alone will enable the backend without
+  using it for the existing I/O objects. This allows it to be used for I/O
+  objects that require io_uring support, such as files.[br]
+  [br]
+  This support depends on the [^liburing] library at both compile and link
+  time. Add `-luring` to your list of libraries for linking.
+
+* Added support for files. This introduces new classes for stream-oriented and
+  random-access files. For example, to write to a newly created stream-oriented
+  file:[br]
+  ``
+  asio::stream_file file(
+      my_io_context, "/path/to/file",
+      asio::stream_file::write_only
+        | asio::stream_file::create
+        | asio::stream_file::truncate);
+
+  file.async_write_some(my_buffer,
+      [](error_code e, size_t n)
+      {
+        // ...
+      });
+  ``[br]
+  or to read from a random-access file:[br]
+  ``
+  asio::random_access_file file(
+      my_io_context, "/path/to/file",
+      asio::random_access_file::read_only);
+
+  file.async_read_some_at(1234, my_buffer,
+      [](error_code e, size_t n)
+      {
+        // ...
+      });
+  ``[br]
+  This feature currently supports I/O completion ports on Windows, and io_uring
+  on Linux (define `ASIO_HAS_IO_URING` to enable).
+
+* Added support for portable pipes. This change add supports for pipes on POSIX
+  and Windows (when I/O completion ports are available). For example, to create
+  and use a connected pair of pipe objects:[br]
+  ``
+  asio::readable_pipe read_end;
+  asio::writable_pipe write_end;
+  asio::connect_pipe(read_end, write_end);
+
+  write_end.async_write_some(my_write_buffer,
+      [](error_code e, size_t n)
+      {
+        // ...
+      });
+
+  read_end.async_read_some(my_read_buffer,
+      [](error_code e, size_t n)
+      {
+        // ...
+      });
+  ``[br]
+
+* Added support for registered buffers. The `mutable_registered_buffer` and
+  `const_registered_buffer` classes are buffer sequence types that represent
+  registered buffers. These buffers are obtained by first performing a buffer
+  registration:[br]
+  ``
+    auto my_registration =
+      asio::register_buffers(
+          my_execution_context,
+          my_buffer_sequence);
+  ``[br]
+  The registration object must be maintained for as long as the buffer
+  registration is required. The supplied buffer sequence represents the
+  memory location or locations that will be registered, and the caller
+  must ensure they remain valid for as long as they are registered. The
+  registration is automatically removed when the registration object is
+  destroyed. There can be at most one active registration per execution
+  context.[br]
+  [br]
+  The registration object is a container of registered buffers. Buffers
+  may be obtained from it by iterating over the container, or via direct
+  index access:[br]
+  ``
+    asio::mutable_registered_buffer my_buffer
+      = my_registration[i];
+  ``[br]
+  The registered buffers may then be passed directly to operations:[br]
+  ``
+  asio::async_read(my_socket, my_buffer,
+      [](error_code ec, size_t n)
+      {
+        // ...
+      });
+  ``[br]
+  Buffer registration supports the io_uring backend when used with read and
+  write operations on descriptors, files, pipes, and sockets. For portability,
+  the facility may be used on other platforms, but the registered buffers will
+  behave as normal buffers.
+
+* Added experimental support for channels. This adds templates
+  `experimental::basic_channel` and `experimental::basic_concurrent_channel`,
+  with aliases `experimental::channel` and `experimental::concurrent_channel`.
+  Channels may be used to send completions as messages. For example:[br]
+  ``
+  // Create a channel with no buffer space.
+  channel<void(error_code, size_t)> ch(ctx);
+
+  // The call to try_send fails as there is no buffer
+  // space and no waiting receive operations.
+  bool ok = ch.try_send(asio::error::eof, 123);
+  assert(!ok);
+
+  // The async_send operation is outstanding until
+  // a receive operation consumes the message.
+  ch.async_send(asio::error::eof, 123,
+      [](error_code ec)
+      {
+        // ...
+      });
+
+  // The async_receive consumes the message. Both the
+  // async_send and async_receive operations complete
+  // immediately.
+  ch.async_receive(
+      [](error_code ec, size_t n)
+      {
+        // ...
+      });
+  ``[br]
+
+* Implemented improvements to `experimental::coro`.
+  * Added overload so member functions can provide an explicit executor.
+  * Added `co_spawn` for `coro` tasks.
+  * Added reference and overview documentation.
+  * Adopted awaitable cancellation model.
+  * Refactored implementation.
+
+* Disabled `aligned_alloc` on [^clang] when using an MSVC runtime.
+
+* Changed to use a faster implementation for `ip::network_v4::canonical()`.
+
+* Added template specialisations for common uses to improve compile time.
+
+* Reduced the size of `io_context` executors to a single pointer.
+
+* Increased the small object buffer size for `execution::any_executor` and
+  `any_io_executor`.
+
+* Fixed multi-signature handling when variadic templates are disabled.
+
+* Fixed compatibility with new versions of [^gcc] and [^clang].
+
+* Fixed compilation on Solaris.
+
+* Fix defence against Qt-defined macros when building with MSVC.
+
+* Fixed various warnings.
+
 [heading Asio 1.20.0]
 
 * Fixed `experimental::coro` compatibility with [^gcc].
