@@ -214,6 +214,12 @@ public:
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
+  /// Destructor.
+  ~basic_channel()
+  {
+    service_->destroy(impl_);
+  }
+
   /// Get the executor associated with the object.
   executor_type get_executor() ASIO_NOEXCEPT
   {
