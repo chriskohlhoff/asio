@@ -240,4 +240,5 @@ AC_OUTPUT([
   src/examples/cpp03/Makefile
   src/examples/cpp11/Makefile
   src/examples/cpp14/Makefile
-  src/examples/cpp17/Makefile])
+  src/examples/cpp17/Makefile
+  src/examples/cpp20/Makefile])
