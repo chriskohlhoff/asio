@@ -94,22 +94,22 @@ struct coro_error<asio::error_code>
 {
   static asio::error_code invalid()
   {
-    return error::fault;
+    return asio::error::fault;
   }
 
   static asio::error_code cancelled()
   {
-    return error::operation_aborted;
+    return asio::error::operation_aborted;
   }
 
   static asio::error_code interrupted()
   {
-    return error::interrupted;
+    return asio::error::interrupted;
   }
 
   static asio::error_code done()
   {
-    return error::broken_pipe;
+    return asio::error::broken_pipe;
   }
 };
 
