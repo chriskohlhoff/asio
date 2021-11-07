@@ -85,7 +85,7 @@ using native_handle = implementation-defined;
 /// The iterator used by a value or value_view to iterator through environments that are lists.
 struct value_iterator
 {
-    using string_view_type  = typename decay<ASIO_STRING_VIEW_PARAM>::type;
+    using string_view_type  = typename decay<ASIO_BASIC_STRING_VIEW_PARAM(char_type)>::type;
     using difference_type   = std::size_t;
     using value_type        = string_view_type;
     using pointer           = const string_view_type *;
@@ -154,6 +154,7 @@ struct key_view
     using value_type       = char_type;
     using traits_type      = key_char_traits<char_type>;
     using string_view_type = typename decay<ASIO_BASIC_STRING_VIEW_PARAM(char_type, traits_type)>::type;
+    using string_type      = std::basic_string<char_type, key_char_traits<char_type>>;
 
     key_view() noexcept = default;
     key_view( const key_view& p ) = default;
@@ -190,14 +191,18 @@ struct key_view
     std::basic_string<CharT,Traits,Alloc>
     string( const Alloc& alloc = Alloc(), const std::locale & loc = std::locale()) const
     {
-        return asio::detail::convert_chars<Traits>(value_.begin(), value_.end(), CharT(), alloc, loc);
-
+        return asio::detail::convert_chars<Traits>(value_.data(), value_.data() + value_.size(), CharT(), alloc, loc);
     }
 
     std::string       string() const {return string<char>();}
     std::wstring     wstring() const {return string<wchar_t>();}
     std::u16string u16string() const {return string<char16_t>();}
     std::u32string u32string() const {return string<char32_t>();}
+
+    string_type native_string() const
+    {
+        return string<char_type, key_char_traits<char_type>>();
+    }
 
 #if ASIO_HAS_CHAR8_T
     std::u8string   u8string() const {return string<char8_t>();}
@@ -240,6 +245,7 @@ struct value_view
 {
     using value_type       = char_type;
     using string_view_type = ASIO_BASIC_CSTRING_VIEW(char_type, value_char_traits<char_type>);
+    using string_type      = std::basic_string<char_type, value_char_traits<char_type>>;
 
     value_view() noexcept = default;
     value_view( const value_view& p ) = default;
@@ -283,6 +289,11 @@ struct value_view
     std::wstring wstring() const     {return string<wchar_t>();}
     std::u16string u16string() const {return string<char16_t>();}
     std::u32string u32string() const {return string<char32_t>();}
+
+    string_type native_string() const
+    {
+        return string<char_type, value_char_traits<char_type>>();
+    }
 
 #if ASIO_HAS_CHAR8_T
     std::u8string u8string() const   {return string<char8_t>();}
@@ -333,7 +344,7 @@ struct key_value_pair_view
   key_value_pair_view() noexcept = default;
   key_value_pair_view( const key_value_pair_view& p ) = default;
   key_value_pair_view( key_value_pair_view&& p ) noexcept = default;
-  //key_value_pair_view( string_view_type source ) : value_(source) {}
+  key_value_pair_view( string_view_type source ) : value_(source) {}
 
   key_value_pair_view( const char_type * p) : value_(p) {}
   key_value_pair_view(       char_type * p) : value_(p) {}
@@ -370,6 +381,11 @@ struct key_value_pair_view
   std::u16string u16string() const {return string<char16_t>();}
   std::u32string u32string() const {return string<char32_t>();}
 
+  string_type native_string() const
+  {
+    return string<char_type>();
+  }
+
 #if ASIO_HAS_CHAR8_T
   std::u8string u8string() const   {return string<char8_t>();}
 #endif
@@ -378,7 +394,8 @@ struct key_value_pair_view
 
   key_view key_view() const
   {
-      auto res = native().substr(0, value_.find(equality_sign) );
+      const auto eq = value_.find(equality_sign);
+      const auto res = native().substr(0,  eq == string_view_type::npos ? value_.size() : eq);
       return key_view::string_view_type(res.data(), res.size());
   }
   value_view value_view() const
@@ -453,10 +470,32 @@ struct key
     key(key_view kv) : value_(kv) {}
 
     template< class Source >
-    key( const Source& source, const std::locale& loc = std::locale())
+    key( const Source& source, const std::locale& loc = std::locale(),
+         decltype(source.data()) = nullptr)
         : value_(asio::detail::convert_chars<traits_type>(source.data(), source.data() + source.size(), char_type(), std::allocator<char_type>(), loc))
     {
     }
+
+    key(const typename conditional<is_same<value_type, char>::value, wchar_t, char>::type  * raw, const std::locale& loc = std::locale())
+        : value_(asio::detail::convert_chars<traits_type>(
+                raw,
+                raw + std::char_traits<asio::decay<asio::remove_pointer<decltype(raw)>::type>::type>::length(raw),
+                char_type(), std::allocator<char_type>(), loc))
+    {
+    }
+
+    key(const char16_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char16_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+    key(const char32_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char32_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+#if ASIO_HAS_CHAR8_T
+    key(const char8_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char8_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+#endif
+
+    template<typename Char, typename Traits>
+    key(std::basic_string_view<Char, Traits> source, const std::locale& loc = std::locale())
+        : value_(asio::detail::convert_chars<traits_type>(source.data(), source.data() + source.size(), char_type(), std::allocator<char_type>(), loc))
+    {
+    }
+
     template< class InputIt >
     key( InputIt first, InputIt last, const std::locale& loc = std::locale())
     : key(std::basic_string(first, last), loc)
@@ -521,13 +560,18 @@ struct key
     std::basic_string<CharT,Traits,Alloc>
     string( const Alloc& alloc = Alloc(), const std::locale & loc = std::locale() ) const
     {
-        return asio::detail::convert_chars<Traits>(&*value_.begin(), &*value_.end(), CharT(), alloc, loc);
+        return asio::detail::convert_chars<Traits>(value_.data(), value_.data() + value_.size(), CharT(), alloc, loc);
     }
 
     std::string string() const       {return string<char>();}
     std::wstring wstring() const     {return string<wchar_t>();}
     std::u16string u16string() const {return string<char16_t>();}
     std::u32string u32string() const {return string<char32_t>();}
+
+    std::basic_string<char_type, value_char_traits<char_type>> native_string() const
+    {
+        return string<char_type, value_char_traits<char_type>>();
+    }
 
 #if ASIO_HAS_CHAR8_T
     std::u8string u8string() const   {return string<char8_t>();}
@@ -564,6 +608,21 @@ struct key
     string_type value_;
 };
 
+inline bool operator==(const key_view & l, const key & r) { return l == key_view(r); }
+inline bool operator!=(const key_view & l, const key & r) { return l != key_view(r); }
+inline bool operator<=(const key_view & l, const key & r) { return l <= key_view(r); }
+inline bool operator>=(const key_view & l, const key & r) { return l >= key_view(r); }
+inline bool operator< (const key_view & l, const key & r) { return l <  key_view(r); }
+inline bool operator> (const key_view & l, const key & r) { return l >  key_view(r); }
+
+inline bool operator==(const key & l, const key_view & r) { return key_view(l) == r; }
+inline bool operator!=(const key & l, const key_view & r) { return key_view(l) != r; }
+inline bool operator<=(const key & l, const key_view & r) { return key_view(l) <= r; }
+inline bool operator>=(const key & l, const key_view & r) { return key_view(l) >= r; }
+inline bool operator< (const key & l, const key_view & r) { return key_view(l) <  r; }
+inline bool operator> (const key & l, const key_view & r) { return key_view(l) >  r; }
+
+
 struct value
 {
     using value_type       = char_type;
@@ -573,7 +632,7 @@ struct value
 
     value() noexcept = default;
     value( const value& p ) = default;
-    value( value&& p ) noexcept = default;
+
     value( const string_type& source ) : value_(source) {}
     value( string_type&& source ) : value_(std::move(source)) {}
     value( const value_type * raw ) : value_(raw) {}
@@ -583,10 +642,26 @@ struct value
     value(value_view kv) : value_(kv.c_str()) {}
 
     template< class Source >
-    value( const Source& source, const std::locale& loc = std::locale())
-        : value_(asio::detail::convert_chars<traits_type>(source.data(), source.data() + source.size(), char_type(), std::allocator<char_type>(), loc))
+    value( const Source& source, const std::locale& loc = std::locale(),
+         decltype(source.data()) = nullptr)
+            : value_(asio::detail::convert_chars<traits_type>(source.data(), source.data() + source.size(), char_type(), std::allocator<char_type>(), loc))
     {
     }
+
+    value(const typename conditional<is_same<value_type, char>::value, wchar_t, char>::type  * raw, const std::locale& loc = std::locale())
+            : value_(asio::detail::convert_chars<traits_type>(
+            raw,
+            raw + std::char_traits<asio::decay<asio::remove_pointer<decltype(raw)>::type>::type>::length(raw),
+            char_type(), std::allocator<char_type>(), loc))
+    {
+    }
+
+    value(const char16_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char16_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+    value(const char32_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char32_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+#if ASIO_HAS_CHAR8_T
+    value(const char8_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char8_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+#endif
+
     template< class InputIt >
     value( InputIt first, InputIt last, const std::locale& loc = std::locale())
             : value(std::basic_string(first, last), loc)
@@ -627,6 +702,11 @@ struct value
         return assign(std::string(first, last));
     }
 
+    void push_back(const value & sv)
+    {
+        (value_ += delimiter) += sv;
+    }
+
     void clear() {value_.clear();}
 
     void swap( value& other ) noexcept
@@ -651,13 +731,18 @@ struct value
     std::basic_string<CharT,Traits,Alloc>
     string( const Alloc& alloc = Alloc(), const std::locale & loc = std::locale()) const
     {
-        return asio::detail::convert_chars<Traits>(&*value_.begin(), &*value_.end(), CharT(), alloc, loc);
+        return asio::detail::convert_chars<Traits>(value_.data(), value_.data() + value_.size(), CharT(), alloc, loc);
     }
 
     std::string string() const       {return string<char>();}
     std::wstring wstring() const     {return string<wchar_t>();}
     std::u16string u16string() const {return string<char16_t>();}
     std::u32string u32string() const {return string<char32_t>();}
+
+    std::basic_string<char_type, value_char_traits<char_type>> native_string() const
+    {
+        return string<char_type, value_char_traits<char_type>>();
+    }
 
 #if ASIO_HAS_CHAR8_T
     std::u8string u8string() const   {return string<char8_t>();}
@@ -698,6 +783,23 @@ struct value
     string_type value_;
 };
 
+
+inline bool operator==(const value_view & l, const value & r) { return l == value_view(r); }
+inline bool operator!=(const value_view & l, const value & r) { return l != value_view(r); }
+inline bool operator<=(const value_view & l, const value & r) { return l <= value_view(r); }
+inline bool operator>=(const value_view & l, const value & r) { return l >= value_view(r); }
+inline bool operator< (const value_view & l, const value & r) { return l <  value_view(r); }
+inline bool operator> (const value_view & l, const value & r) { return l >  value_view(r); }
+
+inline bool operator==(const value & l, const value_view & r) { return value_view(l) == r; }
+inline bool operator!=(const value & l, const value_view & r) { return value_view(l) != r; }
+inline bool operator<=(const value & l, const value_view & r) { return value_view(l) <= r; }
+inline bool operator>=(const value & l, const value_view & r) { return value_view(l) >= r; }
+inline bool operator< (const value & l, const value_view & r) { return value_view(l) <  r; }
+inline bool operator> (const value & l, const value_view & r) { return value_view(l) >  r; }
+
+
+
 struct key_value_pair
 {
     using value_type       = char_type;
@@ -708,7 +810,7 @@ struct key_value_pair
     key_value_pair() noexcept = default;
     key_value_pair( const key_value_pair& p ) = default;
     key_value_pair( key_value_pair&& p ) noexcept = default;
-    key_value_pair(key_view key, value_view value) : value_(key.string() + '=' + value.string()) {}
+    key_value_pair(key_view key, value_view value) : value_(key.string<char_type>() + equality_sign + value.string<char_type>()) {}
     key_value_pair( const string_type& source ) : value_(source) {}
     key_value_pair( string_type&& source ) : value_(std::move(source)) {}
     key_value_pair( const value_type * raw ) : value_(raw) {}
@@ -718,10 +820,26 @@ struct key_value_pair
     key_value_pair(key_value_pair_view kv) : value_(kv.c_str()) {}
 
     template< class Source >
-    key_value_pair( const Source& source, const std::locale& loc = std::locale())
-        : value_(asio::detail::convert_chars<traits_type>(source.data(), source.data() + source.size(), char_type(), std::allocator<char_type>(), loc))
+    key_value_pair( const Source& source, const std::locale& loc = std::locale(),
+           decltype(source.data()) = nullptr)
+            : value_(asio::detail::convert_chars<traits_type>(source.data(), source.data() + source.size(), char_type(), std::allocator<char_type>(), loc))
     {
     }
+
+    key_value_pair(const typename conditional<is_same<value_type, char>::value, wchar_t, char>::type  * raw, const std::locale& loc = std::locale())
+            : value_(asio::detail::convert_chars<traits_type>(
+                     raw,
+                     raw + std::char_traits<asio::decay<asio::remove_pointer<decltype(raw)>::type>::type>::length(raw),
+                     char_type(), std::allocator<char_type>(), loc))
+    {
+    }
+
+    key_value_pair(const char16_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char16_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+    key_value_pair(const char32_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char32_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+#if ASIO_HAS_CHAR8_T
+            key_value_pair(const char8_t * raw, const std::locale& loc = std::locale()) : value_(asio::detail::convert_chars<traits_type>(raw,raw + std::char_traits<char8_t>::length(raw), char_type(), std::allocator<char_type>(), loc)) {}
+#endif
+
     template< class InputIt >
     key_value_pair( InputIt first, InputIt last, const std::locale& loc = std::locale())
             : key_value_pair(std::basic_string(first, last), loc)
@@ -785,13 +903,18 @@ struct key_value_pair
     std::basic_string<CharT,Traits,Alloc>
     string( const Alloc& alloc = Alloc(), const std::locale & loc = std::locale() ) const
     {
-        return asio::detail::convert_chars<Traits>(&*value_.begin(), &*value_.end(), CharT(), alloc, loc);
+        return asio::detail::convert_chars<Traits>(value_.data(), value_.data() + value_.size(), CharT(), alloc, loc);
     }
 
     std::string string() const       {return string<char>();}
     std::wstring wstring() const     {return string<wchar_t>();}
     std::u16string u16string() const {return string<char16_t>();}
     std::u32string u32string() const {return string<char32_t>();}
+
+    std::basic_string<char_type, value_char_traits<char_type>> native_string() const
+    {
+        return string<char_type, value_char_traits<char_type>>();
+    }
 
 #if ASIO_HAS_CHAR8_T
     std::u8string u8string() const   {return string<char8_t>();}
@@ -802,7 +925,11 @@ struct key_value_pair
     key     key() const {return value_.substr(0, value_.find(equality_sign));}
     value value() const {return value_.substr(value_.find(equality_sign) + 1, string_type::npos);}
 
-    key_view     key_view() const {return key_view::string_view_type (native_view().substr(0, value_.find(equality_sign)));}
+    key_view     key_view() const
+    {
+        const auto k = native_view().substr(0, value_.find(equality_sign));
+        return asio::environment::key_view::string_view_type (k.data(), k.size());
+    }
     value_view value_view() const {return value_view::string_view_type(native_view().substr(value_.find(equality_sign)  + 1));}
 
 
@@ -849,6 +976,20 @@ struct key_value_pair
     string_type value_;
 };
 
+inline bool operator==(const key_value_pair_view & l, const key_value_pair & r) { return l == key_value_pair_view(r); }
+inline bool operator!=(const key_value_pair_view & l, const key_value_pair & r) { return l != key_value_pair_view(r); }
+inline bool operator<=(const key_value_pair_view & l, const key_value_pair & r) { return l <= key_value_pair_view(r); }
+inline bool operator>=(const key_value_pair_view & l, const key_value_pair & r) { return l >= key_value_pair_view(r); }
+inline bool operator< (const key_value_pair_view & l, const key_value_pair & r) { return l <  key_value_pair_view(r); }
+inline bool operator> (const key_value_pair_view & l, const key_value_pair & r) { return l >  key_value_pair_view(r); }
+
+inline bool operator==(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) == r; }
+inline bool operator!=(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) != r; }
+inline bool operator<=(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) <= r; }
+inline bool operator>=(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) >= r; }
+inline bool operator< (const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) <  r; }
+inline bool operator> (const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) >  r; }
+
 template<>
 key_view key_value_pair::get<0u>() const
 {
@@ -878,42 +1019,30 @@ struct view
 
         iterator() = default;
         iterator(const iterator & ) = default;
-        iterator(const native_handle_type &native_handle) : iterator_(native_handle) {}
+        iterator(const native_iterator &native_handle) : iterator_(native_handle) {}
 
         iterator & operator++()
         {
-            ++iterator_;
+            iterator_ = detail::next(iterator_);
             return *this;
         }
 
         iterator operator++(int)
         {
             auto last = *this;
-            ++iterator_;
+            iterator_ = detail::next(iterator_);
             return last;
         }
 
-        iterator & operator--()
-        {
-            --iterator_;
-            return *this;
-        }
-
-        iterator operator--(int)
-        {
-            auto last = *this;
-            --iterator_;
-            return last;
-        }
 
         const key_value_pair_view operator*() const
         {
-            return key_value_pair_view(*iterator_);
+            return key_value_pair_view(detail::dereference(iterator_));
         }
 
         std::optional<key_value_pair_view> operator->() const
         {
-            return key_value_pair_view(*iterator_);
+            return key_value_pair_view(detail::dereference(iterator_));
         }
 
       friend bool operator==(const iterator & l, const iterator & r) {return l.iterator_ == r.iterator_;}
@@ -936,33 +1065,44 @@ struct view
 #if ASIO_HAS_FILESYSTEM
 
 template<typename Environment = view>
-inline asio::filesystem::path find_executable(std::basic_string_view<asio::filesystem::path::value_type> name,
+inline asio::filesystem::path find_executable(asio::filesystem::path name,
                                              Environment && env = view())
 {
     auto find_key = [&](key_view ky) -> value_view
                     {
                         const auto itr = std::find_if(std::begin(env), std::end(env),
-                                            [&](key_value_pair vp) {return vp.key_view() == ky;});
+                                            [&](key_value_pair vp)
+                                            {
+                                                auto tmp =  vp.key_view() == ky;
+                                                if (tmp)
+                                                    return true;
+                                                else
+                                                    return false;
+                                            });
                         if (itr != nullptr)
                           return itr->value_view();
                         else
-                          return "";
+                          return value_view();
                     };
 
-    auto path = find_key("PATH");
 #if defined(ASIO_WINDOWS)
-    auto pathext = find_key("PATHEXT");
+    auto path = find_key(L"PATH");
+    auto pathext = find_key(L"PATHEXT");
     for (auto pp_view : path)
         for (auto ext : pathext)
         {
-            asio::filesystem::path p(pp_view);
-            p += ext;
+            asio::filesystem::path nm(name);
+            nm += ext;
+
+            auto p = asio::filesystem::path(pp_view) / nm;
+
             error_code ec;
             bool file = asio::filesystem::is_regular_file(p, ec);
-            if (!ec && file && SHGetFileInfoW(file.native().c_str(), 0,0,0, SHGFI_EXETYPE))
+            if (!ec && file && SHGetFileInfoW(p.native().c_str(), 0,0,0, SHGFI_EXETYPE))
                 return p;
         }
 #else
+    auto path = find_key("PATH");
     for (auto pp_view : path)
     {
         auto p = asio::filesystem::path(pp_view) / name;
@@ -1025,8 +1165,8 @@ inline void set(basic_cstring_view<char_type, key_char_traits<char_type>> k, val
 }
 
 
-inline void set(const char * k, value_view vw, error_code & ec) { detail::set(k, vw, ec);}
-inline void set(const char * k, value_view vw)
+inline void set(const char * k, ASIO_BASIC_CSTRING_VIEW_PARAM(char, value_char_traits<char>) vw, error_code & ec) { detail::set(k, vw, ec);}
+inline void set(const char * k, ASIO_BASIC_CSTRING_VIEW_PARAM(char, value_char_traits<char>) vw)
 {
   error_code ec;
   detail::set(k, vw, ec);
@@ -1086,18 +1226,6 @@ struct tuple_element<0u, asio::environment::key_value_pair_view> {using type = a
 template<>
 struct tuple_element<1u, asio::environment::key_value_pair_view> {using type = asio::environment::value_view;};
 
-#if ASIO_HAS_STD_HASH
-
-template<>
-struct hash<asio::environment::key_value_pair>
-{
-    size_t operator()(const asio::environment::key_value_pair & vp)
-    {
-        return std::hash<asio::environment::key_value_pair::string_type>()(vp.string());
-    }
-};
-
-#endif
 
 }
 

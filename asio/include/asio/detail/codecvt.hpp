@@ -28,7 +28,7 @@ namespace detail
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
-ASIO_DECL const std::codecvt< wchar_t, char, std::mbstate_t > & default_locale();
+ASIO_DECL const std::codecvt< wchar_t, char, std::mbstate_t > & default_codecvt();
 
 #else
 
@@ -82,6 +82,9 @@ inline std::basic_string<char,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+      return {};
+
   const auto & f = loc == std::locale()
                    ? default_codecvt()
                    : std::use_facet<std::codecvt< wchar_t, char, std::mbstate_t > >(loc)
@@ -109,6 +112,9 @@ inline std::basic_string<wchar_t,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = loc == std::locale()
                    ? default_codecvt()
                    : std::use_facet<std::codecvt< wchar_t, char, std::mbstate_t > >(loc);
@@ -177,6 +183,9 @@ inline std::basic_string<char8_t,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = loc == std::locale()
                    ? default_codecvt()
                    : std::use_facet<std::codecvt< wchar_t, char, std::mbstate_t > >(loc)
@@ -207,6 +216,9 @@ inline std::basic_string<char,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt< char16_t, char8_t, std::mbstate_t > >(loc);
 
   std::mbstate_t mb = std::mbstate_t();
@@ -235,6 +247,9 @@ inline std::basic_string<char,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt<char32_t, char8_t, std::mbstate_t > >(loc);
 
   std::mbstate_t mb = std::mbstate_t();
@@ -264,6 +279,9 @@ inline std::basic_string<char16_t,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt< char16_t, char8_t, std::mbstate_t > >(loc);
 
   std::mbstate_t mb = std::mbstate_t();
@@ -294,6 +312,9 @@ inline std::basic_string<char32_t,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt< char32_t, char8_t, std::mbstate_t > >(loc)
   ;
 
@@ -329,6 +350,9 @@ inline std::basic_string<char,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt< char16_t, char, std::mbstate_t > >(loc);
 
   std::mbstate_t mb = std::mbstate_t();
@@ -354,6 +378,9 @@ inline std::basic_string<char,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt<char32_t, char, std::mbstate_t > >(loc);
 
   std::mbstate_t mb = std::mbstate_t();
@@ -380,6 +407,9 @@ inline std::basic_string<char16_t,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt< char16_t, char, std::mbstate_t > >(loc);
 
   std::mbstate_t mb = std::mbstate_t();
@@ -404,6 +434,9 @@ inline std::basic_string<char32_t,Traits,Alloc> convert_chars(
         const Alloc & alloc = Alloc(),
         const std::locale &loc = std::locale())
 {
+  if (begin == end)
+    return {};
+
   const auto & f = std::use_facet<std::codecvt< char32_t, char, std::mbstate_t > >(loc)
   ;
 
@@ -494,7 +527,7 @@ inline std::basic_string<wchar_t,Traits,Alloc> convert_chars(
 
 
 template< class Traits, class CharIn, class CharOut, class Alloc = std::allocator<CharOut>>
-inline std::basic_string<CharOut, std::char_traits<CharOut>, Alloc> convert_chars(
+inline std::basic_string<CharOut, Traits, Alloc> convert_chars(
         const CharIn * begin,
         const CharIn * end,
         CharOut c,

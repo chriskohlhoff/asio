@@ -153,7 +153,7 @@ class windows_codecvt
 
 ASIO_DECL const std::codecvt< wchar_t, char, std::mbstate_t > & default_codecvt()
 {
-  const static const windows_codecvt cvt{1};
+  const static windows_codecvt cvt{1};
   return cvt;
 }
 

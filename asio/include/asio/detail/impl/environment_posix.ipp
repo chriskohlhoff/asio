@@ -66,7 +66,7 @@ void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char_type, key_char_traits<char_type>) 
 native_handle_type load_native_handle() { return ::environ; }
 
 
-native_iterator next(native_handle_type nh)
+native_iterator next(native_iterator nh)
 {
     return nh + 1;
 }

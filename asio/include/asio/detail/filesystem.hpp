@@ -35,9 +35,10 @@ namespace filesystem = std::filesystem;
 namespace filesystem = std::experimental::filesystem;
 #endif // defined(ASIO_HAS_STD_EXPERIMENTAL_FILESYSTEM)
 
+    } // namespace asio
+
 #endif
 
-} // namespace asio
 
 
 

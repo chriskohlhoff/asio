@@ -1996,22 +1996,22 @@
 #endif // !defined(ASIO_HAS_STD_HASH)
 
 #if !defined(ASIO_HAS_CHAR8_T)
-# if (__cplusplus >= 202002)
+# if (__cplusplus >= 202002) || (_MSVC_LANG  >= 202002)
 #  define ASIO_HAS_CHAR8_T 1
 # endif
 #endif
 
 #if !defined(ASIO_HAS_QUOTED)
-# if (__cplusplus >= 201402)
+# if (__cplusplus >= 201402) || (_MSVC_LANG  >= 201402)
 #  define ASIO_HAS_QUOTED 1
 # endif
 #endif
 
 #if !defined(ASIO_HAS_FILESYSTEM)
-# if (__cplusplus >= 201707)
+# if (__cplusplus >= 201707L)  || (_MSVC_LANG  >= 201707L)
 #  define ASIO_HAS_STD_FILESYSTEM 1
 #  define ASIO_HAS_FILESYSTEM 1
-# elif (__cplusplus >= 201103L)
+# elif (__cplusplus >= 201103L)   || (_MSVC_LANG  >= 201703L)
 #  define ASIO_HAS_STD_EXPERIMENTAL_FILESYSTEM 1
 #  define ASIO_HAS_FILESYSTEM 1
 # endif

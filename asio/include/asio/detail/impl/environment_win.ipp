@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cwctype>
 #include <cstring>
+#include <shellapi.h>
 
 #include "asio/cstring_view.hpp"
 #include "asio/error.hpp"
@@ -49,7 +50,9 @@ std::basic_string<char_type, value_char_traits<char_type>> get(
   }
   while (size == buf.size());
 
-  if (buf.size() == 0))
+  buf.resize(size);
+
+  if (buf.size() == 0)
     ec.assign(::GetLastError(), asio::error::get_system_category());
 
   return buf;
@@ -63,7 +66,7 @@ void set(ASIO_BASIC_CSTRING_VIEW_PARAM(char_type,   key_char_traits<char_type>) 
     ec.assign(errno, asio::error::get_system_category());
 }
 
-void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char_type, key_char_traits<char_type>) & key,
+void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char_type, key_char_traits<char_type>) key,
            error_code & ec)
 {
   if (!::SetEnvironmentVariableW(key.c_str(), nullptr))
@@ -85,7 +88,9 @@ std::basic_string<char, value_char_traits<char>> get(
   }
   while (size == buf.size());
 
-  if (buf.size() == 0))
+  buf.resize(size);
+
+  if (buf.size() == 0)
     ec.assign(::GetLastError(), asio::error::get_system_category());
 
   return buf;
@@ -99,7 +104,7 @@ void set(ASIO_BASIC_CSTRING_VIEW_PARAM(char,   key_char_traits<char>)   key,
     ec.assign(errno, asio::error::get_system_category());
 }
 
-void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char, key_char_traits<char>) & key,
+void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char, key_char_traits<char>) key,
            error_code & ec)
 {
   if (!::SetEnvironmentVariableA(key.c_str(), nullptr))
@@ -108,30 +113,30 @@ void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char, key_char_traits<char>) & key,
 
 
 native_handle_type load_native_handle() { return ::GetEnvironmentStringsW(); }
-native_handle_delete::operator()(native_handle_type nh) const
+void native_handle_deleter::operator()(native_handle_type nh) const
 {
     ::FreeEnvironmentStringsW(nh);
 }
 
-native_iterator next(native_handle_type nh)
+native_iterator next(native_iterator nh)
 {
     while (*nh != L'\0')
         nh++;
-
     return ++nh;
 }
 
+
 native_iterator find_end(native_handle_type nh)
 {
-  while ((*nh != L'\0') && (*std::next(nh) != L'\0'))
+  while ((*nh != L'\0') || (*std::next(nh) != L'\0'))
     nh++;
-  return ++nh;
+  return ++ ++nh;
 }
 
 #if ASIO_HAS_FILESYSTEM
 ASIO_DECL bool is_executable(const asio::filesystem::path & pth, error_code & ec)
 {
-    return asio::filesystem::is_regular_file(pth, ec) && SHGetFileInfoW(file.native().c_str(), 0,0,0, SHGFI_EXETYPE);
+    return asio::filesystem::is_regular_file(pth, ec) && SHGetFileInfoW(pth.native().c_str(), 0,0,0, SHGFI_EXETYPE);
 }
 #endif
 

@@ -71,7 +71,7 @@ struct native_handle_deleter
 
 ASIO_DECL native_iterator next(native_handle_type nh);
 ASIO_DECL native_iterator find_end(native_handle_type nh);
-
+inline const char_type * dereference(native_iterator iterator) {return *iterator;}
 #if ASIO_HAS_FILESYSTEM
 ASIO_DECL bool is_executable(const asio::filesystem::path & pth, error_code & ec);
 #endif

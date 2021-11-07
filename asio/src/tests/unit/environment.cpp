@@ -24,11 +24,18 @@
 namespace environment
 {
 void simple_test()
+try
 {
     namespace env = asio::environment;
     for (auto [key, value] : env::view())
     {
-        auto ptr = ::getenv(key.string().c_str());
+        if (key.empty())
+            continue;
+        const auto kenv = ::getenv(key.string().c_str());;
+        ASIO_CHECK_MESSAGE(kenv != nullptr, key);
+        std::string ptr = kenv;
+        env::value v = ptr;
+        ASIO_CHECK(v == ptr);
         ASIO_CHECK(ptr == value);
         ASIO_CHECK(env::get(key) == ptr);
     }
@@ -61,12 +68,16 @@ void simple_test()
     }
 
 #if defined(ASIO_WINDOWS)
-
+    ASIO_CHECK(!asio::environment::find_executable("cmd").empty());
 #else
   ASIO_CHECK((asio::environment::find_executable("ls") == "/bin/ls")
          ||  (asio::environment::find_executable("ls") == "/usr/bin/ls"));
 #endif
 
+}
+catch (std::exception & ex)
+{
+    ASIO_CHECK_MESSAGE(false, ex.what());
 }
 
 }

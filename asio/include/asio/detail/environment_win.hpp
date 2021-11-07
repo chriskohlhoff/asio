@@ -154,32 +154,45 @@ template<typename Char>
 using value_char_traits = std::char_traits<Char>;
 
 ASIO_CONSTEXPR static char_type equality_sign = L'=';
-ASIO_CONSTEXPR static char_type separator = L':';
+ASIO_CONSTEXPR static char_type delimiter = L';';
 
-using native_handle   = wchar_t*;
+using native_handle_type   = wchar_t*;
 using native_iterator = const wchar_t*;
 
 namespace detail
 {
 
-ASIO_DECL ASIO_BASIC_CSTRING_VIEW(char_type, value_char_traits<char_type>) get(
-                                  ASIO_BASIC_CSTRING_VIEW_PARAM(char_type, key_char_traits<char_type>) key,
-                                  error_code & ec);
+ASIO_DECL std::basic_string<wchar_t, value_char_traits<wchar_t>> get(
+        ASIO_BASIC_CSTRING_VIEW_PARAM(wchar_t, key_char_traits<wchar_t>) key,
+        error_code & ec);
 
-ASIO_DECL void set(ASIO_BASIC_CSTRING_VIEW_PARAM(char_type,   key_char_traits<char_type>)   key,
-                   ASIO_BASIC_CSTRING_VIEW_PARAM(char_type, value_char_traits<char_type>) value,
+ASIO_DECL void set(ASIO_BASIC_CSTRING_VIEW_PARAM(wchar_t,   key_char_traits<wchar_t>)   key,
+                   ASIO_BASIC_CSTRING_VIEW_PARAM(wchar_t, value_char_traits<wchar_t>) value,
                    error_code & ec);
 
-ASIO_DECL void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char_type, key_char_traits<char_type>) & key,
+ASIO_DECL void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(wchar_t, key_char_traits<wchar_t>) key,
+                     error_code & ec);
+
+
+ASIO_DECL std::basic_string<char, value_char_traits<char>> get(
+        ASIO_BASIC_CSTRING_VIEW_PARAM(char, key_char_traits<char>) key,
+        error_code & ec);
+
+ASIO_DECL void set(ASIO_BASIC_CSTRING_VIEW_PARAM(char,   key_char_traits<char>)   key,
+                   ASIO_BASIC_CSTRING_VIEW_PARAM(char, value_char_traits<char>) value,
+                   error_code & ec);
+
+ASIO_DECL void unset(ASIO_BASIC_CSTRING_VIEW_PARAM(char, key_char_traits<char>) key,
                      error_code & ec);
 
 inline native_handle_type load_native_handle();
-struct native_handle_delete
+struct native_handle_deleter
 {
   ASIO_DECL void operator()(native_handle_type nh) const;
 
 };
 
+inline const char_type * dereference(native_iterator iterator) {return iterator;}
 ASIO_DECL native_iterator next(native_handle_type nh);
 ASIO_DECL native_iterator find_end(native_handle_type nh);
 

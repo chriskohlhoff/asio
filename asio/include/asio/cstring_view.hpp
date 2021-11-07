@@ -176,7 +176,7 @@ struct basic_cstring_view
   friend ASIO_CONSTEXPR bool operator>=(basic_cstring_view x, basic_cstring_view y) ASIO_NOEXCEPT {return x.compare(y) >= 0;}
 
  private:
-  friend class std::hash<basic_cstring_view>;
+  friend struct std::hash<basic_cstring_view>;
   ASIO_CONSTEXPR static const_pointer   null_char_()         {return null_char_(CharT{});}
   ASIO_CONSTEXPR static const char*     null_char_(char)     {return "\0";}
   ASIO_CONSTEXPR static const wchar_t*  null_char_(wchar_t)  {return L"\0";}
