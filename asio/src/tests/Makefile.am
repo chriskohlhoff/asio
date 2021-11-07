@@ -56,6 +56,7 @@ check_PROGRAMS = \
 	unit/defer \
 	unit/detached \
 	unit/dispatch \
+	unit/environment \
 	unit/error \
 	unit/execution/any_executor \
 	unit/execution/blocking \
@@ -274,6 +275,7 @@ TESTS = \
 	unit/detached \
 	unit/dispatch \
 	unit/error \
+	unit/environment \
 	unit/execution/any_executor \
 	unit/execution/blocking \
 	unit/execution/blocking_adaptation \
@@ -491,6 +493,7 @@ unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
 unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
+unit_environment_SOURCES = unit/environment.cpp
 unit_error_SOURCES = unit/error.cpp
 unit_execution_any_executor_SOURCES = unit/execution/any_executor.cpp
 unit_execution_blocking_SOURCES = unit/execution/blocking.cpp

@@ -2001,4 +2001,20 @@
 # endif
 #endif
 
+#if !defined(ASIO_HAS_QUOTED)
+# if (__cplusplus >= 201402)
+#  define ASIO_HAS_QUOTED 1
+# endif
+#endif
+
+#if !defined(ASIO_HAS_FILESYSTEM)
+# if (__cplusplus >= 201707)
+#  define ASIO_HAS_STD_FILESYSTEM 1
+#  define ASIO_HAS_FILESYSTEM 1
+# elif (__cplusplus >= 201103L)
+#  define ASIO_HAS_STD_EXPERIMENTAL_FILESYSTEM 1
+#  define ASIO_HAS_FILESYSTEM 1
+# endif
+#endif
+
 #endif // ASIO_DETAIL_CONFIG_HPP
