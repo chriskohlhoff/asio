@@ -29,15 +29,18 @@ try
     namespace env = asio::environment;
     for (auto [key, value] : env::view())
     {
-        if (key.empty())
-            continue;
-        const auto kenv = ::getenv(key.string().c_str());;
-        ASIO_CHECK_MESSAGE(kenv != nullptr, key);
-        std::string ptr = kenv;
-        env::value v = ptr;
-        ASIO_CHECK(v == ptr);
-        ASIO_CHECK(ptr == value);
-        ASIO_CHECK(env::get(key) == ptr);
+      if (key.empty())
+        continue;
+      const auto kenv = ::getenv(key.string().c_str());;
+      ASIO_CHECK_MESSAGE(kenv != nullptr, key);
+      std::string ptr = kenv;
+      env::value v = ptr;
+      ASIO_CHECK(v == ptr);
+      env::key_view kv = ptr;
+      static_assert(asio::is_constructible<env::key_view, std::string>::value);
+      static_assert(asio::is_convertible<std::string, env::key_view>::value);
+      ASIO_CHECK(ptr == value);
+      ASIO_CHECK(env::get(key) == ptr);
     }
 
     {
@@ -54,8 +57,17 @@ try
         auto v = env::view();
         auto itr = std::find_if(v.begin(), v.end(), [](env::key_value_pair kvp) {return kvp.key_view() == "ASIO_ENV_TEST";});
         ASIO_CHECK(itr != v.end());
-        ASIO_CHECK(itr->value_view() == "123");
-        ASIO_CHECK(env::get("ASIO_ENV_TEST") == "123");
+
+        using  std::operator""s;
+
+      ASIO_CHECK(*itr == L"ASIO_ENV_TEST=123"s);
+      ASIO_CHECK(*itr == "ASIO_ENV_TEST=123"s);
+      ASIO_CHECK(itr->key_view() == L"ASIO_ENV_TEST"s);
+      ASIO_CHECK(itr->key_view() == "ASIO_ENV_TEST"s);
+      ASIO_CHECK(itr->value_view() == L"123"s);
+      ASIO_CHECK(itr->value_view() == "123"s);
+      ASIO_CHECK(env::get("ASIO_ENV_TEST") == "123"s);
+
     }
     {
         env::unset("ASIO_ENV_TEST");

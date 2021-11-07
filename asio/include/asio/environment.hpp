@@ -159,7 +159,8 @@ struct key_view
     key_view() noexcept = default;
     key_view( const key_view& p ) = default;
     key_view( key_view&& p ) noexcept = default;
-    key_view( string_view_type source ) : value_(source) {}
+    template<typename Source, typename = typename constraint<is_constructible<string_view_type, Source>::value>::type>
+    key_view( const Source& source ) : value_(source) {}
     key_view( const char_type * p) : value_(p) {}
     key_view(       char_type * p) : value_(p) {}
 
@@ -210,14 +211,12 @@ struct key_view
 
     bool empty() const {return value_.empty(); }
 
-    friend bool operator==(const key_view & l, const key_view & r) { return l.value_ == r.value_; }
-    friend bool operator!=(const key_view & l, const key_view & r) { return l.value_ != r.value_; }
-    friend bool operator<=(const key_view & l, const key_view & r) { return l.value_ <= r.value_; }
-    friend bool operator>=(const key_view & l, const key_view & r) { return l.value_ >= r.value_; }
-    friend bool operator< (const key_view & l, const key_view & r) { return l.value_ <  r.value_; }
-    friend bool operator> (const key_view & l, const key_view & r) { return l.value_ >  r.value_; }
-
-    friend bool operator== (const key_view & l, const key_view & r) = default;
+    friend bool operator==(key_view l, key_view r) { return l.value_ == r.value_; }
+    friend bool operator!=(key_view l, key_view r) { return l.value_ != r.value_; }
+    friend bool operator<=(key_view l, key_view r) { return l.value_ <= r.value_; }
+    friend bool operator>=(key_view l, key_view r) { return l.value_ >= r.value_; }
+    friend bool operator< (key_view l, key_view r) { return l.value_ <  r.value_; }
+    friend bool operator> (key_view l, key_view r) { return l.value_ >  r.value_; }
 
     template< class CharT, class Traits >
     friend std::basic_ostream<CharT,Traits>&
@@ -250,7 +249,8 @@ struct value_view
     value_view() noexcept = default;
     value_view( const value_view& p ) = default;
     value_view( value_view&& p ) noexcept = default;
-    value_view( string_view_type source ) : value_(source) {}
+    template<typename Source, typename = typename constraint<is_constructible<string_view_type, Source>::value>::type>
+    value_view( const Source& source ) : value_(source) {}
     value_view( const char_type * p) : value_(p) {}
     value_view(       char_type * p) : value_(p) {}
 
@@ -301,12 +301,12 @@ struct value_view
 
     bool empty() const {return value_.empty(); }
 
-    friend bool operator==(const value_view & l, const value_view & r) { return l.value_ == r.value_; }
-    friend bool operator!=(const value_view & l, const value_view & r) { return l.value_ != r.value_; }
-    friend bool operator<=(const value_view & l, const value_view & r) { return l.value_ <= r.value_; }
-    friend bool operator>=(const value_view & l, const value_view & r) { return l.value_ >= r.value_; }
-    friend bool operator< (const value_view & l, const value_view & r) { return l.value_ <  r.value_; }
-    friend bool operator> (const value_view & l, const value_view & r) { return l.value_ >  r.value_; }
+    friend bool operator==(value_view l, value_view r) { return l.value_ == r.value_; }
+    friend bool operator!=(value_view l, value_view r) { return l.value_ != r.value_; }
+    friend bool operator<=(value_view l, value_view r) { return l.value_ <= r.value_; }
+    friend bool operator>=(value_view l, value_view r) { return l.value_ >= r.value_; }
+    friend bool operator< (value_view l, value_view r) { return l.value_ <  r.value_; }
+    friend bool operator> (value_view l, value_view r) { return l.value_ >  r.value_; }
 
     template< class CharT, class Traits >
     friend std::basic_ostream<CharT,Traits>&
@@ -344,7 +344,8 @@ struct key_value_pair_view
   key_value_pair_view() noexcept = default;
   key_value_pair_view( const key_value_pair_view& p ) = default;
   key_value_pair_view( key_value_pair_view&& p ) noexcept = default;
-  key_value_pair_view( string_view_type source ) : value_(source) {}
+  template<typename Source, typename = typename constraint<is_constructible<string_view_type, Source>::value>::type>
+  key_value_pair_view( const Source& source ) : value_(source) {}
 
   key_value_pair_view( const char_type * p) : value_(p) {}
   key_value_pair_view(       char_type * p) : value_(p) {}
@@ -608,19 +609,19 @@ struct key
     string_type value_;
 };
 
-inline bool operator==(const key_view & l, const key & r) { return l == key_view(r); }
-inline bool operator!=(const key_view & l, const key & r) { return l != key_view(r); }
-inline bool operator<=(const key_view & l, const key & r) { return l <= key_view(r); }
-inline bool operator>=(const key_view & l, const key & r) { return l >= key_view(r); }
-inline bool operator< (const key_view & l, const key & r) { return l <  key_view(r); }
-inline bool operator> (const key_view & l, const key & r) { return l >  key_view(r); }
+template<typename T, typename =  typename constraint<!is_constructible<key_view, T>::value>::type> inline bool operator==(const key_view & l, const T & r) { return l == key_view(key(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<key_view, T>::value>::type> inline bool operator!=(const key_view & l, const T & r) { return l != key_view(key(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<key_view, T>::value>::type> inline bool operator<=(const key_view & l, const T & r) { return l <= key_view(key(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<key_view, T>::value>::type> inline bool operator>=(const key_view & l, const T & r) { return l >= key_view(key(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<key_view, T>::value>::type> inline bool operator< (const key_view & l, const T & r) { return l <  key_view(key(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<key_view, T>::value>::type> inline bool operator> (const key_view & l, const T & r) { return l >  key_view(key(r)); }
 
-inline bool operator==(const key & l, const key_view & r) { return key_view(l) == r; }
-inline bool operator!=(const key & l, const key_view & r) { return key_view(l) != r; }
-inline bool operator<=(const key & l, const key_view & r) { return key_view(l) <= r; }
-inline bool operator>=(const key & l, const key_view & r) { return key_view(l) >= r; }
-inline bool operator< (const key & l, const key_view & r) { return key_view(l) <  r; }
-inline bool operator> (const key & l, const key_view & r) { return key_view(l) >  r; }
+template<typename T> inline typename constraint<!is_constructible<key_view, T>::value, bool>::type operator==(const T & l, const key_view & r) { return key_view(key(l)) == r; }
+template<typename T> inline typename constraint<!is_constructible<key_view, T>::value, bool>::type operator!=(const T & l, const key_view & r) { return key_view(key(l)) != r; }
+template<typename T> inline typename constraint<!is_constructible<key_view, T>::value, bool>::type operator<=(const T & l, const key_view & r) { return key_view(key(l)) <= r; }
+template<typename T> inline typename constraint<!is_constructible<key_view, T>::value, bool>::type operator>=(const T & l, const key_view & r) { return key_view(key(l)) >= r; }
+template<typename T> inline typename constraint<!is_constructible<key_view, T>::value, bool>::type operator< (const T & l, const key_view & r) { return key_view(key(l)) <  r; }
+template<typename T> inline typename constraint<!is_constructible<key_view, T>::value, bool>::type operator> (const T & l, const key_view & r) { return key_view(key(l)) >  r; }
 
 
 struct value
@@ -784,20 +785,20 @@ struct value
 };
 
 
-inline bool operator==(const value_view & l, const value & r) { return l == value_view(r); }
-inline bool operator!=(const value_view & l, const value & r) { return l != value_view(r); }
-inline bool operator<=(const value_view & l, const value & r) { return l <= value_view(r); }
-inline bool operator>=(const value_view & l, const value & r) { return l >= value_view(r); }
-inline bool operator< (const value_view & l, const value & r) { return l <  value_view(r); }
-inline bool operator> (const value_view & l, const value & r) { return l >  value_view(r); }
 
-inline bool operator==(const value & l, const value_view & r) { return value_view(l) == r; }
-inline bool operator!=(const value & l, const value_view & r) { return value_view(l) != r; }
-inline bool operator<=(const value & l, const value_view & r) { return value_view(l) <= r; }
-inline bool operator>=(const value & l, const value_view & r) { return value_view(l) >= r; }
-inline bool operator< (const value & l, const value_view & r) { return value_view(l) <  r; }
-inline bool operator> (const value & l, const value_view & r) { return value_view(l) >  r; }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator==(const value_view & l, const T & r) { return l == value_view(value(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator!=(const value_view & l, const T & r) { return l != value_view(value(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator<=(const value_view & l, const T & r) { return l <= value_view(value(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator>=(const value_view & l, const T & r) { return l >= value_view(value(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator< (const value_view & l, const T & r) { return l <  value_view(value(r)); }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator> (const value_view & l, const T & r) { return l >  value_view(value(r)); }
 
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator==(const T & l, const value_view & r) { return value_view(value(l)) == r; }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator!=(const T & l, const value_view & r) { return value_view(value(l)) != r; }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator<=(const T & l, const value_view & r) { return value_view(value(l)) <= r; }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator>=(const T & l, const value_view & r) { return value_view(value(l)) >= r; }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator< (const T & l, const value_view & r) { return value_view(value(l)) <  r; }
+template<typename T, typename =  typename constraint<!is_constructible<value_view, T>::value>::type> inline bool operator> (const T & l, const value_view & r) { return value_view(value(l)) >  r; }
 
 
 struct key_value_pair
@@ -976,19 +977,19 @@ struct key_value_pair
     string_type value_;
 };
 
-inline bool operator==(const key_value_pair_view & l, const key_value_pair & r) { return l == key_value_pair_view(r); }
-inline bool operator!=(const key_value_pair_view & l, const key_value_pair & r) { return l != key_value_pair_view(r); }
-inline bool operator<=(const key_value_pair_view & l, const key_value_pair & r) { return l <= key_value_pair_view(r); }
-inline bool operator>=(const key_value_pair_view & l, const key_value_pair & r) { return l >= key_value_pair_view(r); }
-inline bool operator< (const key_value_pair_view & l, const key_value_pair & r) { return l <  key_value_pair_view(r); }
-inline bool operator> (const key_value_pair_view & l, const key_value_pair & r) { return l >  key_value_pair_view(r); }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator==(const key_value_pair_view & l, const T & r) { return l == key_value_pair_view(key_value_pair(r)); }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator!=(const key_value_pair_view & l, const T & r) { return l != key_value_pair_view(key_value_pair(r)); }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator<=(const key_value_pair_view & l, const T & r) { return l <= key_value_pair_view(key_value_pair(r)); }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator>=(const key_value_pair_view & l, const T & r) { return l >= key_value_pair_view(key_value_pair(r)); }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator< (const key_value_pair_view & l, const T & r) { return l <  key_value_pair_view(key_value_pair(r)); }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator> (const key_value_pair_view & l, const T & r) { return l >  key_value_pair_view(key_value_pair(r)); }
 
-inline bool operator==(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) == r; }
-inline bool operator!=(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) != r; }
-inline bool operator<=(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) <= r; }
-inline bool operator>=(const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) >= r; }
-inline bool operator< (const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) <  r; }
-inline bool operator> (const key_value_pair & l, const key_value_pair_view & r) { return key_value_pair_view(l) >  r; }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator==(const T & l, const key_value_pair_view & r) { return key_value_pair_view(key_value_pair(l)) == r; }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator!=(const T & l, const key_value_pair_view & r) { return key_value_pair_view(key_value_pair(l)) != r; }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator<=(const T & l, const key_value_pair_view & r) { return key_value_pair_view(key_value_pair(l)) <= r; }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator>=(const T & l, const key_value_pair_view & r) { return key_value_pair_view(key_value_pair(l)) >= r; }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator< (const T & l, const key_value_pair_view & r) { return key_value_pair_view(key_value_pair(l)) <  r; }
+template<typename T, typename = typename constraint<!is_constructible<key_value_pair_view, T>::value>::type> inline bool operator> (const T & l, const key_value_pair_view & r) { return key_value_pair_view(key_value_pair(l)) >  r; }
 
 template<>
 key_view key_value_pair::get<0u>() const
