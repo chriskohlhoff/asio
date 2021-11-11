@@ -75,6 +75,14 @@ public:
       frame_->destroy();
   }
 
+  /// Move assignment.
+  awaitable operator=(awaitable&& other) noexcept
+  {
+    if (this != &other)
+      frame_ = std::exchange(other.frame_, nullptr);
+    return *this;
+  }
+
   /// Checks if the awaitable refers to a future result.
   bool valid() const noexcept
   {
