@@ -100,11 +100,35 @@ public:
       core_(ctx.native_handle(), next_layer_.lowest_layer().get_executor())
   {
   }
+
+  /// Construct a stream from an existing native implementation.
+  /**
+   * This constructor creates a stream and initialises the underlying stream
+   * object. On success, ownership of the native implementation is transferred
+   * to the stream, and it will be cleaned up when the stream is destroyed.
+   *
+   * @param arg The argument to be passed to initialise the underlying stream.
+   *
+   * @param handle An existing native SSL implementation.
+   */
+  template <typename Arg>
+  stream(Arg&& arg, native_handle_type handle)
+    : next_layer_(ASIO_MOVE_CAST(Arg)(arg)),
+      core_(handle, next_layer_.lowest_layer().get_executor())
+  {
+  }
 #else // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
   template <typename Arg>
   stream(Arg& arg, context& ctx)
     : next_layer_(arg),
       core_(ctx.native_handle(), next_layer_.lowest_layer().get_executor())
+  {
+  }
+
+  template <typename Arg>
+  stream(Arg& arg, native_handle_type handle)
+    : next_layer_(arg),
+      core_(handle, next_layer_.lowest_layer().get_executor())
   {
   }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)

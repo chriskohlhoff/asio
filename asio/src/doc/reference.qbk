@@ -145574,6 +145574,8 @@ Provides stream-oriented functionality using SSL.
     [[link asio.reference.ssl__stream.stream [*stream]] [constructor]]
     [Construct a stream. 
      [hr]
+     Construct a stream from an existing native implementation. 
+     [hr]
      Move-construct a stream from another. ]
   ]
   
@@ -146939,15 +146941,26 @@ Construct a stream.
   ``  [''''&raquo;''' [link asio.reference.ssl__stream.stream.overload1 more...]]``
 
 
-Move-construct a stream from another. 
+Construct a stream from an existing native implementation. 
 
 
+  template<
+      typename Arg>
   ``[link asio.reference.ssl__stream.stream.overload2 stream]``(
-      stream && other);
+      Arg && arg,
+      native_handle_type handle);
   ``  [''''&raquo;''' [link asio.reference.ssl__stream.stream.overload2 more...]]``
 
 
-[section:overload1 ssl::stream::stream (1 of 2 overloads)]
+Move-construct a stream from another. 
+
+
+  ``[link asio.reference.ssl__stream.stream.overload3 stream]``(
+      stream && other);
+  ``  [''''&raquo;''' [link asio.reference.ssl__stream.stream.overload3 more...]]``
+
+
+[section:overload1 ssl::stream::stream (1 of 3 overloads)]
 
 
 Construct a stream. 
@@ -146981,7 +146994,41 @@ This constructor creates a stream and initialises the underlying stream object.
 
 
 
-[section:overload2 ssl::stream::stream (2 of 2 overloads)]
+[section:overload2 ssl::stream::stream (2 of 3 overloads)]
+
+
+Construct a stream from an existing native implementation. 
+
+
+  template<
+      typename Arg>
+  stream(
+      Arg && arg,
+      native_handle_type handle);
+
+
+This constructor creates a stream and initialises the underlying stream object. On success, ownership of the native implementation is transferred to the stream, and it will be cleaned up when the stream is destroyed.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[arg][The argument to be passed to initialise the underlying stream.]]
+
+[[handle][An existing native SSL implementation. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 ssl::stream::stream (3 of 3 overloads)]
 
 
 Move-construct a stream from another. 

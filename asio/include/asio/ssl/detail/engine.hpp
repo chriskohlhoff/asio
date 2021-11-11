@@ -58,6 +58,9 @@ public:
   // Construct a new engine for the specified context.
   ASIO_DECL explicit engine(SSL_CTX* context);
 
+  // Construct a new engine for an existing native SSL implementation.
+  ASIO_DECL explicit engine(SSL* ssl_impl);
+
 #if defined(ASIO_HAS_MOVE)
   // Move construct from another engine.
   ASIO_DECL engine(engine&& other) ASIO_NOEXCEPT;
