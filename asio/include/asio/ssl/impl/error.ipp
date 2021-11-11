@@ -35,8 +35,26 @@ public:
 
   std::string message(int value) const
   {
-    const char* s = ::ERR_reason_error_string(value);
-    return s ? s : "asio.ssl error";
+    const char* reason = ::ERR_reason_error_string(value);
+    if (reason)
+    {
+      const char* lib = ::ERR_lib_error_string(value);
+      const char* func = ::ERR_func_error_string(value);
+      std::string result(reason);
+      if (lib || func)
+      {
+        result += " (";
+        if (lib)
+          result += lib;
+        if (lib && func)
+          result += ", ";
+        if (func)
+          result += func;
+        result += ")";
+      }
+      return result;
+    }
+    return "asio.ssl error";
   }
 };
 
