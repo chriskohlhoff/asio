@@ -161,7 +161,12 @@ EXTRA_DIST = \
 	http/server/request.hpp \
 	http/server/request_handler.hpp \
 	http/server/request_parser.hpp \
-	http/server/server.hpp
+	http/server/server.hpp \
+	ssl/README \
+	ssl/ca.pem \
+	ssl/server.pem \
+	ssl/dh4096.pem
+
 
 MAINTAINERCLEANFILES = \
 	$(srcdir)/Makefile.in

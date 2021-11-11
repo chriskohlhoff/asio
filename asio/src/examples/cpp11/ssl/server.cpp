@@ -88,7 +88,7 @@ public:
     context_.set_password_callback(std::bind(&server::get_password, this));
     context_.use_certificate_chain_file("server.pem");
     context_.use_private_key_file("server.pem", asio::ssl::context::pem);
-    context_.use_tmp_dh_file("dh2048.pem");
+    context_.use_tmp_dh_file("dh4096.pem");
 
     do_accept();
   }
