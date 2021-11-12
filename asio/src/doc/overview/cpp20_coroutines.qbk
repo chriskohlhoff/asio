@@ -78,6 +78,72 @@ Where a handler signature has the form:
 the `co_await` expression produces a `void` result. As above, an error is
 passed back to the coroutine as a `system_error` exception.
 
+[heading Error Handling]
+
+To perform explicit error handling, rather than the default exception-throwing
+behaviour, use the [link asio.reference.experimental__as_tuple
+`experimental::as_tuple`] or [link asio.reference.redirect_error
+`redirect_error`] completion token adapters.
+
+The `experimental::as_tuple` completion token adapter packages the completion
+handler arguments into a single tuple, which is then returned as the result of
+the awaited operation. For example:
+
+  asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      std::tuple<asio::error_code, std::size_t> result =
+        co_await socket.async_read_some(asio::buffer(data),
+          asio::experimental::as_tuple(asio::use_awaitable));
+      if (!std::get<0>(result))
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
+The result can also be captured directly into a structured binding:
+
+  asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      auto [ec, n] = co_await socket.async_read_some(asio::buffer(data),
+          asio::experimental::as_tuple(asio::use_awaitable));
+      if (!ec)
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
+Alternatively, the `redirect_error` completion token adapter may be used to
+capture the error into a supplied `error_code` variable:
+
+  asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      asio::error_code ec;
+      std::size_t n = co_await socket.async_read_some(asio::buffer(data),
+          asio::redirect_error(asio::use_awaitable, ec));
+      if (!ec)
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
 [heading Coroutines and Per-Operation Cancellation]
 
 All threads of execution created by `co_spawn` have a cancellation state that
