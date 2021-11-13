@@ -294,8 +294,10 @@ struct prefer_member<any_io_executor, Prop> :
 
 #include "asio/detail/pop_options.hpp"
 
-#if defined(ASIO_HEADER_ONLY)
+#if defined(ASIO_HEADER_ONLY) \
+  && !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 # include "asio/impl/any_io_executor.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+       //   && !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #endif // ASIO_ANY_IO_EXECUTOR_HPP
