@@ -177,7 +177,7 @@ struct coro
    */
   template <typename CompletionToken>
     requires std::is_void_v<input_type>
-  auto async_resume(CompletionToken&& token)
+  auto async_resume(CompletionToken&& token) &
   {
     return async_initiate<CompletionToken,
         typename traits::completion_handler>(
@@ -194,12 +194,49 @@ struct coro
    * @note This overload is only available for coroutines with an input value.
    */
   template <typename CompletionToken, detail::convertible_to<input_type> T>
-  auto async_resume(T&& ip, CompletionToken&& token)
+  auto async_resume(T&& ip, CompletionToken&& token)  &
   {
     return async_initiate<CompletionToken,
         typename traits::completion_handler>(
           initiate_async_resume(this), token, std::forward<T>(ip));
   }
+
+  /// Resume the coroutine and detach if from the coro handle.
+  /**
+   * @param token The completion token of the async resume.
+   *
+   * @attention Calling an invalid coroutine with a noexcept signature is
+   * undefined behaviour.
+   *
+   * @note This overload is only available for coroutines without an input
+   * value.
+   */
+  template <typename CompletionToken>
+  requires std::is_void_v<input_type>
+  auto async_resume(CompletionToken&& token) &&
+  {
+    return async_initiate<CompletionToken,
+            typename traits::completion_handler>(
+            initiate_detached_async_resume(std::exchange(coro_, nullptr)), token);
+  }
+
+  /// Resume the coroutine and detach it from the handle.
+  /**
+   * @param token The completion token of the async resume.
+   *
+   * @attention Calling an invalid coroutine with a noexcept signature is
+   * undefined behaviour.
+   *
+   * @note This overload is only available for coroutines with an input value.
+   */
+  template <typename CompletionToken, detail::convertible_to<input_type> T>
+  auto async_resume(T&& ip, CompletionToken&& token)  &&
+  {
+    return async_initiate<CompletionToken,
+            typename traits::completion_handler>(
+            initiate_detached_async_resume(std::exchange(coro_, nullptr)), token, std::forward<T>(ip));
+  }
+
 
   /// Operator used for coroutines without input value.
   auto operator co_await() requires (std::is_void_v<input_type>)
@@ -247,6 +284,7 @@ private:
   struct awaitable_t;
 
   struct initiate_async_resume;
+  struct initiate_detached_async_resume;
 
   explicit coro(promise_type* const cr) : coro_(cr) {}
 

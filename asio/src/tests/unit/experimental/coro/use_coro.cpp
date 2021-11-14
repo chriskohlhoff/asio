@@ -25,6 +25,30 @@ using namespace asio::experimental;
 
 namespace coro {
 
+asio::experimental::coro<void() noexcept, int>
+poster(asio::any_io_executor exec)
+{
+  co_await asio::post(exec, use_coro);
+  co_return 42;
+}
+
+
+asio::experimental::coro<void() , int>
+throwing(asio::any_io_executor exec)
+{
+  auto res = co_await poster(exec);
+  throw std::logic_error("test-exception");
+  co_return res;
+}
+
+asio::experimental::coro<void(), int>
+erroring(asio::any_io_executor exec)
+{
+  auto t = throwing(exec);
+  co_await t.async_resume(use_coro);
+  co_return 42;
+}
+
 asio::experimental::coro<void(), int>
 awaiter(asio::any_io_executor exec)
 {
@@ -42,30 +66,78 @@ awaiter_noexcept(asio::any_io_executor exec)
   co_return 42;
 }
 
-void stack_test2()
+void use_coro_direct()
 {
-  bool done = false;
+  int done = 0;
   asio::io_context ctx;
 
   auto k = awaiter(ctx.get_executor());
   auto k2 = awaiter_noexcept(ctx.get_executor());
+  auto k3 = poster(ctx.get_executor());
+  auto k4 = erroring(ctx.get_executor());
 
   k.async_resume(
       [&](std::exception_ptr ex, int res)
       {
         ASIO_CHECK(!ex);
         ASIO_CHECK(res == 42);
-        done = true;
+        done++;
       });
 
   k2.async_resume([&](int res)
        {
          ASIO_CHECK(res == 42);
-         done = true;
+         done++;
        });
 
+  k3.async_resume([&](int res)
+                 {
+                   ASIO_CHECK(res == 42);
+                   done ++;
+                 });
+
+  k4.async_resume([&](std::exception_ptr ex, int )
+                  {
+                    ASIO_CHECK(ex != nullptr);
+                    done ++;
+                  });
+
   ctx.run();
-  ASIO_CHECK(done);
+  ASIO_CHECK(done == 4);
+}
+
+asio::experimental::coro<void, void>
+  use_coro_nested_impl(asio::any_io_executor exec)
+{
+  ASIO_CHECK(42 == co_await awaiter(exec));
+  ASIO_CHECK(42 == co_await awaiter_noexcept(exec));
+  ASIO_CHECK(42 == co_await poster(exec));
+  bool caught = false;
+  try
+  {
+    co_await erroring(exec);
+  }
+  catch (std::logic_error & )
+  {
+    caught = true;
+  }
+  ASIO_CHECK(caught);
+}
+
+void use_coro_nested()
+{
+  int done = 0;
+  asio::io_context ctx;
+
+  auto k = use_coro_nested_impl(ctx.get_executor());
+  k.async_resume(
+          [&](std::exception_ptr ex)
+          {
+            ASIO_CHECK(!ex);
+            done++;
+          });
+  ctx.run();
+  ASIO_CHECK(done== 1);
 }
 
 } // namespace coro
@@ -73,5 +145,6 @@ void stack_test2()
 ASIO_TEST_SUITE
 (
   "coro/use_coro",
-  ASIO_TEST_CASE(::coro::stack_test2)
+  ASIO_TEST_CASE(::coro::use_coro_direct)
+  ASIO_TEST_CASE(::coro::use_coro_nested)
 )

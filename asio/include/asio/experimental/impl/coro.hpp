@@ -1191,9 +1191,235 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
           std::move(h)();
         });
   }
-
 private:
   coro* self_;
+};
+
+template <typename Yield, typename Return, typename Executor>
+struct coro<Yield, Return, Executor>::initiate_detached_async_resume
+{
+  typedef Executor executor_type;
+
+  using promise_type = typename coro::promise_type;
+
+  explicit initiate_detached_async_resume(promise_type* coro)
+          : coro_(coro)
+  {
+  }
+
+  executor_type get_executor() const noexcept
+  {
+    return coro_->get_executor();
+  }
+
+  template <typename E, typename WaitHandler>
+  auto handle(E exec, WaitHandler&& handler,
+              std::true_type /* error is noexcept */,
+              std::true_type /* result is void */)  //noexcept
+  {
+    return [this, coro = std::move(coro_),
+            h = std::forward<WaitHandler>(handler),
+            exec = std::move(exec)]() mutable
+    {
+      assert(coro);
+
+      auto ch =
+              detail::coroutine_handle<promise_type>::from_promise(*coro);
+      assert(ch && !ch.done());
+      assert(coro->awaited_from == detail::noop_coroutine());
+
+      auto c = coro.get();
+      c->awaited_from = post_coroutine(std::move(exec),
+
+                                       [h = std::move(h), _ = std::move(coro)]() mutable {std::move(h)(); });
+      c->reset_error();
+      ch.resume();
+    };
+  }
+
+  template <typename E, typename WaitHandler>
+  requires (!std::is_void_v<result_type>)
+  auto handle(E exec, WaitHandler&& handler,
+              std::true_type /* error is noexcept */,
+              std::false_type  /* result is void */)  //noexcept
+  {
+    return [coro = std::move(coro_),
+            h = std::forward<WaitHandler>(handler),
+            exec = std::move(exec)]() mutable
+    {
+      assert(coro);
+
+      auto ch =
+              detail::coroutine_handle<promise_type>::from_promise(*coro);
+      assert(ch && !ch.done());
+      assert(coro->awaited_from == detail::noop_coroutine());
+      auto c = coro.get();
+      c->awaited_from = detail::post_coroutine(exec,
+                                                         [coro = std::move(coro), h = std::move(h)]() mutable
+                                                         {
+                                                           std::move(h)(std::move(coro->result_));
+                                                         });
+      c->reset_error();
+      ch.resume();
+    };
+  }
+
+  template <typename E, typename WaitHandler>
+  auto handle(E exec, WaitHandler&& handler,
+              std::false_type /* error is noexcept */,
+              std::true_type /* result is void */)
+  {
+    return [coro = std::move(coro_),
+            h = std::forward<WaitHandler>(handler),
+            exec = std::move(exec)]() mutable
+    {
+      if (!coro)
+      {
+        asio::post(exec,
+                   [h = std::move(h)]() mutable
+                   {
+                     h(detail::coro_error<error_type>::invalid());
+                   });
+        return;
+      }
+
+      auto ch =
+              detail::coroutine_handle<promise_type>::from_promise(*coro);
+      if (!ch)
+      {
+        asio::post(exec,
+                   [h = std::move(h)]() mutable
+                   {
+                     h(detail::coro_error<error_type>::invalid());
+                   });
+      }
+      else if (ch.done())
+      {
+        asio::post(exec,
+                   [h = std::move(h)]() mutable
+                   {
+                     h(detail::coro_error<error_type>::done());
+                   });
+      }
+      else
+      {
+        auto c = coro.get();
+        assert(coro->awaited_from == detail::noop_coroutine());
+        c->awaited_from =
+                detail::post_coroutine(exec,
+                                       [coro = std::move(coro), h = std::move(h)]() mutable
+                                       {
+                                         std::move(h)(std::move(coro->error_));
+                                       });
+        c->reset_error();
+        ch.resume();
+      }
+    };
+  }
+
+  template <typename E, typename WaitHandler>
+  auto handle(E exec, WaitHandler&& handler,
+              std::false_type /* error is noexcept */,
+              std::false_type  /* result is void */)
+  {
+    return [coro = coro_,
+            h = std::forward<WaitHandler>(handler),
+            exec = std::move(exec)]() mutable
+    {
+      if (!coro)
+      {
+        asio::post(exec,
+                   [h = std::move(h)]() mutable
+                   {
+                     h(detail::coro_error<error_type>::invalid(), result_type{});
+                   });
+        return;
+      }
+
+      auto ch =
+              detail::coroutine_handle<promise_type>::from_promise(*coro);
+      if (!ch)
+      {
+        asio::post(exec,
+                   [h = std::move(h)]() mutable
+                   {
+                     h(detail::coro_error<error_type>::invalid(), result_type{});
+                   });
+      }
+      else if (ch.done())
+      {
+        asio::post(exec,
+                   [h = std::move(h)]() mutable
+                   {
+                     h(detail::coro_error<error_type>::done(), result_type{});
+                   });
+      }
+      else
+      {
+        assert(coro->awaited_from == detail::noop_coroutine());
+        coro->awaited_from =
+                detail::post_coroutine(exec,
+                                       [h = std::move(h), coro = std::move(coro)]() mutable
+                                       {
+                                         std::move(h)(
+                                                 std::move(coro->error_),
+                                                 std::move(coro->result_));
+                                       });
+        coro->reset_error();
+        ch.resume();
+      }
+    };
+  }
+
+  template <typename WaitHandler>
+  void operator()(WaitHandler&& handler)
+  {
+    const auto exec = asio::prefer(
+            get_associated_executor(handler, get_executor()),
+            execution::outstanding_work.tracked);
+
+    auto c = coro_.get();
+    c->cancel = &c->cancel_source.emplace();
+    c->cancel->state = cancellation_state(
+            c->cancel->slot = get_associated_cancellation_slot(handler));
+    asio::dispatch(get_executor(),
+                   handle(exec,
+                          std::forward<WaitHandler>(handler),
+                          std::integral_constant<bool, is_noexcept>{},
+                          std::is_void<result_type>{}));
+  }
+
+  template <typename WaitHandler, typename Input>
+  void operator()(WaitHandler&& handler, Input&& input)
+  {
+    const auto exec = asio::prefer(
+            get_associated_executor(handler, get_executor()),
+            execution::outstanding_work.tracked);
+
+    coro_->cancel = &coro_->cancel_source.emplace();
+    coro_->cancel->state = cancellation_state(
+    coro_->cancel->slot = get_associated_cancellation_slot(handler));
+    asio::dispatch(get_executor(),
+                   [h = handle(exec, std::forward<WaitHandler>(handler),
+                               std::integral_constant<bool, is_noexcept>{},
+                               std::is_void<result_type>{}),
+                           in = std::forward<Input>(input), coro = coro_.get()]() mutable
+                   {
+                     coro->input_ = std::move(in);
+                     std::move(h)();
+                   });
+  }
+ private:
+  struct destroyer
+  {
+    void operator()(promise_type * promise) const
+    {
+      if (promise)
+        detail::coroutine_handle<promise_type>::from_promise(*promise).destroy();
+    }
+  };
+
+  std::unique_ptr<promise_type, destroyer> coro_;
 };
 
 } // namespace experimental

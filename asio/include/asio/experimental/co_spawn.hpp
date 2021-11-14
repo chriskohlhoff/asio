@@ -27,25 +27,6 @@
 
 namespace asio {
 namespace experimental {
-namespace detail {
-
-template <typename T, typename U, typename Executor>
-struct coro_spawn_op
-{
-  std::shared_ptr<coro<T, U, Executor>> c;
-
-  void operator()(auto& self)
-  {
-    c->async_resume((prepend)(std::move(self), 0));
-  }
-
-  void operator()(auto& self, int, auto... res)
-  {
-    self.complete(std::move(res)...);
-  }
-};
-
-} // namespace detail
 
 /// Spawn a resumable coroutine.
 /**
@@ -63,11 +44,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr, T))
 co_spawn(coro<void, T, Executor> c, CompletionToken&& token)
 {
-  auto exec = c.get_executor();
-  return async_compose<CompletionToken, void(std::exception_ptr, T)>(
-      detail::coro_spawn_op<void, T, Executor>{
-        std::make_shared<coro<void, T, Executor>>(std::move(c))},
-      token, exec);
+  std::move(c).async_resume(std::forward<CompletionToken>(token));
 }
 
 /// Spawn a resumable coroutine.
@@ -86,11 +63,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr, T))
 co_spawn(coro<void(), T, Executor> c, CompletionToken&& token)
 {
-  auto exec = c.get_executor();
-  return async_compose<CompletionToken, void(std::exception_ptr, T)>(
-      detail::coro_spawn_op<void(), T, Executor>{
-        std::make_shared<coro<void(), T, Executor>>(std::move(c))},
-      token, exec);
+  std::move(c).async_resume(std::forward<CompletionToken>(token));
 }
 
 /// Spawn a resumable coroutine.
@@ -108,11 +81,7 @@ template <typename T, typename Executor, typename CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void(T))
 co_spawn(coro<void() noexcept, T, Executor> c, CompletionToken&& token)
 {
-  auto exec = c.get_executor();
-  return async_compose<CompletionToken, void(T)>(
-      detail::coro_spawn_op<void() noexcept, T, Executor>{
-        std::make_shared<coro<void() noexcept, T, Executor>>(std::move(c))},
-      token, exec);
+  std::move(c).async_resume(std::forward<CompletionToken>(token));
 }
 
 /// Spawn a resumable coroutine.
@@ -131,11 +100,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr))
 co_spawn(coro<void, void, Executor> c, CompletionToken&& token)
 {
-  auto exec = c.get_executor();
-  return async_compose<CompletionToken, void(std::exception_ptr)>(
-      detail::coro_spawn_op<void, void, Executor>{
-        std::make_shared<coro<void, void, Executor>>(std::move(c))},
-      token, exec);
+  std::move(c).async_resume(std::forward<CompletionToken>(token));
 }
 
 /// Spawn a resumable coroutine.
@@ -154,11 +119,7 @@ ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken, void(std::exception_ptr))
 co_spawn(coro<void(), void, Executor> c, CompletionToken&& token)
 {
-  auto exec = c.get_executor();
-  return async_compose<CompletionToken, void(std::exception_ptr)>(
-      detail::coro_spawn_op<void(), void, Executor>{
-        std::make_shared<coro<void(), void, Executor>>(std::move(c))},
-      token, exec);
+  std::move(c).async_resume(std::forward<CompletionToken>(token));
 }
 
 /// Spawn a resumable coroutine.
@@ -176,11 +137,7 @@ template <typename Executor, typename CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void())
 co_spawn(coro<void() noexcept, void, Executor> c, CompletionToken&& token)
 {
-  auto exec = c.get_executor();
-  return async_compose<CompletionToken, void()>(
-      detail::coro_spawn_op<void() noexcept, void, Executor>{
-        std::make_shared<coro<void() noexcept, void, Executor>>(std::move(c))},
-      token, exec);
+  std::move(c).async_resume(std::forward<CompletionToken>(token));
 }
 
 } // namespace detail
