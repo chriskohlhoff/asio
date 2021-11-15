@@ -1066,6 +1066,33 @@ struct view
 #if ASIO_HAS_FILESYSTEM
 
 template<typename Environment = view>
+inline asio::filesystem::path home(Environment && env = view())
+{
+  auto find_key = [&](key_view ky) -> value
+  {
+    const auto itr = std::find_if(std::begin(env), std::end(env),
+                                  [&](key_value_pair vp)
+                                  {
+                                    auto tmp =  vp.key_view() == ky;
+                                    if (tmp)
+                                      return true;
+                                    else
+                                      return false;
+                                  });
+    if (itr != nullptr)
+      return itr->value_view();
+    else
+      return value_view();
+  };
+#if defined(ASIO_WINDOWS)
+  return find_key(L"HOMEDRIVE") + find_key(L"HOMEPATH");
+#else
+  return find_key(L"HOME");
+#endif
+
+}
+
+template<typename Environment = view>
 inline asio::filesystem::path find_executable(asio::filesystem::path name,
                                              Environment && env = view())
 {
