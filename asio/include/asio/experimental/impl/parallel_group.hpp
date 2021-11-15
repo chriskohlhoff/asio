@@ -344,12 +344,13 @@ struct parallel_group_cancellation_handler
     // yet completed and requested cancellation, emit a signal for each
     // operation in the group.
     if (cancel_type != cancellation_type::none)
-      if (state_->cancellations_requested_++ == 0)
-        for (std::size_t i = 0; i < sizeof...(Ops); ++i)
-          state_->cancellation_signals_[i].emit(cancel_type);
+      if (auto state = state_.lock())
+        if (state->cancellations_requested_++ == 0)
+          for (std::size_t i = 0; i < sizeof...(Ops); ++i)
+            state->cancellation_signals_[i].emit(cancel_type);
   }
 
-  std::shared_ptr<parallel_group_state<Condition, Handler, Ops...> > state_;
+  std::weak_ptr<parallel_group_state<Condition, Handler, Ops...> > state_;
 };
 
 template <typename Condition, typename Handler,
