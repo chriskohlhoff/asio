@@ -235,6 +235,8 @@ struct key_view
         p = t;
         return is;
     }
+    const value_type * data() const {return value_.data(); }
+    std::size_t size() const {return value_.size(); }
   private:
     string_view_type value_;
 };
@@ -245,6 +247,7 @@ struct value_view
     using value_type       = char_type;
     using string_view_type = ASIO_BASIC_CSTRING_VIEW(char_type, value_char_traits<char_type>);
     using string_type      = std::basic_string<char_type, value_char_traits<char_type>>;
+    using traits_type      = value_char_traits<char_type>;
 
     value_view() noexcept = default;
     value_view( const value_view& p ) = default;
@@ -272,6 +275,7 @@ struct value_view
     string_view_type native() const noexcept {return value_;}
 
     operator string_view_type() const {return native();}
+    operator typename string_view_type::string_view_type() const {return value_; }
 
     int compare( const value_view& p ) const noexcept {return value_.compare(p.value_);}
     int compare( string_view_type str ) const {return value_.compare(str);}
@@ -329,6 +333,8 @@ struct value_view
     value_iterator   end() const {return value_iterator(value_.data() , value_.size());}
 
     const char_type * c_str() {return value_.c_str(); }
+    const value_type * data() const {return value_.data(); }
+    std::size_t size() const {return value_.size(); }
 
   private:
     string_view_type value_;
@@ -340,6 +346,7 @@ struct key_value_pair_view
   using value_type       = char_type;
   using string_type      = std::basic_string<char_type>;
   using string_view_type = ASIO_BASIC_CSTRING_VIEW(char_type);
+  using traits_type      = std::char_traits<char_type>;
 
   key_value_pair_view() noexcept = default;
   key_value_pair_view( const key_value_pair_view& p ) = default;
@@ -364,6 +371,7 @@ struct key_value_pair_view
   string_view_type native() const noexcept {return value_;}
 
   operator string_view_type() const {return native();}
+  operator typename string_view_type::string_view_type() const {return value_; }
 
   int compare( const key_value_pair_view& p ) const noexcept {return value_.compare(p.value_);}
   int compare( const string_type& str ) const {return value_.compare(str);}
@@ -436,9 +444,12 @@ struct key_value_pair_view
   {
     return value_.data();
   }
+  const value_type * data() const {return value_.data(); }
+  std::size_t size() const {return value_.size(); }
+
  private:
 
-    string_view_type value_;
+  string_view_type value_;
 };
 
 template<>
@@ -604,6 +615,8 @@ struct key
         p = t;
         return is;
     }
+    const value_type * data() const {return value_.data(); }
+    std::size_t size() const {return value_.size(); }
 
   private:
     string_type value_;
@@ -721,6 +734,7 @@ struct value
 
     operator string_type() const {return native();}
     operator string_view_type() const {return native_view();}
+    operator typename string_view_type::string_view_type() const {return value_; }
 
     int compare( const value& p ) const noexcept {return value_.compare(p.value_);}
     int compare( const string_type& str ) const {return value_.compare(str);}
@@ -779,6 +793,8 @@ struct value
 
     value_iterator begin() const {return value_iterator(value_.data());}
     value_iterator   end() const {return value_iterator(value_.data(), value_.size());}
+  const value_type * data() const {return value_.data(); }
+  std::size_t size() const {return value_.size(); }
 
   private:
     string_type value_;
@@ -972,7 +988,11 @@ struct key_value_pair
     template<std::size_t Idx>
     inline auto get() const -> typename conditional<Idx == 0u, asio::environment::key_view,
             asio::environment::value_view>::type;
-  private:
+
+    const value_type * data() const {return value_.data(); }
+    std::size_t size() const {return value_.size(); }
+
+private:
 
     string_type value_;
 };
@@ -1128,6 +1148,8 @@ inline asio::filesystem::path find_executable(asio::filesystem::path name,
             bool file = asio::filesystem::is_regular_file(p, ec);
             if (!ec && file && SHGetFileInfoW(p.native().c_str(), 0,0,0, SHGFI_EXETYPE))
                 return p;
+
+
         }
 #else
     auto path = find_key("PATH");
