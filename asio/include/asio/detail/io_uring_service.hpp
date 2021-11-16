@@ -27,6 +27,7 @@
 #include "asio/detail/limits.hpp"
 #include "asio/detail/object_pool.hpp"
 #include "asio/detail/op_queue.hpp"
+#include "asio/detail/reactor.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/scheduler_task.hpp"
 #include "asio/detail/timer_queue_base.hpp"

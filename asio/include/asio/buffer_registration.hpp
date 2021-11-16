@@ -27,6 +27,7 @@
 #include "asio/registered_buffer.hpp"
 
 #if defined(ASIO_HAS_IO_URING)
+# include "asio/detail/scheduler.hpp"
 # include "asio/detail/io_uring_service.hpp"
 #endif // defined(ASIO_HAS_IO_URING)
 
