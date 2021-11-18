@@ -597,7 +597,9 @@
 
 #if defined(ASIO_HAS_ALIGNOF)
 # define ASIO_ALIGNOF(T) alignof(T)
-# if defined(__GNUC__)
+# if defined(__STDCPP_DEFAULT_NEW_ALIGNMENT__)
+#  define ASIO_DEFAULT_ALIGN __STDCPP_DEFAULT_NEW_ALIGNMENT__
+# elif defined(__GNUC__)
 #  if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
 #   define ASIO_DEFAULT_ALIGN alignof(std::max_align_t)
 #  else // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
