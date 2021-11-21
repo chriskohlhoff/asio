@@ -20,6 +20,13 @@
 #include "asio/process/default_launcher.hpp"
 #include "asio/detail/push_options.hpp"
 
+
+#if ! defined(ASIO_WINDOWS)
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#endif
+
 namespace asio
 {
 
@@ -101,6 +108,49 @@ typedef process_io_binding<STD_ERROR_HANDLE>  process_error_binding;
 
 #else
 
+template<int Target>
+struct process_io_binding
+{
+  constexpr static int target = Target;
+  int fd{target};
+  bool fd_needs_closing{false};
+
+  ~process_io_binding()
+  {
+    if (fd_needs_closing)
+      ::close(fd);
+  }
+
+  process_io_binding() = default;
+
+  template<typename Stream>
+  process_io_binding(Stream && str, decltype(std::declval<Stream>().native_handle()) = -1)
+          : process_io_binding(str.native_handle())
+  {}
+
+  process_io_binding(FILE * f) : process_io_binding(fileno(f)) {}
+  process_io_binding(int fd) : fd(fd) {}
+  process_io_binding(std::nullptr_t) : process_io_binding(filesystem::path("/dev/null")) {}
+  process_io_binding(const filesystem::path & pth)
+          : fd(::open(pth.c_str(),
+                      Target == STDIN_FILENO ? O_RDONLY : (O_WRONLY | O_CREAT),
+                      0660)), fd_needs_closing(true)
+  {
+  }
+
+  error_code on_exec_setup(posix::default_launcher & launcher, const filesystem::path &, const char * const *)
+  {
+    if (::dup2(fd, target) == -1)
+      return error_code(errno, system_category());
+    else
+      return error_code ();
+  }
+};
+
+typedef process_io_binding<STDIN_FILENO>  process_input_binding;
+typedef process_io_binding<STDOUT_FILENO> process_output_binding;
+typedef process_io_binding<STDERR_FILENO> process_error_binding;
+
 #endif
 
 }
@@ -122,6 +172,21 @@ struct process_stdio
     launcher.inherit_handles = true;
     return error_code {};
   };
+#else
+  error_code on_exec_setup(posix::default_launcher & launcher, const filesystem::path &, const char * const *)
+  {
+    if (::dup2(in.fd, in.target) == -1)
+      return error_code(errno, system_category());
+
+    if (::dup2(out.fd, out.target) == -1)
+      return error_code(errno, system_category());
+
+    if (::dup2(err.fd, err.target) == -1)
+      return error_code(errno, system_category());
+
+    return error_code {};
+  };
+
 
 #endif
 

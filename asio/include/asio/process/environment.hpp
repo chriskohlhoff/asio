@@ -140,6 +140,61 @@ struct process_environment
     return error_code {};
   };
 
+#else
+
+  template<typename Args>
+  static
+  std::vector<const char *> build_env(Args && args,
+                                      typename enable_if<
+                                              std::is_convertible<
+                                                      decltype(*std::begin(std::declval<Args>())),
+                                                      ASIO_CSTRING_VIEW>::value>::type * = nullptr)
+  {
+    std::vector<const char *> env;
+    for (auto && e : args)
+      env.push_back(e.c_str());
+
+    env.push_back(nullptr);
+    return env;
+  }
+
+  template<typename Args>
+  std::vector<const char *> build_env(Args && args,
+                                      typename enable_if<
+                                              !std::is_convertible<
+                                                      decltype(*std::begin(std::declval<Args>())),
+                                                      ASIO_CSTRING_VIEW>::value>::type * = nullptr)
+  {
+    std::vector<const char *> env;
+
+    using char_type = typename decay<decltype((*std::begin(std::declval<Args>()))[0])>::type;
+    for (ASIO_BASIC_STRING_VIEW_PARAM(char_type)  arg : args)
+      env_buffer.push_back(detail::convert_chars(arg.data(), arg.data() + arg.size(), ' '));
+
+    for (auto && e : env_buffer)
+      env.push_back(e.c_str());
+    env.push_back(nullptr);
+    return env;
+  }
+
+
+  process_environment(std::initializer_list<cstring_view> sv) : env{build_env(sv)}  {  }
+
+  template<typename Args>
+  process_environment(Args && args) : env(build_env(std::forward<Args>(args)))
+  {
+  }
+
+
+  error_code on_setup(posix::default_launcher & launcher, const filesystem::path &, const char * const *)
+  {
+    launcher.env = env.data();
+    return error_code{};
+  };
+
+  std::vector<const char *> env;
+  std::vector<std::string> env_buffer;
+
 #endif
 
 };

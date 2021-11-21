@@ -101,10 +101,9 @@ inline void on_error(Launcher & launcher, const filesystem::path &executable, st
 }
 
 template<typename Launcher, typename Init>
-inline error_code invoke_on_success(Launcher & launcher, const filesystem::path &executable, std::wstring &cmd_line,
+inline void invoke_on_success(Launcher & launcher, const filesystem::path &executable, std::wstring &cmd_line,
                                     Init && init, base && )
 {
-  return error_code{};
 }
 
 template<typename Launcher, typename Init>

@@ -60,16 +60,24 @@ asio::filesystem::path closable()
 {
   return asio::environment::find_executable("notepad");
 }
+
+asio::filesystem::path interruptable()
+{
+  return asio::environment::find_executable("cmd");
+}
 #else
 asio::filesystem::path shell()
 {
-  return asio::environment::find_executable("bash");
+  return asio::environment::find_executable("sh");
 }
 asio::filesystem::path closable()
 {
-  return asio::environment::find_executable("sh");
+  return asio::environment::find_executable("tee");
 }
-
+asio::filesystem::path interruptable()
+{
+  return asio::environment::find_executable("tee");
+}
 #endif
 
 inline void trim_end(std::string & str)
@@ -109,7 +117,7 @@ void interrupt()
 {
   asio::io_context ctx;
 
-  auto sh = shell();
+  auto sh = interruptable();
   ASIO_CHECK_MESSAGE(!sh.empty(), sh);
   asio::process proc(ctx, sh, {}
 #if defined(ASIO_WINDOWS)
@@ -145,7 +153,7 @@ void print_args_out()
       };
 
   ASIO_CHECK(sz != 0);
-  ASIO_CHECK_MESSAGE(ec == asio::error::broken_pipe, ec.message());
+  ASIO_CHECK_MESSAGE((ec == asio::error::broken_pipe) || (ec == asio::error::eof), ec.message());
 
   std::string line;
   ASIO_CHECK(std::getline(is, line));
@@ -189,7 +197,7 @@ void print_args_err()
 
 
   ASIO_CHECK(sz != 0);
-  ASIO_CHECK_MESSAGE(ec == asio::error::broken_pipe, ec.message());
+  ASIO_CHECK_MESSAGE((ec == asio::error::broken_pipe) || (ec == asio::error::eof), ec.message());
 
   std::string line;
   ASIO_CHECK(std::getline(is, line));
@@ -251,7 +259,7 @@ void echo_file()
 
   auto sz = asio::read(rp, asio::dynamic_buffer(out),  ec);
   ASIO_CHECK(sz != 0);
-  ASIO_CHECK_MESSAGE(ec == asio::error::broken_pipe, ec.message());
+  ASIO_CHECK_MESSAGE((ec == asio::error::broken_pipe) || (ec == asio::error::eof), ec.message());
   ASIO_CHECK_MESSAGE(out == test_data, out);
 
   proc.wait();
@@ -276,7 +284,7 @@ void print_same_cwd()
 
   auto sz = asio::read(rp, asio::dynamic_buffer(out),  ec);
   ASIO_CHECK(sz != 0);
-  ASIO_CHECK_MESSAGE(ec == asio::error::broken_pipe, ec.message());
+  ASIO_CHECK_MESSAGE((ec == asio::error::broken_pipe) || (ec == asio::error::eof), ec.message());
   ASIO_CHECK_MESSAGE(asio::filesystem::path(out) == asio::filesystem::current_path(),
                      asio::filesystem::path(out) << " != " << asio::filesystem::current_path());
 
@@ -303,12 +311,12 @@ void print_other_cwd()
 
   auto sz = asio::read(rp, asio::dynamic_buffer(out),  ec);
   ASIO_CHECK(sz != 0);
-  ASIO_CHECK_MESSAGE(ec == asio::error::broken_pipe, ec.message());
+  ASIO_CHECK_MESSAGE((ec == asio::error::broken_pipe) || (ec == asio::error::eof), ec.message());
   ASIO_CHECK_MESSAGE(asio::filesystem::path(out) == tmp,
                      asio::filesystem::path(out) << " != " << tmp);
 
   proc.wait();
-  ASIO_CHECK_MESSAGE(proc.exit_code() == 0, proc.exit_code());
+  ASIO_CHECK_MESSAGE(proc.exit_code() == 0, proc.exit_code() << " from " << proc.native_exit_code());
 }
 
 
@@ -355,7 +363,7 @@ void exit_codes()
   proc.async_wait([&](asio::error_code ec, int res)
                   {
                       done = true;
-                      exit_code = res;
+                      exit_code = asio::evaluate_exit_code(res);
                   });
 
   ctx.run();
@@ -382,7 +390,7 @@ std::string read_env(const char * name, Inits && ... inits)
   asio::error_code ec;
 
   auto sz = asio::read(rp, asio::dynamic_buffer(out),  ec);
-  ASIO_CHECK_MESSAGE(ec == asio::error::broken_pipe, ec.message());
+  ASIO_CHECK_MESSAGE((ec == asio::error::broken_pipe) || (ec == asio::error::eof), ec.message());
 
   trim_end(out);
 

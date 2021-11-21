@@ -58,7 +58,7 @@ inline bool process_is_running(int code)
     return !WIFEXITED(code) && !WIFSIGNALED(code);
 }
 
-inline bool evaluate_exit_code(int code)
+inline int evaluate_exit_code(int code)
 {
   if (WIFEXITED(code))
     return WEXITSTATUS(code);

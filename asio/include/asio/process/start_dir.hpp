@@ -32,6 +32,14 @@ struct process_start_dir
     return error_code {};
   };
 
+#else
+  error_code on_exec_setup(posix::default_launcher & launcher, const filesystem::path &, const char * const *)
+  {
+    if (::chdir(start_dir.c_str()) == -1)
+      return error_code(errno, system_category());
+    else
+      return error_code ();
+  }
 #endif
 
 };

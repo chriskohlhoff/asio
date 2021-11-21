@@ -20,7 +20,14 @@
 #if defined(ASIO_WINDOWS)
 #include "asio/process/windows/default_launcher.hpp"
 #else
-#error "Not implemented"
+#if (defined(__MACH__) && defined(__APPLE__)) \
+  || defined(__FreeBSD__) \
+  || defined(__NetBSD__) \
+  || defined(__OpenBSD__)
+#include "asio/process/posix/pdfork_launcher.hpp"
+#else
+#include "asio/process/posix/default_launcher.hpp"
+#endif
 #endif
 
 #include "asio/detail/push_options.hpp"
@@ -32,8 +39,15 @@ namespace asio
 typedef windows::default_launcher default_process_launcher;
 #else
 
+#if (defined(__MACH__) && defined(__APPLE__)) \
+  || defined(__FreeBSD__) \
+  || defined(__NetBSD__) \
+  || defined(__OpenBSD__)
+typedef posix::pdfork_launcher default_process_launcher;
+#else
+typedef posix::default_launcher default_process_launcher;
 #endif
-
+#endif
 }
 
 #include "asio/detail/pop_options.hpp"

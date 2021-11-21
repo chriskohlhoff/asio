@@ -20,7 +20,7 @@
 #if defined(ASIO_WINDOWS)
 #include "asio/process/detail/windows_process_handle.hpp"
 #else
-
+#include "asio/process/detail/posix_process_handle.hpp"
 #endif
 
 namespace asio

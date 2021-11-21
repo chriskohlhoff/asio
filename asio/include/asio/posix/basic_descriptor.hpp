@@ -654,7 +654,6 @@ public:
         initiate_async_wait(this), handler, w);
   }
 
-protected:
   /// Protected destructor to prevent deletion through this type.
   /**
    * This function destroys the descriptor, cancelling any outstanding
@@ -664,6 +663,7 @@ protected:
   ~basic_descriptor()
   {
   }
+ protected:
 
 #if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   detail::io_object_impl<detail::io_uring_descriptor_service, Executor> impl_;
