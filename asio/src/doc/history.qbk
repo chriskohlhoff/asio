@@ -7,6 +7,42 @@
 
 [section:history Revision History]
 
+[heading Asio 1.22.0]
+
+* Improved error messages emitted by `ssl` facilities.
+
+* Fixed `bind_executor` compatibility with completion tokens.
+
+* Fixed build errors when `ASIO_USE_TS_EXECUTOR_AS_DEFAULT` is defined.
+
+* Fixed corruption, cleanup issues in channel implementation.
+
+* Added missing move assignment operator to `awaitable<>`.
+
+* Fixed an access violation when using coroutines with MSVC, due to incorrect
+  alignment of allocated memory.
+
+* Fixed a cleanup issue in `experimental::parallel_group` that occured when the
+  execution context was shut down with parallel operations still pending.
+
+* Fixed header inclusion order problem when io_uring is enabled.
+
+* Eliminated `shared_ptr` use from `experimental::coro` `co_spawn()`
+  implementation.
+
+* Prevented `async_resume` from being called on `experimental::coro`
+  temporaries.
+
+* Made `awaitable_operators.hpp` header self-contained.
+
+* Added clarifications to the documentation on concurrency hints.
+
+* Added documentation on error handling techniques for C++20 coroutines.
+
+* Added channel-based proxy example.
+
+* Regenerated `ssl` certificates used in examples.
+
 [heading Asio 1.21.0]
 
 * Added an io_uring backend. This backend may be used for all I/O objects,
