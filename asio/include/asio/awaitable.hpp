@@ -76,7 +76,7 @@ public:
   }
 
   /// Move assignment.
-  awaitable operator=(awaitable&& other) noexcept
+  awaitable& operator=(awaitable&& other) noexcept
   {
     if (this != &other)
       frame_ = std::exchange(other.frame_, nullptr);
