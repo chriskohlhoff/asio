@@ -27,6 +27,9 @@ facilities. These examples do not make direct use of Boost C++ libraries.
 * [link asio.examples.cpp17_examples C++17 Examples]: Selected examples
 illustrating C++17 usage in conjunction with Technical Specifications.
 
+* [link asio.examples.cpp20_examples C++20 Examples]: Selected examples
+using C++20 language features.
+
 
 [section:cpp03_examples C++03 Examples]
 
@@ -623,6 +626,19 @@ Coroutines TS.
 * [@../src/examples/cpp17/coroutines_ts/refactored_echo_server.cpp]
 * [@../src/examples/cpp17/coroutines_ts/chat_server.cpp]
 * [@../src/examples/cpp17/coroutines_ts/range_based_for.cpp]
+
+
+[endsect]
+
+
+[section:cpp20_examples C++20 Examples]
+
+
+[heading Channels]
+
+Example showing how to use a channel in conjunction with C++20 coroutines.
+
+* [@boost_asio/example/cpp20/channels/throttling_proxy.cpp]
 
 
 [endsect]
