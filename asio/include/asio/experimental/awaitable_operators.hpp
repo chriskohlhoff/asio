@@ -21,6 +21,7 @@
 #include <tuple>
 #include <variant>
 #include "asio/awaitable.hpp"
+#include "asio/co_spawn.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/experimental/deferred.hpp"
 #include "asio/experimental/parallel_group.hpp"
