@@ -7490,7 +7490,7 @@ The executor type that will be used for the coroutine.
 Move assignment. 
 
 
-  awaitable operator=(
+  awaitable & operator=(
       awaitable && other);
 
 
