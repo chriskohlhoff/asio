@@ -24,6 +24,7 @@
 #include "asio/detail/type_traits.hpp"
 #include "asio/experimental/deferred.hpp"
 #include "asio/experimental/parallel_group.hpp"
+#include "asio/co_spawn.hpp"
 #include "asio/multiple_exceptions.hpp"
 #include "asio/this_coro.hpp"
 #include "asio/use_awaitable.hpp"
