@@ -55,7 +55,7 @@ awaitable<void> transfer(tcp::socket& from,
     while (bytes_available > 0)
     {
       std::size_t n = co_await from.async_read_some(
-          buffer(data, bytes_available), use_awaitable);
+          buffer(data, std::min(bytes_available, data.size())), use_awaitable);
 
       co_await async_write(to, buffer(data, n), use_awaitable);
 
