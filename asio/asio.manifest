@@ -14,6 +14,7 @@
 /doc/asio/examples/cpp11_examples.html
 /doc/asio/examples/cpp14_examples.html
 /doc/asio/examples/cpp17_examples.html
+/doc/asio/examples/cpp20_examples.html
 /doc/asio/examples.html
 /doc/asio/history.html
 /doc/asio/index.html
@@ -245,6 +246,7 @@
 /doc/asio/reference/awaitable/awaitable/overload2.html
 /doc/asio/reference/awaitable/executor_type.html
 /doc/asio/reference/awaitable.html
+/doc/asio/reference/awaitable/operator_eq_.html
 /doc/asio/reference/awaitable/valid.html
 /doc/asio/reference/awaitable/value_type.html
 /doc/asio/reference/bad_executor/
@@ -2902,6 +2904,7 @@
 /doc/asio/reference/experimental__basic_channel/async_receive.html
 /doc/asio/reference/experimental__basic_channel/async_send.html
 /doc/asio/reference/experimental__basic_channel/basic_channel/
+/doc/asio/reference/experimental__basic_channel/_basic_channel.html
 /doc/asio/reference/experimental__basic_channel/basic_channel.html
 /doc/asio/reference/experimental__basic_channel/basic_channel/overload1.html
 /doc/asio/reference/experimental__basic_channel/basic_channel/overload2.html
@@ -2931,6 +2934,7 @@
 /doc/asio/reference/experimental__basic_concurrent_channel/async_receive.html
 /doc/asio/reference/experimental__basic_concurrent_channel/async_send.html
 /doc/asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel/
+/doc/asio/reference/experimental__basic_concurrent_channel/_basic_concurrent_channel.html
 /doc/asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel.html
 /doc/asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel/overload1.html
 /doc/asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel/overload2.html
@@ -6071,7 +6075,7 @@
 /src/examples/cpp03/ssl/
 /src/examples/cpp03/ssl/ca.pem
 /src/examples/cpp03/ssl/client.cpp
-/src/examples/cpp03/ssl/dh2048.pem
+/src/examples/cpp03/ssl/dh4096.pem
 /src/examples/cpp03/ssl/README
 /src/examples/cpp03/ssl/server.cpp
 /src/examples/cpp03/ssl/server.pem
@@ -6195,8 +6199,12 @@
 /src/examples/cpp11/spawn/echo_server.cpp
 /src/examples/cpp11/spawn/parallel_grep.cpp
 /src/examples/cpp11/ssl/
+/src/examples/cpp11/ssl/ca.pem
 /src/examples/cpp11/ssl/client.cpp
+/src/examples/cpp11/ssl/dh4096.pem
+/src/examples/cpp11/ssl/README
 /src/examples/cpp11/ssl/server.cpp
+/src/examples/cpp11/ssl/server.pem
 /src/examples/cpp11/timeouts/
 /src/examples/cpp11/timeouts/async_tcp_client.cpp
 /src/examples/cpp11/timeouts/blocking_tcp_client.cpp

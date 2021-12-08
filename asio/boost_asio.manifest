@@ -999,11 +999,15 @@
 /doc/html/boost_asio/example/cpp17/coroutines_ts/echo_server_with_default.cpp
 /doc/html/boost_asio/example/cpp17/coroutines_ts/range_based_for.cpp
 /doc/html/boost_asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp
+/doc/html/boost_asio/example/cpp20/
+/doc/html/boost_asio/example/cpp20/channels/
+/doc/html/boost_asio/example/cpp20/channels/throttling_proxy.cpp
 /doc/html/boost_asio/examples/
 /doc/html/boost_asio/examples/cpp03_examples.html
 /doc/html/boost_asio/examples/cpp11_examples.html
 /doc/html/boost_asio/examples/cpp14_examples.html
 /doc/html/boost_asio/examples/cpp17_examples.html
+/doc/html/boost_asio/examples/cpp20_examples.html
 /doc/html/boost_asio/examples.html
 /doc/html/boost_asio/history.html
 /doc/html/boost_asio.html
@@ -1235,6 +1239,7 @@
 /doc/html/boost_asio/reference/awaitable/awaitable/overload2.html
 /doc/html/boost_asio/reference/awaitable/executor_type.html
 /doc/html/boost_asio/reference/awaitable.html
+/doc/html/boost_asio/reference/awaitable/operator_eq_.html
 /doc/html/boost_asio/reference/awaitable/valid.html
 /doc/html/boost_asio/reference/awaitable/value_type.html
 /doc/html/boost_asio/reference/bad_executor/
@@ -3866,6 +3871,7 @@
 /doc/html/boost_asio/reference/experimental__basic_channel/async_receive.html
 /doc/html/boost_asio/reference/experimental__basic_channel/async_send.html
 /doc/html/boost_asio/reference/experimental__basic_channel/basic_channel/
+/doc/html/boost_asio/reference/experimental__basic_channel/_basic_channel.html
 /doc/html/boost_asio/reference/experimental__basic_channel/basic_channel.html
 /doc/html/boost_asio/reference/experimental__basic_channel/basic_channel/overload1.html
 /doc/html/boost_asio/reference/experimental__basic_channel/basic_channel/overload2.html
@@ -3895,6 +3901,7 @@
 /doc/html/boost_asio/reference/experimental__basic_concurrent_channel/async_receive.html
 /doc/html/boost_asio/reference/experimental__basic_concurrent_channel/async_send.html
 /doc/html/boost_asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel/
+/doc/html/boost_asio/reference/experimental__basic_concurrent_channel/_basic_concurrent_channel.html
 /doc/html/boost_asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel.html
 /doc/html/boost_asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel/overload1.html
 /doc/html/boost_asio/reference/experimental__basic_concurrent_channel/basic_concurrent_channel/overload2.html
@@ -6377,7 +6384,7 @@
 /libs/asio/example/cpp03/ssl/
 /libs/asio/example/cpp03/ssl/ca.pem
 /libs/asio/example/cpp03/ssl/client.cpp
-/libs/asio/example/cpp03/ssl/dh2048.pem
+/libs/asio/example/cpp03/ssl/dh4096.pem
 /libs/asio/example/cpp03/ssl/Jamfile.v2
 /libs/asio/example/cpp03/ssl/README
 /libs/asio/example/cpp03/ssl/server.cpp
@@ -6527,7 +6534,7 @@
 /libs/asio/example/cpp11/ssl/
 /libs/asio/example/cpp11/ssl/ca.pem
 /libs/asio/example/cpp11/ssl/client.cpp
-/libs/asio/example/cpp11/ssl/dh2048.pem
+/libs/asio/example/cpp11/ssl/dh4096.pem
 /libs/asio/example/cpp11/ssl/Jamfile.v2
 /libs/asio/example/cpp11/ssl/README
 /libs/asio/example/cpp11/ssl/server.cpp
@@ -6591,6 +6598,9 @@
 /libs/asio/example/cpp17/coroutines_ts/echo_server_with_default.cpp
 /libs/asio/example/cpp17/coroutines_ts/range_based_for.cpp
 /libs/asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp
+/libs/asio/example/cpp20/
+/libs/asio/example/cpp20/channels/
+/libs/asio/example/cpp20/channels/throttling_proxy.cpp
 /libs/asio/.github/
 /libs/asio/.github/ISSUE_TEMPLATE/
 /libs/asio/.github/ISSUE_TEMPLATE/config.yml
