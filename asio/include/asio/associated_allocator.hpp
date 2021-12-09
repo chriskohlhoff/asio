@@ -37,7 +37,7 @@ struct has_allocator_type : false_type
 
 template <typename T>
 struct has_allocator_type<T,
-  typename void_type<typename T::executor_type>::type>
+  typename void_type<typename T::allocator_type>::type>
     : true_type
 {
 };
