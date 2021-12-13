@@ -45,7 +45,7 @@ void posix_thread::join()
 
 std::size_t posix_thread::hardware_concurrency()
 {
-#if defined(_SC_NPROCESSORS_ONLN)
+#if defined(_SC_NPROCESSORS_ONLN) && !defined(__ORBIS__) && !defined(__PROSPERO__)
   long result = sysconf(_SC_NPROCESSORS_ONLN);
   if (result > 0)
     return result;

@@ -56,13 +56,15 @@
 # endif // !defined(ASIO_NO_DEFAULT_LINKED_LIBS)
 # include "asio/detail/old_win_sdk_compat.hpp"
 #else
-# include <sys/ioctl.h>
+# if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#  include <sys/ioctl.h>
+# endif
 # if (defined(__MACH__) && defined(__APPLE__)) \
-   || defined(__FreeBSD__) || defined(__NetBSD__) \
+   || (defined(__FreeBSD__) && !defined(__ORBIS__) && !defined(__PROSPERO__)) || defined(__NetBSD__) \
    || defined(__OpenBSD__) || defined(__linux__) \
    || defined(__EMSCRIPTEN__)
 #  include <poll.h>
-# elif !defined(__SYMBIAN32__)
+# elif !defined(__SYMBIAN32__) && !defined(__ORBIS__) && !defined(__PROSPERO__)
 #  include <sys/poll.h>
 # endif
 # include <sys/types.h>
@@ -76,14 +78,18 @@
 # endif
 # include <sys/socket.h>
 # include <sys/uio.h>
-# include <sys/un.h>
+# if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#  include <sys/un.h>
+# endif
 # include <netinet/in.h>
 # if !defined(__SYMBIAN32__)
 #  include <netinet/tcp.h>
 # endif
 # include <arpa/inet.h>
-# include <netdb.h>
-# include <net/if.h>
+# if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#  include <netdb.h>
+#  include <net/if.h>
+# endif
 # include <limits.h>
 # if defined(__sun)
 #  include <sys/filio.h>
@@ -289,11 +295,40 @@ typedef int socket_type;
 const int invalid_socket = -1;
 const int socket_error_retval = -1;
 const int max_addr_v4_str_len = INET_ADDRSTRLEN;
-#if defined(INET6_ADDRSTRLEN)
+#if defined(INET6_ADDRSTRLEN) && defined(IF_NAMESIZE)
 const int max_addr_v6_str_len = INET6_ADDRSTRLEN + 1 + IF_NAMESIZE;
 #else // defined(INET6_ADDRSTRLEN)
 const int max_addr_v6_str_len = 256;
 #endif // defined(INET6_ADDRSTRLEN)
+typedef uint32_t u_long_type;
+typedef uint16_t u_short_type;
+#if defined(__ORBIS__) || defined(__PROSPERO__)
+struct in4_addr_type { u_long_type s_addr; };
+struct in4_mreq_type { in4_addr_type imr_multiaddr, imr_interface; };
+struct in6_addr_type { unsigned char s6_addr[16]; };
+struct in6_mreq_type {
+    in6_addr_type ipv6mr_multiaddr;
+    unsigned long ipv6mr_interface;
+};
+typedef sockaddr socket_addr_type;
+typedef sockaddr_in sockaddr_in4_type;
+struct sockaddr_in6_type {
+    int sin6_family;
+    in6_addr_type sin6_addr; u_short_type sin6_port;
+    u_long_type sin6_flowinfo; u_long_type sin6_scope_id;
+};
+struct sockaddr_storage_type {
+    int ss_family;
+    unsigned char ss_bytes[128 - sizeof(int)];
+};
+struct addrinfo_type {
+    int ai_flags;
+    int ai_family, ai_socktype, ai_protocol;
+    int ai_addrlen; void* ai_addr;
+    char* ai_canonname; addrinfo_type* ai_next;
+};
+struct linger_type { u_short_type l_onoff, l_linger; };
+#else
 typedef sockaddr socket_addr_type;
 typedef in_addr in4_addr_type;
 # if defined(__hpux)
@@ -314,9 +349,8 @@ typedef sockaddr_storage sockaddr_storage_type;
 typedef sockaddr_un sockaddr_un_type;
 typedef addrinfo addrinfo_type;
 typedef ::linger linger_type;
+#endif // defined(__ORBIS__) || defined(__PROSPERO__)
 typedef int ioctl_arg_type;
-typedef uint32_t u_long_type;
-typedef uint16_t u_short_type;
 #if defined(ASIO_HAS_SSIZE_T)
 typedef ssize_t signed_size_type;
 #else // defined(ASIO_HAS_SSIZE_T)
@@ -346,6 +380,9 @@ typedef int signed_size_type;
 # define ASIO_OS_DEF_SHUT_RD SHUT_RD
 # define ASIO_OS_DEF_SHUT_WR SHUT_WR
 # define ASIO_OS_DEF_SHUT_RDWR SHUT_RDWR
+# if defined(__ORBIS__) || defined(__PROSPERO__)
+# define SOMAXCONN 4096
+#endif
 # define ASIO_OS_DEF_SOMAXCONN SOMAXCONN
 # define ASIO_OS_DEF_SOL_SOCKET SOL_SOCKET
 # define ASIO_OS_DEF_SO_BROADCAST SO_BROADCAST

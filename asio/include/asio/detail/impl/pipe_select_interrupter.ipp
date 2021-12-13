@@ -44,6 +44,7 @@ pipe_select_interrupter::pipe_select_interrupter()
 
 void pipe_select_interrupter::open_descriptors()
 {
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
   int pipe_fds[2];
   if (pipe(pipe_fds) == 0)
   {
@@ -58,6 +59,7 @@ void pipe_select_interrupter::open_descriptors()
 #endif // defined(FD_CLOEXEC)
   }
   else
+#endif
   {
     asio::error_code ec(errno,
         asio::error::get_system_category());

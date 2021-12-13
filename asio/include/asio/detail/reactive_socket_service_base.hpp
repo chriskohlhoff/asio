@@ -348,6 +348,7 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive"));
 
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
@@ -356,6 +357,15 @@ public:
         ((impl.state_ & socket_ops::stream_oriented)
           && buffer_sequence_adapter<asio::mutable_buffer,
             MutableBufferSequence>::all_empty(buffers)));
+#else
+    start_op(impl,
+        reactor::read_op,
+        p.p, is_continuation,
+        true,
+        ((impl.state_ & socket_ops::stream_oriented)
+          && buffer_sequence_adapter<asio::mutable_buffer,
+            MutableBufferSequence>::all_empty(buffers)));
+#endif
     p.v = p.p = 0;
   }
 
@@ -377,10 +387,16 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive(null_buffers)"));
 
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
         p.p, is_continuation, false, false);
+#else
+    start_op(impl,
+        reactor::read_op,
+        p.p, is_continuation, false, false);
+#endif
     p.v = p.p = 0;
   }
 
@@ -437,11 +453,18 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive_with_flags"));
 
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
         p.p, is_continuation,
         (in_flags & socket_base::message_out_of_band) == 0, false);
+#else
+    start_op(impl,
+        reactor::read_op,
+        p.p, is_continuation,
+        true, false);
+#endif
     p.v = p.p = 0;
   }
 
@@ -468,10 +491,16 @@ public:
     // performing a null_buffers operation.
     out_flags = 0;
 
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
         p.p, is_continuation, false, false);
+#else
+    start_op(impl,
+        reactor::read_op,
+        p.p, is_continuation, false, false);
+#endif
     p.v = p.p = 0;
   }
 

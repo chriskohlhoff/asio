@@ -17,6 +17,9 @@
 
 #include "asio/detail/config.hpp"
 #include <cerrno>
+#if defined(__ORBIS__) || defined(__PROSPERO__)
+#  include <sys/ioccom.h>
+#endif
 #include "asio/detail/descriptor_ops.hpp"
 #include "asio/error.hpp"
 
@@ -57,7 +60,7 @@ int close(int d, state_type& state, asio::error_code& ec)
       // current OS where this behaviour is seen, Windows, says that the socket
       // remains open. Therefore we'll put the descriptor back into blocking
       // mode and have another attempt at closing it.
-#if defined(__SYMBIAN32__)
+#if defined(__SYMBIAN32__) || defined(__ORBIS__) || defined(__PROSPERO__)
       int flags = ::fcntl(d, F_GETFL, 0);
       if (flags >= 0)
         ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
@@ -87,7 +90,7 @@ bool set_user_non_blocking(int d, state_type& state,
   }
 
   errno = 0;
-#if defined(__SYMBIAN32__)
+#if defined(__SYMBIAN32__) || defined(__ORBIS__) || defined(__PROSPERO__)
   int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
   if (result >= 0)
   {
@@ -137,7 +140,7 @@ bool set_internal_non_blocking(int d, state_type& state,
   }
 
   errno = 0;
-#if defined(__SYMBIAN32__)
+#if defined(__SYMBIAN32__) || defined(__ORBIS__) || defined(__PROSPERO__)
   int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
   if (result >= 0)
   {
@@ -337,6 +340,7 @@ int ioctl(int d, state_type& state, long cmd,
   {
     ec = asio::error_code();
 
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
     // When updating the non-blocking mode we always perform the ioctl syscall,
     // even if the flags would otherwise indicate that the descriptor is
     // already in the correct state. This ensures that the underlying
@@ -357,6 +361,7 @@ int ioctl(int d, state_type& state, long cmd,
         state &= ~(user_set_non_blocking | internal_non_blocking);
       }
     }
+#endif
   }
 
   return result;
@@ -391,6 +396,8 @@ int fcntl(int d, int cmd, long arg, asio::error_code& ec)
     ec = asio::error_code();
   return result;
 }
+
+#if !defined(__ORBIS__) && !defined(__PROSPERO__)
 
 int poll_read(int d, state_type state, asio::error_code& ec)
 {
@@ -460,6 +467,8 @@ int poll_error(int d, state_type state, asio::error_code& ec)
     ec = asio::error_code();
   return result;
 }
+
+#endif // !defined(__ORBIS__) && !defined(__PROSPERO__)
 
 } // namespace descriptor_ops
 } // namespace detail
