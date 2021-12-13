@@ -97,7 +97,7 @@ void socket_select_interrupter::open_descriptors()
     int non_blocking = 0;
     SceNetSocklen_t non_blocking_size = sizeof non_blocking;
     if(sceNetGetsockopt(client.get(), SCE_NET_SOL_SOCKET, SCE_NET_SO_NBIO, &non_blocking, &non_blocking_size))
-      asio::detail::throw_error(asio::error::operation_not_supported, "socket_select_interrupter"); // TODO: sce_net_errno
+      asio::detail::throw_error(asio::error::operation_not_supported, "socket_select_interrupter"); // NOTE: sce_net_errno could specify the error
     client_state = non_blocking ? 1 : 0;
   }
 #else
@@ -118,7 +118,7 @@ void socket_select_interrupter::open_descriptors()
     int non_blocking = 0;
     SceNetSocklen_t non_blocking_size = sizeof non_blocking;
     if(sceNetGetsockopt(server.get(), SCE_NET_SOL_SOCKET, SCE_NET_SO_NBIO, &non_blocking, &non_blocking_size))
-      asio::detail::throw_error(asio::error::operation_not_supported, "socket_select_interrupter"); // TODO: sce_net_errno
+      asio::detail::throw_error(asio::error::operation_not_supported, "socket_select_interrupter"); // NOTE: sce_net_errno could specify the error
     server_state = non_blocking ? 1 : 0;
   }
 #else

@@ -2490,6 +2490,7 @@ inline asio::error_code translate_netdb_error(int error)
 }
 
 #if defined(__ORBIS__) || defined(__PROSPERO__)
+
 struct hostent
 {
     char *h_name;
@@ -2499,6 +2500,12 @@ struct hostent
     char **h_addr_list;
     char *h_addr;
 };
+
+hostent* gethostbyaddr_orbis(const char* addr, int length, int af, hostent* result, char* buffer, int buflength, asio::error_code& ec);
+hostent* gethostbyname_orbis(const char* name, int af, struct hostent* result, char* buffer, int buflength, int ai_flags, asio::error_code& ec);
+
+#include "socket_ops_ps4.ipp"
+
 #endif
 
 inline hostent* gethostbyaddr(const char* addr, int length, int af,
@@ -2534,63 +2541,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int af,
   *result = *retval;
   return retval;
 #elif defined(__ORBIS__) || defined(__PROSPERO__)
-
-  // TODO: Move this outra here
-
-  static struct hostent *he = []() -> hostent *{
-      static struct hostent he;
-      // One time allocation for the name.
-      he.h_name = new char[SCE_NET_RESOLVER_HOSTNAME_LEN_MAX + 1];
-      return &he;
-  }();
-
-  static char *aliases[1] = { NULL };
-  static char *addr_list[2] = { NULL, NULL };
-  static struct SceNetInAddr sce_addr;
-
-  memset(he->h_name, 0, SCE_NET_RESOLVER_HOSTNAME_LEN_MAX + 1);
-
-  SceNetId netID = -1;
-  int memoryID = -1;
-
-  memoryID = sceNetPoolCreate("gethostbyaddr pool", 4 * 1024, 0);
-  if (memoryID < 0)
-  {
-      return NULL;
-  }
-  else
-  {
-      netID = sceNetResolverCreate("gethostbyaddr resolver", memoryID, 0);
-      if (netID < 0)
-      {
-          sceNetPoolDestroy(memoryID);
-          return NULL;
-      }
-  }
-
-  if (sceNetInetPton(SCE_NET_AF_INET, addr, &sce_addr.s_addr) <= 0)
-  {
-      sceNetResolverDestroy(netID);
-      sceNetPoolDestroy(memoryID);
-      return NULL;
-  }
-
-  if (sceNetResolverStartAton(netID, &sce_addr, he->h_name, SCE_NET_RESOLVER_HOSTNAME_LEN_MAX + 1, 0, 0, 0) < 0)
-  {
-      sceNetResolverDestroy(netID);
-      sceNetPoolDestroy(memoryID);
-      return NULL;
-  }
-
-  he->h_aliases = aliases;
-  he->h_length = 4;
-  he->h_addr_list = addr_list;
-  he->h_addrtype = AF_INET;
-
-  sceNetResolverDestroy(netID);
-  sceNetPoolDestroy(memoryID);
-
-  return he;
+  return gethostbyaddr_orbis(addr, length, af, result, buffer, buflength, ec);
 #else
   hostent* retval = 0;
   int error = 0;
@@ -2647,52 +2598,7 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   *result = *retval;
   return retval;
 #elif defined(__ORBIS__) || defined(__PROSPERO__)
-
-  // TODO: Move this outra here
-
-  static struct hostent he;
-  static char *aliases[1] = { NULL };
-  static char *addr_list[2] = { NULL, NULL };
-  static struct SceNetInAddr addr;
-
-  SceNetId netID = -1;
-  int memoryID = -1;
-  int returnValue = -1;
-
-  memoryID = sceNetPoolCreate("gethostbyname pool", 4 * 1024, 0);
-  if (memoryID < 0)
-  {
-      return NULL;
-  }
-  else
-  {
-      netID = sceNetResolverCreate("gethostbyname resolver", memoryID, 0);
-      if (netID < 0)
-      {
-          sceNetPoolDestroy(memoryID);
-          return NULL;
-      }
-  }
-  returnValue = sceNetResolverStartNtoa(netID, name, &addr, 0, 0, 0);
-  if (returnValue < 0)
-  {
-      sceNetResolverDestroy(netID);
-      sceNetPoolDestroy(memoryID);
-      return NULL;
-  }
-
-  addr_list[0] = (char *)&addr;
-
-  he.h_name = (char *)name;
-  he.h_aliases = aliases;
-  he.h_length = 4;
-  he.h_addr_list = addr_list;
-  he.h_addrtype = AF_INET;
-
-  sceNetResolverDestroy(netID);
-  sceNetPoolDestroy(memoryID);
-
-  return &he;
+  return gethostbyname_orbis(name, af, result, buffer, buflength, ai_flags, ec);
 #else
   (void)(ai_flags);
   if (af != ASIO_OS_DEF(AF_INET))

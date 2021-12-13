@@ -163,6 +163,8 @@ bool set_internal_non_blocking(int d, state_type& state,
   return false;
 }
 
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
+
 std::size_t sync_read(int d, state_type state, buf* bufs,
     std::size_t count, bool all_empty, asio::error_code& ec)
 {
@@ -394,8 +396,6 @@ int fcntl(int d, int cmd, long arg, asio::error_code& ec)
   return result;
 }
 
-#if !(defined(__ORBIS__) || defined(__PROSPERO__))
-
 int poll_read(int d, state_type state, asio::error_code& ec)
 {
   if (d == -1)
@@ -463,6 +463,67 @@ int poll_error(int d, state_type state, asio::error_code& ec)
   else if (result > 0)
     ec = asio::error_code();
   return result;
+}
+
+#else
+
+// NOTE: These functions are declared as inlines and are referenced by parts of asio we still don't need on the platform;
+//       it would be a good idea to nail those down and drop the references, and so far instead of letting the compiler
+//       reference undefined inlines (which is a warning, not an error), we'd rather assert instead.
+
+std::size_t sync_read(int d, state_type state, buf* bufs,
+    std::size_t count, bool all_empty, asio::error_code& ec)
+{
+  assert(false);
+}
+
+bool non_blocking_read(int d, buf* bufs, std::size_t count,
+    asio::error_code& ec, std::size_t& bytes_transferred)
+{
+  assert(false);
+}
+
+std::size_t sync_write(int d, state_type state, const buf* bufs,
+    std::size_t count, bool all_empty, asio::error_code& ec)
+{
+  assert(false);
+}
+
+bool non_blocking_write(int d, const buf* bufs, std::size_t count,
+    asio::error_code& ec, std::size_t& bytes_transferred)
+{
+  assert(false);
+}
+
+int ioctl(int d, state_type& state, long cmd,
+    ioctl_arg_type* arg, asio::error_code& ec)
+{
+  assert(false);
+}
+
+int fcntl(int d, int cmd, asio::error_code& ec)
+{
+  assert(false);
+}
+
+int fcntl(int d, int cmd, long arg, asio::error_code& ec)
+{
+  assert(false);
+}
+
+int poll_read(int d, state_type state, asio::error_code& ec)
+{
+  assert(false);
+}
+
+int poll_write(int d, state_type state, asio::error_code& ec)
+{
+  assert(false);
+}
+
+int poll_error(int d, state_type state, asio::error_code& ec)
+{
+  assert(false);
 }
 
 #endif // defined(__ORBIS__) || defined(__PROSPERO__)

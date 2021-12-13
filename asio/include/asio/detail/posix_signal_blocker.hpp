@@ -19,15 +19,9 @@
 
 #if defined(ASIO_HAS_PTHREADS)
 
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
-#  include <csignal>
-#endif
+#include <csignal>
 #include <pthread.h>
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
-#  include <signal.h>
-#else
-#  include <sys/signal.h>
-#endif
+#include <signal.h>
 #include "asio/detail/noncopyable.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -43,16 +37,16 @@ public:
   posix_signal_blocker()
     : blocked_(false)
   {
-    //sigset_t new_mask; // TODO: Figure out how to re-enable it, maybe at least asserts?
-    //sigfillset(&new_mask);
-    //blocked_ = (pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask_) == 0);
+    sigset_t new_mask;
+    sigfillset(&new_mask);
+    blocked_ = (pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask_) == 0);
   }
 
   // Destructor restores the previous signal mask.
   ~posix_signal_blocker()
   {
-    //if (blocked_)
-    //  pthread_sigmask(SIG_SETMASK, &old_mask_, 0);
+    if (blocked_)
+      pthread_sigmask(SIG_SETMASK, &old_mask_, 0);
   }
 
   // Block all signals for the calling thread.
@@ -60,17 +54,17 @@ public:
   {
     if (!blocked_)
     {
-      //sigset_t new_mask;
-      //sigfillset(&new_mask);
-      //blocked_ = (pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask_) == 0);
+      sigset_t new_mask;
+      sigfillset(&new_mask);
+      blocked_ = (pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask_) == 0);
     }
   }
 
   // Restore the previous signal mask.
   void unblock()
   {
-    //if (blocked_)
-    //  blocked_ = (pthread_sigmask(SIG_SETMASK, &old_mask_, 0) != 0);
+    if (blocked_)
+      blocked_ = (pthread_sigmask(SIG_SETMASK, &old_mask_, 0) != 0);
   }
 
 private:
@@ -78,7 +72,7 @@ private:
   bool blocked_;
 
   // The previous signal mask.
-  //sigset_t old_mask_;
+  sigset_t old_mask_;
 };
 
 } // namespace detail

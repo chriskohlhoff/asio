@@ -21,7 +21,7 @@
   || defined(ASIO_WINDOWS) \
   || defined(ASIO_WINDOWS_RUNTIME) \
   || defined(__CYGWIN__) \
-  || defined(__SYMBIAN32__)
+  || defined(__SYMBIAN32__) || (defined(__ORBIS__) || defined(__PROSPERO__))
 
 #include "asio/detail/noncopyable.hpp"
 
