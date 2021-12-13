@@ -56,11 +56,13 @@
 # endif // !defined(ASIO_NO_DEFAULT_LINKED_LIBS)
 # include "asio/detail/old_win_sdk_compat.hpp"
 #else
-# if !defined(__ORBIS__) && !defined(__PROSPERO__)
+# if defined(__ORBIS__) || defined(__PROSPERO__)
+#  include <sys/ioccom.h>
+# else
 #  include <sys/ioctl.h>
 # endif
 # if (defined(__MACH__) && defined(__APPLE__)) \
-   || (defined(__FreeBSD__) && !defined(__ORBIS__) && !defined(__PROSPERO__)) || defined(__NetBSD__) \
+   || (defined(__FreeBSD__) && !(defined(__ORBIS__) || defined(__PROSPERO__))) || defined(__NetBSD__) \
    || defined(__OpenBSD__) || defined(__linux__) \
    || defined(__EMSCRIPTEN__)
 #  include <poll.h>
@@ -78,7 +80,7 @@
 # endif
 # include <sys/socket.h>
 # include <sys/uio.h>
-# if !defined(__ORBIS__) && !defined(__PROSPERO__)
+# if !(defined(__ORBIS__) || defined(__PROSPERO__))
 #  include <sys/un.h>
 # endif
 # include <netinet/in.h>
@@ -86,7 +88,7 @@
 #  include <netinet/tcp.h>
 # endif
 # include <arpa/inet.h>
-# if !defined(__ORBIS__) && !defined(__PROSPERO__)
+# if !(defined(__ORBIS__) || defined(__PROSPERO__))
 #  include <netdb.h>
 #  include <net/if.h>
 # endif
@@ -303,6 +305,9 @@ const int max_addr_v6_str_len = 256;
 typedef uint32_t u_long_type;
 typedef uint16_t u_short_type;
 #if defined(__ORBIS__) || defined(__PROSPERO__)
+#include <net.h>
+#include <netinet/in.h>
+#include <sys/param.h>
 struct in4_addr_type { u_long_type s_addr; };
 struct in4_mreq_type { in4_addr_type imr_multiaddr, imr_interface; };
 struct in6_addr_type { unsigned char s6_addr[16]; };
@@ -321,12 +326,22 @@ struct sockaddr_storage_type {
     int ss_family;
     unsigned char ss_bytes[128 - sizeof(int)];
 };
+#define NI_NOFQDN       0x00000001
+#define NI_NUMERICHOST  0x00000002
+#define NI_NAMEREQD     0x00000004
+#define NI_NUMERICSERV  0x00000008
+#define NI_DGRAM        0x00000010
+#define NI_MAXHOST      1025
+#define NI_MAXSERV      32
 struct addrinfo_type {
     int ai_flags;
     int ai_family, ai_socktype, ai_protocol;
     int ai_addrlen; void* ai_addr;
     char* ai_canonname; addrinfo_type* ai_next;
 };
+#define AI_PASSIVE      0x00000001
+#define AI_CANONNAME    0x00000002
+#define AI_NUMERICHOST  0x00000004
 struct linger_type { u_short_type l_onoff, l_linger; };
 #else
 typedef sockaddr socket_addr_type;

@@ -41,25 +41,6 @@
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
        // || defined(__MACH__) && defined(__APPLE__)
 
-#if defined(__ORBIS__) || defined(__PROSPERO__)
-# include <net.h>
-# include <netinet/in.h>
-# include <sys/param.h>
-#define NI_NOFQDN       0x00000001
-#define NI_NUMERICHOST  0x00000002
-#define NI_NAMEREQD     0x00000004
-#define NI_NUMERICSERV  0x00000008
-#define NI_DGRAM        0x00000010
-
-#define NI_MAXHOST      1025
-#define NI_MAXSERV      32
-
-#define AI_PASSIVE      0x00000001
-#define AI_CANONNAME    0x00000002
-#define AI_NUMERICHOST  0x00000004
-
-#endif
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -133,7 +114,8 @@ socket_type accept(socket_type s, socket_addr_type* addr,
   if (new_s == invalid_socket)
     return new_s;
 
-#if defined(__MACH__) && defined(__APPLE__) || (defined(__FreeBSD__) && !defined(__ORBIS__) && !defined(__PROSPERO__)/* SO_NOSIGPIPE not available */)
+#if defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   int optval = 1;
   int result = error_wrapper(::setsockopt(new_s,
         SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)), ec);
@@ -142,6 +124,7 @@ socket_type accept(socket_type s, socket_addr_type* addr,
     ::close(new_s);
     return invalid_socket;
   }
+#endif
 #endif
 
   ec = asio::error_code();
@@ -353,7 +336,7 @@ int close(socket_type s, state_type& state,
       int flags = ::fcntl(s, F_GETFL, 0);
       if (flags >= 0)
         ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
-#elif defined(__ORBIS__) || defined(__PROSPERO__) // defined(__SYMBIAN32__)
+# elif defined(__ORBIS__) || defined(__PROSPERO__) // defined(__SYMBIAN32__)
       int optval = 0;
       sceNetSetsockopt(s, SCE_NET_SOL_SOCKET, SCE_NET_SO_NBIO, &optval, sizeof(optval));
 # else // defined(__ORBIS__) || defined(__PROSPERO__)
@@ -1444,11 +1427,12 @@ socket_type socket(int af, int type, int protocol,
   ec = asio::error_code();
 
   return s;
-#elif defined(__MACH__) && defined(__APPLE__) || (defined(__FreeBSD__) && !defined(__ORBIS__) && !defined(__PROSPERO__) /* SO_NOSIGPIPE not available */)
+#elif defined(__MACH__) && defined(__APPLE__) || defined(__FreeBSD__)
   socket_type s = error_wrapper(::socket(af, type, protocol), ec);
   if (s == invalid_socket)
     return s;
 
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   int optval = 1;
   int result = error_wrapper(::setsockopt(s,
         SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval)), ec);
@@ -1457,6 +1441,7 @@ socket_type socket(int af, int type, int protocol,
     ::close(s);
     return invalid_socket;
   }
+#endif
 
   return s;
 #else
@@ -1749,10 +1734,6 @@ int getsockname(socket_type s, socket_addr_type* addr,
 int ioctl(socket_type s, state_type& state, int cmd,
     ioctl_arg_type* arg, asio::error_code& ec)
 {
-#if defined(__ORBIS__) || defined(__PROSPERO__)
-    ec = asio::error::operation_not_supported;
-    return -1;
-#else
   if (s == invalid_socket)
   {
     ec = asio::error::bad_descriptor;
@@ -1773,6 +1754,7 @@ int ioctl(socket_type s, state_type& state, int cmd,
   {
     ec = asio::error_code();
 
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
     // When updating the non-blocking mode we always perform the ioctl syscall,
     // even if the flags would otherwise indicate that the socket is already in
     // the correct state. This ensures that the underlying socket is put into
@@ -1792,10 +1774,10 @@ int ioctl(socket_type s, state_type& state, int cmd,
         state &= ~(user_set_non_blocking | internal_non_blocking);
       }
     }
+#endif
   }
 
   return result;
-#endif
 }
 
 int select(int nfds, fd_set* readfds, fd_set* writefds,
@@ -2156,7 +2138,7 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
         af, src, dest, static_cast<int>(length)), ec);
   if (result == 0 && !ec)
     ec = asio::error::invalid_argument;
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   if (result != 0 && af == ASIO_OS_DEF(AF_INET6) && scope_id != 0)
   {
     using namespace std; // For strcat and sprintf.
@@ -2408,7 +2390,7 @@ int inet_pton(int af, const char* src, void* dest,
   int result = error_wrapper(::inet_pton(af, src_ptr, dest), ec);
   if (result <= 0 && !ec)
     ec = asio::error::invalid_argument;
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   if (result > 0 && is_v6 && scope_id)
   {
     using namespace std; // For strchr and atoi.
@@ -2463,16 +2445,13 @@ int gethostname(char* name, int namelen, asio::error_code& ec)
         asio::system_category());
     return -1;
   }
-#elif defined(__ORBIS__) || defined(__PROSPERO__)
-  if (namelen >= 9)
+#elif (defined(__ORBIS__) || defined(__PROSPERO__))
+  if(strcpy_s(name, namelen, "localhost"))
   {
-      name = strdup("localhost");
-      return 0;
+    ec = asio::error::name_too_long;
+    return -1;
   }
-  else
-  {
-      return -1;
-  }
+  return 0;
 #else // defined(ASIO_WINDOWS_RUNTIME)
   int result = error_wrapper(::gethostname(name, namelen), ec);
 # if defined(ASIO_WINDOWS)
@@ -2555,6 +2534,9 @@ inline hostent* gethostbyaddr(const char* addr, int length, int af,
   *result = *retval;
   return retval;
 #elif defined(__ORBIS__) || defined(__PROSPERO__)
+
+  // TODO: Move this outra here
+
   static struct hostent *he = []() -> hostent *{
       static struct hostent he;
       // One time allocation for the name.
@@ -2665,6 +2647,9 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   *result = *retval;
   return retval;
 #elif defined(__ORBIS__) || defined(__PROSPERO__)
+
+  // TODO: Move this outra here
+
   static struct hostent he;
   static char *aliases[1] = { NULL };
   static char *addr_list[2] = { NULL, NULL };
@@ -2750,7 +2735,6 @@ inline int gai_nsearch(const char* host,
   int search_count = 0;
   if (host == 0 || host[0] == '\0')
   {
-#if !defined(__ORBIS__) && !defined(__PROSPERO__) // No AI_PASSIVE
     if (hints->ai_flags & AI_PASSIVE)
     {
       // No host and AI_PASSIVE implies wildcard bind.
@@ -2779,7 +2763,6 @@ inline int gai_nsearch(const char* host,
       }
     }
     else
-#endif
     {
       // No host and not AI_PASSIVE means connect to local host.
       switch (hints->ai_family)

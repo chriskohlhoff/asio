@@ -17,9 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include <cerrno>
-#if defined(__ORBIS__) || defined(__PROSPERO__)
-#  include <sys/ioccom.h>
-#endif
 #include "asio/detail/descriptor_ops.hpp"
 #include "asio/error.hpp"
 
