@@ -340,7 +340,7 @@ int ioctl(int d, state_type& state, long cmd,
   {
     ec = asio::error_code();
 
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
     // When updating the non-blocking mode we always perform the ioctl syscall,
     // even if the flags would otherwise indicate that the descriptor is
     // already in the correct state. This ensures that the underlying
@@ -397,7 +397,7 @@ int fcntl(int d, int cmd, long arg, asio::error_code& ec)
   return result;
 }
 
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
 
 int poll_read(int d, state_type state, asio::error_code& ec)
 {
@@ -468,7 +468,7 @@ int poll_error(int d, state_type state, asio::error_code& ec)
   return result;
 }
 
-#endif // !defined(__ORBIS__) && !defined(__PROSPERO__)
+#endif // defined(__ORBIS__) || defined(__PROSPERO__)
 
 } // namespace descriptor_ops
 } // namespace detail

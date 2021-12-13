@@ -271,7 +271,7 @@ asio::error_code signal_set_service::add(
     // Register for the signal if we're the first.
     if (state->registration_count_[signal_number] == 0)
     {
-# if defined(ASIO_HAS_SIGACTION) && !(defined(__ORBIS__) || defined(__PROSPERO__))
+# if defined(ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
@@ -342,7 +342,7 @@ asio::error_code signal_set_service::remove(
     // Set signal handler back to the default if we're the last.
     if (state->registration_count_[signal_number] == 1)
     {
-# if defined(ASIO_HAS_SIGACTION) && !(defined(__ORBIS__) || defined(__PROSPERO__))
+# if defined(ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
@@ -396,7 +396,7 @@ asio::error_code signal_set_service::clear(
     // Set signal handler back to the default if we're the last.
     if (state->registration_count_[reg->signal_number_] == 1)
     {
-# if defined(ASIO_HAS_SIGACTION) && !(defined(__ORBIS__) || defined(__PROSPERO__))
+# if defined(ASIO_HAS_SIGACTION)
       using namespace std; // For memset.
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
@@ -588,7 +588,7 @@ void signal_set_service::open_descriptors()
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
   && !defined(__CYGWIN__)
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   signal_state* state = get_signal_state();
 
   int pipe_fds[2];

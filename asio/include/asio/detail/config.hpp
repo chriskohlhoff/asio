@@ -1192,7 +1192,8 @@
 # if !defined(ASIO_DISABLE_SIGACTION)
 #  if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(__CYGWIN__) \
+  && !(defined(__ORBIS__) || defined(__PROSPERO__))
 #   define ASIO_HAS_SIGACTION 1
 #  endif // !defined(ASIO_WINDOWS)
          //   && !defined(ASIO_WINDOWS_RUNTIME)

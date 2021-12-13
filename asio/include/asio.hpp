@@ -86,13 +86,17 @@
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ip/host_name.hpp"
 #include "asio/ip/icmp.hpp"
-//#include "asio/ip/multicast.hpp"
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
+#  include "asio/ip/multicast.hpp"
+#endif
 #include "asio/ip/resolver_base.hpp"
 #include "asio/ip/resolver_query_base.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/ip/udp.hpp"
-//#include "asio/ip/unicast.hpp"
-//#include "asio/ip/v6_only.hpp"
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
+#  include "asio/ip/unicast.hpp"
+#  include "asio/ip/v6_only.hpp"
+#endif
 #include "asio/is_executor.hpp"
 #include "asio/is_read_buffered.hpp"
 #include "asio/is_write_buffered.hpp"

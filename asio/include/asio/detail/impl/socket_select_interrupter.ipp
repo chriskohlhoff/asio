@@ -21,7 +21,7 @@
 
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
-  || defined(__SYMBIAN32__)
+  || defined(__SYMBIAN32__) || (defined(__ORBIS__) || defined(__PROSPERO__))
 
 #include <cstdlib>
 #include "asio/detail/socket_holder.hpp"
@@ -91,6 +91,7 @@ void socket_select_interrupter::open_descriptors()
   if (server.get() == invalid_socket)
     asio::detail::throw_error(ec, "socket_select_interrupter");
   
+#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   ioctl_arg_type non_blocking = 1;
   socket_ops::state_type client_state = 0;
   if (socket_ops::ioctl(client.get(), client_state,
@@ -110,6 +111,7 @@ void socket_select_interrupter::open_descriptors()
   opt = 1;
   socket_ops::setsockopt(server.get(), server_state,
       IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt), ec);
+#endif
 
   read_descriptor_ = server.release();
   write_descriptor_ = client.release();
