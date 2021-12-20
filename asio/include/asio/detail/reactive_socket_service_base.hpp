@@ -54,6 +54,14 @@ public:
   // The implementation type of the socket.
   struct base_implementation_type
   {
+    // default constructor
+    base_implementation_type()
+      : socket_(invalid_socket),
+        state_(0),
+        reactor_data_{}
+    {
+    }
+
     // The native socket representation.
     socket_type socket_;
 
