@@ -20,6 +20,8 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
 namespace asio {
 
 any_io_executor::any_io_executor() ASIO_NOEXCEPT
@@ -118,6 +120,8 @@ any_io_executor any_io_executor::prefer(
 }
 
 } // namespace asio
+
+#endif // !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #include "asio/detail/pop_options.hpp"
 
