@@ -124046,7 +124046,7 @@ Socket option for determining whether an IPv6 socket supports IPv6 communication
 
 
 
-Implements the IPPROTO\_IPV6/IP\_V6ONLY socket option.
+Implements the IPPROTO\_IPV6/IPV6\_V6ONLY socket option.
 
 
 [heading Examples]

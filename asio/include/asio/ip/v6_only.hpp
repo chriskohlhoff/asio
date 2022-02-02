@@ -26,7 +26,7 @@ namespace ip {
 /// Socket option for determining whether an IPv6 socket supports IPv6
 /// communication only.
 /**
- * Implements the IPPROTO_IPV6/IP_V6ONLY socket option.
+ * Implements the IPPROTO_IPV6/IPV6_V6ONLY socket option.
  *
  * @par Examples
  * Setting the option:
