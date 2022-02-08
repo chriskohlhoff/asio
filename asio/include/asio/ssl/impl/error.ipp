@@ -39,17 +39,11 @@ public:
     if (reason)
     {
       const char* lib = ::ERR_lib_error_string(value);
-      const char* func = ::ERR_func_error_string(value);
       std::string result(reason);
-      if (lib || func)
+      if (lib)
       {
         result += " (";
-        if (lib)
-          result += lib;
-        if (lib && func)
-          result += ", ";
-        if (func)
-          result += func;
+        result += lib;
         result += ")";
       }
       return result;
