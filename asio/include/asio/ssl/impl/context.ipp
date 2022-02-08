@@ -53,11 +53,13 @@ struct context::rsa_cleanup
   ~rsa_cleanup() { if (p) ::RSA_free(p); }
 };
 
+#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
 struct context::dh_cleanup
 {
   DH* p;
   ~dh_cleanup() { if (p) ::DH_free(p); }
 };
+#endif // (OPENSSL_VERSION_NUMBER < 0x30000000L)
 
 context::context(context::method m)
   : handle_(0)
@@ -1118,6 +1120,19 @@ ASIO_SYNC_OP_VOID context::do_use_tmp_dh(
 {
   ::ERR_clear_error();
 
+#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+  EVP_PKEY* p = ::PEM_read_bio_Parameters(bio, 0);
+  if (p)
+  {
+    if (::SSL_CTX_set0_tmp_dh_pkey(handle_, p) == 1)
+    {
+      ec = asio::error_code();
+      ASIO_SYNC_OP_VOID_RETURN(ec);
+    }
+    else
+      ::EVP_PKEY_free(p);
+  }
+#else // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
   dh_cleanup dh = { ::PEM_read_bio_DHparams(bio, 0, 0, 0) };
   if (dh.p)
   {
@@ -1127,6 +1142,7 @@ ASIO_SYNC_OP_VOID context::do_use_tmp_dh(
       ASIO_SYNC_OP_VOID_RETURN(ec);
     }
   }
+#endif // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
 
   ec = asio::error_code(
       static_cast<int>(::ERR_get_error()),
