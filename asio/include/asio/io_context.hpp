@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <typeinfo>
 #include "asio/async_result.hpp"
+#include "asio/detail/concurrency_hint.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/detail/wrapped_handler.hpp"
 #include "asio/error_code.hpp"
