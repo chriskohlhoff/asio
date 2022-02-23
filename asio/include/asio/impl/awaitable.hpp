@@ -372,7 +372,7 @@ public:
           typename result_of<Function(awaitable_frame_base*)>::type,
           awaitable_thread<Executor>*
         >::value
-      >::type* = 0)
+      >::type* = nullptr)
   {
     struct result
     {
