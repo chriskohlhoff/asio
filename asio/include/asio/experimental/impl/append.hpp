@@ -195,13 +195,13 @@ struct async_result<
 };
 
 template <template <typename, typename> class Associator,
-    typename Handler, typename DefaultCandidate>
+    typename Handler, typename... Values, typename DefaultCandidate>
 struct associator<Associator,
-    experimental::detail::append_handler<Handler>, DefaultCandidate>
+    experimental::detail::append_handler<Handler, Values...>, DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
   static typename Associator<Handler, DefaultCandidate>::type get(
-      const experimental::detail::append_handler<Handler>& h,
+      const experimental::detail::append_handler<Handler, Values...>& h,
       const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);

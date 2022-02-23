@@ -188,7 +188,9 @@ endif
 
 if HAVE_CXX14
 check_PROGRAMS += \
-	unit/experimental/deferred
+	unit/experimental/append \
+	unit/experimental/deferred \
+	unit/experimental/prepend
 endif
 
 if HAVE_CXX17
@@ -390,7 +392,9 @@ TESTS = \
 
 if HAVE_CXX14
 TESTS += \
-	unit/experimental/deferred
+	unit/experimental/append \
+	unit/experimental/deferred \
+	unit/experimental/prepend
 endif
 
 if HAVE_CXX17
@@ -611,7 +615,9 @@ unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
 
 if HAVE_CXX14
+unit_experimental_append_SOURCES = unit/experimental/append.cpp
 unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
+unit_experimental_prepend_SOURCES = unit/experimental/prepend.cpp
 endif
 
 if HAVE_CXX17
