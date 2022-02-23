@@ -17,8 +17,6 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_NO_TS_EXECUTORS)
-
 #include "asio/associated_executor.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution.hpp"
@@ -36,13 +34,11 @@ class executor_work_guard;
 
 #endif // !defined(ASIO_EXECUTOR_WORK_GUARD_DECL)
 
+#if defined(GENERATING_DOCUMENTATION)
+
 /// An object of type @c executor_work_guard controls ownership of executor work
 /// within a scope.
-#if defined(GENERATING_DOCUMENTATION)
 template <typename Executor>
-#else // defined(GENERATING_DOCUMENTATION)
-template <typename Executor, typename, typename>
-#endif // defined(GENERATING_DOCUMENTATION)
 class executor_work_guard
 {
 public:
@@ -53,6 +49,50 @@ public:
   /**
    * Stores a copy of @c e and calls <tt>on_work_started()</tt> on it.
    */
+  explicit executor_work_guard(const executor_type& e) ASIO_NOEXCEPT;
+
+  /// Copy constructor.
+  executor_work_guard(const executor_work_guard& other) ASIO_NOEXCEPT;
+
+  /// Move constructor.
+  executor_work_guard(executor_work_guard&& other) ASIO_NOEXCEPT;
+
+  /// Destructor.
+  /**
+   * Unless the object has already been reset, or is in a moved-from state,
+   * calls <tt>on_work_finished()</tt> on the stored executor.
+   */
+  ~executor_work_guard();
+
+  /// Obtain the associated executor.
+  executor_type get_executor() const ASIO_NOEXCEPT;
+
+  /// Whether the executor_work_guard object owns some outstanding work.
+  bool owns_work() const ASIO_NOEXCEPT;
+
+  /// Indicate that the work is no longer outstanding.
+  /**
+   * Unless the object has already been reset, or is in a moved-from state,
+   * calls <tt>on_work_finished()</tt> on the stored executor.
+   */
+  void reset() ASIO_NOEXCEPT;
+};
+
+#endif // defined(GENERATING_DOCUMENTATION)
+
+#if !defined(GENERATING_DOCUMENTATION)
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
+
+template <typename Executor>
+class executor_work_guard<Executor,
+    typename enable_if<
+      is_executor<Executor>::value
+    >::type>
+{
+public:
+  typedef Executor executor_type;
+
   explicit executor_work_guard(const executor_type& e) ASIO_NOEXCEPT
     : executor_(e),
       owns_(true)
@@ -60,7 +100,6 @@ public:
     executor_.on_work_started();
   }
 
-  /// Copy constructor.
   executor_work_guard(const executor_work_guard& other) ASIO_NOEXCEPT
     : executor_(other.executor_),
       owns_(other.owns_)
@@ -69,44 +108,31 @@ public:
       executor_.on_work_started();
   }
 
-#if defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
-  /// Move constructor.
+#if defined(ASIO_HAS_MOVE)
   executor_work_guard(executor_work_guard&& other) ASIO_NOEXCEPT
     : executor_(ASIO_MOVE_CAST(Executor)(other.executor_)),
       owns_(other.owns_)
   {
     other.owns_ = false;
   }
-#endif //  defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+#endif // defined(ASIO_HAS_MOVE)
 
-  /// Destructor.
-  /**
-   * Unless the object has already been reset, or is in a moved-from state,
-   * calls <tt>on_work_finished()</tt> on the stored executor.
-   */
   ~executor_work_guard()
   {
     if (owns_)
       executor_.on_work_finished();
   }
 
-  /// Obtain the associated executor.
   executor_type get_executor() const ASIO_NOEXCEPT
   {
     return executor_;
   }
 
-  /// Whether the executor_work_guard object owns some outstanding work.
   bool owns_work() const ASIO_NOEXCEPT
   {
     return owns_;
   }
 
-  /// Indicate that the work is no longer outstanding.
-  /**
-   * Unless the object has already been reset, or is in a moved-from state,
-   * calls <tt>on_work_finished()</tt> on the stored executor.
-   */
   void reset() ASIO_NOEXCEPT
   {
     if (owns_)
@@ -124,7 +150,7 @@ private:
   bool owns_;
 };
 
-#if !defined(GENERATING_DOCUMENTATION)
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 template <typename Executor>
 class executor_work_guard<Executor,
@@ -296,7 +322,5 @@ make_work_guard(const T& t, ExecutionContext& ctx,
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 #endif // ASIO_EXECUTOR_WORK_GUARD_HPP

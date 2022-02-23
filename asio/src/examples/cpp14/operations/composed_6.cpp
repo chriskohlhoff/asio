@@ -108,9 +108,7 @@ auto async_write_messages(tcp::socket& socket,
       // As our composed operation performs multiple underlying I/O operations,
       // we should maintain a work object against the I/O executor. This tells
       // the I/O executor that there is still more work to come in the future.
-      typename std::decay<decltype(asio::prefer(
-            std::declval<tcp::socket::executor_type>(),
-            asio::execution::outstanding_work.tracked))>::type io_work_;
+      asio::executor_work_guard<tcp::socket::executor_type> io_work_;
 
       // The user-supplied completion handler, called once only on completion
       // of the entire composed operation.
@@ -146,6 +144,9 @@ auto async_write_messages(tcp::socket& socket,
 
         // This point is reached only on completion of the entire composed
         // operation.
+
+        // We no longer have any future work coming for the I/O executor.
+        io_work_.reset();
 
         // Deallocate the encoded message before calling the user-supplied
         // completion handler.
@@ -197,8 +198,7 @@ auto async_write_messages(tcp::socket& socket,
           socket, std::move(encoded_message),
           repeat_count, std::move(delay_timer),
           intermediate_completion_handler::starting,
-          asio::prefer(socket.get_executor(),
-              asio::execution::outstanding_work.tracked),
+          asio::make_work_guard(socket.get_executor()),
           std::forward<decltype(completion_handler)>(completion_handler)});
   };
 

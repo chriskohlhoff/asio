@@ -77,8 +77,7 @@ int main(int argc, char* argv[])
     // We run the io_context off in its own thread so that it operates
     // completely asynchronously with respect to the rest of the program.
     asio::io_context io_context;
-    auto work = asio::require(io_context.get_executor(),
-        asio::execution::outstanding_work.tracked);
+    auto work = asio::make_work_guard(io_context);
     std::thread thread([&io_context](){ io_context.run(); });
 
     get_daytime(io_context, argv[1]);
