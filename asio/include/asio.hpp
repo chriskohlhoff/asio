@@ -40,6 +40,7 @@
 #include "asio/basic_streambuf.hpp"
 #include "asio/basic_waitable_timer.hpp"
 #include "asio/basic_writable_pipe.hpp"
+#include "asio/bind_allocator.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/buffer.hpp"

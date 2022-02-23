@@ -29,6 +29,7 @@ basic_stream_socket
 basic_streambuf
 basic_waitable_timer
 basic_writable_pipe
+bind_allocator
 bind_cancellation_slot
 bind_executor
 buffer

@@ -137,6 +137,7 @@ UNIT_TEST_EXES = \
 	tests\unit\basic_streambuf.exe \
 	tests\unit\basic_waitable_timer.exe \
 	tests\unit\basic_writable_pipe.exe \
+	tests\unit\bind_allocator.exe \
 	tests\unit\bind_cancellation_slot.exe \
 	tests\unit\bind_executor.exe \
 	tests\unit\buffered_read_stream.exe \

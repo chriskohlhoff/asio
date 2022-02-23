@@ -27,6 +27,7 @@ nobase_include_HEADERS = \
 	asio/basic_stream_socket.hpp \
 	asio/basic_waitable_timer.hpp \
 	asio/basic_writable_pipe.hpp \
+	asio/bind_allocator.hpp \
 	asio/bind_cancellation_slot.hpp \
 	asio/bind_executor.hpp \
 	asio/buffered_read_stream_fwd.hpp \

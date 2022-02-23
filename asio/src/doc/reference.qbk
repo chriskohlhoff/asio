@@ -69,6 +69,675 @@
 [include requirements/WriteHandler.qbk]
 
 
+[section:allocator_binder allocator_binder]
+
+[indexterm1 asio.indexterm.allocator_binder..allocator_binder]
+
+
+A call wrapper type to bind an allocator of type `Allocator` to an object of type `T`. 
+
+
+  template<
+      typename T,
+      typename Allocator>
+  class allocator_binder
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.allocator_binder.allocator_type [*allocator_type]]]
+    [The type of the associated allocator. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.allocator_binder.argument_type [*argument_type]]]
+    [The type of the function's argument. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.allocator_binder.first_argument_type [*first_argument_type]]]
+    [The type of the function's first argument. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.allocator_binder.result_type [*result_type]]]
+    [The return type if a function. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.allocator_binder.second_argument_type [*second_argument_type]]]
+    [The type of the function's second argument. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.allocator_binder.target_type [*target_type]]]
+    [The type of the target object. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.allocator_binder.allocator_binder [*allocator_binder]] [constructor]]
+    [Construct an allocator wrapper for the specified object. 
+     [hr]
+     Copy constructor. 
+     [hr]
+     Construct a copy, but specify a different allocator. 
+     [hr]
+     Construct a copy of a different allocator wrapper type. 
+     [hr]
+     Construct a copy of a different allocator wrapper type, but specify a different allocator. 
+     [hr]
+     Move constructor. 
+     [hr]
+     Move construct the target object, but specify a different allocator. 
+     [hr]
+     Move construct from a different allocator wrapper type. 
+     [hr]
+     Move construct from a different allocator wrapper type, but specify a different allocator. ]
+  ]
+  
+  [
+    [[link asio.reference.allocator_binder.get [*get]]]
+    [Obtain a reference to the target object. ]
+  ]
+  
+  [
+    [[link asio.reference.allocator_binder.get_allocator [*get_allocator]]]
+    [Obtain the associated allocator. ]
+  ]
+  
+  [
+    [[link asio.reference.allocator_binder.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.allocator_binder._allocator_binder [*~allocator_binder]] [destructor]]
+    [Destructor. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+[section:allocator_binder allocator_binder::allocator_binder]
+
+[indexterm2 asio.indexterm.allocator_binder.allocator_binder..allocator_binder..allocator_binder] 
+Construct an allocator wrapper for the specified object. 
+
+
+  template<
+      typename U>
+  ``[link asio.reference.allocator_binder.allocator_binder.overload1 allocator_binder]``(
+      const allocator_type & s,
+      U && u);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload1 more...]]``
+
+
+Copy constructor. 
+
+
+  ``[link asio.reference.allocator_binder.allocator_binder.overload2 allocator_binder]``(
+      const allocator_binder & other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload2 more...]]``
+
+
+Construct a copy, but specify a different allocator. 
+
+
+  ``[link asio.reference.allocator_binder.allocator_binder.overload3 allocator_binder]``(
+      const allocator_type & s,
+      const allocator_binder & other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload3 more...]]``
+
+
+Construct a copy of a different allocator wrapper type. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  ``[link asio.reference.allocator_binder.allocator_binder.overload4 allocator_binder]``(
+      const allocator_binder< U, OtherAllocator > & other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload4 more...]]``
+
+
+Construct a copy of a different allocator wrapper type, but specify a different allocator. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  ``[link asio.reference.allocator_binder.allocator_binder.overload5 allocator_binder]``(
+      const allocator_type & s,
+      const allocator_binder< U, OtherAllocator > & other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload5 more...]]``
+
+
+Move constructor. 
+
+
+  ``[link asio.reference.allocator_binder.allocator_binder.overload6 allocator_binder]``(
+      allocator_binder && other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload6 more...]]``
+
+
+Move construct the target object, but specify a different allocator. 
+
+
+  ``[link asio.reference.allocator_binder.allocator_binder.overload7 allocator_binder]``(
+      const allocator_type & s,
+      allocator_binder && other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload7 more...]]``
+
+
+Move construct from a different allocator wrapper type. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  ``[link asio.reference.allocator_binder.allocator_binder.overload8 allocator_binder]``(
+      allocator_binder< U, OtherAllocator > && other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload8 more...]]``
+
+
+Move construct from a different allocator wrapper type, but specify a different allocator. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  ``[link asio.reference.allocator_binder.allocator_binder.overload9 allocator_binder]``(
+      const allocator_type & s,
+      allocator_binder< U, OtherAllocator > && other);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.allocator_binder.overload9 more...]]``
+
+
+[section:overload1 allocator_binder::allocator_binder (1 of 9 overloads)]
+
+
+Construct an allocator wrapper for the specified object. 
+
+
+  template<
+      typename U>
+  allocator_binder(
+      const allocator_type & s,
+      U && u);
+
+
+This constructor is only valid if the type `T` is constructible from type `U`. 
+
+
+[endsect]
+
+
+
+[section:overload2 allocator_binder::allocator_binder (2 of 9 overloads)]
+
+
+Copy constructor. 
+
+
+  allocator_binder(
+      const allocator_binder & other);
+
+
+
+[endsect]
+
+
+
+[section:overload3 allocator_binder::allocator_binder (3 of 9 overloads)]
+
+
+Construct a copy, but specify a different allocator. 
+
+
+  allocator_binder(
+      const allocator_type & s,
+      const allocator_binder & other);
+
+
+
+[endsect]
+
+
+
+[section:overload4 allocator_binder::allocator_binder (4 of 9 overloads)]
+
+
+Construct a copy of a different allocator wrapper type. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  allocator_binder(
+      const allocator_binder< U, OtherAllocator > & other);
+
+
+This constructor is only valid if the `Allocator` type is constructible from type `OtherAllocator`, and the type `T` is constructible from type `U`. 
+
+
+[endsect]
+
+
+
+[section:overload5 allocator_binder::allocator_binder (5 of 9 overloads)]
+
+
+Construct a copy of a different allocator wrapper type, but specify a different allocator. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  allocator_binder(
+      const allocator_type & s,
+      const allocator_binder< U, OtherAllocator > & other);
+
+
+This constructor is only valid if the type `T` is constructible from type `U`. 
+
+
+[endsect]
+
+
+
+[section:overload6 allocator_binder::allocator_binder (6 of 9 overloads)]
+
+
+Move constructor. 
+
+
+  allocator_binder(
+      allocator_binder && other);
+
+
+
+[endsect]
+
+
+
+[section:overload7 allocator_binder::allocator_binder (7 of 9 overloads)]
+
+
+Move construct the target object, but specify a different allocator. 
+
+
+  allocator_binder(
+      const allocator_type & s,
+      allocator_binder && other);
+
+
+
+[endsect]
+
+
+
+[section:overload8 allocator_binder::allocator_binder (8 of 9 overloads)]
+
+
+Move construct from a different allocator wrapper type. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  allocator_binder(
+      allocator_binder< U, OtherAllocator > && other);
+
+
+
+[endsect]
+
+
+
+[section:overload9 allocator_binder::allocator_binder (9 of 9 overloads)]
+
+
+Move construct from a different allocator wrapper type, but specify a different allocator. 
+
+
+  template<
+      typename U,
+      typename OtherAllocator>
+  allocator_binder(
+      const allocator_type & s,
+      allocator_binder< U, OtherAllocator > && other);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:allocator_type allocator_binder::allocator_type]
+
+[indexterm2 asio.indexterm.allocator_binder.allocator_type..allocator_type..allocator_binder] 
+The type of the associated allocator. 
+
+
+  typedef Allocator allocator_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:argument_type allocator_binder::argument_type]
+
+[indexterm2 asio.indexterm.allocator_binder.argument_type..argument_type..allocator_binder] 
+The type of the function's argument. 
+
+
+  typedef see_below argument_type;
+
+
+
+The type of `argument_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to a function type accepting a single argument, `argument_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `argument_type`, then `argument_type` is a synonym for `T::argument_type`;
+
+
+* otherwise `argument_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:first_argument_type allocator_binder::first_argument_type]
+
+[indexterm2 asio.indexterm.allocator_binder.first_argument_type..first_argument_type..allocator_binder] 
+The type of the function's first argument. 
+
+
+  typedef see_below first_argument_type;
+
+
+
+The type of `first_argument_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to a function type accepting two arguments, `first_argument_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `first_argument_type`, then `first_argument_type` is a synonym for `T::first_argument_type`;
+
+
+* otherwise `first_argument_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:get allocator_binder::get]
+
+[indexterm2 asio.indexterm.allocator_binder.get..get..allocator_binder] 
+Obtain a reference to the target object. 
+
+
+  target_type & ``[link asio.reference.allocator_binder.get.overload1 get]``();
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.get.overload1 more...]]``
+
+  const target_type & ``[link asio.reference.allocator_binder.get.overload2 get]``() const;
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.get.overload2 more...]]``
+
+
+[section:overload1 allocator_binder::get (1 of 2 overloads)]
+
+
+Obtain a reference to the target object. 
+
+
+  target_type & get();
+
+
+
+[endsect]
+
+
+
+[section:overload2 allocator_binder::get (2 of 2 overloads)]
+
+
+Obtain a reference to the target object. 
+
+
+  const target_type & get() const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:get_allocator allocator_binder::get_allocator]
+
+[indexterm2 asio.indexterm.allocator_binder.get_allocator..get_allocator..allocator_binder] 
+Obtain the associated allocator. 
+
+
+  allocator_type get_allocator() const;
+
+
+
+[endsect]
+
+
+[section:operator_lp__rp_ allocator_binder::operator()]
+
+[indexterm2 asio.indexterm.allocator_binder.operator_lp__rp_..operator()..allocator_binder] 
+
+  template<
+      typename... Args>
+  auto ``[link asio.reference.allocator_binder.operator_lp__rp_.overload1 operator()]``(
+      Args && ...);
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.operator_lp__rp_.overload1 more...]]``
+
+  template<
+      typename... Args>
+  auto ``[link asio.reference.allocator_binder.operator_lp__rp_.overload2 operator()]``(
+      Args && ...) const;
+  ``  [''''&raquo;''' [link asio.reference.allocator_binder.operator_lp__rp_.overload2 more...]]``
+
+
+[section:overload1 allocator_binder::operator() (1 of 2 overloads)]
+
+
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args && ...);
+
+
+
+[endsect]
+
+
+
+[section:overload2 allocator_binder::operator() (2 of 2 overloads)]
+
+
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args && ...) const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:result_type allocator_binder::result_type]
+
+[indexterm2 asio.indexterm.allocator_binder.result_type..result_type..allocator_binder] 
+The return type if a function. 
+
+
+  typedef see_below result_type;
+
+
+
+The type of `result_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to function type, `result_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `result_type`, then `result_type` is a synonym for `T::result_type`;
+
+
+* otherwise `result_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:second_argument_type allocator_binder::second_argument_type]
+
+[indexterm2 asio.indexterm.allocator_binder.second_argument_type..second_argument_type..allocator_binder] 
+The type of the function's second argument. 
+
+
+  typedef see_below second_argument_type;
+
+
+
+The type of `second_argument_type` is based on the type `T` of the wrapper's target object:
+
+
+* if `T` is a pointer to a function type accepting two arguments, `second_argument_type` is a synonym for the return type of `T`;
+
+
+* if `T` is a class type with a member type `first_argument_type`, then `second_argument_type` is a synonym for `T::second_argument_type`;
+
+
+* otherwise `second_argument_type` is not defined. 
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:target_type allocator_binder::target_type]
+
+[indexterm2 asio.indexterm.allocator_binder.target_type..target_type..allocator_binder] 
+The type of the target object. 
+
+
+  typedef T target_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:_allocator_binder allocator_binder::~allocator_binder]
+
+[indexterm2 asio.indexterm.allocator_binder._allocator_binder..~allocator_binder..allocator_binder] 
+Destructor. 
+
+
+  ~allocator_binder();
+
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:any_io_executor any_io_executor]
 
 [indexterm1 asio.indexterm.any_io_executor..any_io_executor]
@@ -65884,6 +66553,31 @@ By default, when a yield context is used with an asynchronous operation, a non-s
 
 
 [endsect]
+
+
+[section:bind_allocator bind_allocator]
+
+[indexterm1 asio.indexterm.bind_allocator..bind_allocator] 
+Associate an object of type `T` with an allocator of type `Allocator`. 
+
+
+  template<
+      typename Allocator,
+      typename T>
+  allocator_binder< typename decay< T >::type, Allocator > bind_allocator(
+      const Allocator & s,
+      T && t);
+
+
+[heading Requirements]
+
+['Header: ][^asio/bind_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
 
 
 [section:bind_cancellation_slot bind_cancellation_slot]
