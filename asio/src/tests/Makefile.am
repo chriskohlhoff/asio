@@ -187,6 +187,11 @@ noinst_PROGRAMS = \
 	performance/server
 endif
 
+if HAVE_CXX11
+check_PROGRAMS += \
+	unit/experimental/as_tuple
+endif
+
 if HAVE_CXX14
 check_PROGRAMS += \
 	unit/experimental/append \
@@ -391,6 +396,11 @@ TESTS = \
 	unit/writable_pipe \
 	unit/write \
 	unit/write_at
+
+if HAVE_CXX11
+TESTS += \
+	unit/experimental/as_tuple
+endif
 
 if HAVE_CXX14
 TESTS += \
@@ -616,6 +626,10 @@ unit_windows_stream_handle_SOURCES = unit/windows/stream_handle.cpp
 unit_writable_pipe_SOURCES = unit/writable_pipe.cpp
 unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
+
+if HAVE_CXX11
+unit_experimental_as_tuple_SOURCES = unit/experimental/as_tuple.cpp
+endif
 
 if HAVE_CXX14
 unit_experimental_append_SOURCES = unit/experimental/append.cpp

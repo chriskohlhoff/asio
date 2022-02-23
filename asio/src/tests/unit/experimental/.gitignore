@@ -8,6 +8,7 @@
 *.pdb
 *.tds
 append
+as_tuple
 awaitable_operators
 basic_channel
 basic_concurrent_channel
