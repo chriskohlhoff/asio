@@ -116,6 +116,11 @@ void test()
     random_access_file::native_handle_type native_file5 = file1.native_handle();
     (void)native_file5;
 
+    random_access_file::native_handle_type native_file6 = file1.release();
+    (void)native_file6;
+    random_access_file::native_handle_type native_file7 = file1.release(ec);
+    (void)native_file7;
+
     file1.cancel();
     file1.cancel(ec);
 
