@@ -369,6 +369,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code) @endcode
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))

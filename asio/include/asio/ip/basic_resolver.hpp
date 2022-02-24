@@ -665,6 +665,9 @@ public:
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, results_type) @endcode
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
@@ -712,6 +715,9 @@ public:
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, results_type) @endcode
    *
    * @note On POSIX systems, host names may be locally defined in the file
    * <tt>/etc/hosts</tt>. On Windows, host names may be defined in the file
@@ -774,6 +780,9 @@ public:
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, results_type) @endcode
    *
    * @note On POSIX systems, host names may be locally defined in the file
    * <tt>/etc/hosts</tt>. On Windows, host names may be defined in the file
@@ -840,6 +849,9 @@ public:
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
    *
+   * @par Completion Signature
+   * @code void(asio::error_code, results_type) @endcode
+   *
    * @note On POSIX systems, host names may be locally defined in the file
    * <tt>/etc/hosts</tt>. On Windows, host names may be defined in the file
    * <tt>c:\\windows\\system32\\drivers\\etc\\hosts</tt>. Remote host name
@@ -904,6 +916,9 @@ public:
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, results_type) @endcode
    *
    * @note On POSIX systems, host names may be locally defined in the file
    * <tt>/etc/hosts</tt>. On Windows, host names may be defined in the file
@@ -1002,6 +1017,9 @@ public:
    *
    * A successful resolve operation is guaranteed to pass a non-empty range to
    * the handler.
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, results_type) @endcode
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,

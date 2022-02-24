@@ -3017,6 +3017,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, typename Protocol::endpoint) 
+
+
+
+
+
 [heading Example]
   
 
@@ -3119,6 +3129,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, Iterator) 
+
+
+
+
+
 [heading Remarks]
       
 This overload assumes that a default constructed object of type `Iterator` represents the end of the sequence. This is a valid assumption for iterator types such as `asio::ip::tcp::resolver::iterator`.
@@ -3189,6 +3209,16 @@ This function attempts to connect a socket to one of a sequence of endpoints. It
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, Iterator) 
+
+
+
 
 
 [heading Example]
@@ -3287,6 +3317,16 @@ The `ec` parameter contains the result from the most recent connect operation. B
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, typename Protocol::endpoint) 
+
+
+
 
 
 [heading Example]
@@ -3425,6 +3465,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, Iterator) 
+
+
+
+
+
 [heading Remarks]
       
 This overload assumes that a default constructed object of type `Iterator` represents the end of the sequence. This is a valid assumption for iterator types such as `asio::ip::tcp::resolver::iterator`.
@@ -3505,6 +3555,16 @@ The `ec` parameter contains the result from the most recent connect operation. B
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, Iterator) 
+
+
+
 
 
 [heading Example]
@@ -3778,6 +3838,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To read into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -3884,6 +3954,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To read into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -3967,6 +4047,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -4068,6 +4158,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -4136,6 +4236,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -4235,6 +4345,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -4304,6 +4424,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -4402,6 +4532,16 @@ A return value of 0 indicates that the read operation is complete. A non-zero re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -4541,6 +4681,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To read into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -4649,6 +4799,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To read into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -4730,6 +4890,16 @@ This operation is implemented in terms of zero or more calls to the device's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -4827,6 +4997,16 @@ A return value of 0 indicates that the read operation is complete. A non-zero re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -5086,6 +5266,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 After a successful async\_read\_until operation, the dynamic buffer sequence may contain additional data beyond the delimiter. An application will typically leave that data in the dynamic buffer sequence for a subsequent async\_read\_until operation to examine.
@@ -5201,6 +5391,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -5319,6 +5519,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -5453,6 +5663,19 @@ Regardless of whether the asynchronous operation completes immediately or not, t
       
 After a successful async\_read\_until operation, the dynamic buffer sequence may contain additional data beyond that which matched the function object. An application will typically leave that data in the dynamic buffer sequence for a subsequent async\_read\_until operation to examine.
 
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 
@@ -5590,6 +5813,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 After a successful async\_read\_until operation, the streambuf may contain additional data beyond the delimiter. An application will typically leave that data in the streambuf for a subsequent async\_read\_until operation to examine.
@@ -5704,6 +5937,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -5821,6 +6064,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -5953,6 +6206,19 @@ Regardless of whether the asynchronous operation completes immediately or not, t
       
 After a successful async\_read\_until operation, the streambuf may contain additional data beyond that which matched the function object. An application will typically leave that data in the streambuf for a subsequent async\_read\_until operation to examine.
 
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 
@@ -6091,6 +6357,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 After a successful async\_read\_until operation, the dynamic buffer sequence may contain additional data beyond the delimiter. An application will typically leave that data in the dynamic buffer sequence for a subsequent async\_read\_until operation to examine.
@@ -6205,6 +6481,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -6322,6 +6608,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -6455,6 +6751,19 @@ Regardless of whether the asynchronous operation completes immediately or not, t
       
 After a successful async\_read\_until operation, the dynamic buffer sequence may contain additional data beyond that which matched the function object. An application will typically leave that data in the dynamic buffer sequence for a subsequent async\_read\_until operation to examine.
 
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
 The default implementation of the `is_match_condition` type trait evaluates to true for function pointers and function objects with a `result_type` typedef. It must be specialised for other user-defined function objects.
 
 
@@ -7019,6 +7328,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To write a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -7113,6 +7432,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To write a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -7195,6 +7524,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -7282,6 +7621,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -7349,6 +7698,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -7434,6 +7793,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -7502,6 +7871,16 @@ This operation is implemented in terms of zero or more calls to the stream's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -7586,6 +7965,16 @@ A return value of 0 indicates that the write operation is complete. A non-zero r
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -7730,6 +8119,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To write a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -7826,6 +8225,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To write a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -7909,6 +8318,16 @@ This operation is implemented in terms of zero or more calls to the device's asy
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -7995,6 +8414,16 @@ A return value of 0 indicates that the write operation is complete. A non-zero r
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -8809,6 +9238,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -8911,6 +9350,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The async\_receive operation can only be used with a connected socket. Use the async\_receive\_from function to receive data on an unconnected datagram socket.
@@ -8983,6 +9432,16 @@ This function is used to asynchronously receive data from the datagram socket. T
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -9076,6 +9535,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To receive into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -9147,6 +9616,16 @@ This function is used to asynchronously receive a datagram. The function call al
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -9230,6 +9709,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The async\_send operation can only be used with a connected socket. Use the async\_send\_to function to send data on an unconnected datagram socket.
@@ -9302,6 +9791,16 @@ This function is used to asynchronously send data on the datagram socket. The fu
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -9395,6 +9894,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To send a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -9470,6 +9979,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -9527,6 +10046,16 @@ This function is used to perform an asynchronous wait for a socket to enter a re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -15386,6 +15915,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -19640,6 +20179,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read_at `async_read_at`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -19712,6 +20261,16 @@ This function is used to asynchronously write data to the random-access handle. 
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -22532,6 +23091,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -22634,6 +23203,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The async\_receive operation can only be used with a connected socket. Use the async\_receive\_from function to receive data on an unconnected raw socket.
@@ -22706,6 +23285,16 @@ This function is used to asynchronously receive data from the raw socket. The fu
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -22799,6 +23388,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To receive into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -22870,6 +23469,16 @@ This function is used to asynchronously receive raw data. The function call alwa
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -22953,6 +23562,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The async\_send operation can only be used with a connected socket. Use the async\_send\_to function to send data on an unconnected raw socket.
@@ -23025,6 +23644,16 @@ This function is used to send data on the raw socket. The function call will blo
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -23118,6 +23747,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To send a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -23193,6 +23832,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -23250,6 +23899,16 @@ This function is used to perform an asynchronous wait for a socket to enter a re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -29068,6 +29727,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -30606,6 +31275,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -30713,6 +31392,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To receive into a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -30783,6 +31472,16 @@ This function is used to asynchronously receive data from the sequenced data soc
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Example]
@@ -30858,6 +31557,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Example]
   
 To send a single data buffer use the [link asio.reference.buffer `buffer`]  function as follows: 
@@ -30923,6 +31632,16 @@ This function is used to perform an asynchronous wait for a socket to enter a re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -36335,6 +37054,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -36391,6 +37120,16 @@ This function is used to asynchronously write data to the serial port. The funct
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -38409,9 +39148,19 @@ For each call to `async_wait()`, the supplied handler will be called exactly onc
      int signal_number // Indicates which signal occurred.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, int) 
+
+
+
 
 
 
@@ -39849,6 +40598,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -39924,6 +40683,16 @@ This function is used to perform an asynchronous wait for a socket to enter a re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -46200,6 +46969,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -46281,6 +47060,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -46336,6 +47125,18 @@ This overload requires that the Protocol template parameter satisfy the Acceptab
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code,
+      typename Protocol::socket::template
+        rebind_executor<executor_type>::other)) 
+
+
+
 
 
 [heading Example]
@@ -46419,6 +47220,18 @@ This overload requires that the Protocol template parameter satisfy the Acceptab
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code,
+      typename Protocol::socket::template rebind_executor<
+        Executor1>::other)) 
+
+
+
 
 
 [heading Example]
@@ -46505,6 +47318,18 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code,
+      typename Protocol::socket::template rebind_executor<
+        typename ExecutionContext::executor_type>::other)) 
+
+
+
+
+
 [heading Example]
   
 
@@ -46586,6 +47411,18 @@ This overload requires that the Protocol template parameter satisfy the Acceptab
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code,
+      typename Protocol::socket::template
+        rebind_executor<executor_type>::other)) 
+
+
+
 
 
 [heading Example]
@@ -46673,6 +47510,18 @@ This overload requires that the Protocol template parameter satisfy the Acceptab
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code,
+      typename Protocol::socket::template rebind_executor<
+        Executor1>::other)) 
+
+
+
 
 
 [heading Example]
@@ -46763,6 +47612,18 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code,
+      typename Protocol::socket::template rebind_executor<
+        typename ExecutionContext::executor_type>::other)) 
+
+
+
+
+
 [heading Example]
   
 
@@ -46841,6 +47702,16 @@ This function is used to perform an asynchronous wait for an acceptor to enter a
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -52273,6 +53144,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -52342,6 +53223,16 @@ This function is used to asynchronously write data to the stream file. The funct
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -55263,6 +56154,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -55340,6 +56241,16 @@ This function is used to asynchronously read data from the stream socket. The fu
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -55436,6 +56347,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The receive operation may not receive all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is received before the asynchronous operation completes.
@@ -55508,6 +56429,16 @@ This function is used to asynchronously receive data from the stream socket. The
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -55606,6 +56537,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The send operation may not transmit all of the data to the peer. Consider using the [link asio.reference.async_write `async_write`]  function if you need to ensure that all data is written before the asynchronous operation completes.
@@ -55680,6 +56621,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The send operation may not transmit all of the data to the peer. Consider using the [link asio.reference.async_write `async_write`]  function if you need to ensure that all data is written before the asynchronous operation completes.
@@ -55752,6 +56703,16 @@ This function is used to perform an asynchronous wait for a socket to enter a re
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -55830,6 +56791,16 @@ This function is used to asynchronously write data to the stream socket. The fun
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -63543,6 +64514,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -65283,6 +66264,16 @@ This function is used to asynchronously write data to the pipe. The function cal
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -69389,6 +70380,18 @@ Start an asynchronous fill.
 
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -69408,6 +70411,18 @@ Start an asynchronous read. The buffer into which the data will be read must be 
 
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -69424,6 +70439,18 @@ Start an asynchronous write. The data being written must be valid for the lifeti
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
 
 
 
@@ -70122,6 +71149,18 @@ Start an asynchronous fill.
 
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -70136,6 +71175,18 @@ Start an asynchronous flush.
       typename ``[link asio.reference.WriteHandler WriteHandler]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_flush(
       WriteHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
 
 
 
@@ -70158,6 +71209,18 @@ Start an asynchronous read. The buffer into which the data will be read must be 
 
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -70174,6 +71237,18 @@ Start an asynchronous write. The data being written must be valid for the lifeti
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
 
 
 
@@ -70907,6 +71982,18 @@ Start an asynchronous flush.
 
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -70926,6 +72013,18 @@ Start an asynchronous read. The buffer into which the data will be read must be 
 
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
+
+
 [endsect]
 
 
@@ -70942,6 +72041,18 @@ Start an asynchronous write. The data being written must be valid for the lifeti
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_write_some(
       const ConstBufferSequence & buffers,
       WriteHandler && handler = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``);
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
 
 
 
@@ -73929,6 +75040,16 @@ Spawn a new coroutined-based thread of execution.
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, T) 
+
+
+
+
+
 [heading Example]
   
 
@@ -74018,6 +75139,16 @@ Spawn a new coroutined-based thread of execution.
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr) 
+
+
+
+
+
 [heading Example]
   
 
@@ -74098,6 +75229,16 @@ Spawn a new coroutined-based thread of execution.
 ]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, T) 
+
+
+
 
 
 [heading Example]
@@ -74189,6 +75330,16 @@ Spawn a new coroutined-based thread of execution.
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr) 
+
+
+
+
+
 [heading Example]
   
 
@@ -74273,6 +75424,21 @@ Spawn a new coroutined-based thread of execution.
 Otherwise, the function signature of the completion handler must be: 
 
    void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the first template argument to the `awaitable` returned by the supplied function object `F:` 
+
+   asio::awaitable<R, AwaitableExecutor> F() 
 
 
 
@@ -74385,6 +75551,21 @@ Spawn a new coroutined-based thread of execution.
 Otherwise, the function signature of the completion handler must be: 
 
    void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the first template argument to the `awaitable` returned by the supplied function object `F:` 
+
+   asio::awaitable<R, AwaitableExecutor> F() 
 
 
 
@@ -77235,7 +78416,17 @@ This function has the following effects:
 * Performs `ex.defer(std::move(handler), alloc)`.
 
 
-* Returns `result.get()`. 
+* Returns `result.get()`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -77287,7 +78478,17 @@ This function has the following effects:
 * Performs `Executor(ex).defer(std::move(f), alloc)`.
 
 
-* Returns `result.get()`. 
+* Returns `result.get()`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -77314,7 +78515,17 @@ Submits a completion token or function object for execution.
 
 [heading Return Value]
       
-`defer(ctx.get_executor(), forward<CompletionToken>(token))`. 
+`defer(ctx.get_executor(), forward<CompletionToken>(token))`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -77698,7 +78909,17 @@ This function has the following effects:
 * Performs `ex.dispatch(std::move(handler), alloc)`.
 
 
-* Returns `result.get()`. 
+* Returns `result.get()`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -77748,7 +78969,17 @@ This function has the following effects:
 * Performs `Executor(ex).dispatch(std::move(f), alloc)`.
 
 
-* Returns `result.get()`. 
+* Returns `result.get()`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -77775,7 +79006,17 @@ Submits a completion token or function object for execution.
 
 [heading Return Value]
       
-`dispatch(ctx.get_executor(), forward<CompletionToken>(token))`. 
+`dispatch(ctx.get_executor(), forward<CompletionToken>(token))`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -91807,6 +93048,13 @@ Asynchronously receive a message.
 
 
 
+[heading Completion Signature]
+  
+As determined by the `Signatures...` template parameter and the channel traits. 
+
+
+
+
 [endsect]
 
 
@@ -91823,6 +93071,18 @@ Asynchronously send a message.
   auto async_send(
       Args &&... args,
       CompletionToken && token);
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
 
 
 
@@ -113216,7 +114476,19 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 ]
 
-A successful resolve operation is guaranteed to pass a non-empty range to the handler. 
+A successful resolve operation is guaranteed to pass a non-empty range to the handler.
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, results_type) 
+
+
+
+
+
 
 
 [endsect]
@@ -113261,6 +114533,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 A successful resolve operation is guaranteed to pass a non-empty range to the handler.
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, results_type) 
+
+
+
 
 
 [heading Remarks]
@@ -113317,6 +114599,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 A successful resolve operation is guaranteed to pass a non-empty range to the handler.
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, results_type) 
+
+
+
+
+
 [heading Remarks]
       
 On POSIX systems, host names may be locally defined in the file `/etc/hosts`. On Windows, host names may be defined in the file `c:\windows\system32\drivers\etc\hosts`. Remote host name resolution is performed using DNS. Operating systems may use additional locations when resolving host names (such as NETBIOS names on Windows).
@@ -113369,6 +114661,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 A successful resolve operation is guaranteed to pass a non-empty range to the handler.
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, results_type) 
+
+
+
 
 
 [heading Remarks]
@@ -113428,6 +114730,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 A successful resolve operation is guaranteed to pass a non-empty range to the handler.
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, results_type) 
+
+
+
+
+
 [heading Remarks]
       
 On POSIX systems, host names may be locally defined in the file `/etc/hosts`. On Windows, host names may be defined in the file `c:\windows\system32\drivers\etc\hosts`. Remote host name resolution is performed using DNS. Operating systems may use additional locations when resolving host names (such as NETBIOS names on Windows).
@@ -113473,7 +114785,19 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
 ]
 
-A successful resolve operation is guaranteed to pass a non-empty range to the handler. 
+A successful resolve operation is guaranteed to pass a non-empty range to the handler.
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, results_type) 
+
+
+
+
+
 
 
 [endsect]
@@ -128899,6 +130223,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Example]
   
 
@@ -130785,6 +132119,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -130855,6 +132199,16 @@ This function is used to perform an asynchronous wait for a descriptor to enter 
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 [heading Example]
@@ -130935,6 +132289,16 @@ This function is used to asynchronously write data to the stream descriptor. The
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -133592,7 +134956,17 @@ This function has the following effects:
 * Performs `ex.post(std::move(handler), alloc)`.
 
 
-* Returns `result.get()`. 
+* Returns `result.get()`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -133644,7 +135018,17 @@ This function has the following effects:
 * Performs `Executor(ex).post(std::move(f), alloc)`.
 
 
-* Returns `result.get()`. 
+* Returns `result.get()`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -133671,7 +135055,17 @@ Submits a completion token or function object for execution.
 
 [heading Return Value]
       
-`post(ctx.get_executor(), forward<CompletionToken>(token))`. 
+`post(ctx.get_executor(), forward<CompletionToken>(token))`.
+
+
+[heading Completion Signature]
+  
+
+
+   void() 
+
+
+
 
 
 
@@ -145678,6 +147072,16 @@ This function is used to asynchronously perform an SSL handshake on the stream. 
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -145732,6 +147136,16 @@ This function is used to asynchronously perform an SSL handshake on the stream. 
 ]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Per-Operation Cancellation]
@@ -145789,6 +147203,16 @@ This function is used to asynchronously read one or more bytes of data from the 
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The async\_read\_some operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -145842,6 +147266,16 @@ This function is used to asynchronously shut down SSL on the stream. This functi
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
+
+
 [heading Per-Operation Cancellation]
   
 This asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
@@ -145893,6 +147327,16 @@ This function is used to asynchronously write one or more bytes of data to the s
 ]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -154939,9 +156383,19 @@ This function is be used to initiate an asynchronous wait against the object han
      const asio::error_code& error // Result of operation.
    ); 
 ``
-Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`]. ]]
+Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code) 
+
+
+
 
 
 
@@ -157171,6 +158625,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read_at `async_read_at`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -157243,6 +158707,16 @@ This function is used to asynchronously write data to the random-access handle. 
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]
@@ -158680,6 +160154,16 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 ]
 
 
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
+
+
 [heading Remarks]
       
 The read operation may not read all of the requested number of bytes. Consider using the [link asio.reference.async_read `async_read`]  function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.
@@ -158749,6 +160233,16 @@ This function is used to asynchronously write data to the stream handle. The fun
 Regardless of whether the asynchronous operation completes immediately or not, the handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.post `post`].]]
 
 ]
+
+
+[heading Completion Signature]
+  
+
+
+   void(asio::error_code, std::size_t) 
+
+
+
 
 
 [heading Remarks]

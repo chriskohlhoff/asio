@@ -54,6 +54,9 @@ namespace asio {
  * @li Performs <tt>ex.defer(std::move(handler), alloc)</tt>.
  *
  * @li Returns <tt>result.get()</tt>.
+ *
+ * @par Completion Signature
+ * @code void() @endcode
  */
 template <ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken>
 ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
@@ -93,6 +96,9 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
  * @li Performs <tt>Executor(ex).defer(std::move(f), alloc)</tt>.
  *
  * @li Returns <tt>result.get()</tt>.
+ *
+ * @par Completion Signature
+ * @code void() @endcode
  */
 template <typename Executor,
     ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken
@@ -108,6 +114,9 @@ ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, void()) defer(
 /// Submits a completion token or function object for execution.
 /**
  * @returns <tt>defer(ctx.get_executor(), forward<CompletionToken>(token))</tt>.
+ *
+ * @par Completion Signature
+ * @code void() @endcode
  */
 template <typename ExecutionContext,
     ASIO_COMPLETION_TOKEN_FOR(void()) CompletionToken

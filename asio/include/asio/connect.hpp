@@ -635,6 +635,9 @@ Iterator connect(basic_socket<Protocol, Executor>& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, typename Protocol::endpoint) @endcode
+ *
  * @par Example
  * @code tcp::resolver r(my_context);
  * tcp::resolver::query q("host", "service");
@@ -720,6 +723,9 @@ async_connect(basic_socket<Protocol, Executor>& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, Iterator) @endcode
+ *
  * @note This overload assumes that a default constructed object of type @c
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
@@ -778,6 +784,9 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, Iterator) @endcode
  *
  * @par Example
  * @code std::vector<tcp::endpoint> endpoints = ...;
@@ -856,6 +865,9 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin, Iterator end,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, typename Protocol::endpoint) @endcode
  *
  * @par Example
  * The following connect condition function object can be used to output
@@ -977,6 +989,9 @@ async_connect(basic_socket<Protocol, Executor>& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, Iterator) @endcode
+ *
  * @note This overload assumes that a default constructed object of type @c
  * Iterator represents the end of the sequence. This is a valid assumption for
  * iterator types such as @c asio::ip::tcp::resolver::iterator.
@@ -1048,6 +1063,9 @@ async_connect(basic_socket<Protocol, Executor>& s, Iterator begin,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, Iterator) @endcode
  *
  * @par Example
  * The following connect condition function object can be used to output

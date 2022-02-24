@@ -747,6 +747,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code) @endcode
+   *
    * @par Per-Operation Cancellation
    * This asynchronous operation supports cancellation for the following
    * asio::cancellation_type values:

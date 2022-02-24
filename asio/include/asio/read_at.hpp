@@ -443,6 +443,9 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code
@@ -537,6 +540,9 @@ async_read_at(AsyncRandomAccessReadDevice& d, uint64_t offset,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To read into a single data buffer use the @ref buffer function as follows:
  * @code asio::async_read_at(d, 42,
@@ -614,6 +620,9 @@ async_read_at(AsyncRandomAccessReadDevice& d,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note This overload is equivalent to calling:
  * @code asio::async_read_at(
@@ -697,6 +706,9 @@ async_read_at(AsyncRandomAccessReadDevice& d,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following

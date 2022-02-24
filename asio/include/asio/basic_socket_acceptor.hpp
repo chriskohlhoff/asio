@@ -1211,6 +1211,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code) @endcode
+   *
    * @par Example
    * @code
    * void wait_handler(const asio::error_code& error)
@@ -1338,6 +1341,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code) @endcode
    *
    * @par Example
    * @code
@@ -1480,6 +1486,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code) @endcode
+   *
    * @par Per-Operation Cancellation
    * On POSIX or Windows operating systems, this asynchronous operation supports
    * cancellation for the following asio::cancellation_type values:
@@ -1593,6 +1602,11 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code,
+   *    typename Protocol::socket::template
+   *      rebind_executor<executor_type>::other)) @endcode
    *
    * @par Example
    * @code
@@ -1830,6 +1844,11 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code,
+   *    typename Protocol::socket::template rebind_executor<
+   *      Executor1>::other)) @endcode
+   *
    * @par Example
    * @code
    * void accept_handler(const asio::error_code& error,
@@ -1909,6 +1928,11 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code,
+   *    typename Protocol::socket::template rebind_executor<
+   *      typename ExecutionContext::executor_type>::other)) @endcode
    *
    * @par Example
    * @code
@@ -2066,6 +2090,11 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code,
+   *    typename Protocol::socket::template
+   *      rebind_executor<executor_type>::other)) @endcode
    *
    * @par Example
    * @code
@@ -2335,6 +2364,11 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code,
+   *    typename Protocol::socket::template rebind_executor<
+   *      Executor1>::other)) @endcode
+   *
    * @par Example
    * @code
    * void accept_handler(const asio::error_code& error,
@@ -2420,6 +2454,11 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code,
+   *    typename Protocol::socket::template rebind_executor<
+   *      typename ExecutionContext::executor_type>::other)) @endcode
    *
    * @par Example
    * @code

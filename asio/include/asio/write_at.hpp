@@ -446,6 +446,9 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code
@@ -540,6 +543,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::async_write_at(d, 42,
@@ -624,6 +630,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
  * asio::cancellation_type values:
@@ -706,6 +715,9 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following

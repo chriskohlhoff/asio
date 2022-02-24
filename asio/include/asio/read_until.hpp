@@ -1589,6 +1589,9 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond the delimiter. An application
  * will typically leave that data in the dynamic buffer sequence for a
@@ -1700,6 +1703,9 @@ async_read_until(AsyncReadStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond the delimiter. An application
@@ -1819,6 +1825,9 @@ async_read_until(AsyncReadStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond that which matched the regular
@@ -1955,6 +1964,9 @@ async_read_until(AsyncReadStream& s,
  * sequence may contain additional data beyond that which matched the function
  * object. An application will typically leave that data in the dynamic buffer
  * sequence for a subsequent async_read_until operation to examine.
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note The default implementation of the @c is_match_condition type trait
  * evaluates to true for function pointers and function objects with a
@@ -2099,6 +2111,9 @@ async_read_until(AsyncReadStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @note After a successful async_read_until operation, the streambuf may
  * contain additional data beyond the delimiter. An application will typically
  * leave that data in the streambuf for a subsequent async_read_until operation
@@ -2200,6 +2215,9 @@ async_read_until(AsyncReadStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note After a successful async_read_until operation, the streambuf may
  * contain additional data beyond the delimiter. An application will typically
@@ -2309,6 +2327,9 @@ async_read_until(AsyncReadStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note After a successful async_read_until operation, the streambuf may
  * contain additional data beyond that which matched the regular expression. An
@@ -2433,6 +2454,9 @@ async_read_until(AsyncReadStream& s,
  * contain additional data beyond that which matched the function object. An
  * application will typically leave that data in the streambuf for a subsequent
  * async_read_until operation to examine.
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note The default implementation of the @c is_match_condition type trait
  * evaluates to true for function pointers and function objects with a
@@ -2572,6 +2596,9 @@ async_read_until(AsyncReadStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond the delimiter. An application
  * will typically leave that data in the dynamic buffer sequence for a
@@ -2679,6 +2706,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond the delimiter. An application
@@ -2794,6 +2824,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond that which matched the regular
@@ -2926,6 +2959,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * sequence may contain additional data beyond that which matched the function
  * object. An application will typically leave that data in the dynamic buffer
  * sequence for a subsequent async_read_until operation to examine.
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @note The default implementation of the @c is_match_condition type trait
  * evaluates to true for function pointers and function objects with a

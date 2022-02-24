@@ -436,6 +436,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
+   *
    * @note The read operation may not read all of the requested number of bytes.
    * Consider using the @ref async_read function if you need to ensure that the
    * requested amount of data is read before the asynchronous operation

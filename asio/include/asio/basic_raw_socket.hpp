@@ -434,6 +434,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
+   *
    * @note The async_send operation can only be used with a connected socket.
    * Use the async_send_to function to send data on an unconnected raw
    * socket.
@@ -496,6 +499,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
    *
    * @note The async_send operation can only be used with a connected socket.
    * Use the async_send_to function to send data on an unconnected raw
@@ -640,6 +646,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
+   *
    * @par Example
    * To send a single data buffer use the @ref buffer function as follows:
    * @code
@@ -705,6 +714,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
    *
    * @par Per-Operation Cancellation
    * On POSIX or Windows operating systems, this asynchronous operation supports
@@ -843,6 +855,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
+   *
    * @note The async_receive operation can only be used with a connected socket.
    * Use the async_receive_from function to receive data on an unconnected
    * raw socket.
@@ -906,6 +921,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
    *
    * @note The async_receive operation can only be used with a connected socket.
    * Use the async_receive_from function to receive data on an unconnected
@@ -1053,6 +1071,9 @@ public:
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
    *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
+   *
    * @par Example
    * To receive into a single data buffer use the @ref buffer function as
    * follows:
@@ -1117,6 +1138,9 @@ public:
    * not, the handler will not be invoked from within this function. On
    * immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, std::size_t) @endcode
    *
    * @par Per-Operation Cancellation
    * On POSIX or Windows operating systems, this asynchronous operation supports

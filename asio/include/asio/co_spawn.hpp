@@ -59,6 +59,9 @@ struct awaitable_signature<awaitable<void, Executor>>
  * completion handler must be:
  * @code void handler(std::exception_ptr, T); @endcode
  *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, T) @endcode
+ *
  * @par Example
  * @code
  * asio::awaitable<std::size_t> echo(tcp::socket socket)
@@ -128,6 +131,9 @@ co_spawn(const Executor& ex, awaitable<T, AwaitableExecutor> a,
  * completion handler must be:
  * @code void handler(std::exception_ptr); @endcode
  *
+ * @par Completion Signature
+ * @code void(std::exception_ptr) @endcode
+ *
  * @par Example
  * @code
  * asio::awaitable<void> echo(tcp::socket socket)
@@ -188,6 +194,9 @@ co_spawn(const Executor& ex, awaitable<void, AwaitableExecutor> a,
  * the thread of execution has completed. The function signature of the
  * completion handler must be:
  * @code void handler(std::exception_ptr); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, T) @endcode
  *
  * @par Example
  * @code
@@ -261,6 +270,9 @@ co_spawn(ExecutionContext& ctx, awaitable<T, AwaitableExecutor> a,
  * completion handler must be:
  * @code void handler(std::exception_ptr); @endcode
  *
+ * @par Completion Signature
+ * @code void(std::exception_ptr) @endcode
+ *
  * @par Example
  * @code
  * asio::awaitable<void> echo(tcp::socket socket)
@@ -328,6 +340,12 @@ co_spawn(ExecutionContext& ctx, awaitable<void, AwaitableExecutor> a,
  * @code void handler(std::exception_ptr); @endcode
  * Otherwise, the function signature of the completion handler must be:
  * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the first template argument to the @c awaitable returned by the
+ * supplied function object @c F:
+ * @code asio::awaitable<R, AwaitableExecutor> F() @endcode
  *
  * @par Example
  * @code
@@ -415,6 +433,12 @@ co_spawn(const Executor& ex, F&& f,
  * @code void handler(std::exception_ptr); @endcode
  * Otherwise, the function signature of the completion handler must be:
  * @code void handler(std::exception_ptr, R); @endcode
+ *
+ * @par Completion Signature
+ * @code void(std::exception_ptr, R) @endcode
+ * where @c R is the first template argument to the @c awaitable returned by the
+ * supplied function object @c F:
+ * @code asio::awaitable<R, AwaitableExecutor> F() @endcode
  *
  * @par Example
  * @code

@@ -752,6 +752,9 @@ std::size_t write(SyncWriteStream& s, DynamicBuffer_v2 buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code
@@ -844,6 +847,9 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Example
  * To write a single data buffer use the @ref buffer function as follows:
  * @code asio::async_write(s,
@@ -922,6 +928,9 @@ async_write(AsyncWriteStream& s, const ConstBufferSequence& buffers,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
@@ -1010,6 +1019,9 @@ async_write(AsyncWriteStream& s,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
  * asio::cancellation_type values:
@@ -1081,6 +1093,9 @@ async_write(AsyncWriteStream& s,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
@@ -1160,6 +1175,9 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
+ *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
  * asio::cancellation_type values:
@@ -1227,6 +1245,9 @@ async_write(AsyncWriteStream& s, basic_streambuf<Allocator>& b,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
@@ -1310,6 +1331,9 @@ async_write(AsyncWriteStream& s, DynamicBuffer_v2 buffers,
  * not, the handler will not be invoked from within this function. On
  * immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
+ *
+ * @par Completion Signature
+ * @code void(asio::error_code, std::size_t) @endcode
  *
  * @par Per-Operation Cancellation
  * This asynchronous operation supports cancellation for the following
