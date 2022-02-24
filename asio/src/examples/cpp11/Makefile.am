@@ -59,7 +59,9 @@ noinst_PROGRAMS += \
 	local/connect_pair \
 	local/iostream_client \
 	local/stream_server \
-	local/stream_client
+	local/stream_client \
+	local/fd_passing_stream_server \
+	local/fd_passing_stream_client
 endif
 
 if HAVE_OPENSSL
@@ -137,6 +139,8 @@ local_connect_pair_SOURCES = local/connect_pair.cpp
 local_iostream_client_SOURCES = local/iostream_client.cpp
 local_stream_server_SOURCES = local/stream_server.cpp
 local_stream_client_SOURCES = local/stream_client.cpp
+local_fd_passing_stream_server_SOURCES = local/fd_passing_stream_server.cpp
+local_fd_passing_stream_client_SOURCES = local/fd_passing_stream_client.cpp
 endif
 
 if HAVE_OPENSSL
