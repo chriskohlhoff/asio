@@ -457,7 +457,7 @@ private:
 /// Associate an object of type @c T with an allocator of type
 /// @c Allocator.
 template <typename Allocator, typename T>
-inline allocator_binder<typename decay<T>::type, Allocator>
+ASIO_NODISCARD inline allocator_binder<typename decay<T>::type, Allocator>
 bind_allocator(const Allocator& s, ASIO_MOVE_ARG(T) t)
 {
   return allocator_binder<
