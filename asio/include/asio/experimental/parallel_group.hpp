@@ -200,7 +200,8 @@ private:
  * @endcode
  */
 template <typename... Ops>
-inline parallel_group<Ops...> make_parallel_group(Ops... ops)
+ASIO_NODISCARD inline parallel_group<Ops...>
+make_parallel_group(Ops... ops)
 {
   return parallel_group<Ops...>(std::move(ops)...);
 }
