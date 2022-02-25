@@ -458,7 +458,8 @@ private:
 /// Associate an object of type @c T with a cancellation slot of type
 /// @c CancellationSlot.
 template <typename CancellationSlot, typename T>
-inline cancellation_slot_binder<typename decay<T>::type, CancellationSlot>
+ASIO_NODISCARD inline
+cancellation_slot_binder<typename decay<T>::type, CancellationSlot>
 bind_cancellation_slot(const CancellationSlot& s, ASIO_MOVE_ARG(T) t)
 {
   return cancellation_slot_binder<
