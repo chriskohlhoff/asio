@@ -58,6 +58,10 @@ public:
 
   /// Open the file with any existing contents truncated.
   static const flags truncate = implementation_defined;
+
+  /// Open the file so that write operations automatically synchronise the file
+  /// data and metadata to disk.
+  static const flags sync_all_on_write = implementation_defined;
 #else
   enum flags
   {
@@ -68,7 +72,8 @@ public:
     append = 8,
     create = 16,
     exclusive = 32,
-    truncate = 64
+    truncate = 64,
+    sync_all_on_write = 128
 #else // defined(ASIO_WINDOWS)
     read_only = O_RDONLY,
     write_only = O_WRONLY,
@@ -76,7 +81,8 @@ public:
     append = O_APPEND,
     create = O_CREAT,
     exclusive = O_EXCL,
-    truncate = O_TRUNC
+    truncate = O_TRUNC,
+    sync_all_on_write = O_SYNC
 #endif // defined(ASIO_WINDOWS)
   };
 
