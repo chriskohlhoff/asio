@@ -17,6 +17,8 @@
 // Test that header file is self-contained.
 #include "asio/experimental/promise.hpp"
 
+#include <array>
+#include <vector>
 #include "asio/steady_timer.hpp"
 #include "../unit_test.hpp"
 
@@ -176,7 +178,7 @@ void promise_race_ranged_tester()
         ASIO_CHECK(!ec);
       });
 
-  std::array<experimental::promise<void()>, 0u> arr;
+  std::vector<experimental::promise<void()>> arr;
 
   experimental::promise<>::race(
       ctx.get_executor(), std::move(arr)
@@ -241,7 +243,7 @@ void promise_all_ranged_tester()
         called = true;
       });
 
-  std::array<experimental::promise<void()>, 0u> arr;
+  std::vector<experimental::promise<void()>> arr;
   experimental::promise<>::all(
       ctx.get_executor(), std::move(arr)
     ).async_wait(
