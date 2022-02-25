@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/error_code.hpp"
 #include "asio/experimental/detail/channel_message.hpp"
 
 #include "asio/detail/push_options.hpp"
