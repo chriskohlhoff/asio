@@ -19,7 +19,6 @@
 #include <exception>
 #include <new>
 #include <tuple>
-#include <utility>
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
 #include "asio/detail/thread_context.hpp"

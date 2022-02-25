@@ -25,6 +25,7 @@
 # include <experimental/coroutine>
 #endif // defined(ASIO_HAS_STD_COROUTINE)
 
+#include <utility>
 #include "asio/any_io_executor.hpp"
 
 #include "asio/detail/push_options.hpp"
