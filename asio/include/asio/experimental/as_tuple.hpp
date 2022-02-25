@@ -114,7 +114,8 @@ public:
 /// Create a completion token to specify that the completion handler arguments
 /// should be combined into a single tuple argument.
 template <typename CompletionToken>
-inline ASIO_CONSTEXPR as_tuple_t<typename decay<CompletionToken>::type>
+ASIO_NODISCARD inline
+ASIO_CONSTEXPR as_tuple_t<typename decay<CompletionToken>::type>
 as_tuple(ASIO_MOVE_ARG(CompletionToken) completion_token)
 {
   return as_tuple_t<typename decay<CompletionToken>::type>(
