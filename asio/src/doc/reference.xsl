@@ -1957,7 +1957,8 @@
 <xsl:value-of select="$id"/>
 <xsl:text>..</xsl:text>
 <xsl:value-of select="$name"/>
-<xsl:text>] </xsl:text>
+<xsl:text>]</xsl:text>
+<xsl:value-of select="$newline"/>
 
 <xsl:for-each select="($all-compounddefs)[@kind='group' and compoundname=$name]">
   <xsl:apply-templates select="briefdescription" mode="markup"/>
@@ -2008,7 +2009,8 @@
   <xsl:value-of select="$id"/>
   <xsl:text>..</xsl:text>
   <xsl:value-of select="$name"/>
-  <xsl:text>] </xsl:text>
+  <xsl:text>]</xsl:text>
+  <xsl:value-of select="$newline"/>
 </xsl:if>
 
 <xsl:apply-templates select="briefdescription" mode="markup"/><xsl:text>

@@ -97,6 +97,6 @@ exception, associate the output variable with the `yield_context` as follows:
 [link asio.reference.basic_yield_context basic_yield_context],
 [link asio.examples.cpp03_examples.spawn Spawn example (C++03)],
 [link asio.examples.cpp11_examples.spawn Spawn example (C++11)],
-[link asio.overview.core.coroutine Stackless Coroutines].
+[link asio.overview.composition.coroutine Stackless Coroutines].
 
 [endsect]

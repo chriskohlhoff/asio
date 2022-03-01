@@ -11,8 +11,8 @@
 cancellation. For most use cases, consider using a higher level abstraction,
 such as [link asio.reference.experimental__make_parallel_group
 experimental::make_parallel_group] or the [link
-asio.overview.core.cpp20_coroutines.co_ordinating_parallel_coroutines logical
-operators] for `awaitable`.]
+asio.overview.composition.cpp20_coroutines.co_ordinating_parallel_coroutines
+logical operators] for `awaitable`.]
 
 I/O objects, such as sockets and timers, support object-wide cancellation of
 outstanding asynchronous operations via their `close` or `cancel` member

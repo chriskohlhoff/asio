@@ -624,6 +624,7 @@ sub copy_doc
       "src/doc/std_executors.qbk",
       "src/doc/tutorial.xsl",
       glob("src/doc/overview/*.qbk"),
+      glob("src/doc/overview/model/*.qbk"),
       glob("src/doc/requirements/*.qbk"));
   foreach my $file (@files)
   {

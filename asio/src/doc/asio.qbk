@@ -6,7 +6,8 @@
  /]
 
 [library Asio
-    [quickbook 1.4]
+    [quickbook 1.7]
+    [compatibility-mode 1.4]
     [copyright 2003 - 2022 Christopher M. Kohlhoff]
     [purpose Networking library]
     [license

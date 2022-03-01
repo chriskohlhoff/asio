@@ -1002,15 +1002,14 @@
   operation is launched with location information, it outputs lines using the
   [*<action>] [^n^m], prior to the [^n*m] line that signifies the beginning
   of the asynchronous operation. For example:
-  ``
+  [pre
   @asio|1589423304.861944|>7|ec=system:0,bytes_transferred=5
   @asio|1589423304.861952|7^8|in 'async_write' (./../../../include/asio/impl/write.hpp:330)
   @asio|1589423304.861952|7^8|called from 'do_write' (handler_tracking/async_tcp_echo_server.cpp:62)
   @asio|1589423304.861952|7^8|called from 'operator()' (handler_tracking/async_tcp_echo_server.cpp:51)
   @asio|1589423304.861952|7*8|socket@0x7ff61c008230.async_send
   @asio|1589423304.861975|.8|non_blocking_send,ec=system:0,bytes_transferred=5
-  @asio|1589423304.861980|<7|
-  ``[br]
+  @asio|1589423304.861980|<7|][br]
   If `std::source_location` or `std::experimental::source_location` are
   available, the `use_awaitable_t` token (when default-constructed or used as a
   default completion token) will also cause handler tracking to output a source
@@ -1045,21 +1044,18 @@
   include only those events in the tree that produced the nominated handlers.
   For example, to filter the output to include only the events associated with
   handlers `123`, `456`, and their predecessors:
-  ``
-  cat output.txt | perl handlertree.pl 123 456
-  ``
+  [pre
+  cat output.txt | perl handlertree.pl 123 456]
   or:
-  ``
-  perl handlertree.pl 123 456 < output.txt
-  ``[br]
+  [pre
+  perl handlertree.pl 123 456 < output.txt][br]
   This script may be combined with handerlive.pl and handlerviz.pl to produce a
   graph of the "live" asynchronous operation chains. For example:
-  ``
+  [pre
   cat output.txt | \
     perl handlertree.pl `perl handlerlive.pl output.txt` | \
     perl handlerviz.pl | \
-    dot -Tsvg > output.svg
-  ``[br]
+    dot -Tsvg > output.svg][br]
 
 * Added changes for clang-based Embarcadero C++ compilers.
 
@@ -2007,7 +2003,7 @@
   stackful coroutines, based on the Boost.Coroutine library. The `spawn()`
   function enables programs to implement asynchronous logic in a synchronous
   manner. For example: `size_t n = my_socket.async_read_some(my_buffer, yield);`.
-  For further information, see [link asio.overview.core.spawn Stackful
+  For further information, see [link asio.overview.composition.spawn Stackful
   Coroutines].
 
 * Added the `asio::use_future` special value, which provides first-class
@@ -2019,7 +2015,7 @@
 
 * Promoted the stackless coroutine class and macros to be part of Asio's
   documented interface, rather than part of the HTTP server 4 example.
-  For further information, see [link asio.overview.core.coroutine
+  For further information, see [link asio.overview.composition.coroutine
   Stackless Coroutines].
 
 * Added a new handler hook called `asio_handler_is_continuation`.

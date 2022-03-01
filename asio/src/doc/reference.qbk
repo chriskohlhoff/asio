@@ -1783,7 +1783,8 @@ Destructor.
 
 [section:asio_handler_allocate asio_handler_allocate]
 
-[indexterm1 asio.indexterm.asio_handler_allocate..asio_handler_allocate] 
+[indexterm1 asio.indexterm.asio_handler_allocate..asio_handler_allocate]
+
 (Deprecated: Use the [link asio.reference.associated_allocator `associated_allocator`] trait.) Default allocation function for handlers. 
 
 
@@ -1839,7 +1840,8 @@ All temporary objects associated with a handler will be deallocated before the u
 
 [section:asio_handler_deallocate asio_handler_deallocate]
 
-[indexterm1 asio.indexterm.asio_handler_deallocate..asio_handler_deallocate] 
+[indexterm1 asio.indexterm.asio_handler_deallocate..asio_handler_deallocate]
+
 Default deallocation function for handlers. 
 
 
@@ -1868,7 +1870,8 @@ The default implementation of these allocation hooks uses `operator new` and `op
 
 [section:asio_handler_invoke asio_handler_invoke]
 
-[indexterm1 asio.indexterm.asio_handler_invoke..asio_handler_invoke] 
+[indexterm1 asio.indexterm.asio_handler_invoke..asio_handler_invoke]
+
 (Deprecated: Use the [link asio.reference.associated_executor `associated_executor`] trait.) Default invoke function for handlers. 
 
 
@@ -1968,7 +1971,8 @@ Default handler invocation hook used for const function objects.
 
 [section:asio_handler_is_continuation asio_handler_is_continuation]
 
-[indexterm1 asio.indexterm.asio_handler_is_continuation..asio_handler_is_continuation] 
+[indexterm1 asio.indexterm.asio_handler_is_continuation..asio_handler_is_continuation]
+
 Default continuation function for handlers. 
 
 
@@ -2764,7 +2768,8 @@ The result of the asynchronous operation's initiating function.
 
 [section:async_compose async_compose]
 
-[indexterm1 asio.indexterm.async_compose..async_compose] 
+[indexterm1 asio.indexterm.async_compose..async_compose]
+
 Launch an asynchronous operation with a stateful implementation. 
 
 
@@ -2870,7 +2875,8 @@ The async\_compose function simplifies the implementation of composed asynchrono
 
 [section:async_connect async_connect]
 
-[indexterm1 asio.indexterm.async_connect..async_connect] 
+[indexterm1 asio.indexterm.async_connect..async_connect]
+
 The `async_connect` function is a composed asynchronous operation that establishes a socket connection by trying each endpoint in a sequence. 
 
 
@@ -3650,7 +3656,8 @@ if they are also supported by the socket's `async_connect` operation.
 
 [section:async_initiate async_initiate]
 
-[indexterm1 asio.indexterm.async_initiate..async_initiate] 
+[indexterm1 asio.indexterm.async_initiate..async_initiate]
+
 
   template<
       typename CompletionToken,
@@ -3675,7 +3682,8 @@ if they are also supported by the socket's `async_connect` operation.
 
 [section:async_read async_read]
 
-[indexterm1 asio.indexterm.async_read..async_read] 
+[indexterm1 asio.indexterm.async_read..async_read]
+
 The `async_read` function is a composed asynchronous operation that reads a certain amount of data from a stream before completion. 
 
 
@@ -4564,7 +4572,8 @@ if they are also supported by the `AsyncReadStream` type's `async_read_some` ope
 
 [section:async_read_at async_read_at]
 
-[indexterm1 asio.indexterm.async_read_at..async_read_at] 
+[indexterm1 asio.indexterm.async_read_at..async_read_at]
+
 The `async_read_at` function is a composed asynchronous operation that reads a certain amount of data at the specified offset. 
 
 
@@ -5029,7 +5038,8 @@ if they are also supported by the `AsyncRandomAccessReadDevice` type's async\_re
 
 [section:async_read_until async_read_until]
 
-[indexterm1 asio.indexterm.async_read_until..async_read_until] 
+[indexterm1 asio.indexterm.async_read_until..async_read_until]
+
 The `async_read_until` function is a composed asynchronous operation that reads data into a dynamic buffer sequence, or into a streambuf, until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
 
 
@@ -7152,7 +7162,8 @@ The return type of the initiating function is the future obtained from the packa
 
 [section:async_write async_write]
 
-[indexterm1 asio.indexterm.async_write..async_write] 
+[indexterm1 asio.indexterm.async_write..async_write]
+
 The `async_write` function is a composed asynchronous operation that writes a certain amount of data to a stream before completion. 
 
 
@@ -7997,7 +8008,8 @@ if they are also supported by the `AsyncWriteStream` type's `async_write_some` o
 
 [section:async_write_at async_write_at]
 
-[indexterm1 asio.indexterm.async_write_at..async_write_at] 
+[indexterm1 asio.indexterm.async_write_at..async_write_at]
+
 The `async_write_at` function is a composed asynchronous operation that writes a certain amount of data at the specified offset before completion. 
 
 
@@ -17400,6 +17412,11 @@ Provides file functionality.
   ]
 
   [
+    [[link asio.reference.basic_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
+  ]
+
+  [
     [[link asio.reference.basic_file.truncate [*truncate]] [static]]
     [Open the file with any existing contents truncated. ]
   ]
@@ -19000,6 +19017,23 @@ This function synchronises the file data and metadata to disk. Note that the sem
 
 [endsect]
 
+
+[section:sync_all_on_write basic_file::sync_all_on_write]
+
+
+['Inherited from file_base.]
+
+[indexterm2 asio.indexterm.basic_file.sync_all_on_write..sync_all_on_write..basic_file] 
+Open the file so that write operations automatically synchronise the file data and metadata to disk. 
+
+
+  static const flags sync_all_on_write = implementation_defined;
+
+
+
+[endsect]
+
+
 [section:sync_data basic_file::sync_data]
 
 [indexterm2 asio.indexterm.basic_file.sync_data..sync_data..basic_file] 
@@ -19334,6 +19368,11 @@ The file type when rebound to the specified executor.
   [
     [[link asio.reference.basic_file.read_write [*read_write]] [static]]
     [Open the file for reading and writing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
   ]
 
   [
@@ -20037,6 +20076,11 @@ Provides random-access file functionality.
   [
     [[link asio.reference.basic_random_access_file.read_write [*read_write]] [static]]
     [Open the file for reading and writing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_random_access_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
   ]
 
   [
@@ -22041,6 +22085,23 @@ This function synchronises the file data and metadata to disk. Note that the sem
 
 [endsect]
 
+
+[section:sync_all_on_write basic_random_access_file::sync_all_on_write]
+
+
+['Inherited from file_base.]
+
+[indexterm2 asio.indexterm.basic_random_access_file.sync_all_on_write..sync_all_on_write..basic_random_access_file] 
+Open the file so that write operations automatically synchronise the file data and metadata to disk. 
+
+
+  static const flags sync_all_on_write = implementation_defined;
+
+
+
+[endsect]
+
+
 [section:sync_data basic_random_access_file::sync_data]
 
 [indexterm2 asio.indexterm.basic_random_access_file.sync_data..sync_data..basic_random_access_file] 
@@ -22527,6 +22588,11 @@ The file type when rebound to the specified executor.
   [
     [[link asio.reference.basic_random_access_file.read_write [*read_write]] [static]]
     [Open the file for reading and writing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_random_access_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
   ]
 
   [
@@ -53007,6 +53073,11 @@ Provides stream-oriented file functionality.
   ]
 
   [
+    [[link asio.reference.basic_stream_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
+  ]
+
+  [
     [[link asio.reference.basic_stream_file.truncate [*truncate]] [static]]
     [Open the file with any existing contents truncated. ]
   ]
@@ -55101,6 +55172,23 @@ This function synchronises the file data and metadata to disk. Note that the sem
 
 [endsect]
 
+
+[section:sync_all_on_write basic_stream_file::sync_all_on_write]
+
+
+['Inherited from file_base.]
+
+[indexterm2 asio.indexterm.basic_stream_file.sync_all_on_write..sync_all_on_write..basic_stream_file] 
+Open the file so that write operations automatically synchronise the file data and metadata to disk. 
+
+
+  static const flags sync_all_on_write = implementation_defined;
+
+
+
+[endsect]
+
+
 [section:sync_data basic_stream_file::sync_data]
 
 [indexterm2 asio.indexterm.basic_stream_file.sync_data..sync_data..basic_stream_file] 
@@ -55584,6 +55672,11 @@ The file type when rebound to the specified executor.
   [
     [[link asio.reference.basic_stream_file.read_write [*read_write]] [static]]
     [Open the file for reading and writing. ]
+  ]
+
+  [
+    [[link asio.reference.basic_stream_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
   ]
 
   [
@@ -67548,7 +67641,8 @@ By default, when a yield context is used with an asynchronous operation, a non-s
 
 [section:bind_allocator bind_allocator]
 
-[indexterm1 asio.indexterm.bind_allocator..bind_allocator] 
+[indexterm1 asio.indexterm.bind_allocator..bind_allocator]
+
 Associate an object of type `T` with an allocator of type `Allocator`. 
 
 
@@ -67573,7 +67667,8 @@ Associate an object of type `T` with an allocator of type `Allocator`.
 
 [section:bind_cancellation_slot bind_cancellation_slot]
 
-[indexterm1 asio.indexterm.bind_cancellation_slot..bind_cancellation_slot] 
+[indexterm1 asio.indexterm.bind_cancellation_slot..bind_cancellation_slot]
+
 Associate an object of type `T` with a cancellation slot of type `CancellationSlot`. 
 
 
@@ -67597,7 +67692,8 @@ Associate an object of type `T` with a cancellation slot of type `CancellationSl
 
 [section:bind_executor bind_executor]
 
-[indexterm1 asio.indexterm.bind_executor..bind_executor] 
+[indexterm1 asio.indexterm.bind_executor..bind_executor]
+
 Associate an object of type `T` with an executor of type `Executor`. 
 
   template<
@@ -67670,7 +67766,8 @@ Associate an object of type `T` with an execution context's executor.
 
 [section:buffer buffer]
 
-[indexterm1 asio.indexterm.buffer..buffer] 
+[indexterm1 asio.indexterm.buffer..buffer]
+
 The `asio::buffer` function is used to create a buffer object to represent raw memory, an array of POD elements, a vector of POD elements, or a std::string. 
 
 
@@ -69219,7 +69316,8 @@ Obtain a buffer representing part of a registered buffer.
 
 [section:buffer_cast buffer_cast]
 
-[indexterm1 asio.indexterm.buffer_cast..buffer_cast] 
+[indexterm1 asio.indexterm.buffer_cast..buffer_cast]
+
 (Deprecated: Use the `data()` member function.) The `asio::buffer_cast` function is used to obtain a pointer to the underlying memory region associated with a buffer. 
 
 
@@ -69304,7 +69402,8 @@ Cast a non-modifiable buffer to a specified pointer to POD type.
 
 [section:buffer_copy buffer_copy]
 
-[indexterm1 asio.indexterm.buffer_copy..buffer_copy] 
+[indexterm1 asio.indexterm.buffer_copy..buffer_copy]
+
 The `asio::buffer_copy` function is used to copy bytes from a source buffer (or buffer sequence) to a target buffer (or buffer sequence). 
 
 
@@ -69863,7 +69962,8 @@ Unregisters the buffers.
 
 [section:buffer_sequence_begin buffer_sequence_begin]
 
-[indexterm1 asio.indexterm.buffer_sequence_begin..buffer_sequence_begin] 
+[indexterm1 asio.indexterm.buffer_sequence_begin..buffer_sequence_begin]
+
 The `asio::buffer_sequence_begin` function returns an iterator pointing to the first element in a buffer sequence. 
 
 
@@ -70019,7 +70119,8 @@ Get an iterator to the first element in a buffer sequence.
 
 [section:buffer_sequence_end buffer_sequence_end]
 
-[indexterm1 asio.indexterm.buffer_sequence_end..buffer_sequence_end] 
+[indexterm1 asio.indexterm.buffer_sequence_end..buffer_sequence_end]
+
 The `asio::buffer_sequence_end` function returns an iterator pointing to one past the end element in a buffer sequence. 
 
 
@@ -70176,7 +70277,8 @@ Get an iterator to one past the end element in a buffer sequence.
 
 [section:buffer_size buffer_size]
 
-[indexterm1 asio.indexterm.buffer_size..buffer_size] 
+[indexterm1 asio.indexterm.buffer_size..buffer_size]
+
 Get the total number of bytes in a buffer sequence. 
 
 
@@ -72588,7 +72690,8 @@ Write the given data to the stream. Returns the number of bytes written, or 0 if
 
 [section:buffers_begin buffers_begin]
 
-[indexterm1 asio.indexterm.buffers_begin..buffers_begin] 
+[indexterm1 asio.indexterm.buffers_begin..buffers_begin]
+
 Construct an iterator representing the beginning of the buffers' data. 
 
 
@@ -72611,7 +72714,8 @@ Construct an iterator representing the beginning of the buffers' data.
 
 [section:buffers_end buffers_end]
 
-[indexterm1 asio.indexterm.buffers_end..buffers_end] 
+[indexterm1 asio.indexterm.buffers_end..buffers_end]
+
 Construct an iterator representing the end of the buffers' data. 
 
 
@@ -74850,7 +74954,8 @@ This sub-slot is used with the operations that are being composed.
 
 [section:cancellation_type cancellation_type]
 
-[indexterm1 asio.indexterm.cancellation_type..cancellation_type] 
+[indexterm1 asio.indexterm.cancellation_type..cancellation_type]
+
 Enumeration representing the different types of cancellation that may be requested from or implemented by an asynchronous operation. 
 
   enum class cancellation_type : unsigned int
@@ -74905,7 +75010,8 @@ Enumeration representing the different types of cancellation that may be request
 
 [section:cancellation_type_t cancellation_type_t]
 
-[indexterm1 asio.indexterm.cancellation_type_t..cancellation_type_t] 
+[indexterm1 asio.indexterm.cancellation_type_t..cancellation_type_t]
+
 Portability typedef. 
 
 
@@ -74925,7 +75031,8 @@ Portability typedef.
 
 [section:co_spawn co_spawn]
 
-[indexterm1 asio.indexterm.co_spawn..co_spawn] 
+[indexterm1 asio.indexterm.co_spawn..co_spawn]
+
 Spawn a new coroutined-based thread of execution. 
 
   template<
@@ -75642,7 +75749,8 @@ The new thread of execution is created with a cancellation state that supports `
 
 [section:connect connect]
 
-[indexterm1 asio.indexterm.connect..connect] 
+[indexterm1 asio.indexterm.connect..connect]
+
 The `connect` function is a composed operation that establishes a socket connection by trying each endpoint in a sequence. 
 
 
@@ -76676,7 +76784,8 @@ It would be used with the `asio::connect` function as follows:
 
 [section:connect_pipe connect_pipe]
 
-[indexterm1 asio.indexterm.connect_pipe..connect_pipe] 
+[indexterm1 asio.indexterm.connect_pipe..connect_pipe]
+
 Connect two pipe ends using an anonymous pipe. 
 
   template<
@@ -78067,7 +78176,8 @@ Returns true if the coroutine is the parent of a fork.
 
 [section:deadline_timer deadline_timer]
 
-[indexterm1 asio.indexterm.deadline_timer..deadline_timer] 
+[indexterm1 asio.indexterm.deadline_timer..deadline_timer]
+
 Typedef for the typical usage of timer. Uses a UTC clock. 
 
 
@@ -78348,7 +78458,8 @@ If `T` has a nested type `default_completion_token_type`, `T::default_completion
 
 [section:defer defer]
 
-[indexterm1 asio.indexterm.defer..defer] 
+[indexterm1 asio.indexterm.defer..defer]
+
 Submits a completion token or function object for execution. 
 
   template<
@@ -78538,7 +78649,8 @@ Submits a completion token or function object for execution.
 
 [section:detached detached]
 
-[indexterm1 asio.indexterm.detached..detached] 
+[indexterm1 asio.indexterm.detached..detached]
+
 A special value, similar to std::nothrow. 
 
 
@@ -78812,7 +78924,8 @@ Convert the specified executor to the inner executor type, then use that to cons
 
 [section:disable_cancellation disable_cancellation]
 
-[indexterm1 asio.indexterm.disable_cancellation..disable_cancellation] 
+[indexterm1 asio.indexterm.disable_cancellation..disable_cancellation]
+
 A cancellation filter that disables cancellation. 
 
 
@@ -78843,7 +78956,8 @@ A cancellation filter that disables cancellation.
 
 [section:dispatch dispatch]
 
-[indexterm1 asio.indexterm.dispatch..dispatch] 
+[indexterm1 asio.indexterm.dispatch..dispatch]
+
 Submits a completion token or function object for execution. 
 
   template<
@@ -79028,7 +79142,8 @@ Submits a completion token or function object for execution.
 
 [section:dynamic_buffer dynamic_buffer]
 
-[indexterm1 asio.indexterm.dynamic_buffer..dynamic_buffer] 
+[indexterm1 asio.indexterm.dynamic_buffer..dynamic_buffer]
+
 The `asio::dynamic_buffer` function is used to create a dynamically resized buffer from a `std::basic_string` or `std::vector`. 
 
 
@@ -80570,7 +80685,8 @@ Erases `n` bytes from the end of the vector by resizing the vector object. If `n
 
 [section:enable_partial_cancellation enable_partial_cancellation]
 
-[indexterm1 asio.indexterm.enable_partial_cancellation..enable_partial_cancellation] 
+[indexterm1 asio.indexterm.enable_partial_cancellation..enable_partial_cancellation]
+
 A cancellation filter that enables terminal and partial cancellation. 
 
 
@@ -80602,7 +80718,8 @@ A cancellation filter that enables terminal and partial cancellation.
 
 [section:enable_terminal_cancellation enable_terminal_cancellation]
 
-[indexterm1 asio.indexterm.enable_terminal_cancellation..enable_terminal_cancellation] 
+[indexterm1 asio.indexterm.enable_terminal_cancellation..enable_terminal_cancellation]
+
 A cancellation filter that enables terminal cancellation only. 
 
 
@@ -80634,7 +80751,8 @@ A cancellation filter that enables terminal cancellation only.
 
 [section:enable_total_cancellation enable_total_cancellation]
 
-[indexterm1 asio.indexterm.enable_total_cancellation..enable_total_cancellation] 
+[indexterm1 asio.indexterm.enable_total_cancellation..enable_total_cancellation]
+
 A cancellation filter that enables terminal, partial and total cancellation. 
 
 
@@ -80666,7 +80784,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__addrinfo_category error::addrinfo_category]
 
-[indexterm1 asio.indexterm.error__addrinfo_category..error::addrinfo_category] 
+[indexterm1 asio.indexterm.error__addrinfo_category..error::addrinfo_category]
+
 
   static const asio::error_category & addrinfo_category = asio::error::get_addrinfo_category();
 
@@ -80684,7 +80803,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__addrinfo_errors error::addrinfo_errors]
 
-[indexterm1 asio.indexterm.error__addrinfo_errors..error::addrinfo_errors] 
+[indexterm1 asio.indexterm.error__addrinfo_errors..error::addrinfo_errors]
+
   enum addrinfo_errors
 
 [indexterm2 asio.indexterm.error__addrinfo_errors.service_not_found..service_not_found..error::addrinfo_errors]
@@ -80719,7 +80839,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__basic_errors error::basic_errors]
 
-[indexterm1 asio.indexterm.error__basic_errors..error::basic_errors] 
+[indexterm1 asio.indexterm.error__basic_errors..error::basic_errors]
+
   enum basic_errors
 
 [indexterm2 asio.indexterm.error__basic_errors.access_denied..access_denied..error::basic_errors]
@@ -80946,7 +81067,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__get_addrinfo_category error::get_addrinfo_category]
 
-[indexterm1 asio.indexterm.error__get_addrinfo_category..error::get_addrinfo_category] 
+[indexterm1 asio.indexterm.error__get_addrinfo_category..error::get_addrinfo_category]
+
 
   const asio::error_category & get_addrinfo_category();
 
@@ -80964,7 +81086,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__get_misc_category error::get_misc_category]
 
-[indexterm1 asio.indexterm.error__get_misc_category..error::get_misc_category] 
+[indexterm1 asio.indexterm.error__get_misc_category..error::get_misc_category]
+
 
   const asio::error_category & get_misc_category();
 
@@ -80982,7 +81105,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__get_netdb_category error::get_netdb_category]
 
-[indexterm1 asio.indexterm.error__get_netdb_category..error::get_netdb_category] 
+[indexterm1 asio.indexterm.error__get_netdb_category..error::get_netdb_category]
+
 
   const asio::error_category & get_netdb_category();
 
@@ -81000,7 +81124,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__get_ssl_category error::get_ssl_category]
 
-[indexterm1 asio.indexterm.error__get_ssl_category..error::get_ssl_category] 
+[indexterm1 asio.indexterm.error__get_ssl_category..error::get_ssl_category]
+
 
   const asio::error_category & get_ssl_category();
 
@@ -81018,7 +81143,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__get_system_category error::get_system_category]
 
-[indexterm1 asio.indexterm.error__get_system_category..error::get_system_category] 
+[indexterm1 asio.indexterm.error__get_system_category..error::get_system_category]
+
 
   const asio::error_category & get_system_category();
 
@@ -81035,7 +81161,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__make_error_code error::make_error_code]
 
-[indexterm1 asio.indexterm.error__make_error_code..error::make_error_code] 
+[indexterm1 asio.indexterm.error__make_error_code..error::make_error_code]
+
   asio::error_code ``[link asio.reference.error__make_error_code.overload1 make_error_code]``(
       basic_errors e);
   ``  [''''&raquo;''' [link asio.reference.error__make_error_code.overload1 more...]]``
@@ -81132,7 +81259,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__misc_category error::misc_category]
 
-[indexterm1 asio.indexterm.error__misc_category..error::misc_category] 
+[indexterm1 asio.indexterm.error__misc_category..error::misc_category]
+
 
   static const asio::error_category & misc_category = asio::error::get_misc_category();
 
@@ -81150,7 +81278,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__misc_errors error::misc_errors]
 
-[indexterm1 asio.indexterm.error__misc_errors..error::misc_errors] 
+[indexterm1 asio.indexterm.error__misc_errors..error::misc_errors]
+
   enum misc_errors
 
 [indexterm2 asio.indexterm.error__misc_errors.already_open..already_open..error::misc_errors]
@@ -81197,7 +81326,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__netdb_category error::netdb_category]
 
-[indexterm1 asio.indexterm.error__netdb_category..error::netdb_category] 
+[indexterm1 asio.indexterm.error__netdb_category..error::netdb_category]
+
 
   static const asio::error_category & netdb_category = asio::error::get_netdb_category();
 
@@ -81215,7 +81345,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__netdb_errors error::netdb_errors]
 
-[indexterm1 asio.indexterm.error__netdb_errors..error::netdb_errors] 
+[indexterm1 asio.indexterm.error__netdb_errors..error::netdb_errors]
+
   enum netdb_errors
 
 [indexterm2 asio.indexterm.error__netdb_errors.host_not_found..host_not_found..error::netdb_errors]
@@ -81262,7 +81393,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__ssl_category error::ssl_category]
 
-[indexterm1 asio.indexterm.error__ssl_category..error::ssl_category] 
+[indexterm1 asio.indexterm.error__ssl_category..error::ssl_category]
+
 
   static const asio::error_category & ssl_category = asio::error::get_ssl_category();
 
@@ -81280,7 +81412,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__ssl_errors error::ssl_errors]
 
-[indexterm1 asio.indexterm.error__ssl_errors..error::ssl_errors] 
+[indexterm1 asio.indexterm.error__ssl_errors..error::ssl_errors]
+
   enum ssl_errors
 
 
@@ -81297,7 +81430,8 @@ A cancellation filter that enables terminal, partial and total cancellation.
 
 [section:error__system_category error::system_category]
 
-[indexterm1 asio.indexterm.error__system_category..error::system_category] 
+[indexterm1 asio.indexterm.error__system_category..error::system_category]
+
 
   static const asio::error_category & system_category = asio::error::get_system_category();
 
@@ -81822,7 +81956,8 @@ Get the error value.
 
 [section:execution__allocator execution::allocator]
 
-[indexterm1 asio.indexterm.execution__allocator..execution::allocator] 
+[indexterm1 asio.indexterm.execution__allocator..execution::allocator]
+
 A special value used for accessing the [link asio.reference.execution__allocator_t `execution::allocator_t`] property. 
 
 
@@ -82790,7 +82925,8 @@ Obtain message associated with exception.
 
 [section:execution__blocking execution::blocking]
 
-[indexterm1 asio.indexterm.execution__blocking..execution::blocking] 
+[indexterm1 asio.indexterm.execution__blocking..execution::blocking]
+
 A special value used for accessing the [link asio.reference.execution__blocking_t `execution::blocking_t`] property. 
 
 
@@ -82810,7 +82946,8 @@ A special value used for accessing the [link asio.reference.execution__blocking_
 
 [section:execution__blocking_adaptation execution::blocking_adaptation]
 
-[indexterm1 asio.indexterm.execution__blocking_adaptation..execution::blocking_adaptation] 
+[indexterm1 asio.indexterm.execution__blocking_adaptation..execution::blocking_adaptation]
+
 A special value used for accessing the [link asio.reference.execution__blocking_adaptation_t `execution::blocking_adaptation_t`] property. 
 
 
@@ -84347,7 +84484,8 @@ Get the value associated with a property object.
 
 [section:execution__bulk_execute execution::bulk_execute]
 
-[indexterm1 asio.indexterm.execution__bulk_execute..execution::bulk_execute] 
+[indexterm1 asio.indexterm.execution__bulk_execute..execution::bulk_execute]
+
 A customisation point that creates a bulk sender. 
 
 
@@ -84403,7 +84541,8 @@ The name `execution::bulk_execute` denotes a customisation point object. If `is_
 
 [section:execution__bulk_guarantee execution::bulk_guarantee]
 
-[indexterm1 asio.indexterm.execution__bulk_guarantee..execution::bulk_guarantee] 
+[indexterm1 asio.indexterm.execution__bulk_guarantee..execution::bulk_guarantee]
+
 A special value used for accessing the [link asio.reference.execution__bulk_guarantee_t `execution::bulk_guarantee_t`] property. 
 
 
@@ -85512,7 +85651,8 @@ Class template `can_submit` is a trait that is derived from `true_type` if the e
 
 [section:execution__connect execution::connect]
 
-[indexterm1 asio.indexterm.execution__connect..execution::connect] 
+[indexterm1 asio.indexterm.execution__connect..execution::connect]
+
 A customisation point that connects a sender to a receiver. 
 
 
@@ -85647,7 +85787,8 @@ The type of the expression `execution::connect(std::declval<S>(), std::declval<R
 
 [section:execution__context execution::context]
 
-[indexterm1 asio.indexterm.execution__context..execution::context] 
+[indexterm1 asio.indexterm.execution__context..execution::context]
+
 A special value used for accessing the [link asio.reference.execution__context_t `execution::context_t`] property. 
 
 
@@ -85667,7 +85808,8 @@ A special value used for accessing the [link asio.reference.execution__context_t
 
 [section:execution__context_as execution::context_as]
 
-[indexterm1 asio.indexterm.execution__context_as..execution::context_as] 
+[indexterm1 asio.indexterm.execution__context_as..execution::context_as]
+
 A special value used for accessing the [link asio.reference.execution__context_as_t `execution::context_as_t`] property. 
 
 
@@ -85928,7 +86070,8 @@ The type returned by queries against an `any_executor`.
 
 [section:execution__execute execution::execute]
 
-[indexterm1 asio.indexterm.execution__execute..execution::execute] 
+[indexterm1 asio.indexterm.execution__execute..execution::execute]
+
 A customisation point that executes a function on an executor. 
 
 
@@ -86369,7 +86512,8 @@ Class template `is_typed_sender` is a type trait that is derived from `true_type
 
 [section:execution__mapping execution::mapping]
 
-[indexterm1 asio.indexterm.execution__mapping..execution::mapping] 
+[indexterm1 asio.indexterm.execution__mapping..execution::mapping]
+
 A special value used for accessing the [link asio.reference.execution__mapping_t `execution::mapping_t`] property. 
 
 
@@ -87255,7 +87399,8 @@ Get the value associated with a property object.
 
 [section:execution__occupancy execution::occupancy]
 
-[indexterm1 asio.indexterm.execution__occupancy..execution::occupancy] 
+[indexterm1 asio.indexterm.execution__occupancy..execution::occupancy]
+
 A special value used for accessing the [link asio.reference.execution__occupancy_t `execution::occupancy_t`] property. 
 
 
@@ -87394,7 +87539,8 @@ The type returned by queries against an `any_executor`.
 
 [section:execution__outstanding_work execution::outstanding_work]
 
-[indexterm1 asio.indexterm.execution__outstanding_work..execution::outstanding_work] 
+[indexterm1 asio.indexterm.execution__outstanding_work..execution::outstanding_work]
+
 A special value used for accessing the [link asio.reference.execution__outstanding_work_t `execution::outstanding_work_t`] property. 
 
 
@@ -88232,7 +88378,8 @@ Constructor.
 
 [section:execution__relationship execution::relationship]
 
-[indexterm1 asio.indexterm.execution__relationship..execution::relationship] 
+[indexterm1 asio.indexterm.execution__relationship..execution::relationship]
+
 A special value used for accessing the [link asio.reference.execution__relationship_t `execution::relationship_t`] property. 
 
 
@@ -88903,7 +89050,8 @@ Get the value associated with a property object.
 
 [section:execution__schedule execution::schedule]
 
-[indexterm1 asio.indexterm.execution__schedule..execution::schedule] 
+[indexterm1 asio.indexterm.execution__schedule..execution::schedule]
+
 A customisation point that is used to obtain a sender from a scheduler. 
 
 
@@ -88939,7 +89087,8 @@ The name `execution::schedule` denotes a customisation point object. For some su
 
 [section:execution__sender_base execution::sender_base]
 
-[indexterm1 asio.indexterm.execution__sender_base..execution::sender_base] 
+[indexterm1 asio.indexterm.execution__sender_base..execution::sender_base]
+
 Base class used for tagging senders. 
 
 
@@ -88982,7 +89131,8 @@ Traits for senders.
 
 [section:execution__set_done execution::set_done]
 
-[indexterm1 asio.indexterm.execution__set_done..execution::set_done] 
+[indexterm1 asio.indexterm.execution__set_done..execution::set_done]
+
 A customisation point that delivers a done notification to a receiver. 
 
 
@@ -89015,7 +89165,8 @@ The name `execution::set_done` denotes a customisation point object. The express
 
 [section:execution__set_error execution::set_error]
 
-[indexterm1 asio.indexterm.execution__set_error..execution::set_error] 
+[indexterm1 asio.indexterm.execution__set_error..execution::set_error]
+
 A customisation point that delivers an error notification to a receiver. 
 
 
@@ -89048,7 +89199,8 @@ The name `execution::set_error` denotes a customisation point object. The expres
 
 [section:execution__set_value execution::set_value]
 
-[indexterm1 asio.indexterm.execution__set_value..execution::set_value] 
+[indexterm1 asio.indexterm.execution__set_value..execution::set_value]
+
 A customisation point that delivers a value to a receiver. 
 
 
@@ -89081,7 +89233,8 @@ The name `execution::set_value` denotes a customisation point object. The expres
 
 [section:execution__start execution::start]
 
-[indexterm1 asio.indexterm.execution__start..execution::start] 
+[indexterm1 asio.indexterm.execution__start..execution::start]
+
 A customisation point that notifies an operation state object to start its associated operation. 
 
 
@@ -89114,7 +89267,8 @@ The name `execution::start` denotes a customisation point object. The expression
 
 [section:execution__submit execution::submit]
 
-[indexterm1 asio.indexterm.execution__submit..execution::submit] 
+[indexterm1 asio.indexterm.execution__submit..execution::submit]
+
 A customisation point that submits a sender to a receiver. 
 
 
@@ -90716,7 +90870,8 @@ Destructor.
 
 [section:executor_arg executor_arg]
 
-[indexterm1 asio.indexterm.executor_arg..executor_arg] 
+[indexterm1 asio.indexterm.executor_arg..executor_arg]
+
 A special value, similar to std::nothrow, used to disambiguate constructors that accept executor arguments. 
 
 
@@ -91690,7 +91845,8 @@ Unless the object has already been reset, or is in a moved-from state, calls `on
 
 [section:experimental__append experimental::append]
 
-[indexterm1 asio.indexterm.experimental__append..experimental::append] 
+[indexterm1 asio.indexterm.experimental__append..experimental::append]
+
 Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
 
 
@@ -91808,7 +91964,8 @@ Constructor.
 
 [section:experimental__as_single experimental::as_single]
 
-[indexterm1 asio.indexterm.experimental__as_single..experimental::as_single] 
+[indexterm1 asio.indexterm.experimental__as_single..experimental::as_single]
+
 Create a completion token to specify that the completion handler arguments should be combined into a single argument. 
 
 
@@ -92187,7 +92344,8 @@ Convert the specified executor to the inner executor type, then use that to cons
 
 [section:experimental__as_tuple experimental::as_tuple]
 
-[indexterm1 asio.indexterm.experimental__as_tuple..experimental::as_tuple] 
+[indexterm1 asio.indexterm.experimental__as_tuple..experimental::as_tuple]
+
 Create a completion token to specify that the completion handler arguments should be combined into a single tuple argument. 
 
 
@@ -92525,7 +92683,8 @@ Construct the adapted executor from the inner executor type.
 
 [section:experimental__awaitable_operators__operator__amp__amp_ experimental::awaitable_operators::operator &&]
 
-[indexterm1 asio.indexterm.experimental__awaitable_operators__operator__amp__amp_..experimental::awaitable_operators::operator &&] 
+[indexterm1 asio.indexterm.experimental__awaitable_operators__operator__amp__amp_..experimental::awaitable_operators::operator &&]
+
 Wait for both operations to succeed. 
 
   template<
@@ -92714,7 +92873,8 @@ If one operations fails, the other is cancelled as the AND-condition can no long
 
 [section:experimental__awaitable_operators__operator_pipe__pipe_ experimental::awaitable_operators::operator||]
 
-[indexterm1 asio.indexterm.experimental__awaitable_operators__operator_pipe__pipe_..experimental::awaitable_operators::operator||] 
+[indexterm1 asio.indexterm.experimental__awaitable_operators__operator_pipe__pipe_..experimental::awaitable_operators::operator||]
+
 Wait for one operation to succeed. 
 
   template<
@@ -94858,7 +95018,8 @@ This nested structure must have a single nested type `other` that aliases a trai
 
 [section:experimental__co_spawn experimental::co_spawn]
 
-[indexterm1 asio.indexterm.experimental__co_spawn..experimental::co_spawn] 
+[indexterm1 asio.indexterm.experimental__co_spawn..experimental::co_spawn]
+
 Spawn a resumable coroutine. 
 
   template<
@@ -95655,7 +95816,8 @@ Whether or not the coroutine is noexcept.
 
 [section:experimental__deferred experimental::deferred]
 
-[indexterm1 asio.indexterm.experimental__deferred..experimental::deferred] 
+[indexterm1 asio.indexterm.experimental__deferred..experimental::deferred]
+
 A special value, similar to std::nothrow. 
 
 
@@ -96513,7 +96675,8 @@ Encapsulates deferred values.
 
 [section:experimental__error__channel_category experimental::error::channel_category]
 
-[indexterm1 asio.indexterm.experimental__error__channel_category..experimental::error::channel_category] 
+[indexterm1 asio.indexterm.experimental__error__channel_category..experimental::error::channel_category]
+
 
   static const asio::error_category & channel_category = asio::experimental::error::get_channel_category();
 
@@ -96531,7 +96694,8 @@ Encapsulates deferred values.
 
 [section:experimental__error__channel_errors experimental::error::channel_errors]
 
-[indexterm1 asio.indexterm.experimental__error__channel_errors..experimental::error::channel_errors] 
+[indexterm1 asio.indexterm.experimental__error__channel_errors..experimental::error::channel_errors]
+
   enum channel_errors
 
 [indexterm2 asio.indexterm.experimental__error__channel_errors.channel_closed..channel_closed..experimental::error::channel_errors]
@@ -96566,7 +96730,8 @@ Encapsulates deferred values.
 
 [section:experimental__error__get_channel_category experimental::error::get_channel_category]
 
-[indexterm1 asio.indexterm.experimental__error__get_channel_category..experimental::error::get_channel_category] 
+[indexterm1 asio.indexterm.experimental__error__get_channel_category..experimental::error::get_channel_category]
+
 
   const asio::error_category & get_channel_category();
 
@@ -96584,7 +96749,8 @@ Encapsulates deferred values.
 
 [section:experimental__error__make_error_code experimental::error::make_error_code]
 
-[indexterm1 asio.indexterm.experimental__error__make_error_code..experimental::error::make_error_code] 
+[indexterm1 asio.indexterm.experimental__error__make_error_code..experimental::error::make_error_code]
+
 
   asio::error_code make_error_code(
       channel_errors e);
@@ -96666,7 +96832,8 @@ Trait for detecting objects that are usable as deferred operations.
 
 [section:experimental__is_promise_c experimental::is_promise_c]
 
-[indexterm1 asio.indexterm.experimental__is_promise_c..experimental::is_promise_c] 
+[indexterm1 asio.indexterm.experimental__is_promise_c..experimental::is_promise_c]
+
 
   concept is_promise_c =is_promise_v<std::remove_reference_t<T>>;
 
@@ -96684,7 +96851,8 @@ Trait for detecting objects that are usable as deferred operations.
 
 [section:experimental__is_promise_v experimental::is_promise_v]
 
-[indexterm1 asio.indexterm.experimental__is_promise_v..experimental::is_promise_v] 
+[indexterm1 asio.indexterm.experimental__is_promise_v..experimental::is_promise_v]
+
 
   constexpr bool is_promise_v =is_promise<T>::value;
 
@@ -96702,7 +96870,8 @@ Trait for detecting objects that are usable as deferred operations.
 
 [section:experimental__make_parallel_group experimental::make_parallel_group]
 
-[indexterm1 asio.indexterm.experimental__make_parallel_group..experimental::make_parallel_group] 
+[indexterm1 asio.indexterm.experimental__make_parallel_group..experimental::make_parallel_group]
+
 Create a group of operations that may be launched in parallel. 
 
 
@@ -96763,7 +96932,8 @@ For example:
 
 [section:experimental__operator_pipe_ experimental::operator|]
 
-[indexterm1 asio.indexterm.experimental__operator_pipe_..experimental::operator|] 
+[indexterm1 asio.indexterm.experimental__operator_pipe_..experimental::operator|]
+
 Pipe operator used to chain deferred operations. 
 
 
@@ -96923,7 +97093,8 @@ The completion signature for the group of operations.
 
 [section:experimental__prepend experimental::prepend]
 
-[indexterm1 asio.indexterm.experimental__prepend..experimental::prepend] 
+[indexterm1 asio.indexterm.experimental__prepend..experimental::prepend]
+
 Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
 
 
@@ -97505,7 +97676,8 @@ The primary template is not defined.
 
 [section:experimental__use_coro experimental::use_coro]
 
-[indexterm1 asio.indexterm.experimental__use_coro..experimental::use_coro] 
+[indexterm1 asio.indexterm.experimental__use_coro..experimental::use_coro]
+
 A completion token object that represents the currently executing resumable coroutine. 
 
 
@@ -97795,7 +97967,8 @@ Construct the adapted executor from the inner executor type.
 
 [section:experimental__use_promise experimental::use_promise]
 
-[indexterm1 asio.indexterm.experimental__use_promise..experimental::use_promise] 
+[indexterm1 asio.indexterm.experimental__use_promise..experimental::use_promise]
+
 
   constexpr use_promise_t use_promise;
 
@@ -98256,6 +98429,11 @@ The [link asio.reference.file_base `file_base`] class is used as a base for the 
   ]
 
   [
+    [[link asio.reference.file_base.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
+  ]
+
+  [
     [[link asio.reference.file_base.truncate [*truncate]] [static]]
     [Open the file with any existing contents truncated. ]
   ]
@@ -98395,6 +98573,20 @@ Basis for seeking in a file.
   ]
 
 ]
+
+
+
+[endsect]
+
+
+
+[section:sync_all_on_write file_base::sync_all_on_write]
+
+[indexterm2 asio.indexterm.file_base.sync_all_on_write..sync_all_on_write..file_base] 
+Open the file so that write operations automatically synchronise the file data and metadata to disk. 
+
+
+  static const flags sync_all_on_write = implementation_defined;
 
 
 
@@ -102448,7 +102640,8 @@ Obtain an identifier for the type of the protocol.
 
 [section:get_associated_allocator get_associated_allocator]
 
-[indexterm1 asio.indexterm.get_associated_allocator..get_associated_allocator] 
+[indexterm1 asio.indexterm.get_associated_allocator..get_associated_allocator]
+
 Helper function to obtain an object's associated allocator. 
 
   template<
@@ -102525,7 +102718,8 @@ Helper function to obtain an object's associated allocator.
 
 [section:get_associated_cancellation_slot get_associated_cancellation_slot]
 
-[indexterm1 asio.indexterm.get_associated_cancellation_slot..get_associated_cancellation_slot] 
+[indexterm1 asio.indexterm.get_associated_cancellation_slot..get_associated_cancellation_slot]
+
 Helper function to obtain an object's associated [link asio.reference.cancellation_slot `cancellation_slot`]. 
 
   template<
@@ -102602,7 +102796,8 @@ Helper function to obtain an object's associated [link asio.reference.cancellati
 
 [section:get_associated_executor get_associated_executor]
 
-[indexterm1 asio.indexterm.get_associated_executor..get_associated_executor] 
+[indexterm1 asio.indexterm.get_associated_executor..get_associated_executor]
+
 Helper function to obtain an object's associated executor. 
 
   template<
@@ -102718,7 +102913,8 @@ Helper function to obtain an object's associated executor.
 
 [section:high_resolution_timer high_resolution_timer]
 
-[indexterm1 asio.indexterm.high_resolution_timer..high_resolution_timer] 
+[indexterm1 asio.indexterm.high_resolution_timer..high_resolution_timer]
+
 Typedef for a timer based on the high resolution clock. 
 
 
@@ -106682,7 +106878,8 @@ The destructor is used to inform the [link asio.reference.io_context `io_context
 
 [section:io_service io_service]
 
-[indexterm1 asio.indexterm.io_service..io_service] 
+[indexterm1 asio.indexterm.io_service..io_service]
+
 Typedef for backwards compatibility. 
 
 
@@ -109149,7 +109346,8 @@ The type used to represent an address as an unsigned integer.
 
 [section:ip__address_v4_iterator ip::address_v4_iterator]
 
-[indexterm1 asio.indexterm.ip__address_v4_iterator..ip::address_v4_iterator] 
+[indexterm1 asio.indexterm.ip__address_v4_iterator..ip::address_v4_iterator]
+
 An input iterator that can be used for traversing IPv4 addresses. 
 
 
@@ -109280,7 +109478,8 @@ In addition to satisfying the input iterator requirements, this iterator also su
 
 [section:ip__address_v4_range ip::address_v4_range]
 
-[indexterm1 asio.indexterm.ip__address_v4_range..ip::address_v4_range] 
+[indexterm1 asio.indexterm.ip__address_v4_range..ip::address_v4_range]
+
 Represents a range of IPv4 addresses. 
 
 
@@ -110596,7 +110795,8 @@ Get the address as a string.
 
 [section:ip__address_v6_iterator ip::address_v6_iterator]
 
-[indexterm1 asio.indexterm.ip__address_v6_iterator..ip::address_v6_iterator] 
+[indexterm1 asio.indexterm.ip__address_v6_iterator..ip::address_v6_iterator]
+
 An input iterator that can be used for traversing IPv6 addresses. 
 
 
@@ -110727,7 +110927,8 @@ In addition to satisfying the input iterator requirements, this iterator also su
 
 [section:ip__address_v6_range ip::address_v6_range]
 
-[indexterm1 asio.indexterm.ip__address_v6_range..ip::address_v6_range] 
+[indexterm1 asio.indexterm.ip__address_v6_range..ip::address_v6_range]
+
 Represents a range of IPv6 addresses. 
 
 
@@ -119794,7 +119995,8 @@ The [link asio.reference.ip__basic_resolver_entry `ip::basic_resolver_entry`] cl
 
 [section:ip__host_name ip::host_name]
 
-[indexterm1 asio.indexterm.ip__host_name..ip::host_name] 
+[indexterm1 asio.indexterm.ip__host_name..ip::host_name]
+
 Get the current host name. 
 
   std::string ``[link asio.reference.ip__host_name.overload1 host_name]``();
@@ -120844,7 +121046,8 @@ Construct to represent the IPv6 ICMP protocol.
 
 [section:ip__multicast__enable_loopback ip::multicast::enable_loopback]
 
-[indexterm1 asio.indexterm.ip__multicast__enable_loopback..ip::multicast::enable_loopback] 
+[indexterm1 asio.indexterm.ip__multicast__enable_loopback..ip::multicast::enable_loopback]
+
 Socket option determining whether outgoing multicast packets will be received on the same socket if it is a member of the multicast group. 
 
 
@@ -120895,7 +121098,8 @@ Getting the current option value:
 
 [section:ip__multicast__hops ip::multicast::hops]
 
-[indexterm1 asio.indexterm.ip__multicast__hops..ip::multicast::hops] 
+[indexterm1 asio.indexterm.ip__multicast__hops..ip::multicast::hops]
+
 Socket option for time-to-live associated with outgoing multicast packets. 
 
 
@@ -120946,7 +121150,8 @@ Getting the current option value:
 
 [section:ip__multicast__join_group ip::multicast::join_group]
 
-[indexterm1 asio.indexterm.ip__multicast__join_group..ip::multicast::join_group] 
+[indexterm1 asio.indexterm.ip__multicast__join_group..ip::multicast::join_group]
+
 Socket option to join a multicast group on a specified interface. 
 
 
@@ -120987,7 +121192,8 @@ Setting the option to join a multicast group:
 
 [section:ip__multicast__leave_group ip::multicast::leave_group]
 
-[indexterm1 asio.indexterm.ip__multicast__leave_group..ip::multicast::leave_group] 
+[indexterm1 asio.indexterm.ip__multicast__leave_group..ip::multicast::leave_group]
+
 Socket option to leave a multicast group on a specified interface. 
 
 
@@ -121028,7 +121234,8 @@ Setting the option to leave a multicast group:
 
 [section:ip__multicast__outbound_interface ip::multicast::outbound_interface]
 
-[indexterm1 asio.indexterm.ip__multicast__outbound_interface..ip::multicast::outbound_interface] 
+[indexterm1 asio.indexterm.ip__multicast__outbound_interface..ip::multicast::outbound_interface]
+
 Socket option for local interface to use for outgoing multicast packets. 
 
 
@@ -122176,7 +122383,8 @@ Get the network as an address in dotted decimal format.
 
 [section:ip__port_type ip::port_type]
 
-[indexterm1 asio.indexterm.ip__port_type..ip::port_type] 
+[indexterm1 asio.indexterm.ip__port_type..ip::port_type]
+
 Type used for storing port numbers. 
 
 
@@ -122658,7 +122866,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:ip__scope_id_type ip::scope_id_type]
 
-[indexterm1 asio.indexterm.ip__scope_id_type..ip::scope_id_type] 
+[indexterm1 asio.indexterm.ip__scope_id_type..ip::scope_id_type]
+
 Type used for storing IPv6 scope IDs. 
 
 
@@ -125280,7 +125489,8 @@ Construct to represent the IPv6 UDP protocol.
 
 [section:ip__unicast__hops ip::unicast::hops]
 
-[indexterm1 asio.indexterm.ip__unicast__hops..ip::unicast::hops] 
+[indexterm1 asio.indexterm.ip__unicast__hops..ip::unicast::hops]
+
 Socket option for time-to-live associated with outgoing unicast packets. 
 
 
@@ -125331,7 +125541,8 @@ Getting the current option value:
 
 [section:ip__v4_mapped_t ip::v4_mapped_t]
 
-[indexterm1 asio.indexterm.ip__v4_mapped_t..ip::v4_mapped_t] 
+[indexterm1 asio.indexterm.ip__v4_mapped_t..ip::v4_mapped_t]
+
 Tag type used for distinguishing overloads that deal in IPv4-mapped IPv6 addresses. 
 
   enum v4_mapped_t
@@ -125362,7 +125573,8 @@ Tag type used for distinguishing overloads that deal in IPv4-mapped IPv6 address
 
 [section:ip__v6_only ip::v6_only]
 
-[indexterm1 asio.indexterm.ip__v6_only..ip::v6_only] 
+[indexterm1 asio.indexterm.ip__v6_only..ip::v6_only]
+
 Socket option for determining whether an IPv6 socket supports IPv6 communication only. 
 
 
@@ -126493,7 +126705,8 @@ Get the underlying size of the endpoint in the native type.
 
 [section:local__connect_pair local::connect_pair]
 
-[indexterm1 asio.indexterm.local__connect_pair..local::connect_pair] 
+[indexterm1 asio.indexterm.local__connect_pair..local::connect_pair]
+
 Create a pair of connected sockets. 
 
   template<
@@ -128497,7 +128710,8 @@ Obtain an identifier for the type of the protocol.
 
 [section:make_strand make_strand]
 
-[indexterm1 asio.indexterm.make_strand..make_strand] 
+[indexterm1 asio.indexterm.make_strand..make_strand]
+
 The `asio::make_strand` function creates a [link asio.reference.strand `strand`]  object for an executor or execution context. 
 
 
@@ -128565,7 +128779,8 @@ Create a [link asio.reference.strand `strand`]  object for an execution context.
 
 [section:make_work_guard make_work_guard]
 
-[indexterm1 asio.indexterm.make_work_guard..make_work_guard] 
+[indexterm1 asio.indexterm.make_work_guard..make_work_guard]
+
 Create an [link asio.reference.executor_work_guard `executor_work_guard`]  object. 
 
   template<
@@ -129817,7 +130032,8 @@ The `data()` member function permits violations of type safety, so uses of it in
 
 [section:operator_lt__lt_ operator<<]
 
-[indexterm1 asio.indexterm.operator_lt__lt_..operator<<] 
+[indexterm1 asio.indexterm.operator_lt__lt_..operator<<]
+
 Output an error code. 
 
 
@@ -129842,7 +130058,8 @@ Output an error code.
 
 [section:placeholders__bytes_transferred placeholders::bytes_transferred]
 
-[indexterm1 asio.indexterm.placeholders__bytes_transferred..placeholders::bytes_transferred] 
+[indexterm1 asio.indexterm.placeholders__bytes_transferred..placeholders::bytes_transferred]
+
 An argument placeholder, for use with boost::bind(), that corresponds to the bytes\_transferred argument of a handler for asynchronous functions such as `asio::basic_stream_socket::async_write_some` or `asio::async_write`. 
 
 
@@ -129862,7 +130079,8 @@ An argument placeholder, for use with boost::bind(), that corresponds to the byt
 
 [section:placeholders__endpoint placeholders::endpoint]
 
-[indexterm1 asio.indexterm.placeholders__endpoint..placeholders::endpoint] 
+[indexterm1 asio.indexterm.placeholders__endpoint..placeholders::endpoint]
+
 An argument placeholder, for use with boost::bind(), that corresponds to the results argument of a handler for asynchronous functions such as `asio::async_connect`. 
 
 
@@ -129882,7 +130100,8 @@ An argument placeholder, for use with boost::bind(), that corresponds to the res
 
 [section:placeholders__error placeholders::error]
 
-[indexterm1 asio.indexterm.placeholders__error..placeholders::error] 
+[indexterm1 asio.indexterm.placeholders__error..placeholders::error]
+
 An argument placeholder, for use with boost::bind(), that corresponds to the error argument of a handler for any of the asynchronous functions. 
 
 
@@ -129902,7 +130121,8 @@ An argument placeholder, for use with boost::bind(), that corresponds to the err
 
 [section:placeholders__iterator placeholders::iterator]
 
-[indexterm1 asio.indexterm.placeholders__iterator..placeholders::iterator] 
+[indexterm1 asio.indexterm.placeholders__iterator..placeholders::iterator]
+
 An argument placeholder, for use with boost::bind(), that corresponds to the iterator argument of a handler for asynchronous functions such as `asio::async_connect`. 
 
 
@@ -129922,7 +130142,8 @@ An argument placeholder, for use with boost::bind(), that corresponds to the ite
 
 [section:placeholders__results placeholders::results]
 
-[indexterm1 asio.indexterm.placeholders__results..placeholders::results] 
+[indexterm1 asio.indexterm.placeholders__results..placeholders::results]
+
 An argument placeholder, for use with boost::bind(), that corresponds to the results argument of a handler for asynchronous functions such as asio::basic\_resolver::async\_resolve. 
 
 
@@ -129942,7 +130163,8 @@ An argument placeholder, for use with boost::bind(), that corresponds to the res
 
 [section:placeholders__signal_number placeholders::signal_number]
 
-[indexterm1 asio.indexterm.placeholders__signal_number..placeholders::signal_number] 
+[indexterm1 asio.indexterm.placeholders__signal_number..placeholders::signal_number]
+
 An argument placeholder, for use with boost::bind(), that corresponds to the signal\_number argument of a handler for asynchronous functions such as `asio::signal_set::async_wait`. 
 
 
@@ -134369,7 +134591,8 @@ Synchronous `read_some` and `write_some` operations are thread safe with respect
 
 [section:posix__descriptor posix::descriptor]
 
-[indexterm1 asio.indexterm.posix__descriptor..posix::descriptor] 
+[indexterm1 asio.indexterm.posix__descriptor..posix::descriptor]
+
 Typedef for the typical usage of [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`]. 
 
 
@@ -134695,7 +134918,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:posix__stream_descriptor posix::stream_descriptor]
 
-[indexterm1 asio.indexterm.posix__stream_descriptor..posix::stream_descriptor] 
+[indexterm1 asio.indexterm.posix__stream_descriptor..posix::stream_descriptor]
+
 Typedef for the typical usage of a stream-oriented descriptor. 
 
 
@@ -134888,7 +135112,8 @@ Synchronous `read_some` and `write_some` operations are thread safe with respect
 
 [section:post post]
 
-[indexterm1 asio.indexterm.post..post] 
+[indexterm1 asio.indexterm.post..post]
+
 Submits a completion token or function object for execution. 
 
   template<
@@ -135078,7 +135303,8 @@ Submits a completion token or function object for execution.
 
 [section:prefer prefer]
 
-[indexterm1 asio.indexterm.prefer..prefer] 
+[indexterm1 asio.indexterm.prefer..prefer]
+
 A customisation point that attempts to apply a property to an object. 
 
 
@@ -135188,7 +135414,8 @@ The result of the `prefer` expression.
 
 [section:query query]
 
-[indexterm1 asio.indexterm.query..query] 
+[indexterm1 asio.indexterm.query..query]
+
 A customisation point that queries the value of a property. 
 
 
@@ -135286,7 +135513,8 @@ The result of the `query` expression.
 
 [section:random_access_file random_access_file]
 
-[indexterm1 asio.indexterm.random_access_file..random_access_file] 
+[indexterm1 asio.indexterm.random_access_file..random_access_file]
+
 Typedef for the typical usage of a random-access file. 
 
 
@@ -135475,6 +135703,11 @@ Typedef for the typical usage of a random-access file.
   ]
 
   [
+    [[link asio.reference.basic_random_access_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
+  ]
+
+  [
     [[link asio.reference.basic_random_access_file.truncate [*truncate]] [static]]
     [Open the file with any existing contents truncated. ]
   ]
@@ -135510,7 +135743,8 @@ Synchronous `read_some_at` and `write_some_at` operations are thread safe with r
 
 [section:read read]
 
-[indexterm1 asio.indexterm.read..read] 
+[indexterm1 asio.indexterm.read..read]
+
 The `read` function is a composed operation that reads a certain amount of data from a stream before returning. 
 
 
@@ -136821,7 +137055,8 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 
 [section:read_at read_at]
 
-[indexterm1 asio.indexterm.read_at..read_at] 
+[indexterm1 asio.indexterm.read_at..read_at]
+
 The `read_at` function is a composed operation that reads a certain amount of data at the specified offset before returning. 
 
 
@@ -137505,7 +137740,8 @@ The number of bytes read. If an error occurs, returns the total number of bytes 
 
 [section:read_until read_until]
 
-[indexterm1 asio.indexterm.read_until..read_until] 
+[indexterm1 asio.indexterm.read_until..read_until]
+
 The `read_until` function is a composed operation that reads data into a dynamic buffer sequence, or into a streambuf, until it contains a delimiter, matches a regular expression, or a function object indicates a match. 
 
 
@@ -139804,7 +140040,8 @@ The default implementation of the `is_match_condition` type trait evaluates to t
 
 [section:readable_pipe readable_pipe]
 
-[indexterm1 asio.indexterm.readable_pipe..readable_pipe] 
+[indexterm1 asio.indexterm.readable_pipe..readable_pipe]
+
 Typedef for the typical usage of a readable pipe. 
 
 
@@ -139942,7 +140179,8 @@ The [link asio.reference.basic_readable_pipe `basic_readable_pipe`] class provid
 
 [section:redirect_error redirect_error]
 
-[indexterm1 asio.indexterm.redirect_error..redirect_error] 
+[indexterm1 asio.indexterm.redirect_error..redirect_error]
+
 Create a completion token to capture [link asio.reference.error_code `error_code`] values to a variable. 
 
 
@@ -140058,7 +140296,8 @@ Constructor.
 
 [section:register_buffers register_buffers]
 
-[indexterm1 asio.indexterm.register_buffers..register_buffers] 
+[indexterm1 asio.indexterm.register_buffers..register_buffers]
+
 Register buffers with an execution context. 
 
   template<
@@ -140354,7 +140593,8 @@ Default constructor creates an invalid registered buffer identifier.
 
 [section:require require]
 
-[indexterm1 asio.indexterm.require..require] 
+[indexterm1 asio.indexterm.require..require]
+
 A customisation point that applies a concept-preserving property to an object. 
 
 
@@ -140396,7 +140636,8 @@ The name `require` denotes a customisation point object. The expression `asio::r
 
 [section:require_concept require_concept]
 
-[indexterm1 asio.indexterm.require_concept..require_concept] 
+[indexterm1 asio.indexterm.require_concept..require_concept]
+
 A customisation point that applies a concept-enforcing property to an object. 
 
 
@@ -140553,7 +140794,8 @@ The result of the `require` expression.
 
 [section:resolver_errc__try_again resolver_errc::try_again]
 
-[indexterm1 asio.indexterm.resolver_errc__try_again..resolver_errc::try_again] 
+[indexterm1 asio.indexterm.resolver_errc__try_again..resolver_errc::try_again]
+
 
   const error::netdb_errors try_again = error::host_not_found_try_again;
 
@@ -140571,7 +140813,8 @@ The result of the `require` expression.
 
 [section:serial_port serial_port]
 
-[indexterm1 asio.indexterm.serial_port..serial_port] 
+[indexterm1 asio.indexterm.serial_port..serial_port]
+
 Typedef for the typical usage of a serial port. 
 
 
@@ -141519,7 +141762,8 @@ Exception thrown when trying to add a duplicate service to an [link asio.referen
 
 [section:signal_set signal_set]
 
-[indexterm1 asio.indexterm.signal_set..signal_set] 
+[indexterm1 asio.indexterm.signal_set..signal_set]
+
 Typedef for the typical usage of a signal set. 
 
 
@@ -142704,7 +142948,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:spawn spawn]
 
-[indexterm1 asio.indexterm.spawn..spawn] 
+[indexterm1 asio.indexterm.spawn..spawn]
+
 Start a new stackful coroutine. 
 
 
@@ -146461,7 +146706,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:ssl__error__get_stream_category ssl::error::get_stream_category]
 
-[indexterm1 asio.indexterm.ssl__error__get_stream_category..ssl::error::get_stream_category] 
+[indexterm1 asio.indexterm.ssl__error__get_stream_category..ssl::error::get_stream_category]
+
 
   const asio::error_category & get_stream_category();
 
@@ -146479,7 +146725,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:ssl__error__make_error_code ssl::error::make_error_code]
 
-[indexterm1 asio.indexterm.ssl__error__make_error_code..ssl::error::make_error_code] 
+[indexterm1 asio.indexterm.ssl__error__make_error_code..ssl::error::make_error_code]
+
 
   asio::error_code make_error_code(
       stream_errors e);
@@ -146498,7 +146745,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:ssl__error__stream_category ssl::error::stream_category]
 
-[indexterm1 asio.indexterm.ssl__error__stream_category..ssl::error::stream_category] 
+[indexterm1 asio.indexterm.ssl__error__stream_category..ssl::error::stream_category]
+
 
   static const asio::error_category & stream_category = asio::ssl::error::get_stream_category();
 
@@ -146516,7 +146764,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:ssl__error__stream_errors ssl::error::stream_errors]
 
-[indexterm1 asio.indexterm.ssl__error__stream_errors..ssl::error::stream_errors] 
+[indexterm1 asio.indexterm.ssl__error__stream_errors..ssl::error::stream_errors]
+
   enum stream_errors
 
 [indexterm2 asio.indexterm.ssl__error__stream_errors.stream_truncated..stream_truncated..ssl::error::stream_errors]
@@ -148775,7 +149024,8 @@ Protected destructor to prevent deletion through this type.
 
 [section:ssl__verify_client_once ssl::verify_client_once]
 
-[indexterm1 asio.indexterm.ssl__verify_client_once..ssl::verify_client_once] 
+[indexterm1 asio.indexterm.ssl__verify_client_once..ssl::verify_client_once]
+
 Do not request client certificate on renegotiation. Ignored unless [link asio.reference.ssl__verify_peer `ssl::verify_peer`]  is set. 
 
 
@@ -148904,7 +149154,8 @@ Constructor.
 
 [section:ssl__verify_fail_if_no_peer_cert ssl::verify_fail_if_no_peer_cert]
 
-[indexterm1 asio.indexterm.ssl__verify_fail_if_no_peer_cert..ssl::verify_fail_if_no_peer_cert] 
+[indexterm1 asio.indexterm.ssl__verify_fail_if_no_peer_cert..ssl::verify_fail_if_no_peer_cert]
+
 Fail verification if the peer has no certificate. Ignored unless [link asio.reference.ssl__verify_peer `ssl::verify_peer`]  is set. 
 
 
@@ -148924,7 +149175,8 @@ Fail verification if the peer has no certificate. Ignored unless [link asio.refe
 
 [section:ssl__verify_mode ssl::verify_mode]
 
-[indexterm1 asio.indexterm.ssl__verify_mode..ssl::verify_mode] 
+[indexterm1 asio.indexterm.ssl__verify_mode..ssl::verify_mode]
+
 Bitmask type for peer verification. 
 
 
@@ -148958,7 +149210,8 @@ Possible values are:
 
 [section:ssl__verify_none ssl::verify_none]
 
-[indexterm1 asio.indexterm.ssl__verify_none..ssl::verify_none] 
+[indexterm1 asio.indexterm.ssl__verify_none..ssl::verify_none]
+
 No verification. 
 
 
@@ -148978,7 +149231,8 @@ No verification.
 
 [section:ssl__verify_peer ssl::verify_peer]
 
-[indexterm1 asio.indexterm.ssl__verify_peer..ssl::verify_peer] 
+[indexterm1 asio.indexterm.ssl__verify_peer..ssl::verify_peer]
+
 Verify the peer. 
 
 
@@ -148998,7 +149252,8 @@ Verify the peer.
 
 [section:static_thread_pool static_thread_pool]
 
-[indexterm1 asio.indexterm.static_thread_pool..static_thread_pool] 
+[indexterm1 asio.indexterm.static_thread_pool..static_thread_pool]
+
 
   typedef thread_pool static_thread_pool;
 
@@ -149190,7 +149445,8 @@ For example:
 
 [section:steady_timer steady_timer]
 
-[indexterm1 asio.indexterm.steady_timer..steady_timer] 
+[indexterm1 asio.indexterm.steady_timer..steady_timer]
+
 Typedef for a timer based on the steady clock. 
 
 
@@ -150274,7 +150530,8 @@ Destructor.
 
 [section:stream_file stream_file]
 
-[indexterm1 asio.indexterm.stream_file..stream_file] 
+[indexterm1 asio.indexterm.stream_file..stream_file]
+
 Typedef for the typical usage of a stream-oriented file. 
 
 
@@ -150468,6 +150725,11 @@ Typedef for the typical usage of a stream-oriented file.
   ]
 
   [
+    [[link asio.reference.basic_stream_file.sync_all_on_write [*sync_all_on_write]] [static]]
+    [Open the file so that write operations automatically synchronise the file data and metadata to disk. ]
+  ]
+
+  [
     [[link asio.reference.basic_stream_file.truncate [*truncate]] [static]]
     [Open the file with any existing contents truncated. ]
   ]
@@ -150505,7 +150767,8 @@ The [link asio.reference.basic_stream_file `basic_stream_file`] class template p
 
 [section:streambuf streambuf]
 
-[indexterm1 asio.indexterm.streambuf..streambuf] 
+[indexterm1 asio.indexterm.streambuf..streambuf]
+
 Typedef for the typical usage of [link asio.reference.basic_streambuf `basic_streambuf`]. 
 
 
@@ -150671,7 +150934,8 @@ Reading from a socket directly into a streambuf:
 
 [section:system_category system_category]
 
-[indexterm1 asio.indexterm.system_category..system_category] 
+[indexterm1 asio.indexterm.system_category..system_category]
+
 Returns the error category used for the system errors produced by asio. 
 
 
@@ -151618,7 +151882,8 @@ Destructor.
 
 [section:system_executor system_executor]
 
-[indexterm1 asio.indexterm.system_executor..system_executor] 
+[indexterm1 asio.indexterm.system_executor..system_executor]
+
 An executor that uses arbitrary threads. 
 
 
@@ -151740,7 +152005,8 @@ The system executor represents an execution context where functions are permitte
 
 [section:system_timer system_timer]
 
-[indexterm1 asio.indexterm.system_timer..system_timer] 
+[indexterm1 asio.indexterm.system_timer..system_timer]
+
 Typedef for a timer based on the system clock. 
 
 
@@ -151997,7 +152263,8 @@ This typedef uses the C++11 `<chrono>` standard library facility, if available. 
 
 [section:this_coro__cancellation_state this_coro::cancellation_state]
 
-[indexterm1 asio.indexterm.this_coro__cancellation_state..this_coro::cancellation_state] 
+[indexterm1 asio.indexterm.this_coro__cancellation_state..this_coro::cancellation_state]
+
 Awaitable object that returns the cancellation state of the current coroutine. 
 
 
@@ -152081,7 +152348,8 @@ Awaitable type that returns the cancellation state of the current coroutine.
 
 [section:this_coro__executor this_coro::executor]
 
-[indexterm1 asio.indexterm.this_coro__executor..this_coro::executor] 
+[indexterm1 asio.indexterm.this_coro__executor..this_coro::executor]
+
 Awaitable object that returns the executor of the current coroutine. 
 
 
@@ -152143,7 +152411,8 @@ Awaitable type that returns the executor of the current coroutine.
 
 [section:this_coro__reset_cancellation_state this_coro::reset_cancellation_state]
 
-[indexterm1 asio.indexterm.this_coro__reset_cancellation_state..this_coro::reset_cancellation_state] 
+[indexterm1 asio.indexterm.this_coro__reset_cancellation_state..this_coro::reset_cancellation_state]
+
 Returns an awaitable object that may be used to reset the cancellation state of the current coroutine. 
 
   constexpr unspecified ``[link asio.reference.this_coro__reset_cancellation_state.overload1 reset_cancellation_state]``();
@@ -152298,7 +152567,8 @@ The cancellation state is shared by all coroutines in the same "thread of execut
 
 [section:this_coro__throw_if_cancelled this_coro::throw_if_cancelled]
 
-[indexterm1 asio.indexterm.this_coro__throw_if_cancelled..this_coro::throw_if_cancelled] 
+[indexterm1 asio.indexterm.this_coro__throw_if_cancelled..this_coro::throw_if_cancelled]
+
 Returns an awaitable object that may be used to determine whether the coroutine throws if trying to suspend when it has been cancelled. 
 
   constexpr unspecified ``[link asio.reference.this_coro__throw_if_cancelled.overload1 throw_if_cancelled]``();
@@ -155374,7 +155644,8 @@ Convert to POSIX duration type.
 
 [section:transfer_all transfer_all]
 
-[indexterm1 asio.indexterm.transfer_all..transfer_all] 
+[indexterm1 asio.indexterm.transfer_all..transfer_all]
+
 Return a completion condition function object that indicates that a read or write operation should continue until all of the data has been transferred, or until an error occurs. 
 
 
@@ -155420,7 +155691,8 @@ Reading until a buffer is full:
 
 [section:transfer_at_least transfer_at_least]
 
-[indexterm1 asio.indexterm.transfer_at_least..transfer_at_least] 
+[indexterm1 asio.indexterm.transfer_at_least..transfer_at_least]
+
 Return a completion condition function object that indicates that a read or write operation should continue until a minimum number of bytes has been transferred, or until an error occurs. 
 
 
@@ -155467,7 +155739,8 @@ Reading until a buffer is full or contains at least 64 bytes:
 
 [section:transfer_exactly transfer_exactly]
 
-[indexterm1 asio.indexterm.transfer_exactly..transfer_exactly] 
+[indexterm1 asio.indexterm.transfer_exactly..transfer_exactly]
+
 Return a completion condition function object that indicates that a read or write operation should continue until an exact number of bytes has been transferred, or until an error occurs. 
 
 
@@ -155514,7 +155787,8 @@ Reading until a buffer is full or contains exactly 64 bytes:
 
 [section:use_awaitable use_awaitable]
 
-[indexterm1 asio.indexterm.use_awaitable..use_awaitable] 
+[indexterm1 asio.indexterm.use_awaitable..use_awaitable]
+
 A completion token object that represents the currently executing coroutine. 
 
 
@@ -155804,7 +156078,8 @@ Construct the adapted executor from the inner executor type.
 
 [section:use_future use_future]
 
-[indexterm1 asio.indexterm.use_future..use_future] 
+[indexterm1 asio.indexterm.use_future..use_future]
+
 A special value, similar to std::nothrow. 
 
 
@@ -161434,7 +161709,8 @@ The [link asio.reference.windows__basic_stream_handle `windows::basic_stream_han
 
 [section:windows__object_handle windows::object_handle]
 
-[indexterm1 asio.indexterm.windows__object_handle..windows::object_handle] 
+[indexterm1 asio.indexterm.windows__object_handle..windows::object_handle]
+
 Typedef for the typical usage of an object handle. 
 
 
@@ -161567,7 +161843,8 @@ The [link asio.reference.windows__basic_object_handle `windows::basic_object_han
 
 [section:windows__overlapped_handle windows::overlapped_handle]
 
-[indexterm1 asio.indexterm.windows__overlapped_handle..windows::overlapped_handle] 
+[indexterm1 asio.indexterm.windows__overlapped_handle..windows::overlapped_handle]
+
 Typedef for the typical usage of an overlapped handle. 
 
 
@@ -162033,7 +162310,8 @@ Destructor automatically frees the OVERLAPPED object unless released.
 
 [section:windows__random_access_handle windows::random_access_handle]
 
-[indexterm1 asio.indexterm.windows__random_access_handle..windows::random_access_handle] 
+[indexterm1 asio.indexterm.windows__random_access_handle..windows::random_access_handle]
+
 Typedef for the typical usage of a random-access handle. 
 
 
@@ -162176,7 +162454,8 @@ The [link asio.reference.windows__basic_random_access_handle `windows::basic_ran
 
 [section:windows__stream_handle windows::stream_handle]
 
-[indexterm1 asio.indexterm.windows__stream_handle..windows::stream_handle] 
+[indexterm1 asio.indexterm.windows__stream_handle..windows::stream_handle]
+
 Typedef for the typical usage of a stream-oriented handle. 
 
 
@@ -162320,7 +162599,8 @@ The [link asio.reference.windows__basic_stream_handle `windows::basic_stream_han
 
 [section:writable_pipe writable_pipe]
 
-[indexterm1 asio.indexterm.writable_pipe..writable_pipe] 
+[indexterm1 asio.indexterm.writable_pipe..writable_pipe]
+
 Typedef for the typical usage of a writable pipe. 
 
 
@@ -162457,7 +162737,8 @@ The [link asio.reference.basic_writable_pipe `basic_writable_pipe`] class provid
 
 [section:write write]
 
-[indexterm1 asio.indexterm.write..write] 
+[indexterm1 asio.indexterm.write..write]
+
 The `write` function is a composed operation that writes a certain amount of data to a stream before returning. 
 
 
@@ -163782,7 +164063,8 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 [section:write_at write_at]
 
-[indexterm1 asio.indexterm.write_at..write_at] 
+[indexterm1 asio.indexterm.write_at..write_at]
+
 The `write_at` function is a composed operation that writes a certain amount of data at a specified offset before returning. 
 
 
@@ -164485,7 +164767,8 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 [section:yield_context yield_context]
 
-[indexterm1 asio.indexterm.yield_context..yield_context] 
+[indexterm1 asio.indexterm.yield_context..yield_context]
+
 Context object that represents the currently executing coroutine. 
 
 

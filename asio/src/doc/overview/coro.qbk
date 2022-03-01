@@ -253,8 +253,8 @@ flow. For example:
 
 [link asio.reference.co_spawn co_spawn],
 [link asio.reference.experimental__coro experimental::coro],
-[link asio.overview.core.cpp20_coroutines C++20 Coroutines],
-[link asio.overview.core.spawn Stackful Coroutines],
-[link asio.overview.core.coroutine Stackless Coroutines].
+[link asio.overview.composition.cpp20_coroutines C++20 Coroutines],
+[link asio.overview.composition.spawn Stackful Coroutines],
+[link asio.overview.composition.coroutine Stackless Coroutines].
 
 [endsect]

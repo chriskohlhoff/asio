@@ -232,8 +232,8 @@ namespace into scope:
 [link asio.reference.this_coro__executor this_coro::executor],
 [link asio.reference.experimental__coro experimental::coro],
 [link asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
-[link asio.overview.core.coro Resumable C++20 Coroutines],
-[link asio.overview.core.spawn Stackful Coroutines],
-[link asio.overview.core.coroutine Stackless Coroutines].
+[link asio.overview.composition.coro Resumable C++20 Coroutines],
+[link asio.overview.composition.spawn Stackful Coroutines],
+[link asio.overview.composition.coroutine Stackless Coroutines].
 
 [endsect]
