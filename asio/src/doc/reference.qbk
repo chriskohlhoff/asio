@@ -37143,7 +37143,21 @@ To read into a single data buffer use the [link asio.reference.buffer `buffer`] 
        asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 
@@ -37211,7 +37225,21 @@ To write a single data buffer use the [link asio.reference.buffer `buffer`]  fun
        asio::buffer(data, size), handler);
 
 
-See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. 
+See the [link asio.reference.buffer `buffer`]  documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
 
 
 

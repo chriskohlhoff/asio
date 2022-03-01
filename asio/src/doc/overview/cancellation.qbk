@@ -230,6 +230,7 @@ operations, or composed operations, is currently supported by:
 * POSIX descriptors
 * Windows HANDLEs
 * signal sets
+* serial ports
 * SSL streams
 * all Asio-provided composed operations such as `async_read` and `async_write`
 * compositions based on `async_compose`
