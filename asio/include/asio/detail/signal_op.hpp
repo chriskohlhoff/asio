@@ -30,12 +30,16 @@ public:
   // The error code to be passed to the completion handler.
   asio::error_code ec_;
 
+  // The operation key used for targeted cancellation.
+  void* cancellation_key_;
+
   // The signal number to be passed to the completion handler.
   int signal_number_;
 
 protected:
   signal_op(func_type func)
     : operation(func),
+      cancellation_key_(0),
       signal_number_(0)
   {
   }

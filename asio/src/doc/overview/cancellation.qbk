@@ -229,6 +229,7 @@ operations, or composed operations, is currently supported by:
 * sockets on POSIX and Windows
 * POSIX descriptors
 * Windows HANDLEs
+* signal sets
 * SSL streams
 * all Asio-provided composed operations such as `async_read` and `async_write`
 * compositions based on `async_compose`
