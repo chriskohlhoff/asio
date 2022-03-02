@@ -83,6 +83,7 @@ INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio/windows \
                          ./../../include/asio/execution \
                          ./../../include/asio/experimental \
+                         ./model_dox.txt \
                          ./noncopyable_dox.txt \
                          ./std_exception_dox.txt
 FILE_PATTERNS          = 

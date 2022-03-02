@@ -474,17 +474,24 @@ public:
   /// Start an asynchronous SSL handshake.
   /**
    * This function is used to asynchronously perform an SSL handshake on the
-   * stream. This function call always returns immediately.
+   * stream. It is an initiating function for an @ref asynchronous_operation,
+   * and always returns immediately.
    *
    * @param type The type of handshaking to be performed, i.e. as a client or as
    * a server.
    *
-   * @param handler The handler to be called when the handshake operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the handshake completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature. The function signature of the completion handler must be:
    * @code void handler(
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using asio::post().
    *
    * @par Completion Signature
    * @code void(asio::error_code) @endcode
@@ -502,23 +509,24 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
-        HandshakeHandler
+        HandshakeToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(HandshakeHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(HandshakeToken,
       void (asio::error_code))
   async_handshake(handshake_type type,
-      ASIO_MOVE_ARG(HandshakeHandler) handler
+      ASIO_MOVE_ARG(HandshakeToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<HandshakeHandler,
+    return async_initiate<HandshakeToken,
       void (asio::error_code)>(
-        initiate_async_handshake(this), handler, type);
+        initiate_async_handshake(this), token, type);
   }
 
   /// Start an asynchronous SSL handshake.
   /**
    * This function is used to asynchronously perform an SSL handshake on the
-   * stream. This function call always returns immediately.
+   * stream. It is an initiating function for an @ref asynchronous_operation,
+   * and always returns immediately.
    *
    * @param type The type of handshaking to be performed, i.e. as a client or as
    * a server.
@@ -526,15 +534,21 @@ public:
    * @param buffers The buffered data to be reused for the handshake. Although
    * the buffers object may be copied as necessary, ownership of the underlying
    * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * valid until the completion handler is called.
    *
-   * @param handler The handler to be called when the handshake operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the handshake completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature. The function signature of the completion handler must be:
    * @code void handler(
    *   const asio::error_code& error, // Result of operation.
    *   std::size_t bytes_transferred // Amount of buffers used in handshake.
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using asio::post().
    *
    * @par Completion Signature
    * @code void(asio::error_code, std::size_t) @endcode
@@ -552,17 +566,17 @@ public:
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) BufferedHandshakeHandler
+        std::size_t)) BufferedHandshakeToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(BufferedHandshakeHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(BufferedHandshakeToken,
       void (asio::error_code, std::size_t))
   async_handshake(handshake_type type, const ConstBufferSequence& buffers,
-      ASIO_MOVE_ARG(BufferedHandshakeHandler) handler
+      ASIO_MOVE_ARG(BufferedHandshakeToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<BufferedHandshakeHandler,
+    return async_initiate<BufferedHandshakeToken,
       void (asio::error_code, std::size_t)>(
-        initiate_async_buffered_handshake(this), handler, type, buffers);
+        initiate_async_buffered_handshake(this), token, type, buffers);
   }
 
   /// Shut down SSL on the stream.
@@ -594,15 +608,22 @@ public:
 
   /// Asynchronously shut down SSL on the stream.
   /**
-   * This function is used to asynchronously shut down SSL on the stream. This
-   * function call always returns immediately.
+   * This function is used to asynchronously shut down SSL on the stream. It is
+   * an initiating function for an @ref asynchronous_operation, and always
+   * returns immediately.
    *
-   * @param handler The handler to be called when the handshake operation
-   * completes. Copies will be made of the handler as required. The equivalent
-   * function signature of the handler must be:
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the shutdown completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature. The function signature of the completion handler must be:
    * @code void handler(
    *   const asio::error_code& error // Result of operation.
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using asio::post().
    *
    * @par Completion Signature
    * @code void(asio::error_code) @endcode
@@ -620,17 +641,17 @@ public:
    */
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
-        ShutdownHandler
+        ShutdownToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ShutdownHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(ShutdownToken,
       void (asio::error_code))
   async_shutdown(
-      ASIO_MOVE_ARG(ShutdownHandler) handler
+      ASIO_MOVE_ARG(ShutdownToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<ShutdownHandler,
+    return async_initiate<ShutdownToken,
       void (asio::error_code)>(
-        initiate_async_shutdown(this), handler);
+        initiate_async_shutdown(this), token);
   }
 
   /// Write some data to the stream.
@@ -685,20 +706,27 @@ public:
   /// Start an asynchronous write.
   /**
    * This function is used to asynchronously write one or more bytes of data to
-   * the stream. The function call always returns immediately.
+   * the stream. It is an initiating function for an @ref
+   * asynchronous_operation, and always returns immediately.
    *
    * @param buffers The data to be written to the stream. Although the buffers
    * object may be copied as necessary, ownership of the underlying buffers is
    * retained by the caller, which must guarantee that they remain valid until
-   * the handler is called.
+   * the completion handler is called.
    *
-   * @param handler The handler to be called when the write operation completes.
-   * Copies will be made of the handler as required. The equivalent function
-   * signature of the handler must be:
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the write completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature. The function signature of the completion handler must be:
    * @code void handler(
    *   const asio::error_code& error, // Result of operation.
-   *   std::size_t bytes_transferred           // Number of bytes written.
+   *   std::size_t bytes_transferred // Number of bytes written.
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using asio::post().
    *
    * @par Completion Signature
    * @code void(asio::error_code, std::size_t) @endcode
@@ -721,17 +749,17 @@ public:
    */
   template <typename ConstBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) WriteHandler
+        std::size_t)) WriteToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
       void (asio::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
-      ASIO_MOVE_ARG(WriteHandler) handler
+      ASIO_MOVE_ARG(WriteToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<WriteHandler,
+    return async_initiate<WriteToken,
       void (asio::error_code, std::size_t)>(
-        initiate_async_write_some(this), handler, buffers);
+        initiate_async_write_some(this), token, buffers);
   }
 
   /// Read some data from the stream.
@@ -786,20 +814,27 @@ public:
   /// Start an asynchronous read.
   /**
    * This function is used to asynchronously read one or more bytes of data from
-   * the stream. The function call always returns immediately.
+   * the stream. It is an initiating function for an @ref
+   * asynchronous_operation, and always returns immediately.
    *
    * @param buffers The buffers into which the data will be read. Although the
    * buffers object may be copied as necessary, ownership of the underlying
    * buffers is retained by the caller, which must guarantee that they remain
-   * valid until the handler is called.
+   * valid until the completion handler is called.
    *
-   * @param handler The handler to be called when the read operation completes.
-   * Copies will be made of the handler as required. The equivalent function
-   * signature of the handler must be:
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the read completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature. The function signature of the completion handler must be:
    * @code void handler(
    *   const asio::error_code& error, // Result of operation.
-   *   std::size_t bytes_transferred           // Number of bytes read.
+   *   std::size_t bytes_transferred // Number of bytes read.
    * ); @endcode
+   * Regardless of whether the asynchronous operation completes immediately or
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
+   * manner equivalent to using asio::post().
    *
    * @par Completion Signature
    * @code void(asio::error_code, std::size_t) @endcode
@@ -822,17 +857,17 @@ public:
    */
   template <typename MutableBufferSequence,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        std::size_t)) ReadHandler
+        std::size_t)) ReadToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+  ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
       void (asio::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
-      ASIO_MOVE_ARG(ReadHandler) handler
+      ASIO_MOVE_ARG(ReadToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
   {
-    return async_initiate<ReadHandler,
+    return async_initiate<ReadToken,
       void (asio::error_code, std::size_t)>(
-        initiate_async_read_some(this), handler, buffers);
+        initiate_async_read_some(this), token, buffers);
   }
 
 private:

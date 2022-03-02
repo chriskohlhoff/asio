@@ -1545,9 +1545,9 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
 /**
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until the dynamic buffer sequence's get area contains the
- * specified delimiter. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * specified delimiter. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
@@ -1568,25 +1568,26 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param delim The delimiter character.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
  *
  *   // The number of bytes in the dynamic buffer sequence's
  *   // get area up to and including the delimiter.
- *   // 0 if an error occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -1638,14 +1639,14 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v1,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers, char delim,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -1660,9 +1661,9 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until the dynamic buffer sequence's get area contains the
- * specified delimiter. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * specified delimiter. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
@@ -1683,25 +1684,26 @@ async_read_until(AsyncReadStream& s,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param delim The delimiter string.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
  *
  *   // The number of bytes in the dynamic buffer sequence's
  *   // get area up to and including the delimiter.
- *   // 0 if an error occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -1753,15 +1755,15 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v1,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     ASIO_STRING_VIEW_PARAM delim,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -1780,9 +1782,10 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until the dynamic buffer sequence's get area contains some
- * data that matches a regular expression. The function call always returns
- * immediately. The asynchronous operation will continue until one of the
- * following conditions is true:
+ * data that matches a regular expression. It is an initiating function for an
+ * @ref asynchronous_operation, and always returns immediately. The
+ * asynchronous operation will continue until one of the following conditions
+ * is true:
  *
  * @li A substring of the dynamic buffer sequence's get area matches the regular
  * expression.
@@ -1804,13 +1807,15 @@ async_read_until(AsyncReadStream& s,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param expr The regular expression.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -1822,8 +1827,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -1876,15 +1881,15 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v1,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     const boost::regex& expr,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -1903,9 +1908,9 @@ async_read_until(AsyncReadStream& s,
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until a user-defined match condition function object, when
  * applied to the data contained in the dynamic buffer sequence, indicates a
- * successful match. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * successful match. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
@@ -1926,7 +1931,7 @@ async_read_until(AsyncReadStream& s,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param match_condition The function object to be called to determine whether
  * a match exists. The signature of the function object must be:
@@ -1943,9 +1948,11 @@ async_read_until(AsyncReadStream& s,
  * @c second member of the return value is true if a match has been found, false
  * otherwise.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -1956,8 +1963,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @note After a successful async_read_until operation, the dynamic buffer
@@ -2042,15 +2049,15 @@ async_read_until(AsyncReadStream& s,
 template <typename AsyncReadStream,
     typename DynamicBuffer_v1, typename MatchCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     ASIO_MOVE_ARG(DynamicBuffer_v1) buffers,
     MatchCondition match_condition,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -2070,8 +2077,9 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified
  * streambuf until the streambuf's get area contains the specified delimiter.
- * The function call always returns immediately. The asynchronous operation
- * will continue until one of the following conditions is true:
+ * It is an initiating function for an @ref asynchronous_operation, and always
+ * returns immediately. The asynchronous operation will continue until one of
+ * the following conditions is true:
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
@@ -2090,13 +2098,15 @@ async_read_until(AsyncReadStream& s,
  *
  * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
- * valid until the handler is called.
+ * valid until the completion handler is called.
  *
  * @param delim The delimiter character.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2107,8 +2117,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -2159,14 +2169,14 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, char delim,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type));
 
@@ -2175,8 +2185,9 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified
  * streambuf until the streambuf's get area contains the specified delimiter.
- * The function call always returns immediately. The asynchronous operation
- * will continue until one of the following conditions is true:
+ * It is an initiating function for an @ref asynchronous_operation, and always
+ * returns immediately. The asynchronous operation will continue until one of
+ * the following conditions is true:
  *
  * @li The get area of the streambuf contains the specified delimiter.
  *
@@ -2195,13 +2206,15 @@ async_read_until(AsyncReadStream& s,
  *
  * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
- * valid until the handler is called.
+ * valid until the completion handler is called.
  *
  * @param delim The delimiter string.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2212,8 +2225,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -2264,15 +2277,15 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     ASIO_STRING_VIEW_PARAM delim,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type));
 
@@ -2284,9 +2297,9 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified
  * streambuf until the streambuf's get area contains some data that matches a
- * regular expression. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * regular expression. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li A substring of the streambuf's get area matches the regular expression.
  *
@@ -2306,13 +2319,15 @@ async_read_until(AsyncReadStream& s,
  *
  * @param b A streambuf object into which the data will be read. Ownership of
  * the streambuf is retained by the caller, which must guarantee that it remains
- * valid until the handler is called.
+ * valid until the completion handler is called.
  *
  * @param expr The regular expression.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2324,8 +2339,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -2377,14 +2392,14 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b, const boost::regex& expr,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type));
 
@@ -2396,9 +2411,10 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified
  * streambuf until a user-defined match condition function object, when applied
- * to the data contained in the streambuf, indicates a successful match. The
- * function call always returns immediately. The asynchronous operation will
- * continue until one of the following conditions is true:
+ * to the data contained in the streambuf, indicates a successful match. It is
+ * an initiating function for an @ref asynchronous_operation, and always
+ * returns immediately. The asynchronous operation will continue until one of
+ * the following conditions is true:
  *
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
@@ -2433,9 +2449,11 @@ async_read_until(AsyncReadStream& s,
  * @c second member of the return value is true if a match has been found, false
  * otherwise.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2446,8 +2464,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @note After a successful async_read_until operation, the streambuf may
@@ -2530,15 +2548,15 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename Allocator, typename MatchCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s,
     asio::basic_streambuf<Allocator>& b,
     MatchCondition match_condition,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<is_match_condition<MatchCondition>::value>::type = 0);
@@ -2552,9 +2570,9 @@ async_read_until(AsyncReadStream& s,
 /**
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until the dynamic buffer sequence's get area contains the
- * specified delimiter. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * specified delimiter. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
@@ -2575,13 +2593,15 @@ async_read_until(AsyncReadStream& s,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param delim The delimiter character.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2592,8 +2612,8 @@ async_read_until(AsyncReadStream& s,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -2645,13 +2665,13 @@ async_read_until(AsyncReadStream& s,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v2,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -2663,9 +2683,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
 /**
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until the dynamic buffer sequence's get area contains the
- * specified delimiter. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * specified delimiter. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li The get area of the dynamic buffer sequence contains the specified
  * delimiter.
@@ -2686,25 +2706,26 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param delim The delimiter string.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
  *
  *   // The number of bytes in the dynamic buffer sequence's
  *   // get area up to and including the delimiter.
- *   // 0 if an error occurred.
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -2756,14 +2777,14 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers, char delim,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v2,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
     ASIO_STRING_VIEW_PARAM delim,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -2779,9 +2800,10 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
 /**
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until the dynamic buffer sequence's get area contains some
- * data that matches a regular expression. The function call always returns
- * immediately. The asynchronous operation will continue until one of the
- * following conditions is true:
+ * data that matches a regular expression. It is an initiating function for an
+ * @ref asynchronous_operation, and always returns immediately. The
+ * asynchronous operation will continue until one of the following conditions
+ * is true:
  *
  * @li A substring of the dynamic buffer sequence's get area matches the regular
  * expression.
@@ -2803,13 +2825,15 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param expr The regular expression.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2821,8 +2845,8 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -2875,14 +2899,14 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  */
 template <typename AsyncReadStream, typename DynamicBuffer_v2,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
     const boost::regex& expr,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<
@@ -2898,9 +2922,9 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * This function is used to asynchronously read data into the specified dynamic
  * buffer sequence until a user-defined match condition function object, when
  * applied to the data contained in the dynamic buffer sequence, indicates a
- * successful match. The function call always returns immediately. The
- * asynchronous operation will continue until one of the following conditions
- * is true:
+ * successful match. It is an initiating function for an @ref
+ * asynchronous_operation, and always returns immediately. The asynchronous
+ * operation will continue until one of the following conditions is true:
  *
  * @li The match condition function object returns a std::pair where the second
  * element evaluates to true.
@@ -2921,7 +2945,7 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * @param buffers The dynamic buffer sequence into which the data will be read.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param match_condition The function object to be called to determine whether
  * a match exists. The signature of the function object must be:
@@ -2938,9 +2962,11 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * @c second member of the return value is true if a match has been found, false
  * otherwise.
  *
- * @param handler The handler to be called when the read operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the read completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -2951,8 +2977,8 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @note After a successful async_read_until operation, the dynamic buffer
@@ -3037,14 +3063,14 @@ async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
 template <typename AsyncReadStream,
     typename DynamicBuffer_v2, typename MatchCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) ReadHandler
+      std::size_t)) ReadToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncReadStream::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
     void (asio::error_code, std::size_t))
 async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
     MatchCondition match_condition,
-    ASIO_MOVE_ARG(ReadHandler) handler
+    ASIO_MOVE_ARG(ReadToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncReadStream::executor_type),
     typename constraint<

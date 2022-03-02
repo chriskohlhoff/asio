@@ -316,11 +316,11 @@ Next we move the expiry time for the timer along by one second from the previous
 
 
 
-Then we start a new asynchronous wait on the timer. As you can see, the [link asio.tutorial.boost_bind boost::bind]  function is used to associate the extra parameters with your callback handler. The [link asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()] function expects a handler function (or function object) with the signature `void(const asio::error_code&)`. Binding the additional parameters converts your `print` function into a function object that matches the signature correctly.
+Then we start a new asynchronous wait on the timer. As you can see, the [link asio.tutorial.boost_bind boost::bind] function is used to associate the extra parameters with your callback handler. The [link asio.reference.basic_waitable_timer.async_wait steady_timer::async_wait()] function expects a handler function (or function object) with the signature `void(const asio::error_code&)`. Binding the additional parameters converts your `print` function into a function object that matches the signature correctly.
 
-See the [@http://www.boost.org/libs/bind/bind.html Boost.Bind documentation] for more information on how to use [link asio.tutorial.boost_bind boost::bind] .
+See the [@http://www.boost.org/libs/bind/bind.html Boost.Bind documentation] for more information on how to use [link asio.tutorial.boost_bind boost::bind].
 
-In this example, the asio::placeholders::error argument to [link asio.tutorial.boost_bind boost::bind]  is a named placeholder for the error object passed to the handler. When initiating the asynchronous operation, and if using [link asio.tutorial.boost_bind boost::bind] , you must specify only the arguments that match the handler's parameter list. In tutorial Timer.4 you will see that this placeholder may be elided if the parameter is not needed by the callback handler.
+In this example, the asio::placeholders::error argument to [link asio.tutorial.boost_bind boost::bind] is a named placeholder for the error object passed to the handler. When initiating the asynchronous operation, and if using [link asio.tutorial.boost_bind boost::bind], you must specify only the arguments that match the handler's parameter list. In tutorial Timer.4 you will see that this placeholder may be elided if the parameter is not needed by the callback handler.
 
 
   ``''''''``    t->async_wait(boost::bind(print,
@@ -462,7 +462,7 @@ The constructor of this class will take a reference to the io\_context object an
 
 
 
-The [link asio.tutorial.boost_bind boost::bind]  function works just as well with class member functions as with free functions. Since all non-static class member functions have an implicit `this` parameter, we need to bind `this` to the function. As in tutorial Timer.3, [link asio.tutorial.boost_bind boost::bind]  converts our callback handler (now a member function) into a function object that can be invoked as though it has the signature `void(const asio::error_code&)`.
+The [link asio.tutorial.boost_bind boost::bind] function works just as well with class member functions as with free functions. Since all non-static class member functions have an implicit `this` parameter, we need to bind `this` to the function. As in tutorial Timer.3, [link asio.tutorial.boost_bind boost::bind] converts our callback handler (now a member function) into a function object that can be invoked as though it has the signature `void(const asio::error_code&)`.
 
 You will note that the asio::placeholders::error placeholder is not specified here, as the `print` member function does not accept an error object as a parameter.
 
@@ -1303,7 +1303,7 @@ The data to be sent is stored in the class member `message_` as we need to keep 
 
 
 
-When initiating the asynchronous operation, and if using [link asio.tutorial.boost_bind boost::bind] , you must specify only the arguments that match the handler's parameter list. In this program, both of the argument placeholders (asio::placeholders::error and asio::placeholders::bytes\_transferred) could potentially have been removed, since they are not being used in `handle_write()`.
+When initiating the asynchronous operation, and if using [link asio.tutorial.boost_bind boost::bind], you must specify only the arguments that match the handler's parameter list. In this program, both of the argument placeholders (asio::placeholders::error and asio::placeholders::bytes\_transferred) could potentially have been removed, since they are not being used in `handle_write()`.
 
 
 
@@ -1891,7 +1891,7 @@ We now call [link asio.reference.basic_datagram_socket.async_send_to ip::udp::so
 
 
 
-When initiating the asynchronous operation, and if using [link asio.tutorial.boost_bind boost::bind] , you must specify only the arguments that match the handler's parameter list. In this program, both of the argument placeholders (asio::placeholders::error and asio::placeholders::bytes\_transferred) could potentially have been removed.
+When initiating the asynchronous operation, and if using [link asio.tutorial.boost_bind boost::bind], you must specify only the arguments that match the handler's parameter list. In this program, both of the argument placeholders (asio::placeholders::error and asio::placeholders::bytes\_transferred) could potentially have been removed.
 
 Start listening for the next client request.
 
@@ -2082,7 +2082,7 @@ We have created two lots of work for the
 
 [heading The tcp_connection and tcp_server classes]
 
-The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime.3] .
+The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime.3].
 
 
   ``''''''``class tcp_connection
@@ -2163,7 +2163,7 @@ The following two classes are taken from [link asio.tutorial.tutdaytime3 Daytime
 
 [heading The udp_server class]
 
-Similarly, this next class is taken from the [link asio.tutorial.tutdaytime6 previous tutorial step] .
+Similarly, this next class is taken from the [link asio.tutorial.tutdaytime6 previous tutorial step].
 
 
   ``''''''``class udp_server

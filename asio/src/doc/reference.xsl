@@ -46,17 +46,20 @@
 [include requirements/asynchronous_socket_operations.qbk]
 [include requirements/AcceptableProtocol.qbk]
 [include requirements/AcceptHandler.qbk]
+[include requirements/AcceptToken.qbk]
 [include requirements/AsyncRandomAccessReadDevice.qbk]
 [include requirements/AsyncRandomAccessWriteDevice.qbk]
 [include requirements/AsyncReadStream.qbk]
 [include requirements/AsyncWriteStream.qbk]
 [include requirements/BufferedHandshakeHandler.qbk]
+[include requirements/BufferedHandshakeToken.qbk]
 [include requirements/CancellationHandler.qbk]
 [include requirements/CancellationSlot.qbk]
 [include requirements/CompletionCondition.qbk]
 [include requirements/CompletionHandler.qbk]
 [include requirements/ConnectCondition.qbk]
 [include requirements/ConnectHandler.qbk]
+[include requirements/ConnectToken.qbk]
 [include requirements/ConstBufferSequence.qbk]
 [include requirements/DynamicBuffer.qbk]
 [include requirements/DynamicBuffer_v1.qbk]
@@ -69,35 +72,45 @@
 [include requirements/GettableSocketOption.qbk]
 [include requirements/Handler.qbk]
 [include requirements/HandshakeHandler.qbk]
+[include requirements/HandshakeToken.qbk]
 [include requirements/InternetProtocol.qbk]
 [include requirements/IoControlCommand.qbk]
 [include requirements/IoObjectService.qbk]
 [include requirements/IteratorConnectHandler.qbk]
+[include requirements/IteratorConnectToken.qbk]
 [include requirements/LegacyCompletionHandler.qbk]
 [include requirements/MoveAcceptHandler.qbk]
+[include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
 [include requirements/OperationState.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RangeConnectHandler.qbk]
+[include requirements/RangeConnectToken.qbk]
 [include requirements/ReadHandler.qbk]
+[include requirements/ReadToken.qbk]
 [include requirements/Receiver.qbk]
 [include requirements/ResolveHandler.qbk]
+[include requirements/ResolveToken.qbk]
 [include requirements/Scheduler.qbk]
 [include requirements/Sender.qbk]
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
 [include requirements/ShutdownHandler.qbk]
+[include requirements/ShutdownToken.qbk]
 [include requirements/SignalHandler.qbk]
+[include requirements/SignalToken.qbk]
 [include requirements/SyncRandomAccessReadDevice.qbk]
 [include requirements/SyncRandomAccessWriteDevice.qbk]
 [include requirements/SyncReadStream.qbk]
 [include requirements/SyncWriteStream.qbk]
 [include requirements/TimeTraits.qbk]
 [include requirements/WaitHandler.qbk]
+[include requirements/WaitToken.qbk]
 [include requirements/WaitTraits.qbk]
 [include requirements/WriteHandler.qbk]
+[include requirements/WriteToken.qbk]
 
 </xsl:text>
 
@@ -694,6 +707,16 @@
       <xsl:value-of name="text" select="$ref-name"/>
       <xsl:text>`]</xsl:text>
     </xsl:when>
+    <xsl:when test="@refid = 'asynchronous_operation'">
+      <xsl:text>[link asio.overview.model.async_ops </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@refid = 'completion_token'">
+      <xsl:text>[link asio.overview.model.completion_tokens </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:text>`</xsl:text>
       <xsl:value-of select="."/>
@@ -726,6 +749,16 @@
       <xsl:text> `</xsl:text>
       <xsl:value-of name="text" select="$ref-name"/>
       <xsl:text>`]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@refid = 'asynchronous_operation'">
+      <xsl:text>[link asio.overview.model.async_ops </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@refid = 'completion_token'">
+      <xsl:text>[link asio.overview.model.completion_tokens </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
     </xsl:when>
     <xsl:otherwise>
       <xsl:text>`</xsl:text>

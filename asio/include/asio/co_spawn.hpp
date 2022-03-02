@@ -54,7 +54,7 @@ struct awaitable_signature<awaitable<void, Executor>>
  * @param a The asio::awaitable object that is the result of calling the
  * coroutine's entry point function.
  *
- * @param token The completion token that will handle the notification that
+ * @param token The @ref completion_token that will handle the notification that
  * the thread of execution has completed. The function signature of the
  * completion handler must be:
  * @code void handler(std::exception_ptr, T); @endcode
@@ -126,7 +126,7 @@ co_spawn(const Executor& ex, awaitable<T, AwaitableExecutor> a,
  * @param a The asio::awaitable object that is the result of calling the
  * coroutine's entry point function.
  *
- * @param token The completion token that will handle the notification that
+ * @param token The @ref completion_token that will handle the notification that
  * the thread of execution has completed. The function signature of the
  * completion handler must be:
  * @code void handler(std::exception_ptr); @endcode
@@ -190,7 +190,7 @@ co_spawn(const Executor& ex, awaitable<void, AwaitableExecutor> a,
  * @param a The asio::awaitable object that is the result of calling the
  * coroutine's entry point function.
  *
- * @param token The completion token that will handle the notification that
+ * @param token The @ref completion_token that will handle the notification that
  * the thread of execution has completed. The function signature of the
  * completion handler must be:
  * @code void handler(std::exception_ptr); @endcode
@@ -265,7 +265,7 @@ co_spawn(ExecutionContext& ctx, awaitable<T, AwaitableExecutor> a,
  * @param a The asio::awaitable object that is the result of calling the
  * coroutine's entry point function.
  *
- * @param token The completion token that will handle the notification that
+ * @param token The @ref completion_token that will handle the notification that
  * the thread of execution has completed. The function signature of the
  * completion handler must be:
  * @code void handler(std::exception_ptr); @endcode
@@ -333,8 +333,8 @@ co_spawn(ExecutionContext& ctx, awaitable<void, AwaitableExecutor> a,
  * @c asio::awaitable<R,E> that will be used as the coroutine's entry
  * point.
  *
- * @param token The completion token that will handle the notification that the
- * thread of execution has completed. If @c R is @c void, the function
+ * @param token The @ref completion_token that will handle the notification
+ * that the thread of execution has completed. If @c R is @c void, the function
  * signature of the completion handler must be:
  *
  * @code void handler(std::exception_ptr); @endcode
@@ -426,8 +426,8 @@ co_spawn(const Executor& ex, F&& f,
  * @c asio::awaitable<R,E> that will be used as the coroutine's entry
  * point.
  *
- * @param token The completion token that will handle the notification that the
- * thread of execution has completed. If @c R is @c void, the function
+ * @param token The @ref completion_token that will handle the notification
+ * that the thread of execution has completed. If @c R is @c void, the function
  * signature of the completion handler must be:
  *
  * @code void handler(std::exception_ptr); @endcode

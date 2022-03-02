@@ -442,11 +442,13 @@
             <member><link linkend="asio.reference.DynamicBuffer_v2">DynamicBuffer_v2</link></member>
             <member><link linkend="asio.reference.MutableBufferSequence">MutableBufferSequence</link></member>
             <member><link linkend="asio.reference.ReadHandler">ReadHandler</link></member>
+            <member><link linkend="asio.reference.ReadToken">ReadToken</link></member>
             <member><link linkend="asio.reference.SyncRandomAccessReadDevice">SyncRandomAccessReadDevice</link></member>
             <member><link linkend="asio.reference.SyncRandomAccessWriteDevice">SyncRandomAccessWriteDevice</link></member>
             <member><link linkend="asio.reference.SyncReadStream">SyncReadStream</link></member>
             <member><link linkend="asio.reference.SyncWriteStream">SyncWriteStream</link></member>
             <member><link linkend="asio.reference.WriteHandler">WriteHandler</link></member>
+            <member><link linkend="asio.reference.WriteToken">WriteToken</link></member>
           </simplelist>
         </entry>
       </row>
@@ -578,18 +580,24 @@
             <member><link linkend="asio.reference.asynchronous_socket_operations">Asynchronous socket operations</link></member>
             <member><link linkend="asio.reference.AcceptableProtocol">AcceptableProtocol</link></member>
             <member><link linkend="asio.reference.AcceptHandler">AcceptHandler</link></member>
+            <member><link linkend="asio.reference.AcceptToken">AcceptToken</link></member>
             <member><link linkend="asio.reference.ConnectCondition">ConnectCondition</link></member>
             <member><link linkend="asio.reference.ConnectHandler">ConnectHandler</link></member>
+            <member><link linkend="asio.reference.ConnectToken">ConnectToken</link></member>
             <member><link linkend="asio.reference.Endpoint">Endpoint</link></member>
             <member><link linkend="asio.reference.EndpointSequence">EndpointSequence</link></member>
             <member><link linkend="asio.reference.GettableSocketOption">GettableSocketOption</link></member>
             <member><link linkend="asio.reference.InternetProtocol">InternetProtocol</link></member>
             <member><link linkend="asio.reference.IoControlCommand">IoControlCommand</link></member>
             <member><link linkend="asio.reference.IteratorConnectHandler">IteratorConnectHandler</link></member>
+            <member><link linkend="asio.reference.IteratorConnectToken">IteratorConnectToken</link></member>
             <member><link linkend="asio.reference.MoveAcceptHandler">MoveAcceptHandler</link></member>
+            <member><link linkend="asio.reference.MoveAcceptToken">MoveAcceptToken</link></member>
             <member><link linkend="asio.reference.Protocol">Protocol</link></member>
             <member><link linkend="asio.reference.RangeConnectHandler">RangeConnectHandler</link></member>
+            <member><link linkend="asio.reference.RangeConnectToken">RangeConnectToken</link></member>
             <member><link linkend="asio.reference.ResolveHandler">ResolveHandler</link></member>
+            <member><link linkend="asio.reference.ResolveToken">ResolveToken</link></member>
             <member><link linkend="asio.reference.SettableSocketOption">SettableSocketOption</link></member>
           </simplelist>
         </entry>
@@ -638,6 +646,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.TimeTraits">TimeTraits</link></member>
             <member><link linkend="asio.reference.WaitHandler">WaitHandler</link></member>
+            <member><link linkend="asio.reference.WaitToken">WaitToken</link></member>
             <member><link linkend="asio.reference.WaitTraits">WaitTraits</link></member>
           </simplelist>
         </entry>
@@ -662,8 +671,11 @@
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.BufferedHandshakeHandler">BufferedHandshakeHandler</link></member>
+            <member><link linkend="asio.reference.BufferedHandshakeToken">BufferedHandshakeToken</link></member>
             <member><link linkend="asio.reference.HandshakeHandler">HandshakeHandler</link></member>
+            <member><link linkend="asio.reference.HandshakeToken">HandshakeToken</link></member>
             <member><link linkend="asio.reference.ShutdownHandler">ShutdownHandler</link></member>
+            <member><link linkend="asio.reference.ShutdownToken">ShutdownToken</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -702,6 +714,7 @@
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.SignalHandler">SignalHandler</link></member>
+            <member><link linkend="asio.reference.SignalToken">SignalToken</link></member>
           </simplelist>
         </entry>
       </row>

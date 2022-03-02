@@ -403,9 +403,10 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
 /// specified offset.
 /**
  * This function is used to asynchronously write a certain number of bytes of
- * data to a random access device at a specified offset. The function call
- * always returns immediately. The asynchronous operation will continue until
- * one of the following conditions is true:
+ * data to a random access device at a specified offset. It is an initiating
+ * function for an @ref asynchronous_operation, and always returns immediately.
+ * The asynchronous operation will continue until one of the following
+ * conditions is true:
  *
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
@@ -428,11 +429,13 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  * @param buffers One or more buffers containing the data to be written.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
- * @param handler The handler to be called when the write operation completes.
- * Copies will be made of the handler as required. The function signature of
- * the handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the write completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -442,8 +445,8 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -471,14 +474,14 @@ std::size_t write_at(SyncRandomAccessWriteDevice& d, uint64_t offset,
  */
 template <typename AsyncRandomAccessWriteDevice, typename ConstBufferSequence,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler
+      std::size_t)) WriteToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncRandomAccessWriteDevice::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
     const ConstBufferSequence& buffers,
-    ASIO_MOVE_ARG(WriteHandler) handler
+    ASIO_MOVE_ARG(WriteToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncRandomAccessWriteDevice::executor_type));
 
@@ -486,9 +489,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
 /// specified offset.
 /**
  * This function is used to asynchronously write a certain number of bytes of
- * data to a random access device at a specified offset. The function call
- * always returns immediately. The asynchronous operation will continue until
- * one of the following conditions is true:
+ * data to a random access device at a specified offset. It is an initiating
+ * function for an @ref asynchronous_operation, and always returns immediately.
+ * The asynchronous operation will continue until one of the following
+ * conditions is true:
  *
  * @li All of the data in the supplied buffers has been written. That is, the
  * bytes transferred is equal to the sum of the buffer sizes.
@@ -511,7 +515,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * @param buffers One or more buffers containing the data to be written.
  * Although the buffers object may be copied as necessary, ownership of the
  * underlying memory blocks is retained by the caller, which must guarantee
- * that they remain valid until the handler is called.
+ * that they remain valid until the completion handler is called.
  *
  * @param completion_condition The function object to be called to determine
  * whether the write operation is complete. The signature of the function object
@@ -527,9 +531,11 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the device's async_write_some_at function.
  *
- * @param handler The handler to be called when the write operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the write completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -539,8 +545,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -570,15 +576,15 @@ async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
 template <typename AsyncRandomAccessWriteDevice,
     typename ConstBufferSequence, typename CompletionCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler
+      std::size_t)) WriteToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncRandomAccessWriteDevice::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, const ConstBufferSequence& buffers,
     CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler
+    ASIO_MOVE_ARG(WriteToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncRandomAccessWriteDevice::executor_type));
 
@@ -589,9 +595,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 /// specified offset.
 /**
  * This function is used to asynchronously write a certain number of bytes of
- * data to a random access device at a specified offset. The function call
- * always returns immediately. The asynchronous operation will continue until
- * one of the following conditions is true:
+ * data to a random access device at a specified offset. It is an initiating
+ * function for an @ref asynchronous_operation, and always returns immediately.
+ * The asynchronous operation will continue until one of the following
+ * conditions is true:
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
@@ -612,11 +619,13 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  *
  * @param b A basic_streambuf object from which data will be written. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
- * remains valid until the handler is called.
+ * remains valid until the completion handler is called.
  *
- * @param handler The handler to be called when the write operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the write completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -626,8 +635,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -646,14 +655,14 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  */
 template <typename AsyncRandomAccessWriteDevice, typename Allocator,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler
+      std::size_t)) WriteToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncRandomAccessWriteDevice::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d,
     uint64_t offset, basic_streambuf<Allocator>& b,
-    ASIO_MOVE_ARG(WriteHandler) handler
+    ASIO_MOVE_ARG(WriteToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncRandomAccessWriteDevice::executor_type));
 
@@ -661,9 +670,10 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 /// specified offset.
 /**
  * This function is used to asynchronously write a certain number of bytes of
- * data to a random access device at a specified offset. The function call
- * always returns immediately. The asynchronous operation will continue until
- * one of the following conditions is true:
+ * data to a random access device at a specified offset. It is an initiating
+ * function for an @ref asynchronous_operation, and always returns immediately.
+ * The asynchronous operation will continue until one of the following
+ * conditions is true:
  *
  * @li All of the data in the supplied basic_streambuf has been written.
  *
@@ -684,7 +694,7 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  *
  * @param b A basic_streambuf object from which data will be written. Ownership
  * of the streambuf is retained by the caller, which must guarantee that it
- * remains valid until the handler is called.
+ * remains valid until the completion handler is called.
  *
  * @param completion_condition The function object to be called to determine
  * whether the write operation is complete. The signature of the function object
@@ -700,9 +710,11 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  * non-zero return value indicates the maximum number of bytes to be written on
  * the next call to the device's async_write_some_at function.
  *
- * @param handler The handler to be called when the write operation completes.
- * Copies will be made of the handler as required. The function signature of the
- * handler must be:
+ * @param token The @ref completion_token that will be used to produce a
+ * completion handler, which will be called when the write completes.
+ * Potential completion tokens include @ref use_future, @ref use_awaitable,
+ * @ref yield_context, or a function object with the correct completion
+ * signature. The function signature of the completion handler must be:
  * @code void handler(
  *   // Result of operation.
  *   const asio::error_code& error,
@@ -712,8 +724,8 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
  *   std::size_t bytes_transferred
  * ); @endcode
  * Regardless of whether the asynchronous operation completes immediately or
- * not, the handler will not be invoked from within this function. On
- * immediate completion, invocation of the handler will be performed in a
+ * not, the completion handler will not be invoked from within this function.
+ * On immediate completion, invocation of the handler will be performed in a
  * manner equivalent to using asio::post().
  *
  * @par Completion Signature
@@ -733,14 +745,14 @@ async_write_at(AsyncRandomAccessWriteDevice& d,
 template <typename AsyncRandomAccessWriteDevice,
     typename Allocator, typename CompletionCondition,
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-      std::size_t)) WriteHandler
+      std::size_t)) WriteToken
         ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(
           typename AsyncRandomAccessWriteDevice::executor_type)>
-ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
     void (asio::error_code, std::size_t))
 async_write_at(AsyncRandomAccessWriteDevice& d, uint64_t offset,
     basic_streambuf<Allocator>& b, CompletionCondition completion_condition,
-    ASIO_MOVE_ARG(WriteHandler) handler
+    ASIO_MOVE_ARG(WriteToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(
         typename AsyncRandomAccessWriteDevice::executor_type));
 
