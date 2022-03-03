@@ -33,8 +33,8 @@ namespace coro {
 template <typename T>
 void different_execs()
 {
-  asio::io_context ctx;
   asio::thread_pool th_ctx{1u};
+  asio::io_context ctx;
 
   auto o = std::make_optional(
       asio::prefer(th_ctx.get_executor(),
