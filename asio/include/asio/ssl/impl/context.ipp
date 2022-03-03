@@ -359,9 +359,7 @@ context::context(context::method m)
 
   if (handle_ == 0)
   {
-    asio::error_code ec(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    asio::error_code ec = translate_error(::ERR_get_error());
     asio::detail::throw_error(ec, "context");
   }
 
@@ -547,9 +545,7 @@ ASIO_SYNC_OP_VOID context::load_verify_file(
 
   if (::SSL_CTX_load_verify_locations(handle_, filename.c_str(), 0) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -584,17 +580,13 @@ ASIO_SYNC_OP_VOID context::add_certificate_authority(
               && ERR_GET_REASON(err) == PEM_R_NO_START_LINE)
             break;
 
-          ec = asio::error_code(
-              static_cast<int>(err),
-              asio::error::get_ssl_category());
+          ec = translate_error(err);
           ASIO_SYNC_OP_VOID_RETURN(ec);
         }
 
         if (::X509_STORE_add_cert(store, cert.p) != 1)
         {
-          ec = asio::error_code(
-              static_cast<int>(::ERR_get_error()),
-              asio::error::get_ssl_category());
+          ec = translate_error(::ERR_get_error());
           ASIO_SYNC_OP_VOID_RETURN(ec);
         }
       }
@@ -619,9 +611,7 @@ ASIO_SYNC_OP_VOID context::set_default_verify_paths(
 
   if (::SSL_CTX_set_default_verify_paths(handle_) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -643,9 +633,7 @@ ASIO_SYNC_OP_VOID context::add_verify_path(
 
   if (::SSL_CTX_load_verify_locations(handle_, 0, path.c_str()) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -699,9 +687,7 @@ ASIO_SYNC_OP_VOID context::use_certificate(
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -737,9 +723,7 @@ ASIO_SYNC_OP_VOID context::use_certificate_file(
 
   if (::SSL_CTX_use_certificate_file(handle_, filename.c_str(), file_type) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -778,17 +762,14 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
           cb_userdata) };
     if (!cert.p)
     {
-      ec = asio::error_code(ERR_R_PEM_LIB,
-          asio::error::get_ssl_category());
+      ec = translate_error(ERR_R_PEM_LIB);
       ASIO_SYNC_OP_VOID_RETURN(ec);
     }
 
     int result = ::SSL_CTX_use_certificate(handle_, cert.p);
     if (result == 0 || ::ERR_peek_error() != 0)
     {
-      ec = asio::error_code(
-          static_cast<int>(::ERR_get_error()),
-          asio::error::get_ssl_category());
+      ec = translate_error(::ERR_get_error());
       ASIO_SYNC_OP_VOID_RETURN(ec);
     }
 
@@ -811,9 +792,7 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
     {
       if (!::SSL_CTX_add_extra_chain_cert(handle_, cacert))
       {
-        ec = asio::error_code(
-            static_cast<int>(::ERR_get_error()),
-            asio::error::get_ssl_category());
+        ec = translate_error(::ERR_get_error());
         ASIO_SYNC_OP_VOID_RETURN(ec);
       }
     }
@@ -828,9 +807,7 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain(
     }
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -848,9 +825,7 @@ ASIO_SYNC_OP_VOID context::use_certificate_chain_file(
 
   if (::SSL_CTX_use_certificate_chain_file(handle_, filename.c_str()) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -914,9 +889,7 @@ ASIO_SYNC_OP_VOID context::use_private_key(
     }
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -979,10 +952,8 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
     {
       if (::EVP_PKEY_is_a(evp_private_key.p, "RSA") == 0)
       {
-        ec = asio::error_code(
-            static_cast<int>(ERR_PACK(ERR_LIB_EVP,
-                0, EVP_R_EXPECTING_AN_RSA_KEY)),
-            asio::error::get_ssl_category());
+        ec = translate_error(
+            ERR_PACK(ERR_LIB_EVP, 0, EVP_R_EXPECTING_AN_RSA_KEY));
         ASIO_SYNC_OP_VOID_RETURN(ec);
       }
 
@@ -1022,9 +993,7 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
 #endif // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -1052,9 +1021,7 @@ ASIO_SYNC_OP_VOID context::use_private_key_file(
 
   if (::SSL_CTX_use_PrivateKey_file(handle_, filename.c_str(), file_type) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -1105,10 +1072,8 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key_file(
     {
       if (::EVP_PKEY_is_a(evp_private_key.p, "RSA") == 0)
       {
-        ec = asio::error_code(
-            static_cast<int>(ERR_PACK(ERR_LIB_EVP,
-                0, EVP_R_EXPECTING_AN_RSA_KEY)),
-            asio::error::get_ssl_category());
+        ec = translate_error(
+            ERR_PACK(ERR_LIB_EVP, 0, EVP_R_EXPECTING_AN_RSA_KEY));
         ASIO_SYNC_OP_VOID_RETURN(ec);
       }
 
@@ -1120,9 +1085,7 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key_file(
     }
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 #else // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
   int file_type;
@@ -1146,9 +1109,7 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key_file(
   if (::SSL_CTX_use_RSAPrivateKey_file(
         handle_, filename.c_str(), file_type) != 1)
   {
-    ec = asio::error_code(
-        static_cast<int>(::ERR_get_error()),
-        asio::error::get_ssl_category());
+    ec = translate_error(::ERR_get_error());
     ASIO_SYNC_OP_VOID_RETURN(ec);
   }
 
@@ -1175,9 +1136,7 @@ ASIO_SYNC_OP_VOID context::use_tmp_dh(
     return do_use_tmp_dh(bio.p, ec);
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -1199,9 +1158,7 @@ ASIO_SYNC_OP_VOID context::use_tmp_dh_file(
     return do_use_tmp_dh(bio.p, ec);
   }
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -1234,9 +1191,7 @@ ASIO_SYNC_OP_VOID context::do_use_tmp_dh(
   }
 #endif // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
 
-  ec = asio::error_code(
-      static_cast<int>(::ERR_get_error()),
-      asio::error::get_ssl_category());
+  ec = translate_error(::ERR_get_error());
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
@@ -1341,6 +1296,21 @@ BIO* context::make_buffer_bio(const const_buffer& b)
   return ::BIO_new_mem_buf(
       const_cast<void*>(b.data()),
       static_cast<int>(b.size()));
+}
+
+asio::error_code context::translate_error(long error)
+{
+#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+  if (ERR_SYSTEM_ERROR(error))
+  {
+    return asio::error_code(
+        static_cast<int>(ERR_GET_REASON(error)),
+        asio::error::get_system_category());
+  }
+#endif // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+
+  return asio::error_code(static_cast<int>(error),
+      asio::error::get_ssl_category());
 }
 
 } // namespace ssl

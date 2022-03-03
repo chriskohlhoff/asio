@@ -741,6 +741,9 @@ private:
   // Helper function to make a BIO from a memory buffer.
   ASIO_DECL BIO* make_buffer_bio(const const_buffer& b);
 
+  // Translate an SSL error into an error code.
+  ASIO_DECL static asio::error_code translate_error(long error);
+
   // The underlying native implementation.
   native_handle_type handle_;
 
