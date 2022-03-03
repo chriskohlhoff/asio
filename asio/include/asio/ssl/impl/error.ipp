@@ -39,9 +39,13 @@ public:
     if (reason)
     {
       const char* lib = ::ERR_lib_error_string(value);
+#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
       const char* func = ::ERR_func_error_string(value);
+#else // (OPENSSL_VERSION_NUMBER < 0x30000000L)
+      const char* func = 0;
+#endif // (OPENSSL_VERSION_NUMBER < 0x30000000L)
       std::string result(reason);
-      if (lib || func)
+      if (lib)
       {
         result += " (";
         if (lib)
