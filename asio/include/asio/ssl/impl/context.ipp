@@ -47,13 +47,13 @@ struct context::evp_pkey_cleanup
   ~evp_pkey_cleanup() { if (p) ::EVP_PKEY_free(p); }
 };
 
+#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
 struct context::rsa_cleanup
 {
   RSA* p;
   ~rsa_cleanup() { if (p) ::RSA_free(p); }
 };
 
-#if (OPENSSL_VERSION_NUMBER < 0x30000000L)
 struct context::dh_cleanup
 {
   DH* p;
@@ -946,16 +946,53 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
       && (!defined(LIBRESSL_VERSION_NUMBER) \
         || LIBRESSL_VERSION_NUMBER >= 0x2070000fL)) \
     || defined(ASIO_USE_WOLFSSL)
-    pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
-    void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+  pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+  void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
 #else // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
-    pem_password_cb* callback = handle_->default_passwd_callback;
-    void* cb_userdata = handle_->default_passwd_callback_userdata;
+  pem_password_cb* callback = handle_->default_passwd_callback;
+  void* cb_userdata = handle_->default_passwd_callback_userdata;
 #endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
 
   bio_cleanup bio = { make_buffer_bio(private_key) };
   if (bio.p)
   {
+#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+    evp_pkey_cleanup evp_private_key = { 0 };
+    switch (format)
+    {
+    case context_base::asn1:
+      evp_private_key.p = ::d2i_PrivateKey_bio(bio.p, 0);
+      break;
+    case context_base::pem:
+      evp_private_key.p = ::PEM_read_bio_PrivateKey(
+          bio.p, 0, callback,
+          cb_userdata);
+      break;
+    default:
+      {
+        ec = asio::error::invalid_argument;
+        ASIO_SYNC_OP_VOID_RETURN(ec);
+      }
+    }
+
+    if (evp_private_key.p)
+    {
+      if (::EVP_PKEY_is_a(evp_private_key.p, "RSA") == 0)
+      {
+        ec = asio::error_code(
+            static_cast<int>(ERR_PACK(ERR_LIB_EVP,
+                0, EVP_R_EXPECTING_AN_RSA_KEY)),
+            asio::error::get_ssl_category());
+        ASIO_SYNC_OP_VOID_RETURN(ec);
+      }
+
+      if (::SSL_CTX_use_PrivateKey(handle_, evp_private_key.p) == 1)
+      {
+        ec = asio::error_code();
+        ASIO_SYNC_OP_VOID_RETURN(ec);
+      }
+    }
+#else // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
     rsa_cleanup rsa_private_key = { 0 };
     switch (format)
     {
@@ -982,6 +1019,7 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key(
         ASIO_SYNC_OP_VOID_RETURN(ec);
       }
     }
+#endif // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
   }
 
   ec = asio::error_code(
@@ -1036,6 +1074,57 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key_file(
     const std::string& filename, context::file_format format,
     asio::error_code& ec)
 {
+#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
+  ::ERR_clear_error();
+
+  pem_password_cb* callback = ::SSL_CTX_get_default_passwd_cb(handle_);
+  void* cb_userdata = ::SSL_CTX_get_default_passwd_cb_userdata(handle_);
+
+  bio_cleanup bio = { ::BIO_new_file(filename.c_str(), "r") };
+  if (bio.p)
+  {
+    evp_pkey_cleanup evp_private_key = { 0 };
+    switch (format)
+    {
+    case context_base::asn1:
+      evp_private_key.p = ::d2i_PrivateKey_bio(bio.p, 0);
+      break;
+    case context_base::pem:
+      evp_private_key.p = ::PEM_read_bio_PrivateKey(
+          bio.p, 0, callback,
+          cb_userdata);
+      break;
+    default:
+      {
+        ec = asio::error::invalid_argument;
+        ASIO_SYNC_OP_VOID_RETURN(ec);
+      }
+    }
+
+    if (evp_private_key.p)
+    {
+      if (::EVP_PKEY_is_a(evp_private_key.p, "RSA") == 0)
+      {
+        ec = asio::error_code(
+            static_cast<int>(ERR_PACK(ERR_LIB_EVP,
+                0, EVP_R_EXPECTING_AN_RSA_KEY)),
+            asio::error::get_ssl_category());
+        ASIO_SYNC_OP_VOID_RETURN(ec);
+      }
+
+      if (::SSL_CTX_use_PrivateKey(handle_, evp_private_key.p) == 1)
+      {
+        ec = asio::error_code();
+        ASIO_SYNC_OP_VOID_RETURN(ec);
+      }
+    }
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  ASIO_SYNC_OP_VOID_RETURN(ec);
+#else // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
   int file_type;
   switch (format)
   {
@@ -1065,6 +1154,7 @@ ASIO_SYNC_OP_VOID context::use_rsa_private_key_file(
 
   ec = asio::error_code();
   ASIO_SYNC_OP_VOID_RETURN(ec);
+#endif // (OPENSSL_VERSION_NUMBER >= 0x30000000L)
 }
 
 void context::use_tmp_dh(const const_buffer& dh)
