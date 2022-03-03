@@ -542,6 +542,7 @@ nobase_include_HEADERS = \
 	asio/read.hpp \
 	asio/read_until.hpp \
 	asio/readable_pipe.hpp \
+	asio/recycling_allocator.hpp \
 	asio/redirect_error.hpp \
 	asio/registered_buffer.hpp \
 	asio/require.hpp \

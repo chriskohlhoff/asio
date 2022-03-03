@@ -140240,6 +140240,608 @@ The [link asio.reference.basic_readable_pipe `basic_readable_pipe`] class provid
 [endsect]
 
 
+[section:recycling_allocator recycling_allocator]
+
+[indexterm1 asio.indexterm.recycling_allocator..recycling_allocator]
+
+
+An allocator that caches memory blocks in thread-local storage for reuse. 
+
+
+  template<
+      typename T>
+  class recycling_allocator
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.recycling_allocator__rebind [*rebind]]]
+    [Rebind the allocator to another value_type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.recycling_allocator.value_type [*value_type]]]
+    [The type of object allocated by the recycling allocator. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.recycling_allocator.allocate [*allocate]]]
+    [Allocate memory for the specified number of values. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.deallocate [*deallocate]]]
+    [Deallocate memory for the specified number of values. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.operator_not__eq_ [*operator!=]]]
+    [Inequality operator. Always returns false. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.operator_eq__eq_ [*operator==]]]
+    [Equality operator. Always returns true. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.recycling_allocator [*recycling_allocator]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Converting constructor. ]
+  ]
+  
+]
+
+The  uses a simple strategy where a limited number of small memory blocks are cached in thread-local storage, if the current thread is running an `io_context` or is part of a `thread_pool`. 
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:allocate recycling_allocator::allocate]
+
+[indexterm2 asio.indexterm.recycling_allocator.allocate..allocate..recycling_allocator] 
+Allocate memory for the specified number of values. 
+
+
+  T * allocate(
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:deallocate recycling_allocator::deallocate]
+
+[indexterm2 asio.indexterm.recycling_allocator.deallocate..deallocate..recycling_allocator] 
+Deallocate memory for the specified number of values. 
+
+
+  void deallocate(
+      T * p,
+      std::size_t n);
+
+
+
+[endsect]
+
+
+
+[section:operator_not__eq_ recycling_allocator::operator!=]
+
+[indexterm2 asio.indexterm.recycling_allocator.operator_not__eq_..operator!=..recycling_allocator] 
+Inequality operator. Always returns false. 
+
+
+  constexpr bool operator!=(
+      const recycling_allocator & ) const;
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ recycling_allocator::operator==]
+
+[indexterm2 asio.indexterm.recycling_allocator.operator_eq__eq_..operator==..recycling_allocator] 
+Equality operator. Always returns true. 
+
+
+  constexpr bool operator==(
+      const recycling_allocator & ) const;
+
+
+
+[endsect]
+
+
+[section:recycling_allocator recycling_allocator::recycling_allocator]
+
+[indexterm2 asio.indexterm.recycling_allocator.recycling_allocator..recycling_allocator..recycling_allocator] 
+Default constructor. 
+
+
+  constexpr ``[link asio.reference.recycling_allocator.recycling_allocator.overload1 recycling_allocator]``();
+  ``  [''''&raquo;''' [link asio.reference.recycling_allocator.recycling_allocator.overload1 more...]]``
+
+
+Converting constructor. 
+
+
+  template<
+      typename U>
+  constexpr ``[link asio.reference.recycling_allocator.recycling_allocator.overload2 recycling_allocator]``(
+      const recycling_allocator< U > & );
+  ``  [''''&raquo;''' [link asio.reference.recycling_allocator.recycling_allocator.overload2 more...]]``
+
+
+[section:overload1 recycling_allocator::recycling_allocator (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr recycling_allocator();
+
+
+
+[endsect]
+
+
+
+[section:overload2 recycling_allocator::recycling_allocator (2 of 2 overloads)]
+
+
+Converting constructor. 
+
+
+  template<
+      typename U>
+  constexpr recycling_allocator(
+      const recycling_allocator< U > & );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:value_type recycling_allocator::value_type]
+
+[indexterm2 asio.indexterm.recycling_allocator.value_type..value_type..recycling_allocator] 
+The type of object allocated by the recycling allocator. 
+
+
+  typedef T value_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:recycling_allocator__rebind recycling_allocator::rebind]
+
+[indexterm1 asio.indexterm.recycling_allocator__rebind..recycling_allocator::rebind]
+
+
+Rebind the allocator to another value\_type. 
+
+
+  template<
+      typename U>
+  struct rebind
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.recycling_allocator__rebind.other [*other]]]
+    [The rebound allocator type. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:other recycling_allocator::rebind::other]
+
+[indexterm2 asio.indexterm.recycling_allocator__rebind.other..other..recycling_allocator::rebind] 
+The rebound `allocator` type. 
+
+
+  typedef recycling_allocator< U > other;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.recycling_allocator__rebind [*rebind]]]
+    [Rebind the allocator to another value_type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.recycling_allocator.value_type [*value_type]]]
+    [The type of object allocated by the recycling allocator. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.recycling_allocator.allocate [*allocate]]]
+    [Allocate memory for the specified number of values. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.deallocate [*deallocate]]]
+    [Deallocate memory for the specified number of values. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.operator_not__eq_ [*operator!=]]]
+    [Inequality operator. Always returns false. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.operator_eq__eq_ [*operator==]]]
+    [Equality operator. Always returns true. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.recycling_allocator [*recycling_allocator]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Converting constructor. ]
+  ]
+  
+]
+
+The  uses a simple strategy where a limited number of small memory blocks are cached in thread-local storage, if the current thread is running an `io_context` or is part of a `thread_pool`. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:recycling_allocator_lt__void__gt_ recycling_allocator< void >]
+
+[indexterm1 asio.indexterm.recycling_allocator_lt__void__gt_..recycling_allocator< void >]
+
+
+A proto-allocator that caches memory blocks in thread-local storage for reuse. 
+
+
+  template<>
+  class recycling_allocator< void >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.recycling_allocator_lt__void__gt___rebind [*recycling_allocator< void >::rebind]]]
+    [Rebind the allocator to another value_type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.recycling_allocator_lt__void__gt_.value_type [*value_type]]]
+    [No values are allocated by a proto-allocator. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.recycling_allocator_lt__void__gt_.operator_not__eq_ [*operator!=]]]
+    [Inequality operator. Always returns false. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator_lt__void__gt_.operator_eq__eq_ [*operator==]]]
+    [Equality operator. Always returns true. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator_lt__void__gt_.recycling_allocator [*recycling_allocator]]]
+    [Default constructor. 
+     [hr]
+     Converting constructor. ]
+  ]
+  
+]
+
+The  uses a simple strategy where a limited number of small memory blocks are cached in thread-local storage, if the current thread is running an `io_context` or is part of a `thread_pool`. 
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:operator_not__eq_ recycling_allocator< void >::operator!=]
+
+[indexterm2 asio.indexterm.recycling_allocator_lt__void__gt_.operator_not__eq_..operator!=..recycling_allocator< void >] 
+Inequality operator. Always returns false. 
+
+
+  constexpr bool operator!=(
+      const recycling_allocator & ) const;
+
+
+
+[endsect]
+
+
+
+[section:operator_eq__eq_ recycling_allocator< void >::operator==]
+
+[indexterm2 asio.indexterm.recycling_allocator_lt__void__gt_.operator_eq__eq_..operator==..recycling_allocator< void >] 
+Equality operator. Always returns true. 
+
+
+  constexpr bool operator==(
+      const recycling_allocator & ) const;
+
+
+
+[endsect]
+
+
+[section:recycling_allocator recycling_allocator< void >::recycling_allocator]
+
+[indexterm2 asio.indexterm.recycling_allocator_lt__void__gt_.recycling_allocator..recycling_allocator..recycling_allocator< void >] 
+Default constructor. 
+
+
+  constexpr ``[link asio.reference.recycling_allocator_lt__void__gt_.recycling_allocator.overload1 recycling_allocator]``();
+  ``  [''''&raquo;''' [link asio.reference.recycling_allocator_lt__void__gt_.recycling_allocator.overload1 more...]]``
+
+
+Converting constructor. 
+
+
+  template<
+      typename U>
+  constexpr ``[link asio.reference.recycling_allocator_lt__void__gt_.recycling_allocator.overload2 recycling_allocator]``(
+      const recycling_allocator< U > & );
+  ``  [''''&raquo;''' [link asio.reference.recycling_allocator_lt__void__gt_.recycling_allocator.overload2 more...]]``
+
+
+[section:overload1 recycling_allocator< void >::recycling_allocator (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr recycling_allocator();
+
+
+
+[endsect]
+
+
+
+[section:overload2 recycling_allocator< void >::recycling_allocator (2 of 2 overloads)]
+
+
+Converting constructor. 
+
+
+  template<
+      typename U>
+  constexpr recycling_allocator(
+      const recycling_allocator< U > & );
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:value_type recycling_allocator< void >::value_type]
+
+[indexterm2 asio.indexterm.recycling_allocator_lt__void__gt_.value_type..value_type..recycling_allocator< void >] 
+No values are allocated by a proto-allocator. 
+
+
+  typedef void value_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:recycling_allocator_lt__void__gt___rebind recycling_allocator< void >::rebind]
+
+[indexterm1 asio.indexterm.recycling_allocator_lt__void__gt___rebind..recycling_allocator< void >::rebind]
+
+
+Rebind the allocator to another value\_type. 
+
+
+  template<
+      typename U>
+  struct recycling_allocator< void >::rebind
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.recycling_allocator_lt__void__gt___rebind.other [*other]]]
+    [The rebound allocator type. ]
+  
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:other recycling_allocator< void >::rebind::other]
+
+[indexterm2 asio.indexterm.recycling_allocator_lt__void__gt___rebind.other..other..recycling_allocator< void >::rebind] 
+The rebound `allocator` type. 
+
+
+  typedef recycling_allocator< U > other;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.recycling_allocator__rebind [*rebind]]]
+    [Rebind the allocator to another value_type. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.recycling_allocator.value_type [*value_type]]]
+    [The type of object allocated by the recycling allocator. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.recycling_allocator.allocate [*allocate]]]
+    [Allocate memory for the specified number of values. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.deallocate [*deallocate]]]
+    [Deallocate memory for the specified number of values. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.operator_not__eq_ [*operator!=]]]
+    [Inequality operator. Always returns false. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.operator_eq__eq_ [*operator==]]]
+    [Equality operator. Always returns true. ]
+  ]
+  
+  [
+    [[link asio.reference.recycling_allocator.recycling_allocator [*recycling_allocator]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Converting constructor. ]
+  ]
+  
+]
+
+The  uses a simple strategy where a limited number of small memory blocks are cached in thread-local storage, if the current thread is running an `io_context` or is part of a `thread_pool`. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/recycling_allocator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
 
 [section:redirect_error redirect_error]
 
