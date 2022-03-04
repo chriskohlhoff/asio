@@ -56,7 +56,6 @@
 [include requirements/CancellationHandler.qbk]
 [include requirements/CancellationSlot.qbk]
 [include requirements/CompletionCondition.qbk]
-[include requirements/CompletionHandler.qbk]
 [include requirements/ConnectCondition.qbk]
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConnectToken.qbk]
@@ -82,6 +81,7 @@
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/NullaryToken.qbk]
 [include requirements/OperationState.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
@@ -1644,6 +1644,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Clock'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'CompletionHandler'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'CompletionToken'">

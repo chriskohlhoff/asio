@@ -25,7 +25,6 @@
 [include requirements/CancellationHandler.qbk]
 [include requirements/CancellationSlot.qbk]
 [include requirements/CompletionCondition.qbk]
-[include requirements/CompletionHandler.qbk]
 [include requirements/ConnectCondition.qbk]
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConnectToken.qbk]
@@ -51,6 +50,7 @@
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/NullaryToken.qbk]
 [include requirements/OperationState.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
@@ -78527,26 +78527,26 @@ If `T` has a nested type `default_completion_token_type`, `T::default_completion
 Submits a completion token or function object for execution. 
 
   template<
-      typename CompletionToken>
+      typename ``[link asio.reference.NullaryToken NullaryToken]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.defer.overload1 defer]``(
-      CompletionToken && token);
+      NullaryToken && token);
   ``  [''''&raquo;''' [link asio.reference.defer.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.defer.overload2 defer]``(
       const Executor & ex,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< execution::is_executor< Executor >::value||is_executor< Executor >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.defer.overload2 more...]]``
 
   template<
       typename ExecutionContext,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.defer.overload3 defer]``(
       ExecutionContext & ctx,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.defer.overload3 more...]]``
 
@@ -78564,34 +78564,86 @@ Submits a completion token or function object for execution.
 
 
   template<
-      typename CompletionToken>
+      typename ``[link asio.reference.NullaryToken NullaryToken]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` defer(
-      CompletionToken && token);
+      NullaryToken && token);
 
 
 This function submits an object for execution using the object's associated executor. The function object is queued for execution, and is never called from the current thread prior to returning from `defer()`.
 
 The use of `defer()`, rather than [link asio.reference.post `post`], indicates the caller's preference that the executor defer the queueing of the function object. This may allow the executor to optimise queueing for cases when the function object represents a continuation of the current call context.
 
-This function has the following effects:
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
 
 
-* Constructs a function object handler of type `Handler`, initialized with `handler(forward<CompletionToken>(token))`.
+[heading Return Value]
+      
+This function returns `async_initiate<NullaryToken, void()>(Init{}, token)`, where `Init` is a function object type defined as:
 
 
-* Constructs an object `result` of type `async_result<Handler>`, initializing the object as `result(handler)`.
+
+   class Init
+   {
+   public:
+     template <typename CompletionHandler>
+       void operator()(CompletionHandler&& completion_handler) const;
+   }; 
 
 
-* Obtains the handler's associated executor object `ex` by performing `get_associated_executor(handler)`.
 
 
-* Obtains the handler's associated allocator object `alloc` by performing `get_associated_allocator(handler)`.
+The function call operator of `Init:` 
 
 
-* Performs `ex.defer(std::move(handler), alloc)`.
+* Obtains the handler's associated executor object `ex` of type `Ex` by performing
+
+   auto ex = get_associated_executor(handler); 
 
 
-* Returns `result.get()`.
+
+
+
+* Obtains the handler's associated allocator object `alloc` by performing 
+
+   auto alloc = get_associated_allocator(handler); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is true, performs 
+
+   execution::execute(
+       prefer(
+         require(ex, execution::blocking.never),
+         execution::relationship.continuation,
+         execution::allocator(alloc)),
+       std::forward<CompletionHandler>(completion_handler)); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is false, performs 
+
+   ex.defer(
+       std::forward<CompletionHandler>(completion_handler),
+       alloc); 
+
+
+
 
 
 [heading Completion Signature]
@@ -78618,10 +78670,10 @@ Submits a completion token or function object for execution.
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` defer(
       const Executor & ex,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< execution::is_executor< Executor >::value||is_executor< Executor >::value >::type  = 0);
 
 
@@ -78629,31 +78681,105 @@ This function submits an object for execution using the specified executor. The 
 
 The use of `defer()`, rather than [link asio.reference.post `post`], indicates the caller's preference that the executor defer the queueing of the function object. This may allow the executor to optimise queueing for cases when the function object represents a continuation of the current call context.
 
-This function has the following effects:
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The target executor.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
 
 
-* Constructs a function object handler of type `Handler`, initialized with `handler(forward<CompletionToken>(token))`.
+[heading Return Value]
+      
+This function returns `async_initiate<NullaryToken, void()>(Init{ex}, token)`, where `Init` is a function object type defined as:
 
 
-* Constructs an object `result` of type `async_result<Handler>`, initializing the object as `result(handler)`.
+
+   class Init
+   {
+   public:
+     using executor_type = Executor;
+     explicit Init(const Executor& ex) : ex_(ex) {}
+     executor_type get_executor() const noexcept { return ex_; }
+     template <typename CompletionHandler>
+       void operator()(CompletionHandler&& completion_handler) const;
+   private:
+     Executor ex_; // exposition only
+   }; 
 
 
-* Obtains the handler's associated executor object `ex1` by performing `get_associated_executor(handler)`.
 
 
-* Creates a work object `w` by performing `make_work(ex1)`.
+The function call operator of `Init:` 
 
 
-* Obtains the handler's associated allocator object `alloc` by performing `get_associated_allocator(handler)`.
+* Obtains the handler's associated executor object `ex1` of type `Ex1` by performing
+
+   auto ex1 = get_associated_executor(handler, ex); 
 
 
-* Constructs a function object `f` with a function call operator that performs `ex1.dispatch(std::move(handler), alloc)` followed by `w.reset()`.
 
 
-* Performs `Executor(ex).defer(std::move(f), alloc)`.
+
+* Obtains the handler's associated allocator object `alloc` by performing 
+
+   auto alloc = get_associated_allocator(handler); 
 
 
-* Returns `result.get()`.
+
+
+
+* If `execution::is_executor<Ex1>::value` is true, constructs a function object `f` with a member `executor_` that is initialised with `prefer(ex1, execution::outstanding_work.tracked)`, a member `handler_` that is a decay-copy of `completion_handler`, and a function call operator that performs: 
+
+   auto a = get_associated_allocator(handler_);
+   execution::execute(
+       prefer(executor_,
+         execution::blocking.possibly,
+         execution::allocator(a)),
+       std::move(handler_)); 
+
+
+
+
+
+* If `execution::is_executor<Ex1>::value` is false, constructs a function object `f` with a member `work_` that is initialised with `make_work_guard(ex1)`, a member `handler_` that is a decay-copy of `completion_handler`, and a function call operator that performs: 
+
+   auto a = get_associated_allocator(handler_);
+   work_.get_executor().dispatch(std::move(handler_), a);
+   work_.reset(); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is true, performs 
+
+   execution::execute(
+       prefer(
+         require(ex, execution::blocking.never),
+         execution::relationship.continuation,
+         execution::allocator(alloc)),
+       std::move(f)); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is false, performs 
+
+   ex.defer(std::move(f), alloc); 
+
+
+
 
 
 [heading Completion Signature]
@@ -78680,17 +78806,33 @@ Submits a completion token or function object for execution.
 
   template<
       typename ExecutionContext,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` defer(
       ExecutionContext & ctx,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][An execution context, from which the target executor is obtained.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
+
+
 [heading Return Value]
       
-`defer(ctx.get_executor(), forward<CompletionToken>(token))`.
+`defer(ctx.get_executor(), forward<NullaryToken>(token))`.
 
 
 [heading Completion Signature]
@@ -79025,26 +79167,26 @@ A cancellation filter that disables cancellation.
 Submits a completion token or function object for execution. 
 
   template<
-      typename CompletionToken>
+      typename ``[link asio.reference.NullaryToken NullaryToken]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.dispatch.overload1 dispatch]``(
-      CompletionToken && token);
+      NullaryToken && token);
   ``  [''''&raquo;''' [link asio.reference.dispatch.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.dispatch.overload2 dispatch]``(
       const Executor & ex,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< execution::is_executor< Executor >::value||is_executor< Executor >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.dispatch.overload2 more...]]``
 
   template<
       typename ExecutionContext,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.dispatch.overload3 dispatch]``(
       ExecutionContext & ctx,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.dispatch.overload3 more...]]``
 
@@ -79062,32 +79204,83 @@ Submits a completion token or function object for execution.
 
 
   template<
-      typename CompletionToken>
+      typename ``[link asio.reference.NullaryToken NullaryToken]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` dispatch(
-      CompletionToken && token);
+      NullaryToken && token);
 
 
 This function submits an object for execution using the object's associated executor. The function object may be called from the current thread prior to returning from `dispatch()`. Otherwise, it is queued for execution.
 
-This function has the following effects:
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
 
 
-* Constructs a function object handler of type `Handler`, initialized with `handler(forward<CompletionToken>(token))`.
+[heading Return Value]
+      
+This function returns `async_initiate<NullaryToken, void()>(Init{}, token)`, where `Init` is a function object type defined as:
 
 
-* Constructs an object `result` of type `async_result<Handler>`, initializing the object as `result(handler)`.
+
+   class Init
+   {
+   public:
+     template <typename CompletionHandler>
+       void operator()(CompletionHandler&& completion_handler) const;
+   }; 
 
 
-* Obtains the handler's associated executor object `ex` by performing `get_associated_executor(handler)`.
 
 
-* Obtains the handler's associated allocator object `alloc` by performing `get_associated_allocator(handler)`.
+The function call operator of `Init:` 
 
 
-* Performs `ex.dispatch(std::move(handler), alloc)`.
+* Obtains the handler's associated executor object `ex` of type `Ex` by performing
+
+   auto ex = get_associated_executor(handler); 
 
 
-* Returns `result.get()`.
+
+
+
+* Obtains the handler's associated allocator object `alloc` by performing 
+
+   auto alloc = get_associated_allocator(handler); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is true, performs 
+
+   execution::execute(
+       prefer(ex,
+         execution::blocking.possibly,
+         execution::allocator(alloc)),
+       std::forward<CompletionHandler>(completion_handler)); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is false, performs 
+
+   ex.dispatch(
+       std::forward<CompletionHandler>(completion_handler),
+       alloc); 
+
+
+
 
 
 [heading Completion Signature]
@@ -79114,40 +79307,113 @@ Submits a completion token or function object for execution.
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` dispatch(
       const Executor & ex,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< execution::is_executor< Executor >::value||is_executor< Executor >::value >::type  = 0);
 
 
 This function submits an object for execution using the specified executor. The function object may be called from the current thread prior to returning from `dispatch()`. Otherwise, it is queued for execution.
 
-This function has the following effects:
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The target executor.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
 
 
-* Constructs a function object handler of type `Handler`, initialized with `handler(forward<CompletionToken>(token))`.
+[heading Return Value]
+      
+This function returns `async_initiate<NullaryToken, void()>(Init{ex}, token)`, where `Init` is a function object type defined as:
 
 
-* Constructs an object `result` of type `async_result<Handler>`, initializing the object as `result(handler)`.
+
+   class Init
+   {
+   public:
+     using executor_type = Executor;
+     explicit Init(const Executor& ex) : ex_(ex) {}
+     executor_type get_executor() const noexcept { return ex_; }
+     template <typename CompletionHandler>
+       void operator()(CompletionHandler&& completion_handler) const;
+   private:
+     Executor ex_; // exposition only
+   }; 
 
 
-* Obtains the handler's associated executor object `ex1` by performing `get_associated_executor(handler)`.
 
 
-* Creates a work object `w` by performing `make_work(ex1)`.
+The function call operator of `Init:` 
 
 
-* Obtains the handler's associated allocator object `alloc` by performing `get_associated_allocator(handler)`.
+* Obtains the handler's associated executor object `ex1` of type `Ex1` by performing
+
+   auto ex1 = get_associated_executor(handler, ex); 
 
 
-* Constructs a function object `f` with a function call operator that performs `ex1.dispatch(std::move(handler), alloc)` followed by `w.reset()`.
 
 
-* Performs `Executor(ex).dispatch(std::move(f), alloc)`.
+
+* Obtains the handler's associated allocator object `alloc` by performing 
+
+   auto alloc = get_associated_allocator(handler); 
 
 
-* Returns `result.get()`.
+
+
+
+* If `execution::is_executor<Ex1>::value` is true, constructs a function object `f` with a member `executor_` that is initialised with `prefer(ex1, execution::outstanding_work.tracked)`, a member `handler_` that is a decay-copy of `completion_handler`, and a function call operator that performs: 
+
+   auto a = get_associated_allocator(handler_);
+   execution::execute(
+       prefer(executor_,
+         execution::blocking.possibly,
+         execution::allocator(a)),
+       std::move(handler_)); 
+
+
+
+
+
+* If `execution::is_executor<Ex1>::value` is false, constructs a function object `f` with a member `work_` that is initialised with `make_work_guard(ex1)`, a member `handler_` that is a decay-copy of `completion_handler`, and a function call operator that performs: 
+
+   auto a = get_associated_allocator(handler_);
+   work_.get_executor().dispatch(std::move(handler_), a);
+   work_.reset(); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is true, performs 
+
+   execution::execute(
+       prefer(ex,
+         execution::blocking.possibly,
+         execution::allocator(alloc)),
+       std::move(f)); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is false, performs 
+
+   ex.dispatch(std::move(f), alloc); 
+
+
+
 
 
 [heading Completion Signature]
@@ -79174,17 +79440,33 @@ Submits a completion token or function object for execution.
 
   template<
       typename ExecutionContext,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` dispatch(
       ExecutionContext & ctx,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][An execution context, from which the target executor is obtained.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
+
+
 [heading Return Value]
       
-`dispatch(ctx.get_executor(), forward<CompletionToken>(token))`.
+`dispatch(ctx.get_executor(), forward<NullaryToken>(token))`.
 
 
 [heading Completion Signature]
@@ -135181,26 +135463,26 @@ Synchronous `read_some` and `write_some` operations are thread safe with respect
 Submits a completion token or function object for execution. 
 
   template<
-      typename CompletionToken>
+      typename ``[link asio.reference.NullaryToken NullaryToken]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.post.overload1 post]``(
-      CompletionToken && token);
+      NullaryToken && token);
   ``  [''''&raquo;''' [link asio.reference.post.overload1 more...]]``
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.post.overload2 post]``(
       const Executor & ex,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< execution::is_executor< Executor >::value||is_executor< Executor >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.post.overload2 more...]]``
 
   template<
       typename ExecutionContext,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.post.overload3 post]``(
       ExecutionContext & ctx,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.post.overload3 more...]]``
 
@@ -135218,34 +135500,86 @@ Submits a completion token or function object for execution.
 
 
   template<
-      typename CompletionToken>
+      typename ``[link asio.reference.NullaryToken NullaryToken]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` post(
-      CompletionToken && token);
+      NullaryToken && token);
 
 
 This function submits an object for execution using the object's associated executor. The function object is queued for execution, and is never called from the current thread prior to returning from `post()`.
 
 The use of `post()`, rather than [link asio.reference.defer `defer`], indicates the caller's preference that the function object be eagerly queued for execution.
 
-This function has the following effects:
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
 
 
-* Constructs a function object handler of type `Handler`, initialized with `handler(forward<CompletionToken>(token))`.
+[heading Return Value]
+      
+This function returns `async_initiate<NullaryToken, void()>(Init{}, token)`, where `Init` is a function object type defined as:
 
 
-* Constructs an object `result` of type `async_result<Handler>`, initializing the object as `result(handler)`.
+
+   class Init
+   {
+   public:
+     template <typename CompletionHandler>
+       void operator()(CompletionHandler&& completion_handler) const;
+   }; 
 
 
-* Obtains the handler's associated executor object `ex` by performing `get_associated_executor(handler)`.
 
 
-* Obtains the handler's associated allocator object `alloc` by performing `get_associated_allocator(handler)`.
+The function call operator of `Init:` 
 
 
-* Performs `ex.post(std::move(handler), alloc)`.
+* Obtains the handler's associated executor object `ex` of type `Ex` by performing
+
+   auto ex = get_associated_executor(handler); 
 
 
-* Returns `result.get()`.
+
+
+
+* Obtains the handler's associated allocator object `alloc` by performing 
+
+   auto alloc = get_associated_allocator(handler); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is true, performs 
+
+   execution::execute(
+       prefer(
+         require(ex, execution::blocking.never),
+         execution::relationship.fork,
+         execution::allocator(alloc)),
+       std::forward<CompletionHandler>(completion_handler)); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is false, performs 
+
+   ex.post(
+       std::forward<CompletionHandler>(completion_handler),
+       alloc); 
+
+
+
 
 
 [heading Completion Signature]
@@ -135272,10 +135606,10 @@ Submits a completion token or function object for execution.
 
   template<
       typename ``[link asio.reference.Executor1 Executor]``,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` post(
       const Executor & ex,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< execution::is_executor< Executor >::value||is_executor< Executor >::value >::type  = 0);
 
 
@@ -135283,31 +135617,105 @@ This function submits an object for execution using the specified executor. The 
 
 The use of `post()`, rather than [link asio.reference.defer `defer`], indicates the caller's preference that the function object be eagerly queued for execution.
 
-This function has the following effects:
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][The target executor.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
 
 
-* Constructs a function object handler of type `Handler`, initialized with `handler(forward<CompletionToken>(token))`.
+[heading Return Value]
+      
+This function returns `async_initiate<NullaryToken, void()>(Init{ex}, token)`, where `Init` is a function object type defined as:
 
 
-* Constructs an object `result` of type `async_result<Handler>`, initializing the object as `result(handler)`.
+
+   class Init
+   {
+   public:
+     using executor_type = Executor;
+     explicit Init(const Executor& ex) : ex_(ex) {}
+     executor_type get_executor() const noexcept { return ex_; }
+     template <typename CompletionHandler>
+       void operator()(CompletionHandler&& completion_handler) const;
+   private:
+     Executor ex_; // exposition only
+   }; 
 
 
-* Obtains the handler's associated executor object `ex1` by performing `get_associated_executor(handler)`.
 
 
-* Creates a work object `w` by performing `make_work(ex1)`.
+The function call operator of `Init:` 
 
 
-* Obtains the handler's associated allocator object `alloc` by performing `get_associated_allocator(handler)`.
+* Obtains the handler's associated executor object `ex1` of type `Ex1` by performing
+
+   auto ex1 = get_associated_executor(handler, ex); 
 
 
-* Constructs a function object `f` with a function call operator that performs `ex1.dispatch(std::move(handler), alloc)` followed by `w.reset()`.
 
 
-* Performs `Executor(ex).post(std::move(f), alloc)`.
+
+* Obtains the handler's associated allocator object `alloc` by performing 
+
+   auto alloc = get_associated_allocator(handler); 
 
 
-* Returns `result.get()`.
+
+
+
+* If `execution::is_executor<Ex1>::value` is true, constructs a function object `f` with a member `executor_` that is initialised with `prefer(ex1, execution::outstanding_work.tracked)`, a member `handler_` that is a decay-copy of `completion_handler`, and a function call operator that performs: 
+
+   auto a = get_associated_allocator(handler_);
+   execution::execute(
+       prefer(executor_,
+         execution::blocking.possibly,
+         execution::allocator(a)),
+       std::move(handler_)); 
+
+
+
+
+
+* If `execution::is_executor<Ex1>::value` is false, constructs a function object `f` with a member `work_` that is initialised with `make_work_guard(ex1)`, a member `handler_` that is a decay-copy of `completion_handler`, and a function call operator that performs: 
+
+   auto a = get_associated_allocator(handler_);
+   work_.get_executor().dispatch(std::move(handler_), a);
+   work_.reset(); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is true, performs 
+
+   execution::execute(
+       prefer(
+         require(ex, execution::blocking.never),
+         execution::relationship.fork,
+         execution::allocator(alloc)),
+       std::move(f)); 
+
+
+
+
+
+* If `execution::is_executor<Ex>::value` is false, performs 
+
+   ex.post(std::move(f), alloc); 
+
+
+
 
 
 [heading Completion Signature]
@@ -135334,17 +135742,33 @@ Submits a completion token or function object for execution.
 
   template<
       typename ExecutionContext,
-      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+      typename ``[link asio.reference.NullaryToken NullaryToken]`` = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
   ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` post(
       ExecutionContext & ctx,
-      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      NullaryToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][An execution context, from which the target executor is obtained.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler. The function signature of the completion handler must be: 
+``
+   void handler(); 
+``
+]]
+
+]
+
+
 [heading Return Value]
       
-`post(ctx.get_executor(), forward<CompletionToken>(token))`.
+`post(ctx.get_executor(), forward<NullaryToken>(token))`.
 
 
 [heading Completion Signature]
