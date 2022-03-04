@@ -45,7 +45,7 @@ public:
       const char* func = 0;
 #endif // (OPENSSL_VERSION_NUMBER < 0x30000000L)
       std::string result(reason);
-      if (lib)
+      if (lib || func)
       {
         result += " (";
         if (lib)
