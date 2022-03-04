@@ -72,12 +72,18 @@ associated handler is invoked, which means the memory is ready to be reused for
 any new asynchronous operations started by the handler.
 
 The custom memory allocation functions may be called from any user-created
-thread that is calling a library function. The implementation guarantees that,
-for the asynchronous operations included the library, the implementation will
-not make concurrent calls to the memory allocation functions for that handler.
-The implementation will insert appropriate memory barriers to ensure correct
-memory visibility should allocation functions need to be called from different
-threads.
+thread that is calling an Asio library function. The implementation guarantees,
+for the asynchronous operations included with the library, that within the
+context of an individual operation the implementation will not make concurrent
+calls to the memory allocation functions for that handler. The implementation
+will insert appropriate memory barriers to ensure correct memory visibility
+should an asynchronous operation need to call the allocation functions from
+different threads. (Note: If the same allocator is shared across multiple
+concurrent asynchronous operations, this can result in concurrent calls to the
+memory allocation functions. Use of a [link asio.overview.strands strand] does
+not prevent these concurrent calls, as an operation may need to allocate memory
+from outside the strand. In this case, the shared allocator is responsible for
+providing the necessary thread safety guarantees.)
 
 [heading See Also]
 
