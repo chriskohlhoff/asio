@@ -359,7 +359,7 @@ public:
     if (bufs_type::is_single_buffer)
     {
       return descriptor_ops::sync_write_at1(impl.descriptor_,
-          offset, impl.state_, bufs_type::first(buffers).data(),
+          impl.state_, offset, bufs_type::first(buffers).data(),
           bufs_type::first(buffers).size(), ec);
     }
     else
