@@ -598,6 +598,10 @@ Examples showing how to implement composed asynchronous operations as reusable l
 * [@../src/examples/cpp14/operations/composed_7.cpp]
 * [@../src/examples/cpp14/operations/composed_8.cpp]
 
+Examples showing how to expose callback-based APIs as asynchronous operations.
+
+* [@../src/examples/cpp14/operations/callback_wrapper.cpp]
+* [@../src/examples/cpp14/operations/c_callback_wrapper.cpp]
 
 [heading Parallel Groups]
 

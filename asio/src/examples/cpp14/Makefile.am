@@ -32,6 +32,9 @@ noinst_PROGRAMS = \
 	executors/pipeline \
 	executors/priority_scheduler \
 	iostreams/http_client \
+	operations/c_callback_wrapper \
+	operations/callback_wrapper \
+	operations/composed_1 \
 	operations/composed_1 \
 	operations/composed_2 \
 	operations/composed_3 \
@@ -70,6 +73,8 @@ executors_fork_join_SOURCES = executors/fork_join.cpp
 executors_pipeline_SOURCES = executors/pipeline.cpp
 executors_priority_scheduler_SOURCES = executors/priority_scheduler.cpp
 iostreams_http_client_SOURCES = iostreams/http_client.cpp
+operations_c_callback_wrapper_SOURCES = operations/c_callback_wrapper.cpp
+operations_callback_wrapper_SOURCES = operations/callback_wrapper.cpp
 operations_composed_1_SOURCES = operations/composed_1.cpp
 operations_composed_2_SOURCES = operations/composed_2.cpp
 operations_composed_3_SOURCES = operations/composed_3.cpp
