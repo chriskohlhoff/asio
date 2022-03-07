@@ -326,8 +326,6 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@../src/examples/cpp03/local/iostream_client.cpp]
 * [@../src/examples/cpp03/local/stream_server.cpp]
 * [@../src/examples/cpp03/local/stream_client.cpp]
-* [@../src/examples/cpp03/local/fd_passing_stream_server.cpp]
-* [@../src/examples/cpp03/local/fd_passing_stream_client.cpp]
 
 
 [heading Windows]
@@ -528,6 +526,8 @@ Examples showing how to use UNIX domain (local) sockets.
 * [@../src/examples/cpp11/local/iostream_client.cpp] ([@examples/diffs/local/iostream_client.cpp.html diff to C++03])
 * [@../src/examples/cpp11/local/stream_server.cpp] ([@examples/diffs/local/stream_server.cpp.html diff to C++03])
 * [@../src/examples/cpp11/local/stream_client.cpp] ([@examples/diffs/local/stream_client.cpp.html diff to C++03])
+* [@../src/examples/cpp11/local/fd_passing_stream_server.cpp]
+* [@../src/examples/cpp11/local/fd_passing_stream_client.cpp]
 
 
 [endsect]
