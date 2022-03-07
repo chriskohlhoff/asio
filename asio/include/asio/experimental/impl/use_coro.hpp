@@ -80,6 +80,7 @@ struct coro_init_handler
       return bind_cancellation_slot(self_->cancel_slot,
           bind_executor(*self_->executor, [self = self_](Ts... ts)
           {
+            self->cancel_slot.clear();
             self->result.emplace(std::move(ts)...);
             self->h.resume();
           }));
