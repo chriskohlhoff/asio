@@ -7,6 +7,118 @@
 
 [section:history Revision History]
 
+[heading Asio 1.22.1]
+
+* Added `bind_allocator`, to simplify associating a custom allocator with a
+  completion token or handler.
+
+* Added the `file_base::sync_all_on_write` flag, which maps to `O_SYNC` on POSIX
+  and `FILE_FLAG_WRITE_THROUGH` on Windows.
+
+* Added missing implementation of `basic_file::release()`.
+
+* Added per-operation cancellation support to signal sets.
+
+* Exposed `recycling_allocator` as part of the public interface.
+
+* Added the `nodiscard` attribute to the following functions:
+  * `bind_allocator()`
+  * `bind_cancellation_slot()`
+  * `bind_executor()`
+  * `buffer()`
+  * `dynamic_buffer()`
+  * `experimental::append()`
+  * `experimental::as_single()`
+  * `experimental::as_tuple()`
+  * `experimental::make_parallel_group()`
+  * `experimental::prepend()`
+  * `get_associated_allocator()`
+  * `get_associated_cancellation_slot()`
+  * `get_associated_executor()`
+  * `make_work_guard()`
+
+* Added compatibility with OpenSSL 3.0, particularly when deprecated
+  functionality is disabled.
+
+* Added support for adopting an existing `SSL*` into an `ssl::stream<>`.
+
+* Enabled `executor_work_guard<>` even when `ASIO_NO_TS_EXECUTORS` is defined.
+
+* Enabled movable socket iostreams when using clang.
+
+* Fixed `bind_cancellation_slot` compatibility with legacy completion tokens.
+
+* Fixed `bind_executor` compatibility with legacy completion tokens.
+
+* Fixed `associator` specialisations for `experimental::append` and
+  `experimental::prepend`, to correctly propagate the associated allocator,
+  executor, and cancellation slot.
+
+* Fixed 'zero as null pointer constant' warning in C++20 coroutines
+  implementation of `awaitable`.
+
+* Ensured concurrency hint preprocessor macros are made available when
+  [^asio/io_context.hpp] is included.
+
+* Fixed issue where the primary `associated_allocator` template was not
+  correctly detecting the nested `T::allocator_type`.
+
+* Fixed [^io_uring] implementation of `async_receive_from` operation for
+  sockets.
+
+* Fixed [^io_uring] implementation of `write_some_at` operation for files.
+
+* Changed [^io_uring] implementation to correctly check that it is not the
+  default before registering with reactor.
+
+* Fixed a circular inclusion issue when using [^io_uring] in some build
+  configurations.
+
+* Fixed `experimental::coro`'s per-operation cancellation to clear the slot at
+  completion of each operation.
+
+* Fixed memory management in `experimental::promise`'s type-erased completion
+  handlers.
+
+* Fixed move `operator=` implementation for `ssl::stream`.
+
+* Fixed `any_io_executor` implementation to work when both
+  `ASIO_USE_TS_EXECUTOR_AS_DEFAULT` and `ASIO_SEPARATE_COMPILATION` are
+  defined.
+
+* Fixed implementation of `basic_socket::at_mark()` when using the
+  `sockatmark()` system call.
+
+* Changed the recycling allocator to use the default alignment as the minimum
+  alignment for allocations.
+
+* Added additional standard header file includes, as required by newer
+  compilers.
+
+* Added a workaround for apparent coroutine codegen bug with Apple's clang.
+
+* Fixed various warnings in the examples and unit tests.
+
+* Added a C++11 example showing file descriptor passing over local sockets.
+  Thanks to Heiko Hund for providing this example.
+
+* Added C++14 examples of wrapping callback-based APIs in asynchronous
+  operations.
+
+* Added an overview of Asio's asynchronous model to the documentation.
+
+* Reworked reference documentation in terms of completion tokens.
+
+* Updated documentation of asynchronous operation requirements to use new
+  completion token form.
+
+* Updated documentation for `dispatch()`, `post()`, and `defer()` to cover both
+  the old and new executor forms.
+
+* Documented per-operation cancellation for serial ports.
+
+* Clarified the non-concurrency guarantees made for allocators.
+
 [heading Asio 1.22.0]
 
 * Improved error messages emitted by `ssl` facilities.
