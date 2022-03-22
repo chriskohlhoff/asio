@@ -40,6 +40,7 @@
   * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
   * [link asio.overview.composition.deferred Deferred Operations (experimental)]
   * [link asio.overview.composition.parallel_group Co-ordinating Parallel Operations (experimental)]
+  * [link asio.overview.composition.compose Compositions as Asynchronous Operations]
   * [link asio.overview.composition.token_adapters Completion Token Adapters]
 * [link asio.overview.networking Networking]
   * [link asio.overview.networking.protocols TCP, UDP and ICMP]
@@ -111,6 +112,7 @@
 * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
 * [link asio.overview.composition.deferred Deferred Operations (experimental)]
 * [link asio.overview.composition.parallel_group Co-ordinating Parallel Operations (experimental)]
+* [link asio.overview.composition.compose Compositions as Asynchronous Operations]
 * [link asio.overview.composition.token_adapters Completion Token Adapters]
 
 [include overview/coroutine.qbk]
@@ -120,6 +122,7 @@
 [include overview/coro.qbk]
 [include overview/deferred.qbk]
 [include overview/parallel_group.qbk]
+[include overview/compose.qbk]
 [include overview/token_adapters.qbk]
 
 [endsect]
