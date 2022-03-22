@@ -96895,7 +96895,7 @@ The [link asio.reference.experimental__deferred_t `experimental::deferred_t`] cl
 
 
 
-   auto my_sender
+   auto my_deferred_op
      = my_socket.async_read_some(my_buffer,
          asio::experimental::deferred); 
 
@@ -97137,7 +97137,7 @@ The [link asio.reference.experimental__deferred_t `experimental::deferred_t`] cl
 
 
 
-   auto my_sender
+   auto my_deferred_op
      = my_socket.async_read_some(my_buffer,
          asio::experimental::deferred); 
 

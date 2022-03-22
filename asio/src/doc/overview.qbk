@@ -38,6 +38,7 @@
   * [link asio.overview.composition.futures Futures]
   * [link asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
   * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
+  * [link asio.overview.composition.deferred Deferred Operations (experimental)]
 * [link asio.overview.networking Networking]
   * [link asio.overview.networking.protocols TCP, UDP and ICMP]
   * [link asio.overview.networking.other_protocols Support for Other Protocols]
@@ -104,12 +105,14 @@
 * [link asio.overview.composition.futures Futures]
 * [link asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
 * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
+* [link asio.overview.composition.deferred Deferred Operations (experimental)]
 
 [include overview/coroutine.qbk]
 [include overview/spawn.qbk]
 [include overview/futures.qbk]
 [include overview/cpp20_coroutines.qbk]
 [include overview/coro.qbk]
+[include overview/deferred.qbk]
 
 [endsect]
 
