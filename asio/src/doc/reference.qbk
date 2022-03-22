@@ -91967,7 +91967,7 @@ Destructor.
 [indexterm1 asio.indexterm.executor_work_guard..executor_work_guard]
 
 
-An object of type `executor_work_guard` controls ownership of executor work within a scope. 
+An object of type `executor_work_guard` controls ownership of outstanding executor work within a scope. 
 
 
   template<
@@ -93534,6 +93534,63 @@ A channel for messages.
   
 ]
 
+The [link asio.reference.experimental__basic_channel `experimental::basic_channel`] class template is used for sending messages between different parts of the same application. A ['message] is defined as a collection of arguments to be passed to a completion handler, and the set of messages supported by a channel is specified by its `Traits` and `Signatures...` template parameters. Messages may be sent and received using asynchronous or non-blocking synchronous operations.
+
+Unless customising the traits, applications will typically use the `experimental::channel` alias template. For example: 
+
+   void send_loop(int i, steady_timer& timer,
+       channel<void(error_code, int)>& ch)
+   {
+     if (i < 10)
+     {
+       timer.expires_after(chrono::seconds(1));
+       timer.async_wait(
+           [i, &timer, &ch](error_code error)
+           {
+             if (!error)
+             {
+               ch.async_send(error_code(), i,
+                   [i, &timer, &ch](error_code error)
+                   {
+                     if (!error)
+                     {
+                       send_loop(i + 1, timer, ch);
+                     }
+                   });
+             }
+           });
+     }
+     else
+     {
+       ch.close();
+     }
+   }
+
+   void receive_loop(channel<void(error_code, int)>& ch)
+   {
+     ch.async_receive(
+         [&ch](error_code error, int i)
+         {
+           if (!error)
+           {
+             std::cout << "Received " << i << "\n";
+             receive_loop(ch);
+           }
+         });
+   } 
+
+
+
+
+
+[heading Thread Safety]
+  
+['Distinct] ['objects:] Safe.
+
+['Shared] ['objects:] Unsafe.
+
+The [link asio.reference.experimental__basic_channel `experimental::basic_channel`] class template is not thread-safe, and would typically be used for passing messages between application code that runs on the same thread or in the same strand. Consider using [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`], and its alias template `experimental::concurrent_channel`, to pass messages between code running in different threads. 
+
 [heading Requirements]
 
 ['Header: ][^asio/experimental/basic_channel.hpp]
@@ -93783,7 +93840,7 @@ Cancel all asynchronous operations waiting on the channel.
   void cancel();
 
 
-All outstanding send operations will complete with the error `asio::experimental::error::channel_canceld`. Outstanding receive operations complete with the result as determined by the channel traits. 
+All outstanding send operations will complete with the error `asio::experimental::error::channel_cancelled`. Outstanding receive operations complete with the result as determined by the channel traits. 
 
 
 [endsect]
@@ -94251,6 +94308,63 @@ The channel type when rebound to the specified executor.
   
 ]
 
+The [link asio.reference.experimental__basic_channel `experimental::basic_channel`] class template is used for sending messages between different parts of the same application. A ['message] is defined as a collection of arguments to be passed to a completion handler, and the set of messages supported by a channel is specified by its `Traits` and `Signatures...` template parameters. Messages may be sent and received using asynchronous or non-blocking synchronous operations.
+
+Unless customising the traits, applications will typically use the `experimental::channel` alias template. For example: 
+
+   void send_loop(int i, steady_timer& timer,
+       channel<void(error_code, int)>& ch)
+   {
+     if (i < 10)
+     {
+       timer.expires_after(chrono::seconds(1));
+       timer.async_wait(
+           [i, &timer, &ch](error_code error)
+           {
+             if (!error)
+             {
+               ch.async_send(error_code(), i,
+                   [i, &timer, &ch](error_code error)
+                   {
+                     if (!error)
+                     {
+                       send_loop(i + 1, timer, ch);
+                     }
+                   });
+             }
+           });
+     }
+     else
+     {
+       ch.close();
+     }
+   }
+
+   void receive_loop(channel<void(error_code, int)>& ch)
+   {
+     ch.async_receive(
+         [&ch](error_code error, int i)
+         {
+           if (!error)
+           {
+             std::cout << "Received " << i << "\n";
+             receive_loop(ch);
+           }
+         });
+   } 
+
+
+
+
+
+[heading Thread Safety]
+  
+['Distinct] ['objects:] Safe.
+
+['Shared] ['objects:] Unsafe.
+
+The [link asio.reference.experimental__basic_channel `experimental::basic_channel`] class template is not thread-safe, and would typically be used for passing messages between application code that runs on the same thread or in the same strand. Consider using [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`], and its alias template `experimental::concurrent_channel`, to pass messages between code running in different threads. 
+
 
 [heading Requirements]
 
@@ -94391,6 +94505,63 @@ A channel for messages.
   ]
   
 ]
+
+The [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] class template is used for sending messages between different parts of the same application. A ['message] is defined as a collection of arguments to be passed to a completion handler, and the set of messages supported by a channel is specified by its `Traits` and `Signatures...` template parameters. Messages may be sent and received using asynchronous or non-blocking synchronous operations.
+
+Unless customising the traits, applications will typically use the `experimental::concurrent_channel` alias template. For example: 
+
+   void send_loop(int i, steady_timer& timer,
+       concurrent_channel<void(error_code, int)>& ch)
+   {
+     if (i < 10)
+     {
+       timer.expires_after(chrono::seconds(1));
+       timer.async_wait(
+           [i, &timer, &ch](error_code error)
+           {
+             if (!error)
+             {
+               ch.async_send(error_code(), i,
+                   [i, &timer, &ch](error_code error)
+                   {
+                     if (!error)
+                     {
+                       send_loop(i + 1, timer, ch);
+                     }
+                   });
+             }
+           });
+     }
+     else
+     {
+       ch.close();
+     }
+   }
+
+   void receive_loop(concurent_channel<void(error_code, int)>& ch)
+   {
+     ch.async_receive(
+         [&ch](error_code error, int i)
+         {
+           if (!error)
+           {
+             std::cout << "Received " << i << "\n";
+             receive_loop(ch);
+           }
+         });
+   } 
+
+
+
+
+
+[heading Thread Safety]
+  
+['Distinct] ['objects:] Safe.
+
+['Shared] ['objects:] Safe.
+
+The [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] class template is thread-safe, and would typically be used for passing messages between application code that run on different threads. Consider using [link asio.reference.experimental__basic_channel `experimental::basic_channel`], and its alias template `experimental::channel`, to pass messages between code running in a single thread or on the same strand. 
 
 [heading Requirements]
 
@@ -94622,7 +94793,7 @@ Cancel all asynchronous operations waiting on the channel.
   void cancel();
 
 
-All outstanding send operations will complete with the error `asio::experimental::error::channel_canceld`. Outstanding receive operations complete with the result as determined by the channel traits. 
+All outstanding send operations will complete with the error `asio::experimental::error::channel_cancelled`. Outstanding receive operations complete with the result as determined by the channel traits. 
 
 
 [endsect]
@@ -95089,6 +95260,63 @@ The channel type when rebound to the specified executor.
   ]
   
 ]
+
+The [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] class template is used for sending messages between different parts of the same application. A ['message] is defined as a collection of arguments to be passed to a completion handler, and the set of messages supported by a channel is specified by its `Traits` and `Signatures...` template parameters. Messages may be sent and received using asynchronous or non-blocking synchronous operations.
+
+Unless customising the traits, applications will typically use the `experimental::concurrent_channel` alias template. For example: 
+
+   void send_loop(int i, steady_timer& timer,
+       concurrent_channel<void(error_code, int)>& ch)
+   {
+     if (i < 10)
+     {
+       timer.expires_after(chrono::seconds(1));
+       timer.async_wait(
+           [i, &timer, &ch](error_code error)
+           {
+             if (!error)
+             {
+               ch.async_send(error_code(), i,
+                   [i, &timer, &ch](error_code error)
+                   {
+                     if (!error)
+                     {
+                       send_loop(i + 1, timer, ch);
+                     }
+                   });
+             }
+           });
+     }
+     else
+     {
+       ch.close();
+     }
+   }
+
+   void receive_loop(concurent_channel<void(error_code, int)>& ch)
+   {
+     ch.async_receive(
+         [&ch](error_code error, int i)
+         {
+           if (!error)
+           {
+             std::cout << "Received " << i << "\n";
+             receive_loop(ch);
+           }
+         });
+   } 
+
+
+
+
+
+[heading Thread Safety]
+  
+['Distinct] ['objects:] Safe.
+
+['Shared] ['objects:] Safe.
+
+The [link asio.reference.experimental__basic_concurrent_channel `experimental::basic_concurrent_channel`] class template is thread-safe, and would typically be used for passing messages between application code that run on different threads. Consider using [link asio.reference.experimental__basic_channel `experimental::basic_channel`], and its alias template `experimental::channel`, to pass messages between code running in a single thread or on the same strand. 
 
 
 [heading Requirements]
@@ -103877,41 +104105,13 @@ For example:
   
 
 
-Some applications may need to prevent an [link asio.reference.io_context `io_context`] object's `run()` call from returning when there is no more work to do. For example, the [link asio.reference.io_context `io_context`] may be being run in a background thread that is launched prior to the application's asynchronous operations. The `run()` call may be kept running by creating an executor that tracks work against the [link asio.reference.io_context `io_context`]:
+Some applications may need to prevent an [link asio.reference.io_context `io_context`] object's `run()` call from returning when there is no more work to do. For example, the [link asio.reference.io_context `io_context`] may be being run in a background thread that is launched prior to the application's asynchronous operations. The `run()` call may be kept running by using the [link asio.reference.make_work_guard `make_work_guard`] function to create an object of type asio::executor\_work\_guard<io\_context::executor\_type>:
 
 
 
    asio::io_context io_context;
-   auto work = asio::require(io_context.get_executor(),
-       asio::execution::outstanding_work.tracked);
-   ... 
-
-
-
-
-If using C++03, which lacks automatic variable type deduction, you may compute the return type of the require call:
-
-
-
-   asio::io_context io_context;
-   typename asio::require_result<
-       asio::io_context::executor_type,
-       asio::exeution::outstanding_work_t::tracked_t>
-     work = asio::require(io_context.get_executor(),
-       asio::execution::outstanding_work.tracked);
-   ... 
-
-
-
-
-or store the result in the type-erasing executor wrapper, [link asio.reference.any_io_executor `any_io_executor`]:
-
-
-
-   asio::io_context io_context;
-   asio::any_io_executor work
-     = asio::require(io_context.get_executor(),
-         asio::execution::outstanding_work.tracked);
+   asio::executor_work_guard<asio::io_context::executor_type>
+     = asio::make_work_guard(io_context);
    ... 
 
 
@@ -103919,16 +104119,15 @@ or store the result in the type-erasing executor wrapper, [link asio.reference.a
 
 To effect a shutdown, the application will then need to call the [link asio.reference.io_context `io_context`] object's `stop()` member function. This will cause the [link asio.reference.io_context `io_context`] `run()` call to return as soon as possible, abandoning unfinished operations and without permitting ready handlers to be dispatched.
 
-Alternatively, if the application requires that all operations and handlers be allowed to finish normally, store the work-tracking executor in an [link asio.reference.any_io_executor `any_io_executor`] object, so that it may be explicitly reset.
+Alternatively, if the application requires that all operations and handlers be allowed to finish normally, the work object may be explicitly reset.
 
 
 
    asio::io_context io_context;
-   asio::any_io_executor work
-     = asio::require(io_context.get_executor(),
-         asio::execution::outstanding_work.tracked);
+   asio::executor_work_guard<asio::io_context::executor_type>
+     = asio::make_work_guard(io_context);
    ...
-   work = asio::any_io_executor(); // Allow run() to exit. 
+   work.reset(); // Allow run() to exit. 
 
 
 
@@ -107540,41 +107739,13 @@ For example:
   
 
 
-Some applications may need to prevent an [link asio.reference.io_context `io_context`] object's `run()` call from returning when there is no more work to do. For example, the [link asio.reference.io_context `io_context`] may be being run in a background thread that is launched prior to the application's asynchronous operations. The `run()` call may be kept running by creating an executor that tracks work against the [link asio.reference.io_context `io_context`]:
+Some applications may need to prevent an [link asio.reference.io_context `io_context`] object's `run()` call from returning when there is no more work to do. For example, the [link asio.reference.io_context `io_context`] may be being run in a background thread that is launched prior to the application's asynchronous operations. The `run()` call may be kept running by using the [link asio.reference.make_work_guard `make_work_guard`] function to create an object of type asio::executor\_work\_guard<io\_context::executor\_type>:
 
 
 
    asio::io_context io_context;
-   auto work = asio::require(io_context.get_executor(),
-       asio::execution::outstanding_work.tracked);
-   ... 
-
-
-
-
-If using C++03, which lacks automatic variable type deduction, you may compute the return type of the require call:
-
-
-
-   asio::io_context io_context;
-   typename asio::require_result<
-       asio::io_context::executor_type,
-       asio::exeution::outstanding_work_t::tracked_t>
-     work = asio::require(io_context.get_executor(),
-       asio::execution::outstanding_work.tracked);
-   ... 
-
-
-
-
-or store the result in the type-erasing executor wrapper, [link asio.reference.any_io_executor `any_io_executor`]:
-
-
-
-   asio::io_context io_context;
-   asio::any_io_executor work
-     = asio::require(io_context.get_executor(),
-         asio::execution::outstanding_work.tracked);
+   asio::executor_work_guard<asio::io_context::executor_type>
+     = asio::make_work_guard(io_context);
    ... 
 
 
@@ -107582,16 +107753,15 @@ or store the result in the type-erasing executor wrapper, [link asio.reference.a
 
 To effect a shutdown, the application will then need to call the [link asio.reference.io_context `io_context`] object's `stop()` member function. This will cause the [link asio.reference.io_context `io_context`] `run()` call to return as soon as possible, abandoning unfinished operations and without permitting ready handlers to be dispatched.
 
-Alternatively, if the application requires that all operations and handlers be allowed to finish normally, store the work-tracking executor in an [link asio.reference.any_io_executor `any_io_executor`] object, so that it may be explicitly reset.
+Alternatively, if the application requires that all operations and handlers be allowed to finish normally, the work object may be explicitly reset.
 
 
 
    asio::io_context io_context;
-   asio::any_io_executor work
-     = asio::require(io_context.get_executor(),
-         asio::execution::outstanding_work.tracked);
+   asio::executor_work_guard<asio::io_context::executor_type>
+     = asio::make_work_guard(io_context);
    ...
-   work = asio::any_io_executor(); // Allow run() to exit. 
+   work.reset(); // Allow run() to exit. 
 
 
 
@@ -108723,6 +108893,13 @@ Default constructor.
   address_v4();
 
 
+Initialises the `address_v4` object such that: 
+* `to_bytes()` yields `{0, 0, 0, 0}`; and 
+
+* `to_uint() == 0`. 
+
+
+
 
 [endsect]
 
@@ -108736,6 +108913,20 @@ Construct an address from raw bytes.
 
   address_v4(
       const bytes_type & bytes);
+
+
+Initialises the `address_v4` object such that `to_bytes() == bytes`.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[out_of_range][Thrown if any element in `bytes` is not in the range `0 - 0xFF`. Note that no range checking is required for platforms where `std::numeric_limits<unsigned char>::max()` is `0xFF`. ]]
+
+]
+
 
 
 
@@ -108752,6 +108943,8 @@ Construct an address from an unsigned integer in host byte order.
   address_v4(
       uint_type addr);
 
+
+Initialises the `address_v4` object such that `to_uint() == addr`. 
 
 
 [endsect]
@@ -108784,6 +108977,15 @@ Obtain an address object that represents any address.
   static address_v4 any();
 
 
+This functions returns an address that represents the "any" address `0.0.0.0`.
+
+
+[heading Return Value]
+      
+A default-constructed `address_v4` object. 
+
+
+
 
 [endsect]
 
@@ -108814,6 +109016,15 @@ Obtain an address object that represents the broadcast address.
 
 
   static address_v4 broadcast();
+
+
+This function returns an address that represents the broadcast address `255.255.255.255`.
+
+
+[heading Return Value]
+      
+`address_v4(0xFFFFFFFF)`. 
+
 
 
 
@@ -109006,6 +109217,15 @@ Determine whether the address is a loopback address.
   bool is_loopback() const;
 
 
+This function tests whether the address is in the address block `127.0.0.0/8`, which corresponds to the address range `127.0.0.0 - 127.255.255.255`.
+
+
+[heading Return Value]
+      
+`(to_uint() & 0xFF000000) == 0x7F000000`. 
+
+
+
 
 [endsect]
 
@@ -109018,6 +109238,15 @@ Determine whether the address is a multicast address.
 
 
   bool is_multicast() const;
+
+
+This function tests whether the address is in the multicast address block `224.0.0.0/4`, which corresponds to the address range `224.0.0.0 - 239.255.255.255`.
+
+
+[heading Return Value]
+      
+`(to_uint() & 0xF0000000) == 0xE0000000`. 
+
 
 
 
@@ -109034,6 +109263,15 @@ Determine whether the address is unspecified.
   bool is_unspecified() const;
 
 
+This function tests whether the address is the unspecified address `0.0.0.0`.
+
+
+[heading Return Value]
+      
+`to_uint() == 0`. 
+
+
+
 
 [endsect]
 
@@ -109046,6 +109284,15 @@ Obtain an address object that represents the loopback address.
 
 
   static address_v4 loopback();
+
+
+This function returns an address that represents the well-known loopback address `127.0.0.1`.
+
+
+[heading Return Value]
+      
+`address_v4(0x7F000001)`. 
+
 
 
 
@@ -109354,6 +109601,15 @@ Compare addresses for ordering.
       const address_v4 & a2);
 
 
+Compares two addresses in host byte order.
+
+
+[heading Return Value]
+      
+`a1.to_uint() < a2.to_uint()`. 
+
+
+
 [heading Requirements]
 
 ['Header: ][^asio/ip/address_v4.hpp]
@@ -109484,6 +109740,15 @@ Compare addresses for ordering.
       const address_v4 & a2);
 
 
+Compares two addresses in host byte order.
+
+
+[heading Return Value]
+      
+`a1.to_uint() <= a2.to_uint()`. 
+
+
+
 [heading Requirements]
 
 ['Header: ][^asio/ip/address_v4.hpp]
@@ -109543,6 +109808,15 @@ Compare addresses for ordering.
       const address_v4 & a2);
 
 
+Compares two addresses in host byte order.
+
+
+[heading Return Value]
+      
+`a1.to_uint() > a2.to_uint()`. 
+
+
+
 [heading Requirements]
 
 ['Header: ][^asio/ip/address_v4.hpp]
@@ -109563,6 +109837,15 @@ Compare addresses for ordering.
   friend bool operator>=(
       const address_v4 & a1,
       const address_v4 & a2);
+
+
+Compares two addresses in host byte order.
+
+
+[heading Return Value]
+      
+`a1.to_uint() >= a2.to_uint()`. 
+
 
 
 [heading Requirements]
@@ -110179,6 +110462,13 @@ Default constructor.
   address_v6();
 
 
+Initialises the `address_v6` object such that: 
+* `to_bytes()` yields `{0, 0, ..., 0}`; and 
+
+* `scope_id() == 0`. 
+
+
+
 
 [endsect]
 
@@ -110193,6 +110483,23 @@ Construct an address from raw bytes and scope ID.
   address_v6(
       const bytes_type & bytes,
       scope_id_type scope_id = 0);
+
+
+Initialises the `address_v6` object such that: 
+* `to_bytes() == bytes`; and 
+
+* `this->scope_id() == scope_id`.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[out_of_range][Thrown if any element in `bytes` is not in the range `0 - 0xFF`. Note that no range checking is required for platforms where `std::numeric_limits<unsigned char>::max()` is `0xFF`. ]]
+
+]
+
 
 
 
@@ -110224,6 +110531,15 @@ Obtain an address object that represents any address.
 
 
   static address_v6 any();
+
+
+This functions returns an address that represents the "any" address `::`.
+
+
+[heading Return Value]
+      
+A default-constructed `address_v6` object. 
+
 
 
 
@@ -110370,6 +110686,8 @@ Determine whether the address is a loopback address.
   bool is_loopback() const;
 
 
+This function tests whether the address is the loopback address `::1`. 
+
 
 [endsect]
 
@@ -110482,6 +110800,8 @@ Determine whether the address is unspecified.
   bool is_unspecified() const;
 
 
+This function tests whether the address is the loopback address `::`. 
+
 
 [endsect]
 
@@ -110523,6 +110843,8 @@ Obtain an address object that represents the loopback address.
 
   static address_v6 loopback();
 
+
+This function returns an address that represents the well-known loopback address `::1`. 
 
 
 [endsect]
@@ -111021,7 +111343,19 @@ The scope ID of the address.
       scope_id_type id);
 
 
-Modifies the scope ID associated with the IPv6 address. 
+Modifies the scope ID associated with the IPv6 address.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[id][The new scope ID. ]]
+
+]
+
+
 
 
 [endsect]
@@ -129100,6 +129434,23 @@ Create a [link asio.reference.strand `strand`] object for an executor.
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][An executor.]]
+
+]
+
+
+[heading Return Value]
+      
+A strand constructed with the specified executor. 
+
+
+
+
 [endsect]
 
 
@@ -129115,6 +129466,23 @@ Create a [link asio.reference.strand `strand`] object for an execution context.
   strand< typename ExecutionContext::executor_type > make_strand(
       ExecutionContext & ctx,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][An execution context, from which an executor will be obtained.]]
+
+]
+
+
+[heading Return Value]
+      
+A strand constructed with the execution context's executor, obtained by performing `ctx.get_executor()`. 
+
 
 
 
@@ -129194,6 +129562,23 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`] object
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][An executor.]]
+
+]
+
+
+[heading Return Value]
+      
+A work guard constructed with the specified executor. 
+
+
+
+
 [endsect]
 
 
@@ -129209,6 +129594,23 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`] object
   executor_work_guard< typename ExecutionContext::executor_type > make_work_guard(
       ExecutionContext & ctx,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][An execution context, from which an executor will be obtained.]]
+
+]
+
+
+[heading Return Value]
+      
+A work guard constructed with the execution context's executor, obtained by performing `ctx.get_executor()`. 
+
 
 
 
@@ -129232,6 +129634,23 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`] object
 
 
 
+[heading Parameters]
+    
+
+[variablelist
+  
+[[t][An arbitrary object, such as a completion handler, for which the associated executor will be obtained.]]
+
+]
+
+
+[heading Return Value]
+      
+A work guard constructed with the associated executor of the object `t`, which is obtained as if by calling `get_associated_executor(t)`. 
+
+
+
+
 [endsect]
 
 
@@ -129249,6 +129668,25 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`] object
       const T & t,
       const Executor & ex,
       typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[t][An arbitrary object, such as a completion handler, for which the associated executor will be obtained.]]
+
+[[ex][An executor to be used as the candidate object when determining the associated executor.]]
+
+]
+
+
+[heading Return Value]
+      
+A work guard constructed with the associated executor of the object `t`, which is obtained as if by calling `get_associated_executor(t, ex)`. 
+
 
 
 
@@ -129272,6 +129710,25 @@ Create an [link asio.reference.executor_work_guard `executor_work_guard`] object
       typename constraint< !execution::is_executor< T >::value >::type  = 0,
       typename constraint< !is_convertible< T &, execution_context & >::value >::type  = 0,
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[t][An arbitrary object, such as a completion handler, for which the associated executor will be obtained.]]
+
+[[ctx][An execution context, from which an executor is obtained to use as the candidate object for determining the associated executor.]]
+
+]
+
+
+[heading Return Value]
+      
+A work guard constructed with the associated executor of the object `t`, which is obtained as if by calling `get_associated_executor(t, ctx.get_executor())`. 
+
 
 
 
@@ -153538,7 +153995,7 @@ Returns an awaitable object that may be used to reset the cancellation state of 
   constexpr unspecified reset_cancellation_state();
 
 
-Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P)`, into the current coroutine's cancellation state object.
+Let `P` be the cancellation slot associated with the current coroutine's [link asio.reference.co_spawn `co_spawn`] completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P)`, into the current coroutine's cancellation state object.
 
 
 [heading Example]
@@ -153579,7 +154036,7 @@ Returns an awaitable object that may be used to reset the cancellation state of 
       Filter && filter);
 
 
-Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<Filter>(filter))`, into the current coroutine's cancellation state object.
+Let `P` be the cancellation slot associated with the current coroutine's [link asio.reference.co_spawn `co_spawn`] completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<Filter>(filter))`, into the current coroutine's cancellation state object.
 
 
 [heading Example]
@@ -153623,7 +154080,7 @@ Returns an awaitable object that may be used to reset the cancellation state of 
       OutFilter && out_filter);
 
 
-Let `P` be the cancellation slot associated with the current coroutine's `co\_spawn` completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<InFilter>(in_filter), std::forward<OutFilter>(out_filter))`, into the current coroutine's cancellation state object.
+Let `P` be the cancellation slot associated with the current coroutine's [link asio.reference.co_spawn `co_spawn`] completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<InFilter>(in_filter), std::forward<OutFilter>(out_filter))`, into the current coroutine's cancellation state object.
 
 
 [heading Example]
