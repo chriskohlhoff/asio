@@ -48,6 +48,7 @@
   * [link asio.overview.networking.bsd_sockets The BSD Socket API and Asio]
 * [link asio.overview.timers Timers]
 * [link asio.overview.files Files]
+* [link asio.overview.pipes Pipes]
 * [link asio.overview.serial_ports Serial Ports]
 * [link asio.overview.signals Signal Handling]
 * [link asio.overview.posix POSIX-Specific Functionality]
@@ -139,6 +140,7 @@
 
 [include overview/timers.qbk]
 [include overview/files.qbk]
+[include overview/pipes.qbk]
 [include overview/serial_ports.qbk]
 [include overview/signals.qbk]
 [include overview/posix.qbk]
