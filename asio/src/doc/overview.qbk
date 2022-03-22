@@ -35,6 +35,7 @@
 * [link asio.overview.composition Composition and Completion Tokens]
   * [link asio.overview.composition.coroutine Stackless Coroutines]
   * [link asio.overview.composition.spawn Stackful Coroutines]
+  * [link asio.overview.composition.futures Futures]
   * [link asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
   * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
 * [link asio.overview.networking Networking]
@@ -62,7 +63,6 @@
   * [link asio.overview.cpp2011.atomic Atomics]
   * [link asio.overview.cpp2011.shared_ptr Shared Pointers]
   * [link asio.overview.cpp2011.chrono Chrono]
-  * [link asio.overview.cpp2011.futures Futures]
 * [link asio.overview.implementation Platform-Specific Implementation Notes]
 
 [include overview/rationale.qbk]
@@ -101,11 +101,13 @@
 
 * [link asio.overview.composition.coroutine Stackless Coroutines]
 * [link asio.overview.composition.spawn Stackful Coroutines]
+* [link asio.overview.composition.futures Futures]
 * [link asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
 * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
 
 [include overview/coroutine.qbk]
 [include overview/spawn.qbk]
+[include overview/futures.qbk]
 [include overview/cpp20_coroutines.qbk]
 [include overview/coro.qbk]
 

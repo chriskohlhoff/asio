@@ -25,7 +25,7 @@ facilities, such as:
 * Completion tokens that facilitate different composition mechanisms, such as
   [link asio.overview.composition.cpp20_coroutines C++ coroutines], [link
   asio.overview.composition.spawn stackful coroutines], [link
-  asio.overview.cpp2011.futures futures], and [link
+  asio.overview.composition.futures futures], and [link
   asio.reference.experimental__deferred deferred operations].
 
 * High level support for C++ coroutines that combines support executors and

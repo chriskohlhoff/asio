@@ -2122,8 +2122,7 @@
   support for returning a C++11 `std::future` from an asynchronous
   operation's initiating function. For example:
   `future<size_t> = my_socket.async_read_some(my_buffer, asio::use_future);`.
-  For further information, see [link asio.overview.cpp2011.futures C++
-  2011 Support - Futures].
+  For further information, see [link asio.overview.composition.futures Futures].
 
 * Promoted the stackless coroutine class and macros to be part of Asio's
   documented interface, rather than part of the HTTP server 4 example.
