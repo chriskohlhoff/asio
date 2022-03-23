@@ -31,13 +31,6 @@ needs.
     [`ASIO_DISABLE_ALIAS_TEMPLATES`]
   ]
   [
-    [`ASIO_HAS_ALIGNED_NEW`]
-    [
-      Support for operator new with alignment argument.
-    ]
-    [`ASIO_DISABLE_ALIGNED_NEW`]
-  ]
-  [
     [`ASIO_HAS_ALIGNOF`]
     [
       Support for the alignof operator.
@@ -82,7 +75,7 @@ needs.
   [
     [`ASIO_HAS_BOOST_CONFIG`]
     [
-      boostify: non-boost code ends here
+      Boost.Config library is available.
     ]
     []
   ]
@@ -199,6 +192,13 @@ needs.
     [`ASIO_DISABLE_DEV_POLL`]
   ]
   [
+    [`ASIO_HAS_ENUM_CLASS`]
+    [
+      Support enum classes on compilers known to allow them.
+    ]
+    [`ASIO_DISABLE_ENUM_CLASS`]
+  ]
+  [
     [`ASIO_HAS_EPOLL`]
     [
       Linux: epoll, eventfd and timerfd.
@@ -211,6 +211,13 @@ needs.
       Linux: epoll, eventfd and timerfd.
     ]
     [`ASIO_DISABLE_EVENTFD`]
+  ]
+  [
+    [`ASIO_HAS_FILE`]
+    [
+      Files.
+    ]
+    [`ASIO_DISABLE_FILE`]
   ]
   [
     [`ASIO_HAS_GETADDRINFO`]
@@ -232,6 +239,13 @@ needs.
       Windows: IO Completion Ports.
     ]
     [`ASIO_DISABLE_IOCP`]
+  ]
+  [
+    [`ASIO_HAS_IO_URING_AS_DEFAULT`]
+    [
+      Linux: io_uring is used instead of epoll.
+    ]
+    []
   ]
   [
     [`ASIO_HAS_KQUEUE`]
@@ -269,11 +283,25 @@ needs.
     [`ASIO_DISABLE_NOEXCEPT`]
   ]
   [
+    [`ASIO_HAS_NOEXCEPT_FUNCTION_TYPE`]
+    [
+      Support noexcept on function types on compilers known to allow it.
+    ]
+    [`ASIO_DISABLE_NOEXCEPT_FUNCTION_TYPE`]
+  ]
+  [
     [`ASIO_HAS_NULLPTR`]
     [
       Standard library support for the nullptr_t type.
     ]
     [`ASIO_DISABLE_NULLPTR`]
+  ]
+  [
+    [`ASIO_HAS_PIPE`]
+    [
+      Pipes.
+    ]
+    [`ASIO_DISABLE_PIPE`]
   ]
   [
     [`ASIO_HAS_POSIX_STREAM_DESCRIPTOR`]
@@ -358,6 +386,13 @@ needs.
       Standard library support for addressof.
     ]
     [`ASIO_DISABLE_STD_ADDRESSOF`]
+  ]
+  [
+    [`ASIO_HAS_STD_ALIGNED_ALLOC`]
+    [
+      Standard library support for aligned allocation.
+    ]
+    [`ASIO_DISABLE_STD_ALIGNED_ALLOC`]
   ]
   [
     [`ASIO_HAS_STD_ALLOCATOR_ARG`]
