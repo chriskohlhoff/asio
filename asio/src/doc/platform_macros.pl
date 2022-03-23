@@ -22,7 +22,10 @@ while (my $line = <$fh>)
   }
   elsif ($line =~ /^\/\/ (.*)$/)
   {
-    $current_comment = $current_comment . $1 . "\n";
+    if (!($line =~ /boostify/))
+    {
+      $current_comment = $current_comment . $1 . "\n";
+    }
   }
   elsif ($line =~ /^# *define *ASIO_HAS_([A-Z-0-9_]*) 1/)
   {
