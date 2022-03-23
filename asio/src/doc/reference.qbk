@@ -67468,7 +67468,7 @@ The [link asio.reference.basic_writable_pipe `basic_writable_pipe`] class provid
 [indexterm1 asio.indexterm.basic_yield_context..basic_yield_context]
 
 
-A completion token that represents the currently executing coroutine. 
+A [link asio.overview.model.completion_tokens completion token] that represents the currently executing coroutine. 
 
 
   template<
@@ -78857,7 +78857,7 @@ Submits a completion token or function object for execution.
 
 [indexterm1 asio.indexterm.detached..detached]
 
-A special value, similar to std::nothrow. 
+A [link asio.overview.model.completion_tokens completion token] object used to specify that an asynchronous operation is detached. 
 
 
   constexpr detached_t detached;
@@ -78880,7 +78880,7 @@ See the documentation for [link asio.reference.detached_t `detached_t`] for a us
 [indexterm1 asio.indexterm.detached_t..detached_t]
 
 
-Class used to specify that an asynchronous operation is detached. 
+A [link asio.overview.model.completion_tokens completion token] type used to specify that an asynchronous operation is detached. 
 
 
   class detached_t
@@ -92312,7 +92312,7 @@ Constructor.
 
 [indexterm1 asio.indexterm.experimental__as_single..experimental::as_single]
 
-Create a completion token to specify that the completion handler arguments should be combined into a single argument. 
+Adapt a [link asio.overview.model.completion_tokens completion token] to specify that the completion handler arguments should be combined into a single argument. 
 
 
   template<
@@ -92336,7 +92336,7 @@ Create a completion token to specify that the completion handler arguments shoul
 [indexterm1 asio.indexterm.experimental__as_single_t..experimental::as_single_t]
 
 
-Completion token type used to specify that the completion handler arguments should be combined into a single argument. 
+A [link asio.overview.model.completion_tokens completion token] adapter used to specify that the completion handler arguments should be combined into a single argument. 
 
 
   template<
@@ -92692,7 +92692,7 @@ Convert the specified executor to the inner executor type, then use that to cons
 
 [indexterm1 asio.indexterm.experimental__as_tuple..experimental::as_tuple]
 
-Create a completion token to specify that the completion handler arguments should be combined into a single tuple argument. 
+Adapt a [link asio.overview.model.completion_tokens completion token] to specify that the completion handler arguments should be combined into a single tuple argument. 
 
 
   template<
@@ -92716,7 +92716,7 @@ Create a completion token to specify that the completion handler arguments shoul
 [indexterm1 asio.indexterm.experimental__as_tuple_t..experimental::as_tuple_t]
 
 
-Completion token type used to specify that the completion handler arguments should be combined into a single tuple argument. 
+A [link asio.overview.model.completion_tokens completion token] adapter used to specify that the completion handler arguments should be combined into a single tuple argument. 
 
 
   template<
@@ -96392,7 +96392,7 @@ Whether or not the coroutine is noexcept.
 
 [indexterm1 asio.indexterm.experimental__deferred..experimental::deferred]
 
-A special value, similar to std::nothrow. 
+A [link asio.overview.model.completion_tokens completion token] object used to specify that an asynchronous operation should return a function object to lazily launch the operation. 
 
 
   constexpr deferred_t deferred;
@@ -97604,7 +97604,7 @@ Launches the group and asynchronously waits for completion.
   
 [[cancellation_condition][A function object, called on completion of an operation within the group, that is used to determine whether to cancel the remaining operations. The function object is passed the arguments of the completed operation's handler. To trigger cancellation of the remaining operations, it must return a [link asio.reference.cancellation_type `cancellation_type`] value other than `asio::cancellation_type::none`.]]
 
-[[token][A completion token whose signature is comprised of a `std::array<std::size_t, N>` indicating the completion order of the operations, followed by all operations' completion handler arguments.]]
+[[token][A [link asio.overview.model.completion_tokens completion token] whose signature is comprised of a `std::array<std::size_t, N>` indicating the completion order of the operations, followed by all operations' completion handler arguments.]]
 
 ]
 
@@ -98252,7 +98252,7 @@ The primary template is not defined.
 
 [indexterm1 asio.indexterm.experimental__use_coro..experimental::use_coro]
 
-A completion token object that represents the currently executing resumable coroutine. 
+A [link asio.overview.model.completion_tokens completion token] object that represents the currently executing resumable coroutine. 
 
 
   constexpr use_coro_t use_coro;
@@ -98275,7 +98275,7 @@ See the documentation for asio::use\_coro\_t for a usage example.
 [indexterm1 asio.indexterm.experimental__use_coro_t..experimental::use_coro_t]
 
 
-A completion token that represents the currently executing resumable coroutine. 
+A [link asio.overview.model.completion_tokens completion token] that represents the currently executing resumable coroutine. 
 
 
   template<
@@ -141728,7 +141728,7 @@ The  uses a simple strategy where a limited number of small memory blocks are ca
 
 [indexterm1 asio.indexterm.redirect_error..redirect_error]
 
-Create a completion token to capture [link asio.reference.error_code `error_code`] values to a variable. 
+Adapt a [link asio.overview.model.completion_tokens completion token] to capture [link asio.reference.error_code `error_code`] values to a variable. 
 
 
   template<
@@ -141753,7 +141753,7 @@ Create a completion token to capture [link asio.reference.error_code `error_code
 [indexterm1 asio.indexterm.redirect_error_t..redirect_error_t]
 
 
-Completion token type used to specify that an error produced by an asynchronous operation is captured to an [link asio.reference.error_code `error_code`] variable. 
+A [link asio.overview.model.completion_tokens completion token] adapter used to specify that an error produced by an asynchronous operation is captured to an [link asio.reference.error_code `error_code`] variable. 
 
 
   template<
@@ -157336,7 +157336,7 @@ Reading until a buffer is full or contains exactly 64 bytes:
 
 [indexterm1 asio.indexterm.use_awaitable..use_awaitable]
 
-A completion token object that represents the currently executing coroutine. 
+A [link asio.overview.model.completion_tokens completion token] object that represents the currently executing coroutine. 
 
 
   constexpr use_awaitable_t use_awaitable;
@@ -157359,7 +157359,7 @@ See the documentation for [link asio.reference.use_awaitable_t `use_awaitable_t`
 [indexterm1 asio.indexterm.use_awaitable_t..use_awaitable_t]
 
 
-A completion token that represents the currently executing coroutine. 
+A [link asio.overview.model.completion_tokens completion token] that represents the currently executing coroutine. 
 
 
   template<
@@ -157627,7 +157627,7 @@ Construct the adapted executor from the inner executor type.
 
 [indexterm1 asio.indexterm.use_future..use_future]
 
-A completion token object that causes an asynchronous operation to return a future. 
+A [link asio.overview.model.completion_tokens completion token] object that causes an asynchronous operation to return a future. 
 
 
   constexpr use_future_t use_future;
@@ -157650,7 +157650,7 @@ See the documentation for [link asio.reference.use_future_t `use_future_t`] for 
 [indexterm1 asio.indexterm.use_future_t..use_future_t]
 
 
-A completion token type that causes an asynchronous operation to return a future. 
+A [link asio.overview.model.completion_tokens completion token] type that causes an asynchronous operation to return a future. 
 
 
   template<
@@ -166316,7 +166316,7 @@ The number of bytes written. If an error occurs, returns the total number of byt
 
 [indexterm1 asio.indexterm.yield_context..yield_context]
 
-Context object that represents the currently executing coroutine. 
+A [link asio.overview.model.completion_tokens completion token] object that represents the currently executing coroutine. 
 
 
   typedef basic_yield_context< unspecified > yield_context;

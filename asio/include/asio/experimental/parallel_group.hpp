@@ -127,7 +127,7 @@ public:
    * operations, it must return a asio::cancellation_type value other
    * than <tt>asio::cancellation_type::none</tt>.
    *
-   * @param token A completion token whose signature is comprised of
+   * @param token A @ref completion_token whose signature is comprised of
    * a @c std::array<std::size_t, N> indicating the completion order of the
    * operations, followed by all operations' completion handler arguments.
    *

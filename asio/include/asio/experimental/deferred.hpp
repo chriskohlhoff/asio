@@ -584,7 +584,8 @@ inline auto operator|(Head head, ASIO_MOVE_ARG(Tail) tail)
       ASIO_MOVE_CAST(Tail)(tail));
 }
 
-/// A special value, similar to std::nothrow.
+/// A @ref completion_token object used to specify that an asynchronous
+/// operation should return a function object to lazily launch the operation.
 /**
  * See the documentation for asio::experimental::deferred_t for a usage
  * example.

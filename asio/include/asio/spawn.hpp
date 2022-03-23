@@ -30,7 +30,7 @@
 
 namespace asio {
 
-/// A completion token that represents the currently executing coroutine.
+/// A @ref completion_token that represents the currently executing coroutine.
 /**
  * The basic_yield_context class is a completion token type that is used to
  * represent the currently executing stackful coroutine. A basic_yield_context
@@ -148,7 +148,8 @@ private:
 };
 
 #if defined(GENERATING_DOCUMENTATION)
-/// Context object that represents the currently executing coroutine.
+/// A @ref completion_token object that represents the currently executing
+/// coroutine.
 typedef basic_yield_context<unspecified> yield_context;
 #else // defined(GENERATING_DOCUMENTATION)
 typedef basic_yield_context<
