@@ -67,6 +67,8 @@ asio::error_code win_iocp_file_service::open(
   else if ((open_flags & file_base::read_write) != 0)
     access = GENERIC_READ | GENERIC_WRITE;
 
+  DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE;
+
   DWORD disposition = 0;
   if ((open_flags & file_base::create) != 0)
   {
@@ -91,7 +93,7 @@ asio::error_code win_iocp_file_service::open(
   if ((open_flags & file_base::sync_all_on_write) != 0)
     flags |= FILE_FLAG_WRITE_THROUGH;
 
-  HANDLE handle = ::CreateFileA(path, access, 0, 0, disposition, flags, 0);
+  HANDLE handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
   if (handle != INVALID_HANDLE_VALUE)
   {
     if (disposition == OPEN_ALWAYS && (open_flags & file_base::truncate) != 0)
