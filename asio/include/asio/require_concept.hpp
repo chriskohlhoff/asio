@@ -108,7 +108,6 @@ struct require_concept_result
 namespace asio_require_concept_fn {
 
 using asio::conditional;
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::is_applicable_property;
@@ -139,12 +138,12 @@ template <typename Impl, typename T, typename Property>
 struct call_traits<Impl, T, void(Property),
   typename enable_if<
     is_applicable_property<
-      typename decay<T>::type,
-      typename decay<Property>::type
+      typename ::asio::decay<T>::type,
+      typename ::asio::decay<Property>::type
     >::value
   >::type,
   typename enable_if<
-    decay<Property>::type::is_requirable_concept
+    ::asio::decay<Property>::type::is_requirable_concept
   >::type,
   typename enable_if<
     static_require_concept<T, Property>::is_valid
@@ -159,12 +158,12 @@ template <typename Impl, typename T, typename Property>
 struct call_traits<Impl, T, void(Property),
   typename enable_if<
     is_applicable_property<
-      typename decay<T>::type,
-      typename decay<Property>::type
+      typename ::asio::decay<T>::type,
+      typename ::asio::decay<Property>::type
     >::value
   >::type,
   typename enable_if<
-    decay<Property>::type::is_requirable_concept
+    ::asio::decay<Property>::type::is_requirable_concept
   >::type,
   typename enable_if<
     !static_require_concept<T, Property>::is_valid
@@ -187,12 +186,12 @@ template <typename Impl, typename T, typename Property>
 struct call_traits<Impl, T, void(Property),
   typename enable_if<
     is_applicable_property<
-      typename decay<T>::type,
-      typename decay<Property>::type
+      typename ::asio::decay<T>::type,
+      typename ::asio::decay<Property>::type
     >::value
   >::type,
   typename enable_if<
-    decay<Property>::type::is_requirable_concept
+    ::asio::decay<Property>::type::is_requirable_concept
   >::type,
   typename enable_if<
     !static_require_concept<T, Property>::is_valid

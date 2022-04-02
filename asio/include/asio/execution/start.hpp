@@ -65,7 +65,6 @@ struct can_start :
 
 namespace asio_execution_start_fn {
 
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::traits::start_free;

@@ -108,7 +108,6 @@ struct require_result
 namespace asio_require_fn {
 
 using asio::conditional;
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::is_applicable_property;
@@ -141,12 +140,12 @@ template <typename Impl, typename T, typename Property>
 struct call_traits<Impl, T, void(Property),
   typename enable_if<
     is_applicable_property<
-      typename decay<T>::type,
-      typename decay<Property>::type
+      typename ::asio::decay<T>::type,
+      typename ::asio::decay<Property>::type
     >::value
   >::type,
   typename enable_if<
-    decay<Property>::type::is_requirable
+    ::asio::decay<Property>::type::is_requirable
   >::type,
   typename enable_if<
     static_require<T, Property>::is_valid
@@ -158,7 +157,7 @@ struct call_traits<Impl, T, void(Property),
 #if defined(ASIO_HAS_MOVE)
   typedef ASIO_MOVE_ARG(T) result_type;
 #else // defined(ASIO_HAS_MOVE)
-  typedef ASIO_MOVE_ARG(typename decay<T>::type) result_type;
+  typedef ASIO_MOVE_ARG(typename ::asio::decay<T>::type) result_type;
 #endif // defined(ASIO_HAS_MOVE)
 };
 
@@ -166,12 +165,12 @@ template <typename Impl, typename T, typename Property>
 struct call_traits<Impl, T, void(Property),
   typename enable_if<
     is_applicable_property<
-      typename decay<T>::type,
-      typename decay<Property>::type
+      typename ::asio::decay<T>::type,
+      typename ::asio::decay<Property>::type
     >::value
   >::type,
   typename enable_if<
-    decay<Property>::type::is_requirable
+    ::asio::decay<Property>::type::is_requirable
   >::type,
   typename enable_if<
     !static_require<T, Property>::is_valid
@@ -188,12 +187,12 @@ template <typename Impl, typename T, typename Property>
 struct call_traits<Impl, T, void(Property),
   typename enable_if<
     is_applicable_property<
-      typename decay<T>::type,
-      typename decay<Property>::type
+      typename ::asio::decay<T>::type,
+      typename ::asio::decay<Property>::type
     >::value
   >::type,
   typename enable_if<
-    decay<Property>::type::is_requirable
+    ::asio::decay<Property>::type::is_requirable
   >::type,
   typename enable_if<
     !static_require<T, Property>::is_valid
@@ -235,7 +234,7 @@ struct call_traits<Impl, T, void(P0, P1),
       >::is_noexcept
     ));
 
-  typedef typename decay<
+  typedef typename ::asio::decay<
     typename call_traits<
       Impl,
       typename call_traits<Impl, T, void(P0)>::result_type,
@@ -271,7 +270,7 @@ struct call_traits<Impl, T, void(P0, P1, PN ASIO_ELLIPSIS),
       >::is_noexcept
     ));
 
-  typedef typename decay<
+  typedef typename ::asio::decay<
     typename call_traits<
       Impl,
       typename call_traits<Impl, T, void(P0)>::result_type,

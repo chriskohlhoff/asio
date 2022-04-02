@@ -69,7 +69,6 @@ struct can_schedule :
 
 namespace asio_execution_schedule_fn {
 
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::execution::is_executor;
@@ -126,7 +125,7 @@ struct call_traits<S,
     !schedule_free<S>::is_valid
   >::type,
   typename enable_if<
-    is_executor<typename decay<S>::type>::value
+    is_executor<typename ::asio::decay<S>::type>::value
   >::type>
 {
   ASIO_STATIC_CONSTEXPR(overload_type, overload = identity);
@@ -135,7 +134,7 @@ struct call_traits<S,
 #if defined(ASIO_HAS_MOVE)
   typedef ASIO_MOVE_ARG(S) result_type;
 #else // defined(ASIO_HAS_MOVE)
-  typedef ASIO_MOVE_ARG(typename decay<S>::type) result_type;
+  typedef ASIO_MOVE_ARG(typename ::asio::decay<S>::type) result_type;
 #endif // defined(ASIO_HAS_MOVE)
 };
 

@@ -87,7 +87,6 @@ void submit_helper(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r);
 namespace asio_execution_execute_fn {
 
 using asio::conditional;
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::execution::detail::as_receiver;
@@ -149,13 +148,13 @@ struct call_traits<Impl, T, void(F),
     !execute_free<T, F>::is_valid
   >::type,
   typename void_type<
-   typename result_of<typename decay<F>::type&()>::type
+   typename result_of<typename ::asio::decay<F>::type&()>::type
   >::type,
   typename enable_if<
-    !is_as_invocable<typename decay<F>::type>::value
+    !is_as_invocable<typename ::asio::decay<F>::type>::value
   >::type,
   typename enable_if<
-    is_sender_to<T, as_receiver<typename decay<F>::type, T> >::value
+    is_sender_to<T, as_receiver<typename ::asio::decay<F>::type, T> >::value
   >::type>
 {
   ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
@@ -231,7 +230,7 @@ struct impl
   {
     return asio::execution::detail::submit_helper(
         ASIO_MOVE_CAST(T)(t),
-        as_receiver<typename decay<F>::type, T>(
+        as_receiver<typename ::asio::decay<F>::type, T>(
           ASIO_MOVE_CAST(F)(f), 0));
   }
 };

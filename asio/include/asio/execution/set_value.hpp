@@ -71,7 +71,6 @@ struct can_set_value :
 
 namespace asio_execution_set_value_fn {
 
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::traits::set_value_free;

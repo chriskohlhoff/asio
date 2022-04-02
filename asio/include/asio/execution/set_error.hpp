@@ -68,7 +68,6 @@ struct can_set_error :
 
 namespace asio_execution_set_error_fn {
 
-using asio::decay;
 using asio::declval;
 using asio::enable_if;
 using asio::traits::set_error_free;
