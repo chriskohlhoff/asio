@@ -481,7 +481,12 @@ int connect(socket_type s, const socket_addr_type* addr,
   get_last_error(ec, result != 0);
 #if defined(__linux__)
   if (result != 0 && ec == asio::error::try_again)
-    ec = asio::error::no_buffer_space;
+  {
+    if (addr->sa_family == AF_UNIX)
+      ec = asio::error::in_progress;
+    else
+      ec = asio::error::no_buffer_space;
+  }
 #endif // defined(__linux__)
   return result;
 }
