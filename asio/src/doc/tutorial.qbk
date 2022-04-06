@@ -284,11 +284,14 @@ In this tutorial we will modify the program from tutorial Timer.2 so that the ti
 
 To implement a repeating timer using asio you need to change the timer's expiry time in your completion handler, and to then start a new asynchronous wait. Obviously this means that the completion handler will need to be able to access the timer object. To this end we add two new parameters to the `print` function:
 
-* A pointer to a timer object.
+* a pointer to a timer object; and
 
 
-* A counter so that we can stop the program when the timer fires for the sixth time.
+* a counter so that we can stop the program when the timer fires for the sixth time
 
+
+
+at the end of the parameter list.
 
 
 

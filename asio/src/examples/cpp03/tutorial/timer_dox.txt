@@ -143,10 +143,12 @@ asynchronous wait. Obviously this means that the completion handler will need
 to be able to access the timer object. To this end we add two new parameters
 to the <tt>print</tt> function:
 
-\li A pointer to a timer object.
+\li a pointer to a timer object; and
 
-\li A counter so that we can stop the program when the timer fires for the
-sixth time.
+\li a counter so that we can stop the program when the timer fires for the
+sixth time
+
+at the end of the parameter list.
 
 \until {
 
