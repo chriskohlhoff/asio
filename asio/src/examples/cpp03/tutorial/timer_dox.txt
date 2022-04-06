@@ -30,8 +30,9 @@ asio::io_context first thing in the main function.
 
 Next we declare an object of type asio::steady_timer. The core asio classes
 that provide I/O functionality (or as in this case timer functionality) always
-take a reference to an io_context as their first constructor argument. The
-second argument to the constructor sets the timer to expire 5 seconds from now.
+take an executor, or a reference to an execution context (such as
+asio::io_context), as their first constructor argument. The second argument to
+the constructor sets the timer to expire 5 seconds from now.
 
 \until asio::steady_timer
 
