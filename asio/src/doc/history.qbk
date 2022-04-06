@@ -7,6 +7,40 @@
 
 [section:history Revision History]
 
+[heading Asio 1.22.2]
+
+* On Windows, changed the file support to open files using the same sharing mode
+  as `fopen()`.
+
+* On Linux, fixed the UNIX domain sockets implementation to correctly handle
+  `EAGAIN` as an indication of an in-progress connect operation.
+
+* Fixed `experimental::basic_channel::reset()` and
+  `experimental::basic_concurrent_channel::reset()` so that they work correctly
+  for an unclosed channel.
+
+* Fixed potential undefined behaviour in the `experimental::promise` operations
+  `race()` and `all()`.
+
+* Changed the `co_spawn` implementation to explicitly dispatch cancellation
+  signals through the specified executor, if the the completion handler has an
+  associated executor of its own.
+
+* Added more detailed reference documentation to `make_strand()`,
+  `make_work_guard()`, `ip::address_v4`, `ip::address_v6`,
+  `experimental::basic_channel`, and `experimental::basic_concurrent_channel`.
+
+* Re-arranged and extended the Overview documentation to cover files, pipes,
+  `async_compose`, `experimental::deferred`, `experimental::parallel_group`,
+  `experimental::promise`, channels, and completion token adapters.
+
+* Reverted the `io_context` reference documentation to use `executor_work_guard`
+  when preventing the `io_context` from running out of work.
+
+* Removed references to `deadline_timer` from the Overview documentation.
+
+* Added reference documentation cross-references to asynchronous model elements.
+
 [heading Asio 1.22.1]
 
 * Added `bind_allocator`, to simplify associating a custom allocator with a
