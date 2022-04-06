@@ -340,6 +340,16 @@
     <xsl:value-of select="@refid"/>
   </xsl:variable>
   <xsl:choose>
+    <xsl:when test="$refid = 'asynchronous_operation'">
+      <xsl:text>[link asio.overview.model.async_ops </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="$refid = 'completion_token'">
+      <xsl:text>[link asio.overview.model.completion_tokens </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
     <xsl:when test="count(/doxygen/compounddef[@id=$refid]) &gt; 0">
       <xsl:text>[link asio.tutorial.</xsl:text>
       <xsl:choose>
