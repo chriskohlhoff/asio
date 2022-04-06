@@ -17,13 +17,13 @@ The tutorial programs in this first section introduce the fundamental concepts r
 * [link asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
 
 
-* [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
+* [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a completion handler]
 
 
-* [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]
+* [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a completion handler]
 
 
-* [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
+* [link asio.tutorial.tuttimer5 Timer.5 - Synchronising completion handlers in multithreaded programs]
 
 
 
@@ -94,7 +94,8 @@ All programs that use asio need to have at least one I/O execution context, such
 
 
 
-Next we declare an object of type asio::steady\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take a reference to an io\_context as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
+Next we declare an object of type asio::steady\_timer. The core asio classes that provide I/O functionality (or as in this case timer functionality) always take an executor, or a reference to an execution context (such as 
+[link asio.reference.io_context io_context]), as their first constructor argument. The second argument to the constructor sets the timer to expire 5 seconds from now.
 
 
 
@@ -224,7 +225,7 @@ Return to the [link asio.tutorial tutorial index]
 
 Previous: [link asio.tutorial.tuttimer1 Timer.1 - Using a timer synchronously]
 
-Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
+Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a completion handler]
 
 
 
@@ -267,7 +268,7 @@ Return to [link asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
 
 [endsect]
 
-[section:tuttimer3 Timer.3 - Binding arguments to a handler]
+[section:tuttimer3 Timer.3 - Binding arguments to a completion handler]
 
 In this tutorial we will modify the program from tutorial Timer.2 so that the timer fires once a second. This will show how to pass additional parameters to your handler function.
 
@@ -373,7 +374,7 @@ Return to the [link asio.tutorial tutorial index]
 
 Previous: [link asio.tutorial.tuttimer2 Timer.2 - Using a timer asynchronously]
 
-Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]
+Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a completion handler]
 
 
 
@@ -424,13 +425,13 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handl
   ``''''''``  return 0;
   ``''''''``}
 
-Return to [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
+Return to [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a completion handler]
 
 [endsect]
 
 [endsect]
 
-[section:tuttimer4 Timer.4 - Using a member function as a handler]
+[section:tuttimer4 Timer.4 - Using a member function as a completion handler]
 
 In this tutorial we will see how to use a class member function as a completion handler. The program should execute identically to the tutorial program from tutorial Timer.3.
 
@@ -528,9 +529,9 @@ See the [link asio.tutorial.tuttimer4.src full source listing]
 
 Return to the [link asio.tutorial tutorial index]
 
-Previous: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a handler]
+Previous: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a completion handler]
 
-Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
+Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising completion handlers in multithreaded programs]
 
 
 
@@ -594,13 +595,13 @@ Next: [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithr
   ``''''''``  return 0;
   ``''''''``}
 
-Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]
+Return to [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a completion handler]
 
 [endsect]
 
 [endsect]
 
-[section:tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
+[section:tuttimer5 Timer.5 - Synchronising completion handlers in multithreaded programs]
 
 This tutorial demonstrates the use of the 
 [link asio.reference.strand strand] class template to synchronise completion handlers in a multithreaded program.
@@ -741,7 +742,7 @@ See the [link asio.tutorial.tuttimer5.src full source listing]
 
 Return to the [link asio.tutorial tutorial index]
 
-Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a handler]
+Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a completion handler]
 
 
 
@@ -831,7 +832,7 @@ Previous: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a h
   ``''''''``  return 0;
   ``''''''``}
 
-Return to [link asio.tutorial.tuttimer5 Timer.5 - Synchronising handlers in multithreaded programs]
+Return to [link asio.tutorial.tuttimer5 Timer.5 - Synchronising completion handlers in multithreaded programs]
 
 [endsect]
 
