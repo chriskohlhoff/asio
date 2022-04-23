@@ -17,8 +17,13 @@
 // Test that header file is self-contained.
 #include "asio/experimental/use_coro.hpp"
 
+#include "asio/detached.hpp"
+#include "asio/redirect_error.hpp"
 #include "asio/steady_timer.hpp"
+
 #include <iostream>
+#include <asio/this_coro.hpp>
+
 #include "../../unit_test.hpp"
 
 using namespace asio::experimental;
@@ -68,10 +73,54 @@ void stack_test2()
   ASIO_CHECK(done);
 }
 
+asio::experimental::coro<void() noexcept, void>
+cancel_inner(asio::any_io_executor exec, int &cancel_cnt)
+{
+  asio::steady_timer st{exec, std::chrono::steady_clock::time_point::max()};
+
+  (co_await asio::this_coro::cancellation_state).slot().assign(
+            [&](auto c)
+          {
+            cancel_cnt ++;
+            st.cancel();
+            return c;
+          });
+  asio::error_code ec;
+
+  co_await st.async_wait(
+          asio::bind_cancellation_slot(asio::cancellation_slot{},
+          asio::redirect_error(asio::experimental::use_coro,ec)));
+
+};
+
+asio::experimental::coro<void() noexcept, void>
+cancel_test(asio::any_io_executor exec, int & cancelled)
+{
+  auto inner = cancel_inner(exec, cancelled);
+
+  co_await inner.async_resume(asio::experimental::use_coro);
+}
+
+void cancel_test()
+{
+  int cancelled = 0;
+  asio::io_context ctx;
+  auto ct = cancel_test(ctx.get_executor(), cancelled);
+
+  asio::cancellation_signal cs;
+  ct.async_resume(asio::bind_cancellation_slot(cs.slot(), asio::detached));
+
+  asio::post(ctx, [&]{cs.emit(asio::cancellation_type::all);});
+  ctx.run();
+
+  ASIO_CHECK(cancelled == 1);
+}
+
 } // namespace coro
 
 ASIO_TEST_SUITE
 (
   "coro/use_coro",
   ASIO_TEST_CASE(::coro::stack_test2)
+  ASIO_TEST_CASE(::coro::cancel_test)
 )
