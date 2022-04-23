@@ -38,6 +38,21 @@ constexpr executor_t executor;
 __declspec(selectany) executor_t executor;
 #endif
 
+/// Awaitable type that returns the default completion token of the current coroutine.
+struct token_t
+{
+  ASIO_CONSTEXPR token_t()
+  {
+  }
+};
+
+/// Awaitable object that returns the default completion token based on the coro type.
+#if defined(ASIO_HAS_CONSTEXPR) || defined(GENERATING_DOCUMENTATION)
+constexpr token_t token;
+#elif defined(ASIO_MSVC)
+__declspec(selectany) token_t token;
+#endif
+
 /// Awaitable type that returns the cancellation state of the current coroutine.
 struct cancellation_state_t
 {

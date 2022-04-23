@@ -116,6 +116,10 @@ void run_generator_test()
 
 asio::experimental::coro<void, int> task_test(asio::io_context&)
 {
+  auto tk = co_await asio::this_coro::token;
+  const auto eq = std::is_same_v<decltype(tk), asio::experimental::use_coro_t<asio::any_io_executor>>;
+  ASIO_CHECK(eq);
+
   co_return 42;
 }
 

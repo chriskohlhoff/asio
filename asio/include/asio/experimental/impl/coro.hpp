@@ -674,6 +674,29 @@ struct coro_promise final :
     return exec_helper{executor_};
   }
 
+
+  auto await_transform(this_coro::token_t) noexcept
+  {
+    struct result
+    {
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const noexcept
+      {
+        return use_coro_t<Executor>{};
+      }
+    };
+
+    return result{};
+  }
+
   auto await_transform(this_coro::cancellation_state_t) const
   {
     struct exec_helper
@@ -1013,7 +1036,7 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
       assert(ch && !ch.done());
       assert(coro->awaited_from == detail::noop_coroutine());
 
-      coro->awaited_from = post_coroutine(std::move(exec), std::move(h));
+      coro->awaited_from = detail::post_coroutine(std::move(exec), std::move(h));
       coro->reset_error();
       ch.resume();
     };

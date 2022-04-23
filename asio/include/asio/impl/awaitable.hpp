@@ -33,6 +33,10 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+
+template<typename Executor>
+struct use_awaitable_t;
+
 namespace detail {
 
 struct awaitable_thread_has_context_switched {};
@@ -216,6 +220,29 @@ public:
 
     return result{this};
   }
+
+  auto await_transform(this_coro::token_t) noexcept
+  {
+    struct result
+    {
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const noexcept
+      {
+        return use_awaitable_t<Executor>{};
+      }
+    };
+
+    return result{};
+  }
+
 
   // This await transformation resets the associated cancellation state.
   auto await_transform(this_coro::reset_cancellation_state_0_t) noexcept
