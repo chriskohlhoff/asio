@@ -99,9 +99,14 @@ public:
   }
 
   // Support for co_await keyword.
+
+  template<typename U>
+  static int inherits_awaitable_frame(const detail::awaitable_frame<U, Executor> & );
+
   template <class U>
   void await_suspend(
-      detail::coroutine_handle<detail::awaitable_frame<U, Executor>> h)
+      detail::coroutine_handle<U> h,
+      decltype(inherits_awaitable_frame(std::declval<U>()))= 0)
   {
     frame_->push_frame(&h.promise());
   }
