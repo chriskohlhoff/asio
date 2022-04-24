@@ -10,6 +10,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include <asio/experimental/deferred.hpp>
 #include "asio/detail/config.hpp"
 
 #include "asio/co_spawn.hpp"
@@ -27,11 +28,11 @@ struct async_coropose_tag
 {
 };
 
-template<typename Signature, typename CompletionToken>
+template<typename Signature, typename CompletionToken, typename T>
 struct coropose_awaitable_frame;
 
 template<typename T, typename CompletionToken>
-struct coropose_awaitable_frame<void(T), CompletionToken>: asio::detail::awaitable_frame<T, any_io_executor>
+struct coropose_awaitable_frame<void(T), CompletionToken, void> : asio::detail::awaitable_frame<T, any_io_executor>
 {
   using asio::detail::awaitable_frame<T, any_io_executor>::await_transform;
 
@@ -50,7 +51,7 @@ struct coropose_awaitable_frame<void(T), CompletionToken>: asio::detail::awaitab
     asio::co_spawn(std::forward<Context>(ctx),
                    asio::detail::awaitable_frame<T, any_io_executor>::get_return_object(),
                    std::move(l)
-                   );
+    );
   }
 
   void get_return_object()
@@ -58,8 +59,38 @@ struct coropose_awaitable_frame<void(T), CompletionToken>: asio::detail::awaitab
   }
 };
 
+template<typename T, typename CompletionToken, typename ReturnType>
+struct coropose_awaitable_frame<void(T), CompletionToken, ReturnType> : asio::detail::awaitable_frame<T, any_io_executor>
+{
+  using asio::detail::awaitable_frame<T, any_io_executor>::await_transform;
+
+  ReturnType return_;
+
+  template<typename Context,
+          typename ... Args>
+  coropose_awaitable_frame(Context && ctx, Args && ... args)
+  {
+    auto l =
+            asio::experimental::deferred([](std::exception_ptr e, T && t) mutable
+            {
+              if (e)
+                std::rethrow_exception(e); // so run() throws e
+              return asio::experimental::deferred.values(std::forward<T>(t));
+            });
+
+    return_ = asio::co_spawn(std::forward<Context>(ctx),
+                   asio::detail::awaitable_frame<T, any_io_executor>::get_return_object(),
+                   std::move(l))(std::move(std::get<sizeof...(Args) - 2>(std::forward_as_tuple(args...))));
+  }
+
+  ReturnType get_return_object()
+  {
+    return std::move(return_);
+  }
+};
+
 template<typename T, typename CompletionToken>
-struct coropose_awaitable_frame<void(std::exception_ptr, T), CompletionToken>: asio::detail::awaitable_frame<T, any_io_executor>
+struct coropose_awaitable_frame<void(std::exception_ptr, T), CompletionToken, void> : asio::detail::awaitable_frame<T, any_io_executor>
 {
   using asio::detail::awaitable_frame<T, any_io_executor>::await_transform;
 
@@ -75,7 +106,28 @@ struct coropose_awaitable_frame<void(std::exception_ptr, T), CompletionToken>: a
 
   void get_return_object()
   {
-    // NOOP:
+  }
+};
+
+template<typename T, typename CompletionToken, typename ReturnType>
+struct coropose_awaitable_frame<void(std::exception_ptr, T), CompletionToken, ReturnType> : asio::detail::awaitable_frame<T, any_io_executor>
+{
+  using asio::detail::awaitable_frame<T, any_io_executor>::await_transform;
+
+  ReturnType return_;
+  template<typename Context,
+          typename ... Args>
+  coropose_awaitable_frame(Context && ctx, Args && ... args)
+  {
+    return_ = asio::co_spawn(std::forward<Context>(ctx),
+                   asio::detail::awaitable_frame<T, any_io_executor>::get_return_object(),
+                   std::move(std::get<sizeof...(Args) - 2>(std::forward_as_tuple(args...)))
+    );
+  }
+
+  ReturnType get_return_object()
+  {
+    return std::move(return_);
   }
 };
 
@@ -83,8 +135,9 @@ struct coropose_awaitable_frame<void(std::exception_ptr, T), CompletionToken>: a
 template<typename Signature, typename CompletionToken>
 struct async_coropose_traits
 {
-  using promise_type = coropose_awaitable_frame<Signature, CompletionToken>;
-  using type = void;
+  using type = typename asio::async_result<CompletionToken, Signature>::return_type;
+  using promise_type = coropose_awaitable_frame<Signature, std::decay_t<CompletionToken>, type>;
+  using enable_coroutine_traits = type;
 };
 
 
@@ -138,7 +191,7 @@ namespace std::experimental
 {
 
 template<typename Context, typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
                         CompletionToken, asio::async_coropose_tag<Signature> >
 {
   using promise_type = typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::promise_type;
@@ -146,15 +199,16 @@ struct coroutine_traits<void, Context,
 
 
 template<typename Context, typename T0, typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
   using promise_type = typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::promise_type;
 };
 
+//enable_coroutine_traits
 template<typename Context, typename T0, typename T1, typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
@@ -162,7 +216,7 @@ struct coroutine_traits<void, Context,
 };
 
 template<typename Context, typename T0, typename T1, typename T2, typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1, T2,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
@@ -170,7 +224,7 @@ struct coroutine_traits<void, Context,
 };
 
 template<typename Context, typename T0, typename T1,  typename T2,  typename T3, typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1, T2, T3,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
@@ -180,7 +234,7 @@ struct coroutine_traits<void, Context,
 template<typename Context,
         typename T0, typename T1, typename T2, typename T3, typename T4,
         typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1, T2, T3, T4,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
@@ -190,7 +244,7 @@ struct coroutine_traits<void, Context,
 template<typename Context,
         typename T0, typename T1, typename T2, typename T3, typename T4, typename T5,
         typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1, T2, T3, T4, T5,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
@@ -200,7 +254,7 @@ struct coroutine_traits<void, Context,
 template<typename Context,
         typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6,
         typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1, T2, T3, T4, T5, T6,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {
@@ -210,7 +264,7 @@ struct coroutine_traits<void, Context,
 template<typename Context,
         typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7,
         typename CompletionToken, typename Signature>
-struct coroutine_traits<void, Context,
+struct coroutine_traits<typename asio::async_coropose_traits<Signature, std::decay_t<CompletionToken>>::enable_coroutine_traits, Context,
         T0, T1, T2, T3, T4, T5, T6, T7,
         CompletionToken, asio::async_coropose_tag<Signature> >
 {

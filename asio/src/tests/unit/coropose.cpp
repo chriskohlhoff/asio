@@ -12,6 +12,7 @@
 // Test that header file is self-contained.
 #include <asio/this_coro.hpp>
 #include <asio/post.hpp>
+#include <asio/use_future.hpp>
 #include <asio/io_context.hpp>
 #include "asio/coropose.hpp"
 
@@ -50,6 +51,7 @@ void coropose()
 
   int res = 0;
   async_divide(ctx, 144, 12, [&](int i){ res = i;});
+  std::future<int> fut = async_divide(ctx, 96, 12, asio::use_future);
 
   asio::co_spawn(ctx, async_divide(ctx, 100, 10, asio::use_awaitable), [](std::exception_ptr e, int i) {ASIO_CHECK(i == 10);});
 
@@ -58,9 +60,10 @@ void coropose()
 
   ctx.run();
   ASIO_CHECK(res == 12);
+  ASIO_CHECK(fut.get() == 8);
 
   try
-  {
+    {
     ctx.restart();
     async_divide(ctx, 1, 0, [&](int i){ res = i;});
     ctx.run();
