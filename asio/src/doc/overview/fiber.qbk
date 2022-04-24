@@ -1,0 +1,105 @@
+[/
+ / Copyright (c) 2021 Klemens D. Morgenstern
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+
+[section:fiber Stackful Coroutines (boost.context.fiber)]
+
+The [link asio.reference.async_fiber `async_fiber()`] function is a high-level wrapper for
+running stackful coroutines, named fiber in this context.
+It is based on the Boost.Coroutine library.
+The `async_fiber()` function enables programs to implement
+asynchronous logic in a synchronous manner, as shown in the following example:
+
+  asio::async_fiber(my_strand, &do_echom asio::detached);
+
+  // ...
+
+  void do_echo(asio::fiber_context yield)
+  {
+    try
+    {
+      char data[128];
+      for (;;)
+      {
+        std::size_t length =
+          my_socket.async_read_some(
+            asio::buffer(data), yield);
+
+        asio::async_write(my_socket,
+            asio::buffer(data, length), yield);
+      }
+    }
+    catch (std::exception& e)
+    {
+      // ...
+    }
+  }
+
+The first argument to `spawn()` may be an executor or execution_context.
+This argument determines the context in which the fiber is permitted to
+execute. For example, a server's per-client object may consist of multiple
+coroutines; they should all run on the same `strand` so that no explicit
+synchronisation is required.
+
+The third argument is a completion-token, similar to all other `async_*`
+and `co_spawn` functions.
+
+The second argument is a function that takes a `asio::basic_fiber_context`
+as argument. Further on calls the fiber-function.
+
+`fiber_context` is an alias for `asio::basic_fiber_context<asio:any_io_context>`.
+
+The completion token signature is deducted from the fiber function, according
+to the following rules (`T` is a non void type).
+
+[table:result_type Result type deduction
+    [ [Return] [`noexcept`] [`example`] [`completion_signature`]]
+    [ [`T`]    [`false`] [`int(fiber_context)`]           [`void(std::exception_ptr, T)`]]
+    [ [`T`]    [`true`]  [`int(fiber_context) noexcept`]  [`void(T)`]]
+    [ [`void`] [`false`] [`void(fiber_context)`]          [`void(std::exception_ptr)`]]
+    [ [`void`] [`true`]  [`void(fiber_context) noexcept`] [`void()`]]
+]
+
+The `fiber_context` itself is a completion token and may be passed
+to an asynchronous operation in place of the completion
+handler, as in:
+
+  void impl(fiber_context yield)
+  {
+    std::size_t length =
+        my_socket.async_read_some(
+          asio::buffer(data), yield);
+  }
+
+This starts the asynchronous operation and suspends the coroutine. The
+coroutine will be resumed automatically when the asynchronous operation
+completes.
+
+Where an asynchronous operation's handler signature has the form:
+
+  void handler(asio::error_code ec, result_type result);
+
+the initiating function returns the result_type. In the `async_read_some`
+example above, this is `size_t`. If the asynchronous operation fails, the
+`error_code` is converted into a `system_error` exception and thrown.
+
+Where a handler signature has the form:
+
+  void handler(asio::error_code ec);
+
+the initiating function returns `void`. As above, an error is passed back to
+the coroutine as a `system_error` exception.
+
+To collect the `error_code` from an operation, rather than have it throw an
+exception, associate the output variable with the `yield_context` as follows:
+
+  asio::error_code ec;
+  std::size_t length =
+    my_socket.async_read_some(
+      asio::buffer(data), redirect_error(ec, yield));
+
+[endsect]

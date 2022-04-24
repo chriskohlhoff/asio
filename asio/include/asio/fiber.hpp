@@ -45,13 +45,17 @@ struct fiber_handle
 };
 
 }
-
+/** The basic context handle of a fiber.
+ *
+ * @tparam Executor The executor of the fiber_context.
+*/
 template<typename Executor = asio::any_io_executor>
 struct basic_fiber_context
 {
+  /// The executor of the fiber.
   using executor_type = Executor;
 
-
+  //// Copy construct a basic_fiber_context from anoter context. Can convert the executor type.
   template<typename Executor2>
   basic_fiber_context(
           const basic_fiber_context<Executor2>  & other,
@@ -60,6 +64,7 @@ struct basic_fiber_context
   {
   }
 
+  //// move construct a basic_fiber_context from anoter context. Can convert the executor type.
   template<typename Executor2>
   basic_fiber_context(
           basic_fiber_context<Executor2>  && other,
@@ -67,6 +72,7 @@ struct basic_fiber_context
           : handle_(other.handle_), fiber_(std::move(other.fiber_)), executor_(std::move(other.get_executor()))
   {
   }
+#if !defined(GENERATING_DOCUMENTATION)
 
   basic_fiber_context(detail::fiber_handle &handle,
                       boost::context::fiber && fiber,
@@ -74,24 +80,31 @@ struct basic_fiber_context
   {
   }
 
+#endif
+
+  /// Get the executor of the fiber.
   executor_type get_executor() const {return executor_;}
 
+  /// Get the cancellation state of the fiber.
   cancellation_state get_cancellation_state() const ASIO_NOEXCEPT
   {
     return handle_->cancel_state;
   }
 
+  /// Reset the cancellation state of the fiber.
   void reset_cancellation_state()
   {
     handle_->cancel_state = cancellation_state(handle_->cancel_slot);
   }
 
+  /// Reset the cancellation state of the fiber and insert a filter.
   template <typename Filter>
   void reset_cancellation_state(ASIO_MOVE_ARG(Filter) filter)
   {
     handle_->cancel_state = cancellation_state(handle_->cancel_slot, ASIO_MOVE_CAST(Filter)(filter));
   }
 
+  /// Reset the cancellation state of the fiber and insert in and out filters.
   template <typename InFilter, typename OutFilter>
   void reset_cancellation_state(ASIO_MOVE_ARG(InFilter) in_filter,
                                 ASIO_MOVE_ARG(OutFilter) out_filter)
@@ -113,6 +126,7 @@ struct basic_fiber_context
 
 };
 
+/// The fiber context type with the default executor.
 typedef basic_fiber_context<> fiber_context;
 
 namespace detail
@@ -393,6 +407,55 @@ struct initiate_fiber
 
 }
 
+/// Run a fiber based thread of execution.
+/** This is an overload that can throw exception and return a value. The type is deduced from the function signature.
+ *
+ * @param ctx The execution context
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   char data[1024];
+ *   for (;;)
+ *   {
+ *     std::size_t n = socket.async_read_some(
+ *         asio::buffer(data), ctx);
+ *
+ *     asio::async_write(socket,
+ *         asio::buffer(data, n), ctx);
+ *
+ *     bytes_transferred += n;
+ *   }
+ *   return bytes_transferred;
+ * } *
+ * // ...
+ *
+ * asio::async_fiber(my_context,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   [](std::exception_ptr e, std::size_t n)
+ *   {
+ *     std::cout << "transferred " << n << "\n";
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename ExecutionContext, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(std::exception_ptr, decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))))
           CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(typename ExecutionContext::executor_type)>
@@ -411,6 +474,57 @@ auto async_fiber(ExecutionContext & ctx,
                   std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
+/// Run a fiber based thread of execution.
+/** This is an overload that can throw exception and return a value. The type is deduced from the function signature.
+ *
+ * @param exec The executor
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   char data[1024];
+ *   for (;;)
+ *   {
+ *     std::size_t n = socket.async_read_some(
+ *         asio::buffer(data), ctx);
+ *
+ *     asio::async_write(socket,
+ *         asio::buffer(data, n), ctx);
+ *
+ *     bytes_transferred += n;
+ *   }
+ *
+ *   return bytes_transferred;
+ * }
+ *
+ * // ...
+ *
+ * asio::async_fiber(my_executor,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   [](std::exception_ptr e, std::size_t n)
+ *   {
+ *     std::cout << "transferred " << n << "\n";
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename Executor, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(std::exception_ptr,
                 decltype(std::declval<Function>()(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))))
@@ -430,6 +544,63 @@ auto async_fiber(const Executor & exec,
           detail::initiate_fiber<Executor>(exec), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
+/// Run a fiber based thread of execution.
+/** This is an overload that cannot throw exception and return a value. The type is deduced from the function signature
+ * and the exception behaviour with `noexcept`.
+ *
+ * @param ctx The execution context
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   try
+ *   {
+ *     char data[1024];
+ *     for (;;)
+ *     {
+ *       std::size_t n = socket.async_read_some(
+ *           asio::buffer(data), ctx);
+ *
+ *       asio::async_write(socket,
+ *           asio::buffer(data, n), ctx);
+ *
+ *       bytes_transferred += n;
+ *     }
+ *   }
+ *   catch (const std::exception&)
+ *   {
+ *   }
+ *
+ *   return bytes_transferred;
+ * } *
+ * // ...
+ *
+ * asio::async_fiber(my_context,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   [](std::size_t n)
+ *   {
+ *     std::cout << "transferred " << n << "\n";
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename ExecutionContext, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))))
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(typename ExecutionContext::executor_type)>
@@ -446,6 +617,65 @@ auto async_fiber(ExecutionContext & ctx,
   return async_initiate<CompletionToken, sig_t>(
           detail::initiate_fiber<typename ExecutionContext::executor_type>(ctx.get_executor()), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
+
+
+/// Run a fiber based thread of execution.
+/** This is an overload that cannot throw exception and return a value. The type is deduced from the function signature
+ * and the exception behaviour with `noexcept`.
+ *
+ * @param exec The executor
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   try
+ *   {
+ *     char data[1024];
+ *     for (;;)
+ *     {
+ *       std::size_t n = socket.async_read_some(
+ *           asio::buffer(data), ctx);
+ *
+ *       asio::async_write(socket,
+ *           asio::buffer(data, n), ctx);
+ *
+ *       bytes_transferred += n;
+ *     }
+ *   }
+ *   catch (const std::exception&)
+ *   {
+ *   }
+ *
+ *   return bytes_transferred;
+ * } *
+ * // ...
+ *
+ * asio::async_fiber(my_executor,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   [](std::size_t n)
+ *   {
+ *     std::cout << "transferred " << n << "\n";
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 
 template<typename Executor, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))))
@@ -465,6 +695,54 @@ auto async_fiber(const Executor & exec,
           detail::initiate_fiber<Executor>(exec), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
+/// Run a fiber based thread of execution.
+/** This is an overload that can throw exception and does not return a value.
+ * The type is deduced from the function signature.
+ *
+ * @param ctx The execution context
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   char data[1024];
+ *   for (;;)
+ *   {
+ *     std::size_t n = socket.async_read_some(
+ *         asio::buffer(data), ctx);
+ *
+ *     asio::async_write(socket,
+ *         asio::buffer(data, n), ctx);
+ *
+ *     bytes_transferred += n;
+ *   }
+ * } *
+ * // ...
+ *
+ * asio::async_fiber(my_context,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   [](std::exception_ptr e)
+ *   {
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename ExecutionContext, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(std::exception_ptr))
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(typename ExecutionContext::executor_type)>
@@ -483,6 +761,57 @@ auto async_fiber(ExecutionContext & ctx,
            std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
+
+/// Run a fiber based thread of execution.
+/** This is an overload that can throw exception and does not return a value.
+ * The type is deduced from the function signature.
+ *
+ * @param exec The executor
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   char data[1024];
+ *   for (;;)
+ *   {
+ *     std::size_t n = socket.async_read_some(
+ *         asio::buffer(data), ctx);
+ *
+ *     asio::async_write(socket,
+ *         asio::buffer(data, n), ctx);
+ *
+ *     bytes_transferred += n;
+ *   }
+ *
+ * }
+ *
+ * // ...
+ *
+ * asio::async_fiber(my_executor,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   [](std::exception_ptr e)
+ *   {
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename Executor, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(std::exception_ptr))
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
@@ -501,6 +830,63 @@ auto async_fiber(const Executor & exec,
           detail::initiate_fiber<Executor>(exec), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
+
+/// Run a fiber based thread of execution.
+/** This is an overload that cannot throw exception and does not return a value.
+ * The type is deduced from the function signature
+ * and the exception behaviour with `noexcept`.
+ *
+ * @param ctx The execution context
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   try
+ *   {
+ *     char data[1024];
+ *     for (;;)
+ *     {
+ *       std::size_t n = socket.async_read_some(
+ *           asio::buffer(data), ctx);
+ *
+ *       asio::async_write(socket,
+ *           asio::buffer(data, n), ctx);
+ *
+ *       bytes_transferred += n;
+ *     }
+ *   }
+ *   catch (const std::exception&)
+ *   {
+ *   }
+ *
+ * } *
+ * // ...
+ *
+ * asio::async_fiber(my_context,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   []()
+ *   {
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename ExecutionContext, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void())
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(typename ExecutionContext::executor_type)>
@@ -520,6 +906,64 @@ auto async_fiber(ExecutionContext & ctx,
           std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
+
+/// Run a fiber based thread of execution.
+/** This is an overload that cannot throw exception and does not return a value.
+ * The type is deduced from the function signature
+ * and the exception behaviour with `noexcept`.
+ *
+ * @param exec The executor
+ * @param func The fiber function. Must accept a fiber_context as first argument.
+ * @param completion_token The completion token to be invoked once the fiber is done.
+ * @par Completion Signature
+ *
+ * @par Completion Signature
+ * @code void (std::exception_ptr, void)
+ *
+ * @par Example
+ * @code
+ * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * {
+ *   std::size_t bytes_transferred = 0;
+ *
+ *   try
+ *   {
+ *     char data[1024];
+ *     for (;;)
+ *     {
+ *       std::size_t n = socket.async_read_some(
+ *           asio::buffer(data), ctx);
+ *
+ *       asio::async_write(socket,
+ *           asio::buffer(data, n), ctx);
+ *
+ *       bytes_transferred += n;
+ *     }
+ *   }
+ *   catch (const std::exception&)
+ *   {
+ *   }
+ *
+ *   return bytes_transferred;
+ * } *
+ * // ...
+ *
+ * asio::async_fiber(my_executor,
+ *   [&](fiber_context ctx)
+ *   {
+ *      return echo(ctx, std::move(my_tcp_socket));
+ *   },
+ *   []()
+ *   {
+ *   });
+ *
+ * @endcode
+ *
+ * @par Per-Operation Cancellation
+ * The new thread of execution is created with a cancellation state that
+ * supports @c cancellation_type::terminal values only. To change the
+ * cancellation state, call asio::this_coro::reset_cancellation_state.
+ */
 template<typename Executor, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void())
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>

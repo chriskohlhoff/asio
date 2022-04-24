@@ -107,7 +107,8 @@
 [section:composition Composition and Completion Tokens]
 
 * [link asio.overview.composition.coroutine Stackless Coroutines]
-* [link asio.overview.composition.spawn Stackful Coroutines]
+* [link asio.overview.composition.fiber Stackful Coroutines (boost.context.fiber)]
+* [link asio.overview.composition.spawn Stackful Coroutines (boost.coroutine)]
 * [link asio.overview.composition.futures Futures]
 * [link asio.overview.composition.cpp20_coroutines C++20 Coroutines Support]
 * [link asio.overview.composition.coro Resumable C++20 Coroutines (experimental)]
@@ -118,6 +119,7 @@
 * [link asio.overview.composition.token_adapters Completion Token Adapters]
 
 [include overview/coroutine.qbk]
+[include overview/fiber.qbk]
 [include overview/spawn.qbk]
 [include overview/futures.qbk]
 [include overview/cpp20_coroutines.qbk]

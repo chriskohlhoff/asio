@@ -5,7 +5,7 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
-[section:spawn Stackful Coroutines]
+[section:spawn Stackful Coroutines (boost.coroutine)]
 
 The [link asio.reference.spawn `spawn()`] function is a high-level wrapper for
 running stackful coroutines. It is based on the Boost.Coroutine library. The
