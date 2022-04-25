@@ -60,7 +60,7 @@ struct basic_fiber_context
   template<typename Executor2>
   basic_fiber_context(
           const basic_fiber_context<Executor2>  & other,
-          typename constraint<std::is_convertible_v<Executor2, Executor>>::type = 0) noexcept
+          typename constraint<std::is_convertible<Executor2, Executor>::value>::type = 0) noexcept
           : handle_(other.handle_), fiber_(other.fiber_), executor_(other.get_executor())
   {
   }
@@ -69,7 +69,7 @@ struct basic_fiber_context
   template<typename Executor2>
   basic_fiber_context(
           basic_fiber_context<Executor2>  && other,
-          typename constraint<std::is_convertible_v<Executor2, Executor>>::type = 0) noexcept
+          typename constraint<std::is_convertible<Executor2, Executor>::value>::type = 0) noexcept
           : handle_(other.handle_), fiber_(std::move(other.fiber_)), executor_(std::move(other.get_executor()))
   {
   }
@@ -152,7 +152,7 @@ struct initiate_fiber
           : fiber_handle(slot), executor(std::move(executor)),
             func(std::forward<Func>(func)), handler(std::forward<CompletionHandler>(handler)) {}
 
-      auto complete()
+      void complete()
       {
         auto def = asio::experimental::deferred(
                 [this, lf = std::exchange(lifetime, nullptr)] () mutable
@@ -466,7 +466,7 @@ auto async_fiber(ExecutionContext & ctx,
                  typename constraint<
                          is_convertible<ExecutionContext&, execution_context&>::value
                          && !noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))
-                         && !std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>
+                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>::value
                          >::type = 0)
 {
   using sig_t = void (std::exception_ptr, decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>())));
@@ -528,7 +528,7 @@ auto async_fiber(ExecutionContext & ctx,
  */
 template<typename Executor, typename Function,
         ASIO_COMPLETION_TOKEN_FOR(void(std::exception_ptr,
-                decltype(std::declval<Function>()(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))))
+                decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))))
           CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
 auto async_fiber(const Executor & exec,
                  Function && func,
@@ -536,11 +536,11 @@ auto async_fiber(const Executor & exec,
                  typename constraint<
                          ( is_executor<Executor>::value ||
                            execution::is_executor<Executor>::value)
-                       && !noexcept(func(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))
-                       && !std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>
+                       && !noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))
+                       && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>::value
                  >::type = 0)
 {
-  using sig_t = void (std::exception_ptr, decltype(std::declval<Function>()(std::declval<basic_fiber_context<std::decay_t<Executor>>>())));
+  using sig_t = void (std::exception_ptr, decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>())));
   return async_initiate<CompletionToken, sig_t >(
           detail::initiate_fiber<Executor>(exec), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
@@ -611,7 +611,7 @@ auto async_fiber(ExecutionContext & ctx,
                  typename constraint<
                          is_convertible<ExecutionContext&, execution_context&>::value
                          && noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))
-                         && !std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>
+                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>::value
                  >::type = 0)
 {
   using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>())));
@@ -679,7 +679,7 @@ auto async_fiber(ExecutionContext & ctx,
  */
 
 template<typename Executor, typename Function,
-        ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))))
+        ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))))
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
 auto async_fiber(const Executor & exec,
                  Function && func,
@@ -687,11 +687,11 @@ auto async_fiber(const Executor & exec,
                  typename constraint<
                          ( is_executor<Executor>::value ||
                            execution::is_executor<Executor>::value)
-                         && noexcept(func(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))
-                         && !std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>
+                         && noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))
+                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>::value
                  >::type = 0)
 {
-  using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<std::decay_t<Executor>>>())));
+  using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>())));
   return async_initiate<CompletionToken, sig_t>(
           detail::initiate_fiber<Executor>(exec), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
@@ -753,7 +753,7 @@ auto async_fiber(ExecutionContext & ctx,
                  typename constraint<
                          is_convertible<ExecutionContext&, execution_context&>::value
                          && !noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))
-                         && std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>
+                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>::value
                  >::type = 0)
 {
   using sig_t = void (std::exception_ptr);
@@ -822,8 +822,8 @@ auto async_fiber(const Executor & exec,
                  typename constraint<
                          ( is_executor<Executor>::value ||
                            execution::is_executor<Executor>::value)
-                         && !noexcept(func(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))
-                         && std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>
+                         && !noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))
+                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>::value
                  >::type = 0)
 {
   using sig_t = void (std::exception_ptr);
@@ -897,7 +897,7 @@ auto async_fiber(ExecutionContext & ctx,
                  typename constraint<
                          is_convertible<ExecutionContext&, execution_context&>::value
                          && noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))
-                         && std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>
+                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>::value
                  >::type = 0)
 {
   using sig_t = void ();
@@ -974,8 +974,8 @@ auto async_fiber(const Executor & exec,
                  typename constraint<
                          ( is_executor<Executor>::value ||
                            execution::is_executor<Executor>::value)
-                         && noexcept(func(std::declval<basic_fiber_context<std::decay_t<Executor>>>()))
-                         && std::is_void_v<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>
+                         && noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))
+                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>::value
                  >::type = 0)
 {
   using sig_t = void();
@@ -1078,7 +1078,23 @@ struct async_result<basic_fiber_context<Executor>, R(T)>
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(Initiation initiation, basic_fiber_context<Executor> ctx , InitArgs... args)
   {
-    std::optional<T> res;
+    struct my_opt
+    {
+      alignas(T) unsigned char result[sizeof(T)];
+      bool has_result = false;
+      void emplace(T && res)
+      {
+        new (&result) T(std::move(res));
+        has_result = true;
+      }
+
+      T & operator *() {return *reinterpret_cast<T*>(&result); }
+
+      ~my_opt(){
+        if (has_result)
+          reinterpret_cast<T*>(&result)->~T();
+      }
+    } res;
 
     std::move(initiation)(
             bind_cancellation_slot(
@@ -1106,7 +1122,23 @@ struct async_result<basic_fiber_context<Executor>, R(std::exception_ptr, T)>
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(Initiation initiation, basic_fiber_context<Executor> ctx , InitArgs... args)
   {
-    std::optional<T> res;
+    struct my_opt
+    {
+      alignas(T) unsigned char result[sizeof(T)];
+      bool has_result = false;
+      void emplace(T && res)
+      {
+        new (&result) T(std::move(res));
+        has_result = true;
+      }
+
+      T & operator *() {return *static_cast<T*>(&result); }
+
+      ~my_opt(){
+        if (has_result)
+          static_cast<T*>(&result)->~T();
+      }
+    } res;
     std::exception_ptr e;
 
     std::move(initiation)(
@@ -1144,7 +1176,23 @@ struct async_result<basic_fiber_context<Executor>, R(error_code, T)>
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(Initiation initiation, basic_fiber_context<Executor> ctx , InitArgs... args)
   {
-    std::optional<T> res;
+    struct my_opt
+    {
+      alignas(T) unsigned char result[sizeof(T)];
+      bool has_result = false;
+      void emplace(T && res)
+      {
+        new (&result) T(std::move(res));
+        has_result = true;
+      }
+
+      T & operator *() {return *static_cast<T*>(&result); }
+
+      ~my_opt(){
+        if (has_result)
+          static_cast<T*>(&result)->~T();
+      }
+    } res;
     asio::error_code ec;
 
     std::move(initiation)(
@@ -1180,7 +1228,6 @@ struct async_result<basic_fiber_context<Executor>, R(error_code, T)>
 
 // pseudo coroutine
 #if defined(ASIO_HAS_CO_AWAIT)
-
 #if defined(ASIO_HAS_STD_COROUTINE)
 #include <coroutine>
 #else // defined(ASIO_HAS_STD_COROUTINE)

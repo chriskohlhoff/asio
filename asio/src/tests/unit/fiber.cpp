@@ -77,9 +77,9 @@ template<typename Ctx, typename Token, typename ... Args>
 void async_stub(Ctx && ctx, Token && token, Args && ... args)
 {
   return asio::post(ctx, asio::experimental::deferred(
-          [...args = std::forward<Args>(args)]() mutable
+          [=]() mutable
           {
-              return asio::experimental::deferred.values(std::forward<Args>(args)...);
+              return asio::experimental::deferred.values(std::move(args)...);
           }))(std::forward<Token>(token));
 }
 
@@ -176,7 +176,7 @@ void test_modifier_impl(asio::fiber_context ctx)
 
   tim1.async_wait(ctx); // should work fine.
   tim1.expires_after(10ms);
-  auto [ec] =  tim1.async_wait(asio::experimental::as_tuple(ctx));
+  auto ec =  std::get<0>(tim1.async_wait(asio::experimental::as_tuple(ctx)));
   ASIO_CHECK(!ec);
 
   tim1.expires_after(10s);
@@ -211,7 +211,7 @@ void test_cancel()
                     asio::bind_cancellation_slot(sig.slot(),
                       [&](std::tuple<asio::error_code> tup)
                       {
-                          ASIO_CHECK(get<0>(tup) == asio::error::operation_aborted);
+                          ASIO_CHECK(std::get<0>(tup) == asio::error::operation_aborted);
                           done = true;
                       }));
 
