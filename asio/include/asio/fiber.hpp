@@ -24,6 +24,7 @@
 #include "asio/dispatch.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/post.hpp"
+#include "asio/this_coro.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -165,7 +166,7 @@ struct initiate_fiber
 
       }
 
-      auto work(boost::context::fiber && fb) -> boost::context::fiber
+      auto work(boost::context::fiber && fb) noexcept -> boost::context::fiber
       {
         using fiber_context = basic_fiber_context<Executor>;
         assert(lifetime);
@@ -226,7 +227,7 @@ struct initiate_fiber
 
       }
 
-      auto work(boost::context::fiber && fb) -> boost::context::fiber
+      auto work(boost::context::fiber && fb) noexcept -> boost::context::fiber
       {
         using fiber_context = basic_fiber_context<Executor>;
 
@@ -1176,6 +1177,376 @@ struct async_result<basic_fiber_context<Executor>, R(error_code, T)>
 
 
 } // namespace asio
+
+// pseudo coroutine
+#if defined(ASIO_HAS_CO_AWAIT)
+
+#if defined(ASIO_HAS_STD_COROUTINE)
+#include <coroutine>
+#else // defined(ASIO_HAS_STD_COROUTINE)
+#include <experimental/coroutine>
+#endif // defined(ASIO_HAS_STD_COROUTINE)
+
+namespace asio::detail
+{
+#if defined(ASIO_HAS_STD_COROUTINE)
+using std::suspend_never;
+using std::coroutine_handle;
+#else
+using std::experimental::suspend_never;
+using std::experimental::coroutine_handle;
+#endif
+
+template<typename Executor>
+struct basic_fiber_promise_base
+{
+  basic_fiber_context<Executor> ctx;
+
+  template<typename ... Args>
+  basic_fiber_promise_base(const basic_fiber_context<Executor> & ctx, Args && ...) : ctx(ctx) {}
+
+  template<typename Lambda, typename ... Args>
+  basic_fiber_promise_base(Lambda &&, const basic_fiber_context<Executor> & ctx, Args && ...) : ctx(ctx) {}
+
+  constexpr static suspend_never initial_suspend() noexcept {return {};}
+  constexpr static suspend_never   final_suspend() noexcept {return {};}
+
+  auto await_transform(this_coro::executor_t) noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const noexcept
+      {
+        return this_->get_executor();
+      }
+    };
+
+    return result{&this->ctx};
+  }
+
+
+  // This await transformation obtains the associated cancellation state of the
+  // thread of execution.
+  auto await_transform(this_coro::cancellation_state_t) noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const noexcept
+      {
+        return this_->get_cancellation_state();
+      }
+    };
+
+    return result{&this->ctx};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  auto await_transform(this_coro::reset_cancellation_state_0_t) noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume() const
+      {
+        return this_->reset_cancellation_state();
+      }
+    };
+
+    return result{&this->ctx};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  template <typename Filter>
+  auto await_transform(
+          this_coro::reset_cancellation_state_1_t<Filter> reset) noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+      Filter filter_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return this_->reset_cancellation_state(
+                ASIO_MOVE_CAST(Filter)(filter_));
+      }
+    };
+
+    return result{&this->ctx, ASIO_MOVE_CAST(Filter)(reset.filter)};
+  }
+
+  // This await transformation resets the associated cancellation state.
+  template <typename InFilter, typename OutFilter>
+  auto await_transform(
+          this_coro::reset_cancellation_state_2_t<InFilter, OutFilter> reset)
+  noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+      InFilter in_filter_;
+      OutFilter out_filter_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return this_->reset_cancellation_state(
+                ASIO_MOVE_CAST(InFilter)(in_filter_),
+                ASIO_MOVE_CAST(OutFilter)(out_filter_));
+      }
+    };
+
+    return result{&this->ctx,
+                  ASIO_MOVE_CAST(InFilter)(reset.in_filter),
+                  ASIO_MOVE_CAST(OutFilter)(reset.out_filter)};
+  }
+
+  // This await transformation determines whether cancellation is propagated as
+  // an exception.
+  auto await_transform(this_coro::throw_if_cancelled_0_t)
+  noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return this_->throw_if_cancelled();
+      }
+    };
+
+    return result{&this->ctx};
+  }
+
+  // This await transformation sets whether cancellation is propagated as an
+  // exception.
+  auto await_transform(this_coro::throw_if_cancelled_1_t throw_if_cancelled)
+  noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+      bool value_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        this_->throw_if_cancelled(value_);
+      }
+    };
+
+    return result{&this->ctx, throw_if_cancelled.value};
+  }
+
+
+  // This await transformation sets whether cancellation is propagated as an
+  // exception.
+  template<typename ... Args>
+  auto await_transform(asio::experimental::deferred_async_operation<Args...> && op)
+  noexcept
+  {
+    struct result
+    {
+      basic_fiber_context<Executor>* this_;
+      asio::experimental::deferred_async_operation<Args...> && op;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        op(*this_);
+      }
+    };
+
+    return result{&this->ctx, std::move(op)};
+  }
+
+};
+
+template<typename Return, typename Executor>
+struct basic_fiber_promise : basic_fiber_promise_base<Executor>
+{
+  using basic_fiber_promise_base<Executor>::basic_fiber_promise_base;
+
+  struct proxy
+  {
+
+    proxy(Return ** target) : indirection(target)
+    {
+      *indirection = &this->target;
+    }
+
+    proxy(const proxy & rhs) : indirection(rhs.indirection)
+    {
+      *indirection = target;
+    }
+
+    operator Return()
+    {
+      return std::move(target);
+    }
+
+    Return target, ** indirection;
+  };
+
+  // UGLY AF
+  Return * target = nullptr;
+
+  template<typename Return_>
+  void return_value(Return_ && r)
+  {
+    assert(target != nullptr);
+    *target = std::forward<Return_>(r);
+  }
+  proxy get_return_object()
+  {
+    return proxy{&target};
+  }
+  void unhandled_exception() { throw ;}
+
+};
+
+
+template<typename Executor>
+struct basic_fiber_promise<void, Executor> : basic_fiber_promise_base<Executor>
+{
+  using basic_fiber_promise_base<Executor>::basic_fiber_promise_base;
+
+  constexpr static void return_void()
+  {
+  }
+  void get_return_object() {}
+  void unhandled_exception() { throw ;}
+
+  std::exception_ptr ex;
+};
+
+}
+
+#if defined(ASIO_HAS_STD_COROUTINE)
+namespace std
+#else // defined(ASIO_HAS_STD_COROUTINE)
+namespace std::experimental
+#endif // defined(ASIO_HAS_STD_COROUTINE)
+{
+
+template<typename Return, typename Executor, typename ... Args>
+struct coroutine_traits<Return, asio::basic_fiber_context<Executor>, Args...>
+{
+  using promise_type = asio::detail::basic_fiber_promise<Return, Executor>;
+};
+
+template<typename Return, typename Lambda, typename Executor, typename ... Args>
+struct coroutine_traits<Return, Lambda, asio::basic_fiber_context<Executor> , Args...>
+{
+  using promise_type = asio::detail::basic_fiber_promise<Return, Executor>;
+};
+
+template<typename Return, typename Executor, typename ... Args>
+struct coroutine_traits<Return, asio::basic_fiber_context<Executor> &&, Args...>
+{
+  using promise_type = asio::detail::basic_fiber_promise<Return, Executor>;
+};
+
+template<typename Return, typename Lambda, typename Executor, typename ... Args>
+struct coroutine_traits<Return, Lambda, asio::basic_fiber_context<Executor> && , Args...>
+{
+  using promise_type = asio::detail::basic_fiber_promise<Return, Executor>;
+};
+
+template<typename Return, typename Executor, typename ... Args>
+struct coroutine_traits<Return, asio::basic_fiber_context<Executor> &, Args...>
+{
+  using promise_type = asio::detail::basic_fiber_promise<Return, Executor>;
+};
+
+template<typename Return, typename Lambda, typename Executor, typename ... Args>
+struct coroutine_traits<Return, Lambda, asio::basic_fiber_context<Executor> & , Args...>
+{
+  using promise_type = asio::detail::basic_fiber_promise<Return, Executor>;
+};
+
+
+}
+
+
+#endif
+
+
 
 #include "asio/detail/pop_options.hpp"
 

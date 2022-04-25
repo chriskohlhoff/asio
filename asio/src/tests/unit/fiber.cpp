@@ -220,6 +220,53 @@ void test_cancel()
   ctx.run();
 }
 
+#if defined(ASIO_HAS_CO_AWAIT)
+
+int inner(asio::fiber_context ctx)
+{
+  // this could be done as co_await asio::this_coro::token
+
+  auto tim = asio::experimental::deferred.as_default_on(asio::steady_timer{
+      co_await asio::this_coro::executor, std::chrono::milliseconds(10)});
+
+  co_await tim.async_wait();
+
+  co_return 12;
+}
+
+void test_pseudo_coroutine()
+{
+  asio::io_context ctx;
+  bool done = false;
+  bool resumed = false;
+  asio::async_fiber(ctx,
+                    [&]<typename E>(asio::basic_fiber_context<E> && ctx) -> int
+                    {
+                      ASIO_CHECK(ctx.get_executor() == co_await asio::this_coro::executor);
+                      // this could be done as co_await asio::this_coro::token
+                      co_await asio::post(asio::experimental::deferred);
+                      ASIO_CHECK(inner(ctx) == 12);
+                      resumed = true;
+                      co_return 42;
+                    },
+                    [&](std::exception_ptr e, int i)
+                    {
+                        ASIO_CHECK(!e);
+                        ASIO_CHECK(resumed);
+                        ASIO_CHECK(i == 42);
+                        done = true;
+                    });
+  ctx.run();
+
+  done = true;
+}
+
+#else
+
+void test_pseudo_coroutine() {}
+
+#endif
+
 ASIO_TEST_SUITE
 (
   "fiber",
@@ -227,4 +274,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_fiber)
   ASIO_TEST_CASE(test_modifier)
   ASIO_TEST_CASE(test_cancel)
+  ASIO_TEST_CASE(test_pseudo_coroutine)
 )
