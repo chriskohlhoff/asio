@@ -120,6 +120,82 @@ asio::error_code win_iocp_file_service::open(
     return ec;
   }
 }
+  
+#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+asio::error_code win_iocp_file_service::open(
+    win_iocp_file_service::implementation_type& impl,
+    const std::u16string &path, file_base::flags open_flags,
+    asio::error_code& ec)
+{
+  if (is_open(impl))
+  {
+    ec = asio::error::already_open;
+    return ec;
+  }
+
+  DWORD access = 0;
+  if ((open_flags & file_base::read_only) != 0)
+    access = GENERIC_READ;
+  else if ((open_flags & file_base::write_only) != 0)
+    access = GENERIC_WRITE;
+  else if ((open_flags & file_base::read_write) != 0)
+    access = GENERIC_READ | GENERIC_WRITE;
+
+  DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE;
+
+  DWORD disposition = 0;
+  if ((open_flags & file_base::create) != 0)
+  {
+    if ((open_flags & file_base::exclusive) != 0)
+      disposition = CREATE_NEW;
+    else
+      disposition = OPEN_ALWAYS;
+  }
+  else
+  {
+    if ((open_flags & file_base::truncate) != 0)
+      disposition = TRUNCATE_EXISTING;
+    else
+      disposition = OPEN_EXISTING;
+  }
+
+  DWORD flags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED;
+  if (impl.is_stream_)
+    flags |= FILE_FLAG_SEQUENTIAL_SCAN;
+  else
+    flags |= FILE_FLAG_RANDOM_ACCESS;
+  if ((open_flags & file_base::sync_all_on_write) != 0)
+    flags |= FILE_FLAG_WRITE_THROUGH;
+
+  HANDLE handle = ::CreateFileW(
+    (LPCWSTR)path.data(), access, share, 0, disposition, flags, 0);
+  if (handle != INVALID_HANDLE_VALUE)
+  {
+    if (disposition == OPEN_ALWAYS && (open_flags & file_base::truncate) != 0)
+    {
+      if (!::SetEndOfFile(handle))
+      {
+        DWORD last_error = ::GetLastError();
+        ::CloseHandle(handle);
+        ec.assign(last_error, asio::error::get_system_category());
+        return ec;
+      }
+    }
+
+    handle_service_.assign(impl, handle, ec);
+    if (ec)
+      ::CloseHandle(handle);
+    impl.offset_ = 0;
+    return ec;
+  }
+  else
+  {
+    DWORD last_error = ::GetLastError();
+    ec.assign(last_error, asio::error::get_system_category());
+    return ec;
+  }
+}
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1700)
 
 uint64_t win_iocp_file_service::size(
     const win_iocp_file_service::implementation_type& impl,
