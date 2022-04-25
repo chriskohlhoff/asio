@@ -55,7 +55,7 @@ struct basic_fiber_context
   /// The executor of the fiber.
   using executor_type = Executor;
 
-  //// Copy construct a basic_fiber_context from anoter context. Can convert the executor type.
+  /// Copy construct a basic_fiber_context from anoter context. Can convert the executor type.
   template<typename Executor2>
   basic_fiber_context(
           const basic_fiber_context<Executor2>  & other,

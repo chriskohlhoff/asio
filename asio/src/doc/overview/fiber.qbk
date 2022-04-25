@@ -14,7 +14,7 @@ It is based on the Boost.Coroutine library.
 The `async_fiber()` function enables programs to implement
 asynchronous logic in a synchronous manner, as shown in the following example:
 
-  asio::async_fiber(my_strand, &do_echom asio::detached);
+  asio::async_fiber(my_strand, &do_echo asio::detached);
 
   // ...
 
