@@ -46,11 +46,12 @@ class basic_stream_socket;
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
  *
- * Synchronous @c send, @c receive, and @c connect operations are thread safe
- * with respect to each other, if the underlying operating system calls are
- * also thread safe. This means that it is permitted to perform concurrent
- * calls to these synchronous operations on a single socket object. Other
- * synchronous operations, such as @c open or @c close, are not thread safe.
+ * Synchronous @c send, @c receive, @c connect, and @c shutdown operations are
+ * thread safe with respect to each other, if the underlying operating system
+ * calls are also thread safe. This means that it is permitted to perform
+ * concurrent calls to these synchronous operations on a single socket object.
+ * Other synchronous operations, such as @c open or @c close, are not thread
+ * safe.
  *
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
