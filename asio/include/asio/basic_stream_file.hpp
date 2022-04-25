@@ -198,6 +198,35 @@ public:
         path.c_str(), open_flags, ec);
     asio::detail::throw_error(ec, "open");
   }
+  
+#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+  /// Construct and open a basic_stream_file.
+  /**
+   * This constructor initialises and opens a file.
+   *
+   * @param ex The I/O executor that the file will use, by default, to
+   * dispatch handlers for any asynchronous operations performed on the file.
+   *
+   * @param path windows wchar_t path.from filesystem path().u16string().
+   *
+   * @param open_flags A set of flags that determine how the file should be
+   * opened.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  basic_stream_file(const executor_type& ex,
+      const std::u16string &path, file_base::flags open_flags)
+    : basic_file<Executor>(ex)
+  {
+    asio::error_code ec;
+    this->impl_.get_service().set_is_stream(
+        this->impl_.get_implementation(), true);
+    this->impl_.get_service().open(
+        this->impl_.get_implementation(),
+        path, open_flags, ec);
+    asio::detail::throw_error(ec, "open");
+  }
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1700)
 
   /// Construct and open a basic_stream_file.
   /**
