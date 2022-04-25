@@ -102,4 +102,36 @@ exception, associate the output variable with the `yield_context` as follows:
     my_socket.async_read_some(
       asio::buffer(data), redirect_error(ec, yield));
 
+
+[section:fiber_cpp20 C++ 20 co_await keywords]
+
+When compiling with C++20, the coroutine keywords can be used in conjunction
+with `asio::experimental::deferred` as the completion token. The compiler should
+be able to optimize out any allocations related to the coroutine promise.
+
+
+  void do_echo(asio::fiber_context yield)
+  {
+    try
+    {
+      char data[128];
+      for (;;)
+      {
+        std::size_t length =
+          co_await my_socket.async_read_some(
+            asio::buffer(data), asio::experimental::deferred);
+
+        co_await asio::async_write(my_socket,
+            asio::buffer(data, length), asio::experimental::deferred);
+      }
+    }
+    catch (std::exception& e)
+    {
+        // ...
+    }
+  }
+
+[endsect]
+
+
 [endsect]
