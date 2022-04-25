@@ -102,6 +102,12 @@ public:
   ASIO_DECL asio::error_code open(implementation_type& impl,
       const char* path, file_base::flags open_flags,
       asio::error_code& ec);
+#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+  // Open the file using the specified path name. wchar_t version;
+  ASIO_DECL asio::error_code open(implementation_type& impl,
+      const std::u16string &path, file_base::flags open_flags,
+      asio::error_code& ec);
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1700)
 
   // Assign a native handle to a file implementation.
   asio::error_code assign(implementation_type& impl,
