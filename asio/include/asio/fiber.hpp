@@ -12,7 +12,6 @@
 #include "asio/detail/config.hpp"
 
 #include <boost/context/fiber.hpp>
-#include <optional>
 
 #include "asio/any_io_executor.hpp"
 #include "asio/associated_cancellation_slot.hpp"
