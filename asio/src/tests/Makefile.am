@@ -84,6 +84,7 @@ check_PROGRAMS = \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
+	unit/fiber \
 	unit/file_base \
 	unit/generic/basic_endpoint \
 	unit/generic/datagram_protocol \
@@ -310,6 +311,7 @@ TESTS = \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
+	unit/fiber \
 	unit/file_base \
 	unit/high_resolution_timer \
 	unit/io_context \
@@ -536,6 +538,7 @@ unit_execution_submit_SOURCES = unit/execution/submit.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp
 unit_executor_work_guard_SOURCES = unit/executor_work_guard.cpp
+unit_fiber_SOURCES = unit/fiber.cpp
 unit_file_base_SOURCES = unit/file_base.cpp
 unit_generic_basic_endpoint_SOURCES = unit/generic/basic_endpoint.cpp
 unit_generic_datagram_protocol_SOURCES = unit/generic/datagram_protocol.cpp
