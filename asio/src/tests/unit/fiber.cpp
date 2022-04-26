@@ -18,7 +18,7 @@ void test_results()
   int called = 0;
   
   auto check_e  = [&](std::exception_ptr e){called ++; ASIO_CHECK(!e);};
-  auto check    = [&]{called ++;};
+  auto check    = [&]     {called ++;};
   auto check_i  = [&](int i) {called ++; ASIO_CHECK(i == 42);};
   auto check_ei = [&](std::exception_ptr e, int i){called ++; ASIO_CHECK(!e); ASIO_CHECK(i == 42);};
 
@@ -41,30 +41,30 @@ void test_results()
 
 
   asio::async_fiber(ctx, [](asio::fiber_context ctx)          {}, check_e);
-  asio::async_fiber(ctx, [](asio::fiber_context ctx) noexcept {}, check);
+  asio::async_fiber(ctx, [](asio::fiber_context ctx, std::nothrow_t)  {}, check);
 
-  asio::async_fiber(ctx, [](asio::fiber_context ctx)          {return 42;}, check_ei);
-  asio::async_fiber(ctx, [](asio::fiber_context ctx) noexcept {return 42;}, check_i);
+  asio::async_fiber(ctx, [](asio::fiber_context ctx)                 {return 42;}, check_ei);
+  asio::async_fiber(ctx, [](asio::fiber_context ctx, std::nothrow_t) {return 42;}, check_i);
 
-  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx)          {}, check_e);
-  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx) noexcept {}, check);
+  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx)                  {}, check_e);
+  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx, std::nothrow_t)  {}, check);
 
-  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx)          {return 42;}, check_ei);
-  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx) noexcept {return 42;}, check_i);
+  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx)                  {return 42;}, check_ei);
+  asio::async_fiber(ctx.get_executor(), [](asio::fiber_context ctx, std::nothrow_t)  {return 42;}, check_i);
 
   using io_fiber_context = asio::basic_fiber_context<asio::io_context::executor_type>;
 
-  asio::async_fiber(ctx, [](io_fiber_context ctx)          {}, check_e);
-  asio::async_fiber(ctx, [](io_fiber_context ctx) noexcept {}, check);
+  asio::async_fiber(ctx, [](io_fiber_context ctx)                 {}, check_e);
+  asio::async_fiber(ctx, [](io_fiber_context ctx, std::nothrow_t) {}, check);
 
-  asio::async_fiber(ctx, [](io_fiber_context ctx)          {return 42;}, check_ei);
-  asio::async_fiber(ctx, [](io_fiber_context ctx) noexcept {return 42;}, check_i);
+  asio::async_fiber(ctx, [](io_fiber_context ctx)                 {return 42;}, check_ei);
+  asio::async_fiber(ctx, [](io_fiber_context ctx, std::nothrow_t) {return 42;}, check_i);
 
   asio::async_fiber(ctx.get_executor(), [](io_fiber_context ctx)          {}, check_e);
-  asio::async_fiber(ctx.get_executor(), [](io_fiber_context ctx) noexcept {}, check);
+  asio::async_fiber(ctx.get_executor(), [](io_fiber_context ctx, std::nothrow_t) {}, check);
 
   asio::async_fiber(ctx.get_executor(), [](io_fiber_context ctx)          {return 42;}, check_ei);
-  asio::async_fiber(ctx.get_executor(), [](io_fiber_context ctx) noexcept {return 42;}, check_i);
+  asio::async_fiber(ctx.get_executor(), [](io_fiber_context ctx, std::nothrow_t)  {return 42;}, check_i);
 
 
   asio::async_fiber(ctx, [](asio::fiber_context ctx) {throw std::runtime_error("test"); }, check_t);
@@ -202,7 +202,7 @@ void test_cancel()
   bool done = false;
   asio::cancellation_signal sig;
   asio::async_fiber(ctx,
-                    [](asio::fiber_context && ctx) noexcept
+                    [](asio::fiber_context && ctx, std::nothrow_t)
                     {
                       asio::steady_timer tim1{ctx.get_executor(), std::chrono::seconds(10)};
                       return tim1.async_wait(asio::experimental::as_tuple(ctx));
@@ -267,20 +267,20 @@ void test_pseudo_coroutine() {}
 
 #endif
 
-template<bool noexcept_>
-void test_interruption_impl(int n, bool with_value)
+template<typename ... Args>
+void test_interruption_impl(int n, bool with_value, Args...)
 {
   bool unwound = false, called = false, resumed = false, completed = false;
   struct unwinder_t {bool & b; ~unwinder_t() { b = true; } };
 
-  auto l =  [&](asio::fiber_context ctx) noexcept(noexcept_)
+  auto l =  [&](asio::fiber_context ctx, Args...)
             {
               unwinder_t u{unwound};
               called = true;
               asio::post(ctx);
               resumed = true;
             };
-  auto lv =  [&](asio::fiber_context ctx) noexcept(noexcept_)
+  auto lv =  [&](asio::fiber_context ctx, Args...)
             {
               unwinder_t u{unwound};
               called = true;
@@ -324,21 +324,21 @@ void test_interruption()
 {
   //also checks if we're actually dispatching
 
-  test_interruption_impl<false>(0, false);
-  test_interruption_impl<false>(1, false);
-  test_interruption_impl<false>(2, false);
+  test_interruption_impl(0, false);
+  test_interruption_impl(1, false);
+  test_interruption_impl(2, false);
 
-  test_interruption_impl<false>(0, true);
-  test_interruption_impl<false>(1, true);
-  test_interruption_impl<false>(2, true);
+  test_interruption_impl(0, true);
+  test_interruption_impl(1, true);
+  test_interruption_impl(2, true);
 
-  test_interruption_impl<true>(0, false);
-  test_interruption_impl<true>(1, false);
-  test_interruption_impl<true>(2, false);
+  test_interruption_impl(0, false, std::nothrow);
+  test_interruption_impl(1, false, std::nothrow);
+  test_interruption_impl(2, false, std::nothrow);
 
-  test_interruption_impl<true>(0, true);
-  test_interruption_impl<true>(1, true);
-  test_interruption_impl<true>(2, true);
+  test_interruption_impl(0, true, std::nothrow);
+  test_interruption_impl(1, true, std::nothrow);
+  test_interruption_impl(2, true, std::nothrow);
 
 
 }

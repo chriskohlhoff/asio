@@ -203,11 +203,11 @@ struct initiate_fiber
 
       }
 
-      auto work(boost::context::fiber && fb) noexcept -> boost::context::fiber
+      auto work(boost::context::fiber && fb) -> boost::context::fiber
       {
         using fiber_context = basic_fiber_context<Executor>;
         assert(lifetime);
-        func(fiber_context{*this, std::move(fb), executor});
+        func(fiber_context{*this, std::move(fb), executor}, std::nothrow);
         complete();
         return std::move(fb);
       }
@@ -263,12 +263,12 @@ struct initiate_fiber
 
       }
 
-      auto work(boost::context::fiber && fb) noexcept -> boost::context::fiber
+      auto work(boost::context::fiber && fb) -> boost::context::fiber
       {
         using fiber_context = basic_fiber_context<Executor>;
 
         assert(lifetime);
-        complete(func(fiber_context{*this, std::move(fb), executor}));
+        complete(func(fiber_context{*this, std::move(fb), executor}, std::nothrow));
         return std::move(fb);
       }
 
@@ -455,7 +455,7 @@ struct initiate_fiber
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void (std::exception_ptr, T)
  *
  * @par Example
  * @code
@@ -522,7 +522,7 @@ auto async_fiber(ExecutionContext & ctx,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void (std::exception_ptr, T)
  *
  * @par Example
  * @code
@@ -584,8 +584,8 @@ auto async_fiber(const Executor & exec,
 }
 
 /// Run a fiber based thread of execution.
-/** This is an overload that cannot throw exception and return a value. The type is deduced from the function signature
- * and the exception behaviour with `noexcept`.
+/** This is an overload that cannot throw an exception and returns a value. The type and exception behaviour
+ * are deduced from the function signature.
  *
  * @param ctx The execution context
  * @param func The fiber function. Must accept a fiber_context as first argument.
@@ -593,11 +593,11 @@ auto async_fiber(const Executor & exec,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void (T)
  *
  * @par Example
  * @code
- * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
  * {
  *   std::size_t bytes_transferred = 0;
  *
@@ -615,7 +615,7 @@ auto async_fiber(const Executor & exec,
  *       bytes_transferred += n;
  *     }
  *   }
- *   catch (const std::exception&)
+ *   catch (const std::exception&) // let boost::context::detail::force_unwind pass through!
  *   {
  *   }
  *
@@ -624,7 +624,7 @@ auto async_fiber(const Executor & exec,
  * // ...
  *
  * asio::async_fiber(my_context,
- *   [&](fiber_context ctx)
+ *   [&](fiber_context ctx, std::nothrow_t)
  *   {
  *      return echo(ctx, std::move(my_tcp_socket));
  *   },
@@ -641,25 +641,25 @@ auto async_fiber(const Executor & exec,
  * cancellation state, call asio::this_coro::reset_cancellation_state.
  */
 template<typename ExecutionContext, typename Function,
-        ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))))
+        ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>(), std::nothrow))))
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(typename ExecutionContext::executor_type)>
 auto async_fiber(ExecutionContext & ctx,
                  Function && func,
                  CompletionToken && completion_token,
                  typename constraint<
                          is_convertible<ExecutionContext&, execution_context&>::value
-                         && noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))
-                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>::value
+                         && !noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>(), std::nothrow))
+                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>(), std::nothrow))>::value
                  >::type = 0)
 {
-  using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>())));
+  using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>(), std::nothrow)));
   return async_initiate<CompletionToken, sig_t>(
           detail::initiate_fiber<typename ExecutionContext::executor_type>(ctx.get_executor()), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
 
 /// Run a fiber based thread of execution.
-/** This is an overload that cannot throw exception and return a value. The type is deduced from the function signature
+/** This is an overload that cannot throw exception and returns a value. The type is deduced from the function signature
  * and the exception behaviour with `noexcept`.
  *
  * @param exec The executor
@@ -668,11 +668,11 @@ auto async_fiber(ExecutionContext & ctx,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void (void)
  *
  * @par Example
  * @code
- * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
  * {
  *   std::size_t bytes_transferred = 0;
  *
@@ -699,7 +699,7 @@ auto async_fiber(ExecutionContext & ctx,
  * // ...
  *
  * asio::async_fiber(my_executor,
- *   [&](fiber_context ctx)
+ *   [&](fiber_context ctx, std::nothrow_t)
  *   {
  *      return echo(ctx, std::move(my_tcp_socket));
  *   },
@@ -717,7 +717,7 @@ auto async_fiber(ExecutionContext & ctx,
  */
 
 template<typename Executor, typename Function,
-        ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))))
+        ASIO_COMPLETION_TOKEN_FOR(void(decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>(), std::nothrow))))
         CompletionToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(Executor)>
 auto async_fiber(const Executor & exec,
                  Function && func,
@@ -725,17 +725,17 @@ auto async_fiber(const Executor & exec,
                  typename constraint<
                          ( is_executor<Executor>::value ||
                            execution::is_executor<Executor>::value)
-                         && noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))
-                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>::value
+                         && !noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>(), std::nothrow))
+                         && !std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>(), std::nothrow))>::value
                  >::type = 0)
 {
-  using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>())));
+  using sig_t = void (decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>(), std::nothrow)));
   return async_initiate<CompletionToken, sig_t>(
           detail::initiate_fiber<Executor>(exec), completion_token, std::forward<Function>(func), static_cast<sig_t*>(nullptr));
 }
 
 /// Run a fiber based thread of execution.
-/** This is an overload that can throw exception and does not return a value.
+/** This is an overload that can throw and exception and does not return a value.
  * The type is deduced from the function signature.
  *
  * @param ctx The execution context
@@ -744,7 +744,7 @@ auto async_fiber(const Executor & exec,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void (std::exception_ptr)
  *
  * @par Example
  * @code
@@ -802,7 +802,7 @@ auto async_fiber(ExecutionContext & ctx,
 
 
 /// Run a fiber based thread of execution.
-/** This is an overload that can throw exception and does not return a value.
+/** This is an overload that can throw an exception and does not return a value.
  * The type is deduced from the function signature.
  *
  * @param exec The executor
@@ -811,7 +811,7 @@ auto async_fiber(ExecutionContext & ctx,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void (std::exception_ptr)
  *
  * @par Example
  * @code
@@ -871,7 +871,7 @@ auto async_fiber(const Executor & exec,
 
 
 /// Run a fiber based thread of execution.
-/** This is an overload that cannot throw exception and does not return a value.
+/** This is an overload that cannot throw an exception and does not return a value.
  * The type is deduced from the function signature
  * and the exception behaviour with `noexcept`.
  *
@@ -881,11 +881,11 @@ auto async_fiber(const Executor & exec,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void ()
  *
  * @par Example
  * @code
- * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
  * {
  *   std::size_t bytes_transferred = 0;
  *
@@ -911,7 +911,7 @@ auto async_fiber(const Executor & exec,
  * // ...
  *
  * asio::async_fiber(my_context,
- *   [&](fiber_context ctx)
+ *   [&](fiber_context ctx, std::nothrow_t)
  *   {
  *      return echo(ctx, std::move(my_tcp_socket));
  *   },
@@ -934,8 +934,8 @@ auto async_fiber(ExecutionContext & ctx,
                  CompletionToken && completion_token,
                  typename constraint<
                          is_convertible<ExecutionContext&, execution_context&>::value
-                         && noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))
-                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>()))>::value
+                         && !noexcept(func(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>(), std::nothrow))
+                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<typename ExecutionContext::executor_type>>(), std::nothrow))>::value
                  >::type = 0)
 {
   using sig_t = void ();
@@ -947,9 +947,8 @@ auto async_fiber(ExecutionContext & ctx,
 
 
 /// Run a fiber based thread of execution.
-/** This is an overload that cannot throw exception and does not return a value.
- * The type is deduced from the function signature
- * and the exception behaviour with `noexcept`.
+/** This is an overload that cannot throw an exception and does not return a value.
+ * The type and exception behaviour are deduced from the function signature.
  *
  * @param exec The executor
  * @param func The fiber function. Must accept a fiber_context as first argument.
@@ -957,11 +956,11 @@ auto async_fiber(ExecutionContext & ctx,
  * @par Completion Signature
  *
  * @par Completion Signature
- * @code void (std::exception_ptr, void)
+ * @code void ()
  *
  * @par Example
  * @code
- * std::size_t echo(fiber_context ctx, tcp::socket socket) noexcept
+ * std::size_t echo(fiber_context ctx, tcp::socket socket)
  * {
  *   std::size_t bytes_transferred = 0;
  *
@@ -1012,8 +1011,8 @@ auto async_fiber(const Executor & exec,
                  typename constraint<
                          ( is_executor<Executor>::value ||
                            execution::is_executor<Executor>::value)
-                         && noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>()))
-                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>()))>::value
+                         && !noexcept(func(std::declval<basic_fiber_context<typename std::decay<Executor>::type>>(), std::nothrow))
+                         && std::is_void<decltype(std::declval<Function>()(std::declval<basic_fiber_context<Executor>>(), std::nothrow))>::value
                  >::type = 0)
 {
   using sig_t = void();

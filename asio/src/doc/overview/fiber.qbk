@@ -57,12 +57,20 @@ The completion token signature is deducted from the fiber function, according
 to the following rules (`T` is a non void type).
 
 [table:result_type Result type deduction
-    [ [Return] [`noexcept`] [`example`] [`completion_signature`]]
-    [ [`T`]    [`false`] [`int(fiber_context)`]           [`void(std::exception_ptr, T)`]]
-    [ [`T`]    [`true`]  [`int(fiber_context) noexcept`]  [`void(T)`]]
-    [ [`void`] [`false`] [`void(fiber_context)`]          [`void(std::exception_ptr)`]]
-    [ [`void`] [`true`]  [`void(fiber_context) noexcept`] [`void()`]]
+    [ [Return] [`nothrow`] [`example`] [`completion_signature`]]
+    [ [`T`]    [`false`] [`int(fiber_context)`]                   [`void(std::exception_ptr, T)`]]
+    [ [`T`]    [`true`]  [`int(fiber_context, std::nothrow_t)` ]  [`void(T)`]]
+    [ [`void`] [`false`] [`void(fiber_context)`]                  [`void(std::exception_ptr)`]]
+    [ [`void`] [`true`]  [`void(fiber_context, std::nothrow_t)`]  [`void()`]]
 ]
+
+Adding `std::nothrow_t` as the second parameter causes the async_fiber function
+to terminate if an exception is throw.
+
+[warning `nothrow` marked fibers can still throw an internal exception of type
+`boost::context::detail::force_unwind` when destroyed before completion.
+`boost.context` uses this to unwind the fiber early. Declaring a fiber
+noexcept may cause undefined behaviour. ]
 
 The `fiber_context` itself is a completion token and may be passed
 to an asynchronous operation in place of the completion
