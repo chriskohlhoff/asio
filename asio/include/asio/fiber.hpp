@@ -41,7 +41,43 @@ struct fiber_handle
   cancellation_slot  cancel_slot;
   cancellation_state cancel_state{cancel_slot};
 
-  fiber_handle(cancellation_slot  cancel_slot) : cancel_slot(std::move(cancel_slot)) {}
+  bool * completed = nullptr;
+
+  /* The reason we need to point both ways is the
+   * completion by dispatch or post.
+   */
+  void resume()
+  {
+    struct completer_t
+    {
+      fiber_handle & fh;
+      bool done = false;
+
+      completer_t(fiber_handle & fh)  : fh(fh)
+      {
+        fh.completed = & done;
+      }
+      ~completer_t()
+      {
+        if (!done)
+          fh.completed = nullptr;
+      }
+    } completer{*this};
+    did_suspend = true;
+    auto tmp = std::move(fiber).resume();
+    if (!completer.done)
+      fiber = std::move(tmp);
+  }
+
+  fiber_handle(cancellation_slot  cancel_slot) : cancel_slot(std::move(cancel_slot))
+  {
+  }
+  fiber_handle(const fiber_handle & ) = delete;
+  ~fiber_handle()
+  {
+    if (completed)
+      *completed = true;
+  }
 };
 
 }
@@ -114,7 +150,9 @@ struct basic_fiber_context
                                               ASIO_MOVE_CAST(OutFilter)(out_filter));
   }
 
- public:
+ private:
+  template<typename Executor2>
+  friend class basic_fiber_context;
 
   template<typename H, ASIO_COMPLETION_SIGNATURES_TPARAMS>
   friend class async_result;
@@ -171,7 +209,6 @@ struct initiate_fiber
         assert(lifetime);
         func(fiber_context{*this, std::move(fb), executor});
         complete();
-
         return std::move(fb);
       }
 
@@ -295,6 +332,7 @@ struct initiate_fiber
           func(fiber_context{*this, std::move(fb), executor});
           complete(std::exception_ptr{});
         }
+        catch (boost::context::detail::forced_unwind &) {throw; }
         catch (...)
         {
           e = std::current_exception();
@@ -366,6 +404,7 @@ struct initiate_fiber
           assert(lifetime);
           complete(std::exception_ptr{}, func(fiber_context{*this, std::move(fb), executor}));
         }
+        catch (boost::context::detail::forced_unwind &) {throw; }
         catch (...)
         {
           e = std::current_exception();
@@ -1001,7 +1040,7 @@ struct async_result<basic_fiber_context<Executor>, R()>
                 {
                   auto p = lp.get();
                   ctx.handle_->lifetime = std::move(lp);
-                  p->fiber = std::move(p->fiber).resume();
+                  p->resume();
                 })), std::forward<InitArgs>(args)...);
     *ctx.fiber_ = std::move(*ctx.fiber_).resume(); // suspend myself
   }
@@ -1026,7 +1065,7 @@ struct async_result<basic_fiber_context<Executor>, R(std::exception_ptr)>
                               auto p = lp.get();
                               ctx.handle_->lifetime = std::move(lp);
                               e = ep;
-                              p->fiber = std::move(p->fiber).resume();
+                              p->resume();
 
                             })), std::forward<InitArgs>(args)...);
 
@@ -1058,8 +1097,7 @@ struct async_result<basic_fiber_context<Executor>, R(error_code)>
                               auto p = lp.get();
                               ctx.handle_->lifetime = std::move(lp);
                               ec = e;
-                              p->fiber = std::move(p->fiber).resume();
-
+                              p->resume();
                             })), std::forward<InitArgs>(args)...);
 
     *ctx.fiber_ = std::move(*ctx.fiber_).resume(); // suspend myself
@@ -1105,8 +1143,7 @@ struct async_result<basic_fiber_context<Executor>, R(T)>
                               auto p = lp.get();
                               ctx.handle_->lifetime = std::move(lp);
                               res.emplace(std::move(r));
-                              p->fiber = std::move(p->fiber).resume();
-
+                              p->resume();
                             })), std::forward<InitArgs>(args)...);
 
     *ctx.fiber_ = std::move(*ctx.fiber_).resume(); // suspend myself
@@ -1154,8 +1191,7 @@ struct async_result<basic_fiber_context<Executor>, R(std::exception_ptr, T)>
                               else
                                 res.emplace(std::move(r));
 
-                              p->fiber = std::move(p->fiber).resume();
-
+                              p->resume();
                             })), std::forward<InitArgs>(args)...);
 
     *ctx.fiber_ = std::move(*ctx.fiber_).resume(); // suspend myself
@@ -1208,8 +1244,7 @@ struct async_result<basic_fiber_context<Executor>, R(error_code, T)>
                               else
                                 res.emplace(std::move(r));
 
-                              p->fiber = std::move(p->fiber).resume();
-
+                              p->resume();
                             })), std::forward<InitArgs>(args)...);
 
     *ctx.fiber_ = std::move(*ctx.fiber_).resume(); // suspend myself

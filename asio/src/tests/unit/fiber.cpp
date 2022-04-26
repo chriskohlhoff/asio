@@ -267,6 +267,82 @@ void test_pseudo_coroutine() {}
 
 #endif
 
+template<bool noexcept_>
+void test_interruption_impl(int n, bool with_value)
+{
+  bool unwound = false, called = false, resumed = false, completed = false;
+  struct unwinder_t {bool & b; ~unwinder_t() { b = true; } };
+
+  auto l =  [&](asio::fiber_context ctx) noexcept(noexcept_)
+            {
+              unwinder_t u{unwound};
+              called = true;
+              asio::post(ctx);
+              resumed = true;
+            };
+  auto lv =  [&](asio::fiber_context ctx) noexcept(noexcept_)
+            {
+              unwinder_t u{unwound};
+              called = true;
+              asio::post(ctx);
+              resumed = true;
+              return 42;
+            };
+
+
+  {
+    asio::io_context ctx;
+
+    if (with_value)
+      asio::async_fiber(ctx, lv, [&](auto ... ){completed = true;});
+    else
+      asio::async_fiber(ctx, l, [&](auto ... ){completed = true;});
+
+    if (n == 0) // nothing to do, never gets entered, thus never constructed
+    {
+      ASIO_CHECK(!called);
+      return ;
+    }
+
+    ctx.run_one();
+    ASIO_CHECK(called);
+    if (n == 2)
+    {
+      ctx.restart();
+      ctx.run_one();
+      ASIO_CHECK(resumed);
+      ASIO_CHECK(completed);
+    }
+
+
+  }
+  ASIO_CHECK(unwound);
+}
+
+
+void test_interruption()
+{
+  //also checks if we're actually dispatching
+
+  test_interruption_impl<false>(0, false);
+  test_interruption_impl<false>(1, false);
+  test_interruption_impl<false>(2, false);
+
+  test_interruption_impl<false>(0, true);
+  test_interruption_impl<false>(1, true);
+  test_interruption_impl<false>(2, true);
+
+  test_interruption_impl<true>(0, false);
+  test_interruption_impl<true>(1, false);
+  test_interruption_impl<true>(2, false);
+
+  test_interruption_impl<true>(0, true);
+  test_interruption_impl<true>(1, true);
+  test_interruption_impl<true>(2, true);
+
+
+}
+
 ASIO_TEST_SUITE
 (
   "fiber",
@@ -275,4 +351,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_modifier)
   ASIO_TEST_CASE(test_cancel)
   ASIO_TEST_CASE(test_pseudo_coroutine)
+  ASIO_TEST_CASE(test_interruption)
 )
