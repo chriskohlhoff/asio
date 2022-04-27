@@ -390,6 +390,282 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
         Condition, Handler, Ops...> >(state);
 }
 
+
+// Proxy completion handler for the group of parallel operatations. Unpacks and
+// concatenates the individual operations' results, and invokes the user's
+// completion handler.
+template <typename Handler, typename Op>
+struct ranged_parallel_group_completion_handler
+{
+  typedef typename decay<
+          typename prefer_result<
+                  typename associated_executor<Handler>::type,
+                  execution::outstanding_work_t::tracked_t
+          >::type
+  >::type executor_type;
+
+  ranged_parallel_group_completion_handler(Handler&& h, std::size_t size)
+          : handler_(std::move(h)),
+            executor_(
+                    asio::prefer(
+                            asio::get_associated_executor(handler_),
+                            execution::outstanding_work.tracked)),
+            completion_order_(size),
+            args_(size)
+  {
+  }
+
+  executor_type get_executor() const noexcept
+  {
+    return executor_;
+  }
+
+  void operator()()
+  {
+    using result_type = typename parallel_op_signature_as_tuple<typename parallel_op_signature<Op>::type>::type;
+    std::vector<result_type> res;
+    res.resize(args_.size());
+    std::transform(args_.begin(), args_.end(), res.begin(),
+                   [](parallel_group_op_result<result_type> & po)
+                   {
+                      return std::move(po.get());
+                   });
+    std::move(handler_)(std::move(completion_order_), std::move(res));
+  }
+
+  Handler handler_;
+  executor_type executor_;
+  std::vector<std::size_t> completion_order_{};
+  std::vector<
+          parallel_group_op_result<
+                  typename parallel_op_signature_as_tuple<
+                          typename parallel_op_signature<Op>::type
+                  >::type
+          >
+  > args_{};
+};
+
+// Shared state for the parallel group.
+template <typename Condition, typename Handler, typename Op>
+struct ranged_parallel_group_state
+{
+  ranged_parallel_group_state(Condition&& c, Handler&& h, std::size_t size)
+          : cancellation_condition_(std::move(c)),
+            handler_(std::move(h), size),
+            cancellations_requested_(size)
+  {
+  }
+
+  // The number of operations that have completed so far. Used to determine the
+  // order of completion.
+  std::atomic<unsigned int> completed_{0};
+
+  // The non-none cancellation type that resulted from a cancellation condition.
+  // Stored here for use by the group's initiating function.
+  std::atomic<cancellation_type_t> cancel_type_{cancellation_type::none};
+
+  // The number of cancellations that have been requested, either on completion
+  // of the operations within the group, or via the cancellation slot for the
+  // group operation. Initially set to the number of operations to prevent
+  // cancellation signals from being emitted until after all of the group's
+  // operations' initiating functions have completed.
+  std::atomic<unsigned int> cancellations_requested_{};
+
+  // The number of operations that are yet to complete. Used to determine when
+  // it is safe to invoke the user's completion handler.
+  std::atomic<unsigned int> outstanding_{cancellations_requested_.load()};
+
+  // The cancellation signals for each operation in the group.
+  std::vector<asio::cancellation_signal> cancellation_signals_{cancellations_requested_.load()};
+
+  // The cancellation condition is used to determine whether the results from an
+  // individual operation warrant a cancellation request for the whole group.
+  Condition cancellation_condition_;
+
+  // The proxy handler to be invoked once all operations in the group complete.
+  ranged_parallel_group_completion_handler<Handler, Op> handler_;
+};
+
+// Handler for an individual operation within the parallel group.
+template <typename Condition, typename Handler, typename Op>
+struct ranged_parallel_group_op_handler
+{
+  typedef asio::cancellation_slot cancellation_slot_type;
+
+  ranged_parallel_group_op_handler(
+          std::shared_ptr<ranged_parallel_group_state<Condition, Handler, Op > > state,
+          std::size_t idx)
+          : state_(std::move(state)), idx_(idx)
+  {
+  }
+
+  cancellation_slot_type get_cancellation_slot() const noexcept
+  {
+    return state_->cancellation_signals_[idx_].slot();
+  }
+
+  template<typename T>
+  auto foobar(T);
+
+  template <typename... Args>
+  void operator()(Args... args)
+  {
+    // Capture this operation into the completion order.
+    state_->handler_.completion_order_[state_->completed_++] = idx_;
+
+    // Determine whether the results of this operation require cancellation of
+    // the whole group.
+    cancellation_type_t cancel_type = state_->cancellation_condition_(args...);
+
+    // Capture the result of the operation into the proxy completion handler.
+    state_->handler_.args_[idx_].emplace(std::move(args)...);
+
+    if (cancel_type != cancellation_type::none)
+    {
+      // Save the type for potential use by the group's initiating function.
+      state_->cancel_type_ = cancel_type;
+
+      // If we are the first operation to request cancellation, emit a signal
+      // for each operation in the group.
+      if (state_->cancellations_requested_++ == 0)
+        for (std::size_t i = 0; i < state_->cancellation_signals_.size(); ++i)
+          if (i != idx_)
+            state_->cancellation_signals_[i].emit(cancel_type);
+    }
+
+    // If this is the last outstanding operation, invoke the user's handler.
+    if (--state_->outstanding_ == 0)
+      asio::dispatch(std::move(state_->handler_));
+  }
+
+  std::shared_ptr<ranged_parallel_group_state<Condition, Handler, Op> > state_;
+  std::size_t idx_;
+};
+
+// Handler for an individual operation within the parallel group that has an
+// explicitly specified executor.
+template <typename Executor, typename Condition, typename Handler, typename Op>
+struct ranged_parallel_group_op_handler_with_executor :
+        ranged_parallel_group_op_handler<Condition, Handler, Op>
+{
+  typedef ranged_parallel_group_op_handler<Condition, Handler, Op> base_type;
+  typedef asio::cancellation_slot cancellation_slot_type;
+  typedef Executor executor_type;
+
+  ranged_parallel_group_op_handler_with_executor(
+          std::shared_ptr<ranged_parallel_group_state<Condition, Handler, Op> > state,
+          executor_type ex,
+          std::size_t idx)
+          : ranged_parallel_group_op_handler<Condition, Handler, Op>(std::move(state), idx)
+  {
+    cancel_proxy_ =
+            &this->state_->cancellation_signals_[idx].slot().template
+                    emplace<cancel_proxy>(this->state_, std::move(ex));
+  }
+
+  cancellation_slot_type get_cancellation_slot() const noexcept
+  {
+    return cancel_proxy_->signal_.slot();
+  }
+
+  executor_type get_executor() const noexcept
+  {
+    return cancel_proxy_->executor_;
+  }
+
+  // Proxy handler that forwards the emitted signal to the correct executor.
+  struct cancel_proxy
+  {
+    cancel_proxy(
+            std::shared_ptr<ranged_parallel_group_state< Condition, Handler, Op > > state, executor_type ex)
+            : state_(std::move(state)), executor_(std::move(ex))
+    {
+    }
+
+    void operator()(cancellation_type_t type)
+    {
+      if (auto state = state_.lock())
+      {
+        asio::cancellation_signal* sig = &signal_;
+        asio::dispatch(executor_,
+                       [state, sig, type]{ sig->emit(type); });
+      }
+    }
+
+    std::weak_ptr<ranged_parallel_group_state<Condition, Handler, Op> > state_;
+    asio::cancellation_signal signal_;
+    executor_type executor_;
+  };
+
+  cancel_proxy* cancel_proxy_;
+};
+
+
+template <typename Condition, typename Handler, typename Op>
+struct ranged_parallel_group_cancellation_handler
+{
+  ranged_parallel_group_cancellation_handler(
+          std::shared_ptr<ranged_parallel_group_state<Condition, Handler, Op> > state)
+          : state_(std::move(state))
+  {
+  }
+
+  void operator()(cancellation_type_t cancel_type)
+  {
+    // If we are the first place to request cancellation, i.e. no operation has
+    // yet completed and requested cancellation, emit a signal for each
+    // operation in the group.
+    if (cancel_type != cancellation_type::none)
+      if (auto state = state_.lock())
+        if (state->cancellations_requested_++ == 0)
+          for (std::size_t i = 0; i < state->cancellation_signals_.size(); ++i)
+            state->cancellation_signals_[i].emit(cancel_type);
+  }
+
+  std::weak_ptr<ranged_parallel_group_state<Condition, Handler, Op> > state_;
+};
+
+
+template <typename Condition, typename Handler, typename Range>
+void ranged_parallel_group_launch(Condition cancellation_condition, Handler handler, Range && range)
+{
+  // Get the user's completion handler's cancellation slot, so that we can allow
+  // cancellation of the entire group.
+  typename associated_cancellation_slot<Handler>::type slot
+          = asio::get_associated_cancellation_slot(handler);
+
+  // The type of the op
+  typedef typename std::decay<decltype(*std::begin(range))>::type op_type;
+
+  // Create the shared state for the operation.
+  typedef ranged_parallel_group_state<Condition, Handler, op_type> state_type;
+  std::shared_ptr<state_type> state = std::allocate_shared<state_type>(
+      asio::detail::recycling_allocator<state_type,
+        asio::detail::thread_info_base::parallel_group_tag>(),
+      std::move(cancellation_condition), std::move(handler), range.size());
+
+  std::size_t idx = 0u;
+  for (auto && op : std::forward<Range>(range))
+  {
+    typedef typename associated_executor<op_type>::type ex_type;
+    ex_type ex = asio::get_associated_executor(op);
+    std::move(op)(
+            ranged_parallel_group_op_handler_with_executor<ex_type, Condition, Handler, op_type>(state, std::move(ex), idx++));
+  }
+
+  // Check if any of the operations has already requested cancellation, and if
+  // so, emit a signal for each operation in the group.
+  if ((state->cancellations_requested_ -= range.size()) > 0)
+    for (auto& signal : state->cancellation_signals_)
+      signal.emit(state->cancel_type_);
+
+  // Register a handler with the user's completion handler's cancellation slot.
+  if (slot.is_connected())
+    slot.template emplace<
+      ranged_parallel_group_cancellation_handler<
+        Condition, Handler, op_type> >(state);
+}
+
 } // namespace detail
 } // namespace experimental
 
@@ -425,6 +701,24 @@ struct associator<Associator,
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
 };
+
+
+template <template <typename, typename> class Associator,
+        typename Handler, typename  Op, typename DefaultCandidate>
+struct associator<Associator,
+        experimental::detail::ranged_parallel_group_completion_handler<Handler, Op>,
+        DefaultCandidate>
+        : Associator<Handler, DefaultCandidate>
+{
+  static typename Associator<Handler, DefaultCandidate>::type get(
+          const experimental::detail::ranged_parallel_group_completion_handler<
+                  Handler, Op>& h,
+          const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  {
+    return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
+  }
+};
+
 
 } // namespace asio
 

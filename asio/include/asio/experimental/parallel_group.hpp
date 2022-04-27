@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 #include <utility>
+#include <vector>
+#include "asio/async_result.hpp"
 #include "asio/detail/array.hpp"
 #include "asio/experimental/cancellation_condition.hpp"
 
@@ -94,6 +96,18 @@ template <typename Condition, typename Handler,
     typename... Ops, std::size_t... I>
 void parallel_group_launch(Condition cancellation_condition, Handler handler,
     std::tuple<Ops...>& ops, std::index_sequence<I...>);
+
+template <typename Condition, typename Handler, typename Range>
+void ranged_parallel_group_launch(Condition cancellation_condition, Handler handler, Range && range);
+
+template<typename Signature>
+struct ranged_parallel_group_signature;
+
+template<typename ... Ts>
+struct ranged_parallel_group_signature<void(Ts...)>
+{
+  using type = void(std::vector<std::size_t>, std::vector<std::tuple<Ts...>>) ;
+};
 
 } // namespace detail
 
@@ -204,6 +218,102 @@ ASIO_NODISCARD inline parallel_group<Ops...>
 make_parallel_group(Ops... ops)
 {
   return parallel_group<Ops...>(std::move(ops)...);
+}
+
+/// A ranged of asynchronous operations that may be launched in parallel.
+/**
+ * See the documentation for asio::experimental::make_parallel_group for
+ * a usage example.
+ */
+template <typename Range>
+class ranged_parallel_group
+{
+ public:
+  /// Constructor.
+  explicit ranged_parallel_group(Range rng)
+          : range_(std::move(rng))
+  {
+  }
+  /// The completion signature for the group of operations.
+  typedef typename detail::ranged_parallel_group_signature<
+            typename detail::parallel_op_signature<
+              typename std::decay<
+                  decltype(*std::begin(std::declval<Range>()))>::type>::type>::type signature;
+
+  /// Initiate an asynchronous wait for the group of operations.
+  /**
+   * Launches the group and asynchronously waits for completion.
+   *
+   * @param cancellation_condition A function object, called on completion of
+   * an operation within the group, that is used to determine whether to cancel
+   * the remaining operations. The function object is passed the arguments of
+   * the completed operation's handler. To trigger cancellation of the remaining
+   * operations, it must return a asio::cancellation_type value other
+   * than <tt>asio::cancellation_type::none</tt>.
+   *
+   * @param token A @ref completion_token whose signature is comprised of
+   * a @c std::array<std::size_t, N> indicating the completion order of the
+   * operations, followed by all operations' completion handler arguments.
+   *
+   * The library provides the following @c cancellation_condition types:
+   *
+   * @li asio::experimental::wait_for_all
+   * @li asio::experimental::wait_for_one
+   * @li asio::experimental::wait_for_one_error
+   * @li asio::experimental::wait_for_one_success
+   */
+  template <typename CancellationCondition,
+          ASIO_COMPLETION_TOKEN_FOR(signature) CompletionToken>
+  auto async_wait(CancellationCondition cancellation_condition,
+                  CompletionToken&& token)
+  {
+    return asio::async_initiate<CompletionToken, signature>(
+            initiate_async_wait(), token,
+            std::move(cancellation_condition), std::move(range_));
+  }
+
+ private:
+  struct initiate_async_wait
+  {
+    template <typename Handler, typename Condition>
+    void operator()(Handler&& h, Condition&& c, Range && rng) const
+    {
+      detail::ranged_parallel_group_launch(std::move(c), std::move(h), rng);
+    }
+  };
+
+  Range range_;
+};
+
+/// Create a group of operations that may be launched in parallel.
+/**
+ * For example:
+ * @code
+ *
+ * using op = decltype(in1.async_read_some(asio::buffer(data), asio::experimental::deferred));
+ * std::vector<op> ops;
+ * ops.push_back(in1.async_read_some(asio::buffer(data), asio::experimental::deferred));
+ * ops.push_back(in2.async_read_some(asio::buffer(data), asio::experimental::deferred));
+ *
+ * asio::experimental::make_parallel_group(ops).async_wait(
+ *    asio::experimental::wait_for_all(),
+ *    [](
+ *        std::vector<std::size_t> completion_order,
+ *        std::vector<std::tuple<std::error_code, std::size_t> res)
+ *    {
+ *      for (std::size_t idx = 0u; idx < res.size(); idx++)
+ *           std::cout << "socket " << idx << " finished: " << std::get<0>(res[idx]) << ", " << std::get<0>(res[idx]) << "\n";
+ *    }
+ *  );
+ * @endcode
+ */
+template <typename Range>
+ASIO_NODISCARD inline ranged_parallel_group<typename std::decay<Range>::type>
+make_parallel_group(Range && range,
+                    decltype(std::begin(range)) * = nullptr,
+                    decltype(std::end(range))   * = nullptr)
+{
+    return ranged_parallel_group<typename std::decay<Range>::type>(std::forward<Range>(range));
 }
 
 } // namespace experimental
