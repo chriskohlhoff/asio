@@ -19,6 +19,7 @@
 
 #include <array>
 #include <vector>
+#include "asio/redirect_error.hpp"
 #include "asio/steady_timer.hpp"
 #include "../unit_test.hpp"
 
@@ -27,7 +28,6 @@ namespace promise {
 void promise_tester()
 {
   using namespace asio;
-  using asio::error_code;
   using namespace std::chrono;
 
   io_context ctx;
@@ -40,7 +40,7 @@ void promise_tester()
   auto p = timer1.async_wait(experimental::use_promise);
 
   steady_clock::time_point completed_when;
-  error_code ec;
+  asio::error_code ec;
   bool called = false;
 
   p.async_wait(
@@ -52,10 +52,12 @@ void promise_tester()
       });
 
   steady_clock::time_point timer2_done;
-  timer2.async_wait([&](auto) {
-    timer2_done = steady_clock::now();;
-    p.cancel();
-  });
+  timer2.async_wait(
+      [&](auto)
+      {
+        timer2_done = steady_clock::now();;
+        p.cancel();
+      });
 
   ctx.run();
 
@@ -64,248 +66,23 @@ void promise_tester()
   ASIO_CHECK(ec == error::operation_aborted);
 }
 
-void promise_race_tester()
+void test_cancel()
 {
-  using namespace asio;
-  using asio::error_code;
-  using namespace std::chrono;
+  asio::io_context ctx;
+  asio::steady_timer tim{ctx, std::chrono::seconds(10)};
+  asio::error_code ec;
 
-  io_context ctx;
-
-  steady_timer timer1{ctx}, timer2{ctx};
-
-  const auto started_when = steady_clock::now();
-  timer1.expires_at(started_when + milliseconds(2000));
-  timer2.expires_at(started_when + milliseconds(1000));
-
-  experimental::promise<void(std::variant<error_code, error_code>)> p =
-    experimental::promise<>::race(
-        timer1.async_wait(experimental::use_promise),
-        timer2.async_wait(experimental::use_promise));
-
-  auto called = false;
-  error_code ec;
-  steady_clock::time_point completed_when;
-  p.async_wait(
-      [&](auto v)
-      {
-        ASIO_CHECK(v.index() == 1);
-        ec = get<1>(v);
-        called = true;
-        completed_when = steady_clock::now();
-      });
-
-  ctx.run();
-
-  ASIO_CHECK(started_when + milliseconds(1000) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(1500) > completed_when);
-  ASIO_CHECK(called);
-  ASIO_CHECK(!ec);
-}
-
-void promise_all_tester()
-{
-  using namespace asio;
-  using asio::error_code;
-  using namespace std::chrono;
-
-  io_context ctx;
-
-  steady_timer timer1{ctx},
-         timer2{ctx};
-
-  const auto started_when = steady_clock::now();
-  timer1.expires_at(started_when + milliseconds(2000));
-  timer2.expires_at(started_when + milliseconds(1000));
-
-  experimental::promise<void(error_code, error_code)> p =
-    experimental::promise<>::all(
-        timer1.async_wait(experimental::use_promise),
-        timer2.async_wait(experimental::use_promise));
-
-  bool called = false;
-  steady_clock::time_point completed_when;
-
-  p.async_wait(
-      [&](auto ec1, auto ec2)
-      {
-        ASIO_CHECK(!ec1);
-        ASIO_CHECK(!ec2);
-        called = true;
-        completed_when = steady_clock::now();
-      });
-
-  ctx.run();
-
-  ASIO_CHECK(started_when + milliseconds(2000) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(2500) > completed_when);
-  ASIO_CHECK(called);
-}
-
-void promise_race_ranged_tester()
-{
-  using namespace asio;
-  using asio::error_code;
-  using namespace std::chrono;
-
-  io_context ctx;
-
-  steady_timer timer1{ctx}, timer2{ctx};
-
-  const auto started_when = steady_clock::now();
-  timer1.expires_at(started_when + milliseconds(2000));
-  timer2.expires_at(started_when + milliseconds(1000));
-
-  // promise<
-  //   std::variant<
-  //     tuple<error_code, std::size_t>,
-  //     tuple<error_code, std::size_t>>>
-  experimental::promise<void(std::size_t, error_code)> p =
-    experimental::promise<>::race(
-        std::array{
-          timer1.async_wait(experimental::use_promise),
-          timer2.async_wait(experimental::use_promise)
-        });
-
-  auto called = false;
-  auto completed_when = steady_clock::time_point();
-
-  p.async_wait([&](auto idx, auto ec )
-      {
-        ASIO_CHECK(idx == 1);
-        called = true;
-        completed_when = steady_clock::now();
-        ASIO_CHECK(!ec);
-      });
-
-  std::vector<experimental::promise<void()>> arr;
-
-  experimental::promise<>::race(
-      ctx.get_executor(), std::move(arr)
-    ).async_wait(
-      [](std::size_t idx) {ASIO_CHECK(idx == std::size_t(-1));}
-    );
-
-  ctx.run();
-
-  ASIO_CHECK(started_when + milliseconds(1000) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(1500) > completed_when);
-  ASIO_CHECK(called);
-
-  std::exception_ptr ex;
-
-  try
   {
-    experimental::promise<>::race(std::move(arr));
-  }
-  catch (...)
-  {
-    ex = std::current_exception();
+    auto p = tim.async_wait(
+        asio::redirect_error(
+          asio::experimental::use_promise, ec));
   }
 
-  ASIO_CHECK(ex);
-}
-
-void promise_all_ranged_tester()
-{
-  using namespace asio;
-  using asio::error_code;
-  using namespace std::chrono;
-
-  io_context ctx;
-
-  steady_timer timer1{ctx}, timer2{ctx};
-
-  const auto started_when = steady_clock::now();
-  timer1.expires_at(started_when + milliseconds(2000));
-  timer2.expires_at(started_when + milliseconds(1000));
-
-  // promise<
-  //   std::variant<
-  //     tuple<error_code, std::size_t>,
-  //     tuple<error_code, std::size_t>>>
-  experimental::promise<void(std::vector<error_code>)> p =
-    experimental::promise<>::all(
-      std::array{
-        timer1.async_wait(experimental::use_promise),
-        timer2.async_wait(experimental::use_promise)
-      });
-
-  auto called = false;
-  auto completed_when = steady_clock::time_point();
-
-  p.async_wait(
-      [&](auto v){
-        ASIO_CHECK(v.size() == 2u);
-        completed_when = steady_clock::now();
-        ASIO_CHECK(!v[0]);
-        ASIO_CHECK(!v[1]);
-        called = true;
-      });
-
-  std::vector<experimental::promise<void()>> arr;
-  experimental::promise<>::all(
-      ctx.get_executor(), std::move(arr)
-    ).async_wait(
-      [](auto v) {ASIO_CHECK(v.size() == 0);}
-    );
-
   ctx.run();
 
-  ASIO_CHECK(started_when + milliseconds(2000) <= completed_when);
-  ASIO_CHECK(started_when + milliseconds(2500) > completed_when);
-  ASIO_CHECK(called == true);
-
-  std::exception_ptr ex;
-  try
-  {
-    experimental::promise<>::all(std::move(arr));
-  }
-  catch (...)
-  {
-    ex = std::current_exception();
-  }
-
-  ASIO_CHECK(ex);
-}
-
-void promise_cancel_tester()
-{
-  using namespace asio;
-  using asio::error_code;
-  using namespace std::chrono;
-
-  io_context ctx;
-
-  steady_timer timer1{ctx}, timer2{ctx};
-
-  const auto started_when = steady_clock::now();
-  timer1.expires_at(started_when + milliseconds(2000));
-  timer2.expires_at(started_when + milliseconds(1000));
-
-  // promise<
-  //   std::variant<
-  //     tuple<error_code, std::size_t>,
-  //     tuple<error_code, std::size_t>>>
-  experimental::promise<void(error_code, error_code)> p =
-      experimental::promise<>::all(
-          timer1.async_wait(experimental::use_promise),
-          timer2.async_wait(experimental::use_promise));
-
-  bool called = false;
-  p.async_wait(
-      [&](auto ec1, auto ec2)
-      {
-        called = true;
-        ASIO_CHECK(ec1 == error::operation_aborted);
-        ASIO_CHECK(ec2 == error::operation_aborted);
-      });
-
-  post(ctx, [&]{p.cancel();});
-
-  ctx.run();
-
-  ASIO_CHECK(called);
+  ASIO_CHECK_MESSAGE(
+      ec == asio::error::operation_aborted,
+      ec.message());
 }
 
 } // namespace promise
@@ -314,9 +91,4 @@ ASIO_TEST_SUITE
 (
     "promise",
     ASIO_TEST_CASE(promise::promise_tester)
-    ASIO_TEST_CASE(promise::promise_race_tester)
-    ASIO_TEST_CASE(promise::promise_all_tester)
-    ASIO_TEST_CASE(promise::promise_race_ranged_tester)
-    ASIO_TEST_CASE(promise::promise_all_ranged_tester)
-    ASIO_TEST_CASE(promise::promise_cancel_tester)
 )

@@ -40,14 +40,26 @@ complete:
       asio::experimental::use_promise);
 
   auto promise =
-    asio::experimental::promise<>::race(
-      timeout_promise, read_promise);
+    asio::experimental::make_parallel_group(
+      timeout_promise.async_wait(asio::deferred),
+      read_promise.async_wait(asio::deferred)
+    ).async_wait(
+      asio::experimental::wait_for_one(),
+      asio::experimental::use_promise);
 
   promise.async_wait(
-      [](std::variant<error_code, std::tuple<error_code, std::size_t>> v)
+      [](std::array<std::size_t, 2> order,
+         error_code timer_ec,
+         error_code read_ec, std::size_t read_size)
       {
-        if (v.index() == 0) {} //timed out
-        else if (v.index() == 1) // completed in time
+        if (order[0] == 0)
+        {
+          // timed out
+        }
+        else
+        {
+          // completed in time
+        }
       });
 
 or to wait for all to complete:
@@ -61,12 +73,17 @@ or to wait for all to complete:
       asio::experimental::use_promise);
 
   auto promise =
-    asio::experimental::promise<>::all(
-      write_promise, read_promise);
+    asio::experimental::make_parallel_group(
+      timeout_promise.async_wait(asio::deferred),
+      read_promise.async_wait(asio::deferred)
+    ).async_wait(
+      asio::experimental::wait_for_all(),
+      asio::experimental::use_promise);
 
   promise.async_wait(
-      [](std::tuple<error_code, std::size_t> write_result,
-        std::tuple<error_code, std::size_t> read_result)
+      [](std::array<std::size_t, 2> order,
+         error_code timer_ec,
+         error_code read_ec, std::size_t read_size)
       {
         // ...
       });
