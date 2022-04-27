@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <utility>
+#include "asio/async_result.hpp"
 #include "asio/detail/array.hpp"
 #include "asio/experimental/cancellation_condition.hpp"
 
