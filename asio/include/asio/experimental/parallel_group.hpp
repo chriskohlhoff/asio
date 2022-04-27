@@ -285,6 +285,28 @@ class ranged_parallel_group
   Range range_;
 };
 
+/// Create a group of operations that may be launched in parallel.
+/**
+ * For example:
+ * @code
+ *
+ * using op = decltype(in1.async_read_some(asio::buffer(data), asio::experimental::deferred));
+ * std::vector<op> ops;
+ * ops.push_back(in1.async_read_some(asio::buffer(data), asio::experimental::deferred));
+ * ops.push_back(in2.async_read_some(asio::buffer(data), asio::experimental::deferred));
+ *
+ * asio::experimental::make_parallel_group(ops).async_wait(
+ *    asio::experimental::wait_for_all(),
+ *    [](
+ *        std::vector<std::size_t> completion_order,
+ *        std::vector<std::tuple<std::error_code, std::size_t> res)
+ *    {
+ *      for (std::size_t idx = 0u; idx < res.size(); idx++)
+ *           std::cout << "socket " << idx << " finished: " << std::get<0>(res[idx]) << ", " << std::get<0>(res[idx]) << "\n";
+ *    }
+ *  );
+ * @endcode
+ */
 template <typename Range>
 ASIO_NODISCARD inline ranged_parallel_group<typename std::decay<Range>::type>
 make_parallel_group(Range && range,
