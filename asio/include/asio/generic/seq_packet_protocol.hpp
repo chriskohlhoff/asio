@@ -74,11 +74,7 @@ public:
   /// Obtain an identifier for the type of the protocol.
   int type() const
   {
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
     return ASIO_OS_DEF(SOCK_SEQPACKET);
-#else
-    return 0;
-#endif
   }
 
   /// Obtain an identifier for the protocol.

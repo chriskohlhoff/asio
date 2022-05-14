@@ -588,7 +588,6 @@ void signal_set_service::open_descriptors()
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
   && !defined(__CYGWIN__)
-#if !(defined(__ORBIS__) || defined(__PROSPERO__))
   signal_state* state = get_signal_state();
 
   int pipe_fds[2];
@@ -606,7 +605,6 @@ void signal_set_service::open_descriptors()
 #endif // defined(FD_CLOEXEC)
   }
   else
-#endif
   {
     asio::error_code ec(errno,
         asio::error::get_system_category());

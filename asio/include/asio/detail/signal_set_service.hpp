@@ -18,11 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #include <cstddef>
-#if defined(__ORBIS__) || defined(__PROSPERO__)
-#  include <sys/signal.h>
-#else
-#  include <signal.h>
-#endif
+#include <signal.h>
 #include "asio/error.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"

@@ -52,14 +52,12 @@ public:
         ASIO_OS_DEF(AF_INET));
   }
 
-#if !defined(__ORBIS__) && !defined(__PROSPERO__)
   /// Construct to represent the IPv6 ICMP protocol.
   static icmp v6()
   {
     return icmp(ASIO_OS_DEF(IPPROTO_ICMPV6),
         ASIO_OS_DEF(AF_INET6));
   }
-#endif
 
   /// Obtain an identifier for the type of the protocol.
   int type() const

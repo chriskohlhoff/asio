@@ -57,7 +57,7 @@ int close(int d, state_type& state, asio::error_code& ec)
       // current OS where this behaviour is seen, Windows, says that the socket
       // remains open. Therefore we'll put the descriptor back into blocking
       // mode and have another attempt at closing it.
-#if defined(__SYMBIAN32__) || defined(__ORBIS__) || defined(__PROSPERO__)
+#if defined(__SYMBIAN32__)
       int flags = ::fcntl(d, F_GETFL, 0);
       if (flags >= 0)
         ::fcntl(d, F_SETFL, flags & ~O_NONBLOCK);
@@ -87,7 +87,7 @@ bool set_user_non_blocking(int d, state_type& state,
   }
 
   errno = 0;
-#if defined(__SYMBIAN32__) || defined(__ORBIS__) || defined(__PROSPERO__)
+#if defined(__SYMBIAN32__)
   int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
   if (result >= 0)
   {
@@ -137,7 +137,7 @@ bool set_internal_non_blocking(int d, state_type& state,
   }
 
   errno = 0;
-#if defined(__SYMBIAN32__) || defined(__ORBIS__) || defined(__PROSPERO__)
+#if defined(__SYMBIAN32__)
   int result = error_wrapper(::fcntl(d, F_GETFL, 0), ec);
   if (result >= 0)
   {
@@ -162,8 +162,6 @@ bool set_internal_non_blocking(int d, state_type& state,
 
   return false;
 }
-
-#if !(defined(__ORBIS__) || defined(__PROSPERO__))
 
 std::size_t sync_read(int d, state_type state, buf* bufs,
     std::size_t count, bool all_empty, asio::error_code& ec)
@@ -339,7 +337,6 @@ int ioctl(int d, state_type& state, long cmd,
   {
     ec = asio::error_code();
 
-#if !(defined(__ORBIS__) || defined(__PROSPERO__))
     // When updating the non-blocking mode we always perform the ioctl syscall,
     // even if the flags would otherwise indicate that the descriptor is
     // already in the correct state. This ensures that the underlying
@@ -360,7 +357,6 @@ int ioctl(int d, state_type& state, long cmd,
         state &= ~(user_set_non_blocking | internal_non_blocking);
       }
     }
-#endif
   }
 
   return result;
@@ -464,69 +460,6 @@ int poll_error(int d, state_type state, asio::error_code& ec)
     ec = asio::error_code();
   return result;
 }
-
-#else
-
-// NOTE: These functions are declared as inlines and are referenced by parts of asio we still don't need on the platform;
-//       it would be a good idea to nail those down and drop the references, and so far instead of letting the compiler
-//       reference undefined inlines (which is a warning, not an error), we'd rather assert instead.
-
-std::size_t sync_read(int d, state_type state, buf* bufs,
-    std::size_t count, bool all_empty, asio::error_code& ec)
-{
-  assert(false);
-}
-
-bool non_blocking_read(int d, buf* bufs, std::size_t count,
-    asio::error_code& ec, std::size_t& bytes_transferred)
-{
-  assert(false);
-}
-
-std::size_t sync_write(int d, state_type state, const buf* bufs,
-    std::size_t count, bool all_empty, asio::error_code& ec)
-{
-  assert(false);
-}
-
-bool non_blocking_write(int d, const buf* bufs, std::size_t count,
-    asio::error_code& ec, std::size_t& bytes_transferred)
-{
-  assert(false);
-}
-
-int ioctl(int d, state_type& state, long cmd,
-    ioctl_arg_type* arg, asio::error_code& ec)
-{
-  assert(false);
-}
-
-int fcntl(int d, int cmd, asio::error_code& ec)
-{
-  assert(false);
-}
-
-int fcntl(int d, int cmd, long arg, asio::error_code& ec)
-{
-  assert(false);
-}
-
-int poll_read(int d, state_type state, asio::error_code& ec)
-{
-  assert(false);
-}
-
-int poll_write(int d, state_type state, asio::error_code& ec)
-{
-  assert(false);
-}
-
-int poll_error(int d, state_type state, asio::error_code& ec)
-{
-  assert(false);
-}
-
-#endif // defined(__ORBIS__) || defined(__PROSPERO__)
 
 } // namespace descriptor_ops
 } // namespace detail
