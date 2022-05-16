@@ -19,7 +19,7 @@
 
 #if !defined(ASIO_HAS_THREADS) || defined(ASIO_WINDOWS) \
   || defined(ASIO_WINDOWS_RUNTIME) \
-  || defined(__CYGWIN__) || defined(__SYMBIAN32__)
+  || defined(__CYGWIN__) || defined(__SYMBIAN32__) || (defined(__ORBIS__) || defined(__PROSPERO__))
 # include "asio/detail/null_signal_blocker.hpp"
 #elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_signal_blocker.hpp"
@@ -32,7 +32,7 @@ namespace detail {
 
 #if !defined(ASIO_HAS_THREADS) || defined(ASIO_WINDOWS) \
   || defined(ASIO_WINDOWS_RUNTIME) \
-  || defined(__CYGWIN__) || defined(__SYMBIAN32__)
+  || defined(__CYGWIN__) || defined(__SYMBIAN32__) || (defined(__ORBIS__) || defined(__PROSPERO__))
 typedef null_signal_blocker signal_blocker;
 #elif defined(ASIO_HAS_PTHREADS)
 typedef posix_signal_blocker signal_blocker;
