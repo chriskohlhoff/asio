@@ -437,7 +437,6 @@ nobase_include_HEADERS = \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/cancellation_signal.ipp \
 	asio/impl/co_spawn.hpp \
-	asio/impl/compose.hpp \
 	asio/impl/connect.hpp \
 	asio/impl/connect_pipe.hpp \
 	asio/impl/connect_pipe.ipp \

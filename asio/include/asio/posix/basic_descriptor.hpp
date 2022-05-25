@@ -58,6 +58,9 @@ template <typename Executor = any_io_executor>
 class basic_descriptor
   : public descriptor_base
 {
+private:
+  class initiate_async_wait;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -651,11 +654,14 @@ public:
   template <
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code))
         WaitToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WaitToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WaitToken,
       void (asio::error_code))
   async_wait(wait_type w,
       ASIO_MOVE_ARG(WaitToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WaitToken, void (asio::error_code)>(
+          declval<initiate_async_wait>(), token, w)))
   {
     return async_initiate<WaitToken, void (asio::error_code)>(
         initiate_async_wait(this), token, w);

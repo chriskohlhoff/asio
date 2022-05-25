@@ -200,6 +200,11 @@ private:
   friend class detail::win_iocp_overlapped_ptr;
 #endif
 
+#if !defined(ASIO_NO_DEPRECATED)
+  struct initiate_dispatch;
+  struct initiate_post;
+#endif // !defined(ASIO_NO_DEPRECATED)
+
 public:
   template <typename Allocator, uintptr_t Bits>
   class basic_executor_type;
@@ -556,8 +561,11 @@ public:
    * throws an exception.
    */
   template <typename LegacyCompletionHandler>
-  ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
-  dispatch(ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(LegacyCompletionHandler, void ())
+  dispatch(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<LegacyCompletionHandler, void ()>(
+          declval<initiate_dispatch>(), handler, this)));
 
   /// (Deprecated: Use asio::post().) Request the io_context to invoke
   /// the given handler and return immediately.
@@ -583,8 +591,11 @@ public:
    * throws an exception.
    */
   template <typename LegacyCompletionHandler>
-  ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
-  post(ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(LegacyCompletionHandler, void ())
+  post(ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<LegacyCompletionHandler, void ()>(
+          declval<initiate_post>(), handler, this)));
 
   /// (Deprecated: Use asio::bind_executor().) Create a new handler that
   /// automatically dispatches the wrapped handler on the io_context.
@@ -620,11 +631,6 @@ public:
 private:
   io_context(const io_context&) ASIO_DELETED;
   io_context& operator=(const io_context&) ASIO_DELETED;
-
-#if !defined(ASIO_NO_DEPRECATED)
-  struct initiate_dispatch;
-  struct initiate_post;
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   // Helper function to add the implementation.
   ASIO_DECL impl_type& add_impl(impl_type* impl);

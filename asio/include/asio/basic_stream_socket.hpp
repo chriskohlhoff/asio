@@ -59,6 +59,10 @@ template <typename Protocol, typename Executor>
 class basic_stream_socket
   : public basic_socket<Protocol, Executor>
 {
+private:
+  class initiate_async_send;
+  class initiate_async_receive;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -490,11 +494,16 @@ public:
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         std::size_t)) WriteToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WriteToken,
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WriteToken,
+        void (asio::error_code, std::size_t)>(
+          declval<initiate_async_send>(), token,
+          buffers, socket_base::message_flags(0))))
   {
     return async_initiate<WriteToken,
       void (asio::error_code, std::size_t)>(
@@ -559,12 +568,16 @@ public:
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         std::size_t)) WriteToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WriteToken,
       void (asio::error_code, std::size_t))
   async_send(const ConstBufferSequence& buffers,
       socket_base::message_flags flags,
       ASIO_MOVE_ARG(WriteToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WriteToken,
+        void (asio::error_code, std::size_t)>(
+          declval<initiate_async_send>(), token, buffers, flags)))
   {
     return async_initiate<WriteToken,
       void (asio::error_code, std::size_t)>(
@@ -733,11 +746,16 @@ public:
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         std::size_t)) ReadToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadToken,
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadToken,
+        void (asio::error_code, std::size_t)>(
+          declval<initiate_async_receive>(), token,
+          buffers, socket_base::message_flags(0))))
   {
     return async_initiate<ReadToken,
       void (asio::error_code, std::size_t)>(
@@ -804,12 +822,16 @@ public:
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         std::size_t)) ReadToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadToken,
       void (asio::error_code, std::size_t))
   async_receive(const MutableBufferSequence& buffers,
       socket_base::message_flags flags,
       ASIO_MOVE_ARG(ReadToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadToken,
+        void (asio::error_code, std::size_t)>(
+          declval<initiate_async_receive>(), token, buffers, flags)))
   {
     return async_initiate<ReadToken,
       void (asio::error_code, std::size_t)>(
@@ -932,11 +954,16 @@ public:
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         std::size_t)) WriteToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WriteToken,
       void (asio::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
       ASIO_MOVE_ARG(WriteToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WriteToken,
+        void (asio::error_code, std::size_t)>(
+          declval<initiate_async_send>(), token,
+          buffers, socket_base::message_flags(0))))
   {
     return async_initiate<WriteToken,
       void (asio::error_code, std::size_t)>(
@@ -1063,11 +1090,16 @@ public:
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         std::size_t)) ReadToken
           ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadToken,
       void (asio::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
       ASIO_MOVE_ARG(ReadToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadToken,
+        void (asio::error_code, std::size_t)>(
+          declval<initiate_async_receive>(), token,
+          buffers, socket_base::message_flags(0))))
   {
     return async_initiate<ReadToken,
       void (asio::error_code, std::size_t)>(
