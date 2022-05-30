@@ -175,6 +175,50 @@ public:
     basic_descriptor<Executor>::operator=(std::move(other));
     return *this;
   }
+
+    // All sockets have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_descriptor;
+
+
+  /// Move-construct a basic_stream_descriptor from a socket of another protocol type.
+  /**
+   * This constructor moves a socket from one object to another.
+   *
+   * @param other The other basic_stream_descriptor object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_stream_descriptor(const executor_type&) constructor.
+   */
+  template <typename Executor1>
+  basic_stream_descriptor(basic_stream_descriptor<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value
+      >::type = 0)
+    : basic_descriptor<Executor>(std::move(other))
+  {
+  }
+
+  /// Move-assign a basic_stream_descriptor from a socket of another protocol type.
+  /**
+   * This assignment operator moves a socket from one object to another.
+   *
+   * @param other The other basic_stream_descriptor object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_stream_descriptor(const executor_type&) constructor.
+   */
+  template <typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_stream_descriptor&
+  >::type operator=(basic_stream_descriptor<Executor1> && other)
+  {
+    basic_descriptor<Executor>::operator=(std::move(other));
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Write some data to the descriptor.
