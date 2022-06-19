@@ -51,6 +51,7 @@ The deferred token also supports chaining, to create simple compositions:
 
 [link asio.reference.experimental__deferred experimental::deferred],
 [link asio.reference.experimental__deferred_t experimental::deferred_t],
+[link asio.examples.cpp14_examples.deferred Deferred examples (C++11)],
 [link asio.examples.cpp14_examples.deferred Deferred examples (C++14)].
 
 [endsect]

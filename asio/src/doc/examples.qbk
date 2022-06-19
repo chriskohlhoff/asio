@@ -381,6 +381,15 @@ and asynchronous operations.
 * [@../src/examples/cpp11/echo/blocking_udp_echo_server.cpp] ([@examples/diffs/echo/blocking_udp_echo_server.cpp.html diff to C++03])
 
 
+[heading Deferred]
+
+Examples showing how to use the [link asio.reference.experimental__deferred
+`experimental::deferred`] completion token.
+
+* [@../src/examples/cpp14/deferred/deferred_1.cpp]
+* [@../src/examples/cpp14/deferred/deferred_2.cpp]
+
+
 [heading Fork]
 
 These POSIX-specific examples show how to use Asio in conjunction with the

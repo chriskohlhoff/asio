@@ -14,6 +14,13 @@ noinst_PROGRAMS = \
 	buffers/reference_counted \
 	chat/chat_client \
 	chat/chat_server \
+	deferred/deferred_1 \
+	deferred/deferred_2 \
+	deferred/deferred_3 \
+	deferred/deferred_4 \
+	deferred/deferred_5 \
+	deferred/deferred_6 \
+	deferred/deferred_7 \
 	echo/async_tcp_echo_server \
 	echo/async_udp_echo_server \
 	echo/blocking_tcp_echo_client \
@@ -86,6 +93,8 @@ allocation_server_SOURCES = allocation/server.cpp
 buffers_reference_counted_SOURCES = buffers/reference_counted.cpp
 chat_chat_client_SOURCES = chat/chat_client.cpp
 chat_chat_server_SOURCES = chat/chat_server.cpp
+deferred_deferred_1_SOURCES = deferred/deferred_1.cpp
+deferred_deferred_2_SOURCES = deferred/deferred_2.cpp
 echo_async_tcp_echo_server_SOURCES = echo/async_tcp_echo_server.cpp
 echo_async_udp_echo_server_SOURCES = echo/async_udp_echo_server.cpp
 echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp
