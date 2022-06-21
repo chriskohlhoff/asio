@@ -53,6 +53,6 @@ void append_test()
 
 ASIO_TEST_SUITE
 (
-  "experimental/basic_channel",
+  "experimental/append",
   ASIO_TEST_CASE(append_test)
 )

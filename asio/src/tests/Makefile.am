@@ -190,13 +190,13 @@ endif
 
 if HAVE_CXX11
 check_PROGRAMS += \
+	unit/experimental/append \
 	unit/experimental/as_tuple \
 	unit/experimental/deferred
 endif
 
 if HAVE_CXX14
 check_PROGRAMS += \
-	unit/experimental/append \
 	unit/experimental/prepend
 endif
 
@@ -401,13 +401,13 @@ TESTS = \
 
 if HAVE_CXX11
 TESTS += \
+	unit/experimental/append \
 	unit/experimental/as_tuple \
 	unit/experimental/deferred
 endif
 
 if HAVE_CXX14
 TESTS += \
-	unit/experimental/append \
 	unit/experimental/prepend
 endif
 
@@ -631,12 +631,12 @@ unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
 
 if HAVE_CXX11
+unit_experimental_append_SOURCES = unit/experimental/append.cpp
 unit_experimental_as_tuple_SOURCES = unit/experimental/as_tuple.cpp
 unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
 endif
 
 if HAVE_CXX14
-unit_experimental_append_SOURCES = unit/experimental/append.cpp
 unit_experimental_prepend_SOURCES = unit/experimental/prepend.cpp
 endif
 
