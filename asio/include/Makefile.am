@@ -1,6 +1,7 @@
 # find . -name "*.*pp" | sed -e 's/^\.\///' | sed -e 's/^.*$/  & \\/' | sort
 nobase_include_HEADERS = \
 	asio/any_io_executor.hpp \
+	asio/as_tuple.hpp \
 	asio/associated_allocator.hpp \
 	asio/associated_cancellation_slot.hpp \
 	asio/associated_executor.hpp \
@@ -407,7 +408,6 @@ nobase_include_HEADERS = \
 	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/append.hpp \
 	asio/experimental/impl/as_single.hpp \
-	asio/experimental/impl/as_tuple.hpp \
 	asio/experimental/impl/channel_error.ipp \
 	asio/experimental/impl/coro.hpp \
 	asio/experimental/impl/deferred.hpp \
@@ -433,6 +433,7 @@ nobase_include_HEADERS = \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
 	asio/impl/any_io_executor.ipp \
+	asio/impl/as_tuple.hpp \
 	asio/impl/awaitable.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \

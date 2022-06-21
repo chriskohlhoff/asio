@@ -94,11 +94,9 @@ expression will no longer throw an exception on resumption.
 
 [heading as_tuple]
 
-[note This is an experimental feature.]
-
-The [link asio.reference.experimental__as_tuple `experimental::as_tuple`]
-adapter can be used to specify that the completion handler arguments should be
-combined into a single tuple argument.
+The [link asio.reference.as_tuple `as_tuple`] adapter can be used to specify
+that the completion handler arguments should be combined into a single tuple
+argument.
 
 For example, the `as_tuple` adapter may be used in conjunction with [link
 asio.reference.use_awaitable `use_awaitable`] and structured bindings as
@@ -106,11 +104,11 @@ follows:
 
   auto [e, n] =
     co_await my_socket.async_read_some(my_buffer,
-      asio::experimental::as_tuple(asio::use_awaitable));
+      asio::as_tuple(asio::use_awaitable));
 
 This adapter may also be used as a default completion token:
 
-  using default_token = asio::experimental::as_tuple_t<asio::use_awaitable_t<>>;
+  using default_token = asio::as_tuple_t<asio::use_awaitable_t<>>;
   using tcp_socket = default_token::as_default_on_t<tcp::socket>;
   // ...
   asio::awaitable<void> do_read(tcp_socket my_socket)
@@ -208,7 +206,7 @@ For example:
 [link asio.reference.bind_allocator bind_allocator],
 [link asio.reference.bind_cancellation_slot bind_cancellation_slot],
 [link asio.reference.redirect_error redirect_error],
-[link asio.reference.experimental__as_tuple experimental::as_tuple],
+[link asio.reference.as_tuple as_tuple],
 [link asio.reference.experimental__as_single experimental::as_single],
 [link asio.reference.experimental__append experimental::append],
 [link asio.reference.experimental__prepend experimental::prepend].

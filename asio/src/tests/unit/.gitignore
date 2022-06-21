@@ -7,6 +7,7 @@
 *.manifest
 *.pdb
 *.tds
+as_tuple
 associated_allocator
 associated_cancellation_slot
 associated_executor

@@ -8,7 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <asio/experimental/as_tuple.hpp>
+#include <asio/as_tuple.hpp>
 #include <asio/co_spawn.hpp>
 #include <asio/detached.hpp>
 #include <asio/io_context.hpp>
@@ -17,7 +17,7 @@
 #include <asio/write.hpp>
 #include <cstdio>
 
-using asio::experimental::as_tuple_t;
+using asio::as_tuple_t;
 using asio::ip::tcp;
 using asio::awaitable;
 using asio::co_spawn;

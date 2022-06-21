@@ -1,6 +1,6 @@
 //
-// experimental/as_tuple.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// as_tuple.cpp
+// ~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,16 +14,18 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/experimental/as_tuple.hpp"
+#include "asio/as_tuple.hpp"
 
 #include "asio/bind_executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/post.hpp"
 #include "asio/system_timer.hpp"
-#include "../unit_test.hpp"
+#include "unit_test.hpp"
 
 void as_tuple_test()
 {
+#if defined(ASIO_HAS_STD_TUPLE) \
+  && defined(ASIO_HAS_VARIADIC_TEMPLATES)
   asio::io_context io1;
   asio::io_context io2;
   asio::system_timer timer1(io1);
@@ -31,7 +33,7 @@ void as_tuple_test()
 
   timer1.expires_after(asio::chrono::seconds(0));
   timer1.async_wait(
-      asio::experimental::as_tuple(
+      asio::as_tuple(
         asio::bind_executor(io2.get_executor(),
           [&count](std::tuple<asio::error_code>)
           {
@@ -47,10 +49,12 @@ void as_tuple_test()
   io2.run();
 
   ASIO_CHECK(count == 1);
+#endif // defined(ASIO_HAS_STD_TUPLE)
+       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
 ASIO_TEST_SUITE
 (
-  "experimental/basic_channel",
+  "as_tuple",
   ASIO_TEST_CASE(as_tuple_test)
 )
