@@ -53,6 +53,6 @@ void prepend_test()
 
 ASIO_TEST_SUITE
 (
-  "experimental/basic_channel",
+  "experimental/prepend",
   ASIO_TEST_CASE(prepend_test)
 )
