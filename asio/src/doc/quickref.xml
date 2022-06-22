@@ -226,8 +226,8 @@
           <bridgehead renderas="sect3">Free Functions</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution_context.add_service">add_service</link></member>
+            <member><link linkend="asio.reference.append">append</link></member>
             <member><link linkend="asio.reference.as_tuple">as_tuple</link></member>
-            <member><link linkend="asio.reference.experimental__append">experimental::append</link></member>
             <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
             <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
             <member><link linkend="asio.reference.experimental__prepend">experimental::prepend</link></member>
@@ -260,6 +260,7 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.append_t">append_t</link></member>
             <member><link linkend="asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="asio.reference.awaitable">awaitable</link></member>
@@ -271,7 +272,6 @@
             <member><link linkend="asio.reference.experimental__deferred_t">experimental::deferred_t</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
-            <member><link linkend="asio.reference.experimental__append_t">experimental::append_t</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
             <member><link linkend="asio.reference.experimental__basic_channel">experimental::basic_channel</link></member>
             <member><link linkend="asio.reference.experimental__basic_concurrent_channel">experimental::basic_concurrent_channel</link></member>

@@ -150,16 +150,14 @@ specifies two parameters, the handler is passed the result as a tuple:
 
 [heading append]
 
-[note This is an experimental feature.]
-
-The [link asio.reference.experimental__append `experimental::append`]
-completion token adapter can be used to pass additional completion handler
-arguments at the end of the completion signature.
+The [link asio.reference.append `append`] completion token adapter can be
+used to pass additional completion handler arguments at the end of the
+completion signature.
 
 For example:
 
   timer.async_wait(
-      asio::experimental::append(
+      asio::append(
         [](std::error_code ec, int i)
         {
           // ...
@@ -168,7 +166,7 @@ For example:
     );
 
   std::future<int> f = timer.async_wait(
-      asio::experimental::append(
+      asio::append(
         asio::use_future,
         42
       )
@@ -208,7 +206,7 @@ For example:
 [link asio.reference.redirect_error redirect_error],
 [link asio.reference.as_tuple as_tuple],
 [link asio.reference.experimental__as_single experimental::as_single],
-[link asio.reference.experimental__append experimental::append],
+[link asio.reference.append append],
 [link asio.reference.experimental__prepend experimental::prepend].
 
 [endsect]

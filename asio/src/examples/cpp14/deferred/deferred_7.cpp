@@ -9,11 +9,10 @@
 //
 
 #include <asio.hpp>
-#include <asio/experimental/append.hpp>
 #include <asio/experimental/deferred.hpp>
 #include <iostream>
 
-using asio::experimental::append;
+using asio::append;
 using asio::experimental::deferred;
 
 template <typename CompletionToken>

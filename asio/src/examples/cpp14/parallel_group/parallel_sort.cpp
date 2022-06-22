@@ -9,7 +9,6 @@
 //
 
 #include <asio.hpp>
-#include <asio/experimental/append.hpp>
 #include <asio/experimental/parallel_group.hpp>
 #include <algorithm>
 #include <chrono>
@@ -89,7 +88,7 @@ auto parallel_sort(
               [self = std::make_shared<self_type>(std::move(self))]
               {
                 asio::dispatch(
-                    asio::experimental::append(
+                    asio::append(
                       std::move(*self), 0));
               }
             );

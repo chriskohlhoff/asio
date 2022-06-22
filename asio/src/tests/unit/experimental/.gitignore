@@ -7,7 +7,6 @@
 *.manifest
 *.pdb
 *.tds
-append
 awaitable_operators
 basic_channel
 basic_concurrent_channel

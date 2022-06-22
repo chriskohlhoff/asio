@@ -12,6 +12,7 @@ endif
 SUBDIRS = properties
 
 check_PROGRAMS = \
+	unit/append \
 	unit/as_tuple \
 	unit/associated_allocator \
 	unit/associated_cancellation_slot \
@@ -191,7 +192,6 @@ endif
 
 if HAVE_CXX11
 check_PROGRAMS += \
-	unit/experimental/append \
 	unit/experimental/deferred \
 	unit/experimental/prepend
 endif
@@ -235,6 +235,7 @@ check_PROGRAMS += \
 endif
 
 TESTS = \
+	unit/append \
 	unit/as_tuple \
 	unit/associated_allocator \
 	unit/associated_cancellation_slot \
@@ -398,7 +399,6 @@ TESTS = \
 
 if HAVE_CXX11
 TESTS += \
-	unit/experimental/append \
 	unit/experimental/deferred \
 	unit/experimental/prepend
 endif
@@ -456,6 +456,7 @@ performance_client_SOURCES = performance/client.cpp
 performance_server_SOURCES = performance/server.cpp
 endif
 
+unit_append_SOURCES = unit/append.cpp
 unit_as_tuple_SOURCES = unit/as_tuple.cpp
 unit_associated_allocator_SOURCES = unit/associated_allocator.cpp
 unit_associated_cancellation_slot_SOURCES = unit/associated_cancellation_slot.cpp
@@ -624,7 +625,6 @@ unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
 
 if HAVE_CXX11
-unit_experimental_append_SOURCES = unit/experimental/append.cpp
 unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
 unit_experimental_prepend_SOURCES = unit/experimental/prepend.cpp
 endif

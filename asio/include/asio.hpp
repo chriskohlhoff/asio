@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/append.hpp"
 #include "asio/as_tuple.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"

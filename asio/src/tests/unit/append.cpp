@@ -1,6 +1,6 @@
 //
-// experimental/append.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~
+// append.cpp
+// ~~~~~~~~~~
 //
 // Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,16 +14,18 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/experimental/append.hpp"
+#include "asio/append.hpp"
 
 #include "asio/bind_executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/post.hpp"
 #include "asio/system_timer.hpp"
-#include "../unit_test.hpp"
+#include "unit_test.hpp"
 
 void append_test()
 {
+#if defined(ASIO_HAS_STD_TUPLE) \
+  && defined(ASIO_HAS_VARIADIC_TEMPLATES)
   asio::io_context io1;
   asio::io_context io2;
   asio::system_timer timer1(io1);
@@ -31,7 +33,7 @@ void append_test()
 
   timer1.expires_after(asio::chrono::seconds(0));
   timer1.async_wait(
-      asio::experimental::append(
+      asio::append(
         asio::bind_executor(io2.get_executor(),
           [&count](asio::error_code, int a, int b)
           {
@@ -49,10 +51,12 @@ void append_test()
   io2.run();
 
   ASIO_CHECK(count == 1);
+#endif // defined(ASIO_HAS_STD_TUPLE)
+       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
 ASIO_TEST_SUITE
 (
-  "experimental/append",
+  "append",
   ASIO_TEST_CASE(append_test)
 )
