@@ -159,6 +159,7 @@ UNIT_TEST_EXES = \
 	tests\unit\coroutine.exe \
 	tests\unit\deadline_timer.exe \
 	tests\unit\defer.exe \
+	tests\unit\deferred.exe \
 	tests\unit\detached.exe \
 	tests\unit\dispatch.exe \
 	tests\unit\error.exe \

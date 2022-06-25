@@ -207,9 +207,8 @@ arguments, thus ensuring that eager initiation is as efficient as possible.
 
 On the other hand, a lazy completion token (such as `use_awaitable` above) may
 capture these arguments for deferred launching of the operation. For example, a
-specialisation for a trivial [link asio.reference.experimental__deferred
-deferred] token (that simply packages the operation for later) might look
-something like this:
+specialisation for a trivial [link asio.reference.deferred deferred] token
+(that simply packages the operation for later) might look something like this:
 
   template <completion_signature... Signatures>
   struct async_result<deferred_t, Signatures...>

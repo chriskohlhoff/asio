@@ -65,6 +65,7 @@
 #include "asio/coroutine.hpp"
 #include "asio/deadline_timer.hpp"
 #include "asio/defer.hpp"
+#include "asio/deferred.hpp"
 #include "asio/detached.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/error.hpp"

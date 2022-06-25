@@ -7,16 +7,13 @@
 
 [section:deferred Deferred Operations]
 
-[note This is an experimental feature.]
-
-The [link asio.reference.experimental__deferred `experimental::deferred`],
-completion token takes a call to an asynchronous operation's initiating
-function and turns it into a function object that accepts a completion token.
-For example:
+The [link asio.reference.deferred `deferred`], completion token takes a call to
+an asynchronous operation's initiating function and turns it into a function
+object that accepts a completion token. For example:
 
   auto deferred_op =
     timer.async_wait(
-      asio::experimental::deferred);
+      asio::deferred);
   ...
   std::move(deferred_op)(
       [](asio::error_code ec){ ... });
@@ -25,7 +22,7 @@ or:
 
   auto deferred_op =
     timer.async_wait(
-      asio::experimental::deferred);
+      asio::deferred);
   ...
   std::future<void> =
     std::move(deferred_op)(
@@ -35,22 +32,22 @@ The deferred token also supports chaining, to create simple compositions:
 
   auto deferred_op =
     timer.async_wait(
-      asio::experimental::deferred(
+      asio::deferred(
         [&](asio::error_code ec)
         {
           timer.expires_after(
               std::chrono::seconds(1));
 
           return timer.async_wait(
-              asio::experimental::deferred);
+              asio::deferred);
         });
   ...
   std::future<void> = std::move(deferred_op)(asio::use_future);
 
 [heading See Also]
 
-[link asio.reference.experimental__deferred experimental::deferred],
-[link asio.reference.experimental__deferred_t experimental::deferred_t],
+[link asio.reference.deferred deferred],
+[link asio.reference.deferred_t deferred_t],
 [link asio.examples.cpp14_examples.deferred Deferred examples (C++11)],
 [link asio.examples.cpp14_examples.deferred Deferred examples (C++14)].
 

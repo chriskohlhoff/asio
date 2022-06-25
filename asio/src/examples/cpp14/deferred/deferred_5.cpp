@@ -9,10 +9,9 @@
 //
 
 #include <asio.hpp>
-#include <asio/experimental/deferred.hpp>
 #include <iostream>
 
-using asio::experimental::deferred;
+using asio::deferred;
 
 template <typename CompletionToken>
 auto async_wait_twice(asio::steady_timer& timer, CompletionToken&& token)

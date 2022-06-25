@@ -383,11 +383,11 @@ and asynchronous operations.
 
 [heading Deferred]
 
-Examples showing how to use the [link asio.reference.experimental__deferred
-`experimental::deferred`] completion token.
+Examples showing how to use the [link asio.reference.deferred `deferred`]
+completion token.
 
-* [@../src/examples/cpp14/deferred/deferred_1.cpp]
-* [@../src/examples/cpp14/deferred/deferred_2.cpp]
+* [@../src/examples/cpp11/deferred/deferred_1.cpp]
+* [@../src/examples/cpp11/deferred/deferred_2.cpp]
 
 
 [heading Fork]
@@ -547,8 +547,8 @@ Examples showing how to use UNIX domain (local) sockets.
 
 [heading Deferred]
 
-Examples showing how to use the [link asio.reference.experimental__deferred
-`experimental::deferred`] completion token.
+Examples showing how to use the [link asio.reference.deferred `deferred`]
+completion token.
 
 * [@../src/examples/cpp14/deferred/deferred_1.cpp]
 * [@../src/examples/cpp14/deferred/deferred_2.cpp]

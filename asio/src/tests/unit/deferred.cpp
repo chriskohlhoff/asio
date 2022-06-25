@@ -1,6 +1,6 @@
 //
-// experimental/deferred.cpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// deferred.cpp
+// ~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -14,9 +14,9 @@
 #endif // !defined(BOOST_ALL_NO_LIB)
 
 // Test that header file is self-contained.
-#include "asio/experimental/deferred.hpp"
+#include "asio/deferred.hpp"
 
-#include "../unit_test.hpp"
+#include "unit_test.hpp"
 
 ASIO_TEST_SUITE
 (

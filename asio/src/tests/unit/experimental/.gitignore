@@ -13,5 +13,4 @@ basic_concurrent_channel
 channel
 channel_traits
 concurrent_channel
-deferred
 promise

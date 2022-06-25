@@ -52,6 +52,7 @@ nobase_include_HEADERS = \
 	asio/coroutine.hpp \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \
+	asio/deferred.hpp \
 	asio/detached.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
@@ -410,7 +411,6 @@ nobase_include_HEADERS = \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/channel_error.ipp \
 	asio/experimental/impl/coro.hpp \
-	asio/experimental/impl/deferred.hpp \
 	asio/experimental/impl/parallel_group.hpp \
 	asio/experimental/impl/promise.hpp \
 	asio/experimental/impl/use_coro.hpp \
@@ -443,6 +443,7 @@ nobase_include_HEADERS = \
 	asio/impl/connect_pipe.hpp \
 	asio/impl/connect_pipe.ipp \
 	asio/impl/defer.hpp \
+	asio/impl/deferred.hpp \
 	asio/impl/detached.hpp \
 	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \

@@ -566,6 +566,7 @@ sub copy_examples
       "src/examples/cpp11/allocation",
       "src/examples/cpp11/buffers",
       "src/examples/cpp11/chat",
+      "src/examples/cpp11/deferred",
       "src/examples/cpp11/echo",
       "src/examples/cpp11/executors",
       "src/examples/cpp11/fork",

@@ -44,10 +44,10 @@ four provided function objects [link asio.reference.experimental__wait_for_all
 `wait_for_one_error`], or with a custom function.
 
 The `parallel_group` facility can also be combined with [link
-asio.reference.experimental__deferred `experimental::deferred`] as follows:
+asio.reference.deferred `deferred`] as follows:
 
   experimental::make_parallel_group(
-      stream.async_read_some(asio::buffer(data), experimental::deferred),
+      stream.async_read_some(asio::buffer(data), deferred),
       timer.async_wait(experimental::deferred)
     ).async_wait(
       // ...

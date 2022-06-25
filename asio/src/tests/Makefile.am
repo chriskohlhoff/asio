@@ -56,6 +56,7 @@ check_PROGRAMS = \
 	unit/coroutine \
 	unit/deadline_timer \
 	unit/defer \
+	unit/deferred \
 	unit/detached \
 	unit/dispatch \
 	unit/error \
@@ -191,11 +192,6 @@ noinst_PROGRAMS = \
 	performance/server
 endif
 
-if HAVE_CXX11
-check_PROGRAMS += \
-	unit/experimental/deferred
-endif
-
 if HAVE_CXX17
 check_PROGRAMS += \
 	unit/experimental/basic_channel \
@@ -278,6 +274,7 @@ TESTS = \
 	unit/connect_pipe \
 	unit/deadline_timer \
 	unit/defer \
+	unit/deferred \
 	unit/detached \
 	unit/dispatch \
 	unit/error \
@@ -398,11 +395,6 @@ TESTS = \
 	unit/write \
 	unit/write_at
 
-if HAVE_CXX11
-TESTS += \
-	unit/experimental/deferred
-endif
-
 if HAVE_CXX17
 TESTS += \
 	unit/experimental/basic_channel \
@@ -500,6 +492,7 @@ unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
+unit_deferred_SOURCES = unit/deferred.cpp
 unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
 unit_error_SOURCES = unit/error.cpp
@@ -624,10 +617,6 @@ unit_windows_stream_handle_SOURCES = unit/windows/stream_handle.cpp
 unit_writable_pipe_SOURCES = unit/writable_pipe.cpp
 unit_write_SOURCES = unit/write.cpp
 unit_write_at_SOURCES = unit/write_at.cpp
-
-if HAVE_CXX11
-unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
-endif
 
 if HAVE_CXX17
 unit_experimental_basic_channel_SOURCES = unit/experimental/basic_channel.cpp

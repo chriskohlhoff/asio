@@ -9,10 +9,9 @@
 //
 
 #include <asio.hpp>
-#include <asio/experimental/deferred.hpp>
 #include <iostream>
 
-using asio::experimental::deferred;
+using asio::deferred;
 
 int main()
 {

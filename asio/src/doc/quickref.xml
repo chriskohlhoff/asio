@@ -269,7 +269,7 @@
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.cancellation_filter">cancellation_filter</link></member>
             <member><link linkend="asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
-            <member><link linkend="asio.reference.experimental__deferred_t">experimental::deferred_t</link></member>
+            <member><link linkend="asio.reference.deferred_t">deferred_t</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
@@ -298,7 +298,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.detached">detached</link></member>
             <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
-            <member><link linkend="asio.reference.experimental__deferred">experimental::deferred</link></member>
+            <member><link linkend="asio.reference.deferred">deferred</link></member>
             <member><link linkend="asio.reference.experimental__use_coro">experimental::use_coro</link></member>
             <member><link linkend="asio.reference.experimental__use_promise">experimental::use_promise</link></member>
             <member><link linkend="asio.reference.this_coro__cancellation_state">this_coro::cancellation_state</link></member>

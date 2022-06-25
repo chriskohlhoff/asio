@@ -51,6 +51,7 @@ connect_pipe
 coroutine
 deadline_timer
 defer
+deferred
 detached
 dispatch
 error
