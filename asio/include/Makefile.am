@@ -412,7 +412,6 @@ nobase_include_HEADERS = \
 	asio/experimental/impl/coro.hpp \
 	asio/experimental/impl/deferred.hpp \
 	asio/experimental/impl/parallel_group.hpp \
-	asio/experimental/impl/prepend.hpp \
 	asio/experimental/impl/promise.hpp \
 	asio/experimental/impl/use_coro.hpp \
 	asio/experimental/parallel_group.hpp \
@@ -457,6 +456,7 @@ nobase_include_HEADERS = \
 	asio/impl/io_context.ipp \
 	asio/impl/multiple_exceptions.ipp \
 	asio/impl/post.hpp \
+	asio/impl/prepend.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
 	asio/impl/read_until.hpp \
@@ -538,6 +538,7 @@ nobase_include_HEADERS = \
 	asio/posix/stream_descriptor.hpp \
 	asio/post.hpp \
 	asio/prefer.hpp \
+	asio/prepend.hpp \
 	asio/query.hpp \
 	asio/random_access_file.hpp \
 	asio/read_at.hpp \

@@ -14,5 +14,4 @@ channel
 channel_traits
 concurrent_channel
 deferred
-prepend
 promise

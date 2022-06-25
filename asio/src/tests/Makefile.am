@@ -131,6 +131,7 @@ check_PROGRAMS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+	unit/prepend \
 	unit/random_access_file \
 	unit/read \
 	unit/read_at \
@@ -192,8 +193,7 @@ endif
 
 if HAVE_CXX11
 check_PROGRAMS += \
-	unit/experimental/deferred \
-	unit/experimental/prepend
+	unit/experimental/deferred
 endif
 
 if HAVE_CXX17
@@ -348,6 +348,7 @@ TESTS = \
 	unit/posix/descriptor_base \
 	unit/posix/stream_descriptor \
 	unit/post \
+	unit/prepend \
 	unit/random_access_file \
 	unit/read \
 	unit/read_at \
@@ -399,8 +400,7 @@ TESTS = \
 
 if HAVE_CXX11
 TESTS += \
-	unit/experimental/deferred \
-	unit/experimental/prepend
+	unit/experimental/deferred
 endif
 
 if HAVE_CXX17
@@ -575,6 +575,7 @@ unit_posix_descriptor_SOURCES = unit/posix/descriptor.cpp
 unit_posix_descriptor_base_SOURCES = unit/posix/descriptor_base.cpp
 unit_posix_stream_descriptor_SOURCES = unit/posix/stream_descriptor.cpp
 unit_post_SOURCES = unit/post.cpp
+unit_prepend_SOURCES = unit/prepend.cpp
 unit_random_access_file_SOURCES = unit/random_access_file.cpp
 unit_read_SOURCES = unit/read.cpp
 unit_read_at_SOURCES = unit/read_at.cpp
@@ -626,7 +627,6 @@ unit_write_at_SOURCES = unit/write_at.cpp
 
 if HAVE_CXX11
 unit_experimental_deferred_SOURCES = unit/experimental/deferred.cpp
-unit_experimental_prepend_SOURCES = unit/experimental/prepend.cpp
 endif
 
 if HAVE_CXX17

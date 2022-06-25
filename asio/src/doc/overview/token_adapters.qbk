@@ -174,16 +174,14 @@ For example:
 
 [heading prepend]
 
-[note This is an experimental feature.]
-
-The [link asio.reference.experimental__prepend `experimental::prepend`]
-completion token adapter can be used to pass additional completion handler
-arguments before the existing completion handler arguments.
+The [link asio.reference.prepend `prepend`] completion token adapter can be
+used to pass additional completion handler arguments before the existing
+completion handler arguments.
 
 For example:
 
   timer.async_wait(
-      asio::experimental::prepend(
+      asio::prepend(
         [](int i, std::error_code ec)
         {
           // ...
@@ -192,7 +190,7 @@ For example:
     );
 
   std::future<std::tuple<int, std::error_code>> f = timer.async_wait(
-      asio::experimental::prepend(
+      asio::prepend(
         asio::use_future,
         42
       )
@@ -207,6 +205,6 @@ For example:
 [link asio.reference.as_tuple as_tuple],
 [link asio.reference.experimental__as_single experimental::as_single],
 [link asio.reference.append append],
-[link asio.reference.experimental__prepend experimental::prepend].
+[link asio.reference.prepend prepend].
 
 [endsect]

@@ -229,6 +229,7 @@ UNIT_TEST_EXES = \
 	tests\unit\packaged_task.exe \
 	tests\unit\placeholders.exe \
 	tests\unit\post.exe \
+	tests\unit\prepend.exe \
 	tests\unit\random_access_file.exe \
 	tests\unit\read.exe \
 	tests\unit\read_at.exe \

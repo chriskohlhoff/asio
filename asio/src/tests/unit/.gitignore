@@ -68,6 +68,7 @@ is_write_buffered
 packaged_task
 placeholders
 post
+prepend
 random_access_file
 read
 read_at

@@ -230,7 +230,6 @@
             <member><link linkend="asio.reference.as_tuple">as_tuple</link></member>
             <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
             <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
-            <member><link linkend="asio.reference.experimental__prepend">experimental::prepend</link></member>
             <member><link linkend="asio.reference.asio_handler_allocate">asio_handler_allocate</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_invoke">asio_handler_invoke</link> (deprecated)</member>
@@ -250,6 +249,7 @@
             <member><link linkend="asio.reference.make_strand">make_strand</link></member>
             <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="asio.reference.post">post</link></member>
+            <member><link linkend="asio.reference.prepend">prepend</link></member>
             <member><link linkend="asio.reference.redirect_error">redirect_error</link></member>
             <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
@@ -278,7 +278,6 @@
             <member><link linkend="asio.reference.experimental__channel_traits">experimental::channel_traits</link></member>
             <member><link linkend="asio.reference.experimental__coro">experimental::coro</link></member>
             <member><link linkend="asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
-            <member><link linkend="asio.reference.experimental__prepend_t">experimental::prepend_t</link></member>
             <member><link linkend="asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_">experimental::promise</link></member>
             <member><link linkend="asio.reference.experimental__use_coro_t">experimental::use_coro_t</link></member>
             <member><link linkend="asio.reference.experimental__use_promise_t">experimental::use_promise_t</link></member>
@@ -287,6 +286,7 @@
             <member><link linkend="asio.reference.experimental__wait_for_one_error">experimental::wait_for_one_error</link></member>
             <member><link linkend="asio.reference.experimental__wait_for_one_success">experimental::wait_for_one_success</link></member>
             <member><link linkend="asio.reference.io_context__basic_executor_type">io_context::basic_executor_type</link></member>
+            <member><link linkend="asio.reference.prepend_t">prepend_t</link></member>
             <member><link linkend="asio.reference.recycling_allocator">recycling_allocator</link></member>
             <member><link linkend="asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>

@@ -156,6 +156,7 @@
 #include "asio/posix/stream_descriptor.hpp"
 #include "asio/post.hpp"
 #include "asio/prefer.hpp"
+#include "asio/prepend.hpp"
 #include "asio/query.hpp"
 #include "asio/random_access_file.hpp"
 #include "asio/read.hpp"
