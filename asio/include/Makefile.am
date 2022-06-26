@@ -520,6 +520,7 @@ nobase_include_HEADERS = \
 	asio/ip/unicast.hpp \
 	asio/ip/v6_only.hpp \
 	asio/is_applicable_property.hpp \
+	asio/is_contiguous_iterator.hpp \
 	asio/is_executor.hpp \
 	asio/is_read_buffered.hpp \
 	asio/is_write_buffered.hpp \

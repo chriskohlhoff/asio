@@ -37,6 +37,42 @@ namespace buffer_compile {
 
 using namespace asio;
 
+template <typename T>
+class mutable_contiguous_container
+{
+public:
+  typedef T value_type;
+  typedef T* iterator;
+  typedef const T* const_iterator;
+  typedef T& reference;
+  typedef const T& const_reference;
+
+  mutable_contiguous_container() {}
+  std::size_t size() const { return 0; }
+  iterator begin() { return 0; }
+  const_iterator begin() const { return 0; }
+  iterator end() { return 0; }
+  const_iterator end() const { return 0; }
+};
+
+template <typename T>
+class const_contiguous_container
+{
+public:
+  typedef const T value_type;
+  typedef const T* iterator;
+  typedef const T* const_iterator;
+  typedef const T& reference;
+  typedef const T& const_reference;
+
+  const_contiguous_container() {}
+  std::size_t size() const { return 0; }
+  iterator begin() { return 0; }
+  const_iterator begin() const { return 0; }
+  iterator end() { return 0; }
+  const_iterator end() const { return 0; }
+};
+
 void test()
 {
   try
@@ -66,6 +102,10 @@ void test()
 #elif defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
     std::experimental::string_view string_view_data(string_data);
 #endif // defined(ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW)
+    mutable_contiguous_container<char> mutable_contiguous_data;
+    const mutable_contiguous_container<char> const_mutable_contiguous_data;
+    const_contiguous_container<char> const_contiguous_data;
+    const const_contiguous_container<char> const_const_contiguous_data;
 
     // mutable_buffer constructors.
 
@@ -209,6 +249,14 @@ void test()
     cb1 = buffer(string_view_data);
     cb1 = buffer(string_view_data, 1024);
 #endif // defined(ASIO_HAS_STRING_VIEW)
+    mb1 = buffer(mutable_contiguous_data);
+    mb1 = buffer(mutable_contiguous_data, 1024);
+    cb1 = buffer(const_mutable_contiguous_data);
+    cb1 = buffer(const_mutable_contiguous_data, 1024);
+    cb1 = buffer(const_contiguous_data);
+    cb1 = buffer(const_contiguous_data, 1024);
+    cb1 = buffer(const_const_contiguous_data);
+    cb1 = buffer(const_const_contiguous_data, 1024);
 
     // buffer_copy function overloads.
 

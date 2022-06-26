@@ -140,6 +140,7 @@
 #include "asio/ip/unicast.hpp"
 #include "asio/ip/v6_only.hpp"
 #include "asio/is_applicable_property.hpp"
+#include "asio/is_contiguous_iterator.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/is_read_buffered.hpp"
 #include "asio/is_write_buffered.hpp"

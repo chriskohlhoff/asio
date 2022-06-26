@@ -465,6 +465,17 @@
 # endif // !defined(ASIO_DISABLE_CONCEPTS)
 #endif // !defined(ASIO_HAS_CONCEPTS)
 
+// Support concepts on compilers known to allow them.
+#if !defined(ASIO_HAS_STD_CONCEPTS)
+# if !defined(ASIO_DISABLE_STD_CONCEPTS)
+#  if defined(ASIO_HAS_CONCEPTS)
+#   if (__cpp_lib_concepts >= 202002L)
+#    define ASIO_HAS_STD_CONCEPTS 1
+#   endif // (__cpp_concepts >= 202002L)
+#  endif // defined(ASIO_HAS_CONCEPTS)
+# endif // !defined(ASIO_DISABLE_STD_CONCEPTS)
+#endif // !defined(ASIO_HAS_STD_CONCEPTS)
+
 // Support template variables on compilers known to allow it.
 #if !defined(ASIO_HAS_VARIABLE_TEMPLATES)
 # if !defined(ASIO_DISABLE_VARIABLE_TEMPLATES)
@@ -2070,5 +2081,27 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_HASH)
 #endif // !defined(ASIO_HAS_STD_HASH)
+
+// Standard library support for std::to_address.
+#if !defined(ASIO_HAS_STD_TO_ADDRESS)
+# if !defined(ASIO_DISABLE_STD_TO_ADDRESS)
+#  if defined(__clang__)
+#   if (__cplusplus >= 202002)
+#    define ASIO_HAS_STD_TO_ADDRESS 1
+#   endif // (__cplusplus >= 202002)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 8)
+#    if (__cplusplus >= 202002)
+#     define ASIO_HAS_STD_TO_ADDRESS 1
+#    endif // (__cplusplus >= 202002)
+#   endif // (__GNUC__ >= 8)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1922) && (_MSVC_LANG >= 202002)
+#    define ASIO_HAS_STD_TO_ADDRESS 1
+#   endif // (_MSC_VER >= 1922) && (_MSVC_LANG >= 202002)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_TO_ADDRESS)
+#endif // !defined(ASIO_HAS_STD_TO_ADDRESS)
 
 #endif // ASIO_DETAIL_CONFIG_HPP
