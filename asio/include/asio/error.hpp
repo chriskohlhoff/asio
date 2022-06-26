@@ -223,6 +223,11 @@ enum misc_errors
   fd_set_failure
 };
 
+inline void clear(asio::error_code& ec)
+{
+  ec.assign(0, ec.category());
+}
+
 inline const asio::error_category& get_system_category()
 {
   return asio::system_category();

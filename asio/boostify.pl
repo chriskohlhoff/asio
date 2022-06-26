@@ -288,6 +288,11 @@ sub copy_source_file
       $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /ec\.assign\(0, ec\.category\(\)\)/)
+    {
+      $line =~ s/ec\.assign\(0, ec\.category\(\)\)/ec = boost::system::error_code()/g;
+      print_line($output, $line, $from, $lineno);
+    }
     elsif ($line =~ /^} \/\/ namespace std/ && !$is_coroutine_related && !$is_hash_related)
     {
       print_line($output, "} // namespace system", $from, $lineno);
