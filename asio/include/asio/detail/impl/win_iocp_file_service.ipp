@@ -56,6 +56,7 @@ asio::error_code win_iocp_file_service::open(
   if (is_open(impl))
   {
     ec = asio::error::already_open;
+    ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 
@@ -103,6 +104,7 @@ asio::error_code win_iocp_file_service::open(
         DWORD last_error = ::GetLastError();
         ::CloseHandle(handle);
         ec.assign(last_error, asio::error::get_system_category());
+        ASIO_ERROR_LOCATION(ec);
         return ec;
       }
     }
@@ -111,12 +113,14 @@ asio::error_code win_iocp_file_service::open(
     if (ec)
       ::CloseHandle(handle);
     impl.offset_ = 0;
+    ASIO_ERROR_LOCATION(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, asio::error::get_system_category());
+    ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -135,6 +139,7 @@ uint64_t win_iocp_file_service::size(
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, asio::error::get_system_category());
+    ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 }
@@ -161,12 +166,14 @@ asio::error_code win_iocp_file_service::resize(
       asio::error::clear(ec);
     else
       ec.assign(last_error, asio::error::get_system_category());
+    ASIO_ERROR_LOCATION(ec);
     return ec;
   }
   else
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, asio::error::get_system_category());
+    ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -185,6 +192,7 @@ asio::error_code win_iocp_file_service::sync_all(
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, asio::error::get_system_category());
+    ASIO_ERROR_LOCATION(ec);
     return ec;
   }
 }
@@ -224,6 +232,7 @@ uint64_t win_iocp_file_service::seek(
     break;
   default:
     ec = asio::error::invalid_argument;
+    ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 
@@ -239,6 +248,7 @@ uint64_t win_iocp_file_service::seek(
   {
     DWORD last_error = ::GetLastError();
     ec.assign(last_error, asio::error::get_system_category());
+    ASIO_ERROR_LOCATION(ec);
     return 0;
   }
 }
