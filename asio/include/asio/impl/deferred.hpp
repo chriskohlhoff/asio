@@ -21,22 +21,6 @@ namespace asio {
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename R, typename... Args>
-class async_result<detail::deferred_signature_probe, R(Args...)>
-{
-public:
-  typedef detail::deferred_signature_probe_result<void(Args...)> return_type;
-
-  template <typename Initiation, typename... InitArgs>
-  static return_type initiate(
-      ASIO_MOVE_ARG(Initiation),
-      detail::deferred_signature_probe,
-      ASIO_MOVE_ARG(InitArgs)...)
-  {
-    return return_type{};
-  }
-};
-
 template <typename Signature>
 class async_result<deferred_t, Signature>
 {

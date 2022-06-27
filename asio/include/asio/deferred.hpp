@@ -40,23 +40,6 @@ struct is_deferred : false_type
 
 namespace detail {
 
-// Helper trait for getting the completion signature from an async operation.
-
-struct deferred_signature_probe {};
-
-template <typename T>
-struct deferred_signature_probe_result
-{
-  typedef T type;
-};
-
-template <typename T>
-struct deferred_signature
-{
-  typedef typename decltype(
-      declval<T>()(declval<deferred_signature_probe>()))::type type;
-};
-
 // Helper trait for getting the completion signature of the tail in a sequence
 // when invoked with the specified arguments.
 
@@ -70,9 +53,8 @@ struct deferred_sequence_signature<R(Args...), Tail>
       !is_same<decltype(declval<Tail>()(declval<Args>()...)), void>::value,
       "deferred functions must produce a deferred return type");
 
-  typedef typename decltype(
-      declval<Tail>()(declval<Args>()...)(
-        declval<deferred_signature_probe>()))::type type;
+  typedef typename completion_signature_of<
+    decltype(declval<Tail>()(declval<Args>()...))>::type type;
 };
 
 // Completion handler for the head component of a deferred sequence.
@@ -365,7 +347,7 @@ class ASIO_NODISCARD deferred_sequence
 {
 private:
   typedef typename detail::deferred_sequence_signature<
-    typename detail::deferred_signature<Head>::type, Tail>::type
+    typename completion_signature_of<Head>::type, Tail>::type
       signature;
 
   struct initiate
