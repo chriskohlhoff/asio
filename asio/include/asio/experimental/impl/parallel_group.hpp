@@ -135,7 +135,7 @@ struct parallel_group_completion_handler
   std::tuple<
       parallel_group_op_result<
         typename parallel_op_signature_as_tuple<
-          typename parallel_op_signature<Ops>::type
+          typename completion_signature_of<Ops>::type
         >::type
       >...
     > args_{};
@@ -394,23 +394,6 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
 
 } // namespace detail
 } // namespace experimental
-
-template <typename R, typename... Args>
-class async_result<
-    experimental::detail::parallel_op_signature_probe,
-    R(Args...)>
-{
-public:
-  typedef experimental::detail::parallel_op_signature_probe_result<
-    void(Args...)> return_type;
-
-  template <typename Initiation, typename... InitArgs>
-  static return_type initiate(Initiation&&,
-      experimental::detail::parallel_op_signature_probe, InitArgs&&...)
-  {
-    return return_type{};
-  }
-};
 
 template <template <typename, typename> class Associator,
     typename Handler, typename... Ops, typename DefaultCandidate>

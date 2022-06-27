@@ -26,23 +26,6 @@ namespace asio {
 namespace experimental {
 namespace detail {
 
-// Helper trait for getting the completion signature from an async operation.
-
-struct parallel_op_signature_probe {};
-
-template <typename T>
-struct parallel_op_signature_probe_result
-{
-  typedef T type;
-};
-
-template <typename Op>
-struct parallel_op_signature
-{
-  typedef typename decltype(declval<Op>()(
-    declval<parallel_op_signature_probe>()))::type type;
-};
-
 // Helper trait for getting a tuple from a completion signature.
 
 template <typename Signature>
@@ -127,7 +110,7 @@ public:
 
   /// The completion signature for the group of operations.
   typedef typename detail::parallel_group_signature<sizeof...(Ops),
-      typename detail::parallel_op_signature<Ops>::type...>::type signature;
+      typename completion_signature_of<Ops>::type...>::type signature;
 
   /// Initiate an asynchronous wait for the group of operations.
   /**
