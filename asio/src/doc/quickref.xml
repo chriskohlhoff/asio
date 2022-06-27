@@ -331,6 +331,7 @@
             <member><link linkend="asio.reference.associated_executor">associated_executor</link></member>
             <member><link linkend="asio.reference.associator">associator</link></member>
             <member><link linkend="asio.reference.async_result">async_result</link></member>
+            <member><link linkend="asio.reference.completion_signature_of">completion_signature_of</link></member>
             <member><link linkend="asio.reference.default_completion_token">default_completion_token</link></member>
             <member><link linkend="asio.reference.is_async_operation">is_async_operation</link></member>
             <member><link linkend="asio.reference.is_executor">is_executor</link></member>
