@@ -1610,6 +1610,9 @@
 <xsl:text>
       </xsl:text><xsl:value-of select="type"/><xsl:text> </xsl:text>
       <xsl:choose>
+        <xsl:when test="declname = 'A'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
         <xsl:when test="declname = 'Allocator'">
           <xsl:value-of select="declname"/>
         </xsl:when>
@@ -1710,6 +1713,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Head'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'I'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'IoObjectService1'">
@@ -1852,6 +1858,9 @@
         </xsl:when>
         <xsl:when test="declname = 'SocketService1' or declname = 'SocketService2'">
           <xsl:value-of select="concat('``[link asio.reference.SocketService ', declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="declname = 'StackAllocator'">
+          <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Stream'">
           <xsl:value-of select="declname"/>

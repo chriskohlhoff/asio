@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <asio/detached.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/spawn.hpp>
@@ -49,7 +50,7 @@ public:
             socket_.close();
             timer_.cancel();
           }
-        });
+        }, asio::detached);
 
     asio::spawn(strand_,
         [this, self](asio::yield_context yield)
@@ -61,7 +62,7 @@ public:
             if (timer_.expires_from_now() <= std::chrono::seconds(0))
               socket_.close();
           }
-        });
+        }, asio::detached);
   }
 
 private:
@@ -98,7 +99,7 @@ int main(int argc, char* argv[])
               std::make_shared<session>(io_context, std::move(socket))->go();
             }
           }
-        });
+        }, asio::detached);
 
     io_context.run();
   }
