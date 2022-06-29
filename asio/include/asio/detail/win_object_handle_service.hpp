@@ -97,6 +97,14 @@ public:
   ASIO_DECL void move_construct(implementation_type& impl,
       implementation_type& other_impl);
 
+  // Dummy alias to move-construct - same as move_construct because the protocol is the same
+  void converting_move_construct(implementation_type& impl,
+                                 win_object_handle_service &,
+                                implementation_type& other_impl)
+  {
+    move_construct(impl, other_impl);
+  }
+
   // Move-assign from another handle implementation.
   ASIO_DECL void move_assign(implementation_type& impl,
       win_object_handle_service& other_service,

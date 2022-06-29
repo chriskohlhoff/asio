@@ -90,6 +90,15 @@ public:
   ASIO_DECL void move_construct(implementation_type& impl,
       implementation_type& other_impl) ASIO_NOEXCEPT;
 
+  // Move-construct a new descriptor implementation from another exec.
+  ASIO_DECL void converting_move_construct(implementation_type& impl,
+                                reactive_descriptor_service &,
+                                implementation_type& other_impl) ASIO_NOEXCEPT
+  {
+    move_construct(impl, other_impl);
+  }
+
+
   // Move-assign from another descriptor implementation.
   ASIO_DECL void move_assign(implementation_type& impl,
       reactive_descriptor_service& other_service,
