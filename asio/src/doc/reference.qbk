@@ -1794,6 +1794,465 @@ Destructor.
 [endsect]
 
 
+[section:append append]
+
+[indexterm1 asio.indexterm.append..append]
+
+Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  constexpr append_t< typename decay< CompletionToken >::type, typename decay< Values >::type...> append(
+      CompletionToken && completion_token,
+      Values &&... values);
+
+
+[heading Requirements]
+
+['Header: ][^asio/append.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:append_t append_t]
+
+[indexterm1 asio.indexterm.append_t..append_t]
+
+
+Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  class append_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.append_t.append_t [*append_t]] [constructor]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.append_t.token_ [*token_]]]
+    []
+  ]
+
+  [
+    [[link asio.reference.append_t.values_ [*values_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/append.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:append_t append_t::append_t]
+
+[indexterm2 asio.indexterm.append_t.append_t..append_t..append_t] 
+Constructor. 
+
+
+  template<
+      typename T,
+      typename... V>
+  constexpr append_t(
+      T && completion_token,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[section:token_ append_t::token_]
+
+[indexterm2 asio.indexterm.append_t.token_..token_..append_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[section:values_ append_t::values_]
+
+[indexterm2 asio.indexterm.append_t.values_..values_..append_t] 
+
+  std::tuple< Values...> values_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:as_tuple as_tuple]
+
+[indexterm1 asio.indexterm.as_tuple..as_tuple]
+
+Adapt a [link asio.overview.model.completion_tokens completion token] to specify that the completion handler arguments should be combined into a single tuple argument. 
+
+
+  template<
+      typename CompletionToken>
+  constexpr as_tuple_t< typename decay< CompletionToken >::type > as_tuple(
+      CompletionToken && completion_token);
+
+
+[heading Requirements]
+
+['Header: ][^asio/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:as_tuple_t as_tuple_t]
+
+[indexterm1 asio.indexterm.as_tuple_t..as_tuple_t]
+
+
+A [link asio.overview.model.completion_tokens completion token] adapter used to specify that the completion handler arguments should be combined into a single tuple argument. 
+
+
+  template<
+      typename CompletionToken>
+  class as_tuple_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.as_tuple_t__default_constructor_tag [*default_constructor_tag]]]
+    [Tag type used to prevent the "default" constructor from being used for conversions. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.as_tuple_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the as_tuple_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.as_tuple_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use as_tuple_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.as_tuple_t.as_tuple_t [*as_tuple_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.as_tuple_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.as_tuple_t `as_tuple_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single tuple argument. The arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
+
+[heading Requirements]
+
+['Header: ][^asio/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:as_default_on as_tuple_t::as_default_on]
+
+[indexterm2 asio.indexterm.as_tuple_t.as_default_on..as_default_on..as_tuple_t] 
+Function helper to adapt an I/O object to use `as_tuple_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+[section:as_tuple_t as_tuple_t::as_tuple_t]
+
+[indexterm2 asio.indexterm.as_tuple_t.as_tuple_t..as_tuple_t..as_tuple_t] 
+Default constructor. 
+
+
+  constexpr ``[link asio.reference.as_tuple_t.as_tuple_t.overload1 as_tuple_t]``(
+      default_constructor_tag  = default_constructor_tag(),
+      CompletionToken token = CompletionToken());
+  ``  [''''&raquo;''' [link asio.reference.as_tuple_t.as_tuple_t.overload1 more...]]``
+
+
+Constructor. 
+
+
+  template<
+      typename T>
+  explicit constexpr ``[link asio.reference.as_tuple_t.as_tuple_t.overload2 as_tuple_t]``(
+      T && completion_token);
+  ``  [''''&raquo;''' [link asio.reference.as_tuple_t.as_tuple_t.overload2 more...]]``
+
+
+[section:overload1 as_tuple_t::as_tuple_t (1 of 2 overloads)]
+
+
+Default constructor. 
+
+
+  constexpr as_tuple_t(
+      default_constructor_tag  = default_constructor_tag(),
+      CompletionToken token = CompletionToken());
+
+
+This constructor is only valid if the underlying completion token is default constructible and move constructible. The underlying completion token is itself defaulted as an argument to allow it to capture a source location. 
+
+
+[endsect]
+
+
+
+[section:overload2 as_tuple_t::as_tuple_t (2 of 2 overloads)]
+
+
+Constructor. 
+
+
+  template<
+      typename T>
+  constexpr as_tuple_t(
+      T && completion_token);
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:token_ as_tuple_t::token_]
+
+[indexterm2 asio.indexterm.as_tuple_t.token_..token_..as_tuple_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:as_tuple_t__default_constructor_tag as_tuple_t::default_constructor_tag]
+
+[indexterm1 asio.indexterm.as_tuple_t__default_constructor_tag..as_tuple_t::default_constructor_tag]
+
+
+Tag type used to prevent the "default" constructor from being used for conversions. 
+
+
+  struct default_constructor_tag
+
+
+[heading Requirements]
+
+['Header: ][^asio/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+[section:as_tuple_t__executor_with_default as_tuple_t::executor_with_default]
+
+[indexterm1 asio.indexterm.as_tuple_t__executor_with_default..as_tuple_t::executor_with_default]
+
+
+Adapts an executor to add the `as_tuple_t` completion token as the default. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.as_tuple_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify as_tuple_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.as_tuple_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:default_completion_token_type as_tuple_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 asio.indexterm.as_tuple_t__executor_with_default.default_completion_token_type..default_completion_token_type..as_tuple_t::executor_with_default] 
+Specify `as_tuple_t` as the default completion token type. 
+
+
+  typedef as_tuple_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.as_tuple_t__default_constructor_tag [*default_constructor_tag]]]
+    [Tag type used to prevent the "default" constructor from being used for conversions. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.as_tuple_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the as_tuple_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.as_tuple_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use as_tuple_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.as_tuple_t.as_tuple_t [*as_tuple_t]] [constructor]]
+    [Default constructor. 
+     [hr]
+     Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.as_tuple_t.token_ [*token_]]]
+    []
+  ]
+
+]
+
+The [link asio.reference.as_tuple_t `as_tuple_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single tuple argument. The arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/as_tuple.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:executor_with_default as_tuple_t::executor_with_default::executor_with_default]
+
+[indexterm2 asio.indexterm.as_tuple_t__executor_with_default.executor_with_default..executor_with_default..as_tuple_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
+  executor_with_default(
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
 [section:asio_handler_allocate asio_handler_allocate]
 
 [indexterm1 asio.indexterm.asio_handler_allocate..asio_handler_allocate]
@@ -7029,6 +7488,112 @@ The return type of the initiating function.
 [heading Requirements]
 
 ['Header: ][^asio/async_result.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_ async_result< basic_yield_context< Executor >, Signature >]
+
+[indexterm1 asio.indexterm.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_..async_result< basic_yield_context< Executor >, Signature >]
+
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename Signature>
+  class async_result< basic_yield_context< Executor >, Signature >
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_.handler_type [*handler_type]]]
+    []
+  
+  ]
+
+  [
+
+    [[link asio.reference.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_.return_type [*return_type]]]
+    []
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_.initiate [*initiate]] [static]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/impl/spawn.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:handler_type async_result< basic_yield_context< Executor >, Signature >::handler_type]
+
+[indexterm2 asio.indexterm.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_.handler_type..handler_type..async_result< basic_yield_context< Executor >, Signature >] 
+
+  typedef detail::spawn_handler< Executor, Signature > handler_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/impl/spawn.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:initiate async_result< basic_yield_context< Executor >, Signature >::initiate]
+
+[indexterm2 asio.indexterm.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_.initiate..initiate..async_result< basic_yield_context< Executor >, Signature >] 
+
+  template<
+      typename Initiation>
+  static return_type initiate(
+      Initiation init,
+      const basic_yield_context< Executor > & yield);
+
+
+
+[endsect]
+
+
+
+[section:return_type async_result< basic_yield_context< Executor >, Signature >::return_type]
+
+[indexterm2 asio.indexterm.async_result_lt__basic_yield_context_lt__Executor__gt__comma__Signature__gt_.return_type..return_type..async_result< basic_yield_context< Executor >, Signature >] 
+
+  typedef handler_type::return_type return_type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/impl/spawn.hpp]
 
 ['Convenience header: ][^asio.hpp]
 
@@ -67472,7 +68037,7 @@ A [link asio.overview.model.completion_tokens completion token] that represents 
 
 
   template<
-      typename ``[link asio.reference.Handler Handler]``>
+      typename ``[link asio.reference.Executor1 Executor]``>
   class basic_yield_context
 
 
@@ -67482,15 +68047,15 @@ A [link asio.overview.model.completion_tokens completion token] that represents 
 
   [
 
-    [[link asio.reference.basic_yield_context.callee_type [*callee_type]]]
-    [The coroutine callee type, used by the implementation. ]
+    [[link asio.reference.basic_yield_context.cancellation_slot_type [*cancellation_slot_type]]]
+    [The cancellation slot type associated with the yield context. ]
   
   ]
 
   [
 
-    [[link asio.reference.basic_yield_context.caller_type [*caller_type]]]
-    [The coroutine caller type, used by the implementation. ]
+    [[link asio.reference.basic_yield_context.executor_type [*executor_type]]]
+    [The executor type associated with the yield context. ]
   
   ]
 
@@ -67502,14 +68067,44 @@ A [link asio.overview.model.completion_tokens completion token] that represents 
 
   [
     [[link asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]] [constructor]]
-    [Construct a yield context to represent the specified coroutine. 
-     [hr]
-     Construct a yield context from another yield context type. ]
+    [Construct a yield context from another yield context type. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.cancelled [*cancelled]]]
+    [Determine whether the current coroutine has been cancelled. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.get_cancellation_slot [*get_cancellation_slot]]]
+    [Get the cancellation slot associated with the coroutine. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.get_cancellation_state [*get_cancellation_state]]]
+    [Get the cancellation state associated with the coroutine. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.get_executor [*get_executor]]]
+    [Get the executor associated with the yield context. ]
   ]
   
   [
     [[link asio.reference.basic_yield_context.operator_lb__rb_ [*operator\[\]]]]
     [Return a yield context that sets the specified error_code. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.reset_cancellation_state [*reset_cancellation_state]]]
+    [Reset the cancellation state associated with the coroutine. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.throw_if_cancelled [*throw_if_cancelled]]]
+    [Determine whether the coroutine throws if trying to suspend when it has been cancelled. 
+     [hr]
+     Set whether the coroutine throws if trying to suspend when it has been cancelled. ]
   ]
   
 ]
@@ -67518,8 +68113,8 @@ The [link asio.reference.basic_yield_context `basic_yield_context`] class is a c
 
 
 
-   template <typename Handler>
-   void my_coroutine(basic_yield_context<Handler> yield)
+   template <typename Executor>
+   void my_coroutine(basic_yield_context<Executor> yield)
    {
      ...
      std::size_t n = my_socket.async_read_some(buffer, yield);
@@ -67537,88 +68132,121 @@ The initiating function (async\_read\_some in the above example) suspends the cu
 
 ['Convenience header: ]None
 
+
 [section:basic_yield_context basic_yield_context::basic_yield_context]
 
 [indexterm2 asio.indexterm.basic_yield_context.basic_yield_context..basic_yield_context..basic_yield_context] 
-Construct a yield context to represent the specified coroutine. 
-
-
-  ``[link asio.reference.basic_yield_context.basic_yield_context.overload1 basic_yield_context]``(
-      const detail::weak_ptr< callee_type > & coro,
-      caller_type & ca,
-      Handler & handler);
-  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.basic_yield_context.overload1 more...]]``
-
-
 Construct a yield context from another yield context type. 
 
 
   template<
-      typename OtherHandler>
-  ``[link asio.reference.basic_yield_context.basic_yield_context.overload2 basic_yield_context]``(
-      const basic_yield_context< OtherHandler > & other);
-  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.basic_yield_context.overload2 more...]]``
-
-
-[section:overload1 basic_yield_context::basic_yield_context (1 of 2 overloads)]
-
-
-Construct a yield context to represent the specified coroutine. 
-
-
+      typename ``[link asio.reference.Executor1 OtherExecutor]``>
   basic_yield_context(
-      const detail::weak_ptr< callee_type > & coro,
-      caller_type & ca,
-      Handler & handler);
+      const basic_yield_context< OtherExecutor > & other,
+      typename constraint< is_convertible< OtherExecutor, Executor >::value >::type  = 0);
 
 
-Most applications do not need to use this constructor. Instead, the `spawn()` function passes a yield context as an argument to the coroutine function. 
+Requires that OtherExecutor be convertible to Executor. 
+
+
+[endsect]
+
+
+
+[section:cancellation_slot_type basic_yield_context::cancellation_slot_type]
+
+[indexterm2 asio.indexterm.basic_yield_context.cancellation_slot_type..cancellation_slot_type..basic_yield_context] 
+The cancellation slot type associated with the yield context. 
+
+
+  typedef cancellation_slot cancellation_slot_type;
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_slot.assign [*assign]]]
+    [Installs a handler into the slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.cancellation_slot [*cancellation_slot]] [constructor]]
+    [Creates a slot that is not connected to any cancellation signal. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.clear [*clear]]]
+    [Clears the slot. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.emplace [*emplace]]]
+    [Installs a handler into the slot, constructing the new object directly. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.has_handler [*has_handler]]]
+    [Returns whether the slot is connected and has an installed handler. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.is_connected [*is_connected]]]
+    [Returns whether the slot is connected to a signal. ]
+  ]
+  
+]
+
+[heading Friends]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.cancellation_slot.operator_not__eq_ [*operator!=]]]
+    [Compare two slots for inequality. ]
+  ]
+  
+  [
+    [[link asio.reference.cancellation_slot.operator_eq__eq_ [*operator==]]]
+    [Compare two slots for equality. ]
+  ]
+  
+]
+
+
+[heading Requirements]
+
+['Header: ][^asio/spawn.hpp]
+
+['Convenience header: ]None
 
 
 [endsect]
 
 
 
-[section:overload2 basic_yield_context::basic_yield_context (2 of 2 overloads)]
+[section:cancelled basic_yield_context::cancelled]
+
+[indexterm2 asio.indexterm.basic_yield_context.cancelled..cancelled..basic_yield_context] 
+Determine whether the current coroutine has been cancelled. 
 
 
-Construct a yield context from another yield context type. 
+  cancellation_type_t cancelled() const;
 
-
-  template<
-      typename OtherHandler>
-  basic_yield_context(
-      const basic_yield_context< OtherHandler > & other);
-
-
-Requires that OtherHandler be convertible to Handler. 
 
 
 [endsect]
 
 
-[endsect]
+
+[section:executor_type basic_yield_context::executor_type]
+
+[indexterm2 asio.indexterm.basic_yield_context.executor_type..executor_type..basic_yield_context] 
+The executor type associated with the yield context. 
 
 
-[section:callee_type basic_yield_context::callee_type]
-
-[indexterm2 asio.indexterm.basic_yield_context.callee_type..callee_type..basic_yield_context] 
-The coroutine callee type, used by the implementation. 
-
-
-  typedef implementation_defined callee_type;
-
-
-
-When using Boost.Coroutine v1, this type is: 
-
-   typename coroutine<void()> 
-
-
-When using Boost.Coroutine v2 (unidirectional coroutines), this type is: 
-
-   push_coroutine<void> 
-
+  typedef Executor executor_type;
 
 
 
@@ -67633,33 +68261,42 @@ When using Boost.Coroutine v2 (unidirectional coroutines), this type is:
 
 
 
-[section:caller_type basic_yield_context::caller_type]
+[section:get_cancellation_slot basic_yield_context::get_cancellation_slot]
 
-[indexterm2 asio.indexterm.basic_yield_context.caller_type..caller_type..basic_yield_context] 
-The coroutine caller type, used by the implementation. 
-
-
-  typedef implementation_defined caller_type;
+[indexterm2 asio.indexterm.basic_yield_context.get_cancellation_slot..get_cancellation_slot..basic_yield_context] 
+Get the cancellation slot associated with the coroutine. 
 
 
-
-When using Boost.Coroutine v1, this type is: 
-
-   typename coroutine<void()>::caller_type 
-
-
-When using Boost.Coroutine v2 (unidirectional coroutines), this type is: 
-
-   pull_coroutine<void> 
+  cancellation_slot_type get_cancellation_slot() const;
 
 
 
+[endsect]
 
-[heading Requirements]
 
-['Header: ][^asio/spawn.hpp]
 
-['Convenience header: ]None
+[section:get_cancellation_state basic_yield_context::get_cancellation_state]
+
+[indexterm2 asio.indexterm.basic_yield_context.get_cancellation_state..get_cancellation_state..basic_yield_context] 
+Get the cancellation state associated with the coroutine. 
+
+
+  cancellation_state get_cancellation_state() const;
+
+
+
+[endsect]
+
+
+
+[section:get_executor basic_yield_context::get_executor]
+
+[indexterm2 asio.indexterm.basic_yield_context.get_executor..get_executor..basic_yield_context] 
+Get the executor associated with the yield context. 
+
+
+  executor_type get_executor() const;
+
 
 
 [endsect]
@@ -67680,8 +68317,8 @@ By default, when a yield context is used with an asynchronous operation, a non-s
 
 
 
-   template <typename Handler>
-   void my_coroutine(basic_yield_context<Handler> yield)
+   template <typename Executor>
+   void my_coroutine(basic_yield_context<Executor> yield)
    {
      ...
      std::size_t n = my_socket.async_read_some(buffer, yield[ec]);
@@ -67698,6 +68335,135 @@ By default, when a yield context is used with an asynchronous operation, a non-s
 
 [endsect]
 
+
+[section:reset_cancellation_state basic_yield_context::reset_cancellation_state]
+
+[indexterm2 asio.indexterm.basic_yield_context.reset_cancellation_state..reset_cancellation_state..basic_yield_context] 
+Reset the cancellation state associated with the coroutine. 
+
+
+  void ``[link asio.reference.basic_yield_context.reset_cancellation_state.overload1 reset_cancellation_state]``() const;
+  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.reset_cancellation_state.overload1 more...]]``
+
+  template<
+      typename Filter>
+  void ``[link asio.reference.basic_yield_context.reset_cancellation_state.overload2 reset_cancellation_state]``(
+      Filter && filter) const;
+  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.reset_cancellation_state.overload2 more...]]``
+
+  template<
+      typename InFilter,
+      typename OutFilter>
+  void ``[link asio.reference.basic_yield_context.reset_cancellation_state.overload3 reset_cancellation_state]``(
+      InFilter && in_filter,
+      OutFilter && out_filter) const;
+  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.reset_cancellation_state.overload3 more...]]``
+
+
+[section:overload1 basic_yield_context::reset_cancellation_state (1 of 3 overloads)]
+
+
+Reset the cancellation state associated with the coroutine. 
+
+
+  void reset_cancellation_state() const;
+
+
+Let `P` be the cancellation slot associated with the current coroutine's [link asio.reference.spawn `spawn`] completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P)`, into the current coroutine's cancellation state object. 
+
+
+[endsect]
+
+
+
+[section:overload2 basic_yield_context::reset_cancellation_state (2 of 3 overloads)]
+
+
+Reset the cancellation state associated with the coroutine. 
+
+
+  template<
+      typename Filter>
+  void reset_cancellation_state(
+      Filter && filter) const;
+
+
+Let `P` be the cancellation slot associated with the current coroutine's [link asio.reference.spawn `spawn`] completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<Filter>(filter))`, into the current coroutine's cancellation state object. 
+
+
+[endsect]
+
+
+
+[section:overload3 basic_yield_context::reset_cancellation_state (3 of 3 overloads)]
+
+
+Reset the cancellation state associated with the coroutine. 
+
+
+  template<
+      typename InFilter,
+      typename OutFilter>
+  void reset_cancellation_state(
+      InFilter && in_filter,
+      OutFilter && out_filter) const;
+
+
+Let `P` be the cancellation slot associated with the current coroutine's [link asio.reference.spawn `spawn`] completion handler. Assigns a new [link asio.reference.cancellation_state `cancellation_state`] object `S`, constructed as `S(P, std::forward<InFilter>(in_filter), std::forward<OutFilter>(out_filter))`, into the current coroutine's cancellation state object. 
+
+
+[endsect]
+
+
+[endsect]
+
+[section:throw_if_cancelled basic_yield_context::throw_if_cancelled]
+
+[indexterm2 asio.indexterm.basic_yield_context.throw_if_cancelled..throw_if_cancelled..basic_yield_context] 
+Determine whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+
+  bool ``[link asio.reference.basic_yield_context.throw_if_cancelled.overload1 throw_if_cancelled]``() const;
+  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.throw_if_cancelled.overload1 more...]]``
+
+
+Set whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+
+  void ``[link asio.reference.basic_yield_context.throw_if_cancelled.overload2 throw_if_cancelled]``(
+      bool value) const;
+  ``  [''''&raquo;''' [link asio.reference.basic_yield_context.throw_if_cancelled.overload2 more...]]``
+
+
+[section:overload1 basic_yield_context::throw_if_cancelled (1 of 2 overloads)]
+
+
+Determine whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+
+  bool throw_if_cancelled() const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_yield_context::throw_if_cancelled (2 of 2 overloads)]
+
+
+Set whether the coroutine throws if trying to suspend when it has been cancelled. 
+
+
+  void throw_if_cancelled(
+      bool value) const;
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [endsect]
@@ -68075,7 +68841,7 @@ Create a new non-modifiable buffer that represents the given string.
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload30 more...]]``
 
-Create a new modifiable buffer that represents the given string\_view. 
+Create a new non-modifiable buffer that represents the given string\_view. 
 
   template<
       typename Elem,
@@ -68094,27 +68860,80 @@ Create a new non-modifiable buffer that represents the given string.
       std::size_t max_size_in_bytes);
   ``  [''''&raquo;''' [link asio.reference.buffer.overload32 more...]]``
 
-Obtain a buffer representing the entire registered buffer. 
+Create a new modifiable buffer from a contiguous container. 
 
-  mutable_registered_buffer ``[link asio.reference.buffer.overload33 buffer]``(
-      const mutable_registered_buffer & b);
+  template<
+      typename T>
+  mutable_buffer ``[link asio.reference.buffer.overload33 buffer]``(
+      T & data,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< !is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
   ``  [''''&raquo;''' [link asio.reference.buffer.overload33 more...]]``
 
-  const_registered_buffer ``[link asio.reference.buffer.overload34 buffer]``(
-      const const_registered_buffer & b);
+  template<
+      typename T>
+  mutable_buffer ``[link asio.reference.buffer.overload34 buffer]``(
+      T & data,
+      std::size_t max_size_in_bytes,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< !is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
   ``  [''''&raquo;''' [link asio.reference.buffer.overload34 more...]]``
+
+Create a new non-modifiable buffer from a contiguous container. 
+
+  template<
+      typename T>
+  const_buffer ``[link asio.reference.buffer.overload35 buffer]``(
+      T & data,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload35 more...]]``
+
+  template<
+      typename T>
+  const_buffer ``[link asio.reference.buffer.overload36 buffer]``(
+      T & data,
+      std::size_t max_size_in_bytes,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload36 more...]]``
+
+  template<
+      typename T>
+  const_buffer ``[link asio.reference.buffer.overload37 buffer]``(
+      const T & data,
+      typename constraint< is_contiguous_iterator< typename T::const_iterator >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload37 more...]]``
+
+  template<
+      typename T>
+  const_buffer ``[link asio.reference.buffer.overload38 buffer]``(
+      const T & data,
+      std::size_t max_size_in_bytes,
+      typename constraint< is_contiguous_iterator< typename T::const_iterator >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload38 more...]]``
+
+Obtain a buffer representing the entire registered buffer. 
+
+  mutable_registered_buffer ``[link asio.reference.buffer.overload39 buffer]``(
+      const mutable_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload39 more...]]``
+
+  const_registered_buffer ``[link asio.reference.buffer.overload40 buffer]``(
+      const const_registered_buffer & b);
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload40 more...]]``
 
 Obtain a buffer representing part of a registered buffer. 
 
-  mutable_registered_buffer ``[link asio.reference.buffer.overload35 buffer]``(
+  mutable_registered_buffer ``[link asio.reference.buffer.overload41 buffer]``(
       const mutable_registered_buffer & b,
       std::size_t n);
-  ``  [''''&raquo;''' [link asio.reference.buffer.overload35 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload41 more...]]``
 
-  const_registered_buffer ``[link asio.reference.buffer.overload36 buffer]``(
+  const_registered_buffer ``[link asio.reference.buffer.overload42 buffer]``(
       const const_registered_buffer & b,
       std::size_t n);
-  ``  [''''&raquo;''' [link asio.reference.buffer.overload36 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.buffer.overload42 more...]]``
 
 A buffer object represents a contiguous region of memory as a 2-tuple consisting of a pointer and size in bytes. A tuple of the form `{void*, size_t}` specifies a mutable (modifiable) region of memory. Similarly, a tuple of the form `{const void*, size_t}` specifies a const (non-modifiable) region of memory. These two forms correspond to the classes [link asio.reference.mutable_buffer `mutable_buffer`] and [link asio.reference.const_buffer `const_buffer`], respectively. To mirror C++'s conversion rules, a [link asio.reference.mutable_buffer `mutable_buffer`] is implicitly convertible to a [link asio.reference.const_buffer `const_buffer`], and the opposite conversion is not permitted.
 
@@ -68297,7 +69116,7 @@ To read or write using multiple buffers (i.e. scatter-gather I/O), multiple buff
 ['Convenience header: ][^asio.hpp]
 
 
-[section:overload1 buffer (1 of 36 overloads)]
+[section:overload1 buffer (1 of 42 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -68319,7 +69138,7 @@ Create a new modifiable buffer from an existing buffer.
 
 
 
-[section:overload2 buffer (2 of 36 overloads)]
+[section:overload2 buffer (2 of 42 overloads)]
 
 
 Create a new modifiable buffer from an existing buffer. 
@@ -68349,7 +69168,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload3 buffer (3 of 36 overloads)]
+[section:overload3 buffer (3 of 42 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -68371,7 +69190,7 @@ Create a new non-modifiable buffer from an existing buffer.
 
 
 
-[section:overload4 buffer (4 of 36 overloads)]
+[section:overload4 buffer (4 of 42 overloads)]
 
 
 Create a new non-modifiable buffer from an existing buffer. 
@@ -68401,7 +69220,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload5 buffer (5 of 36 overloads)]
+[section:overload5 buffer (5 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given memory range. 
@@ -68424,7 +69243,7 @@ Create a new modifiable buffer that represents the given memory range.
 
 
 
-[section:overload6 buffer (6 of 36 overloads)]
+[section:overload6 buffer (6 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given memory range. 
@@ -68447,7 +69266,7 @@ Create a new non-modifiable buffer that represents the given memory range.
 
 
 
-[section:overload7 buffer (7 of 36 overloads)]
+[section:overload7 buffer (7 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -68479,7 +69298,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload8 buffer (8 of 36 overloads)]
+[section:overload8 buffer (8 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -68512,7 +69331,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload9 buffer (9 of 36 overloads)]
+[section:overload9 buffer (9 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68544,7 +69363,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload10 buffer (10 of 36 overloads)]
+[section:overload10 buffer (10 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68577,7 +69396,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload11 buffer (11 of 36 overloads)]
+[section:overload11 buffer (11 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -68609,7 +69428,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload12 buffer (12 of 36 overloads)]
+[section:overload12 buffer (12 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -68642,7 +69461,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload13 buffer (13 of 36 overloads)]
+[section:overload13 buffer (13 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68674,7 +69493,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload14 buffer (14 of 36 overloads)]
+[section:overload14 buffer (14 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68707,7 +69526,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload15 buffer (15 of 36 overloads)]
+[section:overload15 buffer (15 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68739,7 +69558,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload16 buffer (16 of 36 overloads)]
+[section:overload16 buffer (16 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68772,7 +69591,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload17 buffer (17 of 36 overloads)]
+[section:overload17 buffer (17 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -68804,7 +69623,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload18 buffer (18 of 36 overloads)]
+[section:overload18 buffer (18 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD array. 
@@ -68837,7 +69656,7 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload19 buffer (19 of 36 overloads)]
+[section:overload19 buffer (19 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68869,7 +69688,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload20 buffer (20 of 36 overloads)]
+[section:overload20 buffer (20 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68902,7 +69721,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload21 buffer (21 of 36 overloads)]
+[section:overload21 buffer (21 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68934,7 +69753,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload22 buffer (22 of 36 overloads)]
+[section:overload22 buffer (22 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD array. 
@@ -68967,7 +69786,7 @@ A [link asio.reference.const_buffer `const_buffer`] value equivalent to:
 
 
 
-[section:overload23 buffer (23 of 36 overloads)]
+[section:overload23 buffer (23 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -69004,7 +69823,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload24 buffer (24 of 36 overloads)]
+[section:overload24 buffer (24 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given POD vector. 
@@ -69042,7 +69861,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload25 buffer (25 of 36 overloads)]
+[section:overload25 buffer (25 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -69079,7 +69898,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload26 buffer (26 of 36 overloads)]
+[section:overload26 buffer (26 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given POD vector. 
@@ -69117,7 +69936,7 @@ The buffer is invalidated by any vector operation that would also invalidate ite
 
 
 
-[section:overload27 buffer (27 of 36 overloads)]
+[section:overload27 buffer (27 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given string. 
@@ -69148,7 +69967,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload28 buffer (28 of 36 overloads)]
+[section:overload28 buffer (28 of 42 overloads)]
 
 
 Create a new modifiable buffer that represents the given string. 
@@ -69187,7 +70006,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload29 buffer (29 of 36 overloads)]
+[section:overload29 buffer (29 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -69218,7 +70037,7 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload30 buffer (30 of 36 overloads)]
+[section:overload30 buffer (30 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -69257,10 +70076,10 @@ The buffer is invalidated by any non-const operation called on the given string 
 
 
 
-[section:overload31 buffer (31 of 36 overloads)]
+[section:overload31 buffer (31 of 42 overloads)]
 
 
-Create a new modifiable buffer that represents the given string\_view. 
+Create a new non-modifiable buffer that represents the given string\_view. 
 
 
   template<
@@ -69282,7 +70101,7 @@ Create a new modifiable buffer that represents the given string\_view.
 
 
 
-[section:overload32 buffer (32 of 36 overloads)]
+[section:overload32 buffer (32 of 42 overloads)]
 
 
 Create a new non-modifiable buffer that represents the given string. 
@@ -69315,7 +70134,212 @@ A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to:
 
 
 
-[section:overload33 buffer (33 of 36 overloads)]
+[section:overload33 buffer (33 of 42 overloads)]
+
+
+Create a new modifiable buffer from a contiguous container. 
+
+
+  template<
+      typename T>
+  mutable_buffer buffer(
+      T & data,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< !is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to: 
+
+   mutable_buffer(
+       data.size() ? &data[0] : 0,
+       data.size() * sizeof(typename T::value_type)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload34 buffer (34 of 42 overloads)]
+
+
+Create a new modifiable buffer from a contiguous container. 
+
+
+  template<
+      typename T>
+  mutable_buffer buffer(
+      T & data,
+      std::size_t max_size_in_bytes,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< !is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.mutable_buffer `mutable_buffer`] value equivalent to: 
+
+   mutable_buffer(
+       data.size() ? &data[0] : 0,
+       min(
+         data.size() * sizeof(typename T::value_type),
+         max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload35 buffer (35 of 42 overloads)]
+
+
+Create a new non-modifiable buffer from a contiguous container. 
+
+
+  template<
+      typename T>
+  const_buffer buffer(
+      T & data,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffer `const_buffer`] value equivalent to: 
+
+   const_buffer(
+       data.size() ? &data[0] : 0,
+       data.size() * sizeof(typename T::value_type)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload36 buffer (36 of 42 overloads)]
+
+
+Create a new non-modifiable buffer from a contiguous container. 
+
+
+  template<
+      typename T>
+  const_buffer buffer(
+      T & data,
+      std::size_t max_size_in_bytes,
+      typename constraint< is_contiguous_iterator< typename T::iterator >::value, defaulted_constraint >::type  = defaulted_constraint(),
+      typename constraint< is_const< typename remove_reference< typename std::iterator_traits< typename T::iterator >::reference >::type >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffer `const_buffer`] value equivalent to: 
+
+   const_buffer(
+       data.size() ? &data[0] : 0,
+       min(
+         data.size() * sizeof(typename T::value_type),
+         max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload37 buffer (37 of 42 overloads)]
+
+
+Create a new non-modifiable buffer from a contiguous container. 
+
+
+  template<
+      typename T>
+  const_buffer buffer(
+      const T & data,
+      typename constraint< is_contiguous_iterator< typename T::const_iterator >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffer `const_buffer`] value equivalent to: 
+
+   const_buffer(
+       data.size() ? &data[0] : 0,
+       data.size() * sizeof(typename T::value_type)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload38 buffer (38 of 42 overloads)]
+
+
+Create a new non-modifiable buffer from a contiguous container. 
+
+
+  template<
+      typename T>
+  const_buffer buffer(
+      const T & data,
+      std::size_t max_size_in_bytes,
+      typename constraint< is_contiguous_iterator< typename T::const_iterator >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+
+[heading Return Value]
+      
+A [link asio.reference.const_buffer `const_buffer`] value equivalent to: 
+
+   const_buffer(
+       data.size() ? &data[0] : 0,
+       min(
+         data.size() * sizeof(typename T::value_type),
+         max_size_in_bytes)); 
+
+
+
+
+
+
+
+[endsect]
+
+
+
+[section:overload39 buffer (39 of 42 overloads)]
 
 
 Obtain a buffer representing the entire registered buffer. 
@@ -69330,7 +70354,7 @@ Obtain a buffer representing the entire registered buffer.
 
 
 
-[section:overload34 buffer (34 of 36 overloads)]
+[section:overload40 buffer (40 of 42 overloads)]
 
 
 Obtain a buffer representing the entire registered buffer. 
@@ -69345,7 +70369,7 @@ Obtain a buffer representing the entire registered buffer.
 
 
 
-[section:overload35 buffer (35 of 36 overloads)]
+[section:overload41 buffer (41 of 42 overloads)]
 
 
 Obtain a buffer representing part of a registered buffer. 
@@ -69361,7 +70385,7 @@ Obtain a buffer representing part of a registered buffer.
 
 
 
-[section:overload36 buffer (36 of 36 overloads)]
+[section:overload42 buffer (42 of 42 overloads)]
 
 
 Obtain a buffer representing part of a registered buffer. 
@@ -75811,6 +76835,63 @@ The new thread of execution is created with a cancellation state that supports `
 
 [endsect]
 
+[section:completion_signature_of completion_signature_of]
+
+[indexterm1 asio.indexterm.completion_signature_of..completion_signature_of]
+
+
+The [link asio.reference.completion_signature_of `completion_signature_of`] trait determines the completion signature of an asynchronous operation. 
+
+
+  template<
+      typename T,
+      typename... Args>
+  struct completion_signature_of
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.completion_signature_of.type [*type]]]
+    []
+  
+  ]
+
+]
+
+Class template `completion_signature_of` is a trait with a member type alias `type` that denotes the completion signature of the asynchronous operation initiated by the expression `T(Args..., token)` operation, where `token` is an unspecified completion token type. If the asynchronous operation does not have exactly one completion signature, the instantion of the trait is well-formed but the member type alias `type` is omitted. If the expression `T(Args..., token)` is not an asynchronous operation then use of the trait is ill-formed. 
+
+[heading Requirements]
+
+['Header: ][^asio/async_result.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:type completion_signature_of::type]
+
+[indexterm2 asio.indexterm.completion_signature_of.type..type..completion_signature_of] 
+
+  typedef automatically_determined type;
+
+
+
+[heading Requirements]
+
+['Header: ][^asio/async_result.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
 [section:connect connect]
 
 [indexterm1 asio.indexterm.connect..connect]
@@ -78853,6 +79934,1003 @@ Submits a completion token or function object for execution.
 [endsect]
 
 
+[section:deferred deferred]
+
+[indexterm1 asio.indexterm.deferred..deferred]
+
+A [link asio.overview.model.completion_tokens completion token] object used to specify that an asynchronous operation should return a function object to lazily launch the operation. 
+
+
+  constexpr deferred_t deferred;
+
+
+See the documentation for [link asio.reference.deferred_t `deferred_t`] for a usage example. 
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:deferred_async_operation deferred_async_operation]
+
+[indexterm1 asio.indexterm.deferred_async_operation..deferred_async_operation]
+
+
+Encapsulates a deferred asynchronous operation. 
+
+
+  template<
+      typename Signature,
+      typename Initiation,
+      typename... InitArgs>
+  class deferred_async_operation
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_async_operation.deferred_async_operation [*deferred_async_operation]] [constructor]]
+    [Construct a deferred asynchronous operation from the arguments to an initiation function object. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_async_operation.detail__index_sequence_for [*detail::index_sequence_for]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.deferred_async_operation.operator_lp__rp_ [*operator()]]]
+    [Initiate the asynchronous operation using the supplied completion token. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:deferred_async_operation deferred_async_operation::deferred_async_operation]
+
+[indexterm2 asio.indexterm.deferred_async_operation.deferred_async_operation..deferred_async_operation..deferred_async_operation] 
+Construct a deferred asynchronous operation from the arguments to an initiation function object. 
+
+
+  template<
+      typename I,
+      typename... A>
+  constexpr deferred_async_operation(
+      deferred_init_tag ,
+      I && initiation,
+      A &&... init_args);
+
+
+
+[endsect]
+
+
+
+[section:detail__index_sequence_for deferred_async_operation::detail::index_sequence_for]
+
+[indexterm2 asio.indexterm.deferred_async_operation.detail__index_sequence_for..detail::index_sequence_for..deferred_async_operation] 
+
+  auto detail::index_sequence_for();
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ deferred_async_operation::operator()]
+
+[indexterm2 asio.indexterm.deferred_async_operation.operator_lp__rp_..operator()..deferred_async_operation] 
+Initiate the asynchronous operation using the supplied completion token. 
+
+
+  template<
+      typename CompletionToken>
+  auto operator()(
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_conditional deferred_conditional]
+
+[indexterm1 asio.indexterm.deferred_conditional..deferred_conditional]
+
+
+Used to represent a deferred conditional branch. 
+
+
+  template<
+      typename OnTrue = deferred_noop,
+      typename OnFalse = deferred_noop>
+  class deferred_conditional
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_conditional.deferred_conditional [*deferred_conditional]] [constructor]]
+    [Construct a deferred conditional with the value to determine which branch will be executed. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_conditional.operator_lp__rp_ [*operator()]]]
+    [Invoke the conditional branch bsaed on the stored alue. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_conditional.otherwise [*otherwise]]]
+    [Set the false branch of the conditional. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_conditional.then [*then]]]
+    [Set the true branch of the conditional. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:deferred_conditional deferred_conditional::deferred_conditional]
+
+[indexterm2 asio.indexterm.deferred_conditional.deferred_conditional..deferred_conditional..deferred_conditional] 
+Construct a deferred conditional with the value to determine which branch will be executed. 
+
+
+  constexpr deferred_conditional(
+      bool b);
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ deferred_conditional::operator()]
+
+[indexterm2 asio.indexterm.deferred_conditional.operator_lp__rp_..operator()..deferred_conditional] 
+Invoke the conditional branch bsaed on the stored alue. 
+
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args &&... args);
+
+
+
+[endsect]
+
+
+
+[section:otherwise deferred_conditional::otherwise]
+
+[indexterm2 asio.indexterm.deferred_conditional.otherwise..otherwise..deferred_conditional] 
+Set the false branch of the conditional. 
+
+
+  template<
+      typename T>
+  deferred_conditional< OnTrue, T > otherwise(
+      T on_false,
+      typename constraint< is_deferred< T >::value >::type *  = 0,
+      typename constraint< !is_same< typename conditional< true, OnTrue, T >::type, deferred_noop >::value >::type *  = 0,
+      typename constraint< is_same< typename conditional< true, OnFalse, T >::type, deferred_noop >::value >::type *  = 0);
+
+
+
+[endsect]
+
+
+
+[section:then deferred_conditional::then]
+
+[indexterm2 asio.indexterm.deferred_conditional.then..then..deferred_conditional] 
+Set the true branch of the conditional. 
+
+
+  template<
+      typename T>
+  deferred_conditional< T, OnFalse > then(
+      T on_true,
+      typename constraint< is_deferred< T >::value >::type *  = 0,
+      typename constraint< is_same< typename conditional< true, OnTrue, T >::type, deferred_noop >::value >::type *  = 0);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_function deferred_function]
+
+[indexterm1 asio.indexterm.deferred_function..deferred_function]
+
+
+Wraps a function object so that it may be used as an element in a deferred composition. 
+
+
+  template<
+      typename Function>
+  class deferred_function
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_function.deferred_function [*deferred_function]] [constructor]]
+    [Constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_function.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_function.function_ [*function_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:deferred_function deferred_function::deferred_function]
+
+[indexterm2 asio.indexterm.deferred_function.deferred_function..deferred_function..deferred_function] 
+Constructor. 
+
+
+  template<
+      typename F>
+  constexpr deferred_function(
+      deferred_init_tag ,
+      F && function);
+
+
+
+[endsect]
+
+
+
+[section:function_ deferred_function::function_]
+
+[indexterm2 asio.indexterm.deferred_function.function_..function_..deferred_function] 
+
+  Function function_;
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ deferred_function::operator()]
+
+[indexterm2 asio.indexterm.deferred_function.operator_lp__rp_..operator()..deferred_function] 
+
+  template<
+      typename... Args>
+  auto operator()(
+      Args &&... args);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_init_tag deferred_init_tag]
+
+[indexterm1 asio.indexterm.deferred_init_tag..deferred_init_tag]
+
+
+Tag type to disambiguate deferred constructors. 
+
+
+  struct deferred_init_tag
+
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+[section:deferred_noop deferred_noop]
+
+[indexterm1 asio.indexterm.deferred_noop..deferred_noop]
+
+
+Used to represent an empty deferred action. 
+
+
+  struct deferred_noop
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_noop.operator_lp__rp_ [*operator()]]]
+    [No effect. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:operator_lp__rp_ deferred_noop::operator()]
+
+[indexterm2 asio.indexterm.deferred_noop.operator_lp__rp_..operator()..deferred_noop] 
+No effect. 
+
+
+  template<
+      typename... Args>
+  void operator()(
+      Args && ...);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_sequence deferred_sequence]
+
+[indexterm1 asio.indexterm.deferred_sequence..deferred_sequence]
+
+
+Defines a link between two consecutive operations in a sequence. 
+
+
+  template<
+      typename Head,
+      typename Tail>
+  class deferred_sequence
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_sequence.deferred_sequence [*deferred_sequence]] [constructor]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.deferred_sequence.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:deferred_sequence deferred_sequence::deferred_sequence]
+
+[indexterm2 asio.indexterm.deferred_sequence.deferred_sequence..deferred_sequence..deferred_sequence] 
+
+  template<
+      typename H,
+      typename T>
+  constexpr deferred_sequence(
+      deferred_init_tag ,
+      H && head,
+      T && tail);
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ deferred_sequence::operator()]
+
+[indexterm2 asio.indexterm.deferred_sequence.operator_lp__rp_..operator()..deferred_sequence] 
+
+  template<
+      typename CompletionToken>
+  auto operator()(
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_sequence__initiate deferred_sequence::initiate]
+
+[indexterm1 asio.indexterm.deferred_sequence__initiate..deferred_sequence::initiate]
+
+
+
+  struct initiate
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_sequence__initiate.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:operator_lp__rp_ deferred_sequence::initiate::operator()]
+
+[indexterm2 asio.indexterm.deferred_sequence__initiate.operator_lp__rp_..operator()..deferred_sequence::initiate] 
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``>
+  void operator()(
+      Handler && handler,
+      Head head,
+      Tail && tail);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_t deferred_t]
+
+[indexterm1 asio.indexterm.deferred_t..deferred_t]
+
+
+Class used to specify that an asynchronous operation should return a function object to lazily launch the operation. 
+
+
+  class deferred_t
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.deferred_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the deferred_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use deferred_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.deferred_t [*deferred_t]] [constructor]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.operator_lp__rp_ [*operator()]]]
+    [Creates a new deferred from a function. 
+     [hr]
+     Passes through anything that is already deferred. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.values [*values]] [static]]
+    [Returns a deferred operation that returns the provided values. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.when [*when]] [static]]
+    [Creates a conditional object for branching deferred operations. ]
+  ]
+  
+]
+
+The [link asio.reference.deferred_t `deferred_t`] class is used to indicate that an asynchronous operation should return a function object which is itself an initiation function. A [link asio.reference.deferred_t `deferred_t`] object may be passed as a completion token to an asynchronous operation, typically using the special value `asio::deferred`. For example:
+
+
+
+   auto my_deferred_op
+     = my_socket.async_read_some(my_buffer,
+         asio::deferred); 
+
+
+
+
+The initiating function (async\_read\_some in the above example) returns a function object that will lazily initiate the operation. 
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:as_default_on deferred_t::as_default_on]
+
+[indexterm2 asio.indexterm.deferred_t.as_default_on..as_default_on..deferred_t] 
+Function helper to adapt an I/O object to use `deferred_t` as its default completion token type. 
+
+
+  template<
+      typename T>
+  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
+      T && object);
+
+
+
+[endsect]
+
+
+
+[section:deferred_t deferred_t::deferred_t]
+
+[indexterm2 asio.indexterm.deferred_t.deferred_t..deferred_t..deferred_t] 
+Default constructor. 
+
+
+  constexpr deferred_t();
+
+
+
+[endsect]
+
+
+[section:operator_lp__rp_ deferred_t::operator()]
+
+[indexterm2 asio.indexterm.deferred_t.operator_lp__rp_..operator()..deferred_t] 
+Creates a new deferred from a function. 
+
+
+  template<
+      typename Function>
+  constraint< !is_deferred< typename decay< Function >::type >::value, deferred_function< typename decay< Function >::type > >::type ``[link asio.reference.deferred_t.operator_lp__rp_.overload1 operator()]``(
+      Function && function) const;
+  ``  [''''&raquo;''' [link asio.reference.deferred_t.operator_lp__rp_.overload1 more...]]``
+
+
+Passes through anything that is already deferred. 
+
+
+  template<
+      typename T>
+  constraint< is_deferred< typename decay< T >::type >::value, typename decay< T >::type >::type ``[link asio.reference.deferred_t.operator_lp__rp_.overload2 operator()]``(
+      T && t) const;
+  ``  [''''&raquo;''' [link asio.reference.deferred_t.operator_lp__rp_.overload2 more...]]``
+
+
+[section:overload1 deferred_t::operator() (1 of 2 overloads)]
+
+
+Creates a new deferred from a function. 
+
+
+  template<
+      typename Function>
+  constraint< !is_deferred< typename decay< Function >::type >::value, deferred_function< typename decay< Function >::type > >::type operator()(
+      Function && function) const;
+
+
+
+[endsect]
+
+
+
+[section:overload2 deferred_t::operator() (2 of 2 overloads)]
+
+
+Passes through anything that is already deferred. 
+
+
+  template<
+      typename T>
+  constraint< is_deferred< typename decay< T >::type >::value, typename decay< T >::type >::type operator()(
+      T && t) const;
+
+
+
+[endsect]
+
+
+[endsect]
+
+
+[section:values deferred_t::values]
+
+[indexterm2 asio.indexterm.deferred_t.values..values..deferred_t] 
+Returns a deferred operation that returns the provided values. 
+
+
+  template<
+      typename... Args>
+  static constexpr deferred_values< typename decay< Args >::type...> values(
+      Args &&... args);
+
+
+
+[endsect]
+
+
+
+[section:when deferred_t::when]
+
+[indexterm2 asio.indexterm.deferred_t.when..when..deferred_t] 
+Creates a conditional object for branching deferred operations. 
+
+
+  static constexpr deferred_conditional when(
+      bool b);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_t__executor_with_default deferred_t::executor_with_default]
+
+[indexterm1 asio.indexterm.deferred_t__executor_with_default..deferred_t::executor_with_default]
+
+
+Adapts an executor to add the `deferred_t` completion token as the default. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor]``>
+  struct executor_with_default
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.deferred_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
+    [Specify deferred_t as the default completion token type. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
+    [Construct the adapted executor from the inner executor type. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:default_completion_token_type deferred_t::executor_with_default::default_completion_token_type]
+
+[indexterm2 asio.indexterm.deferred_t__executor_with_default.default_completion_token_type..default_completion_token_type..deferred_t::executor_with_default] 
+Specify `deferred_t` as the default completion token type. 
+
+
+  typedef deferred_t default_completion_token_type;
+
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.deferred_t__executor_with_default [*executor_with_default]]]
+    [Adapts an executor to add the deferred_t completion token as the default. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_t.as_default_on [*as_default_on]] [static]]
+    [Function helper to adapt an I/O object to use deferred_t as its default completion token type. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.deferred_t [*deferred_t]] [constructor]]
+    [Default constructor. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.operator_lp__rp_ [*operator()]]]
+    [Creates a new deferred from a function. 
+     [hr]
+     Passes through anything that is already deferred. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.values [*values]] [static]]
+    [Returns a deferred operation that returns the provided values. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_t.when [*when]] [static]]
+    [Creates a conditional object for branching deferred operations. ]
+  ]
+  
+]
+
+The [link asio.reference.deferred_t `deferred_t`] class is used to indicate that an asynchronous operation should return a function object which is itself an initiation function. A [link asio.reference.deferred_t `deferred_t`] object may be passed as a completion token to an asynchronous operation, typically using the special value `asio::deferred`. For example:
+
+
+
+   auto my_deferred_op
+     = my_socket.async_read_some(my_buffer,
+         asio::deferred); 
+
+
+
+
+The initiating function (async\_read\_some in the above example) returns a function object that will lazily initiate the operation. 
+
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:executor_with_default deferred_t::executor_with_default::executor_with_default]
+
+[indexterm2 asio.indexterm.deferred_t__executor_with_default.executor_with_default..executor_with_default..deferred_t::executor_with_default] 
+Construct the adapted executor from the inner executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
+  executor_with_default(
+      const InnerExecutor1 & ex,
+      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_values deferred_values]
+
+[indexterm1 asio.indexterm.deferred_values..deferred_values]
+
+
+Encapsulates deferred values. 
+
+
+  template<
+      typename... Values>
+  class deferred_values
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_values.deferred_values [*deferred_values]] [constructor]]
+    [Construct a deferred asynchronous operation from the arguments to an initiation function object. ]
+  ]
+  
+  [
+    [[link asio.reference.deferred_values.detail__index_sequence_for [*detail::index_sequence_for]]]
+    []
+  ]
+  
+  [
+    [[link asio.reference.deferred_values.operator_lp__rp_ [*operator()]]]
+    [Initiate the deferred operation using the supplied completion token. ]
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:deferred_values deferred_values::deferred_values]
+
+[indexterm2 asio.indexterm.deferred_values.deferred_values..deferred_values..deferred_values] 
+Construct a deferred asynchronous operation from the arguments to an initiation function object. 
+
+
+  template<
+      typename... V>
+  constexpr deferred_values(
+      deferred_init_tag ,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[section:detail__index_sequence_for deferred_values::detail::index_sequence_for]
+
+[indexterm2 asio.indexterm.deferred_values.detail__index_sequence_for..detail::index_sequence_for..deferred_values] 
+
+  auto detail::index_sequence_for();
+
+
+
+[endsect]
+
+
+
+[section:operator_lp__rp_ deferred_values::operator()]
+
+[indexterm2 asio.indexterm.deferred_values.operator_lp__rp_..operator()..deferred_values] 
+Initiate the deferred operation using the supplied completion token. 
+
+
+  template<
+      typename CompletionToken>
+  auto operator()(
+      CompletionToken && token);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+[section:deferred_values__initiate deferred_values::initiate]
+
+[indexterm1 asio.indexterm.deferred_values__initiate..deferred_values::initiate]
+
+
+
+  struct initiate
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.deferred_values__initiate.operator_lp__rp_ [*operator()]]]
+    []
+  ]
+  
+]
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:operator_lp__rp_ deferred_values::initiate::operator()]
+
+[indexterm2 asio.indexterm.deferred_values__initiate.operator_lp__rp_..operator()..deferred_values::initiate] 
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``,
+      typename... V>
+  void operator()(
+      Handler handler,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[endsect]
+
+
 [section:detached detached]
 
 [indexterm1 asio.indexterm.detached..detached]
@@ -81398,6 +83476,26 @@ A cancellation filter that enables terminal, partial and total cancellation.
   ]
 
 ]
+
+
+[heading Requirements]
+
+['Header: ][^asio/error.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:error__clear error::clear]
+
+[indexterm1 asio.indexterm.error__clear..error::clear]
+
+
+  void clear(
+      asio::error_code & ec);
 
 
 [heading Requirements]
@@ -92189,125 +94287,6 @@ Unless the object has already been reset, or is in a moved-from state, calls `on
 [endsect]
 
 
-[section:experimental__append experimental::append]
-
-[indexterm1 asio.indexterm.experimental__append..experimental::append]
-
-Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
-
-
-  template<
-      typename CompletionToken,
-      typename... Values>
-  constexpr append_t< typename decay< CompletionToken >::type, typename decay< Values >::type...> append(
-      CompletionToken && completion_token,
-      Values &&... values);
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/append.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-[section:experimental__append_t experimental::append_t]
-
-[indexterm1 asio.indexterm.experimental__append_t..experimental::append_t]
-
-
-Completion token type used to specify that the completion handler arguments should be passed additional values after the results of the operation. 
-
-
-  template<
-      typename CompletionToken,
-      typename... Values>
-  class append_t
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__append_t.append_t [*append_t]] [constructor]]
-    [Constructor. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__append_t.token_ [*token_]]]
-    []
-  ]
-
-  [
-    [[link asio.reference.experimental__append_t.values_ [*values_]]]
-    []
-  ]
-
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/append.hpp]
-
-['Convenience header: ]None
-
-
-[section:append_t experimental::append_t::append_t]
-
-[indexterm2 asio.indexterm.experimental__append_t.append_t..append_t..experimental::append_t] 
-Constructor. 
-
-
-  template<
-      typename T,
-      typename... V>
-  constexpr append_t(
-      T && completion_token,
-      V &&... values);
-
-
-
-[endsect]
-
-
-
-[section:token_ experimental::append_t::token_]
-
-[indexterm2 asio.indexterm.experimental__append_t.token_..token_..experimental::append_t] 
-
-  CompletionToken token_;
-
-
-
-[endsect]
-
-
-
-[section:values_ experimental::append_t::values_]
-
-[indexterm2 asio.indexterm.experimental__append_t.values_..values_..experimental::append_t] 
-
-  std::tuple< Values...> values_;
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-
 [section:experimental__as_single experimental::as_single]
 
 [indexterm1 asio.indexterm.experimental__as_single..experimental::as_single]
@@ -92683,346 +94662,6 @@ Convert the specified executor to the inner executor type, then use that to cons
 
 
 [endsect]
-
-
-[endsect]
-
-
-[section:experimental__as_tuple experimental::as_tuple]
-
-[indexterm1 asio.indexterm.experimental__as_tuple..experimental::as_tuple]
-
-Adapt a [link asio.overview.model.completion_tokens completion token] to specify that the completion handler arguments should be combined into a single tuple argument. 
-
-
-  template<
-      typename CompletionToken>
-  constexpr as_tuple_t< typename decay< CompletionToken >::type > as_tuple(
-      CompletionToken && completion_token);
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/as_tuple.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-[section:experimental__as_tuple_t experimental::as_tuple_t]
-
-[indexterm1 asio.indexterm.experimental__as_tuple_t..experimental::as_tuple_t]
-
-
-A [link asio.overview.model.completion_tokens completion token] adapter used to specify that the completion handler arguments should be combined into a single tuple argument. 
-
-
-  template<
-      typename CompletionToken>
-  class as_tuple_t
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.experimental__as_tuple_t__default_constructor_tag [*default_constructor_tag]]]
-    [Tag type used to prevent the "default" constructor from being used for conversions. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.experimental__as_tuple_t__executor_with_default [*executor_with_default]]]
-    [Adapts an executor to add the as_tuple_t completion token as the default. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__as_tuple_t.as_default_on [*as_default_on]] [static]]
-    [Function helper to adapt an I/O object to use as_tuple_t as its default completion token type. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__as_tuple_t.as_tuple_t [*as_tuple_t]] [constructor]]
-    [Default constructor. 
-     [hr]
-     Constructor. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__as_tuple_t.token_ [*token_]]]
-    []
-  ]
-
-]
-
-The [link asio.reference.experimental__as_tuple_t `experimental::as_tuple_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single tuple argument. The arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/as_tuple.hpp]
-
-['Convenience header: ]None
-
-
-[section:as_default_on experimental::as_tuple_t::as_default_on]
-
-[indexterm2 asio.indexterm.experimental__as_tuple_t.as_default_on..as_default_on..experimental::as_tuple_t] 
-Function helper to adapt an I/O object to use `as_tuple_t` as its default completion token type. 
-
-
-  template<
-      typename T>
-  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
-      T && object);
-
-
-
-[endsect]
-
-
-[section:as_tuple_t experimental::as_tuple_t::as_tuple_t]
-
-[indexterm2 asio.indexterm.experimental__as_tuple_t.as_tuple_t..as_tuple_t..experimental::as_tuple_t] 
-Default constructor. 
-
-
-  constexpr ``[link asio.reference.experimental__as_tuple_t.as_tuple_t.overload1 as_tuple_t]``(
-      default_constructor_tag  = default_constructor_tag(),
-      CompletionToken token = CompletionToken());
-  ``  [''''&raquo;''' [link asio.reference.experimental__as_tuple_t.as_tuple_t.overload1 more...]]``
-
-
-Constructor. 
-
-
-  template<
-      typename T>
-  explicit constexpr ``[link asio.reference.experimental__as_tuple_t.as_tuple_t.overload2 as_tuple_t]``(
-      T && completion_token);
-  ``  [''''&raquo;''' [link asio.reference.experimental__as_tuple_t.as_tuple_t.overload2 more...]]``
-
-
-[section:overload1 experimental::as_tuple_t::as_tuple_t (1 of 2 overloads)]
-
-
-Default constructor. 
-
-
-  constexpr as_tuple_t(
-      default_constructor_tag  = default_constructor_tag(),
-      CompletionToken token = CompletionToken());
-
-
-This constructor is only valid if the underlying completion token is default constructible and move constructible. The underlying completion token is itself defaulted as an argument to allow it to capture a source location. 
-
-
-[endsect]
-
-
-
-[section:overload2 experimental::as_tuple_t::as_tuple_t (2 of 2 overloads)]
-
-
-Constructor. 
-
-
-  template<
-      typename T>
-  constexpr as_tuple_t(
-      T && completion_token);
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:token_ experimental::as_tuple_t::token_]
-
-[indexterm2 asio.indexterm.experimental__as_tuple_t.token_..token_..experimental::as_tuple_t] 
-
-  CompletionToken token_;
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__as_tuple_t__default_constructor_tag experimental::as_tuple_t::default_constructor_tag]
-
-[indexterm1 asio.indexterm.experimental__as_tuple_t__default_constructor_tag..experimental::as_tuple_t::default_constructor_tag]
-
-
-Tag type used to prevent the "default" constructor from being used for conversions. 
-
-
-  struct default_constructor_tag
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/as_tuple.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-[section:experimental__as_tuple_t__executor_with_default experimental::as_tuple_t::executor_with_default]
-
-[indexterm1 asio.indexterm.experimental__as_tuple_t__executor_with_default..experimental::as_tuple_t::executor_with_default]
-
-
-Adapts an executor to add the `as_tuple_t` completion token as the default. 
-
-
-  template<
-      typename ``[link asio.reference.Executor1 InnerExecutor]``>
-  struct executor_with_default
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.experimental__as_tuple_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
-    [Specify as_tuple_t as the default completion token type. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__as_tuple_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
-    [Construct the adapted executor from the inner executor type. ]
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/as_tuple.hpp]
-
-['Convenience header: ]None
-
-
-[section:default_completion_token_type experimental::as_tuple_t::executor_with_default::default_completion_token_type]
-
-[indexterm2 asio.indexterm.experimental__as_tuple_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::as_tuple_t::executor_with_default] 
-Specify `as_tuple_t` as the default completion token type. 
-
-
-  typedef as_tuple_t default_completion_token_type;
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.experimental__as_tuple_t__default_constructor_tag [*default_constructor_tag]]]
-    [Tag type used to prevent the "default" constructor from being used for conversions. ]
-  
-  ]
-
-  [
-
-    [[link asio.reference.experimental__as_tuple_t__executor_with_default [*executor_with_default]]]
-    [Adapts an executor to add the as_tuple_t completion token as the default. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__as_tuple_t.as_default_on [*as_default_on]] [static]]
-    [Function helper to adapt an I/O object to use as_tuple_t as its default completion token type. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__as_tuple_t.as_tuple_t [*as_tuple_t]] [constructor]]
-    [Default constructor. 
-     [hr]
-     Constructor. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__as_tuple_t.token_ [*token_]]]
-    []
-  ]
-
-]
-
-The [link asio.reference.experimental__as_tuple_t `experimental::as_tuple_t`] class is used to indicate that any arguments to the completion handler should be combined and passed as a single tuple argument. The arguments are first moved into a `std::tuple` and that tuple is then passed to the completion handler. 
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/as_tuple.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-
-[section:executor_with_default experimental::as_tuple_t::executor_with_default::executor_with_default]
-
-[indexterm2 asio.indexterm.experimental__as_tuple_t__executor_with_default.executor_with_default..executor_with_default..experimental::as_tuple_t::executor_with_default] 
-Construct the adapted executor from the inner executor type. 
-
-
-  template<
-      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
-  executor_with_default(
-      const InnerExecutor1 & ex,
-      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
-
-
-
-[endsect]
-
 
 
 [endsect]
@@ -96388,865 +98027,6 @@ Whether or not the coroutine is noexcept.
 [endsect]
 
 
-[section:experimental__deferred experimental::deferred]
-
-[indexterm1 asio.indexterm.experimental__deferred..experimental::deferred]
-
-A [link asio.overview.model.completion_tokens completion token] object used to specify that an asynchronous operation should return a function object to lazily launch the operation. 
-
-
-  constexpr deferred_t deferred;
-
-
-See the documentation for [link asio.reference.experimental__deferred_t `experimental::deferred_t`] for a usage example. 
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-[section:experimental__deferred_async_operation experimental::deferred_async_operation]
-
-[indexterm1 asio.indexterm.experimental__deferred_async_operation..experimental::deferred_async_operation]
-
-
-Encapsulates a deferred asynchronous operation. 
-
-
-  template<
-      typename Signature,
-      typename Initiation,
-      typename... InitArgs>
-  class deferred_async_operation
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-[section:experimental__deferred_conditional experimental::deferred_conditional]
-
-[indexterm1 asio.indexterm.experimental__deferred_conditional..experimental::deferred_conditional]
-
-
-Used to represent a deferred conditional branch. 
-
-
-  template<
-      typename OnTrue = deferred_noop,
-      typename OnFalse = deferred_noop>
-  class deferred_conditional
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_conditional.deferred_conditional [*deferred_conditional]] [constructor]]
-    [Construct a deferred conditional with the value to determine which branch will be executed. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_conditional.operator_lp__rp_ [*operator()]]]
-    [Invoke the conditional branch bsaed on the stored alue. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_conditional.otherwise [*otherwise]]]
-    [Set the false branch of the conditional. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_conditional.then [*then]]]
-    [Set the true branch of the conditional. ]
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:deferred_conditional experimental::deferred_conditional::deferred_conditional]
-
-[indexterm2 asio.indexterm.experimental__deferred_conditional.deferred_conditional..deferred_conditional..experimental::deferred_conditional] 
-Construct a deferred conditional with the value to determine which branch will be executed. 
-
-
-  constexpr deferred_conditional(
-      bool b);
-
-
-
-[endsect]
-
-
-
-[section:operator_lp__rp_ experimental::deferred_conditional::operator()]
-
-[indexterm2 asio.indexterm.experimental__deferred_conditional.operator_lp__rp_..operator()..experimental::deferred_conditional] 
-Invoke the conditional branch bsaed on the stored alue. 
-
-
-  template<
-      typename... Args>
-  auto operator()(
-      Args &&... args);
-
-
-
-[endsect]
-
-
-
-[section:otherwise experimental::deferred_conditional::otherwise]
-
-[indexterm2 asio.indexterm.experimental__deferred_conditional.otherwise..otherwise..experimental::deferred_conditional] 
-Set the false branch of the conditional. 
-
-
-  template<
-      typename T>
-  deferred_conditional< OnTrue, T > otherwise(
-      T on_false,
-      typename constraint< is_deferred< T >::value >::type *  = 0,
-      typename constraint< !is_same< typename conditional< true, OnTrue, T >::type, deferred_noop >::value >::type *  = 0,
-      typename constraint< is_same< typename conditional< true, OnFalse, T >::type, deferred_noop >::value >::type *  = 0);
-
-
-
-[endsect]
-
-
-
-[section:then experimental::deferred_conditional::then]
-
-[indexterm2 asio.indexterm.experimental__deferred_conditional.then..then..experimental::deferred_conditional] 
-Set the true branch of the conditional. 
-
-
-  template<
-      typename T>
-  deferred_conditional< T, OnFalse > then(
-      T on_true,
-      typename constraint< is_deferred< T >::value >::type *  = 0,
-      typename constraint< is_same< typename conditional< true, OnTrue, T >::type, deferred_noop >::value >::type *  = 0);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_function experimental::deferred_function]
-
-[indexterm1 asio.indexterm.experimental__deferred_function..experimental::deferred_function]
-
-
-Wraps a function object so that it may be used as an element in a deferred composition. 
-
-
-  template<
-      typename Function>
-  class deferred_function
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_function.decltype [*decltype]]]
-    []
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_function.deferred_function [*deferred_function]] [constructor]]
-    [Constructor. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_function.function_ [*function_]]]
-    []
-  ]
-
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:decltype experimental::deferred_function::decltype]
-
-[indexterm2 asio.indexterm.experimental__deferred_function.decltype..decltype..experimental::deferred_function] 
-
-  template<
-      typename... Args>
-  decltype(
-      auto );
-
-
-
-[endsect]
-
-
-
-[section:deferred_function experimental::deferred_function::deferred_function]
-
-[indexterm2 asio.indexterm.experimental__deferred_function.deferred_function..deferred_function..experimental::deferred_function] 
-Constructor. 
-
-
-  template<
-      typename F>
-  constexpr deferred_function(
-      deferred_init_tag ,
-      F && function);
-
-
-
-[endsect]
-
-
-
-[section:function_ experimental::deferred_function::function_]
-
-[indexterm2 asio.indexterm.experimental__deferred_function.function_..function_..experimental::deferred_function] 
-
-  Function function_;
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_init_tag experimental::deferred_init_tag]
-
-[indexterm1 asio.indexterm.experimental__deferred_init_tag..experimental::deferred_init_tag]
-
-
-Tag type to disambiguate deferred constructors. 
-
-
-  struct deferred_init_tag
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-[section:experimental__deferred_noop experimental::deferred_noop]
-
-[indexterm1 asio.indexterm.experimental__deferred_noop..experimental::deferred_noop]
-
-
-Used to represent an empty deferred action. 
-
-
-  struct deferred_noop
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_noop.operator_lp__rp_ [*operator()]]]
-    [No effect. ]
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:operator_lp__rp_ experimental::deferred_noop::operator()]
-
-[indexterm2 asio.indexterm.experimental__deferred_noop.operator_lp__rp_..operator()..experimental::deferred_noop] 
-No effect. 
-
-
-  template<
-      typename... Args>
-  void operator()(
-      Args && ...);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_sequence experimental::deferred_sequence]
-
-[indexterm1 asio.indexterm.experimental__deferred_sequence..experimental::deferred_sequence]
-
-
-Defines a link between two consecutive operations in a sequence. 
-
-
-  template<
-      typename Head,
-      typename Tail>
-  class deferred_sequence
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_sequence.decltype [*decltype]]]
-    []
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_sequence.deferred_sequence [*deferred_sequence]] [constructor]]
-    []
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:decltype experimental::deferred_sequence::decltype]
-
-[indexterm2 asio.indexterm.experimental__deferred_sequence.decltype..decltype..experimental::deferred_sequence] 
-
-  template<
-      typename CompletionToken>
-  decltype(
-      auto );
-
-
-
-[endsect]
-
-
-
-[section:deferred_sequence experimental::deferred_sequence::deferred_sequence]
-
-[indexterm2 asio.indexterm.experimental__deferred_sequence.deferred_sequence..deferred_sequence..experimental::deferred_sequence] 
-
-  template<
-      typename H,
-      typename T>
-  constexpr deferred_sequence(
-      deferred_init_tag ,
-      H && head,
-      T && tail);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_sequence__initiate experimental::deferred_sequence::initiate]
-
-[indexterm1 asio.indexterm.experimental__deferred_sequence__initiate..experimental::deferred_sequence::initiate]
-
-
-
-  struct initiate
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_sequence__initiate.operator_lp__rp_ [*operator()]]]
-    []
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:operator_lp__rp_ experimental::deferred_sequence::initiate::operator()]
-
-[indexterm2 asio.indexterm.experimental__deferred_sequence__initiate.operator_lp__rp_..operator()..experimental::deferred_sequence::initiate] 
-
-  template<
-      typename ``[link asio.reference.Handler Handler]``>
-  void operator()(
-      Handler && handler,
-      Head head,
-      Tail && tail);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_t experimental::deferred_t]
-
-[indexterm1 asio.indexterm.experimental__deferred_t..experimental::deferred_t]
-
-
-Class used to specify that an asynchronous operation should return a function object to lazily launch the operation. 
-
-
-  class deferred_t
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.experimental__deferred_t__executor_with_default [*executor_with_default]]]
-    [Adapts an executor to add the deferred_t completion token as the default. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_t.as_default_on [*as_default_on]] [static]]
-    [Function helper to adapt an I/O object to use deferred_t as its default completion token type. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.deferred_t [*deferred_t]] [constructor]]
-    [Default constructor. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.operator_lp__rp_ [*operator()]]]
-    [Creates a new deferred from a function. 
-     [hr]
-     Passes through anything that is already deferred. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.values [*values]] [static]]
-    [Returns a deferred operation that returns the provided values. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.when [*when]] [static]]
-    [Creates a conditional object for branching deferred operations. ]
-  ]
-  
-]
-
-The [link asio.reference.experimental__deferred_t `experimental::deferred_t`] class is used to indicate that an asynchronous operation should return a function object which is itself an initiation function. A [link asio.reference.experimental__deferred_t `experimental::deferred_t`] object may be passed as a completion token to an asynchronous operation, typically using the special value `asio::deferred`. For example:
-
-
-
-   auto my_deferred_op
-     = my_socket.async_read_some(my_buffer,
-         asio::experimental::deferred); 
-
-
-
-
-The initiating function (async\_read\_some in the above example) returns a function object that will lazily initiate the operation. 
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:as_default_on experimental::deferred_t::as_default_on]
-
-[indexterm2 asio.indexterm.experimental__deferred_t.as_default_on..as_default_on..experimental::deferred_t] 
-Function helper to adapt an I/O object to use `deferred_t` as its default completion token type. 
-
-
-  template<
-      typename T>
-  static decay< T >::type::template rebind_executor< executor_with_default< typename decay< T >::type::executor_type > >::other as_default_on(
-      T && object);
-
-
-
-[endsect]
-
-
-
-[section:deferred_t experimental::deferred_t::deferred_t]
-
-[indexterm2 asio.indexterm.experimental__deferred_t.deferred_t..deferred_t..experimental::deferred_t] 
-Default constructor. 
-
-
-  constexpr deferred_t();
-
-
-
-[endsect]
-
-
-[section:operator_lp__rp_ experimental::deferred_t::operator()]
-
-[indexterm2 asio.indexterm.experimental__deferred_t.operator_lp__rp_..operator()..experimental::deferred_t] 
-Creates a new deferred from a function. 
-
-
-  template<
-      typename Function>
-  constraint< !is_deferred< typename decay< Function >::type >::value, deferred_function< typename decay< Function >::type > >::type ``[link asio.reference.experimental__deferred_t.operator_lp__rp_.overload1 operator()]``(
-      Function && function) const;
-  ``  [''''&raquo;''' [link asio.reference.experimental__deferred_t.operator_lp__rp_.overload1 more...]]``
-
-
-Passes through anything that is already deferred. 
-
-
-  template<
-      typename T>
-  constraint< is_deferred< typename decay< T >::type >::value, typename decay< T >::type >::type ``[link asio.reference.experimental__deferred_t.operator_lp__rp_.overload2 operator()]``(
-      T && t) const;
-  ``  [''''&raquo;''' [link asio.reference.experimental__deferred_t.operator_lp__rp_.overload2 more...]]``
-
-
-[section:overload1 experimental::deferred_t::operator() (1 of 2 overloads)]
-
-
-Creates a new deferred from a function. 
-
-
-  template<
-      typename Function>
-  constraint< !is_deferred< typename decay< Function >::type >::value, deferred_function< typename decay< Function >::type > >::type operator()(
-      Function && function) const;
-
-
-
-[endsect]
-
-
-
-[section:overload2 experimental::deferred_t::operator() (2 of 2 overloads)]
-
-
-Passes through anything that is already deferred. 
-
-
-  template<
-      typename T>
-  constraint< is_deferred< typename decay< T >::type >::value, typename decay< T >::type >::type operator()(
-      T && t) const;
-
-
-
-[endsect]
-
-
-[endsect]
-
-
-[section:values experimental::deferred_t::values]
-
-[indexterm2 asio.indexterm.experimental__deferred_t.values..values..experimental::deferred_t] 
-Returns a deferred operation that returns the provided values. 
-
-
-  template<
-      typename... Args>
-  static constexpr deferred_values< typename decay< Args >::type...> values(
-      Args &&... args);
-
-
-
-[endsect]
-
-
-
-[section:when experimental::deferred_t::when]
-
-[indexterm2 asio.indexterm.experimental__deferred_t.when..when..experimental::deferred_t] 
-Creates a conditional object for branching deferred operations. 
-
-
-  static constexpr deferred_conditional when(
-      bool b);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_t__executor_with_default experimental::deferred_t::executor_with_default]
-
-[indexterm1 asio.indexterm.experimental__deferred_t__executor_with_default..experimental::deferred_t::executor_with_default]
-
-
-Adapts an executor to add the `deferred_t` completion token as the default. 
-
-
-  template<
-      typename ``[link asio.reference.Executor1 InnerExecutor]``>
-  struct executor_with_default
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.experimental__deferred_t__executor_with_default.default_completion_token_type [*default_completion_token_type]]]
-    [Specify deferred_t as the default completion token type. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_t__executor_with_default.executor_with_default [*executor_with_default]] [constructor]]
-    [Construct the adapted executor from the inner executor type. ]
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:default_completion_token_type experimental::deferred_t::executor_with_default::default_completion_token_type]
-
-[indexterm2 asio.indexterm.experimental__deferred_t__executor_with_default.default_completion_token_type..default_completion_token_type..experimental::deferred_t::executor_with_default] 
-Specify `deferred_t` as the default completion token type. 
-
-
-  typedef deferred_t default_completion_token_type;
-
-
-[heading Types]
-[table
-  [[Name][Description]]
-
-  [
-
-    [[link asio.reference.experimental__deferred_t__executor_with_default [*executor_with_default]]]
-    [Adapts an executor to add the deferred_t completion token as the default. ]
-  
-  ]
-
-]
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_t.as_default_on [*as_default_on]] [static]]
-    [Function helper to adapt an I/O object to use deferred_t as its default completion token type. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.deferred_t [*deferred_t]] [constructor]]
-    [Default constructor. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.operator_lp__rp_ [*operator()]]]
-    [Creates a new deferred from a function. 
-     [hr]
-     Passes through anything that is already deferred. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.values [*values]] [static]]
-    [Returns a deferred operation that returns the provided values. ]
-  ]
-  
-  [
-    [[link asio.reference.experimental__deferred_t.when [*when]] [static]]
-    [Creates a conditional object for branching deferred operations. ]
-  ]
-  
-]
-
-The [link asio.reference.experimental__deferred_t `experimental::deferred_t`] class is used to indicate that an asynchronous operation should return a function object which is itself an initiation function. A [link asio.reference.experimental__deferred_t `experimental::deferred_t`] object may be passed as a completion token to an asynchronous operation, typically using the special value `asio::deferred`. For example:
-
-
-
-   auto my_deferred_op
-     = my_socket.async_read_some(my_buffer,
-         asio::experimental::deferred); 
-
-
-
-
-The initiating function (async\_read\_some in the above example) returns a function object that will lazily initiate the operation. 
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-
-[section:executor_with_default experimental::deferred_t::executor_with_default::executor_with_default]
-
-[indexterm2 asio.indexterm.experimental__deferred_t__executor_with_default.executor_with_default..executor_with_default..experimental::deferred_t::executor_with_default] 
-Construct the adapted executor from the inner executor type. 
-
-
-  template<
-      typename ``[link asio.reference.Executor1 InnerExecutor1]``>
-  executor_with_default(
-      const InnerExecutor1 & ex,
-      typename constraint< conditional< !is_same< InnerExecutor1, executor_with_default >::value, is_convertible< InnerExecutor1, InnerExecutor >, false_type >::type::value >::type  = 0);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-[section:experimental__deferred_values experimental::deferred_values]
-
-[indexterm1 asio.indexterm.experimental__deferred_values..experimental::deferred_values]
-
-
-Encapsulates deferred values. 
-
-
-  template<
-      typename... Values>
-  class deferred_values
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-[section:experimental__deferred_values__initiate experimental::deferred_values::initiate]
-
-[indexterm1 asio.indexterm.experimental__deferred_values__initiate..experimental::deferred_values::initiate]
-
-
-
-  struct initiate
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__deferred_values__initiate.operator_lp__rp_ [*operator()]]]
-    []
-  ]
-  
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[section:operator_lp__rp_ experimental::deferred_values::initiate::operator()]
-
-[indexterm2 asio.indexterm.experimental__deferred_values__initiate.operator_lp__rp_..operator()..experimental::deferred_values::initiate] 
-
-  template<
-      typename ``[link asio.reference.Handler Handler]``,
-      typename... V>
-  void operator()(
-      Handler handler,
-      V &&... values);
-
-
-
-[endsect]
-
-
-
-[endsect]
-
-
 [section:experimental__error__channel_category experimental::error::channel_category]
 
 [indexterm1 asio.indexterm.experimental__error__channel_category..experimental::error::channel_category]
@@ -97339,29 +98119,6 @@ Encapsulates deferred values.
 
 [endsect]
 
-
-[section:experimental__is_deferred experimental::is_deferred]
-
-[indexterm1 asio.indexterm.experimental__is_deferred..experimental::is_deferred]
-
-
-Trait for detecting objects that are usable as deferred operations. 
-
-
-  template<
-      typename T>
-  struct is_deferred :
-    public false_type
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
 
 [section:experimental__is_promise experimental::is_promise]
 
@@ -97503,32 +98260,6 @@ For example:
 [endsect]
 
 
-
-[section:experimental__operator_pipe_ experimental::operator|]
-
-[indexterm1 asio.indexterm.experimental__operator_pipe_..experimental::operator|]
-
-Pipe operator used to chain deferred operations. 
-
-
-  template<
-      typename Head,
-      typename Tail>
-  auto operator|(
-      Head head,
-      Tail && tail) const;
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/deferred.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
 [section:experimental__parallel_group experimental::parallel_group]
 
 [indexterm1 asio.indexterm.experimental__parallel_group..experimental::parallel_group]
@@ -97589,7 +98320,7 @@ Initiate an asynchronous wait for the group of operations.
   template<
       typename CancellationCondition,
       typename CompletionToken>
-  auto async_wait(
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_wait(
       CancellationCondition cancellation_condition,
       CompletionToken && token);
 
@@ -97647,8 +98378,23 @@ Constructor.
 The completion signature for the group of operations. 
 
 
-  typedef detail::parallel_group_signature< sizeof...(Ops), typename detail::parallel_op_signature< Ops >::type...>::type signature;
+  typedef detail::parallel_group_signature< sizeof...(Ops), typename completion_signature_of< Ops >::type...>::type signature;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.completion_signature_of.type [*type]]]
+    []
+  
+  ]
+
+]
+
+Class template `completion_signature_of` is a trait with a member type alias `type` that denotes the completion signature of the asynchronous operation initiated by the expression `T(Args..., token)` operation, where `token` is an unspecified completion token type. If the asynchronous operation does not have exactly one completion signature, the instantion of the trait is well-formed but the member type alias `type` is omitted. If the expression `T(Args..., token)` is not an asynchronous operation then use of the trait is ill-formed. 
 
 
 [heading Requirements]
@@ -97656,125 +98402,6 @@ The completion signature for the group of operations.
 ['Header: ][^asio/experimental/parallel_group.hpp]
 
 ['Convenience header: ]None
-
-
-[endsect]
-
-
-
-[endsect]
-
-
-[section:experimental__prepend experimental::prepend]
-
-[indexterm1 asio.indexterm.experimental__prepend..experimental::prepend]
-
-Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
-
-
-  template<
-      typename CompletionToken,
-      typename... Values>
-  constexpr prepend_t< typename decay< CompletionToken >::type, typename decay< Values >::type...> prepend(
-      CompletionToken && completion_token,
-      Values &&... values);
-
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/prepend.hpp]
-
-['Convenience header: ]None
-
-
-[endsect]
-
-
-[section:experimental__prepend_t experimental::prepend_t]
-
-[indexterm1 asio.indexterm.experimental__prepend_t..experimental::prepend_t]
-
-
-Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
-
-
-  template<
-      typename CompletionToken,
-      typename... Values>
-  class prepend_t
-
-
-[heading Member Functions]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__prepend_t.prepend_t [*prepend_t]] [constructor]]
-    [Constructor. ]
-  ]
-  
-]
-
-[heading Data Members]
-[table
-  [[Name][Description]]
-
-  [
-    [[link asio.reference.experimental__prepend_t.token_ [*token_]]]
-    []
-  ]
-
-  [
-    [[link asio.reference.experimental__prepend_t.values_ [*values_]]]
-    []
-  ]
-
-]
-
-[heading Requirements]
-
-['Header: ][^asio/experimental/prepend.hpp]
-
-['Convenience header: ]None
-
-
-[section:prepend_t experimental::prepend_t::prepend_t]
-
-[indexterm2 asio.indexterm.experimental__prepend_t.prepend_t..prepend_t..experimental::prepend_t] 
-Constructor. 
-
-
-  template<
-      typename T,
-      typename... V>
-  constexpr prepend_t(
-      T && completion_token,
-      V &&... values);
-
-
-
-[endsect]
-
-
-
-[section:token_ experimental::prepend_t::token_]
-
-[indexterm2 asio.indexterm.experimental__prepend_t.token_..token_..experimental::prepend_t] 
-
-  CompletionToken token_;
-
-
-
-[endsect]
-
-
-
-[section:values_ experimental::prepend_t::values_]
-
-[indexterm2 asio.indexterm.experimental__prepend_t.values_..values_..experimental::prepend_t] 
-
-  std::tuple< Values...> values_;
-
 
 
 [endsect]
@@ -126324,6 +126951,35 @@ Getting the current option value:
 
 [endsect]
 
+[section:is_async_operation is_async_operation]
+
+[indexterm1 asio.indexterm.is_async_operation..is_async_operation]
+
+
+
+  template<
+      typename T,
+      typename  = void,
+      typename  = void,
+      typename  = void,
+      typename  = void,
+      typename  = void,
+      typename  = void,
+      typename  = void,
+      typename  = void,
+      typename  = void>
+  struct is_async_operation
+
+
+[heading Requirements]
+
+['Header: ][^asio/async_result.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
 [section:is_const_buffer_sequence is_const_buffer_sequence]
 
 [indexterm1 asio.indexterm.is_const_buffer_sequence..is_const_buffer_sequence]
@@ -126340,6 +126996,51 @@ Trait to determine whether a type satisfies the ConstBufferSequence requirements
 [heading Requirements]
 
 ['Header: ][^asio/buffer.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+[section:is_contiguous_iterator is_contiguous_iterator]
+
+[indexterm1 asio.indexterm.is_contiguous_iterator..is_contiguous_iterator]
+
+
+The [link asio.reference.is_contiguous_iterator `is_contiguous_iterator`] class is a traits class that may be used to determine whether a type is a contiguous iterator. 
+
+
+  template<
+      typename T>
+  struct is_contiguous_iterator
+
+
+[heading Requirements]
+
+['Header: ][^asio/is_contiguous_iterator.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+[section:is_deferred is_deferred]
+
+[indexterm1 asio.indexterm.is_deferred..is_deferred]
+
+
+Trait for detecting objects that are usable as deferred operations. 
+
+
+  template<
+      typename T>
+  struct is_deferred :
+    public false_type
+
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
 
 ['Convenience header: ][^asio.hpp]
 
@@ -130851,6 +131552,32 @@ Output an error code.
 [heading Requirements]
 
 ['Header: ][^asio/error_code.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:operator_pipe_ operator|]
+
+[indexterm1 asio.indexterm.operator_pipe_..operator|]
+
+Pipe operator used to chain deferred operations. 
+
+
+  template<
+      typename Head,
+      typename Tail>
+  auto operator|(
+      Head head,
+      Tail && tail) const;
+
+
+[heading Requirements]
+
+['Header: ][^asio/deferred.hpp]
 
 ['Convenience header: ][^asio.hpp]
 
@@ -136348,6 +137075,125 @@ The result of the `prefer` expression.
 ['Header: ][^asio/prefer.hpp]
 
 ['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[endsect]
+
+
+[section:prepend prepend]
+
+[indexterm1 asio.indexterm.prepend..prepend]
+
+Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  constexpr prepend_t< typename decay< CompletionToken >::type, typename decay< Values >::type...> prepend(
+      CompletionToken && completion_token,
+      Values &&... values);
+
+
+[heading Requirements]
+
+['Header: ][^asio/prepend.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+[section:prepend_t prepend_t]
+
+[indexterm1 asio.indexterm.prepend_t..prepend_t]
+
+
+Completion token type used to specify that the completion handler arguments should be passed additional values before the results of the operation. 
+
+
+  template<
+      typename CompletionToken,
+      typename... Values>
+  class prepend_t
+
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.prepend_t.prepend_t [*prepend_t]] [constructor]]
+    [Constructor. ]
+  ]
+  
+]
+
+[heading Data Members]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.prepend_t.token_ [*token_]]]
+    []
+  ]
+
+  [
+    [[link asio.reference.prepend_t.values_ [*values_]]]
+    []
+  ]
+
+]
+
+[heading Requirements]
+
+['Header: ][^asio/prepend.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[section:prepend_t prepend_t::prepend_t]
+
+[indexterm2 asio.indexterm.prepend_t.prepend_t..prepend_t..prepend_t] 
+Constructor. 
+
+
+  template<
+      typename T,
+      typename... V>
+  constexpr prepend_t(
+      T && completion_token,
+      V &&... values);
+
+
+
+[endsect]
+
+
+
+[section:token_ prepend_t::token_]
+
+[indexterm2 asio.indexterm.prepend_t.token_..token_..prepend_t] 
+
+  CompletionToken token_;
+
+
+
+[endsect]
+
+
+
+[section:values_ prepend_t::values_]
+
+[indexterm2 asio.indexterm.prepend_t.values_..values_..prepend_t] 
+
+  std::tuple< Values...> values_;
+
 
 
 [endsect]
@@ -144500,86 +145346,173 @@ Protected destructor to prevent deletion through this type.
 Start a new stackful coroutine. 
 
 
-Start a new stackful coroutine, calling the specified handler when it completes. 
+Start a new stackful coroutine that executes on a given executor. 
 
   template<
-      typename Function>
-  void ``[link asio.reference.spawn.overload1 spawn]``(
-      Function && function,
-      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.spawn.overload1 spawn]``(
+      const Executor & ex,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.spawn.overload1 more...]]``
 
+Start a new stackful coroutine that executes on a given execution context. 
+
   template<
-      typename ``[link asio.reference.Handler Handler]``,
-      typename Function>
-  void ``[link asio.reference.spawn.overload2 spawn]``(
-      Handler && handler,
-      Function && function,
-      const boost::coroutines::attributes & attributes = boost::coroutines::attributes(),
-      typename constraint< !is_executor< typename decay< Handler >::type >::value &&!execution::is_executor< typename decay< Handler >::type >::value &&!is_convertible< Handler &, execution_context & >::value >::type  = 0);
+      typename ExecutionContext,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.spawn.overload2 spawn]``(
+      ExecutionContext & ctx,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.spawn.overload2 more...]]``
 
-Start a new stackful coroutine, inheriting the execution context of another. 
+Start a new stackful coroutine, inheriting the executor of another. 
 
   template<
-      typename ``[link asio.reference.Handler Handler]``,
-      typename Function>
-  void ``[link asio.reference.spawn.overload3 spawn]``(
-      basic_yield_context< Handler > ctx,
-      Function && function,
-      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.spawn.overload3 spawn]``(
+      const basic_yield_context< Executor > & ctx,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.spawn.overload3 more...]]``
 
 Start a new stackful coroutine that executes on a given executor. 
 
   template<
-      typename Function,
-      typename ``[link asio.reference.Executor1 Executor]``>
-  void ``[link asio.reference.spawn.overload4 spawn]``(
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename StackAllocator,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.spawn.overload4 spawn]``(
       const Executor & ex,
-      Function && function,
-      const boost::coroutines::attributes & attributes = boost::coroutines::attributes(),
+      allocator_arg_t ,
+      StackAllocator && stack_allocator,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
       typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
   ``  [''''&raquo;''' [link asio.reference.spawn.overload4 more...]]``
-
-Start a new stackful coroutine that executes on a given strand. 
-
-  template<
-      typename Function,
-      typename ``[link asio.reference.Executor1 Executor]``>
-  void ``[link asio.reference.spawn.overload5 spawn]``(
-      const strand< Executor > & ex,
-      Function && function,
-      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
-  ``  [''''&raquo;''' [link asio.reference.spawn.overload5 more...]]``
-
-Start a new stackful coroutine that executes in the context of a strand. 
-
-  template<
-      typename Function>
-  void ``[link asio.reference.spawn.overload6 spawn]``(
-      const asio::io_context::strand & s,
-      Function && function,
-      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
-  ``  [''''&raquo;''' [link asio.reference.spawn.overload6 more...]]``
 
 Start a new stackful coroutine that executes on a given execution context. 
 
   template<
+      typename ExecutionContext,
+      typename StackAllocator,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.spawn.overload5 spawn]``(
+      ExecutionContext & ctx,
+      allocator_arg_t ,
+      StackAllocator && stack_allocator,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload5 more...]]``
+
+Start a new stackful coroutine, inheriting the executor of another. 
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename StackAllocator,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.spawn.overload6 spawn]``(
+      const basic_yield_context< Executor > & ctx,
+      allocator_arg_t ,
+      StackAllocator && stack_allocator,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload6 more...]]``
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine, calling the specified handler when it completes. 
+
+  template<
+      typename Function>
+  void ``[link asio.reference.spawn.overload7 spawn]``(
+      Function && function,
+      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload7 more...]]``
+
+  template<
+      typename ``[link asio.reference.Handler Handler]``,
+      typename Function>
+  void ``[link asio.reference.spawn.overload8 spawn]``(
+      Handler && handler,
+      Function && function,
+      const boost::coroutines::attributes & attributes = boost::coroutines::attributes(),
+      typename constraint< !is_executor< typename decay< Handler >::type >::value &&!execution::is_executor< typename decay< Handler >::type >::value &&!is_convertible< Handler &, execution_context & >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload8 more...]]``
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine, inheriting the execution context of another. 
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename Function>
+  void ``[link asio.reference.spawn.overload9 spawn]``(
+      basic_yield_context< Executor > ctx,
+      Function && function,
+      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload9 more...]]``
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes on a given executor. 
+
+  template<
+      typename Function,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  void ``[link asio.reference.spawn.overload10 spawn]``(
+      const Executor & ex,
+      Function && function,
+      const boost::coroutines::attributes & attributes = boost::coroutines::attributes(),
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload10 more...]]``
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes on a given strand. 
+
+  template<
+      typename Function,
+      typename ``[link asio.reference.Executor1 Executor]``>
+  void ``[link asio.reference.spawn.overload11 spawn]``(
+      const strand< Executor > & ex,
+      Function && function,
+      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload11 more...]]``
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes in the context of a strand. 
+
+  template<
+      typename Function>
+  void ``[link asio.reference.spawn.overload12 spawn]``(
+      const asio::io_context::strand & s,
+      Function && function,
+      const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload12 more...]]``
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes on a given execution context. 
+
+  template<
       typename Function,
       typename ExecutionContext>
-  void ``[link asio.reference.spawn.overload7 spawn]``(
+  void ``[link asio.reference.spawn.overload13 spawn]``(
       ExecutionContext & ctx,
       Function && function,
       const boost::coroutines::attributes & attributes = boost::coroutines::attributes(),
       typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
-  ``  [''''&raquo;''' [link asio.reference.spawn.overload7 more...]]``
+  ``  [''''&raquo;''' [link asio.reference.spawn.overload13 more...]]``
 
 The `spawn()` function is a high-level wrapper over the Boost.Coroutine library. This function enables programs to implement asynchronous logic in a synchronous manner, as illustrated by the following example:
 
 
 
-   asio::spawn(my_strand, do_echo);
+   asio::spawn(my_strand, do_echo, asio::detached);
 
    // ...
 
@@ -144614,10 +145547,451 @@ The `spawn()` function is a high-level wrapper over the Boost.Coroutine library.
 ['Convenience header: ]None
 
 
-[section:overload1 spawn (1 of 7 overloads)]
+[section:overload1 spawn (1 of 13 overloads)]
 
 
-Start a new stackful coroutine, calling the specified handler when it completes. 
+Start a new stackful coroutine that executes on a given executor. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` spawn(
+      const Executor & ex,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+This function is used to launch a new stackful coroutine.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][Identifies the executor that will run the stackful coroutine.]]
+
+[[function][The coroutine function. The function must be callable the signature: 
+``
+   void function(basic_yield_context<Executor> yield); 
+``
+]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will handle the notification that the coroutine has completed. If the return type `R` of `function` is `void`, the function signature of the completion handler must be:]]
+
+]
+
+
+
+   void handler(std::exception_ptr); 
+
+
+Otherwise, the function signature of the completion handler must be: 
+
+   void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the return type of the function object.
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call the [link asio.reference.basic_yield_context `basic_yield_context`] member function `reset_cancellation_state`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 spawn (2 of 13 overloads)]
+
+
+Start a new stackful coroutine that executes on a given execution context. 
+
+
+  template<
+      typename ExecutionContext,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` spawn(
+      ExecutionContext & ctx,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+This function is used to launch a new stackful coroutine.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][Identifies the execution context that will run the stackful coroutine.]]
+
+[[function][The coroutine function. The function must be callable the signature: 
+``
+   void function(basic_yield_context<Executor> yield); 
+``
+]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will handle the notification that the coroutine has completed. If the return type `R` of `function` is `void`, the function signature of the completion handler must be:]]
+
+]
+
+
+
+   void handler(std::exception_ptr); 
+
+
+Otherwise, the function signature of the completion handler must be: 
+
+   void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the return type of the function object.
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call the [link asio.reference.basic_yield_context `basic_yield_context`] member function `reset_cancellation_state`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 spawn (3 of 13 overloads)]
+
+
+Start a new stackful coroutine, inheriting the executor of another. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` spawn(
+      const basic_yield_context< Executor > & ctx,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+This function is used to launch a new stackful coroutine.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][Identifies the current coroutine as a parent of the new coroutine. This specifies that the new coroutine should inherit the executor of the parent. For example, if the parent coroutine is executing in a particular strand, then the new coroutine will execute in the same strand.]]
+
+[[function][The coroutine function. The function must be callable the signature: 
+``
+   void function(basic_yield_context<Executor> yield); 
+``
+]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will handle the notification that the coroutine has completed. If the return type `R` of `function` is `void`, the function signature of the completion handler must be:]]
+
+]
+
+
+
+   void handler(std::exception_ptr); 
+
+
+Otherwise, the function signature of the completion handler must be: 
+
+   void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the return type of the function object.
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call the [link asio.reference.basic_yield_context `basic_yield_context`] member function `reset_cancellation_state`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 spawn (4 of 13 overloads)]
+
+
+Start a new stackful coroutine that executes on a given executor. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename StackAllocator,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` spawn(
+      const Executor & ex,
+      allocator_arg_t ,
+      StackAllocator && stack_allocator,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+This function is used to launch a new stackful coroutine using the specified stack allocator.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ex][Identifies the executor that will run the stackful coroutine.]]
+
+[[stack_allocator][Denotes the allocator to be used to allocate the underlying coroutine's stack. The type must satisfy the stack-allocator concept defined by the Boost.Context library.]]
+
+[[function][The coroutine function. The function must be callable the signature: 
+``
+   void function(basic_yield_context<Executor> yield); 
+``
+]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will handle the notification that the coroutine has completed. If the return type `R` of `function` is `void`, the function signature of the completion handler must be:]]
+
+]
+
+
+
+   void handler(std::exception_ptr); 
+
+
+Otherwise, the function signature of the completion handler must be: 
+
+   void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the return type of the function object.
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call the [link asio.reference.basic_yield_context `basic_yield_context`] member function `reset_cancellation_state`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 spawn (5 of 13 overloads)]
+
+
+Start a new stackful coroutine that executes on a given execution context. 
+
+
+  template<
+      typename ExecutionContext,
+      typename StackAllocator,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` spawn(
+      ExecutionContext & ctx,
+      allocator_arg_t ,
+      StackAllocator && stack_allocator,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_convertible< ExecutionContext &, execution_context & >::value >::type  = 0);
+
+
+This function is used to launch a new stackful coroutine.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][Identifies the execution context that will run the stackful coroutine.]]
+
+[[stack_allocator][Denotes the allocator to be used to allocate the underlying coroutine's stack. The type must satisfy the stack-allocator concept defined by the Boost.Context library.]]
+
+[[function][The coroutine function. The function must be callable the signature: 
+``
+   void function(basic_yield_context<Executor> yield); 
+``
+]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will handle the notification that the coroutine has completed. If the return type `R` of `function` is `void`, the function signature of the completion handler must be:]]
+
+]
+
+
+
+   void handler(std::exception_ptr); 
+
+
+Otherwise, the function signature of the completion handler must be: 
+
+   void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the return type of the function object.
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call the [link asio.reference.basic_yield_context `basic_yield_context`] member function `reset_cancellation_state`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 spawn (6 of 13 overloads)]
+
+
+Start a new stackful coroutine, inheriting the executor of another. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor]``,
+      typename StackAllocator,
+      typename F,
+      typename CompletionToken = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` spawn(
+      const basic_yield_context< Executor > & ctx,
+      allocator_arg_t ,
+      StackAllocator && stack_allocator,
+      F && function,
+      CompletionToken && token = ``[link asio.reference.asynchronous_operations.default_completion_tokens ['DEFAULT]]``,
+      typename constraint< is_executor< Executor >::value||execution::is_executor< Executor >::value >::type  = 0);
+
+
+This function is used to launch a new stackful coroutine using the specified stack allocator.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[ctx][Identifies the current coroutine as a parent of the new coroutine. This specifies that the new coroutine should inherit the executor of the parent. For example, if the parent coroutine is executing in a particular strand, then the new coroutine will execute in the same strand.]]
+
+[[stack_allocator][Denotes the allocator to be used to allocate the underlying coroutine's stack. The type must satisfy the stack-allocator concept defined by the Boost.Context library.]]
+
+[[function][The coroutine function. The function must be callable the signature: 
+``
+   void function(basic_yield_context<Executor> yield); 
+``
+]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will handle the notification that the coroutine has completed. If the return type `R` of `function` is `void`, the function signature of the completion handler must be:]]
+
+]
+
+
+
+   void handler(std::exception_ptr); 
+
+
+Otherwise, the function signature of the completion handler must be: 
+
+   void handler(std::exception_ptr, R); 
+
+
+
+
+
+[heading Completion Signature]
+  
+
+
+   void(std::exception_ptr, R) 
+
+
+where `R` is the return type of the function object.
+
+
+[heading Per-Operation Cancellation]
+  
+The new thread of execution is created with a cancellation state that supports `cancellation_type::terminal` values only. To change the cancellation state, call the [link asio.reference.basic_yield_context `basic_yield_context`] member function `reset_cancellation_state`. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload7 spawn (7 of 13 overloads)]
+
+
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine, calling the specified handler when it completes. 
 
 
   template<
@@ -144637,9 +146011,9 @@ This function is used to launch a new coroutine.
   
 [[function][The coroutine function. The function must have the signature: 
 ``
-   void function(basic_yield_context<Handler> yield); 
+   void function(basic_yield_context<Executor> yield); 
 ``
-]]
+where Executor is the associated executor type of `Function`.]]
 
 [[attributes][Boost.Coroutine attributes used to customise the coroutine. ]]
 
@@ -144652,10 +146026,10 @@ This function is used to launch a new coroutine.
 
 
 
-[section:overload2 spawn (2 of 7 overloads)]
+[section:overload8 spawn (8 of 13 overloads)]
 
 
-Start a new stackful coroutine, calling the specified handler when it completes. 
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine, calling the specified handler when it completes. 
 
 
   template<
@@ -144684,9 +146058,9 @@ This function is used to launch a new coroutine.
 
 [[function][The coroutine function. The function must have the signature: 
 ``
-   void function(basic_yield_context<Handler> yield); 
+   void function(basic_yield_context<Executor> yield); 
 ``
-]]
+where Executor is the associated executor type of `Handler`.]]
 
 [[attributes][Boost.Coroutine attributes used to customise the coroutine. ]]
 
@@ -144699,17 +146073,17 @@ This function is used to launch a new coroutine.
 
 
 
-[section:overload3 spawn (3 of 7 overloads)]
+[section:overload9 spawn (9 of 13 overloads)]
 
 
-Start a new stackful coroutine, inheriting the execution context of another. 
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine, inheriting the execution context of another. 
 
 
   template<
-      typename ``[link asio.reference.Handler Handler]``,
+      typename ``[link asio.reference.Executor1 Executor]``,
       typename Function>
   void spawn(
-      basic_yield_context< Handler > ctx,
+      basic_yield_context< Executor > ctx,
       Function && function,
       const boost::coroutines::attributes & attributes = boost::coroutines::attributes());
 
@@ -144726,7 +146100,7 @@ This function is used to launch a new coroutine.
 
 [[function][The coroutine function. The function must have the signature: 
 ``
-   void function(basic_yield_context<Handler> yield); 
+   void function(basic_yield_context<Executor> yield); 
 ``
 ]]
 
@@ -144741,10 +146115,10 @@ This function is used to launch a new coroutine.
 
 
 
-[section:overload4 spawn (4 of 7 overloads)]
+[section:overload10 spawn (10 of 13 overloads)]
 
 
-Start a new stackful coroutine that executes on a given executor. 
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes on a given executor. 
 
 
   template<
@@ -144765,7 +146139,7 @@ This function is used to launch a new coroutine.
 
 [variablelist
   
-[[ex][Identifies the executor that will run the coroutine. The new coroutine is implicitly given its own strand within this executor.]]
+[[ex][Identifies the executor that will run the coroutine. The new coroutine is automatically given its own explicit strand within this executor.]]
 
 [[function][The coroutine function. The function must have the signature: 
 ``
@@ -144784,10 +146158,10 @@ This function is used to launch a new coroutine.
 
 
 
-[section:overload5 spawn (5 of 7 overloads)]
+[section:overload11 spawn (11 of 13 overloads)]
 
 
-Start a new stackful coroutine that executes on a given strand. 
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes on a given strand. 
 
 
   template<
@@ -144826,10 +146200,10 @@ This function is used to launch a new coroutine.
 
 
 
-[section:overload6 spawn (6 of 7 overloads)]
+[section:overload12 spawn (12 of 13 overloads)]
 
 
-Start a new stackful coroutine that executes in the context of a strand. 
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes in the context of a strand. 
 
 
   template<
@@ -144867,10 +146241,10 @@ This function is used to launch a new coroutine.
 
 
 
-[section:overload7 spawn (7 of 7 overloads)]
+[section:overload13 spawn (13 of 13 overloads)]
 
 
-Start a new stackful coroutine that executes on a given execution context. 
+(Deprecated: Use overloads with a completion token.) Start a new stackful coroutine that executes on a given execution context. 
 
 
   template<
@@ -166319,7 +167693,7 @@ The number of bytes written. If an error occurs, returns the total number of byt
 A [link asio.overview.model.completion_tokens completion token] object that represents the currently executing coroutine. 
 
 
-  typedef basic_yield_context< unspecified > yield_context;
+  typedef basic_yield_context< any_io_executor > yield_context;
 
 
 [heading Types]
@@ -166328,15 +167702,15 @@ A [link asio.overview.model.completion_tokens completion token] object that repr
 
   [
 
-    [[link asio.reference.basic_yield_context.callee_type [*callee_type]]]
-    [The coroutine callee type, used by the implementation. ]
+    [[link asio.reference.basic_yield_context.cancellation_slot_type [*cancellation_slot_type]]]
+    [The cancellation slot type associated with the yield context. ]
   
   ]
 
   [
 
-    [[link asio.reference.basic_yield_context.caller_type [*caller_type]]]
-    [The coroutine caller type, used by the implementation. ]
+    [[link asio.reference.basic_yield_context.executor_type [*executor_type]]]
+    [The executor type associated with the yield context. ]
   
   ]
 
@@ -166348,14 +167722,44 @@ A [link asio.overview.model.completion_tokens completion token] object that repr
 
   [
     [[link asio.reference.basic_yield_context.basic_yield_context [*basic_yield_context]] [constructor]]
-    [Construct a yield context to represent the specified coroutine. 
-     [hr]
-     Construct a yield context from another yield context type. ]
+    [Construct a yield context from another yield context type. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.cancelled [*cancelled]]]
+    [Determine whether the current coroutine has been cancelled. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.get_cancellation_slot [*get_cancellation_slot]]]
+    [Get the cancellation slot associated with the coroutine. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.get_cancellation_state [*get_cancellation_state]]]
+    [Get the cancellation state associated with the coroutine. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.get_executor [*get_executor]]]
+    [Get the executor associated with the yield context. ]
   ]
   
   [
     [[link asio.reference.basic_yield_context.operator_lb__rb_ [*operator\[\]]]]
     [Return a yield context that sets the specified error_code. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.reset_cancellation_state [*reset_cancellation_state]]]
+    [Reset the cancellation state associated with the coroutine. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_yield_context.throw_if_cancelled [*throw_if_cancelled]]]
+    [Determine whether the coroutine throws if trying to suspend when it has been cancelled. 
+     [hr]
+     Set whether the coroutine throws if trying to suspend when it has been cancelled. ]
   ]
   
 ]
@@ -166364,8 +167768,8 @@ The [link asio.reference.basic_yield_context `basic_yield_context`] class is a c
 
 
 
-   template <typename Handler>
-   void my_coroutine(basic_yield_context<Handler> yield)
+   template <typename Executor>
+   void my_coroutine(basic_yield_context<Executor> yield)
    {
      ...
      std::size_t n = my_socket.async_read_some(buffer, yield);
