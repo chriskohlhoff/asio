@@ -364,7 +364,7 @@ public:
     is_convertible<Protocol1, Protocol>::value
       && is_convertible<Executor1, Executor>::value,
     basic_socket&
-  >::type operator=(basic_socket<Protocol1, Executor1> && other)
+  >::type operator=(basic_socket<Protocol1, Executor1>&& other)
   {
     basic_socket tmp(std::move(other));
     impl_ = std::move(tmp.impl_);

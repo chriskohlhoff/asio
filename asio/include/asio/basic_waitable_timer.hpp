@@ -341,7 +341,7 @@ public:
   basic_waitable_timer(
       basic_waitable_timer<Clock, WaitTraits, Executor1>&& other,
       typename constraint<
-          is_convertible<Executor1, Executor>::value
+        is_convertible<Executor1, Executor>::value
       >::type = 0)
     : impl_(std::move(other.impl_))
   {
