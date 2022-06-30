@@ -68,6 +68,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     posix::stream_descriptor descriptor5(std::move(descriptor2));
+
+    posix::basic_stream_descriptor<io_context::executor_type> descriptor6(ioc);
+    posix::stream_descriptor descriptor7(std::move(descriptor6));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_descriptor operators.
@@ -75,6 +78,7 @@ void test()
 #if defined(ASIO_HAS_MOVE)
     descriptor1 = posix::stream_descriptor(ioc);
     descriptor1 = std::move(descriptor2);
+    descriptor1 = std::move(descriptor6);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
@@ -88,9 +92,9 @@ void test()
       = descriptor1.lowest_layer();
     (void)lowest_layer;
 
-    const posix::stream_descriptor& descriptor6 = descriptor1;
+    const posix::stream_descriptor& descriptor8 = descriptor1;
     const posix::stream_descriptor::lowest_layer_type& lowest_layer2
-      = descriptor6.lowest_layer();
+      = descriptor8.lowest_layer();
     (void)lowest_layer2;
 
     int native_descriptor2 = -1;
