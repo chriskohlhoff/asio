@@ -203,6 +203,53 @@ public:
     impl_ = std::move(other.impl_);
     return *this;
   }
+
+  // All pipes have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_writable_pipe;
+
+  /// Move-construct a basic_writable_pipe from a pipe of another executor type.
+  /**
+   * This constructor moves a pipe from one object to another.
+   *
+   * @param other The other basic_writable_pipe object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_writable_pipe(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  basic_writable_pipe(basic_writable_pipe<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(std::move(other.impl_))
+  {
+  }
+
+  /// Move-assign a basic_writable_pipe from a pipe of another executor type.
+  /**
+   * This assignment operator moves a pipe from one object to another.
+   *
+   * @param other The other basic_writable_pipe object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_writable_pipe(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_writable_pipe&
+  >::type operator=(basic_writable_pipe<Executor1>&& other)
+  {
+    basic_writable_pipe tmp(std::move(other));
+    impl_ = std::move(tmp.impl_);
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destroys the pipe.

@@ -75,6 +75,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     writable_pipe pipe5(std::move(pipe4));
+
+    basic_writable_pipe<io_context::executor_type> pipe6(ioc);
+    writable_pipe pipe7(std::move(pipe6));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_writable_pipe operators.
@@ -82,6 +85,7 @@ void test()
 #if defined(ASIO_HAS_MOVE)
     pipe1 = writable_pipe(ioc);
     pipe1 = std::move(pipe2);
+    pipe1 = std::move(pipe6);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
