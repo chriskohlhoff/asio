@@ -188,6 +188,52 @@ public:
     impl_ = std::move(other.impl_);
     return *this;
   }
+
+  // All handles have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_object_handle;
+
+  /// Move-construct an object handle from a handle of another executor type.
+  /**
+   * This constructor moves an object handle from one object to another.
+   *
+   * @param other The other object handle object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_object_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  basic_object_handle(basic_object_handle<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(std::move(other.impl_))
+  {
+  }
+
+  /// Move-assign an object handle from a handle of another executor type.
+  /**
+   * This assignment operator moves an object handle from one object to another.
+   *
+   * @param other The other object handle object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_object_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_object_handle&
+  >::type operator=(basic_object_handle<Executor1>&& other)
+  {
+    impl_ = std::move(other.impl_);
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Get the executor associated with the object.

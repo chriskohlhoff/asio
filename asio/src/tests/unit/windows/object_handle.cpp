@@ -63,6 +63,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     win::object_handle handle5(std::move(handle4));
+
+    win::basic_object_handle<io_context::executor_type> handle6(ioc);
+    win::object_handle handle7(std::move(handle6));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_object_handle operators.
@@ -70,6 +73,7 @@ void test()
 #if defined(ASIO_HAS_MOVE)
     handle1 = win::object_handle(ioc);
     handle1 = std::move(handle3);
+    handle1 = std::move(handle6);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
@@ -83,9 +87,9 @@ void test()
       = handle1.lowest_layer();
     (void)lowest_layer;
 
-    const win::object_handle& handle6 = handle1;
+    const win::object_handle& handle8 = handle1;
     const win::object_handle::lowest_layer_type& lowest_layer3
-      = handle6.lowest_layer();
+      = handle8.lowest_layer();
     (void)lowest_layer3;
 
     HANDLE native_handle4 = INVALID_HANDLE_VALUE;
