@@ -85,6 +85,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     serial_port port7(std::move(port6));
+
+    basic_serial_port<io_context::executor_type> port8(ioc);
+    serial_port port9(std::move(port8));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_serial_port operators.
@@ -92,6 +95,7 @@ void test()
 #if defined(ASIO_HAS_MOVE)
     port1 = serial_port(ioc);
     port1 = std::move(port2);
+    port1 = std::move(port8);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
@@ -104,8 +108,8 @@ void test()
     serial_port::lowest_layer_type& lowest_layer = port1.lowest_layer();
     (void)lowest_layer;
 
-    const serial_port& port8 = port1;
-    const serial_port::lowest_layer_type& lowest_layer2 = port8.lowest_layer();
+    const serial_port& port10 = port1;
+    const serial_port::lowest_layer_type& lowest_layer2 = port10.lowest_layer();
     (void)lowest_layer2;
 
     port1.open("null");

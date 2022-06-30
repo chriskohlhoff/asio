@@ -291,6 +291,55 @@ public:
     impl_ = std::move(other.impl_);
     return *this;
   }
+
+  // All serial ports have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_serial_port;
+
+  /// Move-construct a basic_serial_port from a serial port of another executor
+  /// type.
+  /**
+   * This constructor moves a serial port from one object to another.
+   *
+   * @param other The other basic_serial_port object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_serial_port(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  basic_serial_port(basic_serial_port<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(std::move(other.impl_))
+  {
+  }
+
+  /// Move-assign a basic_serial_port from a serial port of another executor
+  /// type.
+  /**
+   * This assignment operator moves a serial port from one object to another.
+   *
+   * @param other The other basic_serial_port object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_serial_port(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_serial_port&
+  >::type operator=(basic_serial_port<Executor1>&& other)
+  {
+    basic_serial_port tmp(std::move(other));
+    impl_ = std::move(tmp.impl_);
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destroys the serial port.
