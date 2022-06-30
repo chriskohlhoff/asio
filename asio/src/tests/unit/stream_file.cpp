@@ -80,6 +80,9 @@ void test()
 
 #if defined(ASIO_HAS_MOVE)
     stream_file file9(std::move(file8));
+
+    basic_stream_file<io_context::executor_type> file10(ioc);
+    stream_file file11(std::move(file10));
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_file operators.
@@ -87,6 +90,7 @@ void test()
 #if defined(ASIO_HAS_MOVE)
     file1 = stream_file(ioc);
     file1 = std::move(file2);
+    file1 = std::move(file10);
 #endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
