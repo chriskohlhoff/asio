@@ -173,6 +173,48 @@ public:
     basic_overlapped_handle<Executor>::operator=(std::move(other));
     return *this;
   }
+
+  /// Move-construct a stream handle from a handle of another executor type.
+  /**
+   * This constructor moves a stream handle from one object to another.
+   *
+   * @param other The other stream handle object from which the move
+   * will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_stream_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  basic_stream_handle(basic_stream_handle<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : basic_overlapped_handle<Executor>(std::move(other))
+  {
+  }
+
+  /// Move-assign a stream handle from a handle of another executor type.
+  /**
+   * This assignment operator moves a stream handle from one object to
+   * another.
+   *
+   * @param other The other stream handle object from which the move will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_stream_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_stream_handle&
+  >::type operator=(basic_stream_handle<Executor1>&& other)
+  {
+    basic_overlapped_handle<Executor>::operator=(std::move(other));
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Write some data to the handle.

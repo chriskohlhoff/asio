@@ -172,6 +172,51 @@ public:
     basic_overlapped_handle<Executor>::operator=(std::move(other));
     return *this;
   }
+
+  /// Move-construct a random-access handle from a handle of another executor
+  /// type.
+  /**
+   * This constructor moves a random-access handle from one object to another.
+   *
+   * @param other The other random-access handle object from which the
+   * move will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_random_access_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  basic_random_access_handle(basic_random_access_handle<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : basic_overlapped_handle<Executor>(std::move(other))
+  {
+  }
+
+  /// Move-assign a random-access handle from a handle of another executor
+  /// type.
+  /**
+   * This assignment operator moves a random-access handle from one object to
+   * another.
+   *
+   * @param other The other random-access handle object from which the
+   * move will occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_random_access_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_random_access_handle&
+  >::type operator=(basic_random_access_handle<Executor1>&& other)
+  {
+    basic_overlapped_handle<Executor>::operator=(std::move(other));
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Write some data to the handle at the specified offset.

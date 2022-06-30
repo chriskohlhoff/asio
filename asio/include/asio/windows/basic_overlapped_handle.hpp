@@ -188,6 +188,53 @@ public:
     impl_ = std::move(other.impl_);
     return *this;
   }
+
+  // All overlapped handles have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_overlapped_handle;
+
+  /// Move-construct an overlapped handle from a handle of another executor
+  /// type.
+  /**
+   * This constructor moves a handle from one object to another.
+   *
+   * @param other The other overlapped handle object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c overlapped_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  basic_overlapped_handle(basic_overlapped_handle<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(std::move(other.impl_))
+  {
+  }
+
+  /// Move-assign an overlapped handle from a handle of another executor type.
+  /**
+   * This assignment operator moves a handle from one object to another.
+   *
+   * @param other The other overlapped handle object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c overlapped_handle(const executor_type&)
+   * constructor.
+   */
+  template<typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_overlapped_handle&
+  >::type operator=(basic_overlapped_handle<Executor1>&& other)
+  {
+    impl_ = std::move(other.impl_);
+    return *this;
+  }
 #endif // defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Get the executor associated with the object.
