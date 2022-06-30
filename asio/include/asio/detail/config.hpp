@@ -1289,9 +1289,9 @@
 #  endif // defined(ASIO_MSVC)
 #  if defined(ASIO_HAS_CLANG_LIBCXX)
 #   if (_LIBCPP_VERSION >= 13000)
-#    if (__cplusplus >= 202002)
+#    if (__cplusplus >= 201703)
 #     define ASIO_HAS_STD_INVOKE_RESULT 1
-#    endif // (__cplusplus >= 202002)
+#    endif // (__cplusplus >= 201703)
 #   endif // (_LIBCPP_VERSION >= 13000)
 #  endif // defined(ASIO_HAS_CLANG_LIBCXX)
 # endif // !defined(ASIO_DISABLE_STD_INVOKE_RESULT)
