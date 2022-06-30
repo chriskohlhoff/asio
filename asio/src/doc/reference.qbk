@@ -9719,7 +9719,7 @@ The [link asio.reference.basic_datagram_socket `basic_datagram_socket`] class te
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 [heading Requirements]
 
@@ -16224,7 +16224,7 @@ The [link asio.reference.basic_datagram_socket `basic_datagram_socket`] class te
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -23626,7 +23626,7 @@ The [link asio.reference.basic_raw_socket `basic_raw_socket`] class template pro
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 [heading Requirements]
 
@@ -30131,7 +30131,7 @@ The [link asio.reference.basic_raw_socket `basic_raw_socket`] class template pro
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -30214,7 +30214,9 @@ Provides pipe functionality.
      [hr]
      Construct a basic_readable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_readable_pipe from another. ]
+     Move-construct a basic_readable_pipe from another. 
+     [hr]
+     Move-construct a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -30251,7 +30253,9 @@ Provides pipe functionality.
   
   [
     [[link asio.reference.basic_readable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_readable_pipe from another. ]
+    [Move-assign a basic_readable_pipe from another. 
+     [hr]
+     Move-assign a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -30442,7 +30446,18 @@ Move-construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`]
   ``  [''''&raquo;''' [link asio.reference.basic_readable_pipe.basic_readable_pipe.overload5 more...]]``
 
 
-[section:overload1 basic_readable_pipe::basic_readable_pipe (1 of 5 overloads)]
+Move-construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.basic_readable_pipe.basic_readable_pipe.overload6 basic_readable_pipe]``(
+      basic_readable_pipe< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.basic_readable_pipe.basic_readable_pipe.overload6 more...]]``
+
+
+[section:overload1 basic_readable_pipe::basic_readable_pipe (1 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] without opening it. 
@@ -30471,7 +30486,7 @@ This constructor creates a pipe without opening it.
 
 
 
-[section:overload2 basic_readable_pipe::basic_readable_pipe (2 of 5 overloads)]
+[section:overload2 basic_readable_pipe::basic_readable_pipe (2 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] without opening it. 
@@ -30503,7 +30518,7 @@ This constructor creates a pipe without opening it.
 
 
 
-[section:overload3 basic_readable_pipe::basic_readable_pipe (3 of 5 overloads)]
+[section:overload3 basic_readable_pipe::basic_readable_pipe (3 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] on an existing native pipe. 
@@ -30545,7 +30560,7 @@ This constructor creates a pipe object to hold an existing native pipe.
 
 
 
-[section:overload4 basic_readable_pipe::basic_readable_pipe (4 of 5 overloads)]
+[section:overload4 basic_readable_pipe::basic_readable_pipe (4 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] on an existing native pipe. 
@@ -30590,7 +30605,7 @@ This constructor creates a pipe object to hold an existing native pipe.
 
 
 
-[section:overload5 basic_readable_pipe::basic_readable_pipe (5 of 5 overloads)]
+[section:overload5 basic_readable_pipe::basic_readable_pipe (5 of 6 overloads)]
 
 
 Move-construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from another. 
@@ -30598,6 +30613,43 @@ Move-construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`]
 
   basic_readable_pipe(
       basic_readable_pipe && other);
+
+
+This constructor moves a pipe from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_readable_pipe `basic_readable_pipe`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_readable_pipe(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 basic_readable_pipe::basic_readable_pipe (6 of 6 overloads)]
+
+
+Move-construct a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_readable_pipe(
+      basic_readable_pipe< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves a pipe from one object to another.
@@ -30946,7 +30998,9 @@ A [link asio.reference.basic_readable_pipe `basic_readable_pipe`] is always the 
      [hr]
      Construct a basic_readable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_readable_pipe from another. ]
+     Move-construct a basic_readable_pipe from another. 
+     [hr]
+     Move-construct a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -30983,7 +31037,9 @@ A [link asio.reference.basic_readable_pipe `basic_readable_pipe`] is always the 
   
   [
     [[link asio.reference.basic_readable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_readable_pipe from another. ]
+    [Move-assign a basic_readable_pipe from another. 
+     [hr]
+     Move-assign a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -31057,10 +31113,30 @@ The native representation of a pipe.
 [endsect]
 
 
-
 [section:operator_eq_ basic_readable_pipe::operator=]
 
 [indexterm2 asio.indexterm.basic_readable_pipe.operator_eq_..operator=..basic_readable_pipe] 
+Move-assign a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from another. 
+
+
+  basic_readable_pipe & ``[link asio.reference.basic_readable_pipe.operator_eq_.overload1 operator=]``(
+      basic_readable_pipe && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_readable_pipe.operator_eq_.overload1 more...]]``
+
+
+Move-assign a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_readable_pipe & >::type ``[link asio.reference.basic_readable_pipe.operator_eq_.overload2 operator=]``(
+      basic_readable_pipe< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_readable_pipe.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 basic_readable_pipe::operator= (1 of 2 overloads)]
+
+
 Move-assign a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from another. 
 
 
@@ -31090,6 +31166,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 basic_readable_pipe::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.basic_readable_pipe `basic_readable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_readable_pipe & >::type operator=(
+      basic_readable_pipe< Executor1 > && other);
+
+
+This assignment operator moves a pipe from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_readable_pipe `basic_readable_pipe`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_readable_pipe(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:read_some basic_readable_pipe::read_some]
 
@@ -31332,7 +31446,9 @@ The pipe type when rebound to the specified executor.
      [hr]
      Construct a basic_readable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_readable_pipe from another. ]
+     Move-construct a basic_readable_pipe from another. 
+     [hr]
+     Move-construct a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -31369,7 +31485,9 @@ The pipe type when rebound to the specified executor.
   
   [
     [[link asio.reference.basic_readable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_readable_pipe from another. ]
+    [Move-assign a basic_readable_pipe from another. 
+     [hr]
+     Move-assign a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -31810,7 +31928,7 @@ The [link asio.reference.basic_seq_packet_socket `basic_seq_packet_socket`] clas
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 [heading Requirements]
 
@@ -37425,7 +37543,7 @@ The [link asio.reference.basic_seq_packet_socket `basic_seq_packet_socket`] clas
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -37516,7 +37634,9 @@ Provides serial port functionality.
      [hr]
      Construct a basic_serial_port on an existing native serial port. 
      [hr]
-     Move-construct a basic_serial_port from another. ]
+     Move-construct a basic_serial_port from another. 
+     [hr]
+     Move-construct a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -37563,7 +37683,9 @@ Provides serial port functionality.
   
   [
     [[link asio.reference.basic_serial_port.operator_eq_ [*operator=]]]
-    [Move-assign a basic_serial_port from another. ]
+    [Move-assign a basic_serial_port from another. 
+     [hr]
+     Move-assign a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -37895,7 +38017,18 @@ Move-construct a [link asio.reference.basic_serial_port `basic_serial_port`] fro
   ``  [''''&raquo;''' [link asio.reference.basic_serial_port.basic_serial_port.overload9 more...]]``
 
 
-[section:overload1 basic_serial_port::basic_serial_port (1 of 9 overloads)]
+Move-construct a [link asio.reference.basic_serial_port `basic_serial_port`] from a serial port of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.basic_serial_port.basic_serial_port.overload10 basic_serial_port]``(
+      basic_serial_port< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.basic_serial_port.basic_serial_port.overload10 more...]]``
+
+
+[section:overload1 basic_serial_port::basic_serial_port (1 of 10 overloads)]
 
 
 Construct a [link asio.reference.basic_serial_port `basic_serial_port`] without opening it. 
@@ -37924,7 +38057,7 @@ This constructor creates a serial port without opening it.
 
 
 
-[section:overload2 basic_serial_port::basic_serial_port (2 of 9 overloads)]
+[section:overload2 basic_serial_port::basic_serial_port (2 of 10 overloads)]
 
 
 Construct a [link asio.reference.basic_serial_port `basic_serial_port`] without opening it. 
@@ -37956,7 +38089,7 @@ This constructor creates a serial port without opening it.
 
 
 
-[section:overload3 basic_serial_port::basic_serial_port (3 of 9 overloads)]
+[section:overload3 basic_serial_port::basic_serial_port (3 of 10 overloads)]
 
 
 Construct and open a [link asio.reference.basic_serial_port `basic_serial_port`]. 
@@ -37988,7 +38121,7 @@ This constructor creates and opens a serial port for the specified device name.
 
 
 
-[section:overload4 basic_serial_port::basic_serial_port (4 of 9 overloads)]
+[section:overload4 basic_serial_port::basic_serial_port (4 of 10 overloads)]
 
 
 Construct and open a [link asio.reference.basic_serial_port `basic_serial_port`]. 
@@ -38023,7 +38156,7 @@ This constructor creates and opens a serial port for the specified device name.
 
 
 
-[section:overload5 basic_serial_port::basic_serial_port (5 of 9 overloads)]
+[section:overload5 basic_serial_port::basic_serial_port (5 of 10 overloads)]
 
 
 Construct and open a [link asio.reference.basic_serial_port `basic_serial_port`]. 
@@ -38055,7 +38188,7 @@ This constructor creates and opens a serial port for the specified device name.
 
 
 
-[section:overload6 basic_serial_port::basic_serial_port (6 of 9 overloads)]
+[section:overload6 basic_serial_port::basic_serial_port (6 of 10 overloads)]
 
 
 Construct and open a [link asio.reference.basic_serial_port `basic_serial_port`]. 
@@ -38090,7 +38223,7 @@ This constructor creates and opens a serial port for the specified device name.
 
 
 
-[section:overload7 basic_serial_port::basic_serial_port (7 of 9 overloads)]
+[section:overload7 basic_serial_port::basic_serial_port (7 of 10 overloads)]
 
 
 Construct a [link asio.reference.basic_serial_port `basic_serial_port`] on an existing native serial port. 
@@ -38132,7 +38265,7 @@ This constructor creates a serial port object to hold an existing native serial 
 
 
 
-[section:overload8 basic_serial_port::basic_serial_port (8 of 9 overloads)]
+[section:overload8 basic_serial_port::basic_serial_port (8 of 10 overloads)]
 
 
 Construct a [link asio.reference.basic_serial_port `basic_serial_port`] on an existing native serial port. 
@@ -38177,7 +38310,7 @@ This constructor creates a serial port object to hold an existing native serial 
 
 
 
-[section:overload9 basic_serial_port::basic_serial_port (9 of 9 overloads)]
+[section:overload9 basic_serial_port::basic_serial_port (9 of 10 overloads)]
 
 
 Move-construct a [link asio.reference.basic_serial_port `basic_serial_port`] from another. 
@@ -38185,6 +38318,43 @@ Move-construct a [link asio.reference.basic_serial_port `basic_serial_port`] fro
 
   basic_serial_port(
       basic_serial_port && other);
+
+
+This constructor moves a serial port from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_serial_port `basic_serial_port`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_serial_port(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload10 basic_serial_port::basic_serial_port (10 of 10 overloads)]
+
+
+Move-construct a [link asio.reference.basic_serial_port `basic_serial_port`] from a serial port of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_serial_port(
+      basic_serial_port< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves a serial port from one object to another.
@@ -38638,7 +38808,9 @@ A basic\_basic\_serial\_port is always the lowest layer.
      [hr]
      Construct a basic_serial_port on an existing native serial port. 
      [hr]
-     Move-construct a basic_serial_port from another. ]
+     Move-construct a basic_serial_port from another. 
+     [hr]
+     Move-construct a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -38685,7 +38857,9 @@ A basic\_basic\_serial\_port is always the lowest layer.
   
   [
     [[link asio.reference.basic_serial_port.operator_eq_ [*operator=]]]
-    [Move-assign a basic_serial_port from another. ]
+    [Move-assign a basic_serial_port from another. 
+     [hr]
+     Move-assign a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -38862,10 +39036,30 @@ This function opens the serial port using the given platform-specific device nam
 
 [endsect]
 
-
 [section:operator_eq_ basic_serial_port::operator=]
 
 [indexterm2 asio.indexterm.basic_serial_port.operator_eq_..operator=..basic_serial_port] 
+Move-assign a [link asio.reference.basic_serial_port `basic_serial_port`] from another. 
+
+
+  basic_serial_port & ``[link asio.reference.basic_serial_port.operator_eq_.overload1 operator=]``(
+      basic_serial_port && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_serial_port.operator_eq_.overload1 more...]]``
+
+
+Move-assign a [link asio.reference.basic_serial_port `basic_serial_port`] from a serial port of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_serial_port & >::type ``[link asio.reference.basic_serial_port.operator_eq_.overload2 operator=]``(
+      basic_serial_port< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_serial_port.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 basic_serial_port::operator= (1 of 2 overloads)]
+
+
 Move-assign a [link asio.reference.basic_serial_port `basic_serial_port`] from another. 
 
 
@@ -38895,6 +39089,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 basic_serial_port::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.basic_serial_port `basic_serial_port`] from a serial port of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_serial_port & >::type operator=(
+      basic_serial_port< Executor1 > && other);
+
+
+This assignment operator moves a serial port from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_serial_port `basic_serial_port`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_serial_port(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:read_some basic_serial_port::read_some]
 
@@ -39440,7 +39672,9 @@ The serial port type when rebound to the specified executor.
      [hr]
      Construct a basic_serial_port on an existing native serial port. 
      [hr]
-     Move-construct a basic_serial_port from another. ]
+     Move-construct a basic_serial_port from another. 
+     [hr]
+     Move-construct a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -39487,7 +39721,9 @@ The serial port type when rebound to the specified executor.
   
   [
     [[link asio.reference.basic_serial_port.operator_eq_ [*operator=]]]
-    [Move-assign a basic_serial_port from another. ]
+    [Move-assign a basic_serial_port from another. 
+     [hr]
+     Move-assign a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -56767,7 +57003,7 @@ The [link asio.reference.basic_stream_socket `basic_stream_socket`] class templa
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
 
 
 
@@ -62995,7 +63231,7 @@ The [link asio.reference.basic_stream_socket `basic_stream_socket`] class templa
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
 
 
 
@@ -66834,7 +67070,9 @@ Provides pipe functionality.
      [hr]
      Construct a basic_writable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_writable_pipe from another. ]
+     Move-construct a basic_writable_pipe from another. 
+     [hr]
+     Move-construct a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -66871,7 +67109,9 @@ Provides pipe functionality.
   
   [
     [[link asio.reference.basic_writable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_writable_pipe from another. ]
+    [Move-assign a basic_writable_pipe from another. 
+     [hr]
+     Move-assign a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -67061,7 +67301,18 @@ Move-construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`]
   ``  [''''&raquo;''' [link asio.reference.basic_writable_pipe.basic_writable_pipe.overload5 more...]]``
 
 
-[section:overload1 basic_writable_pipe::basic_writable_pipe (1 of 5 overloads)]
+Move-construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.basic_writable_pipe.basic_writable_pipe.overload6 basic_writable_pipe]``(
+      basic_writable_pipe< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.basic_writable_pipe.basic_writable_pipe.overload6 more...]]``
+
+
+[section:overload1 basic_writable_pipe::basic_writable_pipe (1 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] without opening it. 
@@ -67090,7 +67341,7 @@ This constructor creates a pipe without opening it.
 
 
 
-[section:overload2 basic_writable_pipe::basic_writable_pipe (2 of 5 overloads)]
+[section:overload2 basic_writable_pipe::basic_writable_pipe (2 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] without opening it. 
@@ -67122,7 +67373,7 @@ This constructor creates a pipe without opening it.
 
 
 
-[section:overload3 basic_writable_pipe::basic_writable_pipe (3 of 5 overloads)]
+[section:overload3 basic_writable_pipe::basic_writable_pipe (3 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] on an existing native pipe. 
@@ -67164,7 +67415,7 @@ This constructor creates a pipe object to hold an existing native pipe.
 
 
 
-[section:overload4 basic_writable_pipe::basic_writable_pipe (4 of 5 overloads)]
+[section:overload4 basic_writable_pipe::basic_writable_pipe (4 of 6 overloads)]
 
 
 Construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] on an existing native pipe. 
@@ -67209,7 +67460,7 @@ This constructor creates a pipe object to hold an existing native pipe.
 
 
 
-[section:overload5 basic_writable_pipe::basic_writable_pipe (5 of 5 overloads)]
+[section:overload5 basic_writable_pipe::basic_writable_pipe (5 of 6 overloads)]
 
 
 Move-construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from another. 
@@ -67217,6 +67468,43 @@ Move-construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`]
 
   basic_writable_pipe(
       basic_writable_pipe && other);
+
+
+This constructor moves a pipe from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_writable_pipe `basic_writable_pipe`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_writable_pipe(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 basic_writable_pipe::basic_writable_pipe (6 of 6 overloads)]
+
+
+Move-construct a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_writable_pipe(
+      basic_writable_pipe< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves a pipe from one object to another.
@@ -67565,7 +67853,9 @@ A [link asio.reference.basic_writable_pipe `basic_writable_pipe`] is always the 
      [hr]
      Construct a basic_writable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_writable_pipe from another. ]
+     Move-construct a basic_writable_pipe from another. 
+     [hr]
+     Move-construct a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -67602,7 +67892,9 @@ A [link asio.reference.basic_writable_pipe `basic_writable_pipe`] is always the 
   
   [
     [[link asio.reference.basic_writable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_writable_pipe from another. ]
+    [Move-assign a basic_writable_pipe from another. 
+     [hr]
+     Move-assign a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -67676,10 +67968,30 @@ The native representation of a pipe.
 [endsect]
 
 
-
 [section:operator_eq_ basic_writable_pipe::operator=]
 
 [indexterm2 asio.indexterm.basic_writable_pipe.operator_eq_..operator=..basic_writable_pipe] 
+Move-assign a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from another. 
+
+
+  basic_writable_pipe & ``[link asio.reference.basic_writable_pipe.operator_eq_.overload1 operator=]``(
+      basic_writable_pipe && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_writable_pipe.operator_eq_.overload1 more...]]``
+
+
+Move-assign a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_writable_pipe & >::type ``[link asio.reference.basic_writable_pipe.operator_eq_.overload2 operator=]``(
+      basic_writable_pipe< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.basic_writable_pipe.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 basic_writable_pipe::operator= (1 of 2 overloads)]
+
+
 Move-assign a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from another. 
 
 
@@ -67709,6 +68021,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 basic_writable_pipe::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.basic_writable_pipe `basic_writable_pipe`] from a pipe of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_writable_pipe & >::type operator=(
+      basic_writable_pipe< Executor1 > && other);
+
+
+This assignment operator moves a pipe from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.basic_writable_pipe `basic_writable_pipe`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_writable_pipe(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:write_some basic_writable_pipe::write_some]
 
@@ -67951,7 +68301,9 @@ The pipe type when rebound to the specified executor.
      [hr]
      Construct a basic_writable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_writable_pipe from another. ]
+     Move-construct a basic_writable_pipe from another. 
+     [hr]
+     Move-construct a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -67988,7 +68340,9 @@ The pipe type when rebound to the specified executor.
   
   [
     [[link asio.reference.basic_writable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_writable_pipe from another. ]
+    [Move-assign a basic_writable_pipe from another. 
+     [hr]
+     Move-assign a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -101174,7 +101528,7 @@ The [link asio.reference.basic_datagram_socket `basic_datagram_socket`] class te
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -102007,7 +102361,7 @@ The [link asio.reference.basic_raw_socket `basic_raw_socket`] class template pro
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -102817,7 +103171,7 @@ The [link asio.reference.basic_seq_packet_socket `basic_seq_packet_socket`] clas
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -103738,7 +104092,7 @@ The [link asio.reference.basic_stream_socket `basic_stream_socket`] class templa
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
 
 
 
@@ -122292,7 +122646,7 @@ The [link asio.reference.basic_raw_socket `basic_raw_socket`] class template pro
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -125732,7 +126086,7 @@ The [link asio.reference.basic_stream_socket `basic_stream_socket`] class templa
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
 
 
 
@@ -126735,7 +127089,7 @@ The [link asio.reference.basic_datagram_socket `basic_datagram_socket`] class te
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -128822,7 +129176,7 @@ The [link asio.reference.basic_datagram_socket `basic_datagram_socket`] class te
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `send_to`, `receive`, `receive_from`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
+Synchronous `send`, `send_to`, `receive`, `receive_from`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe. 
 
 
 [heading Requirements]
@@ -130056,7 +130410,7 @@ The [link asio.reference.basic_stream_socket `basic_stream_socket`] class templa
 
 ['Shared] ['objects:] Unsafe.
 
-Synchronous `send`, `receive`, and `connect` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
+Synchronous `send`, `receive`, `connect`, and `shutdown` operations are thread safe with respect to each other, if the underlying operating system calls are also thread safe. This means that it is permitted to perform concurrent calls to these synchronous operations on a single socket object. Other synchronous operations, such as `open` or `close`, are not thread safe.
 
 
 
@@ -131793,7 +132147,9 @@ Provides POSIX descriptor functionality.
      [hr]
      Construct a descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a descriptor from another. ]
+     Move-construct a descriptor from another. 
+     [hr]
+     Move-construct a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -131849,7 +132205,9 @@ Provides POSIX descriptor functionality.
   
   [
     [[link asio.reference.posix__basic_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a descriptor from another. ]
+    [Move-assign a descriptor from another. 
+     [hr]
+     Move-assign a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -132071,7 +132429,18 @@ Move-construct a descriptor from another.
   ``  [''''&raquo;''' [link asio.reference.posix__basic_descriptor.basic_descriptor.overload5 more...]]``
 
 
-[section:overload1 posix::basic_descriptor::basic_descriptor (1 of 5 overloads)]
+Move-construct a [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.posix__basic_descriptor.basic_descriptor.overload6 basic_descriptor]``(
+      basic_descriptor< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.posix__basic_descriptor.basic_descriptor.overload6 more...]]``
+
+
+[section:overload1 posix::basic_descriptor::basic_descriptor (1 of 6 overloads)]
 
 
 Construct a descriptor without opening it. 
@@ -132100,7 +132469,7 @@ This constructor creates a descriptor without opening it.
 
 
 
-[section:overload2 posix::basic_descriptor::basic_descriptor (2 of 5 overloads)]
+[section:overload2 posix::basic_descriptor::basic_descriptor (2 of 6 overloads)]
 
 
 Construct a descriptor without opening it. 
@@ -132132,7 +132501,7 @@ This constructor creates a descriptor without opening it.
 
 
 
-[section:overload3 posix::basic_descriptor::basic_descriptor (3 of 5 overloads)]
+[section:overload3 posix::basic_descriptor::basic_descriptor (3 of 6 overloads)]
 
 
 Construct a descriptor on an existing native descriptor. 
@@ -132174,7 +132543,7 @@ This constructor creates a descriptor object to hold an existing native descript
 
 
 
-[section:overload4 posix::basic_descriptor::basic_descriptor (4 of 5 overloads)]
+[section:overload4 posix::basic_descriptor::basic_descriptor (4 of 6 overloads)]
 
 
 Construct a descriptor on an existing native descriptor. 
@@ -132219,7 +132588,7 @@ This constructor creates a descriptor object to hold an existing native descript
 
 
 
-[section:overload5 posix::basic_descriptor::basic_descriptor (5 of 5 overloads)]
+[section:overload5 posix::basic_descriptor::basic_descriptor (5 of 6 overloads)]
 
 
 Move-construct a descriptor from another. 
@@ -132238,6 +132607,43 @@ This constructor moves a descriptor from one object to another.
 [variablelist
   
 [[other][The other descriptor object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_descriptor(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 posix::basic_descriptor::basic_descriptor (6 of 6 overloads)]
+
+
+Move-construct a [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_descriptor(
+      basic_descriptor< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+This constructor moves a descriptor from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`] object from which the move will occur.]]
 
 ]
 
@@ -132763,7 +133169,9 @@ A descriptor is always the lowest layer.
      [hr]
      Construct a descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a descriptor from another. ]
+     Move-construct a descriptor from another. 
+     [hr]
+     Move-construct a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -132819,7 +133227,9 @@ A descriptor is always the lowest layer.
   
   [
     [[link asio.reference.posix__basic_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a descriptor from another. ]
+    [Move-assign a descriptor from another. 
+     [hr]
+     Move-assign a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -133154,10 +133564,30 @@ The non-blocking mode has no effect on the behaviour of asynchronous operations.
 
 [endsect]
 
-
 [section:operator_eq_ posix::basic_descriptor::operator=]
 
 [indexterm2 asio.indexterm.posix__basic_descriptor.operator_eq_..operator=..posix::basic_descriptor] 
+Move-assign a descriptor from another. 
+
+
+  basic_descriptor & ``[link asio.reference.posix__basic_descriptor.operator_eq_.overload1 operator=]``(
+      basic_descriptor && other);
+  ``  [''''&raquo;''' [link asio.reference.posix__basic_descriptor.operator_eq_.overload1 more...]]``
+
+
+Move-assign a [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_descriptor & >::type ``[link asio.reference.posix__basic_descriptor.operator_eq_.overload2 operator=]``(
+      basic_descriptor< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.posix__basic_descriptor.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 posix::basic_descriptor::operator= (1 of 2 overloads)]
+
+
 Move-assign a descriptor from another. 
 
 
@@ -133187,6 +133617,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 posix::basic_descriptor::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_descriptor & >::type operator=(
+      basic_descriptor< Executor1 > && other);
+
+
+This assignment operator moves a descriptor from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.posix__basic_descriptor `posix::basic_descriptor`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_descriptor(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:release posix::basic_descriptor::release]
@@ -133480,7 +133948,9 @@ The descriptor type when rebound to the specified executor.
      [hr]
      Construct a descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a descriptor from another. ]
+     Move-construct a descriptor from another. 
+     [hr]
+     Move-construct a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -133536,7 +134006,9 @@ The descriptor type when rebound to the specified executor.
   
   [
     [[link asio.reference.posix__basic_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a descriptor from another. ]
+    [Move-assign a descriptor from another. 
+     [hr]
+     Move-assign a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -133679,7 +134151,9 @@ Provides stream-oriented descriptor functionality.
      [hr]
      Construct a stream descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a stream descriptor from another. ]
+     Move-construct a stream descriptor from another. 
+     [hr]
+     Move-construct a basic_stream_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -133735,7 +134209,9 @@ Provides stream-oriented descriptor functionality.
   
   [
     [[link asio.reference.posix__basic_stream_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a stream descriptor from another. ]
+    [Move-assign a stream descriptor from another. 
+     [hr]
+     Move-assign a basic_stream_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -134130,7 +134606,18 @@ Move-construct a stream descriptor from another.
   ``  [''''&raquo;''' [link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor.overload5 more...]]``
 
 
-[section:overload1 posix::basic_stream_descriptor::basic_stream_descriptor (1 of 5 overloads)]
+Move-construct a [link asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor.overload6 basic_stream_descriptor]``(
+      basic_stream_descriptor< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.posix__basic_stream_descriptor.basic_stream_descriptor.overload6 more...]]``
+
+
+[section:overload1 posix::basic_stream_descriptor::basic_stream_descriptor (1 of 6 overloads)]
 
 
 Construct a stream descriptor without opening it. 
@@ -134159,7 +134646,7 @@ This constructor creates a stream descriptor without opening it. The descriptor 
 
 
 
-[section:overload2 posix::basic_stream_descriptor::basic_stream_descriptor (2 of 5 overloads)]
+[section:overload2 posix::basic_stream_descriptor::basic_stream_descriptor (2 of 6 overloads)]
 
 
 Construct a stream descriptor without opening it. 
@@ -134191,7 +134678,7 @@ This constructor creates a stream descriptor without opening it. The descriptor 
 
 
 
-[section:overload3 posix::basic_stream_descriptor::basic_stream_descriptor (3 of 5 overloads)]
+[section:overload3 posix::basic_stream_descriptor::basic_stream_descriptor (3 of 6 overloads)]
 
 
 Construct a stream descriptor on an existing native descriptor. 
@@ -134233,7 +134720,7 @@ This constructor creates a stream descriptor object to hold an existing native d
 
 
 
-[section:overload4 posix::basic_stream_descriptor::basic_stream_descriptor (4 of 5 overloads)]
+[section:overload4 posix::basic_stream_descriptor::basic_stream_descriptor (4 of 6 overloads)]
 
 
 Construct a stream descriptor on an existing native descriptor. 
@@ -134278,7 +134765,7 @@ This constructor creates a stream descriptor object to hold an existing native d
 
 
 
-[section:overload5 posix::basic_stream_descriptor::basic_stream_descriptor (5 of 5 overloads)]
+[section:overload5 posix::basic_stream_descriptor::basic_stream_descriptor (5 of 6 overloads)]
 
 
 Move-construct a stream descriptor from another. 
@@ -134297,6 +134784,43 @@ This constructor moves a stream descriptor from one object to another.
 [variablelist
   
 [[other][The other stream descriptor object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_descriptor(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 posix::basic_stream_descriptor::basic_stream_descriptor (6 of 6 overloads)]
+
+
+Move-construct a [link asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_stream_descriptor(
+      basic_stream_descriptor< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+
+
+This constructor moves a descriptor from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] object from which the move will occur.]]
 
 ]
 
@@ -134855,7 +135379,9 @@ A descriptor is always the lowest layer.
      [hr]
      Construct a descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a descriptor from another. ]
+     Move-construct a descriptor from another. 
+     [hr]
+     Move-construct a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -134911,7 +135437,9 @@ A descriptor is always the lowest layer.
   
   [
     [[link asio.reference.posix__basic_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a descriptor from another. ]
+    [Move-assign a descriptor from another. 
+     [hr]
+     Move-assign a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -135056,7 +135584,9 @@ The native representation of a descriptor.
      [hr]
      Construct a descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a descriptor from another. ]
+     Move-construct a descriptor from another. 
+     [hr]
+     Move-construct a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -135112,7 +135642,9 @@ The native representation of a descriptor.
   
   [
     [[link asio.reference.posix__basic_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a descriptor from another. ]
+    [Move-assign a descriptor from another. 
+     [hr]
+     Move-assign a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -135428,10 +135960,30 @@ The non-blocking mode has no effect on the behaviour of asynchronous operations.
 
 [endsect]
 
-
 [section:operator_eq_ posix::basic_stream_descriptor::operator=]
 
 [indexterm2 asio.indexterm.posix__basic_stream_descriptor.operator_eq_..operator=..posix::basic_stream_descriptor] 
+Move-assign a stream descriptor from another. 
+
+
+  basic_stream_descriptor & ``[link asio.reference.posix__basic_stream_descriptor.operator_eq_.overload1 operator=]``(
+      basic_stream_descriptor && other);
+  ``  [''''&raquo;''' [link asio.reference.posix__basic_stream_descriptor.operator_eq_.overload1 more...]]``
+
+
+Move-assign a [link asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_stream_descriptor & >::type ``[link asio.reference.posix__basic_stream_descriptor.operator_eq_.overload2 operator=]``(
+      basic_stream_descriptor< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.posix__basic_stream_descriptor.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 posix::basic_stream_descriptor::operator= (1 of 2 overloads)]
+
+
 Move-assign a stream descriptor from another. 
 
 
@@ -135461,6 +136013,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 posix::basic_stream_descriptor::operator= (2 of 2 overloads)]
+
+
+Move-assign a [link asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] from a descriptor of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_stream_descriptor & >::type operator=(
+      basic_stream_descriptor< Executor1 > && other);
+
+
+This assignment operator moves a descriptor from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other [link asio.reference.posix__basic_stream_descriptor `posix::basic_stream_descriptor`] object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_descriptor(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:read_some posix::basic_stream_descriptor::read_some]
 
@@ -136009,7 +136599,9 @@ The descriptor type when rebound to the specified executor.
      [hr]
      Construct a stream descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a stream descriptor from another. ]
+     Move-construct a stream descriptor from another. 
+     [hr]
+     Move-construct a basic_stream_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -136065,7 +136657,9 @@ The descriptor type when rebound to the specified executor.
   
   [
     [[link asio.reference.posix__basic_stream_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a stream descriptor from another. ]
+    [Move-assign a stream descriptor from another. 
+     [hr]
+     Move-assign a basic_stream_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -136197,7 +136791,9 @@ Typedef for the typical usage of [link asio.reference.posix__basic_descriptor `p
      [hr]
      Construct a descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a descriptor from another. ]
+     Move-construct a descriptor from another. 
+     [hr]
+     Move-construct a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -136253,7 +136849,9 @@ Typedef for the typical usage of [link asio.reference.posix__basic_descriptor `p
   
   [
     [[link asio.reference.posix__basic_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a descriptor from another. ]
+    [Move-assign a descriptor from another. 
+     [hr]
+     Move-assign a basic_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -136534,7 +137132,9 @@ Typedef for the typical usage of a stream-oriented descriptor.
      [hr]
      Construct a stream descriptor on an existing native descriptor. 
      [hr]
-     Move-construct a stream descriptor from another. ]
+     Move-construct a stream descriptor from another. 
+     [hr]
+     Move-construct a basic_stream_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -136590,7 +137190,9 @@ Typedef for the typical usage of a stream-oriented descriptor.
   
   [
     [[link asio.reference.posix__basic_stream_descriptor.operator_eq_ [*operator=]]]
-    [Move-assign a stream descriptor from another. ]
+    [Move-assign a stream descriptor from another. 
+     [hr]
+     Move-assign a basic_stream_descriptor from a descriptor of another executor type. ]
   ]
   
   [
@@ -141893,7 +142495,9 @@ Typedef for the typical usage of a readable pipe.
      [hr]
      Construct a basic_readable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_readable_pipe from another. ]
+     Move-construct a basic_readable_pipe from another. 
+     [hr]
+     Move-construct a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -141930,7 +142534,9 @@ Typedef for the typical usage of a readable pipe.
   
   [
     [[link asio.reference.basic_readable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_readable_pipe from another. ]
+    [Move-assign a basic_readable_pipe from another. 
+     [hr]
+     Move-assign a basic_readable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -143275,7 +143881,9 @@ Typedef for the typical usage of a serial port.
      [hr]
      Construct a basic_serial_port on an existing native serial port. 
      [hr]
-     Move-construct a basic_serial_port from another. ]
+     Move-construct a basic_serial_port from another. 
+     [hr]
+     Move-construct a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -143322,7 +143930,9 @@ Typedef for the typical usage of a serial port.
   
   [
     [[link asio.reference.basic_serial_port.operator_eq_ [*operator=]]]
-    [Move-assign a basic_serial_port from another. ]
+    [Move-assign a basic_serial_port from another. 
+     [hr]
+     Move-assign a basic_serial_port from a serial port of another executor type. ]
   ]
   
   [
@@ -159440,7 +160050,9 @@ Provides object-oriented handle functionality.
      [hr]
      Construct an object handle on an existing native handle. 
      [hr]
-     Move-construct an object handle from another. ]
+     Move-construct an object handle from another. 
+     [hr]
+     Move-construct an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -159477,7 +160089,9 @@ Provides object-oriented handle functionality.
   
   [
     [[link asio.reference.windows__basic_object_handle.operator_eq_ [*operator=]]]
-    [Move-assign an object handle from another. ]
+    [Move-assign an object handle from another. 
+     [hr]
+     Move-assign an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -159642,7 +160256,18 @@ Move-construct an object handle from another.
   ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.basic_object_handle.overload5 more...]]``
 
 
-[section:overload1 windows::basic_object_handle::basic_object_handle (1 of 5 overloads)]
+Move-construct an object handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.windows__basic_object_handle.basic_object_handle.overload6 basic_object_handle]``(
+      basic_object_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.basic_object_handle.overload6 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::basic_object_handle (1 of 6 overloads)]
 
 
 Construct an object handle without opening it. 
@@ -159671,7 +160296,7 @@ This constructor creates an object handle without opening it.
 
 
 
-[section:overload2 windows::basic_object_handle::basic_object_handle (2 of 5 overloads)]
+[section:overload2 windows::basic_object_handle::basic_object_handle (2 of 6 overloads)]
 
 
 Construct an object handle without opening it. 
@@ -159703,7 +160328,7 @@ This constructor creates an object handle without opening it.
 
 
 
-[section:overload3 windows::basic_object_handle::basic_object_handle (3 of 5 overloads)]
+[section:overload3 windows::basic_object_handle::basic_object_handle (3 of 6 overloads)]
 
 
 Construct an object handle on an existing native handle. 
@@ -159745,7 +160370,7 @@ This constructor creates an object handle object to hold an existing native hand
 
 
 
-[section:overload4 windows::basic_object_handle::basic_object_handle (4 of 5 overloads)]
+[section:overload4 windows::basic_object_handle::basic_object_handle (4 of 6 overloads)]
 
 
 Construct an object handle on an existing native handle. 
@@ -159790,7 +160415,7 @@ This constructor creates an object handle object to hold an existing native hand
 
 
 
-[section:overload5 windows::basic_object_handle::basic_object_handle (5 of 5 overloads)]
+[section:overload5 windows::basic_object_handle::basic_object_handle (5 of 6 overloads)]
 
 
 Move-construct an object handle from another. 
@@ -159798,6 +160423,43 @@ Move-construct an object handle from another.
 
   basic_object_handle(
       basic_object_handle && other);
+
+
+This constructor moves an object handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other object handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_object_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 windows::basic_object_handle::basic_object_handle (6 of 6 overloads)]
+
+
+Move-construct an object handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_object_handle(
+      basic_object_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves an object handle from one object to another.
@@ -160146,7 +160808,9 @@ An object handle is always the lowest layer.
      [hr]
      Construct an object handle on an existing native handle. 
      [hr]
-     Move-construct an object handle from another. ]
+     Move-construct an object handle from another. 
+     [hr]
+     Move-construct an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -160183,7 +160847,9 @@ An object handle is always the lowest layer.
   
   [
     [[link asio.reference.windows__basic_object_handle.operator_eq_ [*operator=]]]
-    [Move-assign an object handle from another. ]
+    [Move-assign an object handle from another. 
+     [hr]
+     Move-assign an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -160252,10 +160918,30 @@ The native representation of a handle.
 [endsect]
 
 
-
 [section:operator_eq_ windows::basic_object_handle::operator=]
 
 [indexterm2 asio.indexterm.windows__basic_object_handle.operator_eq_..operator=..windows::basic_object_handle] 
+Move-assign an object handle from another. 
+
+
+  basic_object_handle & ``[link asio.reference.windows__basic_object_handle.operator_eq_.overload1 operator=]``(
+      basic_object_handle && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.operator_eq_.overload1 more...]]``
+
+
+Move-assign an object handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_object_handle & >::type ``[link asio.reference.windows__basic_object_handle.operator_eq_.overload2 operator=]``(
+      basic_object_handle< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_object_handle.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 windows::basic_object_handle::operator= (1 of 2 overloads)]
+
+
 Move-assign an object handle from another. 
 
 
@@ -160285,6 +160971,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_object_handle::operator= (2 of 2 overloads)]
+
+
+Move-assign an object handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_object_handle & >::type operator=(
+      basic_object_handle< Executor1 > && other);
+
+
+This assignment operator moves an object handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other object handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_object_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:wait windows::basic_object_handle::wait]
 
@@ -160457,7 +161181,9 @@ The handle type when rebound to the specified executor.
      [hr]
      Construct an object handle on an existing native handle. 
      [hr]
-     Move-construct an object handle from another. ]
+     Move-construct an object handle from another. 
+     [hr]
+     Move-construct an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -160494,7 +161220,9 @@ The handle type when rebound to the specified executor.
   
   [
     [[link asio.reference.windows__basic_object_handle.operator_eq_ [*operator=]]]
-    [Move-assign an object handle from another. ]
+    [Move-assign an object handle from another. 
+     [hr]
+     Move-assign an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -160591,7 +161319,9 @@ Provides Windows handle functionality for objects that support overlapped I/O.
      [hr]
      Construct an overlapped handle on an existing native handle. 
      [hr]
-     Move-construct an overlapped handle from another. ]
+     Move-construct an overlapped handle from another. 
+     [hr]
+     Move-construct an overlapped handle from a handle of another executor type. ]
   ]
   
   [
@@ -160628,7 +161358,9 @@ Provides Windows handle functionality for objects that support overlapped I/O.
   
   [
     [[link asio.reference.windows__basic_overlapped_handle.operator_eq_ [*operator=]]]
-    [Move-assign an overlapped handle from another. ]
+    [Move-assign an overlapped handle from another. 
+     [hr]
+     Move-assign an overlapped handle from a handle of another executor type. ]
   ]
   
 ]
@@ -160752,7 +161484,18 @@ Move-construct an overlapped handle from another.
   ``  [''''&raquo;''' [link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle.overload5 more...]]``
 
 
-[section:overload1 windows::basic_overlapped_handle::basic_overlapped_handle (1 of 5 overloads)]
+Move-construct an overlapped handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle.overload6 basic_overlapped_handle]``(
+      basic_overlapped_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_overlapped_handle.basic_overlapped_handle.overload6 more...]]``
+
+
+[section:overload1 windows::basic_overlapped_handle::basic_overlapped_handle (1 of 6 overloads)]
 
 
 Construct an overlapped handle without opening it. 
@@ -160781,7 +161524,7 @@ This constructor creates an overlapped handle without opening it.
 
 
 
-[section:overload2 windows::basic_overlapped_handle::basic_overlapped_handle (2 of 5 overloads)]
+[section:overload2 windows::basic_overlapped_handle::basic_overlapped_handle (2 of 6 overloads)]
 
 
 Construct an overlapped handle without opening it. 
@@ -160813,7 +161556,7 @@ This constructor creates an overlapped handle without opening it.
 
 
 
-[section:overload3 windows::basic_overlapped_handle::basic_overlapped_handle (3 of 5 overloads)]
+[section:overload3 windows::basic_overlapped_handle::basic_overlapped_handle (3 of 6 overloads)]
 
 
 Construct an overlapped handle on an existing native handle. 
@@ -160855,7 +161598,7 @@ This constructor creates an overlapped handle object to hold an existing native 
 
 
 
-[section:overload4 windows::basic_overlapped_handle::basic_overlapped_handle (4 of 5 overloads)]
+[section:overload4 windows::basic_overlapped_handle::basic_overlapped_handle (4 of 6 overloads)]
 
 
 Construct an overlapped handle on an existing native handle. 
@@ -160900,7 +161643,7 @@ This constructor creates an overlapped handle object to hold an existing native 
 
 
 
-[section:overload5 windows::basic_overlapped_handle::basic_overlapped_handle (5 of 5 overloads)]
+[section:overload5 windows::basic_overlapped_handle::basic_overlapped_handle (5 of 6 overloads)]
 
 
 Move-construct an overlapped handle from another. 
@@ -160908,6 +161651,43 @@ Move-construct an overlapped handle from another.
 
   basic_overlapped_handle(
       basic_overlapped_handle && other);
+
+
+This constructor moves a handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other overlapped handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `overlapped_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 windows::basic_overlapped_handle::basic_overlapped_handle (6 of 6 overloads)]
+
+
+Move-construct an overlapped handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_overlapped_handle(
+      basic_overlapped_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves a handle from one object to another.
@@ -161251,7 +162031,9 @@ An overlapped\_handle is always the lowest layer.
      [hr]
      Construct an overlapped handle on an existing native handle. 
      [hr]
-     Move-construct an overlapped handle from another. ]
+     Move-construct an overlapped handle from another. 
+     [hr]
+     Move-construct an overlapped handle from a handle of another executor type. ]
   ]
   
   [
@@ -161288,7 +162070,9 @@ An overlapped\_handle is always the lowest layer.
   
   [
     [[link asio.reference.windows__basic_overlapped_handle.operator_eq_ [*operator=]]]
-    [Move-assign an overlapped handle from another. ]
+    [Move-assign an overlapped handle from another. 
+     [hr]
+     Move-assign an overlapped handle from a handle of another executor type. ]
   ]
   
 ]
@@ -161363,10 +162147,30 @@ The native representation of a handle.
 [endsect]
 
 
-
 [section:operator_eq_ windows::basic_overlapped_handle::operator=]
 
 [indexterm2 asio.indexterm.windows__basic_overlapped_handle.operator_eq_..operator=..windows::basic_overlapped_handle] 
+Move-assign an overlapped handle from another. 
+
+
+  basic_overlapped_handle & ``[link asio.reference.windows__basic_overlapped_handle.operator_eq_.overload1 operator=]``(
+      basic_overlapped_handle && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_overlapped_handle.operator_eq_.overload1 more...]]``
+
+
+Move-assign an overlapped handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_overlapped_handle & >::type ``[link asio.reference.windows__basic_overlapped_handle.operator_eq_.overload2 operator=]``(
+      basic_overlapped_handle< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_overlapped_handle.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 windows::basic_overlapped_handle::operator= (1 of 2 overloads)]
+
+
 Move-assign an overlapped handle from another. 
 
 
@@ -161396,6 +162200,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_overlapped_handle::operator= (2 of 2 overloads)]
+
+
+Move-assign an overlapped handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_overlapped_handle & >::type operator=(
+      basic_overlapped_handle< Executor1 > && other);
+
+
+This assignment operator moves a handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other overlapped handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `overlapped_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 
 [section:_basic_overlapped_handle windows::basic_overlapped_handle::~basic_overlapped_handle]
@@ -161507,7 +162349,9 @@ The handle type when rebound to the specified executor.
      [hr]
      Construct an overlapped handle on an existing native handle. 
      [hr]
-     Move-construct an overlapped handle from another. ]
+     Move-construct an overlapped handle from another. 
+     [hr]
+     Move-construct an overlapped handle from a handle of another executor type. ]
   ]
   
   [
@@ -161544,7 +162388,9 @@ The handle type when rebound to the specified executor.
   
   [
     [[link asio.reference.windows__basic_overlapped_handle.operator_eq_ [*operator=]]]
-    [Move-assign an overlapped handle from another. ]
+    [Move-assign an overlapped handle from another. 
+     [hr]
+     Move-assign an overlapped handle from a handle of another executor type. ]
   ]
   
 ]
@@ -161658,7 +162504,9 @@ Provides random-access handle functionality.
      [hr]
      Construct a random-access handle on an existing native handle. 
      [hr]
-     Move-construct a random-access handle from another. ]
+     Move-construct a random-access handle from another. 
+     [hr]
+     Move-construct a random-access handle from a handle of another executor type. ]
   ]
   
   [
@@ -161695,7 +162543,9 @@ Provides random-access handle functionality.
   
   [
     [[link asio.reference.windows__basic_random_access_handle.operator_eq_ [*operator=]]]
-    [Move-assign a random-access handle from another. ]
+    [Move-assign a random-access handle from another. 
+     [hr]
+     Move-assign a random-access handle from a handle of another executor type. ]
   ]
   
   [
@@ -161992,7 +162842,18 @@ Move-construct a random-access handle from another.
   ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.basic_random_access_handle.overload5 more...]]``
 
 
-[section:overload1 windows::basic_random_access_handle::basic_random_access_handle (1 of 5 overloads)]
+Move-construct a random-access handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.windows__basic_random_access_handle.basic_random_access_handle.overload6 basic_random_access_handle]``(
+      basic_random_access_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.basic_random_access_handle.overload6 more...]]``
+
+
+[section:overload1 windows::basic_random_access_handle::basic_random_access_handle (1 of 6 overloads)]
 
 
 Construct a random-access handle without opening it. 
@@ -162021,7 +162882,7 @@ This constructor creates a random-access handle without opening it.
 
 
 
-[section:overload2 windows::basic_random_access_handle::basic_random_access_handle (2 of 5 overloads)]
+[section:overload2 windows::basic_random_access_handle::basic_random_access_handle (2 of 6 overloads)]
 
 
 Construct a random-access handle without opening it. 
@@ -162053,7 +162914,7 @@ This constructor creates a random-access handle without opening it. The handle n
 
 
 
-[section:overload3 windows::basic_random_access_handle::basic_random_access_handle (3 of 5 overloads)]
+[section:overload3 windows::basic_random_access_handle::basic_random_access_handle (3 of 6 overloads)]
 
 
 Construct a random-access handle on an existing native handle. 
@@ -162095,7 +162956,7 @@ This constructor creates a random-access handle object to hold an existing nativ
 
 
 
-[section:overload4 windows::basic_random_access_handle::basic_random_access_handle (4 of 5 overloads)]
+[section:overload4 windows::basic_random_access_handle::basic_random_access_handle (4 of 6 overloads)]
 
 
 Construct a random-access handle on an existing native handle. 
@@ -162140,7 +163001,7 @@ This constructor creates a random-access handle object to hold an existing nativ
 
 
 
-[section:overload5 windows::basic_random_access_handle::basic_random_access_handle (5 of 5 overloads)]
+[section:overload5 windows::basic_random_access_handle::basic_random_access_handle (5 of 6 overloads)]
 
 
 Move-construct a random-access handle from another. 
@@ -162148,6 +163009,43 @@ Move-construct a random-access handle from another.
 
   basic_random_access_handle(
       basic_random_access_handle && other);
+
+
+This constructor moves a random-access handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other random-access handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_random_access_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 windows::basic_random_access_handle::basic_random_access_handle (6 of 6 overloads)]
+
+
+Move-construct a random-access handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_random_access_handle(
+      basic_random_access_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves a random-access handle from one object to another.
@@ -162518,7 +163416,9 @@ An overlapped\_handle is always the lowest layer.
      [hr]
      Construct an overlapped handle on an existing native handle. 
      [hr]
-     Move-construct an overlapped handle from another. ]
+     Move-construct an overlapped handle from another. 
+     [hr]
+     Move-construct an overlapped handle from a handle of another executor type. ]
   ]
   
   [
@@ -162555,7 +163455,9 @@ An overlapped\_handle is always the lowest layer.
   
   [
     [[link asio.reference.windows__basic_overlapped_handle.operator_eq_ [*operator=]]]
-    [Move-assign an overlapped handle from another. ]
+    [Move-assign an overlapped handle from another. 
+     [hr]
+     Move-assign an overlapped handle from a handle of another executor type. ]
   ]
   
 ]
@@ -162633,10 +163535,30 @@ The native representation of a handle.
 [endsect]
 
 
-
 [section:operator_eq_ windows::basic_random_access_handle::operator=]
 
 [indexterm2 asio.indexterm.windows__basic_random_access_handle.operator_eq_..operator=..windows::basic_random_access_handle] 
+Move-assign a random-access handle from another. 
+
+
+  basic_random_access_handle & ``[link asio.reference.windows__basic_random_access_handle.operator_eq_.overload1 operator=]``(
+      basic_random_access_handle && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.operator_eq_.overload1 more...]]``
+
+
+Move-assign a random-access handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_random_access_handle & >::type ``[link asio.reference.windows__basic_random_access_handle.operator_eq_.overload2 operator=]``(
+      basic_random_access_handle< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_random_access_handle.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 windows::basic_random_access_handle::operator= (1 of 2 overloads)]
+
+
 Move-assign a random-access handle from another. 
 
 
@@ -162666,6 +163588,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_random_access_handle::operator= (2 of 2 overloads)]
+
+
+Move-assign a random-access handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_random_access_handle & >::type operator=(
+      basic_random_access_handle< Executor1 > && other);
+
+
+This assignment operator moves a random-access handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other random-access handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_random_access_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:read_some_at windows::basic_random_access_handle::read_some_at]
 
@@ -163039,7 +163999,9 @@ The handle type when rebound to the specified executor.
      [hr]
      Construct a random-access handle on an existing native handle. 
      [hr]
-     Move-construct a random-access handle from another. ]
+     Move-construct a random-access handle from another. 
+     [hr]
+     Move-construct a random-access handle from a handle of another executor type. ]
   ]
   
   [
@@ -163076,7 +164038,9 @@ The handle type when rebound to the specified executor.
   
   [
     [[link asio.reference.windows__basic_random_access_handle.operator_eq_ [*operator=]]]
-    [Move-assign a random-access handle from another. ]
+    [Move-assign a random-access handle from another. 
+     [hr]
+     Move-assign a random-access handle from a handle of another executor type. ]
   ]
   
   [
@@ -163189,7 +164153,9 @@ Provides stream-oriented handle functionality.
      [hr]
      Construct a stream handle on an existing native handle. 
      [hr]
-     Move-construct a stream handle from another. ]
+     Move-construct a stream handle from another. 
+     [hr]
+     Move-construct a stream handle from a handle of another executor type. ]
   ]
   
   [
@@ -163226,7 +164192,9 @@ Provides stream-oriented handle functionality.
   
   [
     [[link asio.reference.windows__basic_stream_handle.operator_eq_ [*operator=]]]
-    [Move-assign a stream handle from another. ]
+    [Move-assign a stream handle from another. 
+     [hr]
+     Move-assign a stream handle from a handle of another executor type. ]
   ]
   
   [
@@ -163518,7 +164486,18 @@ Move-construct a stream handle from another.
   ``  [''''&raquo;''' [link asio.reference.windows__basic_stream_handle.basic_stream_handle.overload5 more...]]``
 
 
-[section:overload1 windows::basic_stream_handle::basic_stream_handle (1 of 5 overloads)]
+Move-construct a stream handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  ``[link asio.reference.windows__basic_stream_handle.basic_stream_handle.overload6 basic_stream_handle]``(
+      basic_stream_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_stream_handle.basic_stream_handle.overload6 more...]]``
+
+
+[section:overload1 windows::basic_stream_handle::basic_stream_handle (1 of 6 overloads)]
 
 
 Construct a stream handle without opening it. 
@@ -163547,7 +164526,7 @@ This constructor creates a stream handle without opening it.
 
 
 
-[section:overload2 windows::basic_stream_handle::basic_stream_handle (2 of 5 overloads)]
+[section:overload2 windows::basic_stream_handle::basic_stream_handle (2 of 6 overloads)]
 
 
 Construct a stream handle without opening it. 
@@ -163579,7 +164558,7 @@ This constructor creates a stream handle without opening it. The handle needs to
 
 
 
-[section:overload3 windows::basic_stream_handle::basic_stream_handle (3 of 5 overloads)]
+[section:overload3 windows::basic_stream_handle::basic_stream_handle (3 of 6 overloads)]
 
 
 Construct a stream handle on an existing native handle. 
@@ -163621,7 +164600,7 @@ This constructor creates a stream handle object to hold an existing native handl
 
 
 
-[section:overload4 windows::basic_stream_handle::basic_stream_handle (4 of 5 overloads)]
+[section:overload4 windows::basic_stream_handle::basic_stream_handle (4 of 6 overloads)]
 
 
 Construct a stream handle on an existing native handle. 
@@ -163666,7 +164645,7 @@ This constructor creates a stream handle object to hold an existing native handl
 
 
 
-[section:overload5 windows::basic_stream_handle::basic_stream_handle (5 of 5 overloads)]
+[section:overload5 windows::basic_stream_handle::basic_stream_handle (5 of 6 overloads)]
 
 
 Move-construct a stream handle from another. 
@@ -163674,6 +164653,43 @@ Move-construct a stream handle from another.
 
   basic_stream_handle(
       basic_stream_handle && other);
+
+
+This constructor moves a stream handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other stream handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 windows::basic_stream_handle::basic_stream_handle (6 of 6 overloads)]
+
+
+Move-construct a stream handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  basic_stream_handle(
+      basic_stream_handle< Executor1 > && other,
+      typename constraint< is_convertible< Executor1, Executor >::value, defaulted_constraint >::type  = defaulted_constraint());
 
 
 This constructor moves a stream handle from one object to another.
@@ -164044,7 +165060,9 @@ An overlapped\_handle is always the lowest layer.
      [hr]
      Construct an overlapped handle on an existing native handle. 
      [hr]
-     Move-construct an overlapped handle from another. ]
+     Move-construct an overlapped handle from another. 
+     [hr]
+     Move-construct an overlapped handle from a handle of another executor type. ]
   ]
   
   [
@@ -164081,7 +165099,9 @@ An overlapped\_handle is always the lowest layer.
   
   [
     [[link asio.reference.windows__basic_overlapped_handle.operator_eq_ [*operator=]]]
-    [Move-assign an overlapped handle from another. ]
+    [Move-assign an overlapped handle from another. 
+     [hr]
+     Move-assign an overlapped handle from a handle of another executor type. ]
   ]
   
 ]
@@ -164159,10 +165179,30 @@ The native representation of a handle.
 [endsect]
 
 
-
 [section:operator_eq_ windows::basic_stream_handle::operator=]
 
 [indexterm2 asio.indexterm.windows__basic_stream_handle.operator_eq_..operator=..windows::basic_stream_handle] 
+Move-assign a stream handle from another. 
+
+
+  basic_stream_handle & ``[link asio.reference.windows__basic_stream_handle.operator_eq_.overload1 operator=]``(
+      basic_stream_handle && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_stream_handle.operator_eq_.overload1 more...]]``
+
+
+Move-assign a stream handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_stream_handle & >::type ``[link asio.reference.windows__basic_stream_handle.operator_eq_.overload2 operator=]``(
+      basic_stream_handle< Executor1 > && other);
+  ``  [''''&raquo;''' [link asio.reference.windows__basic_stream_handle.operator_eq_.overload2 more...]]``
+
+
+[section:overload1 windows::basic_stream_handle::operator= (1 of 2 overloads)]
+
+
 Move-assign a stream handle from another. 
 
 
@@ -164192,6 +165232,44 @@ Following the move, the moved-from object is in the same state as if constructed
 
 [endsect]
 
+
+
+[section:overload2 windows::basic_stream_handle::operator= (2 of 2 overloads)]
+
+
+Move-assign a stream handle from a handle of another executor type. 
+
+
+  template<
+      typename ``[link asio.reference.Executor1 Executor1]``>
+  constraint< is_convertible< Executor1, Executor >::value, basic_stream_handle & >::type operator=(
+      basic_stream_handle< Executor1 > && other);
+
+
+This assignment operator moves a stream handle from one object to another.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[other][The other stream handle object from which the move will occur.]]
+
+]
+
+
+[heading Remarks]
+      
+Following the move, the moved-from object is in the same state as if constructed using the `basic_stream_handle(const executor_type&)` constructor. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:read_some windows::basic_stream_handle::read_some]
 
@@ -164549,7 +165627,9 @@ The handle type when rebound to the specified executor.
      [hr]
      Construct a stream handle on an existing native handle. 
      [hr]
-     Move-construct a stream handle from another. ]
+     Move-construct a stream handle from another. 
+     [hr]
+     Move-construct a stream handle from a handle of another executor type. ]
   ]
   
   [
@@ -164586,7 +165666,9 @@ The handle type when rebound to the specified executor.
   
   [
     [[link asio.reference.windows__basic_stream_handle.operator_eq_ [*operator=]]]
-    [Move-assign a stream handle from another. ]
+    [Move-assign a stream handle from another. 
+     [hr]
+     Move-assign a stream handle from a handle of another executor type. ]
   ]
   
   [
@@ -164692,7 +165774,9 @@ Typedef for the typical usage of an object handle.
      [hr]
      Construct an object handle on an existing native handle. 
      [hr]
-     Move-construct an object handle from another. ]
+     Move-construct an object handle from another. 
+     [hr]
+     Move-construct an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -164729,7 +165813,9 @@ Typedef for the typical usage of an object handle.
   
   [
     [[link asio.reference.windows__basic_object_handle.operator_eq_ [*operator=]]]
-    [Move-assign an object handle from another. ]
+    [Move-assign an object handle from another. 
+     [hr]
+     Move-assign an object handle from a handle of another executor type. ]
   ]
   
   [
@@ -164821,7 +165907,9 @@ Typedef for the typical usage of an overlapped handle.
      [hr]
      Construct an overlapped handle on an existing native handle. 
      [hr]
-     Move-construct an overlapped handle from another. ]
+     Move-construct an overlapped handle from another. 
+     [hr]
+     Move-construct an overlapped handle from a handle of another executor type. ]
   ]
   
   [
@@ -164858,7 +165946,9 @@ Typedef for the typical usage of an overlapped handle.
   
   [
     [[link asio.reference.windows__basic_overlapped_handle.operator_eq_ [*operator=]]]
-    [Move-assign an overlapped handle from another. ]
+    [Move-assign an overlapped handle from another. 
+     [hr]
+     Move-assign an overlapped handle from a handle of another executor type. ]
   ]
   
 ]
@@ -165298,7 +166388,9 @@ Typedef for the typical usage of a random-access handle.
      [hr]
      Construct a random-access handle on an existing native handle. 
      [hr]
-     Move-construct a random-access handle from another. ]
+     Move-construct a random-access handle from another. 
+     [hr]
+     Move-construct a random-access handle from a handle of another executor type. ]
   ]
   
   [
@@ -165335,7 +166427,9 @@ Typedef for the typical usage of a random-access handle.
   
   [
     [[link asio.reference.windows__basic_random_access_handle.operator_eq_ [*operator=]]]
-    [Move-assign a random-access handle from another. ]
+    [Move-assign a random-access handle from another. 
+     [hr]
+     Move-assign a random-access handle from a handle of another executor type. ]
   ]
   
   [
@@ -165442,7 +166536,9 @@ Typedef for the typical usage of a stream-oriented handle.
      [hr]
      Construct a stream handle on an existing native handle. 
      [hr]
-     Move-construct a stream handle from another. ]
+     Move-construct a stream handle from another. 
+     [hr]
+     Move-construct a stream handle from a handle of another executor type. ]
   ]
   
   [
@@ -165479,7 +166575,9 @@ Typedef for the typical usage of a stream-oriented handle.
   
   [
     [[link asio.reference.windows__basic_stream_handle.operator_eq_ [*operator=]]]
-    [Move-assign a stream handle from another. ]
+    [Move-assign a stream handle from another. 
+     [hr]
+     Move-assign a stream handle from a handle of another executor type. ]
   ]
   
   [
@@ -165582,7 +166680,9 @@ Typedef for the typical usage of a writable pipe.
      [hr]
      Construct a basic_writable_pipe on an existing native pipe. 
      [hr]
-     Move-construct a basic_writable_pipe from another. ]
+     Move-construct a basic_writable_pipe from another. 
+     [hr]
+     Move-construct a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
@@ -165619,7 +166719,9 @@ Typedef for the typical usage of a writable pipe.
   
   [
     [[link asio.reference.basic_writable_pipe.operator_eq_ [*operator=]]]
-    [Move-assign a basic_writable_pipe from another. ]
+    [Move-assign a basic_writable_pipe from another. 
+     [hr]
+     Move-assign a basic_writable_pipe from a pipe of another executor type. ]
   ]
   
   [
