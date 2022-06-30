@@ -94,7 +94,8 @@ private:
     template <typename Handler, typename Condition>
     void operator()(Handler&& h, Condition&& c, std::tuple<Ops...>&& ops) const
     {
-      detail::parallel_group_launch(std::move(c), std::move(h),
+      detail::parallel_group_launch(
+          std::forward<Condition>(c), std::forward<Handler>(h),
           ops, asio::detail::index_sequence_for<Ops...>());
     }
   };
