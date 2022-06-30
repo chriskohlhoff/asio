@@ -491,13 +491,16 @@ int connect(socket_type s, const socket_addr_type* addr,
   return result;
 }
 
-void sync_connect(socket_type s, const socket_addr_type* addr,
+void sync_connect(socket_type s, state_type state, const socket_addr_type* addr,
     std::size_t addrlen, asio::error_code& ec)
 {
   // Perform the connect operation.
   socket_ops::connect(s, addr, addrlen, ec);
-  if (ec != asio::error::in_progress
-      && ec != asio::error::would_block)
+
+  // If the user wants non-blocking behaviour, give it to them.
+  if ((state & user_set_non_blocking)
+      || (ec != asio::error::would_block
+          && ec != asio::error::in_progress))
   {
     // The connect operation finished immediately.
     return;

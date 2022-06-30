@@ -626,7 +626,7 @@ public:
   asio::error_code connect(implementation_type& impl,
       const endpoint_type& peer_endpoint, asio::error_code& ec)
   {
-    socket_ops::sync_connect(impl.socket_,
+    socket_ops::sync_connect(impl.socket_, impl.state_,
         peer_endpoint.data(), peer_endpoint.size(), ec);
     ASIO_ERROR_LOCATION(ec);
     return ec;
