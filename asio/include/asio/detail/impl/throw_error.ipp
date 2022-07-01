@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/throw_error.hpp"
-#include "asio/detail/throw_exception.hpp"
 #include "asio/system_error.hpp"
 
 #include "asio/detail/push_options.hpp"
