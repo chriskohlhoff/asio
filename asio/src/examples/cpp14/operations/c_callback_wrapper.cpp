@@ -184,6 +184,30 @@ void test_callback()
 
 //------------------------------------------------------------------------------
 
+void test_deferred()
+{
+  asio::io_context io_context;
+
+  // Test our asynchronous operation using the deferred completion token. This
+  // token causes the operation's initiating function to package up the
+  // operation with its arguments to return a function object, which may then be
+  // used to launch the asynchronous operation.
+  auto op = async_read_input("Enter your name", asio::deferred);
+
+  // Launch our asynchronous operation using a lambda as a callback. We will use
+  // an io_context to obtain an associated executor.
+  std::move(op)(
+      asio::bind_executor(io_context,
+        [](const std::string& result)
+        {
+          std::cout << "Hello " << result << "\n";
+        }));
+
+  io_context.run();
+}
+
+//------------------------------------------------------------------------------
+
 void test_future()
 {
   // Test our asynchronous operation using the use_future completion token.
@@ -201,5 +225,6 @@ void test_future()
 int main()
 {
   test_callback();
+  test_deferred();
   test_future();
 }
