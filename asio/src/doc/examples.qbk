@@ -656,6 +656,25 @@ Example showing how to use a channel in conjunction with C++20 coroutines.
 * [@boost_asio/example/cpp20/channels/throttling_proxy.cpp]
 
 
+[heading Operations]
+
+Examples showing how to implement composed asynchronous operations as reusable library functions.
+
+* [@../src/examples/cpp20/operations/composed_1.cpp]
+* [@../src/examples/cpp20/operations/composed_2.cpp]
+* [@../src/examples/cpp20/operations/composed_3.cpp]
+* [@../src/examples/cpp20/operations/composed_4.cpp]
+* [@../src/examples/cpp20/operations/composed_5.cpp]
+* [@../src/examples/cpp20/operations/composed_6.cpp]
+* [@../src/examples/cpp20/operations/composed_7.cpp]
+* [@../src/examples/cpp20/operations/composed_8.cpp]
+
+Examples showing how to expose callback-based APIs as asynchronous operations.
+
+* [@../src/examples/cpp20/operations/callback_wrapper.cpp]
+* [@../src/examples/cpp20/operations/c_callback_wrapper.cpp]
+
+
 [endsect]
 
 
