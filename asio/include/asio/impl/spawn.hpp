@@ -914,6 +914,18 @@ private:
       ASIO_MOVE_OR_LVALUE(Handler)(handler_)(exception_ptr());
     }
 #if !defined(ASIO_NO_EXCEPTIONS)
+# if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+    catch (const boost::context::detail::forced_unwind&)
+    {
+      throw;
+    }
+# endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+# if defined(ASIO_HAS_BOOST_COROUTINE)
+    catch (const boost::coroutines::detail::forced_unwind&)
+    {
+      throw;
+    }
+# endif // defined(ASIO_HAS_BOOST_COROUTINE)
     catch (...)
     {
       exception_ptr ex = current_exception();
@@ -938,6 +950,18 @@ private:
           exception_ptr(), ASIO_MOVE_CAST(T)(result));
     }
 #if !defined(ASIO_NO_EXCEPTIONS)
+# if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+    catch (const boost::context::detail::forced_unwind&)
+    {
+      throw;
+    }
+# endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+# if defined(ASIO_HAS_BOOST_COROUTINE)
+    catch (const boost::coroutines::detail::forced_unwind&)
+    {
+      throw;
+    }
+# endif // defined(ASIO_HAS_BOOST_COROUTINE)
     catch (...)
     {
       exception_ptr ex = current_exception();
