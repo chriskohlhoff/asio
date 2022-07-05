@@ -122,6 +122,14 @@ public:
   // Release ownership of the native descriptor representation.
   ASIO_DECL native_handle_type release(implementation_type& impl);
 
+  // Release ownership of the native descriptor representation.
+  native_handle_type release(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    ec = success_ec_;
+    return release(impl);
+  }
+
   // Cancel all operations associated with the descriptor.
   ASIO_DECL asio::error_code cancel(implementation_type& impl,
       asio::error_code& ec);
