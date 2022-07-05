@@ -171,6 +171,10 @@ public:
   auto await_transform(Op&& op,
       typename constraint<is_async_operation<Op>::value>::type = 0)
   {
+    if (attached_thread_->entry_point()->throw_if_cancelled_)
+      if (!!attached_thread_->get_cancellation_state().cancelled())
+        throw_error(asio::error::operation_aborted, "co_await");
+
     return awaitable_async_op<typename completion_signature_of<Op>::type,
       typename decay<Op>::type, Executor>{
         std::forward<Op>(op), this};
