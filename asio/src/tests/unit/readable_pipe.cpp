@@ -135,5 +135,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "readable_pipe",
-  ASIO_TEST_CASE(readable_pipe_compile::test)
+  ASIO_COMPILE_TEST_CASE(readable_pipe_compile::test)
 )

@@ -409,6 +409,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/address_v6",
-  ASIO_TEST_CASE(ip_address_v6_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_address_v6_compile::test)
   ASIO_TEST_CASE(ip_address_v6_runtime::test)
 )

@@ -645,6 +645,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "socket_base",
-  ASIO_TEST_CASE(socket_base_compile::test)
+  ASIO_COMPILE_TEST_CASE(socket_base_compile::test)
   ASIO_TEST_CASE(socket_base_runtime::test)
 )

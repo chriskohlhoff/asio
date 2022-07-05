@@ -309,6 +309,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/network_v4",
-  ASIO_TEST_CASE(ip_network_v4_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_network_v4_compile::test)
   ASIO_TEST_CASE(ip_network_v4_runtime::test)
 )

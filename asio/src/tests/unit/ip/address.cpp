@@ -145,5 +145,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/address",
-  ASIO_TEST_CASE(ip_address_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_address_compile::test)
 )

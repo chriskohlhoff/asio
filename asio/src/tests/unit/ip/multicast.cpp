@@ -358,6 +358,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/multicast",
-  ASIO_TEST_CASE(ip_multicast_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_multicast_compile::test)
   ASIO_TEST_CASE(ip_multicast_runtime::test)
 )

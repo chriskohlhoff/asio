@@ -244,5 +244,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "generic/stream_protocol",
-  ASIO_TEST_CASE(generic_stream_protocol_socket_compile::test)
+  ASIO_COMPILE_TEST_CASE(generic_stream_protocol_socket_compile::test)
 )

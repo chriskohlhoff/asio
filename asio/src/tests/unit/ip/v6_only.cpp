@@ -130,6 +130,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/v6_only",
-  ASIO_TEST_CASE(ip_v6_only_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_v6_only_compile::test)
   ASIO_TEST_CASE(ip_v6_only_runtime::test)
 )

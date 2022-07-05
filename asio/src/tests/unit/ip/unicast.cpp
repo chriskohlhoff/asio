@@ -166,6 +166,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/unicast",
-  ASIO_TEST_CASE(ip_unicast_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_unicast_compile::test)
   ASIO_TEST_CASE(ip_unicast_runtime::test)
 )

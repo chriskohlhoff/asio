@@ -140,5 +140,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "writable_pipe",
-  ASIO_TEST_CASE(writable_pipe_compile::test)
+  ASIO_COMPILE_TEST_CASE(writable_pipe_compile::test)
 )

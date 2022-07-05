@@ -130,5 +130,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "windows/object_handle",
-  ASIO_TEST_CASE(windows_object_handle_compile::test)
+  ASIO_COMPILE_TEST_CASE(windows_object_handle_compile::test)
 )

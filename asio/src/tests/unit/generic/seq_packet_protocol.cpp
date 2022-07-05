@@ -201,5 +201,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "generic/seq_packet_protocol",
-  ASIO_TEST_CASE(generic_seq_packet_protocol_socket_compile::test)
+  ASIO_COMPILE_TEST_CASE(generic_seq_packet_protocol_socket_compile::test)
 )

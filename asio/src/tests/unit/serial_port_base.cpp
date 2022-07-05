@@ -95,5 +95,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "serial_port_base",
-  ASIO_TEST_CASE(serial_port_base_compile::test)
+  ASIO_COMPILE_TEST_CASE(serial_port_base_compile::test)
 )

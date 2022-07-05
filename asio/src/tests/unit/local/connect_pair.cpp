@@ -72,5 +72,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "local/connect_pair",
-  ASIO_TEST_CASE(local_connect_pair_compile::test)
+  ASIO_COMPILE_TEST_CASE(local_connect_pair_compile::test)
 )

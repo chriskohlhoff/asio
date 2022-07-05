@@ -667,7 +667,7 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/udp",
-  ASIO_TEST_CASE(ip_udp_socket_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_udp_socket_compile::test)
   ASIO_TEST_CASE(ip_udp_socket_runtime::test)
-  ASIO_TEST_CASE(ip_udp_resolver_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_udp_resolver_compile::test)
 )

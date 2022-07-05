@@ -238,5 +238,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "local/datagram_protocol",
-  ASIO_TEST_CASE(local_datagram_protocol_socket_compile::test)
+  ASIO_COMPILE_TEST_CASE(local_datagram_protocol_socket_compile::test)
 )

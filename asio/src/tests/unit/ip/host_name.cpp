@@ -51,5 +51,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/host_name",
-  ASIO_TEST_CASE(ip_host_name_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_host_name_compile::test)
 )

@@ -324,6 +324,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/address_v4",
-  ASIO_TEST_CASE(ip_address_v4_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_address_v4_compile::test)
   ASIO_TEST_CASE(ip_address_v4_runtime::test)
 )

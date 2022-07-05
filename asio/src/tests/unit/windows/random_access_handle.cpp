@@ -162,5 +162,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "windows/random_access_handle",
-  ASIO_TEST_CASE(windows_random_access_handle_compile::test)
+  ASIO_COMPILE_TEST_CASE(windows_random_access_handle_compile::test)
 )

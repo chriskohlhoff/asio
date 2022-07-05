@@ -115,5 +115,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "windows/overlapped_ptr",
-  ASIO_TEST_CASE(windows_overlapped_ptr_compile::test)
+  ASIO_COMPILE_TEST_CASE(windows_overlapped_ptr_compile::test)
 )

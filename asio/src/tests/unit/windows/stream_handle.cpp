@@ -155,5 +155,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "windows/stream_handle",
-  ASIO_TEST_CASE(windows_stream_handle_compile::test)
+  ASIO_COMPILE_TEST_CASE(windows_stream_handle_compile::test)
 )

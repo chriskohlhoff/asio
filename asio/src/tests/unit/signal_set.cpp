@@ -91,5 +91,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "signal_set",
-  ASIO_TEST_CASE(signal_set_compile::test)
+  ASIO_COMPILE_TEST_CASE(signal_set_compile::test)
 )

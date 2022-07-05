@@ -183,5 +183,5 @@ void test()
 ASIO_TEST_SUITE
 (
   "posix/stream_descriptor",
-  ASIO_TEST_CASE(posix_stream_descriptor_compile::test)
+  ASIO_COMPILE_TEST_CASE(posix_stream_descriptor_compile::test)
 )

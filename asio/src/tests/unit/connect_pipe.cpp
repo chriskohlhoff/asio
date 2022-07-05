@@ -158,6 +158,6 @@ void test()
 ASIO_TEST_SUITE
 (
   "connect_pipe",
-  ASIO_TEST_CASE(connect_pipe_compile::test)
+  ASIO_COMPILE_TEST_CASE(connect_pipe_compile::test)
   ASIO_TEST_CASE(connect_pipe_runtime::test)
 )
