@@ -106,8 +106,13 @@ void test()
     pipe1.close();
     pipe1.close(ec);
 
-    readable_pipe::native_handle_type native_pipe5 = pipe1.native_handle();
+    readable_pipe::native_handle_type native_pipe5 = pipe1.release();
     (void)native_pipe5;
+    readable_pipe::native_handle_type native_pipe6 = pipe1.release(ec);
+    (void)native_pipe6;
+
+    readable_pipe::native_handle_type native_pipe7 = pipe1.native_handle();
+    (void)native_pipe7;
 
     pipe1.cancel();
     pipe1.cancel(ec);
