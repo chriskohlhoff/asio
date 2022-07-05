@@ -24,7 +24,16 @@ noinst_PROGRAMS = \
 
 if HAVE_COROUTINES
 noinst_PROGRAMS += \
-	channels/throttling_proxy
+	channels/throttling_proxy \
+	coroutines/chat_server \
+	coroutines/echo_server \
+	coroutines/echo_server_with_default \
+	coroutines/echo_server_with_deferred \
+	coroutines/echo_server_with_deferred_default \
+	coroutines/echo_server_with_as_single_default \
+	coroutines/echo_server_with_as_tuple_default \
+	coroutines/refactored_echo_server \
+	coroutines/timeout
 endif
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
@@ -42,6 +51,15 @@ operations_composed_8_SOURCES = operations/composed_8.cpp
 
 if HAVE_COROUTINES
 channels_throttling_proxy_SOURCES = channels/throttling_proxy.cpp
+coroutines_chat_server_SOURCES = coroutines/chat_server.cpp
+coroutines_echo_server_SOURCES = coroutines/echo_server.cpp
+coroutines_echo_server_with_default_SOURCES = coroutines/echo_server_with_default.cpp
+coroutines_echo_server_with_deferred_SOURCES = coroutines/echo_server_with_deferred.cpp
+coroutines_echo_server_with_deferred_default_SOURCES = coroutines/echo_server_with_deferred_default.cpp
+coroutines_echo_server_with_as_single_default_SOURCES = coroutines/echo_server_with_as_single_default.cpp
+coroutines_echo_server_with_as_tuple_default_SOURCES = coroutines/echo_server_with_as_tuple_default.cpp
+coroutines_refactored_echo_server_SOURCES = coroutines/refactored_echo_server.cpp
+coroutines_timeout_SOURCES = coroutines/timeout.cpp
 endif
 
 MAINTAINERCLEANFILES = \

@@ -656,6 +656,22 @@ Example showing how to use a channel in conjunction with C++20 coroutines.
 * [@boost_asio/example/cpp20/channels/throttling_proxy.cpp]
 
 
+[heading Coroutines]
+
+Examples showing how to implement a chain of asynchronous operations using C++20
+Coroutines.
+
+* [@../src/examples/cpp20/coroutines/echo_server.cpp]
+* [@../src/examples/cpp20/coroutines/echo_server_with_default.cpp]
+* [@../src/examples/cpp20/coroutines/echo_server_with_as_tuple_default.cpp]
+* [@../src/examples/cpp20/coroutines/echo_server_with_as_single_default.cpp]
+* [@../src/examples/cpp20/coroutines/echo_server_with_deferred.cpp]
+* [@../src/examples/cpp20/coroutines/echo_server_with_deferred_default.cpp]
+* [@../src/examples/cpp20/coroutines/refactored_echo_server.cpp]
+* [@../src/examples/cpp20/coroutines/chat_server.cpp]
+* [@../src/examples/cpp20/coroutines/timeout.cpp]
+
+
 [heading Operations]
 
 Examples showing how to implement composed asynchronous operations as reusable library functions.

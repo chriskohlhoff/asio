@@ -597,6 +597,7 @@ sub copy_examples
       "src/examples/cpp14/parallel_group",
       "src/examples/cpp17/coroutines_ts",
       "src/examples/cpp20/channels",
+      "src/examples/cpp20/coroutines",
       "src/examples/cpp20/operations");
 
   our $boost_dir;
