@@ -108,8 +108,15 @@ void test()
     handle1.close(ec);
 
     win::stream_handle::native_handle_type native_handle4
-      = handle1.native_handle();
+      = handle1.release();
     (void)native_handle4;
+    win::stream_handle::native_handle_type native_handle5
+      = handle1.release(ec);
+    (void)native_handle5;
+
+    win::stream_handle::native_handle_type native_handle6
+      = handle1.native_handle();
+    (void)native_handle6;
 
     handle1.cancel();
     handle1.cancel(ec);
