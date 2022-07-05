@@ -47,6 +47,7 @@ void reactive_descriptor_service::construct(
 {
   impl.descriptor_ = -1;
   impl.state_ = 0;
+  impl.reactor_data_ = reactor::per_descriptor_data();
 }
 
 void reactive_descriptor_service::move_construct(

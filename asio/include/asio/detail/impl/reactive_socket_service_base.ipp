@@ -44,6 +44,7 @@ void reactive_socket_service_base::construct(
 {
   impl.socket_ = invalid_socket;
   impl.state_ = 0;
+  impl.reactor_data_ = reactor::per_descriptor_data();
 }
 
 void reactive_socket_service_base::base_move_construct(
