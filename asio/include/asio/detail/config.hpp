@@ -598,6 +598,25 @@
 # endif // !defined(ASIO_RVALUE_REF_QUAL)
 #endif // defined(ASIO_HAS_REF_QUALIFIED_FUNCTIONS)
 
+// Support for capturing parameter packs in lambdas.
+#if !defined(ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
+# if !defined(ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES)
+#  if defined(__GNUC__)
+#   if (__GNUC__ >= 6)
+#    define ASIO_HAS_VARIADIC_LAMBDA_CAPTURES 1
+#   endif // (__GNUC__ >= 6)
+#  elif defined(ASIO_MSVC)
+#   if (_MSVC_LANG >= 201103)
+#    define ASIO_HAS_VARIADIC_LAMBDA_CAPTURES 1
+#   endif // (_MSC_LANG >= 201103)
+#  else // defined(ASIO_MSVC)
+#   if (__cplusplus >= 201103)
+#    define ASIO_HAS_VARIADIC_LAMBDA_CAPTURES 1
+#   endif // (__cplusplus >= 201103)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES)
+#endif // !defined(ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
+
 // Support for the alignof operator.
 #if !defined(ASIO_HAS_ALIGNOF)
 # if !defined(ASIO_DISABLE_ALIGNOF)
