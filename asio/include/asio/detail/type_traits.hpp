@@ -53,7 +53,12 @@ namespace asio {
 #if defined(ASIO_HAS_STD_TYPE_TRAITS)
 using std::add_const;
 using std::add_lvalue_reference;
+#if defined(ASIO_MSVC) && (_MSC_VER < 1900)
 using std::aligned_storage;
+#else // defined(ASIO_MSVC) && (_MSC_VER < 1900)
+template <std::size_t N, std::size_t A>
+struct aligned_storage { struct type { alignas(A) unsigned char data[N]; }; };
+#endif // defined(ASIO_MSVC) && (_MSC_VER < 1900)
 using std::alignment_of;
 using std::conditional;
 using std::decay;
