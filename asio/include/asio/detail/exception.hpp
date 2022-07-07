@@ -17,23 +17,23 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_STD_EXCEPTION)
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR)
 # include <exception>
-#else // defined(ASIO_HAS_STD_EXCEPTION)
+#else // defined(ASIO_HAS_STD_EXCEPTION_PTR)
 # include <boost/exception_ptr.hpp>
-#endif // defined(ASIO_HAS_STD_EXCEPTION)
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
 
 namespace asio {
 
-#if defined(ASIO_HAS_STD_EXCEPTION)
+#if defined(ASIO_HAS_STD_EXCEPTION_PTR)
 using std::exception_ptr;
 using std::current_exception;
 using std::rethrow_exception;
-#else // defined(ASIO_HAS_STD_EXCEPTION)
+#else // defined(ASIO_HAS_STD_EXCEPTION_PTR)
 using boost::exception_ptr;
 using boost::current_exception;
 using boost::rethrow_exception;
-#endif // defined(ASIO_HAS_STD_EXCEPTION)
+#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
 
 } // namespace asio
 
