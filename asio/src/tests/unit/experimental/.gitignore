@@ -12,5 +12,6 @@ basic_channel
 basic_concurrent_channel
 channel
 channel_traits
+co_composed
 concurrent_channel
 promise
