@@ -28,7 +28,7 @@ using std::index_sequence;
 using std::index_sequence_for;
 using std::make_index_sequence;
 
-#else // defined(ASIO_HAS_STD_INDEX_SEQUENCE)
+#elif defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <std::size_t...>
 struct index_sequence
@@ -76,7 +76,7 @@ using index_sequence_for = typename index_range<0, sizeof...(T)>::type;
 template <std::size_t N>
 using make_index_sequence = typename index_range<0, N>::type;
 
-#endif // defined(ASIO_HAS_STD_INDEX_SEQUENCE)
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 } // namespace detail
 } // namespace asio
