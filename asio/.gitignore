@@ -1,6 +1,7 @@
 Makefile
 Makefile.in
 aclocal.m4
+asio.pc
 autom4te.cache
 compile
 config.guess
