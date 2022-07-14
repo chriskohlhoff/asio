@@ -140,6 +140,10 @@ address_v4 address_v6::to_v4() const
 
 bool address_v6::is_loopback() const ASIO_NOEXCEPT
 {
+  if(is_v4_mapped())
+  {
+    return addr_.s6_addr[12] == 127;
+  }
   return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
       && (addr_.s6_addr[2] == 0) && (addr_.s6_addr[3] == 0)
       && (addr_.s6_addr[4] == 0) && (addr_.s6_addr[5] == 0)
