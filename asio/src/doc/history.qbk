@@ -7,6 +7,178 @@
 
 [section:history Revision History]
 
+[heading Asio 1.23.0]
+
+* Added a deduced trailing return type, using `decltype`, to all asynchronous
+  operations' initiating functions when using C++11. This change enables the
+  new form of `async_result`, where the return type can vary per operation,
+  for C++11.
+
+* Moved `append`, `prepend`, `as_tuple`, and `deferred` to the `asio`
+  namespace, and made them compatible with C++11. These are no longer
+  experimental facilities, although the names have temporarily been retained
+  under the `asio::experimental` namespace for backwards compatibility.
+
+* Added `buffer()` overloads for contiguous containers, such as `std::span`.
+
+* Added the ability for `awaitable<>`-based coroutines to directly `co_await`
+  operations that are packaged as function objects. For example, using
+  `deferred`:[br]
+  ``
+  asio::awaitable<void> my_coro()
+  {
+    asio::steady_timer timer(co_await asio::this_coro::executor);
+    timer.expires_after(std::chrono::seconds(5));
+
+    co_await timer.async_wait(asio::deferred);
+  }
+  ``
+  or with a handcrafted function object:[br]
+  ``
+  asio::awaitable<void> my_coro()
+  {
+    asio::steady_timer timer(co_await asio::this_coro::executor);
+    timer.expires_after(std::chrono::seconds(5));
+
+    co_await [&](auto&& token)
+    {
+      return timer.async_wait(std::forward<decltype(token)>(token));
+    };
+  }
+  ``[br]
+
+* Changed `spawn()` to be a completion token-based asynchronous operation. This
+  introduces new `spawn()` overloads that conform to the requirements for
+  asynchronous operations. For example:[br]
+  ``
+  std::string do_read(asio::yield_context yield)
+  {
+    char data[1024];
+    size_t n = my_socket.async_read_some(asio::buffer(data), yield);
+    return std::string(data, n);
+  }
+
+  asio::spawn(my_executor, do_read,
+      [](std::exception_ptr ex, std::string result)
+      {
+        // ...
+      });
+  ``
+  These new `spawn()` overloads support cancellation, and the
+  `basic_yield_context` completion token has also been enhanced to support
+  move-only and variadic result types. When targeting C++11 and later, these
+  functions are implemented in terms of Boost.Context directly. The existing
+  overloads have been retained but are deprecated.
+
+* Added the `is_async_operation` trait and `async_operation` concept. The
+  `is_async_operation` trait may be used to determine if a function object, and
+  optional arguments, may be called to initiate an asynchronous operation. For
+  example, when using `deferred`:[br]
+  ``
+  auto d = my_timer.async_wait(asio::deferred);
+  static_assert(asio::is_async_operation<decltype(d)>::value);
+  ``[br]
+  or with a handcrafted asynchronous operation:[br]
+  ``
+  struct my_async_op
+  {
+    asio::ip::tcp::socket& socket_ = ...;
+
+    template <typename Token>
+    auto operator()(asio::const_buffer data, Token&& token)
+    {
+      return asio::async_write(socket_, data,
+          std::forward<Token>(token));
+    }
+  };
+
+  static_assert(
+      asio::is_async_operation<
+        my_async_op, asio::const_buffer>::value);
+  ``[br]
+
+* Added the `completion_signature_of` trait. The `completion_signature_of`
+  trait (and corresponding type alias `completion_signature_of_t`) may be used
+  to determine the completion signature of an asynchronous operation. For
+  example:[br]
+  ``
+  auto d = my_timer.async_wait(asio::deferred);
+  using sig = asio::completion_signature_of<decltype(d)>::type;
+  // sig is void(error_code)
+  ``[br]
+  or with a handcrafted asynchronous operation:[br]
+  ``
+  struct my_async_op
+  {
+    asio::ip::tcp::socket& socket_ = ...;
+
+    template <typename Token>
+    auto operator()(asio::const_buffer data, Token&& token)
+    {
+      return asio::async_write(socket_, data,
+          std::forward<Token>(token));
+    }
+  };
+
+  using sig =
+    asio::completion_signature_of<
+      my_async_op, asio::const_buffer>::type;
+  // sig is void(error_code, size_t)
+  ``[br]
+
+* Added converting move construction/assignment to posix descriptors, serial
+  ports, pipes, Windows `object_handle`, Windows stream handles, and Windows
+  random-access handles.
+
+* Added `release()` member functions to pipes, Windows stream handles, and
+  Windows random-access handles.
+
+* Enabled support for `Endpoint` implementations that return `void` pointers
+  from their `data()` member functions, as per the documented `Endpoint` type
+  requirements.
+
+* Removed `all()` and `race()` from `experimental::promise`, as
+  `experimental::parallel_group` covers this functionality.
+
+* Added source locations to exceptions and error codes produced by the
+  synchronous and asynchronous operations.
+
+* Fixed compatibility with OpenSSL 3.0.4 and later.
+
+* Fixed compatibility with with [^-masm=intel].
+
+* Explicitly stated that socket `shutdown()` calls are thread-safe with respect
+  to certain other synchronous operations on the same socket.
+
+* Optimised the move construction of I/O objects where only the executor type
+  differs.
+
+* Fixed the detection of `std::invoke_result` for clang/libc++.
+
+* Fixed an issue where `experimental::parallel_group` initiation incorrectly
+  moved arguments instead of forwarding them.
+
+* Fixed a sequencing issue in the implementation of `post()`, `dispatch()`,
+  and `defer()`, where the the associated allocator may be obtained from an
+  already moved-from completion handler.
+
+* Fixed the `awaitable<>` implementation to propagate exceptions from awaited
+  initiation functions through the current completion handler.
+
+* Fixed detection of `std::aligned_alloc` with [^gcc].
+
+* Changed to avoid using the soon-to-be-deprecated `std::aligned_storage` on
+  newer compilers.
+
+* Fixed various compiler warnings.
+
+* Updated all composed operations examples, and the C++11 timeouts example, to
+  use the new `async_result` form.
+
+* Added composed operation and coroutine examples for C++20.
+
+* Added pkg-config support.
+
 [heading Asio 1.22.2]
 
 * On Windows, changed the file support to open files using the same sharing mode
