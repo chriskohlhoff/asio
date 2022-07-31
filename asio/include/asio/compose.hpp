@@ -658,9 +658,11 @@ struct associator<Associator,
  * auto async_echo(tcp::socket& socket,
  *     asio::mutable_buffer buffer,
  *     CompletionToken&& token) ->
- *   typename asio::async_result<
- *     typename std::decay<CompletionToken>::type,
- *       void(asio::error_code, std::size_t)>::return_type
+ *   decltype(
+ *     asio::async_compose<CompletionToken,
+ *       void(asio::error_code, std::size_t)>(
+ *         std::declval<async_echo_implementation>(),
+ *         token, socket))
  * {
  *   return asio::async_compose<CompletionToken,
  *     void(asio::error_code, std::size_t)>(
