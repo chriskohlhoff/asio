@@ -1085,9 +1085,8 @@ class awaitable_async_op
 public:
   typedef awaitable_async_op_handler<Signature, Executor> handler_type;
 
-  template <typename O>
-  awaitable_async_op(O&& o, awaitable_frame_base<Executor>* frame)
-    : op_(std::forward<O>(o)),
+  awaitable_async_op(Op&& o, awaitable_frame_base<Executor>* frame)
+    : op_(std::forward<Op>(o)),
       frame_(frame),
       result_()
   {
@@ -1104,7 +1103,7 @@ public:
         [](void* arg)
         {
           awaitable_async_op* self = static_cast<awaitable_async_op*>(arg);
-          std::move(self->op_)(
+          std::forward<Op&&>(self->op_)(
               handler_type(self->frame_->detach_thread(), self->result_));
         }, this);
   }
@@ -1115,7 +1114,7 @@ public:
   }
 
 private:
-  Op op_;
+  Op&& op_;
   awaitable_frame_base<Executor>* frame_;
   typename handler_type::result_type result_;
 };
