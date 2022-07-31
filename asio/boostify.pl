@@ -100,6 +100,9 @@ sub copy_source_file
   my $is_xsl = 0;
   $is_xsl = 1 if ($from =~ /.xsl$/);
 
+  my $is_quickref = 0;
+  $is_quickref = 1 if ($from =~ /quickref.xml$/);
+
   my $is_test = 0;
   $is_test = 1 if ($from =~ /tests\/unit/);
 
@@ -139,8 +142,8 @@ sub copy_source_file
       $line =~ s/ASIO_/BOOST_ASIO_/g;
     }
 
-    # Extra replacements for quickbook and XSL source only.
-    if ($is_qbk || $is_xsl)
+    # Extra replacements for quickbook, XSL and quickref.xml source only.
+    if ($is_qbk || $is_xsl || $is_quickref)
     {
       $line =~ s/asio\.examples/boost_asio.examples/g;
       $line =~ s/asio\.history/boost_asio.history/g;
@@ -159,6 +162,7 @@ sub copy_source_file
       $line =~ s/\^asio/^boost\/asio/g;
       $line =~ s/namespaceasio/namespaceboost_1_1asio/g;
       $line =~ s/ \(\[\@examples\/diffs.*$//;
+      $line =~ s/boost\/tools\/boostbook/tools\/boostbook/g;
     }
 
     # Conditional replacements.
@@ -367,6 +371,25 @@ sub copy_source_file
       print_line($output, "//  See www.boost.org/libs/asio for documentation.", $from, $lineno);
       print_line($output, "//", $from, $lineno);
       print_line($output, $line, $from, $lineno);
+    }
+    elsif ($is_quickref)
+    {
+      if ($line =~ /asio\.reference\.error_code">/)
+      {
+        # Line is removed.
+      }
+      elsif ($line =~ /asio\.reference\.system_error">/)
+      {
+        # Line is removed.
+      }
+      elsif ($line =~ /asio\.reference\.thread">/)
+      {
+        # Line is removed.
+      }
+      else
+      {
+        print_line($output, $line, $from, $lineno);
+      }
     }
     else
     {
@@ -628,6 +651,7 @@ sub copy_doc
       "src/doc/examples.qbk",
       "src/doc/net_ts.qbk",
       "src/doc/overview.qbk",
+      "src/doc/quickref.xml",
       "src/doc/reference.xsl",
       "src/doc/std_executors.qbk",
       "src/doc/tutorial.xsl",
