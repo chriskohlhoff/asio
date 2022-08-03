@@ -40,7 +40,7 @@ void do_throw_error(
   // boostify: non-boost code starts here
 #if defined(ASIO_MSVC) \
   && defined(ASIO_HAS_STD_SYSTEM_ERROR) \
-  && (_MSC_VER < 1928)
+  && (_MSC_VER < 1800)
   // Microsoft's implementation of std::system_error is non-conformant in that
   // it ignores the error code's message when a "what" string is supplied. We'll
   // work around this by explicitly formatting the "what" string.
@@ -58,7 +58,7 @@ void do_throw_error(
   // boostify: non-boost code starts here
 #endif // defined(ASIO_MSVC)
        //   && defined(ASIO_HAS_STD_SYSTEM_ERROR)
-       //   && (_MSC_VER < 1928)
+       //   && (_MSC_VER < 1800)
   // boostify: non-boost code ends here
 }
 
