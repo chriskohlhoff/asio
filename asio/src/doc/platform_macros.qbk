@@ -80,6 +80,20 @@ needs.
     []
   ]
   [
+    [`ASIO_HAS_BOOST_CONTEXT_FIBER`]
+    [
+      Boost support for the Context library's fibers.
+    ]
+    [`ASIO_DISABLE_BOOST_CONTEXT_FIBER`]
+  ]
+  [
+    [`ASIO_HAS_BOOST_COROUTINE`]
+    [
+      Boost support for the Coroutine library.
+    ]
+    [`ASIO_DISABLE_BOOST_COROUTINE`]
+  ]
+  [
     [`ASIO_HAS_BOOST_DATE_TIME`]
     [
       Boost support for the DateTime library.
@@ -99,6 +113,13 @@ needs.
       Boost regex library.
     ]
     [`ASIO_DISABLE_BOOST_REGEX`]
+  ]
+  [
+    [`ASIO_HAS_BOOST_SOURCE_LOCATION`]
+    [
+      Boost support for source_location and system errors.
+    ]
+    [`ASIO_DISABLE_BOOST_SOURCE_LOCATION`]
   ]
   [
     [`ASIO_HAS_BOOST_THROW_EXCEPTION`]
@@ -448,6 +469,13 @@ needs.
     []
   ]
   [
+    [`ASIO_HAS_STD_CONCEPTS`]
+    [
+      Support concepts on compilers known to allow them.
+    ]
+    [`ASIO_DISABLE_STD_CONCEPTS`]
+  ]
+  [
     [`ASIO_HAS_STD_COROUTINE`]
     [
       Standard library support for coroutines.
@@ -495,6 +523,13 @@ needs.
       Standard library support for std::hash.
     ]
     [`ASIO_DISABLE_STD_HASH`]
+  ]
+  [
+    [`ASIO_HAS_STD_INDEX_SEQUENCE`]
+    [
+      Standard library support for std::index_sequence.
+    ]
+    [`ASIO_DISABLE_STD_INDEX_SEQUENCE`]
   ]
   [
     [`ASIO_HAS_STD_INVOKE_RESULT`]
@@ -560,6 +595,20 @@ needs.
     [`ASIO_DISABLE_STD_THREAD`]
   ]
   [
+    [`ASIO_HAS_STD_TO_ADDRESS`]
+    [
+      Standard library support for std::to_address.
+    ]
+    [`ASIO_DISABLE_STD_TO_ADDRESS`]
+  ]
+  [
+    [`ASIO_HAS_STD_TUPLE`]
+    [
+      Standard library support for std::tuple.
+    ]
+    [`ASIO_DISABLE_STD_TUPLE`]
+  ]
+  [
     [`ASIO_HAS_STD_TYPE_TRAITS`]
     [
       Standard library support for type traits.
@@ -609,6 +658,13 @@ needs.
       Support template variables on compilers known to allow it.
     ]
     [`ASIO_DISABLE_VARIABLE_TEMPLATES`]
+  ]
+  [
+    [`ASIO_HAS_VARIADIC_LAMBDA_CAPTURES`]
+    [
+      Support for capturing parameter packs in lambdas.
+    ]
+    [`ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES`]
   ]
   [
     [`ASIO_HAS_VARIADIC_TEMPLATES`]
