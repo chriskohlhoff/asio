@@ -711,6 +711,30 @@
 # endif // !defined(ASIO_DISABLE_STD_ALIGNED_ALLOC)
 #endif // !defined(ASIO_HAS_STD_ALIGNED_ALLOC)
 
+// Standard library support for std::align.
+#if !defined(ASIO_HAS_STD_ALIGN)
+# if !defined(ASIO_DISABLE_STD_ALIGN)
+#  if defined(__clang__)
+#   if defined(ASIO_HAS_CLANG_LIBCXX)
+#    define ASIO_HAS_STD_ALIGN 1
+#   elif (__cplusplus >= 201103)
+#    define ASIO_HAS_STD_ALIGN 1
+#   endif // (__cplusplus >= 201103)
+#  elif defined(__GNUC__)
+#   if (__GNUC__ >= 6)
+#    if (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#     define ASIO_HAS_STD_ALIGN 1
+#    endif // (__cplusplus >= 201103) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+#   endif // (__GNUC__ >= 6)
+#  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1700)
+#    define ASIO_HAS_STD_ALIGN 1
+#   endif // (_MSC_VER >= 1700)
+#  endif // defined(ASIO_MSVC)
+# endif // !defined(ASIO_DISABLE_STD_ALIGN)
+#endif // !defined(ASIO_HAS_STD_ALIGN)
+
 // Standard library support for system errors.
 #if !defined(ASIO_HAS_STD_SYSTEM_ERROR)
 # if !defined(ASIO_DISABLE_STD_SYSTEM_ERROR)

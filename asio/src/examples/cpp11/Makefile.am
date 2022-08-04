@@ -56,7 +56,8 @@ noinst_PROGRAMS = \
 	timeouts/blocking_token_tcp_client \
 	timeouts/blocking_udp_client \
 	timeouts/server \
-	timers/time_t_timer
+	timers/time_t_timer \
+	type_erasure/type_erasure
 
 if !WINDOWS_TARGET
 noinst_PROGRAMS += \
@@ -143,6 +144,7 @@ timeouts_blocking_token_tcp_client_SOURCES = timeouts/blocking_token_tcp_client.
 timeouts_blocking_udp_client_SOURCES = timeouts/blocking_udp_client.cpp
 timeouts_server_SOURCES = timeouts/server.cpp
 timers_time_t_timer_SOURCES = timers/time_t_timer.cpp
+type_erasure_type_erasure_SOURCES = type_erasure/main.cpp type_erasure/stdin_line_reader.cpp type_erasure/sleep.cpp
 
 if !WINDOWS_TARGET
 fork_daemon_SOURCES = fork/daemon.cpp
@@ -181,7 +183,10 @@ EXTRA_DIST = \
 	ssl/README \
 	ssl/ca.pem \
 	ssl/server.pem \
-	ssl/dh4096.pem
+	ssl/dh4096.pem \
+	type_erasure/line_reader.hpp \
+	type_erasure/stdin_line_reader.hpp \
+	type_erasure/sleep.hpp
 
 
 MAINTAINERCLEANFILES = \

@@ -614,6 +614,7 @@ sub copy_examples
       "src/examples/cpp11/ssl",
       "src/examples/cpp11/timeouts",
       "src/examples/cpp11/timers",
+      "src/examples/cpp11/type_erasure",
       "src/examples/cpp14/deferred",
       "src/examples/cpp14/executors",
       "src/examples/cpp14/iostreams",
@@ -622,7 +623,8 @@ sub copy_examples
       "src/examples/cpp17/coroutines_ts",
       "src/examples/cpp20/channels",
       "src/examples/cpp20/coroutines",
-      "src/examples/cpp20/operations");
+      "src/examples/cpp20/operations",
+      "src/examples/cpp20/type_erasure");
 
   our $boost_dir;
   foreach my $dir (@dirs)

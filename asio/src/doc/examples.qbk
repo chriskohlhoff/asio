@@ -539,6 +539,20 @@ Example showing how to customise basic_waitable_timer using a different clock ty
 * [@../src/examples/cpp11/timers/time_t_timer.cpp] ([@examples/diffs/timers/time_t_timer.cpp.html diff to C++03])
 
 
+[heading Type Erasure]
+
+Example showing how to use [link asio.reference.any_completion_handler
+`any_completion_handler`] to enable separate compilation of asynchronous
+operations.
+
+* [@../src/examples/cpp11/type_erasure/main.cpp]
+* [@../src/examples/cpp11/type_erasure/line_reader.hpp]
+* [@../src/examples/cpp11/type_erasure/stdin_line_reader.hpp]
+* [@../src/examples/cpp11/type_erasure/stdin_line_reader.cpp]
+* [@../src/examples/cpp11/type_erasure/sleep.hpp]
+* [@../src/examples/cpp11/type_erasure/sleep.cpp]
+
+
 [heading UNIX Domain Sockets]
 
 Examples showing how to use UNIX domain (local) sockets.
@@ -701,6 +715,20 @@ Examples showing how to expose callback-based APIs as asynchronous operations.
 
 * [@../src/examples/cpp20/operations/callback_wrapper.cpp]
 * [@../src/examples/cpp20/operations/c_callback_wrapper.cpp]
+
+
+[heading Type Erasure]
+
+Example showing how to use [link asio.reference.any_completion_handler
+`any_completion_handler`] to enable separate compilation of asynchronous
+operations.
+
+* [@../src/examples/cpp20/type_erasure/main.cpp]
+* [@../src/examples/cpp20/type_erasure/line_reader.hpp]
+* [@../src/examples/cpp20/type_erasure/stdin_line_reader.hpp]
+* [@../src/examples/cpp20/type_erasure/stdin_line_reader.cpp]
+* [@../src/examples/cpp20/type_erasure/sleep.hpp]
+* [@../src/examples/cpp20/type_erasure/sleep.cpp]
 
 
 [endsect]
