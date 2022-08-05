@@ -211,6 +211,11 @@ public:
   {
   }
 
+  execution_context& query(execution::context_t) const ASIO_NOEXCEPT
+  {
+    return asio::query(system_executor(), execution::context);
+  }
+
   static ASIO_CONSTEXPR Blocking query(execution::blocking_t)
   {
     return Blocking();
@@ -988,6 +993,21 @@ struct query_static_constexpr_member<
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_QUERY_STATIC_CONSTEXPR_TRAIT)
+
+#if !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
+
+template <typename T, typename Blocking>
+struct query_member<
+    asio::detail::promise_executor<T, Blocking>,
+    execution::context_t
+  >
+{
+  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  typedef asio::system_context& result_type;
+};
+
+#endif // !defined(ASIO_HAS_DEDUCED_QUERY_MEMBER_TRAIT)
 
 #if !defined(ASIO_HAS_DEDUCED_REQUIRE_MEMBER_TRAIT)
 
