@@ -29,16 +29,10 @@ namespace detail {
 class any_completion_handler_impl_base
 {
 public:
-  template <typename E, typename S>
-  any_completion_handler_impl_base(E&& ex, S&& slot)
-    : executor_(std::forward<E>(ex)),
-      cancel_state_(std::forward<S>(slot), enable_total_cancellation())
+  template <typename S>
+  explicit any_completion_handler_impl_base(S&& slot)
+    : cancel_state_(std::forward<S>(slot), enable_total_cancellation())
   {
-  }
-
-  const any_io_executor& get_executor() const noexcept
-  {
-    return executor_;
   }
 
   cancellation_slot get_cancellation_slot() const noexcept
@@ -47,7 +41,6 @@ public:
   }
 
 private:
-  any_io_executor executor_;
   cancellation_state cancel_state_;
 };
 
@@ -56,9 +49,9 @@ class any_completion_handler_impl :
   public any_completion_handler_impl_base
 {
 public:
-  template <typename E, typename S, typename H>
-  any_completion_handler_impl(E&& ex, S&& slot, H&& h)
-    : any_completion_handler_impl_base(std::forward<E>(ex), std::forward<S>(slot)),
+  template <typename S, typename H>
+  any_completion_handler_impl(S&& slot, H&& h)
+    : any_completion_handler_impl_base(std::forward<S>(slot)),
       handler_(std::forward<H>(h))
   {
   }
@@ -90,8 +83,8 @@ public:
     }
   };
 
-  template <typename E, typename S, typename H>
-  static any_completion_handler_impl* create(E&& ex, S&& slot, H&& h)
+  template <typename S, typename H>
+  static any_completion_handler_impl* create(S&& slot, H&& h)
   {
     uninit_deleter d{(get_associated_allocator)(h, asio::recycling_allocator<void>())};
     std::unique_ptr<any_completion_handler_impl, uninit_deleter> uninit_ptr(
@@ -99,7 +92,7 @@ public:
 
     any_completion_handler_impl* ptr =
       new (uninit_ptr.get()) any_completion_handler_impl(
-        std::forward<E>(ex), std::forward<S>(slot), std::forward<H>(h));
+        std::forward<S>(slot), std::forward<H>(h));
 
     uninit_ptr.release();
     return ptr;
@@ -109,6 +102,11 @@ public:
   {
     deleter d{(get_associated_allocator)(handler_, asio::recycling_allocator<void>())};
     d(this);
+  }
+
+  any_io_executor executor(const any_io_executor& candidate) const
+  {
+    return (get_associated_executor)(handler_, candidate);
   }
 
   template <typename... Args>
@@ -208,21 +206,51 @@ private:
   type destroy_fn_;
 };
 
+class any_completion_handler_executor_fn
+{
+public:
+  using type = any_io_executor(*)(any_completion_handler_impl_base*, const any_io_executor&);
+
+  constexpr any_completion_handler_executor_fn(type fn)
+    : executor_fn_(fn)
+  {
+  }
+
+  any_io_executor executor(any_completion_handler_impl_base* impl, const any_io_executor& candidate) const
+  {
+    return executor_fn_(impl, candidate);
+  }
+
+  template <typename Handler>
+  static any_io_executor impl(any_completion_handler_impl_base* impl, const any_io_executor& candidate)
+  {
+    return static_cast<any_completion_handler_impl<Handler>*>(impl)->executor(candidate);
+  }
+
+private:
+  type executor_fn_;
+};
+
 template <typename... Signatures>
 class any_completion_handler_fn_table
   : private any_completion_handler_destroy_fn,
+    private any_completion_handler_executor_fn,
     private any_completion_handler_call_fns<Signatures...>
 {
 public:
   template <typename... CallFns>
   constexpr any_completion_handler_fn_table(
-      any_completion_handler_destroy_fn::type destroy_fn, CallFns... call_fns)
+      any_completion_handler_destroy_fn::type destroy_fn,
+      any_completion_handler_executor_fn::type executor_fn,
+      CallFns... call_fns)
     : any_completion_handler_destroy_fn(destroy_fn),
+      any_completion_handler_executor_fn(executor_fn),
       any_completion_handler_call_fns<Signatures...>(call_fns...)
   {
   }
 
   using any_completion_handler_destroy_fn::destroy;
+  using any_completion_handler_executor_fn::executor;
   using any_completion_handler_call_fns<Signatures...>::call;
 };
 
@@ -232,6 +260,7 @@ struct any_completion_handler_fn_table_instance
   static constexpr any_completion_handler_fn_table<Signatures...>
     value = any_completion_handler_fn_table<Signatures...>(
         &any_completion_handler_destroy_fn::impl<Handler>,
+        &any_completion_handler_executor_fn::impl<Handler>,
         &any_completion_handler_call_fn<Signatures>::template impl<Handler>...);
 };
 
@@ -241,6 +270,7 @@ template <typename... Signatures>
 class any_completion_handler
 {
 private:
+  template <typename, typename> friend struct associated_executor;
   const detail::any_completion_handler_fn_table<Signatures...>* fn_table_;
   detail::any_completion_handler_impl_base* impl_;
 
@@ -251,7 +281,6 @@ public:
   any_completion_handler(H&& h)
     : fn_table_(&detail::any_completion_handler_fn_table_instance<Handler, Signatures...>::value),
       impl_(detail::any_completion_handler_impl<Handler>::create(
-            (get_associated_executor)(h, any_io_executor{}),
             (get_associated_cancellation_slot)(h), std::forward<H>(h)))
   {
   }
@@ -270,11 +299,6 @@ public:
   {
     if (impl_)
       fn_table_->destroy(impl_);
-  }
-
-  const any_io_executor& get_executor() const noexcept
-  {
-    return impl_->get_executor();
   }
 
   cancellation_slot_type get_cancellation_slot() const noexcept
@@ -297,11 +321,9 @@ struct associated_executor<any_completion_handler<Signatures...>, Candidate>
 {
   using type = any_io_executor;
 
-  static type get(const any_completion_handler<Signatures...>& handler, const Candidate& candidate)
+  static type get(const any_completion_handler<Signatures...>& handler, const type& candidate = Candidate()) noexcept
   {
-    if (handler.get_executor())
-      return handler.get_executor();
-    return candidate;
+    return handler.fn_table_->executor(handler.impl_, candidate);
   }
 };
 
