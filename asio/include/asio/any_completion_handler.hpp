@@ -307,7 +307,7 @@ public:
   }
 
   template <typename... Args>
-  auto operator()(Args&&... args) &&
+  auto operator()(Args&&... args)
     -> decltype(fn_table_->call(impl_, std::forward<Args>(args)...))
   {
     detail::any_completion_handler_impl_base* impl = impl_;
