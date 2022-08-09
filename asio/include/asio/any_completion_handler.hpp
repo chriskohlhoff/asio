@@ -14,7 +14,7 @@
 #include "asio/detail/config.hpp"
 #include <memory>
 #include <utility>
-#include "asio/any_io_executor.hpp"
+#include "asio/any_completion_executor.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_cancellation_slot.hpp"
 #include "asio/associated_executor.hpp"
@@ -104,7 +104,7 @@ public:
     d(this);
   }
 
-  any_io_executor executor(const any_io_executor& candidate) const
+  any_completion_executor executor(const any_completion_executor& candidate) const
   {
     return (get_associated_executor)(handler_, candidate);
   }
@@ -209,20 +209,20 @@ private:
 class any_completion_handler_executor_fn
 {
 public:
-  using type = any_io_executor(*)(any_completion_handler_impl_base*, const any_io_executor&);
+  using type = any_completion_executor(*)(any_completion_handler_impl_base*, const any_completion_executor&);
 
   constexpr any_completion_handler_executor_fn(type fn)
     : executor_fn_(fn)
   {
   }
 
-  any_io_executor executor(any_completion_handler_impl_base* impl, const any_io_executor& candidate) const
+  any_completion_executor executor(any_completion_handler_impl_base* impl, const any_completion_executor& candidate) const
   {
     return executor_fn_(impl, candidate);
   }
 
   template <typename Handler>
-  static any_io_executor impl(any_completion_handler_impl_base* impl, const any_io_executor& candidate)
+  static any_completion_executor impl(any_completion_handler_impl_base* impl, const any_completion_executor& candidate)
   {
     return static_cast<any_completion_handler_impl<Handler>*>(impl)->executor(candidate);
   }
@@ -319,7 +319,7 @@ public:
 template <typename... Signatures, typename Candidate>
 struct associated_executor<any_completion_handler<Signatures...>, Candidate>
 {
-  using type = any_io_executor;
+  using type = any_completion_executor;
 
   static type get(const any_completion_handler<Signatures...>& handler, const type& candidate = Candidate()) noexcept
   {

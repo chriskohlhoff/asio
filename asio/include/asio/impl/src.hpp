@@ -19,6 +19,7 @@
 # error Do not compile Asio library source with ASIO_HEADER_ONLY defined
 #endif
 
+#include "asio/impl/any_completion_executor.ipp"
 #include "asio/impl/any_io_executor.ipp"
 #include "asio/impl/cancellation_signal.ipp"
 #include "asio/impl/connect_pipe.ipp"

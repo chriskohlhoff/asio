@@ -36,6 +36,7 @@ class io_context;
 
 #if !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
+class any_completion_executor;
 class any_io_executor;
 
 #endif // !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
@@ -377,6 +378,10 @@ class handler_work_base<
     Executor, CandidateExecutor,
     IoContext, PolymorphicExecutor,
     typename enable_if<
+      is_same<
+        Executor,
+        any_completion_executor
+      >::value ||
       is_same<
         Executor,
         any_io_executor
