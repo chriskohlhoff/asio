@@ -12,6 +12,7 @@
 #define ASIO_ANY_COMPLETION_HANDLER_HPP
 
 #include "asio/detail/config.hpp"
+#include <functional>
 #include <memory>
 #include <utility>
 #include "asio/any_completion_executor.hpp"
@@ -281,6 +282,18 @@ private:
 public:
   using cancellation_slot_type = cancellation_slot;
 
+  constexpr any_completion_handler()
+    : fn_table_(nullptr),
+      impl_(nullptr)
+  {
+  }
+
+  constexpr any_completion_handler(nullptr_t)
+    : fn_table_(nullptr),
+      impl_(nullptr)
+  {
+  }
+
   template <typename H, typename Handler = typename decay<H>::type>
   any_completion_handler(H&& h)
     : fn_table_(&detail::any_completion_handler_fn_table_instance<Handler, Signatures...>::value),
@@ -297,12 +310,38 @@ public:
     other.impl_ = nullptr;
   }
 
-  any_completion_handler& operator=(any_completion_handler&&) = delete;
+  any_completion_handler& operator=(any_completion_handler&& other) noexcept
+  {
+    any_completion_handler(other).swap(*this);
+    return *this;
+  }
+
+  any_completion_handler& operator=(nullptr_t) noexcept
+  {
+    any_completion_handler().swap(*this);
+    return *this;
+  }
 
   ~any_completion_handler()
   {
     if (impl_)
       fn_table_->destroy(impl_);
+  }
+
+  constexpr explicit operator bool() const noexcept
+  {
+    return impl_ != nullptr;
+  }
+
+  constexpr bool operator!() const noexcept
+  {
+    return impl_ == nullptr;
+  }
+
+  void swap(any_completion_handler& other) noexcept
+  {
+    std::swap(fn_table_, other.fn_table_);
+    std::swap(impl_, other.impl_);
   }
 
   cancellation_slot_type get_cancellation_slot() const noexcept
@@ -314,9 +353,33 @@ public:
   auto operator()(Args&&... args)
     -> decltype(fn_table_->call(impl_, std::forward<Args>(args)...))
   {
-    detail::any_completion_handler_impl_base* impl = impl_;
-    impl_ = nullptr;
-    return fn_table_->call(impl, std::forward<Args>(args)...);
+    if (detail::any_completion_handler_impl_base* impl = impl_)
+    {
+      impl_ = nullptr;
+      return fn_table_->call(impl, std::forward<Args>(args)...);
+    }
+    std::bad_function_call ex;
+    asio::detail::throw_exception(ex);
+  }
+
+  friend constexpr bool operator==(const any_completion_handler& a, nullptr_t) noexcept
+  {
+    return a.impl_ == nullptr;
+  }
+
+  friend constexpr bool operator==(nullptr_t, const any_completion_handler& b) noexcept
+  {
+    return nullptr == b.impl_;
+  }
+
+  friend constexpr bool operator!=(const any_completion_handler& a, nullptr_t) noexcept
+  {
+    return a.impl_ != nullptr;
+  }
+
+  friend constexpr bool operator!=(nullptr_t, const any_completion_handler& b) noexcept
+  {
+    return nullptr != b.impl_;
   }
 };
 
