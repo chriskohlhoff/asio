@@ -12,6 +12,7 @@
 #define ASIO_ANY_COMPLETION_HANDLER_HPP
 
 #include "asio/detail/config.hpp"
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <utility>
@@ -108,6 +109,53 @@ public:
   any_completion_executor executor(const any_completion_executor& candidate) const
   {
     return (get_associated_executor)(handler_, candidate);
+  }
+
+  void* allocate(std::size_t size, std::size_t align) const
+  {
+    typename std::allocator_traits<
+      associated_allocator_t<Handler,
+        asio::recycling_allocator<void>>>::template
+          rebind_alloc<unsigned char> alloc(
+            (get_associated_allocator)(handler_,
+              asio::recycling_allocator<void>()));
+
+    std::size_t space = size + align - 1;
+    unsigned char* base =
+      std::allocator_traits<decltype(alloc)>::allocate(
+        alloc, space + sizeof(std::ptrdiff_t));
+
+    void* p = base;
+    if (std::align(align, size, p, space))
+    {
+      std::ptrdiff_t offset = static_cast<unsigned char*>(p) - base;
+      std::memcpy(static_cast<unsigned char*>(p) + size, &offset, sizeof(offset));
+      return p;
+    }
+
+    std::bad_alloc ex;
+    asio::detail::throw_exception(ex);
+    return nullptr;
+  }
+
+  void deallocate(void* p, std::size_t size, std::size_t align) const
+  {
+    if (p)
+    {
+      typename std::allocator_traits<
+        associated_allocator_t<Handler,
+          asio::recycling_allocator<void>>>::template
+            rebind_alloc<unsigned char> alloc(
+              (get_associated_allocator)(handler_,
+                asio::recycling_allocator<void>()));
+
+      std::ptrdiff_t offset;
+      std::memcpy(&offset, static_cast<unsigned char*>(p) + size, sizeof(offset));
+      unsigned char* base = static_cast<unsigned char*>(p) - offset;
+
+      std::allocator_traits<decltype(alloc)>::deallocate(
+          alloc, base, size + align -1 + sizeof(std::ptrdiff_t));
+    }
   }
 
   template <typename... Args>
@@ -232,10 +280,62 @@ private:
   type executor_fn_;
 };
 
+class any_completion_handler_allocate_fn
+{
+public:
+  using type = void*(*)(any_completion_handler_impl_base*, std::size_t, std::size_t);
+
+  constexpr any_completion_handler_allocate_fn(type fn)
+    : allocate_fn_(fn)
+  {
+  }
+
+  void* allocate(any_completion_handler_impl_base* impl, std::size_t size, std::size_t align) const
+  {
+    return allocate_fn_(impl, size, align);
+  }
+
+  template <typename Handler>
+  static void* impl(any_completion_handler_impl_base* impl, std::size_t size, std::size_t align)
+  {
+    return static_cast<any_completion_handler_impl<Handler>*>(impl)->allocate(size, align);
+  }
+
+private:
+  type allocate_fn_;
+};
+
+class any_completion_handler_deallocate_fn
+{
+public:
+  using type = void(*)(any_completion_handler_impl_base*, void*, std::size_t, std::size_t);
+
+  constexpr any_completion_handler_deallocate_fn(type fn)
+    : deallocate_fn_(fn)
+  {
+  }
+
+  void deallocate(any_completion_handler_impl_base* impl, void* p, std::size_t size, std::size_t align) const
+  {
+    deallocate_fn_(impl, p, size, align);
+  }
+
+  template <typename Handler>
+  static void impl(any_completion_handler_impl_base* impl, void* p, std::size_t size, std::size_t align)
+  {
+    static_cast<any_completion_handler_impl<Handler>*>(impl)->deallocate(p, size, align);
+  }
+
+private:
+  type deallocate_fn_;
+};
+
 template <typename... Signatures>
 class any_completion_handler_fn_table
   : private any_completion_handler_destroy_fn,
     private any_completion_handler_executor_fn,
+    private any_completion_handler_allocate_fn,
+    private any_completion_handler_deallocate_fn,
     private any_completion_handler_call_fns<Signatures...>
 {
 public:
@@ -243,15 +343,21 @@ public:
   constexpr any_completion_handler_fn_table(
       any_completion_handler_destroy_fn::type destroy_fn,
       any_completion_handler_executor_fn::type executor_fn,
+      any_completion_handler_allocate_fn::type allocate_fn,
+      any_completion_handler_deallocate_fn::type deallocate_fn,
       CallFns... call_fns)
     : any_completion_handler_destroy_fn(destroy_fn),
       any_completion_handler_executor_fn(executor_fn),
+      any_completion_handler_allocate_fn(allocate_fn),
+      any_completion_handler_deallocate_fn(deallocate_fn),
       any_completion_handler_call_fns<Signatures...>(call_fns...)
   {
   }
 
   using any_completion_handler_destroy_fn::destroy;
   using any_completion_handler_executor_fn::executor;
+  using any_completion_handler_allocate_fn::allocate;
+  using any_completion_handler_deallocate_fn::deallocate;
   using any_completion_handler_call_fns<Signatures...>::call;
 };
 
@@ -262,6 +368,8 @@ struct any_completion_handler_fn_table_instance
     value = any_completion_handler_fn_table<Signatures...>(
         &any_completion_handler_destroy_fn::impl<Handler>,
         &any_completion_handler_executor_fn::impl<Handler>,
+        &any_completion_handler_allocate_fn::impl<Handler>,
+        &any_completion_handler_deallocate_fn::impl<Handler>,
         &any_completion_handler_call_fn<Signatures>::template impl<Handler>...);
 };
 
@@ -272,14 +380,115 @@ any_completion_handler_fn_table_instance<Handler, Signatures...>::value;
 } // namespace detail
 
 template <typename... Signatures>
+class any_completion_handler;
+
+template <typename T, typename... Signatures>
+class any_completion_handler_allocator
+{
+private:
+  template <typename...> friend class any_completion_handler;
+  template <typename, typename...> friend class any_completion_handler_allocator;
+  const detail::any_completion_handler_fn_table<Signatures...>* fn_table_;
+  detail::any_completion_handler_impl_base* impl_;
+
+  constexpr any_completion_handler_allocator(int,
+      const any_completion_handler<Signatures...>& h) noexcept
+    : fn_table_(h.fn_table_),
+      impl_(h.impl_)
+  {
+  }
+
+public:
+  typedef T value_type;
+
+  template <typename U>
+  struct rebind
+  {
+    typedef any_completion_handler_allocator<U, Signatures...> other;
+  };
+
+  template <typename U>
+  constexpr any_completion_handler_allocator(const any_completion_handler_allocator<U, Signatures...>& a) noexcept
+    : fn_table_(a.fn_table_),
+      impl_(a.impl_)
+  {
+  }
+
+  constexpr bool operator==(const any_completion_handler_allocator& other) const noexcept
+  {
+    return fn_table_ == other.fn_table_ && impl_ == other.impl_;
+  }
+
+  constexpr bool operator!=(const any_completion_handler_allocator& other) const noexcept
+  {
+    return fn_table_ != other.fn_table_ || impl_ != other.impl_;
+  }
+
+  T* allocate(std::size_t n) const
+  {
+    return static_cast<T*>(fn_table_->allocate(impl_, sizeof(T) * n, alignof(T)));
+  }
+
+  void deallocate(T* p, std::size_t n) const
+  {
+    fn_table_->deallocate(impl_, p, sizeof(T) * n, alignof(T));
+  }
+};
+
+template <typename... Signatures>
+class any_completion_handler_allocator<void, Signatures...>
+{
+private:
+  template <typename...> friend class any_completion_handler;
+  template <typename, typename...> friend class any_completion_handler_allocator;
+  const detail::any_completion_handler_fn_table<Signatures...>* fn_table_;
+  detail::any_completion_handler_impl_base* impl_;
+
+  constexpr any_completion_handler_allocator(int,
+      const any_completion_handler<Signatures...>& h) noexcept
+    : fn_table_(h.fn_table_),
+      impl_(h.impl_)
+  {
+  }
+
+public:
+  typedef void value_type;
+
+  template <typename U>
+  struct rebind
+  {
+    typedef any_completion_handler_allocator<U, Signatures...> other;
+  };
+
+  template <typename U>
+  constexpr any_completion_handler_allocator(const any_completion_handler_allocator<U, Signatures...>& a) noexcept
+    : fn_table_(a.fn_table_),
+      impl_(a.impl_)
+  {
+  }
+
+  constexpr bool operator==(const any_completion_handler_allocator& other) const noexcept
+  {
+    return fn_table_ == other.fn_table_ && impl_ == other.impl_;
+  }
+
+  constexpr bool operator!=(const any_completion_handler_allocator& other) const noexcept
+  {
+    return fn_table_ != other.fn_table_ || impl_ != other.impl_;
+  }
+};
+
+template <typename... Signatures>
 class any_completion_handler
 {
 private:
+  template <typename, typename...> friend class any_completion_handler_allocator;
   template <typename, typename> friend struct associated_executor;
   const detail::any_completion_handler_fn_table<Signatures...>* fn_table_;
   detail::any_completion_handler_impl_base* impl_;
 
 public:
+  using allocator_type = any_completion_handler_allocator<void, Signatures...>;
   using cancellation_slot_type = cancellation_slot;
 
   constexpr any_completion_handler()
@@ -342,6 +551,11 @@ public:
   {
     std::swap(fn_table_, other.fn_table_);
     std::swap(impl_, other.impl_);
+  }
+
+  allocator_type get_allocator() const noexcept
+  {
+    return allocator_type(0, *this);
   }
 
   cancellation_slot_type get_cancellation_slot() const noexcept
