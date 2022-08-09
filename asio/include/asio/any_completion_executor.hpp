@@ -20,7 +20,6 @@
 # include "asio/executor.hpp"
 #else // defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 # include "asio/execution.hpp"
-# include "asio/execution_context.hpp"
 #endif // defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 #include "asio/detail/push_options.hpp"

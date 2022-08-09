@@ -264,6 +264,10 @@ struct any_completion_handler_fn_table_instance
         &any_completion_handler_call_fn<Signatures>::template impl<Handler>...);
 };
 
+template <typename Handler, typename... Signatures>
+constexpr any_completion_handler_fn_table<Signatures...>
+any_completion_handler_fn_table_instance<Handler, Signatures...>::value;
+
 } // namespace detail
 
 template <typename... Signatures>
