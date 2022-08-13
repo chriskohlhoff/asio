@@ -7,6 +7,38 @@
 
 [section:history Revision History]
 
+[heading Asio 1.24.0]
+
+* Improved the performance of `awaitable<>`-based coroutines when they directly
+  `co_await` an asynchronous operation, by eliminating the copy of the operation
+  object in `await_transform`.
+
+* Improved the performance of `spawn()`-based stackful coroutines by storing a
+  reference to the yield context in the completion handler, rather than storing
+  a copy of the executor.
+
+* Fixed a C++03 build error by disabling `index_sequence` emulation when
+  variadic templates are unavailable.
+
+* Fixed detection of `std::aligned_alloc` for older Apple platforms.
+
+* Removed faulty assertions from `experimental::coro` implementation.
+
+* Added defence against Qt-defined macros when building with Intel C++.
+
+* Ensured that a `spawn()`-based stackful coroutine is cleaned up immediately
+  after it completes.
+
+* Changed the implementation of the `select_reactor`, on Windows, to ensure that
+  any exception resulting from failure to recreate its interrupter's sockets
+  will be allowed to propagate out through `io_context::run()`.
+
+* Changed the MSVC version used for the `system_error` workaround, as more
+  recent runtime redistributables appear to have fixed the issue.
+
+* Changed the `async_compose` example to use a return type compatible with the
+  new `async_result` form.
+
 [heading Asio 1.23.0]
 
 * Added a deduced trailing return type, using `decltype`, to all asynchronous
