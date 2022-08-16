@@ -28,7 +28,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "asio/detail/pipe_select_interrupter.hpp"
-#include "asio/detail/socket_types.hpp"
+//#include "asio/detail/socket_types.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
