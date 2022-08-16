@@ -18,6 +18,15 @@
 #include "asio/detail/config.hpp"
 #include "asio/error_code.hpp"
 #include "asio/system_error.hpp"
+
+
+inline const asio::error_category& get_system_category()
+{
+	return asio::system_category();
+}
+
+#if defined(ASIO_USE_SOCKETS)
+
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
   || defined(ASIO_WINDOWS_RUNTIME)
@@ -223,10 +232,7 @@ enum misc_errors
   fd_set_failure
 };
 
-inline const asio::error_category& get_system_category()
-{
-  return asio::system_category();
-}
+
 
 #if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
@@ -272,10 +278,6 @@ static const asio::error_category&
 #if defined(ASIO_HAS_STD_SYSTEM_ERROR)
 namespace std {
 
-template<> struct is_error_code_enum<asio::error::basic_errors>
-{
-  static const bool value = true;
-};
 
 template<> struct is_error_code_enum<asio::error::netdb_errors>
 {
@@ -297,12 +299,6 @@ template<> struct is_error_code_enum<asio::error::misc_errors>
 
 namespace asio {
 namespace error {
-
-inline asio::error_code make_error_code(basic_errors e)
-{
-  return asio::error_code(
-      static_cast<int>(e), get_system_category());
-}
 
 inline asio::error_code make_error_code(netdb_errors e)
 {
@@ -352,5 +348,42 @@ namespace resolver_errc {
 #if defined(ASIO_HEADER_ONLY)
 # include "asio/impl/error.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
+#else
+namespace asio {
+namespace error {
+
+enum basic_errors
+{
+  operation_aborted,
+  operation_not_supported
+};
+
+} // namespace error
+} // namespace asio
+
+#endif
+
+namespace asio {
+namespace error {
+
+inline asio::error_code make_error_code(basic_errors e)
+{
+  return asio::error_code(
+      static_cast<int>(e), get_system_category());
+}
+
+}
+
+}
+#if defined(ASIO_HAS_STD_SYSTEM_ERROR)
+namespace std {
+
+template<> struct is_error_code_enum<asio::error::basic_errors>
+{
+  static const bool value = true;
+};
+
+}
+#endif 
 
 #endif // ASIO_ERROR_HPP

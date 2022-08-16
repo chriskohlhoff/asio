@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
+#if defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME) || defined(ASIO_NULL_REACTOR)
 
 #include "asio/detail/scheduler_operation.hpp"
 #include "asio/execution_context.hpp"
