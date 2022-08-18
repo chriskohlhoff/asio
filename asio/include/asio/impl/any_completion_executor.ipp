@@ -40,8 +40,20 @@ any_completion_executor::any_completion_executor(const any_completion_executor& 
 {
 }
 
+any_completion_executor::any_completion_executor(std::nothrow_t,
+    const any_completion_executor& e) ASIO_NOEXCEPT
+  : base_type(static_cast<const base_type&>(e))
+{
+}
+
 #if defined(ASIO_HAS_MOVE)
 any_completion_executor::any_completion_executor(any_completion_executor&& e) ASIO_NOEXCEPT
+  : base_type(static_cast<base_type&&>(e))
+{
+}
+
+any_completion_executor::any_completion_executor(std::nothrow_t,
+    any_completion_executor&& e) ASIO_NOEXCEPT
   : base_type(static_cast<base_type&&>(e))
 {
 }
