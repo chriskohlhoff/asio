@@ -596,9 +596,9 @@ class any_executor_base
 {
 public:
   any_executor_base() ASIO_NOEXCEPT
-    : object_fns_(object_fns_table<void>()),
+    : object_fns_(0),
       target_(0),
-      target_fns_(target_fns_table<void>())
+      target_fns_(0)
   {
   }
 
@@ -666,15 +666,25 @@ public:
   }
 
   any_executor_base(const any_executor_base& other) ASIO_NOEXCEPT
-    : object_fns_(other.object_fns_),
-      target_fns_(other.target_fns_)
   {
-    object_fns_->copy(*this, other);
+    if (!!other)
+    {
+      object_fns_ = other.object_fns_;
+      target_fns_ = other.target_fns_;
+      object_fns_->copy(*this, other);
+    }
+    else
+    {
+      object_fns_ = 0;
+      target_ = 0;
+      target_fns_ = 0;
+    }
   }
 
   ~any_executor_base() ASIO_NOEXCEPT
   {
-    object_fns_->destroy(*this);
+    if (!!*this)
+      object_fns_->destroy(*this);
   }
 
   any_executor_base& operator=(
@@ -682,33 +692,53 @@ public:
   {
     if (this != &other)
     {
-      object_fns_->destroy(*this);
-      object_fns_ = other.object_fns_;
-      target_fns_ = other.target_fns_;
-      object_fns_->copy(*this, other);
+      if (!!*this)
+        object_fns_->destroy(*this);
+      if (!!other)
+      {
+        object_fns_ = other.object_fns_;
+        target_fns_ = other.target_fns_;
+        object_fns_->copy(*this, other);
+      }
+      else
+      {
+        object_fns_ = 0;
+        target_ = 0;
+        target_fns_ = 0;
+      }
     }
     return *this;
   }
 
   any_executor_base& operator=(nullptr_t) ASIO_NOEXCEPT
   {
-    object_fns_->destroy(*this);
+    if (target_)
+      object_fns_->destroy(*this);
     target_ = 0;
-    object_fns_ = object_fns_table<void>();
-    target_fns_ = target_fns_table<void>();
+    object_fns_ = 0;
+    target_fns_ = 0;
     return *this;
   }
 
 #if defined(ASIO_HAS_MOVE)
 
   any_executor_base(any_executor_base&& other) ASIO_NOEXCEPT
-    : object_fns_(other.object_fns_),
-      target_fns_(other.target_fns_)
   {
-    other.object_fns_ = object_fns_table<void>();
-    other.target_fns_ = target_fns_table<void>();
-    object_fns_->move(*this, other);
-    other.target_ = 0;
+    if (other.target_)
+    {
+      object_fns_ = other.object_fns_;
+      target_fns_ = other.target_fns_;
+      other.object_fns_ = 0;
+      other.target_fns_ = 0;
+      object_fns_->move(*this, other);
+      other.target_ = 0;
+    }
+    else
+    {
+      object_fns_ = 0;
+      target_ = 0;
+      target_fns_ = 0;
+    }
   }
 
   any_executor_base& operator=(
@@ -716,13 +746,23 @@ public:
   {
     if (this != &other)
     {
-      object_fns_->destroy(*this);
-      object_fns_ = other.object_fns_;
-      other.object_fns_ = object_fns_table<void>();
-      target_fns_ = other.target_fns_;
-      other.target_fns_ = target_fns_table<void>();
-      object_fns_->move(*this, other);
-      other.target_ = 0;
+      if (!!*this)
+        object_fns_->destroy(*this);
+      if (!!other)
+      {
+        object_fns_ = other.object_fns_;
+        target_fns_ = other.target_fns_;
+        other.object_fns_ = 0;
+        other.target_fns_ = 0;
+        object_fns_->move(*this, other);
+        other.target_ = 0;
+      }
+      else
+      {
+        object_fns_ = 0;
+        target_ = 0;
+        target_fns_ = 0;
+      }
     }
     return *this;
   }
@@ -742,38 +782,53 @@ public:
   template <typename F>
   void execute(ASIO_MOVE_ARG(F) f) const
   {
-    if (target_fns_->blocking_execute != 0)
+    if (target_)
     {
-      asio::detail::non_const_lvalue<F> f2(f);
-      target_fns_->blocking_execute(*this, function_view(f2.value));
+      if (target_fns_->blocking_execute != 0)
+      {
+        asio::detail::non_const_lvalue<F> f2(f);
+        target_fns_->blocking_execute(*this, function_view(f2.value));
+      }
+      else
+      {
+        target_fns_->execute(*this,
+            function(ASIO_MOVE_CAST(F)(f), std::allocator<void>()));
+      }
     }
     else
     {
-      target_fns_->execute(*this,
-          function(ASIO_MOVE_CAST(F)(f), std::allocator<void>()));
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
     }
   }
 
   template <typename Executor>
   Executor* target()
   {
-    return static_cast<Executor*>(target_);
+    return target_ && (is_same<Executor, void>::value
+        || target_fns_->target_type() == target_type_ex<Executor>())
+      ? static_cast<Executor*>(target_) : 0;
   }
 
   template <typename Executor>
   const Executor* target() const
   {
-    return static_cast<Executor*>(target_);
+    return target_ && (is_same<Executor, void>::value
+        || target_fns_->target_type() == target_type_ex<Executor>())
+      ? static_cast<const Executor*>(target_) : 0;
   }
 
 #if !defined(ASIO_NO_TYPEID)
   const std::type_info& target_type() const
+  {
+    return target_ ? target_fns_->target_type() : typeid(void);
+  }
 #else // !defined(ASIO_NO_TYPEID)
   const void* target_type() const
-#endif // !defined(ASIO_NO_TYPEID)
   {
-    return target_fns_->target_type();
+    return target_ ? target_fns_->target_type() : 0;
   }
+#endif // !defined(ASIO_NO_TYPEID)
 
   struct unspecified_bool_type_t {};
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
@@ -822,41 +877,6 @@ protected:
     void (*move)(any_executor_base&, any_executor_base&);
     const void* (*target)(const any_executor_base&);
   };
-
-  static void destroy_void(any_executor_base&)
-  {
-  }
-
-  static void copy_void(any_executor_base& ex1, const any_executor_base&)
-  {
-    ex1.target_ = 0;
-  }
-
-  static void move_void(any_executor_base& ex1, any_executor_base&)
-  {
-    ex1.target_ = 0;
-  }
-
-  static const void* target_void(const any_executor_base&)
-  {
-    return 0;
-  }
-
-  template <typename Obj>
-  static const object_fns* object_fns_table(
-      typename enable_if<
-        is_same<Obj, void>::value
-      >::type* = 0)
-  {
-    static const object_fns fns =
-    {
-      &any_executor_base::destroy_void,
-      &any_executor_base::copy_void,
-      &any_executor_base::move_void,
-      &any_executor_base::target_void
-    };
-    return &fns;
-  }
 
   static void destroy_shared(any_executor_base& ex)
   {
@@ -959,52 +979,6 @@ protected:
     void (*execute)(const any_executor_base&, ASIO_MOVE_ARG(function));
     void (*blocking_execute)(const any_executor_base&, function_view);
   };
-
-#if !defined(ASIO_NO_TYPEID)
-  static const std::type_info& target_type_void()
-  {
-    return typeid(void);
-  }
-#else // !defined(ASIO_NO_TYPEID)
-  static const void* target_type_void()
-  {
-    return 0;
-  }
-#endif // !defined(ASIO_NO_TYPEID)
-
-  static bool equal_void(const any_executor_base&, const any_executor_base&)
-  {
-    return true;
-  }
-
-  static void execute_void(const any_executor_base&,
-      ASIO_MOVE_ARG(function))
-  {
-    bad_executor ex;
-    asio::detail::throw_exception(ex);
-  }
-
-  static void blocking_execute_void(const any_executor_base&, function_view)
-  {
-    bad_executor ex;
-    asio::detail::throw_exception(ex);
-  }
-
-  template <typename Ex>
-  static const target_fns* target_fns_table(
-      typename enable_if<
-        is_same<Ex, void>::value
-      >::type* = 0)
-  {
-    static const target_fns fns =
-    {
-      &any_executor_base::target_type_void,
-      &any_executor_base::equal_void,
-      &any_executor_base::execute_void,
-      &any_executor_base::blocking_execute_void
-    };
-    return &fns;
-  }
 
 #if !defined(ASIO_NO_TYPEID)
   template <typename Ex>
