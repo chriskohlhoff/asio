@@ -108,7 +108,7 @@ public:
 
   any_completion_executor executor(const any_completion_executor& candidate) const
   {
-    return (get_associated_executor)(handler_, candidate);
+    return any_completion_executor(std::nothrow, (get_associated_executor)(handler_, candidate));
   }
 
   void* allocate(std::size_t size, std::size_t align) const
@@ -602,9 +602,9 @@ struct associated_executor<any_completion_handler<Signatures...>, Candidate>
 {
   using type = any_completion_executor;
 
-  static type get(const any_completion_handler<Signatures...>& handler, const type& candidate = Candidate()) noexcept
+  static type get(const any_completion_handler<Signatures...>& handler, const Candidate& candidate = Candidate()) noexcept
   {
-    return handler.fn_table_->executor(handler.impl_, candidate);
+    return handler.fn_table_->executor(handler.impl_, any_completion_executor(std::nothrow, candidate));
   }
 };
 
