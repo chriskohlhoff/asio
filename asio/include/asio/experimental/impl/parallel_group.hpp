@@ -402,10 +402,20 @@ struct associator<Associator,
     DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
-  static typename Associator<Handler, DefaultCandidate>::type get(
-      const experimental::detail::parallel_group_completion_handler<
+  static typename Associator<Handler, DefaultCandidate>::type
+  get(const experimental::detail::parallel_group_completion_handler<
+        Handler, Ops...>& h) ASIO_NOEXCEPT
+  {
+    return Associator<Handler, DefaultCandidate>::get(h.handler_);
+  }
+
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<Handler, DefaultCandidate>::type)
+  get(const experimental::detail::parallel_group_completion_handler<
         Handler, Ops...>& h,
-      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+      const DefaultCandidate& c) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((
+      Associator<Handler, DefaultCandidate>::get(h.handler_, c)))
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }

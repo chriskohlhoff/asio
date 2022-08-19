@@ -78,9 +78,19 @@ struct associator<Associator,
     DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
-  static typename Associator<Handler, DefaultCandidate>::type get(
-      const detail::deferred_sequence_handler<Handler, Tail>& h,
-      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type
+  get(const detail::deferred_sequence_handler<Handler, Tail>& h)
+    ASIO_NOEXCEPT
+  {
+    return Associator<Handler, DefaultCandidate>::get(h.handler_);
+  }
+
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<Handler, DefaultCandidate>::type)
+  get(const detail::deferred_sequence_handler<Handler, Tail>& h,
+      const DefaultCandidate& c) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((
+      Associator<Handler, DefaultCandidate>::get(h.handler_, c)))
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }

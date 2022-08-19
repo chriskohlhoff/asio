@@ -692,8 +692,16 @@ struct associator<Associator,
 {
   typedef typename Associator<T, DefaultCandidate>::type type;
 
-  static type get(const allocator_binder<T, Allocator>& b,
-      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  static type get(const allocator_binder<T, Allocator>& b) ASIO_NOEXCEPT
+  {
+    return Associator<T, DefaultCandidate>::get(b.get());
+  }
+
+  static ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
+      const allocator_binder<T, Allocator>& b,
+      const DefaultCandidate& c) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((
+      Associator<T, DefaultCandidate>::get(b.get(), c)))
   {
     return Associator<T, DefaultCandidate>::get(b.get(), c);
   }
@@ -706,8 +714,10 @@ struct associated_allocator<
 {
   typedef Allocator type;
 
-  static type get(const allocator_binder<T, Allocator>& b,
+  static ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
+      const allocator_binder<T, Allocator>& b,
       const Allocator1& = Allocator1()) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((b.get_allocator()))
   {
     return b.get_allocator();
   }

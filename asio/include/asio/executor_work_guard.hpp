@@ -288,17 +288,14 @@ make_work_guard(ExecutionContext& ctx,
  */
 template <typename T>
 ASIO_NODISCARD inline
-executor_work_guard<typename associated_executor<T>::type>
-make_work_guard(const T& t,
+executor_work_guard<
     typename constraint<
       !is_executor<T>::value
-    >::type = 0,
-    typename constraint<
-      !execution::is_executor<T>::value
-    >::type = 0,
-    typename constraint<
-      !is_convertible<T&, execution_context&>::value
-    >::type = 0)
+        && !execution::is_executor<T>::value
+        && !is_convertible<T&, execution_context&>::value,
+      associated_executor<T>
+    >::type::type>
+make_work_guard(const T& t)
 {
   return executor_work_guard<typename associated_executor<T>::type>(
       associated_executor<T>::get(t));

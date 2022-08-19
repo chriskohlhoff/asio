@@ -396,6 +396,17 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_DECLTYPE)
 #endif // !defined(ASIO_HAS_DECLTYPE)
+#if defined(ASIO_HAS_DECLTYPE)
+# define ASIO_AUTO_RETURN_TYPE_PREFIX(t) auto
+# define ASIO_AUTO_RETURN_TYPE_PREFIX2(t0, t1) auto
+# define ASIO_AUTO_RETURN_TYPE_PREFIX3(t0, t1, t2) auto
+# define ASIO_AUTO_RETURN_TYPE_SUFFIX(expr) -> decltype expr
+#else // defined(ASIO_HAS_DECLTYPE)
+# define ASIO_AUTO_RETURN_TYPE_PREFIX(t) t
+# define ASIO_AUTO_RETURN_TYPE_PREFIX2(t0, t1) t0, t1
+# define ASIO_AUTO_RETURN_TYPE_PREFIX3(t0, t1, t2) t0, t1, t2
+# define ASIO_AUTO_RETURN_TYPE_SUFFIX(expr)
+#endif // defined(ASIO_HAS_DECLTYPE)
 
 // Support alias templates on compilers known to allow it.
 #if !defined(ASIO_HAS_ALIAS_TEMPLATES)

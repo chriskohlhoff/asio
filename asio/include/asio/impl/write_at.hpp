@@ -391,11 +391,22 @@ struct associator<Associator,
     DefaultCandidate>
   : Associator<WriteHandler, DefaultCandidate>
 {
-  static typename Associator<WriteHandler, DefaultCandidate>::type get(
-      const detail::write_at_op<AsyncRandomAccessWriteDevice,
+  static typename Associator<WriteHandler, DefaultCandidate>::type
+  get(const detail::write_at_op<AsyncRandomAccessWriteDevice,
+        ConstBufferSequence, ConstBufferIterator,
+        CompletionCondition, WriteHandler>& h) ASIO_NOEXCEPT
+  {
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_);
+  }
+
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<WriteHandler, DefaultCandidate>::type)
+  get(const detail::write_at_op<AsyncRandomAccessWriteDevice,
         ConstBufferSequence, ConstBufferIterator,
         CompletionCondition, WriteHandler>& h,
-      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+      const DefaultCandidate& c) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((
+      Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c)))
   {
     return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }
@@ -598,9 +609,19 @@ struct associator<Associator,
     DefaultCandidate>
   : Associator<WriteHandler, DefaultCandidate>
 {
-  static typename Associator<WriteHandler, DefaultCandidate>::type get(
-      const detail::write_at_streambuf_op<Executor, WriteHandler>& h,
-      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  static typename Associator<WriteHandler, DefaultCandidate>::type
+  get(const detail::write_at_streambuf_op<Executor, WriteHandler>& h)
+    ASIO_NOEXCEPT
+  {
+    return Associator<WriteHandler, DefaultCandidate>::get(h.handler_);
+  }
+
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<WriteHandler, DefaultCandidate>::type)
+  get(const detail::write_at_streambuf_op<Executor, WriteHandler>& h,
+      const DefaultCandidate& c) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((
+      Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c)))
   {
     return Associator<WriteHandler, DefaultCandidate>::get(h.handler_, c);
   }

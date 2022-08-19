@@ -592,9 +592,18 @@ struct associator<Associator,
     detail::redirect_error_handler<Handler>, DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
-  static typename Associator<Handler, DefaultCandidate>::type get(
-      const detail::redirect_error_handler<Handler>& h,
-      const DefaultCandidate& c = DefaultCandidate()) ASIO_NOEXCEPT
+  static typename Associator<Handler, DefaultCandidate>::type
+  get(const detail::redirect_error_handler<Handler>& h) ASIO_NOEXCEPT
+  {
+    return Associator<Handler, DefaultCandidate>::get(h.handler_);
+  }
+
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<Handler, DefaultCandidate>::type)
+  get(const detail::redirect_error_handler<Handler>& h,
+      const DefaultCandidate& c) ASIO_NOEXCEPT
+    ASIO_AUTO_RETURN_TYPE_SUFFIX((
+      Associator<Handler, DefaultCandidate>::get(h.handler_, c)))
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_, c);
   }
