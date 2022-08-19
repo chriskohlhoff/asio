@@ -511,7 +511,7 @@ private:
     {
     }
 
-    executor_type get_executor() const ASIO_NOEXCEPT
+    const executor_type& get_executor() const ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
@@ -544,7 +544,7 @@ private:
     {
     }
 
-    executor_type get_executor() const ASIO_NOEXCEPT
+    const executor_type& get_executor() const ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
