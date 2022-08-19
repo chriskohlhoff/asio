@@ -1063,29 +1063,6 @@ struct associator<Associator,
   }
 };
 
-template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-    typename CompletionCondition, typename WriteHandler,
-    typename CancellationSlot>
-struct associated_cancellation_slot<
-    detail::write_dynbuf_v2_op<AsyncWriteStream,
-      DynamicBuffer_v2, CompletionCondition, WriteHandler>,
-    CancellationSlot>
-  : detail::associated_cancellation_slot_forwarding_base<
-      WriteHandler, CancellationSlot>
-{
-  typedef typename associated_cancellation_slot<
-      WriteHandler, CancellationSlot>::type type;
-
-  static type get(
-      const detail::write_dynbuf_v2_op<AsyncWriteStream,
-        DynamicBuffer_v2, CompletionCondition, WriteHandler>& h,
-      const CancellationSlot& s = CancellationSlot()) ASIO_NOEXCEPT
-  {
-    return associated_cancellation_slot<WriteHandler,
-        CancellationSlot>::get(h.handler_, s);
-  }
-};
-
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 template <typename AsyncWriteStream, typename DynamicBuffer_v2,
