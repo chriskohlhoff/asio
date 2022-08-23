@@ -45,6 +45,14 @@
 namespace asio {
 namespace detail {
 
+#if !defined(ASIO_NO_EXCEPTIONS)
+static void spawned_thread_rethrow(void* ex)
+{
+  if (*static_cast<exception_ptr*>(ex))
+    rethrow_exception(*static_cast<exception_ptr*>(ex));
+}
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+
 #if defined(ASIO_HAS_BOOST_COROUTINE)
 
 // Spawned thread implementation using Boost.Coroutine.
@@ -139,8 +147,24 @@ private:
       *spawned_thread_out_ = &spawned_thread;
       spawned_thread_out_ = 0;
       spawned_thread.suspend();
-      function(&spawned_thread);
-      spawned_thread.suspend();
+#if !defined(ASIO_NO_EXCEPTIONS)
+      try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+      {
+        function(&spawned_thread);
+        spawned_thread.suspend();
+      }
+#if !defined(ASIO_NO_EXCEPTIONS)
+      catch (const boost::coroutines::detail::forced_unwind&)
+      {
+        throw;
+      }
+      catch (...)
+      {
+        exception_ptr ex = current_exception();
+        spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
+      }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
     }
 
   private:
@@ -249,8 +273,24 @@ private:
       *spawned_thread_out_ = &spawned_thread;
       spawned_thread_out_ = 0;
       spawned_thread.suspend();
-      function(&spawned_thread);
-      spawned_thread.suspend();
+#if !defined(ASIO_NO_EXCEPTIONS)
+      try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+      {
+        function(&spawned_thread);
+        spawned_thread.suspend();
+      }
+#if !defined(ASIO_NO_EXCEPTIONS)
+      catch (const boost::context::detail::forced_unwind&)
+      {
+        throw;
+      }
+      catch (...)
+      {
+        exception_ptr ex = current_exception();
+        spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
+      }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
       return {};
     }
 
