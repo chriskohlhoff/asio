@@ -42,7 +42,8 @@ public:
   spawned_thread_base()
     : owner_(0),
       has_context_switched_(false),
-      throw_if_cancelled_(false)
+      throw_if_cancelled_(false),
+      terminal_(false)
   {
   }
 
@@ -130,6 +131,7 @@ protected:
   asio::cancellation_state cancellation_state_;
   bool has_context_switched_;
   bool throw_if_cancelled_;
+  bool terminal_;
 
 private:
   // Disallow copying and assignment.
