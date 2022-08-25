@@ -99,7 +99,12 @@ int main(int argc, char* argv[])
               std::make_shared<session>(io_context, std::move(socket))->go();
             }
           }
-        }, asio::detached);
+        },
+        [](std::exception_ptr e)
+        {
+          if (e)
+            std::rethrow_exception(e);
+        });
 
     io_context.run();
   }
