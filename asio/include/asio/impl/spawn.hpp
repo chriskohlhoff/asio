@@ -125,6 +125,8 @@ public:
   {
     callee_type callee;
     callee.swap(callee_);
+    if (terminal_)
+      callee();
   }
 
 private:
@@ -152,6 +154,7 @@ private:
 #endif // !defined(ASIO_NO_EXCEPTIONS)
       {
         function(&spawned_thread);
+        spawned_thread.terminal_ = true;
         spawned_thread.suspend();
       }
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -162,6 +165,7 @@ private:
       catch (...)
       {
         exception_ptr ex = current_exception();
+        spawned_thread.terminal_ = true;
         spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
       }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
@@ -249,7 +253,8 @@ public:
   void destroy()
   {
     fiber_type callee = ASIO_MOVE_CAST(fiber_type)(callee_);
-    (void)callee;
+    if (terminal_)
+      fiber_type(ASIO_MOVE_CAST(fiber_type)(callee)).resume();
   }
 
 private:
@@ -278,6 +283,7 @@ private:
 #endif // !defined(ASIO_NO_EXCEPTIONS)
       {
         function(&spawned_thread);
+        spawned_thread.terminal_ = true;
         spawned_thread.suspend();
       }
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -288,10 +294,11 @@ private:
       catch (...)
       {
         exception_ptr ex = current_exception();
+        spawned_thread.terminal_ = true;
         spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
       }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
-      return {};
+      return ASIO_MOVE_CAST(fiber_type)(spawned_thread.caller_);
     }
 
   private:
