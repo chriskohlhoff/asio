@@ -474,9 +474,13 @@ struct redirect_error_signature<
 template <typename CompletionToken, typename Signature>
 struct async_result<redirect_error_t<CompletionToken>, Signature>
 {
+  typedef typename detail::redirect_error_signature<Signature>::type result_signature;
+
+#if !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
   typedef typename async_result<CompletionToken,
     typename detail::redirect_error_signature<Signature>::type>
       ::return_type return_type;
+#endif
 
   template <typename Initiation>
   struct init_wrapper
@@ -539,7 +543,7 @@ struct async_result<redirect_error_t<CompletionToken>, Signature>
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
-  static return_type initiate(
+  static ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, result_signature) initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token,
       ASIO_MOVE_ARG(Args)... args)
@@ -554,7 +558,7 @@ struct async_result<redirect_error_t<CompletionToken>, Signature>
 #else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
   template <typename Initiation, typename RawCompletionToken>
-  static return_type initiate(
+  static ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, result_signature) initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token)
   {
@@ -568,7 +572,7 @@ struct async_result<redirect_error_t<CompletionToken>, Signature>
 #define ASIO_PRIVATE_INITIATE_DEF(n) \
   template <typename Initiation, typename RawCompletionToken, \
       ASIO_VARIADIC_TPARAMS(n)> \
-  static return_type initiate( \
+  static ASIO_INITFN_AUTO_RESULT_TYPE(CompletionToken, result_signature) initiate( \
       ASIO_MOVE_ARG(Initiation) initiation, \
       ASIO_MOVE_ARG(RawCompletionToken) token, \
       ASIO_VARIADIC_MOVE_PARAMS(n)) \
