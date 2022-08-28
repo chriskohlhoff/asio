@@ -21,12 +21,12 @@
 namespace asio {
 namespace experimental {
 
-template <typename Yield, typename Return, typename Executor>
+template <typename Yield, typename Return, typename Executor, typename Allocator>
 struct coro;
 
 namespace detail {
 
-template <typename Yield, typename Return, typename Executor>
+template <typename Yield, typename Return, typename Executor, typename Allocator>
 struct coro_promise;
 
 template <typename Executor, typename... Ts>
@@ -101,9 +101,9 @@ struct coro_init_handler
     constexpr static bool await_ready() noexcept { return false; }
 
     template <typename Yield, typename Return,
-        convertible_to<Executor> Executor1>
+        convertible_to<Executor> Executor1, typename Allocator1>
     auto await_suspend(
-        coroutine_handle<coro_promise<Yield, Return, Executor1> > h) noexcept
+        coroutine_handle<coro_promise<Yield, Return, Executor1, Allocator1> > h) noexcept
     {
       promise->executor = h.promise().get_executor();
       promise->h = h;
@@ -139,9 +139,9 @@ struct coro_init_handler
     constexpr static bool await_ready() noexcept { return false; }
 
     template <typename Yield, typename Return,
-        convertible_to<Executor> Executor1>
+        convertible_to<Executor> Executor1, typename Allocator1>
     auto await_suspend(
-        coroutine_handle<coro_promise<Yield, Return, Executor1> > h) noexcept
+        coroutine_handle<coro_promise<Yield, Return, Executor1, Allocator1> > h) noexcept
     {
       promise->executor = h.promise().get_executor();
       promise->h = h;

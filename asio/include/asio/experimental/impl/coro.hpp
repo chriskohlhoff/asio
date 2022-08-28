@@ -17,13 +17,15 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
+#include "asio/append.hpp"
+#include "asio/deferred.hpp"
+#include "asio/bind_allocator.hpp"
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
 namespace experimental {
 
-template <typename Yield, typename Return, typename Executor>
+template <typename Yield, typename Return, typename Executor, typename Allocator>
 struct coro;
 
 namespace detail {
@@ -65,7 +67,7 @@ struct coro_cancellation_source
   }
 };
 
-template <typename Signature, typename Return, typename Executor>
+template <typename Signature, typename Return, typename Executor, typename Allocator>
 struct coro_promise;
 
 template <typename T>
@@ -159,13 +161,13 @@ struct coro_with_arg
 
     constexpr static bool await_ready() { return false; }
 
-    template <typename Y, typename R, typename E>
-    auto await_suspend(coroutine_handle<coro_promise<Y, R, E>> h)
+    template <typename Y, typename R, typename E, typename A>
+    auto await_suspend(coroutine_handle<coro_promise<Y, R, E, A>> h)
       -> coroutine_handle<>
     {
       auto& hp = h.promise();
 
-      if constexpr (!coro_promise<Y, R, E>::is_noexcept)
+      if constexpr (!coro_promise<Y, R, E, A>::is_noexcept)
       {
         if ((hp.cancel->state.cancelled() != cancellation_type::none)
             && hp.cancel->throw_if_cancelled_)
@@ -189,7 +191,7 @@ struct coro_with_arg
           dispatch_coroutine(
               asio::prefer(hp.get_executor(),
                 execution::outstanding_work.tracked),
-                [h]() mutable { h.resume(); });
+                [h]() mutable { h.resume(); }).handle;
 
         coro.coro_->reset_error();
         coro.coro_->input_ = std::move(value);
@@ -230,7 +232,7 @@ struct coro_with_arg
           typename coro_t::promise_type>::from_promise(*coro.coro_);
 
         return dispatch_coroutine(
-            coro.coro_->get_executor(), [hh]() mutable { hh.resume(); });
+            coro.coro_->get_executor(), [hh]() mutable { hh.resume(); }).handle;
       }
     }
 
@@ -373,7 +375,7 @@ struct coro_awaited_from
         return false;
       }
 
-      auto await_suspend(coroutine_handle<>) noexcept
+      auto await_suspend(coroutine_handle<> h) noexcept
       {
         return std::exchange(awaited_from, noop_coroutine());
       }
@@ -566,9 +568,10 @@ struct coro_promise_exchange<Yield, void, void> : coro_awaited_from
   }
 };
 
-template <typename Yield, typename Return, typename Executor>
+
+template <typename Yield, typename Return, typename Executor, typename Allocator>
 struct coro_promise final :
-  coro_promise_allocator<coro<Yield, Return, Executor>>,
+  coro_promise_allocator<Allocator>,
   coro_promise_error<coro_traits<Yield, Return, Executor>::is_noexcept>,
   coro_promise_exchange<
       typename coro_traits<Yield, Return, Executor>::yield_type,
@@ -612,32 +615,32 @@ struct coro_promise final :
   }
 
   template <typename... Args>
-  coro_promise(Executor executor, Args&&...) noexcept
-    : executor_(std::move(executor))
+  coro_promise(Executor executor, Args&&... args) noexcept
+    : coro_promise_allocator<Allocator>(executor, std::forward<Args>(args)...), executor_(std::move(executor))
   {
   }
 
   template <typename First, typename... Args>
-  coro_promise(First&&, Executor executor, Args&&...) noexcept
-    : executor_(std::move(executor))
+  coro_promise(First&& f, Executor executor, Args&&... args) noexcept
+    : coro_promise_allocator<Allocator>(f, executor, std::forward<Args>(args)...), executor_(std::move(executor))
   {
   }
 
   template <typename First, detail::execution_context Context, typename... Args>
-  coro_promise(First&&, Context&& ctx, Args&&...) noexcept
-    : executor_(ctx.get_executor())
+  coro_promise(First&& f, Context&& ctx, Args&&... args) noexcept
+    : coro_promise_allocator<Allocator>(f, ctx, std::forward<Args>(args)...), executor_(ctx.get_executor())
   {
   }
 
   template <detail::execution_context Context, typename... Args>
-  coro_promise(Context&& ctx, Args&&...) noexcept
-    : executor_(ctx.get_executor())
+  coro_promise(Context&& ctx, Args&&... args) noexcept
+    : coro_promise_allocator<Allocator>(ctx, std::forward<Args>(args)...), executor_(ctx.get_executor())
   {
   }
 
   auto get_return_object()
   {
-    return coro<Yield, Return, Executor>{this};
+    return coro<Yield, Return, Executor, Allocator>{this};
   }
 
   auto initial_suspend() noexcept
@@ -888,21 +891,21 @@ struct coro_promise final :
 
 } // namespace detail
 
-template <typename Yield, typename Return, typename Executor>
-struct coro<Yield, Return, Executor>::awaitable_t
+template <typename Yield, typename Return, typename Executor, typename Allocator>
+struct coro<Yield, Return, Executor, Allocator>::awaitable_t
 {
   coro& coro_;
 
   constexpr static bool await_ready() { return false; }
 
-  template <typename Y, typename R, typename E>
+  template <typename Y, typename R, typename E, typename A>
   auto await_suspend(
-      detail::coroutine_handle<detail::coro_promise<Y, R, E>> h)
+      detail::coroutine_handle<detail::coro_promise<Y, R, E, A>> h)
     -> detail::coroutine_handle<>
   {
     auto& hp = h.promise();
 
-    if constexpr (!detail::coro_promise<Y, R, E>::is_noexcept)
+    if constexpr (!detail::coro_promise<Y, R, E, A>::is_noexcept)
     {
       if ((hp.cancel->state.cancelled() != cancellation_type::none)
           && hp.cancel->throw_if_cancelled_)
@@ -928,7 +931,7 @@ struct coro<Yield, Return, Executor>::awaitable_t
           [h]() mutable
           {
             h.resume();
-          });
+          }).handle;
 
       coro_.coro_->reset_error();
 
@@ -965,12 +968,12 @@ struct coro<Yield, Return, Executor>::awaitable_t
       }
 
       auto hh = detail::coroutine_handle<
-        detail::coro_promise<Yield, Return, Executor>>::from_promise(
+        detail::coro_promise<Yield, Return, Executor, Allocator>>::from_promise(
             *coro_.coro_);
 
       return detail::dispatch_coroutine(
           coro_.coro_->get_executor(),
-          [hh]() mutable { hh.resume(); });
+          [hh]() mutable { hh.resume(); }).handle;
     }
   }
 
@@ -983,10 +986,11 @@ struct coro<Yield, Return, Executor>::awaitable_t
   }
 };
 
-template <typename Yield, typename Return, typename Executor>
-struct coro<Yield, Return, Executor>::initiate_async_resume
+template <typename Yield, typename Return, typename Executor, typename Allocator>
+struct coro<Yield, Return, Executor, Allocator>::initiate_async_resume
 {
   typedef Executor executor_type;
+  typedef Allocator allocator_type;
 
   explicit initiate_async_resume(coro* self)
     : coro_(self->coro_)
@@ -996,6 +1000,11 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
   executor_type get_executor() const noexcept
   {
     return coro_->get_executor();
+  }
+
+  allocator_type get_allocator() const noexcept
+  {
+    return coro_->get_allocator();
   }
 
   template <typename E, typename WaitHandler>
@@ -1033,11 +1042,7 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
       auto ch = detail::coroutine_handle<promise_type>::from_promise(*coro);
       assert(ch && !ch.done());
 
-      coro->awaited_from = detail::post_coroutine(exec,
-          [coro, h = std::move(h)]() mutable
-          {
-            std::move(h)(std::move(coro->result_));
-          });
+      coro->awaited_from = detail::post_coroutine(exec, std::move(h), coro->result_).handle;
       coro->reset_error();
       ch.resume();
     };
@@ -1053,40 +1058,16 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
         exec = std::move(exec)]() mutable
     {
       if (!coro)
-      {
-        asio::post(exec,
-            [h = std::move(h)]() mutable
-            {
-              h(detail::coro_error<error_type>::invalid());
-            });
-        return;
-      }
+        return asio::post(exec, asio::append(std::move(h), detail::coro_error<error_type>::invalid()));
 
       auto ch = detail::coroutine_handle<promise_type>::from_promise(*coro);
       if (!ch)
-      {
-        asio::post(exec,
-            [h = std::move(h)]() mutable
-            {
-              h(detail::coro_error<error_type>::invalid());
-            });
-      }
+        return asio::post(exec, asio::append(std::move(h), detail::coro_error<error_type>::invalid()));
       else if (ch.done())
-      {
-        asio::post(exec,
-            [h = std::move(h)]() mutable
-            {
-              h(detail::coro_error<error_type>::done());
-            });
-      }
+        return asio::post(exec, asio::append(std::move(h), detail::coro_error<error_type>::done()));
       else
       {
-        coro->awaited_from =
-          detail::post_coroutine(exec,
-              [coro, h = std::move(h)]() mutable
-              {
-                std::move(h)(std::move(coro->error_));
-              });
+        coro->awaited_from = detail::post_coroutine(exec, std::move(h), coro->error_).handle;
         coro->reset_error();
         ch.resume();
       }
@@ -1103,43 +1084,17 @@ struct coro<Yield, Return, Executor>::initiate_async_resume
         exec = std::move(exec)]() mutable
     {
       if (!coro)
-      {
-        asio::post(exec,
-            [h = std::move(h)]() mutable
-            {
-              h(detail::coro_error<error_type>::invalid(), result_type{});
-            });
-        return;
-      }
+        return asio::post(exec, asio::append(std::move(h), detail::coro_error<error_type>::invalid(), result_type{}));
 
       auto ch =
         detail::coroutine_handle<promise_type>::from_promise(*coro);
       if (!ch)
-      {
-        asio::post(exec,
-            [h = std::move(h)]() mutable
-            {
-              h(detail::coro_error<error_type>::invalid(), result_type{});
-            });
-      }
+        return asio::post(exec, asio::append(std::move(h), detail::coro_error<error_type>::invalid(), result_type{}));
       else if (ch.done())
-      {
-        asio::post(exec,
-            [h = std::move(h)]() mutable
-            {
-              h(detail::coro_error<error_type>::done(), result_type{});
-            });
-      }
+        return asio::post(exec, asio::append(std::move(h), detail::coro_error<error_type>::done(), result_type{}));
       else
       {
-        coro->awaited_from =
-          detail::post_coroutine(exec,
-              [h = std::move(h), coro]() mutable
-              {
-                std::move(h)(
-                    std::move(coro->error_),
-                    std::move(coro->result_));
-              });
+        coro->awaited_from = detail::post_coroutine(exec, std::move(h), coro->error_, coro->result_).handle;
         coro->reset_error();
         ch.resume();
       }

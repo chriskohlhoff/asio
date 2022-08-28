@@ -44,7 +44,8 @@ struct coro_with_arg;
  * the underlying executor type.
  */
 template <typename Yield = void, typename Return = void,
-    typename Executor = any_io_executor>
+          typename Executor = any_io_executor,
+          typename Allocator = std::allocator<void>>
 struct coro
 {
   /// The traits of the coroutine. See asio::experimental::coro_traits
@@ -78,7 +79,7 @@ struct coro
   using completion_handler = typename traits::completion_handler;
 
   /// The internal promise-type of the coroutine.
-  using promise_type = detail::coro_promise<Yield, Return, Executor>;
+  using promise_type = detail::coro_promise<Yield, Return, Executor, Allocator>;
 
 #if !defined(GENERATING_DOCUMENTATION)
   template <typename T, typename Coroutine>
@@ -88,8 +89,11 @@ struct coro
   /// The executor type.
   using executor_type = Executor;
 
+  /// The allocator type.
+  using allocator_type = Allocator;
+
 #if !defined(GENERATING_DOCUMENTATION)
-  friend struct detail::coro_promise<Yield, Return, Executor>;
+  friend struct detail::coro_promise<Yield, Return, Executor, Allocator>;
 #endif // !defined(GENERATING_DOCUMENTATION)
 
   /// The default constructor, gives an invalid coroutine.
@@ -163,6 +167,18 @@ struct coro
       return Executor{};
     else
       throw std::logic_error("Coroutine has no executor");
+  }
+
+  /// Get the used allocator.
+  allocator_type get_allocator() const
+  {
+    if (coro_)
+      return coro_->get_allocator();
+
+    if constexpr (std::is_default_constructible_v<Allocator>)
+      return Allocator{};
+    else
+      throw std::logic_error("Coroutine has no available allocator without a constructed promise");
   }
 
   /// Resume the coroutine.
@@ -252,6 +268,16 @@ private:
 
   promise_type* coro_{nullptr};
 };
+
+/// A generator is a coro that returns void and yields value.
+template<typename T, typename Executor = asio::any_io_executor, typename Allocator = std::allocator<void>>
+using generator = coro<T, void, Executor, Allocator>;
+
+/// A task is a coro that does not yield values
+template<typename T, typename Executor = asio::any_io_executor, typename Allocator = std::allocator<void>>
+using task = coro<void(), T, Executor, Allocator>;
+
+
 
 } // namespace experimental
 } // namespace asio
