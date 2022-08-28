@@ -18,8 +18,10 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/append.hpp"
+#include "asio/associated_cancellation_slot.hpp"
 #include "asio/deferred.hpp"
 #include "asio/bind_allocator.hpp"
+#include "asio/experimental/impl/coro_completion_handler.hpp"
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -567,7 +569,47 @@ struct coro_promise_exchange<Yield, void, void> : coro_awaited_from
     result_.reset();
   }
 };
+/*
+template <typename Signature, typename Op, typename Executor>
+struct coro_async_op
+{
+  typedef coro_async_op_handler<Signature, Executor> handler_type;
 
+
+  coro_async_op(Op&& o, coro_promise<Executor>* frame)
+  : op_(std::forward<Op>(o)),
+  frame_(frame),
+  result_()
+  {
+  }
+
+  bool await_ready() const noexcept
+  {
+    return false;
+  }
+
+  void await_suspend(coroutine_handle<void>)
+  {
+    frame_->after_suspend(
+            [](void* arg)
+            {
+              awaitable_async_op* self = static_cast<awaitable_async_op*>(arg);
+              std::forward<Op&&>(self->op_)(
+                      handler_type(self->frame_->detach_thread(), self->result_));
+            }, this);
+  }
+
+  auto await_resume()
+  {
+    return handler_type::resume(result_);
+  }
+
+ private:
+  Op&& op_;
+  awaitable_frame_base<Executor>* frame_;
+  typename handler_type::result_type result_;
+
+};*/
 
 template <typename Yield, typename Return, typename Executor, typename Allocator>
 struct coro_promise final :
@@ -585,12 +627,20 @@ struct coro_promise final :
     return coroutine_handle<coro_promise>::from_promise(this);
   }
 
+
   using executor_type = Executor;
 
   executor_type executor_;
 
   std::optional<coro_cancellation_source> cancel_source;
   coro_cancellation_source * cancel;
+
+  using cancellation_slot_type = asio::cancellation_slot;
+  cancellation_slot_type get_cancellation_slot() const noexcept
+  {
+    return cancel ? cancel->slot : cancellation_slot_type{};
+  }
+
 
   using allocator_type =
     typename std::allocator_traits<associated_allocator_t<Executor>>::
@@ -864,28 +914,52 @@ struct coro_promise final :
   }
 
   template <typename T_>
-    requires requires(T_ t) {{ t.async_wait(use_coro) }; }
+    requires requires(T_ t) {{ t.async_wait(deferred) }; }
   auto await_transform(T_& t) -> decltype(auto)
   {
-    return await_transform(t.async_wait(use_coro));
+    return await_transform(t.async_wait(deferred));
   }
 
-  template <typename... Ts>
-  auto await_transform(coro_init_handler<Executor, Ts...>&& kr) const
+  template <typename Op>
+  auto await_transform(Op&& op,
+                       typename constraint<is_async_operation<Op>::value>::type = 0)
   {
-    assert(cancel);
-    if constexpr (is_noexcept)
-      return std::move(kr).as_noexcept(cancel->state.slot());
-    else
+    if ((cancel->state.cancelled() != cancellation_type::none)
+        && cancel->throw_if_cancelled_)
     {
-      if ((cancel->state.cancelled() != cancellation_type::none)
-          && cancel->throw_if_cancelled_)
-      {
-        asio::detail::throw_error(
-            asio::error::operation_aborted, "coro-cancelled");
-      }
-      return std::move(kr).as_throwing(cancel->state.slot());
+      asio::detail::throw_error(
+              asio::error::operation_aborted, "coro-cancelled");
     }
+    using signature = typename decltype(op(asio::detail::completion_signature_probe{}))::type;
+    using result_type = detail::coro_completion_handler_type_t<signature>;
+    using handler_type = typename detail::coro_completion_handler_type<signature>::
+                            template completion_handler<coro_promise>;
+    struct aw_t
+    {
+      Op op;
+      std::optional<result_type> result;
+      constexpr static bool await_ready() {return false;}
+      void await_suspend(coroutine_handle<coro_promise> h)
+      {
+        std::move(op)(handler_type{h, result});
+      }
+      auto await_resume()
+      {
+        if constexpr (is_noexcept)
+        {
+          if constexpr (std::tuple_size_v<result_type> == 0u)
+            return;
+          else if constexpr (std::tuple_size_v<result_type> == 1u)
+            return std::get<0>(std::move(result).value());
+          else
+            return std::move(result).value();
+        }
+        else
+          return detail::coro_interpret_result(std::move(result).value());
+      }
+    };
+
+    return aw_t{std::move(op)};
   }
 };
 
@@ -991,6 +1065,7 @@ struct coro<Yield, Return, Executor, Allocator>::initiate_async_resume
 {
   typedef Executor executor_type;
   typedef Allocator allocator_type;
+  typedef asio::cancellation_slot cancellation_slot_type;
 
   explicit initiate_async_resume(coro* self)
     : coro_(self->coro_)

@@ -23,7 +23,6 @@
 #include "asio/experimental/coro_traits.hpp"
 #include "asio/experimental/detail/coro_promise_allocator.hpp"
 #include "asio/experimental/detail/partial_promise.hpp"
-#include "asio/experimental/use_coro.hpp"
 #include "asio/post.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -31,6 +30,9 @@
 namespace asio {
 namespace experimental {
 namespace detail {
+
+template <typename Signature, typename Return, typename Executor, typename Allocator>
+struct coro_promise;
 
 template <typename T, typename Coroutine>
 struct coro_with_arg;

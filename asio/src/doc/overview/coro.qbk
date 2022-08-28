@@ -21,7 +21,7 @@ generators and transfomers, depending on their signature.
        std::array<char, 4096> buf;
 
        auto read = co_await stream.async_read_some(
-           asio::buffer(buf), experimental::use_coro);
+           asio::buffer(buf), deferred);
 
        if (read == 0u)
          continue;
@@ -189,7 +189,7 @@ context, to override the one of the object:
 
 [heading `co_await`]
 
-The @c co_await within a `coro` is not the same as `async_resume(use_coro)`,
+The @c co_await within a `coro` is not the same as `async_resume(deferred)`,
 unless both coros use different executors. If they use the same, the `coro`
 will direclty suspend and resume the executor, without any usage of the
 executor.
@@ -215,7 +215,7 @@ flow. For example:
     {
       std::size_t n = co_await asio::async_read_until(
           sock, asio::dynamic_buffer(buf), '\n',
-          asio::experimental::use_coro);
+          asio::deferred);
       co_yield buf.substr(0, n);
       buf.erase(0, n);
     }
