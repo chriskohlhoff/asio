@@ -409,6 +409,7 @@ nobase_include_HEADERS = \
 	asio/experimental/detail/channel_send_op.hpp \
 	asio/experimental/detail/channel_service.hpp \
 	asio/experimental/detail/completion_handler_erasure.hpp \
+	asio/experimental/detail/coro_completion_handler.hpp \
 	asio/experimental/detail/coro_promise_allocator.hpp \
 	asio/experimental/detail/has_signature.hpp \
 	asio/experimental/detail/impl/channel_service.hpp \

@@ -37,7 +37,7 @@ asio::experimental::coro<void() noexcept, int>
 awaiter_noexcept(asio::any_io_executor exec)
 {
   asio::steady_timer timer{exec};
-  auto ec = co_await timer.async_wait(use_coro);
+  auto ec = co_await timer.async_wait(asio::deferred);
   ASIO_CHECK(ec == asio::error_code{});
   co_return 42;
 }
