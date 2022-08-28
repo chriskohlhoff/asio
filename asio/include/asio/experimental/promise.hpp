@@ -34,7 +34,6 @@
 namespace asio {
 namespace experimental {
 
-
 template <typename T>
 struct is_promise : std::false_type {};
 
@@ -63,16 +62,43 @@ struct promise_value_type<>
 };
 
 #if defined(GENERATING_DOCUMENTATION)
-/// The primary template is not defined.
-template<typename Signature = void(), typename Allocator = std::allocator<void>>
+/// A disposable handle for an eager operation.
+/**
+ *
+ * @tparam Signature The signature of the operation
+ * @tparam Executor The executor to be used by the promise (taken from the operation)
+ * @tparam Allocator The allocator used for the promise. Can be set through use_allocator.
+ *
+ * A promise can be used to initiate an asynchronous option that can be completed later.
+ * If the promise gets destroyed before completion,
+ * the operation gets a cancel signal and the result is ignored.
+ *
+ * A promise fulfills the requirements of async_operation.
+ *
+ * @par Examples
+ * Reading and writing from one coroutine.
+ * @code *
+ *
+ * awaitable<void> read_write_some(asio::ip::tcp::socket & sock,
+ *                                 asio::mutable_buffer read_buf, asio::const_buffer to_write)
+ * {
+ *    auto p = asio::async_read(read_buf, asio::use_awaitable);
+ *    co_await asio::async_write_some(to_write, asio::deferred);
+ *    co_await p;
+ * }
+ *
+ * @endcode
+ */
+template<typename Signature = void(),
+         typename Executor = asio::any_io_executor,
+         typename Allocator = std::allocator<void>>
 struct promise
-{
-};
-#endif // defined(GENERATING_DOCUMENTATION)
-
+#else
 template <typename ... Ts, typename Executor, typename Allocator>
 struct promise<void(Ts...), Executor,  Allocator>
+#endif // defined(GENERATING_DOCUMENTATION)
 {
+  /// The value that's returned by the promise.
   using value_type = typename promise_value_type<Ts...>::type;
 
   /// Cancel the promise. Usually done through the destructor.
@@ -104,6 +130,10 @@ struct promise<void(Ts...), Executor,  Allocator>
   promise(const promise& ) = delete;
   promise(promise&& ) noexcept = default;
 
+  /// Destruct the promise and cancel the operation.
+  /**
+   * It is safe to destruct a promise of a promise that didn't complete.
+   */
   ~promise() { cancel(); }
 
 
