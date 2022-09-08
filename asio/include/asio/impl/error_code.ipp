@@ -26,7 +26,7 @@
 # include <string>
 #endif
 #include "asio/detail/local_free_on_block_exit.hpp"
-#if defined (ASIO_USE_SOCKETS)
+#if !defined (ASIO_DISABLE_SOCKETS)
 #include "asio/detail/socket_types.hpp"
 #endif
 #include "asio/error_code.hpp"
@@ -114,7 +114,7 @@ public:
   {
     switch (ev)
     {
-#if defined(ASIO_USE_SOCKETS)
+#if !defined(ASIO_DISABLE_SOCKETS)
     case access_denied:
       return std::errc::permission_denied;
     case address_family_not_supported:

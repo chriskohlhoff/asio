@@ -20,12 +20,9 @@
 #include "asio/system_error.hpp"
 
 
-inline const asio::error_category& get_system_category()
-{
-	return asio::system_category();
-}
 
-#if defined(ASIO_USE_SOCKETS)
+
+#if !defined(ASIO_DISABLE_SOCKETS)
 
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
@@ -72,7 +69,9 @@ inline const asio::error_category& get_system_category()
 namespace asio {
 namespace error {
 
-enum basic_errors
+inline const asio::error_category& get_system_category();
+
+	enum basic_errors
 {
   /// Permission denied.
   access_denied = ASIO_SOCKET_ERROR(EACCES),
@@ -366,7 +365,12 @@ enum basic_errors
 namespace asio {
 namespace error {
 
-inline asio::error_code make_error_code(basic_errors e)
+inline const asio::error_category& get_system_category()
+{
+	return asio::system_category();
+}
+
+	inline asio::error_code make_error_code(basic_errors e)
 {
   return asio::error_code(
       static_cast<int>(e), get_system_category());
