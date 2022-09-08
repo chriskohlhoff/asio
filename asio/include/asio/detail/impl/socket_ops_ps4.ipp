@@ -14,8 +14,6 @@ inline hostent* gethostbyaddr_orbis(const char* addr, int length, int af, hosten
 
     memset(he->h_name, 0, SCE_NET_RESOLVER_HOSTNAME_LEN_MAX + 1);
 
-    struct hostent* return_value = nullptr;
-
     const int pool = sceNetPoolCreate("gethostbyaddr pool", 4 * 1024, 0);
     if(pool >= 0)
     {
@@ -30,8 +28,6 @@ inline hostent* gethostbyaddr_orbis(const char* addr, int length, int af, hosten
                     he->h_length = 4;
                     he->h_addr_list = addr_list;
                     he->h_addrtype = AF_INET;
-
-                    return_value = he;
                 }
             }
         }
