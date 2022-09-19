@@ -105,7 +105,7 @@ struct early_completion_helper
 {
   typedef typename async_result<Token, Signatures...>::return_type return_type;
 
-  Initiation init;
+  Initiation& init;
 
   std::optional<experimental::detail::channel_payload<Signatures...>> payload;
 
@@ -132,7 +132,7 @@ struct early_completion_helper
     }
   };
 
-  early_completion_helper(ASIO_MOVE_ARG(Initiation) init) : init(ASIO_MOVE_CAST(Initiation)(init)) {}
+  early_completion_helper(Initiation & init) : init(init) {}
 
   template<typename ... InitArgs>
   bool try_complete_impl(false_type,
@@ -160,7 +160,16 @@ struct early_completion_helper
   {
     return async_result<Token, Signatures...>::initiate(
             immediate_initiation{*payload},
-            ASIO_MOVE_CAST(RawCompletionToken)(token));  }
+            ASIO_MOVE_CAST(RawCompletionToken)(token));
+  }
+
+  template<typename Handler>
+  void receive(ASIO_MOVE_ARG(Handler) handler)
+  {
+    payload->receive(handler);
+  }
+
+
 };
 
 template <typename Token, typename... Signatures>
@@ -176,7 +185,7 @@ struct async_result<allow_recursion_t<Token>, Signatures ...>
   {
     early_completion_helper<Initiation,
                             Token,
-                            Signatures...> ech(ASIO_MOVE_CAST(Initiation)(init));
+                            Signatures...> ech(init);
     if (ech.try_complete(ASIO_MOVE_CAST(InitArgs)(init_args)...))
       return ech.get_result(ASIO_MOVE_CAST(Token)(wrapped_token.token));
 

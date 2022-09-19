@@ -10,8 +10,10 @@
 
 // Test that header file is self-contained.
 #include "asio/early_complete.hpp"
+#include "asio/co_spawn.hpp"
 #include "asio/steady_timer.hpp"
 #include "asio/experimental/channel.hpp"
+#include "asio/use_awaitable.hpp"
 
 #include "./unit_test.hpp"
 
@@ -75,7 +77,6 @@ void channel_test()
   asio::experimental::channel<void(asio::error_code, int)> chn{ctx, 1};
 
   // this thing doesn't dispatch, we're just completing immediately
-
   bool done = false;
   auto cpl =  [&](asio::error_code ec)
   {
@@ -97,7 +98,6 @@ void channel_test()
   chn.async_receive(asio::allow_recursion(rec));
   ASIO_CHECK(reced == 42);
 
-
   chn.async_send(asio::error_code{}, 43, asio::allow_recursion(cpl));
   ASIO_CHECK(done);
   done = false;
@@ -106,7 +106,29 @@ void channel_test()
   chn.async_receive(rec);
   ctx.run();
   ASIO_CHECK(done);
+}
 
+asio::awaitable<void> awaitable_test_impl()
+{
+  asio::steady_timer tim{co_await asio::this_coro::executor};
+
+  bool posted = false;
+  asio::post(co_await asio::this_coro::executor, [&]{posted = true;});
+
+  ASIO_CHECK(!posted);
+  co_await tim.async_wait(asio::use_awaitable);
+  ASIO_CHECK(!posted);
+
+  co_await asio::post(asio::use_awaitable);
+  ASIO_CHECK(posted);
+
+}
+
+void awaitable_test()
+{
+  asio::io_context ctx;
+  asio::co_spawn(ctx, awaitable_test_impl(), [](std::exception_ptr e){ASIO_CHECK(!e);});
+  ctx.run();
 }
 
 ASIO_TEST_SUITE
@@ -115,4 +137,5 @@ ASIO_TEST_SUITE
     ASIO_TEST_CASE(trait_test)
     ASIO_TEST_CASE(timer_test)
     ASIO_TEST_CASE(channel_test)
+    ASIO_TEST_CASE(awaitable_test)
 )

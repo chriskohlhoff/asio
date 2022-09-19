@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
 #include "asio/cancellation_signal.hpp"
+#include "asio/early_complete.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -236,6 +237,144 @@ public:
   }
 };
 
+template<typename ... Ts>
+struct result_helper
+{
+  std::optional<std::tuple<Ts... >> res;
+  void set(Ts && ... ts)
+  {
+    res.emplace(std::move(ts)...);
+  }
+
+  std::tuple<Ts... > get()
+  {
+    return std::move(res.get());
+  }
+};
+
+
+template<>
+struct result_helper<>
+{
+  void set() { }
+  void get() { }
+};
+
+template<>
+struct result_helper<error_code>
+{
+  error_code ec;
+  void set(error_code ec_)
+  {
+    ec = ec_;
+  }
+
+  void get()
+  {
+    if (ec)
+      detail::throw_error(ec);
+  }
+};
+
+
+template<>
+struct result_helper<std::exception_ptr>
+{
+  std::exception_ptr ex;
+  void set(std::exception_ptr ex_)
+  {
+    ex = ex_;
+  }
+
+  void get()
+  {
+    if (ex)
+      std::rethrow_exception(ex);
+  }
+};
+
+template<typename T>
+struct result_helper<error_code, T>
+{
+  std::optional<T> res;
+  error_code ec;
+  void set(error_code ec_, T value)
+  {
+    ec = ec_;
+    res.emplace(std::move(value));
+  }
+
+  T get()
+  {
+    if (ec)
+      detail::throw_error(ec);
+    return std::move(*res);
+  }
+};
+
+
+template<typename T>
+struct result_helper<std::exception_ptr, T>
+{
+  std::optional<T> res;
+  std::exception_ptr ex;
+  void set(std::exception_ptr ex_, T value)
+  {
+    ex = ex_;
+    res.emplace(std::move(value));
+  }
+
+  T get()
+  {
+    if (ex)
+      std::rethrow_exception(ex);
+    return std::move(*res);
+  }
+};
+
+
+template<typename ... Ts>
+struct result_helper<error_code, Ts...>
+{
+  std::optional<std::tuple<Ts...>> res;
+  error_code ec;
+  void set(error_code ec_, Ts ...  value)
+  {
+    ec = ec_;
+    res.emplace(std::move(value)...);
+  }
+
+  std::tuple<Ts...> get()
+  {
+    if (ec)
+      detail::throw_error(ec);
+    return std::move(*res);
+  }
+};
+
+
+template<typename ... Ts>
+struct result_helper<std::exception_ptr, Ts...>
+{
+  std::optional<std::tuple<Ts...>> res;
+  std::exception_ptr ex;
+  void set(std::exception_ptr ex_, Ts ...  value)
+  {
+    ex = ex_;
+    res.emplace(std::move(value)...);
+  }
+
+  std::tuple<Ts...> get()
+  {
+    if (ex)
+      std::rethrow_exception(ex);
+    return std::move(*res);
+  }
+};
+
+
+
+
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -280,6 +419,17 @@ public:
   static return_type initiate(Initiation initiation,
       use_awaitable_t<Executor> u, InitArgs... args)
   {
+    early_completion_helper<Initiation,
+            use_awaitable_t<Executor>,
+            R(Args...)> ech(initiation);
+
+    if (ech.try_complete(ASIO_MOVE_CAST(InitArgs)(args)...))
+    {
+      detail::result_helper<Args...> res;
+      ech.receive([&](Args ... args_){res.set(std::move(args_)...);});
+      co_return res.get();
+    }
+
     co_await [&] (auto* frame)
       {
         return do_init(frame, initiation, u, args...);
