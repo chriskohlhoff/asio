@@ -441,6 +441,23 @@ private:
           handler2.value, self_->get_executor());
     }
 
+    template <typename SendHandler>
+    bool try_complete(ASIO_MOVE_ARG(SendHandler) handler,
+                      ASIO_MOVE_ARG(payload_type) payload) const
+    {
+      // another improvisation really
+      bool did_send = false;
+      auto h =
+            [&](auto && ... args)
+              {
+                did_send = self_->try_send(std::move(args)...);
+                if (did_send)
+                  ASIO_MOVE_CAST(SendHandler)(handler)(asio::error_code{});
+              };
+      payload.receive(h);
+      return did_send;
+    }
+
   private:
     basic_concurrent_channel* self_;
   };
@@ -466,6 +483,12 @@ private:
       asio::detail::non_const_lvalue<ReceiveHandler> handler2(handler);
       self_->service_->async_receive(self_->impl_,
           handler2.value, self_->get_executor());
+    }
+
+    template <typename ReceiveHandler>
+    bool try_complete(ASIO_MOVE_ARG(ReceiveHandler) handler) const
+    {
+      return self_->try_receive(ASIO_MOVE_CAST(ReceiveHandler)(handler));
     }
 
   private:

@@ -11,6 +11,7 @@
 // Test that header file is self-contained.
 #include "asio/early_complete.hpp"
 #include "asio/steady_timer.hpp"
+#include "asio/experimental/channel.hpp"
 
 #include "./unit_test.hpp"
 
@@ -42,8 +43,6 @@ void trait_test()
 
 }
 
-
-
 void timer_test()
 {
   asio::io_context ctx;
@@ -67,6 +66,46 @@ void timer_test()
   ASIO_CHECK(!done);
   ctx.run();
   ASIO_CHECK(done);
+}
+
+
+void channel_test()
+{
+  asio::io_context ctx;
+  asio::experimental::channel<void(asio::error_code, int)> chn{ctx, 1};
+
+  // this thing doesn't dispatch, we're just completing immediately
+
+  bool done = false;
+  auto cpl =  [&](asio::error_code ec)
+  {
+    ASIO_CHECK(!ec);
+    done = true;
+  };
+
+  int reced = 0;
+  auto rec =  [&](asio::error_code ec, int i)
+  {
+    ASIO_CHECK(!ec);
+    reced = i;
+  };
+
+  chn.async_send(asio::error_code{}, 42, asio::allow_recursion(cpl));
+  ASIO_CHECK(done);
+  done = false;
+
+  chn.async_receive(asio::allow_recursion(rec));
+  ASIO_CHECK(reced == 42);
+
+
+  chn.async_send(asio::error_code{}, 43, asio::allow_recursion(cpl));
+  ASIO_CHECK(done);
+  done = false;
+  chn.async_send(asio::error_code{}, 44, asio::allow_recursion(cpl));
+  ASIO_CHECK(!done);
+  chn.async_receive(rec);
+  ctx.run();
+  ASIO_CHECK(done);
 
 }
 
@@ -75,4 +114,5 @@ ASIO_TEST_SUITE
     "early_completion",
     ASIO_TEST_CASE(trait_test)
     ASIO_TEST_CASE(timer_test)
+    ASIO_TEST_CASE(channel_test)
 )
