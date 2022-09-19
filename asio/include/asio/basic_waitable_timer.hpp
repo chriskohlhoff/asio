@@ -816,6 +816,17 @@ private:
           handler2.value, self_->impl_.get_executor());
     }
 
+    template<typename Handler>
+    void complete_early(ASIO_MOVE_ARG(Handler) handler) const
+    {
+      ASIO_MOVE_CAST(Handler)(handler)(error_code());
+    }
+
+    bool can_complete_early() const
+    {
+      return self_->expires_at() < clock_type::now();
+    }
+
   private:
     basic_waitable_timer* self_;
   };

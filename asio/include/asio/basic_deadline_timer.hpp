@@ -697,6 +697,17 @@ private:
           handler2.value, self_->impl_.get_executor());
     }
 
+    template<typename Handler>
+    bool early_complete(ASIO_MOVE_ARG(Handler) handler) const
+    {
+      ASIO_MOVE_CAST(Handler)(handler)(error_code());
+    }
+
+    bool can_complete_early() const
+    {
+      return self_->expired_from_now() < duration_type();
+    }
+
   private:
     basic_deadline_timer* self_;
   };
