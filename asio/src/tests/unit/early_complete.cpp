@@ -16,20 +16,32 @@
 
 struct dummy_init
 {
-  template<typename Func>
-  auto complete_early(Func && func) -> decltype(std::declval<Func>()(int()));
+  template<typename Handler>
+  bool try_complete(Handler && handler, decltype(std::declval<Handler>()(int())) * = nullptr);
+};
 
-  bool can_complete_early();
-
+struct dummy_init_s
+{
+  template<typename Handler>
+  bool try_complete(Handler && handler, int, decltype(std::declval<Handler>()(int())) * = nullptr);
 };
 
 void trait_test()
 {
-  using t1 = asio::has_early_completion<dummy_init, void()>;
-  using t2 = asio::has_early_completion<dummy_init, void(int)>;
+  using t1 = asio::has_early_completion<dummy_init, std::tuple<>, void()>;
+  using t2 = asio::has_early_completion<dummy_init, std::tuple<>, void(int)>;
   ASIO_CHECK(!t1::value);
   ASIO_CHECK(t2::value);
+
+  using u1 = asio::has_early_completion<dummy_init_s, std::tuple<int>, void()>;
+  using u2 = asio::has_early_completion<dummy_init_s, std::tuple<int>, void(int)>;
+  using u3 = asio::has_early_completion<dummy_init_s, std::tuple<>, void(int)>;
+  ASIO_CHECK(!u1::value);
+  ASIO_CHECK(u2::value);
+  ASIO_CHECK(!u3::value);
+
 }
+
 
 
 void timer_test()

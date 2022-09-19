@@ -817,14 +817,15 @@ private:
     }
 
     template<typename Handler>
-    void complete_early(ASIO_MOVE_ARG(Handler) handler) const
+    bool try_complete(ASIO_MOVE_ARG(Handler) handler) const
     {
-      ASIO_MOVE_CAST(Handler)(handler)(error_code());
-    }
-
-    bool can_complete_early() const
-    {
-      return self_->expires_at() < clock_type::now();
+      if (self_->expires_at() < clock_type::now())
+      {
+        ASIO_MOVE_CAST(Handler)(handler)(error_code());
+        return true;
+      }
+      else
+        return false;
     }
 
   private:

@@ -698,15 +698,17 @@ private:
     }
 
     template<typename Handler>
-    bool early_complete(ASIO_MOVE_ARG(Handler) handler) const
+    bool try_complete(ASIO_MOVE_ARG(Handler) handler) const
     {
-      ASIO_MOVE_CAST(Handler)(handler)(error_code());
+      if (self_->expired_from_now() < duration_type())
+      {
+        ASIO_MOVE_CAST(Handler)(handler)(error_code());
+        return true;
+      }
+      else
+        return false;
     }
 
-    bool can_complete_early() const
-    {
-      return self_->expired_from_now() < duration_type();
-    }
 
   private:
     basic_deadline_timer* self_;
