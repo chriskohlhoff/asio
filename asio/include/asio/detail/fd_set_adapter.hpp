@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if !defined(ASIO_WINDOWS_RUNTIME)
+#if !defined(ASIO_WINDOWS_RUNTIME) && !defined(ASIO_DISABLE_FD_SET)
 
 #include "asio/detail/posix_fd_set_adapter.hpp"
 #include "asio/detail/win_fd_set_adapter.hpp"

@@ -26,7 +26,9 @@
 # include <string>
 #endif
 #include "asio/detail/local_free_on_block_exit.hpp"
+#if !defined (ASIO_DISABLE_SOCKETS)
 #include "asio/detail/socket_types.hpp"
+#endif
 #include "asio/error_code.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -112,6 +114,7 @@ public:
   {
     switch (ev)
     {
+#if !defined(ASIO_DISABLE_SOCKETS)
     case access_denied:
       return std::errc::permission_denied;
     case address_family_not_supported:
@@ -180,6 +183,7 @@ public:
       return std::errc::resource_unavailable_try_again;
     case would_block:
       return std::errc::operation_would_block;
+#endif
     default:
       return std::make_error_condition(ev, *this);
   }
