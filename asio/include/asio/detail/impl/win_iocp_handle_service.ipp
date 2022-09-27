@@ -68,6 +68,7 @@ public:
 win_iocp_handle_service::win_iocp_handle_service(execution_context& context)
   : execution_context_service_base<win_iocp_handle_service>(context),
     iocp_service_(asio::use_service<win_iocp_io_context>(context)),
+    nt_set_info_(0),
     mutex_(),
     impl_list_(0)
 {
