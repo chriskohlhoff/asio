@@ -2490,22 +2490,7 @@ inline asio::error_code translate_netdb_error(int error)
 }
 
 #if defined(__ORBIS__) || defined(__PROSPERO__)
-
-struct hostent
-{
-    char *h_name;
-    char **h_aliases;
-    int h_addrtype;
-    int h_length;
-    char **h_addr_list;
-    char *h_addr;
-};
-
-hostent* gethostbyaddr_orbis(const char* addr, int length, int af, hostent* result, char* buffer, int buflength, asio::error_code& ec);
-hostent* gethostbyname_orbis(const char* name, int af, struct hostent* result, char* buffer, int buflength, int ai_flags, asio::error_code& ec);
-
-#include "socket_ops_ps4.ipp"
-
+    #include "../platform_shims/ps/platform_shims.h"
 #endif
 
 inline hostent* gethostbyaddr(const char* addr, int length, int af,
@@ -2541,7 +2526,7 @@ inline hostent* gethostbyaddr(const char* addr, int length, int af,
   *result = *retval;
   return retval;
 #elif defined(__ORBIS__) || defined(__PROSPERO__)
-  return gethostbyaddr_orbis(addr, length, af, result, buffer, buflength, ec);
+  return gethostbyaddr(addr);
 #else
   hostent* retval = 0;
   int error = 0;
@@ -2598,7 +2583,7 @@ inline hostent* gethostbyname(const char* name, int af, struct hostent* result,
   *result = *retval;
   return retval;
 #elif defined(__ORBIS__) || defined(__PROSPERO__)
-  return gethostbyname_orbis(name, af, result, buffer, buflength, ai_flags, ec);
+  return gethostbyname(name);
 #else
   (void)(ai_flags);
   if (af != ASIO_OS_DEF(AF_INET))
