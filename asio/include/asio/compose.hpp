@@ -439,6 +439,11 @@ public:
         ASIO_MOVE_CAST(InFilter)(in_filter),
         ASIO_MOVE_CAST(OutFilter)(out_filter));
   }
+  
+  cancellation_type_t cancelled() const ASIO_NOEXCEPT
+  {
+    return base_from_cancellation_state::cancelled();
+  }
 
 //private:
   Impl impl_;
