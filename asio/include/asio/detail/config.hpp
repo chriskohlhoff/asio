@@ -2082,7 +2082,7 @@
 #   endif // (_MSC_FULL_VER >= 190023506)
 #  elif defined(__clang__)
 #   if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
-#    if __has_include(<experimental/coroutine>)
+#    if __has_include(<experimental/coroutine>) || __has_include(<coroutine>)
 #     define ASIO_HAS_CO_AWAIT 1
 #    endif // __has_include(<experimental/coroutine>)
 #   endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
