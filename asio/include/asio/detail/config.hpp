@@ -2073,13 +2073,9 @@
 // Support the co_await keyword on compilers known to allow it.
 #if !defined(ASIO_HAS_CO_AWAIT)
 # if !defined(ASIO_DISABLE_CO_AWAIT)
-#  if has_include(<version>) && has_include(<coroutine>) && defined(__cpp_coroutines) && (__cpp_coroutines >= 201707L) 
-#   include <version>
-#   if defined(__cpp_lib_coroutine) && (__cpp_lib_coroutine >= 201902L)
-#    define ASIO_HAS_CO_AWAIT 1
-#   endif // defined(__cpp_lib_coroutine) && (__cpp_lib_coroutine >= 201902L)
-#  endif //has_include(<version>) && has_include(<coroutine>) && defined(__cpp_coroutines) && (__cpp_coroutines >= 201707L) 
-#  if !defined(ASIO_HAS_CO_AWAIT) && defined(ASIO_MSVC)
+#  if ((defined(__cpp_coroutines) && (__cpp_coroutines >= 201707L)) || (defined(__cpp_impl_coroutine) && (__cpp_impl_coroutine >= 201902L))) 
+#   define ASIO_HAS_CO_AWAIT 1
+#  elif !defined(ASIO_HAS_CO_AWAIT) && defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705) 
 #    define ASIO_HAS_CO_AWAIT 1
 #   elif (_MSC_FULL_VER >= 190023506)
