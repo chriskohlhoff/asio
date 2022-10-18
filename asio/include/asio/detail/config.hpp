@@ -2078,6 +2078,7 @@
 #   if defined(__cpp_lib_coroutine) && (__cpp_lib_coroutine >= 201902L)
 #    define ASIO_HAS_CO_AWAIT 1
 #   endif // defined(__cpp_lib_coroutine) && (__cpp_lib_coroutine >= 201902L)
+#  endif //has_include(<version>) && has_include(<coroutine>) && defined(__cpp_coroutines) && (__cpp_coroutines >= 201707L) 
 #  if !defined(ASIO_HAS_CO_AWAIT) && defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705) 
 #    define ASIO_HAS_CO_AWAIT 1
@@ -2086,12 +2087,14 @@
 #     define ASIO_HAS_CO_AWAIT 1
 #    endif // defined(_RESUMABLE_FUNCTIONS_SUPPORTED)
 #   endif // (_MSC_FULL_VER >= 190023506)
+#  endif // !defined(ASIO_HAS_CO_AWAIT) && defined(ASIO_MSVC)
 #  if !defined(ASIO_HAS_CO_AWAIT) && defined(__clang__)
 #   if (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
 #    if __has_include(<experimental/coroutine>)
 #     define ASIO_HAS_CO_AWAIT 1
 #    endif // __has_include(<experimental/coroutine>)
 #   endif // (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)
+#  endif // !defined(ASIO_HAS_CO_AWAIT) && defined(__clang__)
 #  if !defined(ASIO_HAS_CO_AWAIT) && defined(__GNUC__)
 #   if (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
 #    if __has_include(<coroutine>)
