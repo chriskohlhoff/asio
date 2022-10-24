@@ -118,10 +118,11 @@ int main(int argc, char* argv[])
     io_context ctx;
 
     auto listen_endpoint =
-      *tcp::resolver(ctx).resolve(argv[1], argv[2], tcp::resolver::passive);
+      *tcp::resolver(ctx).resolve(argv[1], argv[2],
+          tcp::resolver::passive).begin();
 
     auto target_endpoint =
-      *tcp::resolver(ctx).resolve(argv[3], argv[4]);
+      *tcp::resolver(ctx).resolve(argv[3], argv[4]).begin();
 
     tcp::acceptor acceptor(ctx, listen_endpoint);
     co_spawn(ctx, listen(acceptor, target_endpoint), detached);
