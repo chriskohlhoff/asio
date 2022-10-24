@@ -27,6 +27,8 @@
 # include <functional>
 #endif // defined(ASIO_HAS_BOOST_BIND)
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 struct no_execute
@@ -382,7 +384,17 @@ void test_execute()
 
 ASIO_TEST_SUITE
 (
-  "blocking",
+  "execute",
   ASIO_TEST_CASE(test_can_execute)
   ASIO_TEST_CASE(test_execute)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "execute",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

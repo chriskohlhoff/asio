@@ -262,13 +262,6 @@ public:
 
   /// Request the strand to invoke the given function object.
   /**
-   * Do not call this function directly. It is intended for use with the
-   * execution::execute customisation point.
-   *
-   * For example:
-   * @code asio::strand<my_executor_type> ex = ...;
-   * execution::execute(ex, my_function_object); @endcode
-   *
    * This function is used to ask the strand to execute the given function
    * object on its underlying executor. The function object will be executed
    * according to the properties of the underlying executor.
@@ -279,7 +272,14 @@ public:
    */
   template <typename Function>
   typename constraint<
+#if defined(ASIO_NO_DEPRECATED) \
+  || defined(GENERATING_DOCUMENTATION)
+    traits::execute_member<const Executor&, Function>::is_valid,
+#else // defined(ASIO_NO_DEPRECATED)
+      //   || defined(GENERATING_DOCUMENTATION)
     execution::can_execute<const Executor&, Function>::value,
+#endif // defined(ASIO_NO_DEPRECATED)
+       //   || defined(GENERATING_DOCUMENTATION)
     void
   >::type execute(ASIO_MOVE_ARG(Function) f) const
   {
@@ -494,7 +494,11 @@ struct equality_comparable<strand<Executor> >
 template <typename Executor, typename Function>
 struct execute_member<strand<Executor>, Function,
     typename enable_if<
+#if defined(ASIO_NO_DEPRECATED)
+      traits::execute_member<const Executor&, Function>::is_valid
+#else // defined(ASIO_NO_DEPRECATED)
       execution::can_execute<const Executor&, Function>::value
+#endif // defined(ASIO_NO_DEPRECATED)
     >::type>
 {
   ASIO_STATIC_CONSTEXPR(bool, is_valid = true);

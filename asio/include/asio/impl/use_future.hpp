@@ -236,9 +236,14 @@ public:
   template <typename F>
   void execute(ASIO_MOVE_ARG(F) f) const
   {
+#if defined(ASIO_NO_DEPRECATED)
+    asio::require(system_executor(), Blocking()).execute(
+        promise_invoker<T, F>(p_, ASIO_MOVE_CAST(F)(f)));
+#else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
         asio::require(system_executor(), Blocking()),
         promise_invoker<T, F>(p_, ASIO_MOVE_CAST(F)(f)));
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 #if !defined(ASIO_NO_TS_EXECUTORS)

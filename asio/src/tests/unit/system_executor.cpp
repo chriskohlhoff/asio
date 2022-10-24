@@ -101,61 +101,52 @@ void system_executor_execute_test()
 {
   asio::detail::atomic_count count(0);
 
-  asio::execution::execute(system_executor(),
-      bindns::bind(increment, &count));
+  system_executor().execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(system_executor(),
-        asio::execution::blocking.possibly),
-      bindns::bind(increment, &count));
+  asio::require(system_executor(),
+      asio::execution::blocking.possibly
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(system_executor(),
-        asio::execution::blocking.always),
-      bindns::bind(increment, &count));
+  asio::require(system_executor(),
+      asio::execution::blocking.always
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(system_executor(),
-        asio::execution::blocking.never),
-      bindns::bind(increment, &count));
+  asio::require(system_executor(),
+      asio::execution::blocking.never
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(system_executor(),
-        asio::execution::blocking.never,
-        asio::execution::outstanding_work.untracked),
-      bindns::bind(increment, &count));
+  asio::require(system_executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.untracked
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(system_executor(),
-        asio::execution::blocking.never,
-        asio::execution::outstanding_work.untracked,
-        asio::execution::relationship.fork),
-      bindns::bind(increment, &count));
+  asio::require(system_executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.untracked,
+      asio::execution::relationship.fork
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
+  asio::require(system_executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.untracked,
+      asio::execution::relationship.continuation
+    ).execute(bindns::bind(increment, &count));
+
+  asio::prefer(
       asio::require(system_executor(),
         asio::execution::blocking.never,
         asio::execution::outstanding_work.untracked,
         asio::execution::relationship.continuation),
-      bindns::bind(increment, &count));
+      asio::execution::allocator(std::allocator<void>())
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::prefer(
-        asio::require(system_executor(),
-          asio::execution::blocking.never,
-          asio::execution::outstanding_work.untracked,
-          asio::execution::relationship.continuation),
-        asio::execution::allocator(std::allocator<void>())),
-      bindns::bind(increment, &count));
-
-  asio::execution::execute(
-      asio::prefer(
-        asio::require(system_executor(),
-          asio::execution::blocking.never,
-          asio::execution::outstanding_work.untracked,
-          asio::execution::relationship.continuation),
-        asio::execution::allocator),
-      bindns::bind(increment, &count));
+  asio::prefer(
+      asio::require(system_executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.continuation),
+      asio::execution::allocator
+    ).execute(bindns::bind(increment, &count));
 
   asio::query(system_executor(), execution::context).join();
 

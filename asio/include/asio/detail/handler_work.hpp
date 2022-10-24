@@ -94,11 +94,18 @@ public:
   template <typename Function, typename Handler>
   void dispatch(Function& function, Handler& handler)
   {
+#if defined(ASIO_NO_DEPRECATED)
+    asio::prefer(executor_,
+        execution::blocking.possibly,
+        execution::allocator((get_associated_allocator)(handler))
+      ).execute(ASIO_MOVE_CAST(Function)(function));
+#else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
         asio::prefer(executor_,
           execution::blocking.possibly,
           execution::allocator((get_associated_allocator)(handler))),
         ASIO_MOVE_CAST(Function)(function));
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 private:
@@ -360,9 +367,14 @@ public:
   template <typename Function, typename Handler>
   void dispatch(Function& function, Handler&)
   {
+#if defined(ASIO_NO_DEPRECATED)
+    asio::prefer(executor_, execution::blocking.possibly).execute(
+        ASIO_MOVE_CAST(Function)(function));
+#else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
         asio::prefer(executor_, execution::blocking.possibly),
         ASIO_MOVE_CAST(Function)(function));
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 private:
@@ -435,9 +447,14 @@ public:
   template <typename Function, typename Handler>
   void dispatch(Function& function, Handler&)
   {
+#if defined(ASIO_NO_DEPRECATED)
+    asio::prefer(executor_, execution::blocking.possibly).execute(
+        ASIO_MOVE_CAST(Function)(function));
+#else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
         asio::prefer(executor_, execution::blocking.possibly),
         ASIO_MOVE_CAST(Function)(function));
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 private:

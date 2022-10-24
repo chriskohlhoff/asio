@@ -291,6 +291,7 @@ void test_bulk_execute()
   exec::bulk_execute(free_bulk_execute(), handler, 2);
   ASIO_CHECK(call_count == 1);
 
+#if !defined(ASIO_NO_DEPRECATED)
   call_count = 0;
   executor ex5;
   exec::execute(
@@ -310,6 +311,7 @@ void test_bulk_execute()
       exec::bulk_execute(executor(), counting_handler, 10u),
       completion_handler);
   ASIO_CHECK(call_count == 11);
+#endif // !defined(ASIO_NO_DEPRECATED)
 }
 
 ASIO_TEST_SUITE

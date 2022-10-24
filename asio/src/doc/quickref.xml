@@ -96,7 +96,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution__bulk_execute">execution::bulk_execute</link></member>
             <member><link linkend="asio.reference.execution__connect">execution::connect</link></member>
-            <member><link linkend="asio.reference.execution__execute">execution::execute</link></member>
+            <member><link linkend="asio.reference.execution__execute">execution::execute</link> (deprecated)</member>
             <member><link linkend="asio.reference.execution__schedule">execution::schedule</link></member>
             <member><link linkend="asio.reference.execution__set_done">execution::set_done</link></member>
             <member><link linkend="asio.reference.execution__set_error">execution::set_error</link></member>
@@ -138,7 +138,7 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution__can_bulk_execute">execution::can_bulk_execute</link></member>
             <member><link linkend="asio.reference.execution__can_connect">execution::can_connect</link></member>
-            <member><link linkend="asio.reference.execution__can_execute">execution::can_execute</link></member>
+            <member><link linkend="asio.reference.execution__can_execute">execution::can_execute</link> (deprecated)</member>
             <member><link linkend="asio.reference.execution__can_schedule">execution::can_schedule</link></member>
             <member><link linkend="asio.reference.execution__can_set_done">execution::can_set_done</link></member>
             <member><link linkend="asio.reference.execution__can_set_error">execution::can_set_error</link></member>

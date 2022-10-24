@@ -93,11 +93,18 @@ public:
     typename associated_allocator<Handler>::type allocator =
       (get_associated_allocator)(handler);
 
+#if defined(ASIO_NO_DEPRECATED)
+    asio::prefer(
+        asio::require(executor_, execution::blocking.never),
+        execution::allocator(allocator)
+      ).execute(ASIO_MOVE_CAST(Function)(function));
+#else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
         asio::prefer(
           asio::require(executor_, execution::blocking.never),
           execution::allocator(allocator)),
         ASIO_MOVE_CAST(Function)(function));
+#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 private:

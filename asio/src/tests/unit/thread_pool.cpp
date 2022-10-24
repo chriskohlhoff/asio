@@ -231,67 +231,57 @@ void thread_pool_executor_execute_test()
   int count = 0;
   thread_pool pool(1);
 
-  asio::execution::execute(pool.executor(),
-      bindns::bind(increment, &count));
+  pool.executor().execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(pool.executor(),
-        asio::execution::blocking.possibly),
-      bindns::bind(increment, &count));
+  asio::require(pool.executor(),
+      asio::execution::blocking.possibly
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(pool.executor(),
-        asio::execution::blocking.always),
-      bindns::bind(increment, &count));
+  asio::require(pool.executor(),
+      asio::execution::blocking.always
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(pool.executor(),
-        asio::execution::blocking.never),
-      bindns::bind(increment, &count));
+  asio::require(pool.executor(),
+      asio::execution::blocking.never
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(pool.executor(),
-        asio::execution::blocking.never,
-        asio::execution::outstanding_work.tracked),
-      bindns::bind(increment, &count));
+  asio::require(pool.executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.tracked
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(pool.executor(),
-        asio::execution::blocking.never,
-        asio::execution::outstanding_work.untracked),
-      bindns::bind(increment, &count));
+  asio::require(pool.executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.untracked
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::require(pool.executor(),
-        asio::execution::blocking.never,
-        asio::execution::outstanding_work.untracked,
-        asio::execution::relationship.fork),
-      bindns::bind(increment, &count));
+  asio::require(pool.executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.untracked,
+      asio::execution::relationship.fork
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
+  asio::require(pool.executor(),
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.untracked,
+      asio::execution::relationship.continuation
+    ).execute(bindns::bind(increment, &count));
+
+  asio::prefer(
       asio::require(pool.executor(),
         asio::execution::blocking.never,
         asio::execution::outstanding_work.untracked,
         asio::execution::relationship.continuation),
-      bindns::bind(increment, &count));
+      asio::execution::allocator(std::allocator<void>())
+    ).execute(bindns::bind(increment, &count));
 
-  asio::execution::execute(
-      asio::prefer(
-        asio::require(pool.executor(),
-          asio::execution::blocking.never,
-          asio::execution::outstanding_work.untracked,
-          asio::execution::relationship.continuation),
-        asio::execution::allocator(std::allocator<void>())),
-      bindns::bind(increment, &count));
-
-  asio::execution::execute(
-      asio::prefer(
-        asio::require(pool.executor(),
-          asio::execution::blocking.never,
-          asio::execution::outstanding_work.untracked,
-          asio::execution::relationship.continuation),
-        asio::execution::allocator),
-      bindns::bind(increment, &count));
+  asio::prefer(
+      asio::require(pool.executor(),
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.untracked,
+        asio::execution::relationship.continuation),
+      asio::execution::allocator
+    ).execute(bindns::bind(increment, &count));
 
   pool.wait();
 

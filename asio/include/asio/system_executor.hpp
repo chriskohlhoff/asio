@@ -314,20 +314,7 @@ public:
     return false;
   }
 
-#if !defined(GENERATING_DOCUMENTATION)
-private:
-  friend struct asio_execution_execute_fn::impl;
-#endif // !defined(GENERATING_DOCUMENTATION)
-
   /// Execution function.
-  /**
-   * Do not call this function directly. It is intended for use with the
-   * execution::execute customisation point.
-   *
-   * For example:
-   * @code asio::system_executor ex;
-   * execution::execute(ex, my_function_object); @endcode
-   */
   template <typename Function>
   void execute(ASIO_MOVE_ARG(Function) f) const
   {
