@@ -21,6 +21,8 @@
 #include "asio/require.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 typedef exec::bulk_guarantee_t s;
@@ -1976,3 +1978,13 @@ ASIO_TEST_SUITE
 
   ASIO_TEST_CASE(test_vars)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "bulk_guarantee",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

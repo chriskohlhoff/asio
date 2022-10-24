@@ -18,6 +18,8 @@
 
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 struct not_a_scheduler
@@ -97,3 +99,13 @@ ASIO_TEST_SUITE
   "scheduler",
   ASIO_TEST_CASE(test_is_scheduler)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "scheduler",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

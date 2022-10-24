@@ -20,6 +20,8 @@
 #include "asio/error_code.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 struct not_an_operation_state_1
 {
 };
@@ -102,3 +104,13 @@ ASIO_TEST_SUITE
   "operation_state",
   ASIO_TEST_CASE(is_operation_state_test)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "operation_state",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

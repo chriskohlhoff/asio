@@ -24,6 +24,8 @@
 #include "asio/traits/submit_member.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 struct operation_state
@@ -488,3 +490,13 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_can_schedule)
   ASIO_TEST_CASE(test_schedule)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "schedule",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

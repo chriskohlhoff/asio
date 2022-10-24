@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_NO_DEPRECATED)
+
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/detail/as_invocable.hpp"
 #include "asio/execution/detail/void_receiver.hpp"
@@ -307,5 +310,7 @@ ASIO_CONCEPT typed_sender = is_typed_sender<T>::value;
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/execution/connect.hpp"
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_EXECUTION_SENDER_HPP

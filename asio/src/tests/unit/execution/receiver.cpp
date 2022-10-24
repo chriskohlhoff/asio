@@ -20,6 +20,8 @@
 #include "asio/error_code.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 struct not_a_receiver
 {
 };
@@ -547,3 +549,13 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(is_receiver_of_test)
   ASIO_TEST_CASE(is_nothrow_receiver_of_test)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "receiver",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

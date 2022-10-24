@@ -19,6 +19,8 @@
 #include "asio/error_code.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 struct not_a_sender
@@ -229,3 +231,13 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_is_sender)
   ASIO_TEST_CASE(test_is_typed_sender)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "sender",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

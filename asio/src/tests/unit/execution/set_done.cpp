@@ -19,6 +19,8 @@
 #include "asio/error_code.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 static int call_count = 0;
@@ -226,3 +228,13 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_can_set_done)
   ASIO_TEST_CASE(test_set_done)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "set_done",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

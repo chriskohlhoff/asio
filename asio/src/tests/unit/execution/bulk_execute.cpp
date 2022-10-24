@@ -19,6 +19,8 @@
 #include "asio/execution.hpp"
 #include "../unit_test.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 namespace exec = asio::execution;
 
 int call_count = 0;
@@ -320,3 +322,13 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_can_bulk_execute)
   ASIO_TEST_CASE(test_bulk_execute)
 )
+
+#else // !defined(ASIO_NO_DEPRECATED)
+
+ASIO_TEST_SUITE
+(
+  "bulk_execute",
+  ASIO_TEST_CASE(null_test)
+)
+
+#endif // !defined(ASIO_NO_DEPRECATED)

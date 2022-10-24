@@ -205,10 +205,12 @@ void thread_pool_executor_query_test()
         asio::execution::relationship.fork)
       == asio::execution::relationship.fork);
 
+#if !defined(ASIO_NO_DEPRECATED)
   ASIO_CHECK(
       asio::query(pool.executor(),
         asio::execution::bulk_guarantee)
       == asio::execution::bulk_guarantee.parallel);
+#endif // !defined(ASIO_NO_DEPRECATED)
 
   ASIO_CHECK(
       asio::query(pool.executor(),
@@ -287,6 +289,8 @@ void thread_pool_executor_execute_test()
 
   ASIO_CHECK(count == 10);
 }
+
+#if !defined(ASIO_NO_DEPRECATED)
 
 struct receiver
 {
@@ -504,6 +508,13 @@ void thread_pool_executor_bulk_execute_test()
   ASIO_CHECK(count == 20);
 }
 
+#else // !defined(ASIO_NO_DEPRECATED)
+
+void thread_pool_scheduler_test() {}
+void thread_pool_executor_bulk_execute_test() {}
+
+#endif // !defined(ASIO_NO_DEPRECATED)
+
 ASIO_TEST_SUITE
 (
   "thread_pool",
@@ -511,6 +522,6 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(thread_pool_service_test)
   ASIO_TEST_CASE(thread_pool_executor_query_test)
   ASIO_TEST_CASE(thread_pool_executor_execute_test)
-  ASIO_TEST_CASE(thread_pool_executor_bulk_execute_test)
   ASIO_TEST_CASE(thread_pool_scheduler_test)
+  ASIO_TEST_CASE(thread_pool_executor_bulk_execute_test)
 )
