@@ -27,9 +27,9 @@ int main()
   asio::experimental::make_parallel_group(
       in.async_read_some(
         asio::buffer(data),
-        asio::experimental::deferred),
+        asio::deferred),
       timer.async_wait(
-        asio::experimental::deferred)
+        asio::deferred)
     ).async_wait(
       asio::experimental::wait_for_one(),
       [](

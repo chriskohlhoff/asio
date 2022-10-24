@@ -608,6 +608,7 @@ sub copy_examples
       "src/examples/cpp11/multicast",
       "src/examples/cpp11/nonblocking",
       "src/examples/cpp11/operations",
+      "src/examples/cpp11/parallel_group",
       "src/examples/cpp11/socks4",
       "src/examples/cpp11/spawn",
       "src/examples/cpp11/ssl",
