@@ -131,10 +131,8 @@ ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
  * handler_ that is a decay-copy of @c completion_handler, and a function call
  * operator that performs:
  * @code auto a = get_associated_allocator(handler_);
- * prefer(executor_,
- *     execution::blocking.possibly,
- *     execution::allocator(a)
- *   ).execute(std::move(handler_)); @endcode
+ * prefer(executor_, execution::allocator(a)).execute(std::move(handler_));
+ * @endcode
  *
  * @li If <tt>execution::is_executor<Ex1>::value</tt> is false, constructs a
  * function object @c f with a member @c work_ that is initialised with

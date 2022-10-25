@@ -81,17 +81,12 @@ public:
     typename associated_allocator<Handler>::type alloc(
         (get_associated_allocator)(handler_));
 #if defined(ASIO_NO_DEPRECATED)
-    asio::prefer(executor_,
-        execution::blocking.possibly,
-        execution::allocator(alloc)
-      ).execute(
+    asio::prefer(executor_, execution::allocator(alloc)).execute(
         asio::detail::bind_handler(
           ASIO_MOVE_CAST(Handler)(handler_)));
 #else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
-        asio::prefer(executor_,
-          execution::blocking.possibly,
-          execution::allocator(alloc)),
+        asio::prefer(executor_, execution::allocator(alloc)),
         asio::detail::bind_handler(
           ASIO_MOVE_CAST(Handler)(handler_)));
 #endif // defined(ASIO_NO_DEPRECATED)
