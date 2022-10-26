@@ -1,5 +1,6 @@
 # find . -name "*.*pp" | sed -e 's/^\.\///' | sed -e 's/^.*$/  & \\/' | sort
 nobase_include_HEADERS = \
+	asio/any_completion_executor.hpp \
 	asio/any_io_executor.hpp \
 	asio/append.hpp \
 	asio/as_tuple.hpp \
