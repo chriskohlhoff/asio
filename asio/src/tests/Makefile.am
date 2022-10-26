@@ -53,6 +53,7 @@ check_PROGRAMS = \
 	unit/compose \
 	unit/connect \
 	unit/connect_pipe \
+	unit/consign \
 	unit/coroutine \
 	unit/deadline_timer \
 	unit/defer \
@@ -272,6 +273,7 @@ TESTS = \
 	unit/compose \
 	unit/connect \
 	unit/connect_pipe \
+	unit/consign \
 	unit/deadline_timer \
 	unit/defer \
 	unit/deferred \
@@ -489,6 +491,7 @@ unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
+unit_consign_SOURCES = unit/consign.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp

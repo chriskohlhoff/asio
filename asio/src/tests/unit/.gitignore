@@ -48,6 +48,7 @@ completion_condition
 compose
 connect
 connect_pipe
+consign
 coroutine
 deadline_timer
 defer

@@ -162,7 +162,8 @@ For example:
         {
           // ...
         },
-      42)
+        42
+      )
     );
 
   std::future<int> f = timer.async_wait(
@@ -186,13 +187,45 @@ For example:
         {
           // ...
         },
-      42)
+        42
+      )
     );
 
   std::future<std::tuple<int, std::error_code>> f = timer.async_wait(
       asio::prepend(
         asio::use_future,
         42
+      )
+    );
+
+[heading consign]
+
+The [link asio.reference.consign `consign`] completion token adapter can be
+used to attach additional values to a completion handler. This is typically used
+to keep at least one copy of an object, such as a smart pointer, alive until the
+completion handler is called.
+
+For example:
+
+  auto timer1 = std::make_shared<asio::steady_timer>(my_io_context);
+  timer1->expires_after(std::chrono::seconds(1));
+  timer1->async_wait(
+      asio::consign(
+        [](std::error_code ec)
+        {
+          // ...
+        },
+        timer1
+      )
+    );
+
+  auto timer2 = std::make_shared<asio::steady_timer>(my_io_context);
+  timer2->expires_after(std::chrono::seconds(30));
+  std::future<void> f =
+    timer2->async_wait(
+      asio::consign(
+        asio::use_future,
+        timer2
       )
     );
 

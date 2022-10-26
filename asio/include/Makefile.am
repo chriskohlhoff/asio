@@ -50,6 +50,7 @@ nobase_include_HEADERS = \
 	asio/compose.hpp \
 	asio/connect.hpp \
 	asio/connect_pipe.hpp \
+	asio/consign.hpp \
 	asio/coroutine.hpp \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \

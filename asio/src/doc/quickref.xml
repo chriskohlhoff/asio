@@ -241,6 +241,7 @@
             <member><link linkend="asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
             <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
             <member><link linkend="asio.reference.co_spawn">co_spawn</link></member>
+            <member><link linkend="asio.reference.consign">consign</link></member>
             <member><link linkend="asio.reference.dispatch">dispatch</link></member>
             <member><link linkend="asio.reference.defer">defer</link></member>
             <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
@@ -270,6 +271,7 @@
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.cancellation_filter">cancellation_filter</link></member>
             <member><link linkend="asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
+            <member><link linkend="asio.reference.consign_t">consign_t</link></member>
             <member><link linkend="asio.reference.deferred_t">deferred_t</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>

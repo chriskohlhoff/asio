@@ -64,6 +64,7 @@
 #include "asio/compose.hpp"
 #include "asio/connect.hpp"
 #include "asio/connect_pipe.hpp"
+#include "asio/consign.hpp"
 #include "asio/coroutine.hpp"
 #include "asio/deadline_timer.hpp"
 #include "asio/defer.hpp"
