@@ -480,6 +480,18 @@ Examples showing how to implement composed asynchronous operations as reusable l
 * [@../src/examples/cpp11/operations/composed_8.cpp]
 
 
+[heading Parallel Groups]
+
+Examples showing how to use the [link
+asio.reference.experimental__make_parallel_group
+`experimental::make_parallel_group`] operation.
+
+* [@../src/examples/cpp11/parallel_group/wait_for_all.cpp]
+* [@../src/examples/cpp11/parallel_group/wait_for_one.cpp]
+* [@../src/examples/cpp11/parallel_group/wait_for_one_error.cpp]
+* [@../src/examples/cpp11/parallel_group/wait_for_one_success.cpp]
+
+
 [heading SOCKS 4]
 
 Example client program implementing the SOCKS 4 protocol for communication via
@@ -612,6 +624,7 @@ Examples showing how to expose callback-based APIs as asynchronous operations.
 * [@../src/examples/cpp14/operations/callback_wrapper.cpp]
 * [@../src/examples/cpp14/operations/c_callback_wrapper.cpp]
 
+
 [heading Parallel Groups]
 
 Examples showing how to use the [link
@@ -623,7 +636,6 @@ asio.reference.experimental__make_parallel_group
 * [@../src/examples/cpp14/parallel_group/wait_for_one.cpp]
 * [@../src/examples/cpp14/parallel_group/wait_for_one_error.cpp]
 * [@../src/examples/cpp14/parallel_group/wait_for_one_success.cpp]
-
 
 
 [endsect]
@@ -653,7 +665,7 @@ Coroutines TS.
 
 Example showing how to use a channel in conjunction with C++20 coroutines.
 
-* [@boost_asio/example/cpp20/channels/throttling_proxy.cpp]
+* [@../src/examples/cpp20/channels/throttling_proxy.cpp]
 
 
 [heading Coroutines]

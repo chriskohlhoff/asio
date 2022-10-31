@@ -60,6 +60,7 @@ executor automatically to the operations within the group.
 
 [link asio.reference.experimental__make_parallel_group experimental::make_parallel_group],
 [link asio.reference.experimental__parallel_group experimental::parallel_group],
+[link asio.examples.cpp11_examples.parallel_groups Parallel Groups examples (C++11)],
 [link asio.examples.cpp14_examples.parallel_groups Parallel Groups examples (C++14)].
 
 [endsect]
