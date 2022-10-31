@@ -157,9 +157,65 @@ void buffered_channel_test()
   ASIO_CHECK(!ec2);
 };
 
+void buffered_error_channel_test()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code)> ch1(ctx, 1);
+
+  ASIO_CHECK(ch1.is_open());
+  ASIO_CHECK(!ch1.ready());
+
+  bool b1 = ch1.try_send(asio::error::eof);
+
+  ASIO_CHECK(b1);
+
+  bool b2 = ch1.try_send(asio::error::eof);
+
+  ASIO_CHECK(!b2);
+
+  asio::error_code ec1;
+  ch1.async_receive(
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+
+  bool b4 = ch1.try_receive([](asio::error_code){});
+
+  ASIO_CHECK(!b4);
+
+  asio::error_code ec2 = asio::error::would_block;
+  ch1.async_send(asio::error::eof,
+      [&](asio::error_code ec)
+      {
+        ec2 = ec;
+      });
+
+  asio::error_code ec3;
+  bool b5 = ch1.try_receive(
+      [&](asio::error_code ec)
+      {
+        ec3 = ec;
+      });
+
+  ASIO_CHECK(b5);
+  ASIO_CHECK(ec3 == asio::error::eof);
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(!ec2);
+};
+
 ASIO_TEST_SUITE
 (
   "experimental/channel",
   ASIO_TEST_CASE(unbuffered_channel_test)
   ASIO_TEST_CASE(buffered_channel_test)
+  ASIO_TEST_CASE(buffered_error_channel_test)
 )
