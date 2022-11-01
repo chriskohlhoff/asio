@@ -68,11 +68,16 @@ template <typename T>
 struct context_as_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+# if defined(ASIO_NO_DEPRECATED)
+  template <typename U>
+  ASIO_STATIC_CONSTEXPR(bool,
+    is_applicable_property_v = (
+      is_executor<U>::value));
+# else // defined(ASIO_NO_DEPRECATED)
   template <typename U>
   ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<U>::value
-#if !defined(ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<U>::value,
             false_type,
@@ -83,8 +88,8 @@ struct context_as_t
             false_type,
             is_scheduler<U>
           >::type::value
-#endif // !defined(ASIO_NO_DEPRECATED)
       ));
+# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);

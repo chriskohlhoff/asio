@@ -65,11 +65,16 @@ template <int I = 0>
 struct occupancy_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+# if defined(ASIO_NO_DEPRECATED)
+  template <typename T>
+  ASIO_STATIC_CONSTEXPR(bool,
+    is_applicable_property_v = (
+      is_executor<T>::value));
+# else // defined(ASIO_NO_DEPRECATED)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -80,8 +85,8 @@ struct occupancy_t
             false_type,
             is_scheduler<T>
           >::type::value
-#endif // !defined(ASIO_NO_DEPRECATED)
       ));
+# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);

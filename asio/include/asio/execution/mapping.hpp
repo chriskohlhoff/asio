@@ -192,11 +192,16 @@ template <int I = 0>
 struct mapping_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+# if defined(ASIO_NO_DEPRECATED)
+  template <typename T>
+  ASIO_STATIC_CONSTEXPR(bool,
+    is_applicable_property_v = (
+      is_executor<T>::value));
+# else // defined(ASIO_NO_DEPRECATED)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -207,8 +212,8 @@ struct mapping_t
             false_type,
             is_scheduler<T>
           >::type::value
-#endif // !defined(ASIO_NO_DEPRECATED)
       ));
+# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = false);
@@ -497,11 +502,16 @@ template <int I = 0>
 struct thread_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+# if defined(ASIO_NO_DEPRECATED)
+  template <typename T>
+  ASIO_STATIC_CONSTEXPR(bool,
+    is_applicable_property_v = (
+      is_executor<T>::value));
+# else // defined(ASIO_NO_DEPRECATED)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -512,8 +522,8 @@ struct thread_t
             false_type,
             is_scheduler<T>
           >::type::value
-#endif // !defined(ASIO_NO_DEPRECATED)
       ));
+# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -602,11 +612,16 @@ template <int I = 0>
 struct new_thread_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+# if defined(ASIO_NO_DEPRECATED)
+  template <typename T>
+  ASIO_STATIC_CONSTEXPR(bool,
+    is_applicable_property_v = (
+      is_executor<T>::value));
+# else // defined(ASIO_NO_DEPRECATED)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -617,8 +632,8 @@ struct new_thread_t
             false_type,
             is_scheduler<T>
           >::type::value
-#endif // !defined(ASIO_NO_DEPRECATED)
       ));
+# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
@@ -686,11 +701,16 @@ template <int I>
 struct other_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
+# if defined(ASIO_NO_DEPRECATED)
+  template <typename T>
+  ASIO_STATIC_CONSTEXPR(bool,
+    is_applicable_property_v = (
+      is_executor<T>::value));
+# else // defined(ASIO_NO_DEPRECATED)
   template <typename T>
   ASIO_STATIC_CONSTEXPR(bool,
     is_applicable_property_v = (
       is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
         || conditional<
             is_executor<T>::value,
             false_type,
@@ -701,8 +721,8 @@ struct other_t
             false_type,
             is_scheduler<T>
           >::type::value
-#endif // !defined(ASIO_NO_DEPRECATED)
       ));
+# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   ASIO_STATIC_CONSTEXPR(bool, is_requirable = true);
