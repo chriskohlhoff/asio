@@ -46,6 +46,7 @@ noinst_PROGRAMS = \
 	operations/composed_6 \
 	operations/composed_7 \
 	operations/composed_8 \
+  parallel_group/ranged_wait_for_all \
   parallel_group/wait_for_all \
   parallel_group/wait_for_one \
   parallel_group/wait_for_one_error \
@@ -133,6 +134,7 @@ operations_composed_5_SOURCES = operations/composed_5.cpp
 operations_composed_6_SOURCES = operations/composed_6.cpp
 operations_composed_7_SOURCES = operations/composed_7.cpp
 operations_composed_8_SOURCES = operations/composed_8.cpp
+parallel_group_ranged_wait_for_all_SOURCES = parallel_group/ranged_wait_for_all.cpp
 parallel_group_wait_for_all_SOURCES = parallel_group/wait_for_all.cpp
 parallel_group_wait_for_one_SOURCES = parallel_group/wait_for_one.cpp
 parallel_group_wait_for_one_error_SOURCES = parallel_group/wait_for_one_error.cpp

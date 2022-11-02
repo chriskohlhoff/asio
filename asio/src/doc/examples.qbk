@@ -490,6 +490,7 @@ asio.reference.experimental__make_parallel_group
 * [@../src/examples/cpp11/parallel_group/wait_for_one.cpp]
 * [@../src/examples/cpp11/parallel_group/wait_for_one_error.cpp]
 * [@../src/examples/cpp11/parallel_group/wait_for_one_success.cpp]
+* [@../src/examples/cpp11/parallel_group/ranged_wait_for_all.cpp]
 
 
 [heading SOCKS 4]
@@ -650,6 +651,7 @@ asio.reference.experimental__make_parallel_group
 * [@../src/examples/cpp14/parallel_group/wait_for_one.cpp]
 * [@../src/examples/cpp14/parallel_group/wait_for_one_error.cpp]
 * [@../src/examples/cpp14/parallel_group/wait_for_one_success.cpp]
+* [@../src/examples/cpp14/parallel_group/ranged_wait_for_all.cpp]
 
 
 [endsect]

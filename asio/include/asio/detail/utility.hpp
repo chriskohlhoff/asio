@@ -16,8 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-
-# include <utility>
+#include <utility>
 
 namespace asio {
 namespace detail {

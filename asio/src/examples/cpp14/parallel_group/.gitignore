@@ -8,6 +8,7 @@
 *.pdb
 *.tds
 parallel_sort
+ranged_wait_for_all
 wait_for_all
 wait_for_one
 wait_for_one_error
