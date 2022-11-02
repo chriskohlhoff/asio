@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/experimental/coro.hpp"
 #include <iostream>
+#include "asio/bind_cancellation_slot.hpp"
 #include "asio/io_context.hpp"
 #include "asio/steady_timer.hpp"
 #include "asio/this_coro.hpp"
