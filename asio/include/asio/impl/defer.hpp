@@ -262,7 +262,9 @@ template <typename Executor,
 ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) defer(
     const Executor& ex, ASIO_MOVE_ARG(NullaryToken) token,
     typename constraint<
-      execution::is_executor<Executor>::value || is_executor<Executor>::value
+      (execution::is_executor<Executor>::value
+          && can_require<Executor, execution::blocking_t::never_t>::value)
+        || is_executor<Executor>::value
     >::type)
   ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<NullaryToken, void()>(

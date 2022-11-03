@@ -19,8 +19,10 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution_context.hpp"
+#include "asio/execution/blocking.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/is_executor.hpp"
+#include "asio/require.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -167,7 +169,9 @@ ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) defer(
     ASIO_MOVE_ARG(NullaryToken) token
       ASIO_DEFAULT_COMPLETION_TOKEN(Executor),
     typename constraint<
-      execution::is_executor<Executor>::value || is_executor<Executor>::value
+      (execution::is_executor<Executor>::value
+          && can_require<Executor, execution::blocking_t::never_t>::value)
+        || is_executor<Executor>::value
     >::type = 0)
   ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<NullaryToken, void()>(
