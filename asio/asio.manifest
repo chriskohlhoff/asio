@@ -5870,7 +5870,6 @@
 /include/asio/experimental/detail/channel_send_functions.hpp
 /include/asio/experimental/detail/channel_send_op.hpp
 /include/asio/experimental/detail/channel_service.hpp
-/include/asio/experimental/detail/completion_handler_erasure.hpp
 /include/asio/experimental/detail/coro_promise_allocator.hpp
 /include/asio/experimental/detail/has_signature.hpp
 /include/asio/experimental/detail/impl/
@@ -5887,6 +5886,7 @@
 /include/asio/experimental/prepend.hpp
 /include/asio/experimental/promise.hpp
 /include/asio/experimental/use_coro.hpp
+/include/asio/experimental/use_promise.hpp
 /include/asio/file_base.hpp
 /include/asio/generic/
 /include/asio/generic/basic_endpoint.hpp

@@ -15,7 +15,9 @@
 
 // Test that header file is self-contained.
 #include "asio/deferred.hpp"
-
+#include "asio/io_context.hpp"
+#include "asio/redirect_error.hpp"
+#include "asio/post.hpp"
 #include "unit_test.hpp"
 
 ASIO_TEST_SUITE
