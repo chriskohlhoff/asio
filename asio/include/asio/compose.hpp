@@ -71,11 +71,16 @@ public:
   }
 #endif // defined(ASIO_HAS_MOVE)
 
-  typedef typename associated_executor<Handler,
-      typename composed_work_guard<
-        typename Work::head_type
-      >::executor_type
-    >::type executor_type;
+  typedef typename composed_work_guard<
+    typename Work::head_type>::executor_type io_executor_type;
+
+  io_executor_type get_io_executor() const ASIO_NOEXCEPT
+  {
+    return work_.head_.get_executor();
+  }
+
+  typedef typename associated_executor<Handler, io_executor_type>::type
+    executor_type;
 
   executor_type get_executor() const ASIO_NOEXCEPT
   {
