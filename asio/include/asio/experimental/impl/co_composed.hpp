@@ -53,6 +53,7 @@ using std::experimental::suspend_never;
 
 using asio::detail::composed_io_executors;
 using asio::detail::composed_work;
+using asio::detail::composed_work_guard;
 using asio::detail::get_composed_io_executor;
 using asio::detail::make_composed_io_executors;
 using asio::detail::recycling_allocator;
@@ -454,6 +455,9 @@ class co_composed_state
     public co_composed_state_cancellation<Executors, Handler, Return>
 {
 public:
+  using io_executor_type = typename composed_work_guard<
+    typename composed_work<Executors>::head_type>::executor_type;
+
   template <typename H>
   co_composed_state(composed_io_executors<Executors>&& executors,
       H&& h, co_composed_on_suspend& on_suspend)
@@ -462,6 +466,11 @@ public:
       on_suspend_(&on_suspend)
   {
     this->reset_cancellation_state(enable_terminal_cancellation());
+  }
+
+  io_executor_type get_io_executor() const noexcept
+  {
+    return work_.head_.get_executor();
   }
 
   template <typename... Args>
