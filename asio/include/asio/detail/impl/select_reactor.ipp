@@ -309,7 +309,7 @@ void select_reactor::run_thread()
   {
     lock.unlock();
     op_queue<operation> ops;
-    run(true, ops);
+    run(-1, ops);
     scheduler_.post_deferred_completions(ops);
     lock.lock();
   }
