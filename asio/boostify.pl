@@ -107,7 +107,7 @@ sub copy_source_file
   $is_test = 1 if ($from =~ /tests\/unit/);
 
   my $is_coroutine_related = 0;
-  $is_coroutine_related = 1 if ($from =~ /await/ || $from =~ /partial_promise/);
+  $is_coroutine_related = 1 if ($from =~ /await/ || $from =~ /partial_promise/ || $from =~ /co_composed/);
 
   my $is_hash_related = 0;
   $is_hash_related = 1 if ($from =~ /ip\/address/ || $from =~ /ip\/basic_endpoint/);
