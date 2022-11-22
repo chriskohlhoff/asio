@@ -51,7 +51,7 @@ asio_handler_deallocate(void* pointer, std::size_t size, ...)
       detail::thread_context::top_of_thread_call_stack(), pointer, size);
 #else // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
   (void)size;
-  aligned_delete(pointer)
+  aligned_delete(pointer);
 #endif // !defined(ASIO_DISABLE_SMALL_BLOCK_RECYCLING)
 }
 
