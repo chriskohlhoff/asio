@@ -25,7 +25,7 @@ inline const asio::error_category& get_system_category()
 	return asio::system_category();
 }
 
-#if defined(ASIO_USE_SOCKETS)
+#if !defined(ASIO_DISABLE_SOCKETS)
 
 #if defined(ASIO_WINDOWS) \
   || defined(__CYGWIN__) \
