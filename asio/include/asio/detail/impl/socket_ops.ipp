@@ -2552,6 +2552,7 @@ int inet_pton(int af, const char* src, void* dest,
     bytes[1] = static_cast<unsigned char>(b1);
     bytes[2] = static_cast<unsigned char>(b2);
     bytes[3] = static_cast<unsigned char>(b3);
+
     asio::error::clear(ec);
     return 1;
   }

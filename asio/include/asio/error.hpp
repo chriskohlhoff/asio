@@ -72,7 +72,9 @@ inline const asio::error_category& get_system_category()
 namespace asio {
 namespace error {
 
-enum basic_errors
+inline const asio::error_category& get_system_category();
+
+	enum basic_errors
 {
   /// Permission denied.
   access_denied = ASIO_SOCKET_ERROR(EACCES),
@@ -231,6 +233,7 @@ enum misc_errors
   /// The descriptor cannot fit into the select system call's fd_set.
   fd_set_failure
 };
+
 
 // boostify: non-boost code starts here
 #if !defined(ASIO_ERROR_LOCATION)
