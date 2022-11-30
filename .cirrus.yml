@@ -1,5 +1,5 @@
 freebsd_instance:
-  image_family: freebsd-12-1
+  image_family: freebsd-13-0
   cpu: 1
 
 env:
@@ -7,7 +7,7 @@ env:
 
 task:
   install_script:
-    - pkg install -y autoconf automake
+    - pkg install -y autoconf automake pkgconf
   build_script:
     - cd asio
     - ./autogen.sh

@@ -2,7 +2,7 @@
 // udp.cpp
 // ~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -667,7 +667,7 @@ void test()
 ASIO_TEST_SUITE
 (
   "ip/udp",
-  ASIO_TEST_CASE(ip_udp_socket_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_udp_socket_compile::test)
   ASIO_TEST_CASE(ip_udp_socket_runtime::test)
-  ASIO_TEST_CASE(ip_udp_resolver_compile::test)
+  ASIO_COMPILE_TEST_CASE(ip_udp_resolver_compile::test)
 )

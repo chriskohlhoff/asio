@@ -17,7 +17,6 @@ environment:
       SEPARATE_COMPILATION: 1
       MSVC: 1
     - STANDALONE: 1
-      SEPARATE_COMPILATION: 1
       MINGW: 1
     - STANDALONE: 1
       CXXLATEST: 1
@@ -37,7 +36,6 @@ environment:
       SEPARATE_COMPILATION: 1
       MSVC: 1
     - USING_BOOST: 1
-      SEPARATE_COMPILATION: 1
       MINGW: 1
 
 for:

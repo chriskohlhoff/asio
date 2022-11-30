@@ -2,7 +2,7 @@
 // detail/win_iocp_handle_write_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -51,8 +51,10 @@ public:
   }
 
   static void do_complete(void* owner, operation* base,
-      const asio::error_code& ec, std::size_t bytes_transferred)
+      const asio::error_code& result_ec, std::size_t bytes_transferred)
   {
+    asio::error_code ec(result_ec);
+
     // Take ownership of the operation object.
     win_iocp_handle_write_op* o(static_cast<win_iocp_handle_write_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
@@ -72,6 +74,8 @@ public:
           ConstBufferSequence>::validate(o->buffers_);
     }
 #endif // defined(ASIO_ENABLE_BUFFER_DEBUGGING)
+
+    ASIO_ERROR_LOCATION(ec);
 
     // Make a copy of the handler so that the memory can be deallocated before
     // the upcall is made. Even if we're not about to make an upcall, a

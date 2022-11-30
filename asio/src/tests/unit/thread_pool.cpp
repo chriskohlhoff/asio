@@ -2,7 +2,7 @@
 // thread_pool.cpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -90,6 +90,10 @@ void thread_pool_test()
 class test_service : public asio::execution_context::service
 {
 public:
+#if defined(ASIO_NO_TYPEID)
+  static asio::execution_context::id id;
+#endif // defined(ASIO_NO_TYPEID)
+
   typedef test_service key_type;
 
   test_service(asio::execution_context& ctx)
@@ -100,6 +104,10 @@ public:
 private:
   virtual void shutdown() {}
 };
+
+#if defined(ASIO_NO_TYPEID)
+asio::execution_context::id test_service::id;
+#endif // defined(ASIO_NO_TYPEID)
 
 void thread_pool_service_test()
 {

@@ -2,7 +2,7 @@
 // basic_signal_set.hpp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -27,6 +27,8 @@
 #include "asio/detail/type_traits.hpp"
 #include "asio/error.hpp"
 #include "asio/execution_context.hpp"
+
+#include "asio/detail/push_options.hpp"
 
 namespace asio {
 
@@ -93,6 +95,9 @@ namespace asio {
 template <typename Executor = any_io_executor>
 class basic_signal_set
 {
+private:
+  class initiate_async_wait;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -114,7 +119,7 @@ public:
    * signal set.
    */
   explicit basic_signal_set(const executor_type& ex)
-    : impl_(ex)
+    : impl_(0, ex)
   {
   }
 
@@ -128,10 +133,11 @@ public:
    */
   template <typename ExecutionContext>
   explicit basic_signal_set(ExecutionContext& context,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
-    : impl_(context)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(0, 0, context)
   {
   }
 
@@ -150,7 +156,7 @@ public:
    * signals.add(signal_number_1); @endcode
    */
   basic_signal_set(const executor_type& ex, int signal_number_1)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -173,10 +179,11 @@ public:
    */
   template <typename ExecutionContext>
   basic_signal_set(ExecutionContext& context, int signal_number_1,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
-    : impl_(context)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -202,7 +209,7 @@ public:
    */
   basic_signal_set(const executor_type& ex, int signal_number_1,
       int signal_number_2)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -231,10 +238,11 @@ public:
   template <typename ExecutionContext>
   basic_signal_set(ExecutionContext& context, int signal_number_1,
       int signal_number_2,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
-    : impl_(context)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -265,7 +273,7 @@ public:
    */
   basic_signal_set(const executor_type& ex, int signal_number_1,
       int signal_number_2, int signal_number_3)
-    : impl_(ex)
+    : impl_(0, ex)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -299,10 +307,11 @@ public:
   template <typename ExecutionContext>
   basic_signal_set(ExecutionContext& context, int signal_number_1,
       int signal_number_2, int signal_number_3,
-      typename enable_if<
-        is_convertible<ExecutionContext&, execution_context&>::value
-      >::type* = 0)
-    : impl_(context)
+      typename constraint<
+        is_convertible<ExecutionContext&, execution_context&>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(0, 0, context)
   {
     asio::error_code ec;
     impl_.get_service().add(impl_.get_implementation(), signal_number_1, ec);
@@ -488,39 +497,58 @@ public:
   /// Start an asynchronous operation to wait for a signal to be delivered.
   /**
    * This function may be used to initiate an asynchronous wait against the
-   * signal set. It always returns immediately.
+   * signal set. It is an initiating function for an @ref
+   * asynchronous_operation, and always returns immediately.
    *
-   * For each call to async_wait(), the supplied handler will be called exactly
-   * once. The handler will be called when:
+   * For each call to async_wait(), the completion handler will be called
+   * exactly once. The completion handler will be called when:
    *
    * @li One of the registered signals in the signal set occurs; or
    *
    * @li The signal set was cancelled, in which case the handler is passed the
    * error code asio::error::operation_aborted.
    *
-   * @param handler The handler to be called when the signal occurs. Copies
-   * will be made of the handler as required. The function signature of the
-   * handler must be:
+   * @param token The @ref completion_token that will be used to produce a
+   * completion handler, which will be called when the wait completes.
+   * Potential completion tokens include @ref use_future, @ref use_awaitable,
+   * @ref yield_context, or a function object with the correct completion
+   * signature. The function signature of the completion handler must be:
    * @code void handler(
    *   const asio::error_code& error, // Result of operation.
    *   int signal_number // Indicates which signal occurred.
    * ); @endcode
    * Regardless of whether the asynchronous operation completes immediately or
-   * not, the handler will not be invoked from within this function. On
-   * immediate completion, invocation of the handler will be performed in a
+   * not, the completion handler will not be invoked from within this function.
+   * On immediate completion, invocation of the handler will be performed in a
    * manner equivalent to using asio::post().
+   *
+   * @par Completion Signature
+   * @code void(asio::error_code, int) @endcode
+   *
+   * @par Per-Operation Cancellation
+   * This asynchronous operation supports cancellation for the following
+   * asio::cancellation_type values:
+   *
+   * @li @c cancellation_type::terminal
+   *
+   * @li @c cancellation_type::partial
+   *
+   * @li @c cancellation_type::total
    */
   template <
     ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code, int))
-      SignalHandler ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  ASIO_INITFN_AUTO_RESULT_TYPE(SignalHandler,
+      SignalToken ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(SignalToken,
       void (asio::error_code, int))
   async_wait(
-      ASIO_MOVE_ARG(SignalHandler) handler
+      ASIO_MOVE_ARG(SignalToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<SignalToken, void (asio::error_code, int)>(
+          declval<initiate_async_wait>(), token)))
   {
-    return async_initiate<SignalHandler, void (asio::error_code, int)>(
-        initiate_async_wait(this), handler);
+    return async_initiate<SignalToken, void (asio::error_code, int)>(
+        initiate_async_wait(this), token);
   }
 
 private:
@@ -564,5 +592,7 @@ private:
 };
 
 } // namespace asio
+
+#include "asio/detail/pop_options.hpp"
 
 #endif // ASIO_BASIC_SIGNAL_SET_HPP

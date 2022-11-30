@@ -2,7 +2,7 @@
 // asio.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -15,8 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/append.hpp"
+#include "asio/as_tuple.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
+#include "asio/associated_cancellation_slot.hpp"
+#include "asio/associator.hpp"
 #include "asio/async_result.hpp"
 #include "asio/awaitable.hpp"
 //#include "asio/basic_datagram_socket.hpp"
@@ -42,6 +46,9 @@
 //#include "asio/buffered_write_stream_fwd.hpp"
 //#include "asio/buffered_write_stream.hpp"
 #include "asio/buffers_iterator.hpp"
+#include "asio/cancellation_signal.hpp"
+#include "asio/cancellation_state.hpp"
+#include "asio/cancellation_type.hpp"
 #include "asio/co_spawn.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/compose.hpp"
@@ -49,6 +56,7 @@
 #include "asio/coroutine.hpp"
 #include "asio/deadline_timer.hpp"
 #include "asio/defer.hpp"
+#include "asio/deferred.hpp"
 #include "asio/detached.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/error.hpp"
@@ -84,6 +92,8 @@
 #include "asio/execution_context.hpp"
 #include "asio/executor.hpp"
 #include "asio/executor_work_guard.hpp"
+
+//#include "asio/file_base.hpp"
 //#include "asio/generic/basic_endpoint.hpp"
 //#include "asio/generic/datagram_protocol.hpp"
 //#include "asio/generic/raw_protocol.hpp"
@@ -122,6 +132,7 @@
 //#include "asio/ip/unicast.hpp"
 //#include "asio/ip/v6_only.hpp"
 #include "asio/is_applicable_property.hpp"
+#include "asio/is_contiguous_iterator.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/is_read_buffered.hpp"
 #include "asio/is_write_buffered.hpp"
@@ -139,11 +150,16 @@
 //#include "asio/posix/stream_descriptor.hpp"
 #include "asio/post.hpp"
 #include "asio/prefer.hpp"
+#include "asio/prepend.hpp"
 #include "asio/query.hpp"
+//#include "asio/random_access_file.hpp"
 //#include "asio/read.hpp"
 //#include "asio/read_at.hpp"
 //#include "asio/read_until.hpp"
 //#include "asio/redirect_error.hpp"
+//#include "asio/recycling_allocator.hpp"
+//#include "asio/redirect_error.hpp"
+//#include "asio/registered_buffer.hpp"
 #include "asio/require.hpp"
 #include "asio/require_concept.hpp"
 //#include "asio/serial_port.hpp"
@@ -153,6 +169,7 @@
 //#include "asio/static_thread_pool.hpp"
 //#include "asio/steady_timer.hpp"
 #include "asio/strand.hpp"
+//#include "asio/stream_file.hpp"
 //#include "asio/streambuf.hpp"
 #include "asio/system_context.hpp"
 #include "asio/system_error.hpp"

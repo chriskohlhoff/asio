@@ -2,7 +2,7 @@
 // error.hpp
 // ~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +20,10 @@
 #include "asio/system_error.hpp"
 
 
-
+inline const asio::error_category& get_system_category()
+{
+	return asio::system_category();
+}
 
 #if !defined(ASIO_DISABLE_SOCKETS)
 
@@ -232,6 +235,46 @@ enum misc_errors
 };
 
 
+// boostify: non-boost code starts here
+#if !defined(ASIO_ERROR_LOCATION)
+# define ASIO_ERROR_LOCATION(e) (void)0
+#endif // !defined(ASIO_ERROR_LOCATION)
+
+// boostify: non-boost code ends here
+#if !defined(ASIO_ERROR_LOCATION) \
+  && !defined(ASIO_DISABLE_ERROR_LOCATION) \
+  && defined(ASIO_HAS_BOOST_CONFIG) \
+  && (BOOST_VERSION >= 107900)
+
+# define ASIO_ERROR_LOCATION(e) \
+  do { \
+    BOOST_STATIC_CONSTEXPR boost::source_location loc \
+      = BOOST_CURRENT_LOCATION; \
+    (e).assign((e), &loc); \
+  } while (false)
+
+#else // !defined(ASIO_ERROR_LOCATION)
+      //   && !defined(ASIO_DISABLE_ERROR_LOCATION)
+      //   && defined(ASIO_HAS_BOOST_CONFIG)
+      //   && (BOOST_VERSION >= 107900)
+
+# define ASIO_ERROR_LOCATION(e) (void)0
+
+#endif // !defined(ASIO_ERROR_LOCATION)
+       //   && !defined(ASIO_DISABLE_ERROR_LOCATION)
+       //   && defined(ASIO_HAS_BOOST_CONFIG)
+       //   && (BOOST_VERSION >= 107900)
+
+inline void clear(asio::error_code& ec)
+{
+  ec.assign(0, ec.category());
+}
+
+inline const asio::error_category& get_system_category()
+{
+  return asio::system_category();
+}
+
 
 #if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
 
@@ -365,12 +408,7 @@ enum basic_errors
 namespace asio {
 namespace error {
 
-inline const asio::error_category& get_system_category()
-{
-	return asio::system_category();
-}
-
-	inline asio::error_code make_error_code(basic_errors e)
+inline asio::error_code make_error_code(basic_errors e)
 {
   return asio::error_code(
       static_cast<int>(e), get_system_category());

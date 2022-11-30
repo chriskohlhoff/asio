@@ -2,7 +2,7 @@
 // execution/any_executor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -481,6 +481,11 @@ struct is_valid_target_executor :
 {
 };
 
+template <typename Props>
+struct is_valid_target_executor<int, Props> : false_type
+{
+};
+
 class any_executor_base
 {
 public:
@@ -869,7 +874,8 @@ protected:
   template <typename Ex>
   static const void* target_type_ex()
   {
-    return Ex::type_id();
+    static int unique_id;
+    return &unique_id;
   }
 #endif // !defined(ASIO_NO_TYPEID)
 
@@ -1161,7 +1167,7 @@ private:
 //  template <typename...> friend class any_executor;
 
   typedef aligned_storage<
-      sizeof(asio::detail::shared_ptr<void>),
+      sizeof(asio::detail::shared_ptr<void>) + sizeof(void*),
       alignment_of<asio::detail::shared_ptr<void> >::value
     >::type object_type;
 
@@ -1302,39 +1308,65 @@ public:
   {
     return any_executor_base::equality_helper(other);
   }
+
+  template <typename AnyExecutor1, typename AnyExecutor2>
+  friend typename enable_if<
+    is_base_of<any_executor, AnyExecutor1>::value
+      || is_base_of<any_executor, AnyExecutor2>::value,
+    bool
+  >::type operator==(const AnyExecutor1& a,
+      const AnyExecutor2& b) ASIO_NOEXCEPT
+  {
+    return static_cast<const any_executor&>(a).equality_helper(b);
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator==(const AnyExecutor& a, nullptr_t) ASIO_NOEXCEPT
+  {
+    return !a;
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator==(nullptr_t, const AnyExecutor& b) ASIO_NOEXCEPT
+  {
+    return !b;
+  }
+
+  template <typename AnyExecutor1, typename AnyExecutor2>
+  friend typename enable_if<
+    is_base_of<any_executor, AnyExecutor1>::value
+      || is_base_of<any_executor, AnyExecutor2>::value,
+    bool
+  >::type operator!=(const AnyExecutor1& a,
+      const AnyExecutor2& b) ASIO_NOEXCEPT
+  {
+    return !static_cast<const any_executor&>(a).equality_helper(b);
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator!=(const AnyExecutor& a, nullptr_t) ASIO_NOEXCEPT
+  {
+    return !!a;
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator!=(nullptr_t, const AnyExecutor& b) ASIO_NOEXCEPT
+  {
+    return !!b;
+  }
 };
-
-inline bool operator==(const any_executor<>& a,
-    const any_executor<>& b) ASIO_NOEXCEPT
-{
-  return a.equality_helper(b);
-}
-
-inline bool operator==(const any_executor<>& a, nullptr_t) ASIO_NOEXCEPT
-{
-  return !a;
-}
-
-inline bool operator==(nullptr_t, const any_executor<>& b) ASIO_NOEXCEPT
-{
-  return !b;
-}
-
-inline bool operator!=(const any_executor<>& a,
-    const any_executor<>& b) ASIO_NOEXCEPT
-{
-  return !a.equality_helper(b);
-}
-
-inline bool operator!=(const any_executor<>& a, nullptr_t) ASIO_NOEXCEPT
-{
-  return !!a;
-}
-
-inline bool operator!=(nullptr_t, const any_executor<>& b) ASIO_NOEXCEPT
-{
-  return !!b;
-}
 
 inline void swap(any_executor<>& a, any_executor<>& b) ASIO_NOEXCEPT
 {
@@ -1472,6 +1504,64 @@ public:
   bool equality_helper(const any_executor& other) const ASIO_NOEXCEPT
   {
     return any_executor_base::equality_helper(other);
+  }
+
+  template <typename AnyExecutor1, typename AnyExecutor2>
+  friend typename enable_if<
+    is_base_of<any_executor, AnyExecutor1>::value
+      || is_base_of<any_executor, AnyExecutor2>::value,
+    bool
+  >::type operator==(const AnyExecutor1& a,
+      const AnyExecutor2& b) ASIO_NOEXCEPT
+  {
+    return static_cast<const any_executor&>(a).equality_helper(b);
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator==(const AnyExecutor& a, nullptr_t) ASIO_NOEXCEPT
+  {
+    return !a;
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator==(nullptr_t, const AnyExecutor& b) ASIO_NOEXCEPT
+  {
+    return !b;
+  }
+
+  template <typename AnyExecutor1, typename AnyExecutor2>
+  friend typename enable_if<
+    is_base_of<any_executor, AnyExecutor1>::value
+      || is_base_of<any_executor, AnyExecutor2>::value,
+    bool
+  >::type operator!=(const AnyExecutor1& a,
+      const AnyExecutor2& b) ASIO_NOEXCEPT
+  {
+    return !static_cast<const any_executor&>(a).equality_helper(b);
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator!=(const AnyExecutor& a, nullptr_t) ASIO_NOEXCEPT
+  {
+    return !!a;
+  }
+
+  template <typename AnyExecutor>
+  friend typename enable_if<
+    is_same<AnyExecutor, any_executor>::value,
+    bool
+  >::type operator!=(nullptr_t, const AnyExecutor& b) ASIO_NOEXCEPT
+  {
+    return !!b;
   }
 
   template <typename T>
@@ -1617,48 +1707,6 @@ public:
 
   const prop_fns<any_executor>* prop_fns_;
 };
-
-template <typename... SupportableProperties>
-inline bool operator==(const any_executor<SupportableProperties...>& a,
-    const any_executor<SupportableProperties...>& b) ASIO_NOEXCEPT
-{
-  return a.equality_helper(b);
-}
-
-template <typename... SupportableProperties>
-inline bool operator==(const any_executor<SupportableProperties...>& a,
-    nullptr_t) ASIO_NOEXCEPT
-{
-  return !a;
-}
-
-template <typename... SupportableProperties>
-inline bool operator==(nullptr_t,
-    const any_executor<SupportableProperties...>& b) ASIO_NOEXCEPT
-{
-  return !b;
-}
-
-template <typename... SupportableProperties>
-inline bool operator!=(const any_executor<SupportableProperties...>& a,
-    const any_executor<SupportableProperties...>& b) ASIO_NOEXCEPT
-{
-  return !a.equality_helper(b);
-}
-
-template <typename... SupportableProperties>
-inline bool operator!=(const any_executor<SupportableProperties...>& a,
-    nullptr_t) ASIO_NOEXCEPT
-{
-  return !!a;
-}
-
-template <typename... SupportableProperties>
-inline bool operator!=(nullptr_t,
-    const any_executor<SupportableProperties...>& b) ASIO_NOEXCEPT
-{
-  return !!b;
-}
 
 template <typename... SupportableProperties>
 inline void swap(any_executor<SupportableProperties...>& a,
@@ -1873,6 +1921,64 @@ inline void swap(any_executor<SupportableProperties...>& a,
       return any_executor_base::equality_helper(other); \
     } \
     \
+    template <typename AnyExecutor1, typename AnyExecutor2> \
+    friend typename enable_if< \
+      is_base_of<any_executor, AnyExecutor1>::value \
+        || is_base_of<any_executor, AnyExecutor2>::value, \
+      bool \
+    >::type operator==(const AnyExecutor1& a, \
+        const AnyExecutor2& b) ASIO_NOEXCEPT \
+    { \
+      return static_cast<const any_executor&>(a).equality_helper(b); \
+    } \
+    \
+    template <typename AnyExecutor> \
+    friend typename enable_if< \
+      is_same<AnyExecutor, any_executor>::value, \
+      bool \
+    >::type operator==(const AnyExecutor& a, nullptr_t) ASIO_NOEXCEPT \
+    { \
+      return !a; \
+    } \
+    \
+    template <typename AnyExecutor> \
+    friend typename enable_if< \
+      is_same<AnyExecutor, any_executor>::value, \
+      bool \
+    >::type operator==(nullptr_t, const AnyExecutor& b) ASIO_NOEXCEPT \
+    { \
+      return !b; \
+    } \
+    \
+    template <typename AnyExecutor1, typename AnyExecutor2> \
+    friend typename enable_if< \
+      is_base_of<any_executor, AnyExecutor1>::value \
+        || is_base_of<any_executor, AnyExecutor2>::value, \
+      bool \
+    >::type operator!=(const AnyExecutor1& a, \
+        const AnyExecutor2& b) ASIO_NOEXCEPT \
+    { \
+      return !static_cast<const any_executor&>(a).equality_helper(b); \
+    } \
+    \
+    template <typename AnyExecutor> \
+    friend typename enable_if< \
+      is_same<AnyExecutor, any_executor>::value, \
+      bool \
+    >::type operator!=(const AnyExecutor& a, nullptr_t) ASIO_NOEXCEPT \
+    { \
+      return !!a; \
+    } \
+    \
+    template <typename AnyExecutor> \
+    friend typename enable_if< \
+      is_same<AnyExecutor, any_executor>::value, \
+      bool \
+    >::type operator!=(nullptr_t, const AnyExecutor& b) ASIO_NOEXCEPT \
+    { \
+      return !!b; \
+    } \
+    \
     template <typename T> \
     struct find_convertible_property : \
         detail::supportable_properties< \
@@ -2010,48 +2116,6 @@ inline void swap(any_executor<SupportableProperties...>& a,
     typedef detail::supportable_properties<0, \
         void(ASIO_VARIADIC_TARGS(n))> supportable_properties_type; \
   }; \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  inline bool operator==(const any_executor<ASIO_VARIADIC_TARGS(n)>& a, \
-      const any_executor<ASIO_VARIADIC_TARGS(n)>& b) ASIO_NOEXCEPT \
-  { \
-    return a.equality_helper(b); \
-  } \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  inline bool operator==(const any_executor<ASIO_VARIADIC_TARGS(n)>& a, \
-      nullptr_t) ASIO_NOEXCEPT \
-  { \
-    return !a; \
-  } \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  inline bool operator==(nullptr_t, \
-      const any_executor<ASIO_VARIADIC_TARGS(n)>& b) ASIO_NOEXCEPT \
-  { \
-    return !b; \
-  } \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  inline bool operator!=(const any_executor<ASIO_VARIADIC_TARGS(n)>& a, \
-      const any_executor<ASIO_VARIADIC_TARGS(n)>& b) ASIO_NOEXCEPT \
-  { \
-    return !a.equality_helper(b); \
-  } \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  inline bool operator!=(const any_executor<ASIO_VARIADIC_TARGS(n)>& a, \
-      nullptr_t) ASIO_NOEXCEPT \
-  { \
-    return !!a; \
-  } \
-  \
-  template <ASIO_VARIADIC_TPARAMS(n)> \
-  inline bool operator!=(nullptr_t, \
-      const any_executor<ASIO_VARIADIC_TARGS(n)>& b) ASIO_NOEXCEPT \
-  { \
-    return !!b; \
-  } \
   \
   template <ASIO_VARIADIC_TPARAMS(n)> \
   inline void swap(any_executor<ASIO_VARIADIC_TARGS(n)>& a, \
