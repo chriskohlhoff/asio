@@ -19,6 +19,7 @@
 #include "asio/detail/config.hpp"
 #include <memory>
 #include "asio/deferred.hpp"
+#include "asio/detail/source_location.hpp"
 
 #include "asio/detail/push_options.hpp"
 
