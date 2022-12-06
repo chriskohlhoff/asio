@@ -22,6 +22,7 @@
 #include "asio/async_result.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/detail/atomic_count.hpp"
+#include "asio/detail/bind_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
@@ -1009,7 +1010,8 @@ public:
       ASIO_MOVE_ARG(F) f, ASIO_MOVE_ARG(H) h)
     : executor_(ex),
       function_(ASIO_MOVE_CAST(F)(f)),
-      handler_(ASIO_MOVE_CAST(H)(h))
+      handler_(ASIO_MOVE_CAST(H)(h)),
+      work_(handler_, executor_)
   {
   }
 
@@ -1031,7 +1033,9 @@ private:
       function_(yield);
       if (!yield.spawned_thread_->has_context_switched())
         (post)(yield);
-      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(exception_ptr());
+      detail::binder1<Handler, exception_ptr>
+        handler(handler_, exception_ptr());
+      work_.complete(handler, handler.handler_);
     }
 #if !defined(ASIO_NO_EXCEPTIONS)
 # if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
@@ -1051,7 +1055,8 @@ private:
       exception_ptr ex = current_exception();
       if (!yield.spawned_thread_->has_context_switched())
         (post)(yield);
-      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(ex);
+      detail::binder1<Handler, exception_ptr> handler(handler_, ex);
+      work_.complete(handler, handler.handler_);
     }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
   }
@@ -1066,8 +1071,9 @@ private:
       T result(function_(yield));
       if (!yield.spawned_thread_->has_context_switched())
         (post)(yield);
-      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(
-          exception_ptr(), ASIO_MOVE_CAST(T)(result));
+      detail::binder2<Handler, exception_ptr, T>
+        handler(handler_, exception_ptr(), ASIO_MOVE_CAST(T)(result));
+      work_.complete(handler, handler.handler_);
     }
 #if !defined(ASIO_NO_EXCEPTIONS)
 # if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
@@ -1087,7 +1093,8 @@ private:
       exception_ptr ex = current_exception();
       if (!yield.spawned_thread_->has_context_switched())
         (post)(yield);
-      ASIO_MOVE_OR_LVALUE(Handler)(handler_)(ex, T());
+      detail::binder2<Handler, exception_ptr, T> handler(handler_, ex, T());
+      work_.complete(handler, handler.handler_);
     }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
   }
@@ -1095,6 +1102,7 @@ private:
   Executor executor_;
   Function function_;
   Handler handler_;
+  handler_work<Handler, Executor> work_;
 };
 
 struct spawn_cancellation_signal_emitter
