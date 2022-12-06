@@ -7,6 +7,205 @@
 
 [section:history Revision History]
 
+[heading Asio 1.25.0]
+
+* Added the `consign` completion token adapter, which can be used to attach
+  additional values to a completion handler. This is typically used to keep at
+  least one copy of an object, such as a smart pointer, alive until the
+  completion handler is called. For example:[br]
+  ``
+  auto timer1 = std::make_shared<asio::steady_timer>(my_io_context);
+  timer1->expires_after(std::chrono::seconds(1));
+  timer1->async_wait(
+      asio::consign(
+        [](asio::error_code ec)
+        {
+          // ...
+        },
+        timer1
+      )
+    );
+  ``[br]
+
+* Added `any_completion_handler<>`, which can be used to type-erase completion
+  handlers. A typical use case is to enable separate compilation of
+  asynchronous operation implementations. For example:[br]
+  ``
+  // Header file:
+
+  void async_sleep_impl(
+      asio::any_completion_handler<void(asio::error_code)> handler,
+      asio::any_io_executor ex, std::chrono::nanoseconds duration);
+
+  template <typename CompletionToken>
+  inline auto async_sleep(asio::any_io_executor ex,
+      std::chrono::nanoseconds duration, CompletionToken&& token)
+  {
+    return asio::async_initiate<
+      CompletionToken, void(asio::error_code)>(
+        async_sleep_impl, token, std::move(ex), duration);
+  }
+
+  // Separately compiled source file:
+
+  void async_sleep_impl(
+      asio::any_completion_handler<void(asio::error_code)> handler,
+      asio::any_io_executor ex, std::chrono::nanoseconds duration)
+  {
+    auto timer = std::make_shared<asio::steady_timer>(ex, duration);
+    timer->async_wait(asio::consign(std::move(handler), timer));
+  }
+  ``[br]
+
+* Added `experimental::co_composed` which facilitates a lightweight
+  implementation of user-defined asynchronous operations using C++20
+  coroutines. The following example illustrates a simple asynchronous operation
+  that implements an echo protocol in terms of a coroutine:[br]
+  ``
+  template <typename CompletionToken>
+  auto async_echo(tcp::socket& socket,
+      CompletionToken&& token)
+  {
+    return asio::async_initiate<
+      CompletionToken, void(asio::error_code)>(
+        asio::experimental::co_composed<
+          void(asio::error_code)>(
+            [](auto state, tcp::socket& socket) -> void
+            {
+              try
+              {
+                state.throw_if_cancelled(true);
+                state.reset_cancellation_state(
+                  asio::enable_terminal_cancellation());
+
+                for (;;)
+                {
+                  char data[1024];
+                  std::size_t n = co_await socket.async_read_some(
+                      asio::buffer(data), asio::deferred);
+
+                  co_await asio::async_write(socket,
+                      asio::buffer(data, n), asio::deferred);
+                }
+              }
+              catch (const asio::system_error& e)
+              {
+                co_return {e.code()};
+              }
+            }, socket),
+        token, std::ref(socket));
+  }
+  ``[br]
+
+* Add range-based experimental::make_parallel_group() overloads that may be used
+  to launch a dynamically-sized set of asynchronous operations, where all
+  operations are the same type. For example:[br]
+  ``
+  using op_type = decltype(
+      socket1.async_read_some(
+        asio::buffer(data1),
+        asio::deferred
+      )
+    );
+
+  std::vector<op_type> ops;
+  ops.push_back(
+      socket1.async_read_some(
+        asio::buffer(data1),
+        asio::deferred
+      )
+    );
+  ops.push_back(
+      socket2.async_read_some(
+        asio::buffer(data2),
+        asio::deferred
+      )
+    );
+
+  asio::experimental::make_parallel_group(ops).async_wait(
+      asio::experimental::wait_for_all(),
+      [](
+          std::vector<std::size_t> completion_order,
+          std::vector<asio::error_code> e,
+          std::vector<std::size_t> n
+        )
+      {
+        for (std::size_t i = 0; i < completion_order.size(); ++i)
+        {
+          std::size_t idx = completion_order[i];
+          std::cout << "socket " << idx << " finished: ";
+          std::cout << e[idx] << ", " << n[idx] << "\n";
+        }
+      }
+    );
+  ``[br]
+  Thanks go to Klemens Morgenstern for supplying part of this implementation.
+
+* Added `any_completion_executor`, a type-erased wrappers for executors that
+  are associated with completion handlers.
+
+* Added missing `context` query to use_future's executor.
+
+* Added nothrow constructor overloads to `execution::any_executor<>` and
+  `any_io_executor`.
+
+* Optimised representation of empty `execution::any_executor` objects to improve
+  the performance of copy and move operations.
+
+* Added an `associated_cancellation_slot` specialisation for
+  `std::reference_wrapper`.
+
+* Changed I/O objects to return their executors by const reference.
+
+* Changed associated to use deduced return types for all two-argument `get`
+  functions.
+
+* Fixed `spawn` implementation to catch unhandled exceptions and rethrow them
+  outside of the spawned "thread".
+
+* Fixed cleanup of of terminal-state `spawn` "thread" objects.
+
+* Changed semantics of 'dispatch' to mean the executor is used as-is. An
+  execution context's default executor is imbued with the possibly-blocking
+  property.
+
+* Deprecated the `execution::execute` customisation point. Use `execute` as a
+  member function.
+
+* Deprecated the concepts, traits, functions and customisation points related to
+  senders and receivers.
+
+* Added a C++11 `parallel_group` example.
+
+* Fixed example code to not use the deprecated conversion of a resolve result to
+  an endpoint.
+
+* Fixed an ambiguity in `experimental::channel_traits` specialisations.
+
+* Added a specialised channel implementation for the  for `R(error_code)`
+  signature.
+
+* Made `cancelled()` public on the `async_compose` 'self' object.
+
+* Added io_executor_type and get_io_executor to the `async_compose` 'self'
+  object.
+
+* Fixed implementation of `release()` for Windows overlapped handles.
+
+* Enabled deferred awaiting for `experimental::coro`, regularised
+  `experimental::use_coro`, and fixed allocator handling. This means that
+  `use_coro` does not return a coro object, just like use_awaitable does, i.e.
+  it's an overhead that buys us type erasure. Allocators can now be set for
+  `coro` by including `allocator_arg` in the coro signature.
+
+* Cleaned up `experimental::promise` and made it an asynchronous operation
+  object.
+
+* Constrained `post`/`defer` overloads on ability to require `blocking.never`.
+
+* Changed descriptor implementation to fall back to `fcntl` if `ioctl` fails
+  with `ENOTTY` when setting non-blocking mode.
+
 [heading Asio 1.24.0]
 
 * Improved the performance of `awaitable<>`-based coroutines when they directly
