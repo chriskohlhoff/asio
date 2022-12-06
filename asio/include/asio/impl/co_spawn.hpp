@@ -203,8 +203,8 @@ template <typename Handler, typename Executor, typename = void>
 class co_spawn_cancellation_handler
 {
 public:
-  co_spawn_cancellation_handler(const Handler& handler, const Executor& ex)
-    : ex_(asio::get_associated_executor(handler, ex))
+  co_spawn_cancellation_handler(const Handler&, const Executor& ex)
+    : ex_(ex)
   {
   }
 
@@ -221,7 +221,7 @@ public:
 
 private:
   cancellation_signal signal_;
-  typename associated_executor<Handler, Executor>::type ex_;
+  Executor ex_;
 };
 
 
