@@ -443,7 +443,11 @@
 #   if (__cpp_return_type_deduction >= 201304)
 #    define ASIO_HAS_RETURN_TYPE_DEDUCTION 1
 #   endif // (__cpp_return_type_deduction >= 201304)
-#  endif // defined(__cpp_return_type_deduction)
+#  elif defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#    define ASIO_HAS_RETURN_TYPE_DEDUCTION 1
+#   endif // (_MSC_VER >= 1900 && _MSVC_LANG >= 201402)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_RETURN_TYPE_DEDUCTION)
 #endif // !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
