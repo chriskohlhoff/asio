@@ -224,8 +224,8 @@ asio.reference.Executor1 `Executor`] requirements. If not otherwise specified by
 the asynchronous operation, this associated executor is an object of type
 `system_executor`.
 
-All asynchronous operations in this library have an associated executor object
-that is determined as follows:
+All asynchronous operations in this library have an associated I/O executor
+object that is determined as follows:
 
 [mdash] If the initiating function is a member function, the associated
 executor is that returned by the `get_executor` member function on the same
@@ -304,14 +304,21 @@ argument associated with [^T[sub ['i]]].
 
 Let `f` be a function object, callable as `f()`, that invokes
 `completion_handler` as if by [^completion_handler(forward<T[sub ['0]]>(t[sub
-['0]]), ..., forward<T[sub ['N-1]]>(t[sub ['N-1]]))].
+['0]]), ..., forward<T[sub ['N-1]]>(t[sub ['N-1]]))]. Let `g` be a function
+object, callable as `g()`, that contains a copy of `work2` and when invoked
+performs `dispatch(ex2, bind_allocator(alloc2, std::move(f)))`.
 
 If an asynchonous operation completes immediately (that is, within the thread
 of execution calling the initiating function, and before the initiating
 function returns), the completion handler shall be submitted for execution as
-if by performing `post(ex2, std::move(f), alloc2)`. Otherwise, the completion
-handler shall be submitted for execution as if by performing
-`dispatch(ex2, std::move(f), alloc2)`.
+if by performing `post(ex1, bind_allocator(alloc2, std::move(g)))`. As an
+optimisation, the operation may submit the completion handler for execution by
+performing expression `post(ex2, bind_allocator(alloc2, std::move(f)))`, if that
+expression is well-formed.
+
+Otherwise, when the operation completes, the completion handler shall be
+submitted for execution as if by performing `dispatch(ex2,
+bind_allocator(alloc2, std::move(f)))`.
 
 [heading Completion handlers and exceptions]
 
