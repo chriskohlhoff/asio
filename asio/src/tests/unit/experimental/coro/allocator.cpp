@@ -64,6 +64,14 @@ exp::coro<void, void, asio::any_io_executor, tracked_allocator<void>>
   co_return ;
 }
 
+exp::coro<void, void, asio::any_io_executor>
+outer_impl(asio::io_context & ctx, tracked_allocator<void> ta)
+{
+  co_await outer_impl(ctx, std::allocator_arg, ta, 42.);
+  co_return ;
+}
+
+
 void alloc_test()
 {
   std::vector<std::pair<void*, std::size_t>> allocs, deallocs;
@@ -71,7 +79,7 @@ void alloc_test()
   bool ran = false;
 
   {
-    auto pp = alloc_test_impl(ctx, 42, std::allocator_arg, {allocs, deallocs}, 42.);
+    auto pp = outer_impl(ctx, 42, std::allocator_arg, {allocs, deallocs}, 42.);
 
     ASIO_CHECK(allocs.size()  == 1u);
     ASIO_CHECK(deallocs.empty());
