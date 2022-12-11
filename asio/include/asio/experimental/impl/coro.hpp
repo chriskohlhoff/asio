@@ -606,7 +606,7 @@ struct coro_promise final :
   using allocator_type =
     typename std::allocator_traits<associated_allocator_t<Executor>>::
       template rebind_alloc<std::byte>;
-  using traits = coro_traits<Yield, Return, Executor, Allocator>;
+  using traits = coro_traits<Yield, Return, Executor>;
 
   using input_type = typename traits::input_type;
   using yield_type = typename traits::yield_type;
