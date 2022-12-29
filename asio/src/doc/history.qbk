@@ -7,6 +7,42 @@
 
 [section:history Revision History]
 
+[heading Asio 1.26.0]
+
+* Fixed `spawn` and `co_spawn` implementations to dispatch cancellation
+  handlers on the correct executor. When a completion handler uses a specified
+  (i.e. non-default) associated executor, cancellation handlers are dispatched
+  to the executor that was passed to `spawn()` or `co_spawn()`.
+
+* Fixed `spawn` to ensure the completion handler is dispatched through the
+  correct executor.
+
+* Changed to use `snprintf` rather than `sprintf` on latest Xcode, to address
+  deprecation warnings.
+
+* Fixed compatibility between `co_spawn` and `any_completion_handler`.
+
+* Fixed the arguments passed to `select_reactor::run` when it is run on an
+  internal thread.
+
+* Fixed compilation errors when `(BOOST_)ASIO_DISABLE_SMALL_BLOCK_RECYCLING` is
+  defined.
+
+* Updated detection of C++20 coroutine support on clang 14 and later.
+  This includes the ability to use coroutines with libstdc++.
+
+* Changed standard library feature detection to always enable
+  `std::invoke_result` when targeting C++17 or later.
+
+* Fixed detection of return type deduction with MSVC.
+
+* Added a missing include in `experimental::coro` implementation.
+
+* Updated the asynchronous operation requirements to relax the requirements on
+  the associated executor.
+
+* Added [^io_uring] to the implementation notes.
+
 [heading Asio 1.25.0]
 
 * Added the `consign` completion token adapter, which can be used to attach
@@ -165,7 +201,7 @@
 
 * Fixed cleanup of of terminal-state `spawn` "thread" objects.
 
-* Changed semantics of 'dispatch' to mean the executor is used as-is. An
+* Changed semantics of `dispatch` to mean the executor is used as-is. An
   execution context's default executor is imbued with the possibly-blocking
   property.
 
