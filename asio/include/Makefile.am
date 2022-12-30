@@ -1,6 +1,7 @@
 # find . -name "*.*pp" | sed -e 's/^\.\///' | sed -e 's/^.*$/  & \\/' | sort
 nobase_include_HEADERS = \
 	asio/any_completion_executor.hpp \
+	asio/any_completion_handler.hpp \
 	asio/any_io_executor.hpp \
 	asio/append.hpp \
 	asio/as_tuple.hpp \
@@ -439,6 +440,7 @@ nobase_include_HEADERS = \
 	asio/handler_invoke_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/impl/any_completion_executor.ipp \
 	asio/impl/any_io_executor.ipp \
 	asio/impl/append.hpp \
 	asio/impl/as_tuple.hpp \
@@ -450,6 +452,7 @@ nobase_include_HEADERS = \
 	asio/impl/connect.hpp \
 	asio/impl/connect_pipe.hpp \
 	asio/impl/connect_pipe.ipp \
+	asio/impl/consign.hpp \
 	asio/impl/defer.hpp \
 	asio/impl/deferred.hpp \
 	asio/impl/detached.hpp \

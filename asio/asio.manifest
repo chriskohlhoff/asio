@@ -5579,6 +5579,7 @@
 /doc/prev_disabled.png
 /doc/prev.png
 /doc/proactor.png
+/doc/standalone_HTML.manifest
 /doc/sync_op.png
 /doc/tip.png
 /doc/up_disabled.png
@@ -5587,6 +5588,7 @@
 /include/
 /include/asio/
 /include/asio/any_completion_executor.hpp
+/include/asio/any_completion_handler.hpp
 /include/asio/any_io_executor.hpp
 /include/asio/append.hpp
 /include/asio/associated_allocator.hpp
@@ -6038,6 +6040,7 @@
 /include/asio/high_resolution_timer.hpp
 /include/asio.hpp
 /include/asio/impl/
+/include/asio/impl/any_completion_executor.ipp
 /include/asio/impl/any_io_executor.ipp
 /include/asio/impl/append.hpp
 /include/asio/impl/as_tuple.hpp
@@ -6048,6 +6051,7 @@
 /include/asio/impl/connect.hpp
 /include/asio/impl/connect_pipe.hpp
 /include/asio/impl/connect_pipe.ipp
+/include/asio/impl/consign.hpp
 /include/asio/impl/co_spawn.hpp
 /include/asio/impl/defer.hpp
 /include/asio/impl/deferred.hpp
