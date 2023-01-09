@@ -170,6 +170,7 @@ check_PROGRAMS = \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
+	unit/windows/basic_console \
 	unit/windows/basic_object_handle \
 	unit/windows/basic_overlapped_handle \
 	unit/windows/basic_random_access_handle \
@@ -386,8 +387,9 @@ TESTS = \
 	unit/use_future \
 	unit/uses_executor \
 	unit/wait_traits \
-	unit/windows/basic_object_handle \
-	unit/windows/basic_overlapped_handle \
+	unit/windows/basic_console \
+    unit/windows/basic_object_handle \
+    unit/windows/basic_overlapped_handle \
 	unit/windows/basic_random_access_handle \
 	unit/windows/basic_stream_handle \
 	unit/windows/object_handle \
@@ -612,6 +614,7 @@ unit_use_awaitable_SOURCES = unit/use_awaitable.cpp
 unit_use_future_SOURCES = unit/use_future.cpp
 unit_uses_executor_SOURCES = unit/uses_executor.cpp
 unit_wait_traits_SOURCES = unit/wait_traits.cpp
+unit_windows_basic_console_SOURCES = unit/windows/basic_console.cpp
 unit_windows_basic_object_handle_SOURCES = unit/windows/basic_object_handle.cpp
 unit_windows_basic_overlapped_handle_SOURCES = unit/windows/basic_overlapped_handle.cpp
 unit_windows_basic_random_access_handle_SOURCES = unit/windows/basic_random_access_handle.cpp
