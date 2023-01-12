@@ -220,7 +220,7 @@ struct associated_cancellation_slot<reference_wrapper<T>, CancellationSlot>
   /// Forwards the request to get the cancellation slot to the associator
   /// specialisation for the unwrapped type @c T.
   static ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(reference_wrapper<T> t,
-      const CancellationSlot& s = CancellationSlot()) ASIO_NOEXCEPT
+      const CancellationSlot& s) ASIO_NOEXCEPT
     ASIO_AUTO_RETURN_TYPE_SUFFIX((
       associated_cancellation_slot<T, CancellationSlot>::get(t.get(), s)))
   {
