@@ -952,7 +952,7 @@ public:
 
   static T resume(result_type& result)
   {
-    if (*result)
+    if (*result.ex_)
     {
       std::exception_ptr ex = std::exchange(*result.ex_, nullptr);
       std::rethrow_exception(ex);
@@ -1067,7 +1067,7 @@ public:
 
   static std::tuple<Ts...> resume(result_type& result)
   {
-    if (*result)
+    if (*result.ex_)
     {
       std::exception_ptr ex = std::exchange(*result.ex_, nullptr);
       std::rethrow_exception(ex);
