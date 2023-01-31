@@ -687,7 +687,10 @@ __kernel_timespec io_uring_service::get_timeout() const
     sqe = ::io_uring_get_sqe(&ring_);
   }
   if (sqe)
+  {
+    ::io_uring_sqe_set_data(sqe, nullptr);
     ++pending_sqes_;
+  }
   return sqe;
 }
 
