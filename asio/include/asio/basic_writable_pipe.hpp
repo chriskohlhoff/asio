@@ -382,10 +382,8 @@ public:
 #endif
   native_handle_type release()
   {
-    asio::error_code ec;
     native_handle_type s = impl_.get_service().release(
-        impl_.get_implementation(), ec);
-    asio::detail::throw_error(ec, "release");
+        impl_.get_implementation());
     return s;
   }
 
@@ -408,9 +406,9 @@ public:
         "operation_not_supported when used on Windows versions "
         "prior to Windows 8.1."))
 #endif
-  native_handle_type release(asio::error_code& ec)
+  native_handle_type release(asio::error_code&)
   {
-    return impl_.get_service().release(impl_.get_implementation(), ec);
+    return impl_.get_service().release(impl_.get_implementation());
   }
 
   /// Get the native pipe representation.
