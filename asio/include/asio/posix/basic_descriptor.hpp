@@ -377,7 +377,8 @@ public:
    */
   native_handle_type release()
   {
-    return impl_.get_service().release(impl_.get_implementation());
+    asio::error_code ignored_ec;
+    return impl_.get_service().release(impl_.get_implementation(), ignored_ec);
   }
 
   /// Cancel all asynchronous operations associated with the descriptor.

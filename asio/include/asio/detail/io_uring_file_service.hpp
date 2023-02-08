@@ -131,8 +131,7 @@ public:
   native_handle_type release(implementation_type& impl,
       asio::error_code& ec)
   {
-    ec = success_ec_;
-    return descriptor_service_.release(impl);
+    return descriptor_service_.release(impl, ec);
   }
 
   // Cancel all operations associated with the file.

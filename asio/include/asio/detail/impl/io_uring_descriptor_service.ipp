@@ -144,7 +144,8 @@ asio::error_code io_uring_descriptor_service::close(
 
 io_uring_descriptor_service::native_handle_type
 io_uring_descriptor_service::release(
-    io_uring_descriptor_service::implementation_type& impl)
+    io_uring_descriptor_service::implementation_type& impl,
+    asio::error_code&)
 {
   native_handle_type descriptor = impl.descriptor_;
 
