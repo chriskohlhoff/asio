@@ -400,6 +400,13 @@ functionality, and behaviour of Asio.
       types are not passed across shared library API boundaries.
     ]
   ]
+  [
+    [`ASIO_NO_SET_SA_RESTART`]
+    [
+      Disables the use of the flag `SA_RESTART` when establishing signal
+      handlers.
+    ]
+  ]
 ]
 
 [include platform_macros.qbk]

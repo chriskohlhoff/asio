@@ -342,6 +342,9 @@ asio::error_code signal_set_service::add(
       struct sigaction sa;
       memset(&sa, 0, sizeof(sa));
       sa.sa_handler = asio_signal_handler;
+#  if !defined(ASIO_NO_SET_SA_RESTART)
+      sa.sa_flags = SA_RESTART;
+#  endif
       sigfillset(&sa.sa_mask);
       if (::sigaction(signal_number, &sa, 0) == -1)
 # else // defined(ASIO_HAS_SIGACTION)
