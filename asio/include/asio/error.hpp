@@ -86,7 +86,9 @@ enum basic_errors
       ASIO_NATIVE_ERROR(EPIPE)),
 
   /// A connection has been aborted.
-  connection_aborted = ASIO_SOCKET_ERROR(ECONNABORTED),
+  connection_aborted = ASIO_WIN_OR_POSIX(
+      ASIO_NATIVE_ERROR(ERROR_CONNECTION_ABORTED),
+      ASIO_NATIVE_ERROR(ECONNABORTED)),
 
   /// Connection refused.
   connection_refused = ASIO_SOCKET_ERROR(ECONNREFUSED),
