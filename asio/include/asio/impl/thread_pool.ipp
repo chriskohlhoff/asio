@@ -114,11 +114,11 @@ void thread_pool::attach()
 
 void thread_pool::join()
 {
-  if (!threads_.empty())
-  {
+  if (num_threads_)
     scheduler_.work_finished();
+
+  if (!threads_.empty())
     threads_.join();
-  }
 }
 
 detail::scheduler& thread_pool::add_scheduler(detail::scheduler* s)
