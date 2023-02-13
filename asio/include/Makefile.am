@@ -8,6 +8,7 @@ nobase_include_HEADERS = \
 	asio/associated_allocator.hpp \
 	asio/associated_cancellation_slot.hpp \
 	asio/associated_executor.hpp \
+	asio/associated_immediate_executor.hpp \
 	asio/associator.hpp \
 	asio/async_result.hpp \
 	asio/awaitable.hpp \

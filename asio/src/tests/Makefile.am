@@ -17,6 +17,7 @@ check_PROGRAMS = \
 	unit/associated_allocator \
 	unit/associated_cancellation_slot \
 	unit/associated_executor \
+	unit/associated_immediate_executor \
 	unit/associator \
 	unit/async_result \
 	unit/awaitable \
@@ -239,6 +240,7 @@ TESTS = \
 	unit/associated_allocator \
 	unit/associated_cancellation_slot \
 	unit/associated_executor \
+	unit/associated_immediate_executor \
 	unit/associator \
 	unit/async_result \
 	unit/awaitable \
@@ -459,6 +461,7 @@ unit_as_tuple_SOURCES = unit/as_tuple.cpp
 unit_associated_allocator_SOURCES = unit/associated_allocator.cpp
 unit_associated_cancellation_slot_SOURCES = unit/associated_cancellation_slot.cpp
 unit_associated_executor_SOURCES = unit/associated_executor.cpp
+unit_associated_immediate_executor_SOURCES = unit/associated_immediate_executor.cpp
 unit_associator_SOURCES = unit/associator.cpp
 unit_async_result_SOURCES = unit/async_result.cpp
 unit_awaitable_SOURCES = unit/awaitable.cpp

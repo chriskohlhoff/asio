@@ -12,6 +12,7 @@ as_tuple
 associated_allocator
 associated_cancellation_slot
 associated_executor
+associated_immediate_executor
 associator
 async_result
 awaitable
