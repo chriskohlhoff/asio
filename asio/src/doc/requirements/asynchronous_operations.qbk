@@ -254,8 +254,10 @@ type `Executor2` obtained by performing
 
 [heading Outstanding work]
 
-Until the asynchronous operation has completed, the asynchronous operation
-shall maintain:
+If the operation does not complete immediately (that is, the operation does not
+complete within the thread of execution calling the initiating function, before
+the initiating function returns) then, until the asynchronous operation has
+completed, the asynchronous operation shall maintain:
 
 [mdash] an object `work1` of type `executor_work_guard<Executor1>`, initialized
 as `work1(ex1)`, and where `work1.owns_work() == true`; and
@@ -308,17 +310,22 @@ Let `f` be a function object, callable as `f()`, that invokes
 object, callable as `g()`, that contains a copy of `work2` and when invoked
 performs `dispatch(ex2, bind_allocator(alloc2, std::move(f)))`.
 
-If an asynchonous operation completes immediately (that is, within the thread
-of execution calling the initiating function, and before the initiating
-function returns), the completion handler shall be submitted for execution as
-if by performing `post(ex1, bind_allocator(alloc2, std::move(g)))`. As an
-optimisation, the operation may submit the completion handler for execution by
-performing expression `post(ex2, bind_allocator(alloc2, std::move(f)))`, if that
-expression is well-formed.
+If an asynchonous operation completes immediately (that is, the operation
+completes within the thread of execution calling the initiating function, and
+before the initiating function returns), the completion handler shall be
+submitted for execution as if by performing `post(ex1, bind_allocator(alloc2,
+std::move(g)))`.
 
 Otherwise, when the operation completes, the completion handler shall be
 submitted for execution as if by performing `dispatch(ex2,
 bind_allocator(alloc2, std::move(f)))`.
+
+[heading Optimisation of immediate completion]
+
+If an asynchronous operation completes immediately then, as an optimisation,
+the operation may submit the completion handler for execution by performing
+expression `post(ex2, bind_allocator(alloc2, std::move(f)))`, if that
+expression is well-formed.
 
 [heading Completion handlers and exceptions]
 

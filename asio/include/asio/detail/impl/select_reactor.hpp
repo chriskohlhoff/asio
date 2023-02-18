@@ -35,7 +35,7 @@ namespace asio {
 namespace detail {
 
 inline void select_reactor::post_immediate_completion(
-    reactor_op* op, bool is_continuation)
+    operation* op, bool is_continuation) const
 {
   scheduler_.post_immediate_completion(op, is_continuation);
 }

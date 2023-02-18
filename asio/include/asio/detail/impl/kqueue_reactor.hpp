@@ -28,7 +28,7 @@ namespace asio {
 namespace detail {
 
 inline void kqueue_reactor::post_immediate_completion(
-    operation* op, bool is_continuation)
+    operation* op, bool is_continuation) const
 {
   scheduler_.post_immediate_completion(op, is_continuation);
 }

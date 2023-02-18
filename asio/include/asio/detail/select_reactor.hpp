@@ -94,12 +94,29 @@ public:
       per_descriptor_data& descriptor_data, reactor_op* op);
 
   // Post a reactor operation for immediate completion.
-  void post_immediate_completion(reactor_op* op, bool is_continuation);
+  void post_immediate_completion(operation* op, bool is_continuation) const;
+
+  // Post a reactor operation for immediate completion.
+  ASIO_DECL static void call_post_immediate_completion(
+      operation* op, bool is_continuation, const void* self);
 
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.
   ASIO_DECL void start_op(int op_type, socket_type descriptor,
-      per_descriptor_data&, reactor_op* op, bool is_continuation, bool);
+      per_descriptor_data&, reactor_op* op, bool is_continuation, bool,
+      void (*on_immediate)(operation*, bool, const void*),
+      const void* immediate_arg);
+
+  // Start a new operation. The reactor operation will be performed when the
+  // given descriptor is flagged as ready, or an error has occurred.
+  void start_op(int op_type, socket_type descriptor,
+      per_descriptor_data& descriptor_data, reactor_op* op,
+      bool is_continuation, bool allow_speculative)
+  {
+    start_op(op_type, descriptor, descriptor_data,
+        op, is_continuation, allow_speculative,
+        &select_reactor::call_post_immediate_completion, this);
+  }
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
