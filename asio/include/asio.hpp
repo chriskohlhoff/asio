@@ -153,6 +153,7 @@
 #include "asio/local/basic_endpoint.hpp"
 #include "asio/local/connect_pair.hpp"
 #include "asio/local/datagram_protocol.hpp"
+#include "asio/local/seq_packet_protocol.hpp"
 #include "asio/local/stream_protocol.hpp"
 #include "asio/multiple_exceptions.hpp"
 #include "asio/packaged_task.hpp"

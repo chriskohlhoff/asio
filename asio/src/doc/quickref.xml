@@ -779,6 +779,10 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.local__seq_packet_protocol">local::seq_packet_protocol</link></member>
+            <member><link linkend="asio.reference.local__seq_packet_protocol.acceptor">local::seq_packet_protocol::acceptor</link></member>
+            <member><link linkend="asio.reference.local__seq_packet_protocol.endpoint">local::seq_packet_protocol::endpoint</link></member>
+            <member><link linkend="asio.reference.local__seq_packet_protocol.socket">local::seq_packet_protocol::socket</link></member>
             <member><link linkend="asio.reference.local__stream_protocol">local::stream_protocol</link></member>
             <member><link linkend="asio.reference.local__stream_protocol.acceptor">local::stream_protocol::acceptor</link></member>
             <member><link linkend="asio.reference.local__stream_protocol.endpoint">local::stream_protocol::endpoint</link></member>

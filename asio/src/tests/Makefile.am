@@ -126,6 +126,7 @@ check_PROGRAMS = \
 	unit/local/basic_endpoint \
 	unit/local/connect_pair \
 	unit/local/datagram_protocol \
+	unit/local/seq_packet_protocol \
 	unit/local/stream_protocol \
 	unit/packaged_task \
 	unit/placeholders \
@@ -344,6 +345,7 @@ TESTS = \
 	unit/local/basic_endpoint \
 	unit/local/connect_pair \
 	unit/local/datagram_protocol \
+	unit/local/seq_packet_protocol \
 	unit/local/stream_protocol \
 	unit/packaged_task \
 	unit/placeholders \
@@ -572,6 +574,7 @@ unit_is_write_buffered_SOURCES = unit/is_write_buffered.cpp
 unit_local_basic_endpoint_SOURCES = unit/local/basic_endpoint.cpp
 unit_local_connect_pair_SOURCES = unit/local/connect_pair.cpp
 unit_local_datagram_protocol_SOURCES = unit/local/datagram_protocol.cpp
+unit_local_seq_packet_protocol_SOURCES = unit/local/seq_packet_protocol.cpp
 unit_local_stream_protocol_SOURCES = unit/local/stream_protocol.cpp
 unit_packaged_task_SOURCES = unit/packaged_task.cpp
 unit_placeholders_SOURCES = unit/placeholders.cpp
