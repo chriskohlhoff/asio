@@ -246,7 +246,7 @@ void channel_service<Mutex>::cancel(
   if (impl.receive_state_ == waiter)
     impl.receive_state_ = block;
   if (impl.send_state_ == waiter)
-    impl.send_state_ = block;
+    impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
 }
 
 template <typename Mutex>
@@ -294,7 +294,7 @@ void channel_service<Mutex>::cancel_by_key(
     if (impl.receive_state_ == waiter)
       impl.receive_state_ = block;
     if (impl.send_state_ == waiter)
-      impl.send_state_ = block;
+      impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
   }
 }
 
