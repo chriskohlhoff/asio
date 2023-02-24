@@ -167,6 +167,9 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_static_mutex.ipp \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
+	asio/detail/initiate_defer.hpp \
+	asio/detail/initiate_dispatch.hpp \
+	asio/detail/initiate_post.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
 	asio/detail/io_uring_descriptor_read_at_op.hpp \
@@ -453,10 +456,8 @@ nobase_include_HEADERS = \
 	asio/impl/connect_pipe.hpp \
 	asio/impl/connect_pipe.ipp \
 	asio/impl/consign.hpp \
-	asio/impl/defer.hpp \
 	asio/impl/deferred.hpp \
 	asio/impl/detached.hpp \
-	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
 	asio/impl/execution_context.hpp \
@@ -467,7 +468,6 @@ nobase_include_HEADERS = \
 	asio/impl/io_context.hpp \
 	asio/impl/io_context.ipp \
 	asio/impl/multiple_exceptions.ipp \
-	asio/impl/post.hpp \
 	asio/impl/prepend.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
