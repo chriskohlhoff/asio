@@ -35,6 +35,7 @@ nobase_include_HEADERS = \
 	asio/bind_allocator.hpp \
 	asio/bind_cancellation_slot.hpp \
 	asio/bind_executor.hpp \
+	asio/bind_immediate_executor.hpp \
 	asio/buffered_read_stream_fwd.hpp \
 	asio/buffered_read_stream.hpp \
 	asio/buffered_stream_fwd.hpp \

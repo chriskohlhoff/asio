@@ -40,6 +40,7 @@ check_PROGRAMS = \
 	unit/bind_allocator \
 	unit/bind_cancellation_slot \
 	unit/bind_executor \
+	unit/bind_immediate_executor \
 	unit/buffered_read_stream \
 	unit/buffered_stream \
 	unit/buffered_write_stream \
@@ -263,6 +264,7 @@ TESTS = \
 	unit/bind_allocator \
 	unit/bind_cancellation_slot \
 	unit/bind_executor \
+	unit/bind_immediate_executor \
 	unit/buffered_read_stream \
 	unit/buffered_stream \
 	unit/buffered_write_stream \
@@ -484,6 +486,7 @@ unit_basic_writable_pipe_SOURCES = unit/basic_writable_pipe.cpp
 unit_bind_allocator_SOURCES = unit/bind_allocator.cpp
 unit_bind_cancellation_slot_SOURCES = unit/bind_cancellation_slot.cpp
 unit_bind_executor_SOURCES = unit/bind_executor.cpp
+unit_bind_immediate_executor_SOURCES = unit/bind_immediate_executor.cpp
 unit_buffer_SOURCES = unit/buffer.cpp
 unit_buffer_registration_SOURCES = unit/buffer_registration.cpp
 unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp

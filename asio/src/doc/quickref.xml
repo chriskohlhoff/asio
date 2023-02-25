@@ -240,6 +240,7 @@
             <member><link linkend="asio.reference.bind_allocator">bind_allocator</link></member>
             <member><link linkend="asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
             <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
+            <member><link linkend="asio.reference.bind_immediate_executor">bind_immediate_executor</link></member>
             <member><link linkend="asio.reference.co_spawn">co_spawn</link></member>
             <member><link linkend="asio.reference.consign">consign</link></member>
             <member><link linkend="asio.reference.dispatch">dispatch</link></member>

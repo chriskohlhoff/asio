@@ -49,6 +49,7 @@
 #include "asio/bind_allocator.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/bind_executor.hpp"
+#include "asio/bind_immediate_executor.hpp"
 #include "asio/buffer.hpp"
 #include "asio/buffer_registration.hpp"
 #include "asio/buffered_read_stream_fwd.hpp"

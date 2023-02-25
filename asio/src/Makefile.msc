@@ -142,6 +142,7 @@ UNIT_TEST_EXES = \
 	tests\unit\bind_allocator.exe \
 	tests\unit\bind_cancellation_slot.exe \
 	tests\unit\bind_executor.exe \
+	tests\unit\bind_immediate_executor.exe \
 	tests\unit\buffered_read_stream.exe \
 	tests\unit\buffered_stream.exe \
 	tests\unit\buffered_write_stream.exe \
