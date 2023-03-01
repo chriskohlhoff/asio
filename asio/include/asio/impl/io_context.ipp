@@ -54,6 +54,7 @@ io_context::impl_type& io_context::add_impl(io_context::impl_type* impl)
 
 io_context::~io_context()
 {
+  shutdown();
 }
 
 io_context::count_type io_context::run()
