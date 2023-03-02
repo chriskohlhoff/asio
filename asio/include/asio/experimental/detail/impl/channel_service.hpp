@@ -211,7 +211,8 @@ void channel_service<Mutex>::close(
   }
 
   impl.send_state_ = closed;
-  impl.receive_state_ = closed;
+  if (impl.receive_state_ != buffer)
+    impl.receive_state_ = closed;
 }
 
 template <typename Mutex>

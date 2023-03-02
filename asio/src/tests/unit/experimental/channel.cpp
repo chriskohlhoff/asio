@@ -155,6 +155,42 @@ void buffered_channel_test()
   ctx.run();
 
   ASIO_CHECK(!ec2);
+
+  bool b6 = ch1.try_send(asio::error_code(), "goodbye");
+
+  ASIO_CHECK(b6);
+
+  ch1.close();
+
+  asio::error_code ec4;
+  std::string s5;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec4 = ec;
+        s5 = std::move(s);
+      });
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(!ec4);
+  ASIO_CHECK(s5 == "goodbye");
+
+  asio::error_code ec5;
+  std::string s6;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec5 = ec;
+        s6 = std::move(s);
+      });
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(ec5 == asio::experimental::channel_errc::channel_closed);
+  ASIO_CHECK(s6.empty());
 };
 
 void buffered_error_channel_test()
