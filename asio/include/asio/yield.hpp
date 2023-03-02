@@ -10,12 +10,25 @@
 
 #include "coroutine.hpp"
 
+#if defined(__clang__)
+# define GCC_SUPRESS_WARNING_FALLTROUGH _Pragma("GCC diagnostic push")\
+										_Pragma("GCC diagnostic ignored \"-Wimplicit-fallthrough\"")
+# define GCC_SUPRESS_WARNING_POP  _Pragma("GCC diagnostic pop")
+#else
+# define GCC_SUPRESS_WARNING_FALLTROUGH
+# define GCC_SUPRESS_WARNING_POP
+#endif
+
 #ifndef reenter
-# define reenter(c) ASIO_CORO_REENTER(c)
+# define reenter(c) GCC_SUPRESS_WARNING_FALLTROUGH \
+					ASIO_CORO_REENTER(c) \
+					GCC_SUPRESS_WARNING_POP
 #endif
 
 #ifndef yield
-# define yield ASIO_CORO_YIELD
+# define yield  GCC_SUPRESS_WARNING_FALLTROUGH \
+				ASIO_CORO_YIELD \
+			    GCC_SUPRESS_WARNING_POP
 #endif
 
 #ifndef fork
