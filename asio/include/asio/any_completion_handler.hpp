@@ -579,7 +579,8 @@ public:
   any_completion_handler& operator=(
       any_completion_handler&& other) ASIO_NOEXCEPT
   {
-    any_completion_handler(other).swap(*this);
+    any_completion_handler(
+        ASIO_MOVE_CAST(any_completion_handler)(other)).swap(*this);
     return *this;
   }
 
