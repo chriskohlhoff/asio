@@ -2751,9 +2751,9 @@ struct hex_literal<bytes<Bytes...>, Hi, Lo, Chars...> :
       static_cast<unsigned char>(
         Lo >= 'A' && Lo <= 'F' ? Lo - 'A' + 10 :
           (Lo >= 'a' && Lo <= 'f' ? Lo - 'a' + 10 : Lo - '0')) |
-      (static_cast<unsigned char>(
+      ((static_cast<unsigned char>(
         Hi >= 'A' && Hi <= 'F' ? Hi - 'A' + 10 :
-          (Hi >= 'a' && Hi <= 'f' ? Hi - 'a' + 10 : Hi - '0')) << 4)
+          (Hi >= 'a' && Hi <= 'f' ? Hi - 'a' + 10 : Hi - '0'))) << 4)
     >, Chars...> {};
 
 template <unsigned char... Bytes, char Char>
