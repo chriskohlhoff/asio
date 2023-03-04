@@ -168,7 +168,10 @@ void win_iocp_io_context::shutdown()
   }
 
   if (timer_thread_.get())
+  {
     timer_thread_->join();
+    timer_thread_.reset();
+  }
 }
 
 asio::error_code win_iocp_io_context::register_handle(
