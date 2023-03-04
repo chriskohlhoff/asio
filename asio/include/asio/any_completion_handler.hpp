@@ -559,7 +559,10 @@ public:
   }
 
   template <typename H, typename Handler = typename decay<H>::type>
-  any_completion_handler(H&& h)
+  any_completion_handler(H&& h,
+      typename constraint<
+        !is_same<typename decay<H>::type, any_completion_handler>::value
+      >::type = 0)
     : fn_table_(
         &detail::any_completion_handler_fn_table_instance<
           Handler, Signatures...>::value),
