@@ -70,6 +70,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the operation object.
+    ASIO_ASSUME(base != 0);
     resolve_endpoint_op* o(static_cast<resolve_endpoint_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
 

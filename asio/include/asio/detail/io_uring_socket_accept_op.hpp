@@ -56,6 +56,7 @@ public:
 
   static void do_prepare(io_uring_operation* base, ::io_uring_sqe* sqe)
   {
+    ASIO_ASSUME(base != 0);
     io_uring_socket_accept_op_base* o(
         static_cast<io_uring_socket_accept_op_base*>(base));
 
@@ -73,6 +74,7 @@ public:
 
   static bool do_perform(io_uring_operation* base, bool after_completion)
   {
+    ASIO_ASSUME(base != 0);
     io_uring_socket_accept_op_base* o(
         static_cast<io_uring_socket_accept_op_base*>(base));
 
@@ -147,6 +149,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    ASIO_ASSUME(base != 0);
     io_uring_socket_accept_op* o(static_cast<io_uring_socket_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
 
@@ -221,6 +224,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    ASIO_ASSUME(base != 0);
     io_uring_socket_move_accept_op* o(
         static_cast<io_uring_socket_move_accept_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };

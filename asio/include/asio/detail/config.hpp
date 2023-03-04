@@ -2118,6 +2118,20 @@
 # define ASIO_UNUSED_VARIABLE
 #endif // !defined(ASIO_UNUSED_VARIABLE)
 
+// Helper macro to tell the optimiser what may be assumed to be true.
+#if defined(ASIO_MSVC)
+# define ASIO_ASSUME(expr) __assume(expr)
+#elif defined(__clang__)
+# if __has_builtin(__builtin_assume)
+#  define ASIO_ASSUME(expr) __builtin_assume(expr)
+# endif // __has_builtin(__builtin_assume)
+#elif defined(__GNUC__)
+# define ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
+#endif // defined(__GNUC__)
+#if !defined(ASIO_ASSUME)
+# define ASIO_ASSUME (void)0
+#endif // !defined(ASIO_ASSUME)
+
 // Support the co_await keyword on compilers known to allow it.
 #if !defined(ASIO_HAS_CO_AWAIT)
 # if !defined(ASIO_DISABLE_CO_AWAIT)

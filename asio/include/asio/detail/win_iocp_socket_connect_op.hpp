@@ -47,6 +47,7 @@ public:
 
   static status do_perform(reactor_op* base)
   {
+    ASIO_ASSUME(base != 0);
     win_iocp_socket_connect_op_base* o(
         static_cast<win_iocp_socket_connect_op_base*>(base));
 
@@ -80,6 +81,7 @@ public:
     asio::error_code ec(result_ec);
 
     // Take ownership of the operation object.
+    ASIO_ASSUME(base != 0);
     win_iocp_socket_connect_op* o(
         static_cast<win_iocp_socket_connect_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };

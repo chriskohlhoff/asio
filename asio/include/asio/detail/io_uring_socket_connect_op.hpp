@@ -50,6 +50,7 @@ public:
 
   static void do_prepare(io_uring_operation* base, ::io_uring_sqe* sqe)
   {
+    ASIO_ASSUME(base != 0);
     io_uring_socket_connect_op_base* o(
         static_cast<io_uring_socket_connect_op_base*>(base));
 
@@ -90,6 +91,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    ASIO_ASSUME(base != 0);
     io_uring_socket_connect_op* o
       (static_cast<io_uring_socket_connect_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };

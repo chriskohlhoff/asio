@@ -50,6 +50,7 @@ public:
 
   static status do_perform(reactor_op* base)
   {
+    ASIO_ASSUME(base != 0);
     reactive_socket_send_op_base* o(
         static_cast<reactive_socket_send_op_base*>(base));
 
@@ -121,6 +122,7 @@ public:
       std::size_t /*bytes_transferred*/)
   {
     // Take ownership of the handler object.
+    ASIO_ASSUME(base != 0);
     reactive_socket_send_op* o(static_cast<reactive_socket_send_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
 
@@ -157,6 +159,7 @@ public:
   static void do_immediate(operation* base, bool, const void* io_ex)
   {
     // Take ownership of the handler object.
+    ASIO_ASSUME(base != 0);
     reactive_socket_send_op* o(static_cast<reactive_socket_send_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
 

@@ -63,6 +63,7 @@ public:
       const asio::error_code&, std::size_t)
   {
     // Take ownership of the operation object.
+    ASIO_ASSUME(base != 0);
     winrt_resolve_op* o(static_cast<winrt_resolve_op*>(base));
     ptr p = { asio::detail::addressof(o->handler_), o, o };
 
