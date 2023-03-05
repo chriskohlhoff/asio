@@ -169,6 +169,11 @@ void io_context::service::fork_service(io_context::fork_event)
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
+int io_context::get_concurrency_hint() const
+{
+  return impl_.concurrency_hint();
+}
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
