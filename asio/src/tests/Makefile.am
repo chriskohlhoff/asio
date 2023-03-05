@@ -148,6 +148,7 @@ check_PROGRAMS = \
 	unit/serial_port \
 	unit/serial_port_base \
 	unit/signal_set \
+	unit/signal_set_base \
 	unit/socket_base \
 	unit/static_thread_pool \
 	unit/steady_timer \
@@ -367,6 +368,7 @@ TESTS = \
 	unit/serial_port \
 	unit/serial_port_base \
 	unit/signal_set \
+	unit/signal_set_base \
 	unit/socket_base \
 	unit/static_thread_pool \
 	unit/steady_timer \
@@ -596,6 +598,7 @@ unit_registered_buffer_SOURCES = unit/registered_buffer.cpp
 unit_serial_port_SOURCES = unit/serial_port.cpp
 unit_serial_port_base_SOURCES = unit/serial_port_base.cpp
 unit_signal_set_SOURCES = unit/signal_set.cpp
+unit_signal_set_base_SOURCES = unit/signal_set_base.cpp
 unit_socket_base_SOURCES = unit/socket_base.cpp
 unit_static_thread_pool_SOURCES = unit/static_thread_pool.cpp
 unit_steady_timer_SOURCES = unit/steady_timer.cpp

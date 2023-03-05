@@ -66,6 +66,9 @@ void test()
     set1.add(1);
     set1.add(1, ec);
 
+    set1.add(1, signal_set::flags::dont_care);
+    set1.add(1, signal_set::flags::dont_care, ec);
+
     set1.remove(1);
     set1.remove(1, ec);
 

@@ -89,6 +89,7 @@
 #  include <sys/filio.h>
 #  include <sys/sockio.h>
 # endif
+# include <signal.h>
 #endif
 
 #include "asio/detail/push_options.hpp"
@@ -178,6 +179,7 @@ typedef int signed_size_type;
 # define ASIO_OS_DEF_AI_V4MAPPED 0x800
 # define ASIO_OS_DEF_AI_ALL 0x100
 # define ASIO_OS_DEF_AI_ADDRCONFIG 0x400
+# define ASIO_OS_DEF_SA_RESTART 0x1
 #elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 typedef SOCKET socket_type;
 const SOCKET invalid_socket = INVALID_SOCKET;
@@ -285,6 +287,7 @@ const int max_iov_len = 64;
 # else
 const int max_iov_len = 16;
 # endif
+# define ASIO_OS_DEF_SA_RESTART 0x1
 #else
 typedef int socket_type;
 const int invalid_socket = -1;
@@ -404,6 +407,7 @@ const int max_iov_len = IOV_MAX;
 // POSIX platforms are not required to define IOV_MAX.
 const int max_iov_len = 16;
 # endif
+# define ASIO_OS_DEF_SA_RESTART SA_RESTART
 #endif
 const int custom_socket_option_level = 0xA5100000;
 const int enable_connection_aborted_option = 1;

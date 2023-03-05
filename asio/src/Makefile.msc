@@ -243,6 +243,7 @@ UNIT_TEST_EXES = \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
 	tests\unit\signal_set.exe \
+	tests\unit\signal_set_base.exe \
 	tests\unit\socket_base.exe \
 	tests\unit\static_thread_pool.exe \
 	tests\unit\steady_timer.exe \
