@@ -266,6 +266,7 @@
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.any_completion_handler">any_completion_handler</link></member>
+            <member><link linkend="asio.reference.any_completion_handler_allocator">any_completion_handler_allocator</link></member>
             <member><link linkend="asio.reference.append_t">append_t</link></member>
             <member><link linkend="asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>

@@ -133,7 +133,8 @@
             not(contains(compoundname, 'context_impl')) and
             not(contains(compoundname, 'initiate_')) and
             not(contains(compoundname, '_adapter')) and
-            not(contains(compoundname, '_is_deprecated'))">
+            not(contains(compoundname, '_is_deprecated')) or
+            contains(compoundname, 'asio::any_completion_handler')">
           <xsl:call-template name="class"/>
         </xsl:if>
       </xsl:when>
