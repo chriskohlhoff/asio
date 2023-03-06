@@ -367,6 +367,12 @@
          select="concat(substring-before($name, ','), '_comma_', substring-after($name, ','))"/>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="contains($name, '&quot;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&quot;'), '_quot_', substring-after($name, '&quot;'))"/>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="contains($name, '...')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
@@ -1645,6 +1651,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'CancellationCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Chars'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Clock'">
