@@ -172,7 +172,8 @@ get_associated_executor(const T& t, const Executor& ex,
  * ExecutionContext::executor_type>::get(t, ctx.get_executor())</tt>
  */
 template <typename T, typename ExecutionContext>
-ASIO_NODISCARD inline typename ExecutionContext::executor_type
+ASIO_NODISCARD inline typename associated_executor<T,
+    typename ExecutionContext::executor_type>::type
 get_associated_executor(const T& t, ExecutionContext& ctx,
     typename constraint<is_convertible<ExecutionContext&,
       execution_context&>::value>::type = 0) ASIO_NOEXCEPT
