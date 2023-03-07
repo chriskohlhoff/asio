@@ -41,6 +41,12 @@ public:
     /// fail with error::interrupted.
     restart = implementation_defined,
 
+    /// Do not generate SIGCHLD when children stop or stopped children continue.
+    nocldstop = implementation_defined,
+
+    /// Do not transform children into zombies when they terminate.
+    nocldwait = implementation_defined,
+
     /// Special value to indicate that the signal registration does not care
     /// which flags are set, and so will not conflict with any prior
     /// registrations of the same signal.
@@ -54,6 +60,8 @@ public:
   {
     none = 0,
     restart = ASIO_OS_DEF(SA_RESTART),
+    nocldstop = ASIO_OS_DEF(SA_NOCLDSTOP),
+    nocldwait = ASIO_OS_DEF(SA_NOCLDWAIT),
     dont_care = -1
   };
 
@@ -65,6 +73,8 @@ public:
     {
       none = 0,
       restart = ASIO_OS_DEF(SA_RESTART),
+      nocldstop = ASIO_OS_DEF(SA_NOCLDSTOP),
+      nocldwait = ASIO_OS_DEF(SA_NOCLDWAIT),
       dont_care = -1
     };
   };
