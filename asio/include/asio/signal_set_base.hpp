@@ -41,6 +41,13 @@ public:
     /// fail with error::interrupted.
     restart = implementation_defined,
 
+    /// Do not generate SIGCHLD when child processes stop or stopped child
+    /// processes continue.
+    no_child_stop = implementation_defined,
+
+    /// Do not transform child processes into zombies when they terminate.
+    no_child_wait = implementation_defined,
+
     /// Special value to indicate that the signal registration does not care
     /// which flags are set, and so will not conflict with any prior
     /// registrations of the same signal.
@@ -54,6 +61,8 @@ public:
   {
     none = 0,
     restart = ASIO_OS_DEF(SA_RESTART),
+    no_child_stop = ASIO_OS_DEF(SA_NOCLDSTOP),
+    no_child_wait = ASIO_OS_DEF(SA_NOCLDWAIT),
     dont_care = -1
   };
 
@@ -65,6 +74,8 @@ public:
     {
       none = 0,
       restart = ASIO_OS_DEF(SA_RESTART),
+      no_child_stop = ASIO_OS_DEF(SA_NOCLDSTOP),
+      no_child_wait = ASIO_OS_DEF(SA_NOCLDWAIT),
       dont_care = -1
     };
   };
