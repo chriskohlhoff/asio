@@ -185,7 +185,6 @@ public:
   bool try_receive(implementation_type<Traits, Signatures...>& impl,
       ASIO_MOVE_ARG(Handler) handler);
 
-  // Asynchronously send a new value into the channel.
   // Asynchronously receive a value from the channel.
   template <typename Traits, typename... Signatures,
       typename Handler, typename IoExecutor>
