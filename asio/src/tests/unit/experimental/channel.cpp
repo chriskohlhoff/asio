@@ -17,8 +17,11 @@
 #include "asio/experimental/channel.hpp"
 
 #include <utility>
+#include "asio/bind_executor.hpp"
+#include "asio/bind_immediate_executor.hpp"
 #include "asio/error.hpp"
 #include "asio/io_context.hpp"
+#include "asio/system_executor.hpp"
 #include "../unit_test.hpp"
 
 using namespace asio;
@@ -91,7 +94,7 @@ void unbuffered_channel_test()
   ctx.run();
 
   ASIO_CHECK(!ec2);
-};
+}
 
 void buffered_channel_test()
 {
@@ -191,7 +194,7 @@ void buffered_channel_test()
 
   ASIO_CHECK(ec5 == asio::experimental::channel_errc::channel_closed);
   ASIO_CHECK(s6.empty());
-};
+}
 
 void buffered_error_channel_test()
 {
@@ -246,7 +249,414 @@ void buffered_error_channel_test()
   ctx.run();
 
   ASIO_CHECK(!ec2);
-};
+}
+
+void unbuffered_non_immediate_receive()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = std::move(s);
+      });
+
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+}
+
+void unbuffered_immediate_receive()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      bind_immediate_executor(system_executor(),
+        [&](asio::error_code ec, std::string s)
+        {
+          ec2 = ec;
+          s2 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+}
+
+void unbuffered_executor_receive()
+{
+  io_context ctx;
+  io_context ctx2;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      bind_executor(ctx2,
+        [&](asio::error_code ec, std::string s)
+        {
+          ec2 = ec;
+          s2 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx2.run();
+
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+}
+
+void unbuffered_non_immediate_send()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec1 = ec;
+        s1 = std::move(s);
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s2),
+      [&](asio::error_code ec)
+      {
+        ec2 = ec;
+      });
+
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "0123456789");
+  ASIO_CHECK(!ec2);
+}
+
+void unbuffered_immediate_send()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec1 = ec;
+        s1 = std::move(s);
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s2),
+      bind_immediate_executor(system_executor(),
+        [&](asio::error_code ec)
+        {
+          ec2 = ec;
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+  ASIO_CHECK(!ec2);
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "0123456789");
+}
+
+void unbuffered_executor_send()
+{
+  io_context ctx;
+  io_context ctx2;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec1 = ec;
+        s1 = std::move(s);
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s2),
+      bind_executor(ctx2,
+        [&](asio::error_code ec)
+        {
+          ec2 = ec;
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "0123456789");
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx2.run();
+
+  ASIO_CHECK(!ec2);
+}
+
+void buffered_non_immediate_receive()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = std::move(s);
+      });
+
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+}
+
+void buffered_immediate_receive()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      bind_immediate_executor(system_executor(),
+        [&](asio::error_code ec, std::string s)
+        {
+          ec2 = ec;
+          s2 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+
+  ctx.restart();
+  ctx.run();
+}
+
+void buffered_executor_receive()
+{
+  io_context ctx;
+  io_context ctx2;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      bind_executor(ctx2,
+        [&](asio::error_code ec, std::string s)
+        {
+          ec2 = ec;
+          s2 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx2.run();
+
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+}
+
+void buffered_non_immediate_send()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+}
+
+void buffered_immediate_send()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      bind_immediate_executor(system_executor(),
+        [&](asio::error_code ec)
+        {
+          ec1 = ec;
+        }));
+
+  ASIO_CHECK(!ec1);
+
+  ctx.run();
+}
+
+void buffered_executor_send()
+{
+  io_context ctx;
+  io_context ctx2;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "0123456789";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      bind_executor(ctx2,
+        [&](asio::error_code ec)
+        {
+          ec1 = ec;
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx2.run();
+
+  ASIO_CHECK(!ec1);
+}
 
 ASIO_TEST_SUITE
 (
@@ -254,4 +664,16 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(unbuffered_channel_test)
   ASIO_TEST_CASE(buffered_channel_test)
   ASIO_TEST_CASE(buffered_error_channel_test)
+  ASIO_TEST_CASE(unbuffered_non_immediate_receive)
+  ASIO_TEST_CASE(unbuffered_immediate_receive)
+  ASIO_TEST_CASE(unbuffered_executor_receive)
+  ASIO_TEST_CASE(unbuffered_non_immediate_send)
+  ASIO_TEST_CASE(unbuffered_immediate_send)
+  ASIO_TEST_CASE(unbuffered_executor_send)
+  ASIO_TEST_CASE(buffered_non_immediate_receive)
+  ASIO_TEST_CASE(buffered_immediate_receive)
+  ASIO_TEST_CASE(buffered_executor_receive)
+  ASIO_TEST_CASE(buffered_non_immediate_send)
+  ASIO_TEST_CASE(buffered_immediate_send)
+  ASIO_TEST_CASE(buffered_executor_send)
 )

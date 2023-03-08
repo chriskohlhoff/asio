@@ -38,6 +38,11 @@ public:
     return ASIO_MOVE_CAST(Payload)(payload_);
   }
 
+  void immediate()
+  {
+    func_(this, immediate_op, 0);
+  }
+
   void complete()
   {
     func_(this, complete_op, 0);
@@ -121,7 +126,10 @@ public:
     if (a != channel_operation::destroy_op)
     {
       ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_));
-      w.complete(handler, handler.handler_);
+      if (a == channel_operation::immediate_op)
+        w.immediate(handler, handler.handler_, 0);
+      else
+        w.complete(handler, handler.handler_);
       ASIO_HANDLER_INVOCATION_END;
     }
   }
