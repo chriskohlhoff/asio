@@ -64,6 +64,12 @@ public:
   auto async_send(Args... args,
       ASIO_MOVE_ARG(CompletionToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(Executor))
+    -> decltype(
+        async_initiate<CompletionToken, void (asio::error_code)>(
+          declval<typename conditional<false, CompletionToken,
+            Derived>::type::initiate_async_send>(), token,
+          declval<typename conditional<false, CompletionToken,
+            Derived>::type::payload_type>()))
   {
     typedef typename Derived::payload_type payload_type;
     typedef typename detail::channel_message<R(Args...)> message_type;
@@ -113,6 +119,12 @@ public:
   auto async_send(Args... args,
       ASIO_MOVE_ARG(CompletionToken) token
         ASIO_DEFAULT_COMPLETION_TOKEN(Executor))
+    -> decltype(
+        async_initiate<CompletionToken, void (asio::error_code)>(
+          declval<typename conditional<false, CompletionToken,
+            Derived>::type::initiate_async_send>(), token,
+          declval<typename conditional<false, CompletionToken,
+            Derived>::type::payload_type>()))
   {
     typedef typename Derived::payload_type payload_type;
     typedef typename detail::channel_message<R(Args...)> message_type;

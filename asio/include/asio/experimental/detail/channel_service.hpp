@@ -536,6 +536,7 @@ struct channel_service<Mutex>::implementation_type<
   implementation_type()
     : size_(0)
   {
+    first_.count_ = 0;
   }
 
   // Move from another buffer.
@@ -636,7 +637,7 @@ private:
   struct buffered_value
   {
     asio::error_code value_;
-    std::size_t count_ = 0;
+    std::size_t count_;
   };
 
   struct value_handler
