@@ -7,6 +7,111 @@
 
 [section:history Revision History]
 
+[heading Asio 1.27.0]
+
+* Added the ability to customise the execution of a completion handler when an
+  operation completes immediately. This change adds the
+  `associated_immediate_executor` associator trait, `bind_immediate_executor`
+  function, and `immediate_executor_binder` adapter. When a supported operation
+  completes immediately (that is, within the initiating function) the
+  associated immmediate executor is obtained, and the completion handler is
+  delivered through that executor as if by using `asio::dispatch` on that
+  executor. By default, the immediate executor delivers the completion handler
+  as if using `asio::post` via the operations I/O executors. For example, to
+  allow a recursive call to the completion handler of an `async_read_some`
+  operation, we may specify that immediate completion is delivered via a
+  `system_executor`:[br]
+  ``
+  my_socket.async_read_some(my_buffer,
+      bind_immediate_executor(
+        system_executor(),
+        [](error_code e, size_t n)
+        {
+          // ...
+        }
+      )
+    );
+  ``[br]
+  Immediate execution is currently supported for asynchronous operations on
+  reactor-based sockets and descriptors, and for asynchronous operations on
+  channels.
+
+* Added user-defined literals for buffer types. The `_buf` literal suffix,
+  defined in namespace `asio::buffer_literals`, may be used to create
+  const_buffer objects from string, binary integer, and hexadecimal integer
+  literals. These buffer literals may be arbitrarily long. For example:[br]
+  [pre
+  using namespace asio::buffer_literals;
+
+  asio::const_buffer b1 = "hello"_buf;
+  asio::const_buffer b2 = 0xdeadbeef_buf;
+  asio::const_buffer b3 = 0x01234567'89abcdef'01234567'89abcdef_buf;
+  asio::const_buffer b4 = 0b1010101011001100_buf;
+  ][br]
+  The memory associated with a buffer literal is valid for the lifetime of the
+  program. This means that the buffer can be safely used with asynchronous
+  operations:[br]
+  ``
+  async_write(my_socket, "hello"_buf, my_handler);
+  ``[br]
+
+* Added a new protocol type `local::seq_packet_protocol` to represent `AF_UNIX`
+  with `SOCK_SEQPACKET`.
+
+* Exposed `sigaction()` flags via optional argument to `signal_set::add`. When
+  registering a signal, it is now possible to pass flags that specify the
+  behaviour associated with the signal. These flags are specified as an enum
+  type in a new class, signal_set_base, and are passed to the underlying
+  `sigaction()` call. For example:[br]
+  ``
+  asio::signal_set sigs(my_io_context);
+  sigs.add(SIGINT, asio::signal_set::flags::restart);
+  ``[br]
+  Specifying flags other than `flags::dont_care` will fail unless `sigaction()`
+  is supported by the target operating system. Since signal registration is
+  global, conflicting flags (multiple registrations that pass differing flags
+  other than `flags::dont_care`) will also result in an error.
+
+* Change `allocator_binder`, `executor_binder`, and `cancellation_slot_binder`
+  to support detection of unspecialised associators.
+
+* Fixed ambiguity in `associated_cancellation_slot<reference_wrapper>::get()`.
+
+* Fixed `awaitable` handling for completion signatures containing
+  `std::exception_ptr`.
+
+* Fixed `experimental::channel` `try_send` failure after a `cancel`.
+
+* Fixed `thread_pool::join()` deadlock when the pool has no internal threads.
+
+* Fixed pipe `release()` when using [^io_uring].
+
+* Fixed a data initialisation issue in the [^io_uring] backend.
+
+* Fixed a dangling reference issue in the execution context overload of
+  `get_associated_executor`.
+
+* Ensured buffered messages can still be received when an
+  `experimental::channel` is closed.
+
+* Fixed the `any_completion_handler` assignment operator to work correctly.
+
+* Constrained the constructor of the move-only class template
+  `any_completion_handler` to prevent accidental copying
+
+* Suppressed spurious 'potential null dereference' warnings.
+
+* Changed to use `uint64_t` for OpenSSL options, to match OpenSSL 3.
+
+* Fixed `deferred` interoperability with multiple completion signatures.
+
+* Fixed channels to support C++11 and later. Note that for C++11 and C++14,
+  support is limited to channels with a single completion signature, or
+  channels with a void() signature (plus the error signature added by the
+  channel traits).
+
+* Added `any_completion_handler` to the documentation.
+
 [heading Asio 1.26.0]
 
 * Fixed `spawn` and `co_spawn` implementations to dispatch cancellation
