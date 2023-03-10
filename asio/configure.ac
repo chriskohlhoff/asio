@@ -1,7 +1,7 @@
 AC_INIT(asio, [1.26.0])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE([tar-ustar])
+AM_INIT_AUTOMAKE([tar-pax])
 
 AC_CANONICAL_HOST
 AM_PROG_CC_C_O
