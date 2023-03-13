@@ -210,7 +210,7 @@ struct prefer_only :
 
   template <typename E, typename T = decltype(prefer_only::static_query<E>())>
   static ASIO_CONSTEXPR const T static_query_v
-    = prefer_only::static_query<E>();
+    = {};
 #endif // defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT)
        //   && defined(ASIO_HAS_SFINAE_VARIABLE_TEMPLATES)
 
