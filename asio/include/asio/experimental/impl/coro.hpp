@@ -582,7 +582,7 @@ struct coro_promise final :
       typename coro_traits<Yield, Return, Executor>::input_type,
       typename coro_traits<Yield, Return, Executor>::return_type>
 {
-  using coro_type = coro<Yield, Return, Executor>;
+  using coro_type = coro<Yield, Return, Executor, Allocator>;
 
   auto handle()
   {
@@ -668,9 +668,9 @@ struct coro_promise final :
   }
 
   using coro_promise_exchange<
-      typename coro_traits<Yield, Return, Executor>::yield_type,
-      typename coro_traits<Yield, Return, Executor>::input_type,
-      typename coro_traits<Yield, Return, Executor>::return_type>::yield_value;
+      typename coro_traits<Yield, Return, Executor, Allocator>::yield_type,
+      typename coro_traits<Yield, Return, Executor, Allocator>::input_type,
+      typename coro_traits<Yield, Return, Executor, Allocator>::return_type>::yield_value;
 
   auto await_transform(this_coro::executor_t) const
   {
@@ -864,14 +864,14 @@ struct coro_promise final :
     return result{cancel, throw_if_cancelled.value};
   }
 
-  template <typename Yield_, typename Return_, typename Executor_>
-  auto await_transform(coro<Yield_, Return_, Executor_>& kr) -> decltype(auto)
+  template <typename Yield_, typename Return_, typename Executor_, typename Allocator_>
+  auto await_transform(coro<Yield_, Return_, Executor_, Allocator_>& kr) -> decltype(auto)
   {
     return kr;
   }
 
-  template <typename Yield_, typename Return_, typename Executor_>
-  auto await_transform(coro<Yield_, Return_, Executor_>&& kr)
+  template <typename Yield_, typename Return_, typename Executor_, typename Allocator_>
+  auto await_transform(coro<Yield_, Return_, Executor_, Allocator_>&& kr)
   {
     return std::move(kr);
   }
