@@ -18,6 +18,7 @@
 #include "asio/experimental/promise.hpp"
 
 #include "asio/bind_cancellation_slot.hpp"
+#include "asio/append.hpp"
 #include "asio/compose.hpp"
 #include "asio/deferred.hpp"
 #include "asio/experimental/use_promise.hpp"
@@ -83,7 +84,7 @@ void promise_slot_tester()
   const auto started_when = steady_clock::now();
   timer1.expires_at(started_when + milliseconds(2500));
   timer2.expires_at(started_when + milliseconds(1000));
-  auto p = timer1.async_wait(experimental::use_promise);
+  auto p = timer1.async_wait(asio::append(experimental::use_promise, 123));
 
   steady_clock::time_point completed_when;
   asio::error_code ec;
@@ -93,8 +94,9 @@ void promise_slot_tester()
 
   p(asio::bind_cancellation_slot(
         sig.slot(),
-        [&](asio::error_code ec_)
+        [&](asio::error_code ec_, int i)
         {
+          ASIO_CHECK(i == 123);
           ec = ec_;
           called = true;
           completed_when = steady_clock::now();

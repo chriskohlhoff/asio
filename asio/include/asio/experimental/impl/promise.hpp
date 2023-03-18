@@ -228,7 +228,12 @@ struct promise_handler<void(Ts...), Executor, Allocator>
     impl_->done = true;
 
     if (impl_->completion)
-      impl_->complete(std::move(ts)...);
+      impl_->apply(
+        [this](std::remove_reference_t<Ts>... ts_)
+        {
+          impl_->complete(std::move(ts_)...);
+        }
+      );
   }
 };
 
