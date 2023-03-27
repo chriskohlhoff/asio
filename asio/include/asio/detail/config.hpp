@@ -2149,11 +2149,11 @@
 # if __has_builtin(__builtin_assume)
 #  define ASIO_ASSUME(expr) __builtin_assume(expr)
 # endif // __has_builtin(__builtin_assume)
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5))
 # define ASIO_ASSUME(expr) if (expr) {} else { __builtin_unreachable(); }
 #endif // defined(__GNUC__)
 #if !defined(ASIO_ASSUME)
-# define ASIO_ASSUME (void)0
+# define ASIO_ASSUME(expr) (void)0
 #endif // !defined(ASIO_ASSUME)
 
 // Support the co_await keyword on compilers known to allow it.
