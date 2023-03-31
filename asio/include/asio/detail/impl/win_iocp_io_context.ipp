@@ -530,6 +530,7 @@ size_t win_iocp_io_context::do_one(DWORD msec,
 
 DWORD win_iocp_io_context::get_gqcs_timeout()
 {
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
   OSVERSIONINFOEX osvi;
   ZeroMemory(&osvi, sizeof(osvi));
   osvi.dwOSVersionInfoSize = sizeof(osvi);
@@ -542,6 +543,9 @@ DWORD win_iocp_io_context::get_gqcs_timeout()
     return INFINITE;
 
   return default_gqcs_timeout;
+#else // !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
+  return INFINITE;
+#endif // !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
 }
 
 void win_iocp_io_context::do_add_timer_queue(timer_queue_base& queue)
