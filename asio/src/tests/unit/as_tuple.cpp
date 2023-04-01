@@ -17,9 +17,11 @@
 #include "asio/as_tuple.hpp"
 
 #include "asio/bind_executor.hpp"
+#include "asio/deferred.hpp"
 #include "asio/io_context.hpp"
 #include "asio/post.hpp"
 #include "asio/system_timer.hpp"
+#include "asio/use_future.hpp"
 #include "unit_test.hpp"
 
 void as_tuple_test()
@@ -49,6 +51,51 @@ void as_tuple_test()
   io2.run();
 
   ASIO_CHECK(count == 1);
+
+# if defined(ASIO_HAS_DECLTYPE)
+  timer1.async_wait(
+      asio::as_tuple(
+        asio::bind_executor(io2.get_executor(),
+          asio::deferred)))(
+            [&count](std::tuple<asio::error_code>)
+            {
+              ++count;
+            });
+
+  ASIO_CHECK(count == 1);
+
+  io1.restart();
+  io1.run();
+
+  ASIO_CHECK(count == 1);
+
+  io2.restart();
+  io2.run();
+
+  ASIO_CHECK(count == 2);
+# endif // defined(ASIO_HAS_DECLTYPE)
+
+# if defined(ASIO_HAS_STD_FUTURE_CLASS)
+  std::future<std::tuple<asio::error_code> > f = timer1.async_wait(
+      asio::as_tuple(
+        asio::bind_executor(io2.get_executor(),
+          asio::use_future)));
+
+  ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
+      == std::future_status::timeout);
+
+  io1.restart();
+  io1.run();
+
+  ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
+      == std::future_status::timeout);
+
+  io2.restart();
+  io2.run();
+
+  ASIO_CHECK(f.wait_for(std::chrono::seconds(0))
+      == std::future_status::ready);
+# endif // defined(ASIO_HAS_STD_FUTURE_CLASS)
 #endif // defined(ASIO_HAS_STD_TUPLE)
        //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
 }
