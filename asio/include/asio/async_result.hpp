@@ -1349,7 +1349,10 @@ struct is_async_operation :
 template <typename T, typename = void, typename = void, typename = void,
     typename = void, typename = void, typename = void, typename = void,
     typename = void, typename = void>
-struct is_async_operation :
+struct is_async_operation;
+
+template <typename T>
+struct is_async_operation<T> :
   detail::is_async_operation_call<
     T(detail::async_operation_probe)>
 {
@@ -1574,7 +1577,10 @@ using completion_signature_of_t =
 template <typename T, typename = void, typename = void, typename = void,
     typename = void, typename = void, typename = void, typename = void,
     typename = void, typename = void>
-struct completion_signature_of :
+struct completion_signature_of;
+
+template <typename T>
+struct completion_signature_of<T> :
   result_of<T(detail::completion_signature_probe)>::type
 {
 };
