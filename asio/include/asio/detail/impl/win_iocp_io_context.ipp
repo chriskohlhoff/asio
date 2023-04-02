@@ -51,7 +51,7 @@ struct win_iocp_io_context::thread_function
 
 struct win_iocp_io_context::work_finished_on_block_exit
 {
-  ~work_finished_on_block_exit()
+  ~work_finished_on_block_exit() ASIO_NOEXCEPT_IF(false)
   {
     io_context_->work_finished();
   }
