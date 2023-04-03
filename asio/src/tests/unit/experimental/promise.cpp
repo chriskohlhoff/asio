@@ -17,6 +17,7 @@
 // Test that header file is self-contained.
 #include "asio/experimental/promise.hpp"
 
+#include "asio/append.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/compose.hpp"
 #include "asio/deferred.hpp"
@@ -38,13 +39,13 @@ void promise_tester()
   const auto started_when = steady_clock::now();
   timer1.expires_at(started_when + milliseconds(5000));
   timer2.expires_at(started_when + milliseconds(1000));
-  auto p = timer1.async_wait(experimental::use_promise);
+  auto p1 = timer1.async_wait(experimental::use_promise);
 
   steady_clock::time_point completed_when;
   asio::error_code ec;
   bool called = false;
 
-  p([&](asio::error_code ec_)
+  p1([&](asio::error_code ec_)
       {
         ec = ec_;
         called = true;
@@ -56,19 +57,46 @@ void promise_tester()
       [&](asio::error_code)
       {
         timer2_done = steady_clock::now();
-        p.cancel();
+        p1.cancel();
       });
 
   ctx.run();
 
   static_assert(
-      asio::is_async_operation<decltype(p)>::value,
+      asio::is_async_operation<decltype(p1)>::value,
       "promise is async_op");
 
   ASIO_CHECK(timer2_done + milliseconds(1) > started_when);
   ASIO_CHECK(completed_when > timer2_done);
   ASIO_CHECK(called);
   ASIO_CHECK(ec == error::operation_aborted);
+
+  timer1.expires_after(milliseconds(0));
+  auto p2 = timer1.async_wait(
+      asio::append(experimental::use_promise, 123));
+
+  ec = asio::error::would_block;
+  called = false;
+
+  p2([&](asio::error_code ec_, int i)
+      {
+        ASIO_CHECK(i == 123);
+        ec = ec_;
+        called = true;
+      });
+
+  ASIO_CHECK(ec == asio::error::would_block);
+  ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  static_assert(
+      asio::is_async_operation<decltype(p2)>::value,
+      "promise is async_op");
+
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(called);
 }
 
 void promise_slot_tester()
