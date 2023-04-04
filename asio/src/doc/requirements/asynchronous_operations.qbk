@@ -252,6 +252,15 @@ Executor requirements]. The type `Executor2` is
 type `Executor2` obtained by performing
 `get_associated_executor(completion_handler, ex1)`.
 
+[heading Associated immediate completion executor]
+
+A completion handler object of type `CompletionHandler` has an associated
+immediate executor of type `Executor3` satisfying the
+[link asio.reference.Executor1 Executor requirements]. The type `Executor3` is
+`associated_immediate_executor_t<CompletionHandler, Executor1>`. Let `ex3` be a
+value of type `Executor3` obtained by performing
+`get_associated_immediate_executor(completion_handler, ex1)`.
+
 [heading Outstanding work]
 
 If the operation does not complete immediately (that is, the operation does not
@@ -304,28 +313,46 @@ range [half_open_range `0`,[^['N]]]. Let [^T[sub ['i]]] be the [^['i]]th type
 in `Args...` and let [^t[sub ['i]]] be the [^['i]]th completion handler
 argument associated with [^T[sub ['i]]].
 
-Let `f` be a function object, callable as `f()`, that invokes
-`completion_handler` as if by [^completion_handler(forward<T[sub ['0]]>(t[sub
-['0]]), ..., forward<T[sub ['N-1]]>(t[sub ['N-1]]))]. Let `g` be a function
-object, callable as `g()`, that contains a copy of `work2` and when invoked
-performs `dispatch(ex2, bind_allocator(alloc2, std::move(f)))`.
+Let `f` be a function object that:
+
+[mdash] is callable as `f()`, and when so called invokes `completion_handler`
+as if by [^std::move(completion_handler)(forward<T[sub ['0]]>(t[sub ['0]]), ...,
+forward<T[sub ['N-1]]>(t[sub ['N-1]]))];
+
+[mdash] has an associated executor such that `get_associated_executor(f, ex1)`
+returns an executor that is equal to `ex2`; and
+
+[mdash] has an associated allocator such that `get_associated_allocator(f,
+alloc1)` returns an allocator that is equal to `alloc2`.
+
+[inline_note These associated executor and allocator requirements on `f` are
+typically implemented by specialising the associator traits for `f` so that they
+forward to the associator traits for `completion_handler`.]
 
 If an asynchonous operation completes immediately (that is, the operation
 completes within the thread of execution calling the initiating function, and
 before the initiating function returns), the completion handler shall be
-submitted for execution as if by performing `post(ex1, bind_allocator(alloc2,
-std::move(g)))`.
+submitted for execution as if by performing `post(ex1, std::move(f))`.
 
 Otherwise, when the operation completes, the completion handler shall be
-submitted for execution as if by performing `dispatch(ex2,
-bind_allocator(alloc2, std::move(f)))`.
+submitted for execution as if by performing `dispatch(ex2, std::move(f))`.
 
 [heading Optimisation of immediate completion]
 
 If an asynchronous operation completes immediately then, as an optimisation,
-the operation may submit the completion handler for execution by performing
-expression `post(ex2, bind_allocator(alloc2, std::move(f)))`, if that
-expression is well-formed.
+the operation may either:
+
+[mdash] obtain the associated immediate completion executor `ex3` by performing
+`get_associated_immediate_executor(completion_handler, ex1)`, and then
+submit the completion handler for execution as if by performing `dispatch(ex3,
+std::move(f))`; or
+
+[mdash] submit the completion handler for execution by performing the expression
+`post(ex2, std::move(f))`, if that expression is well-formed.
+
+[inline_note If `completion_handler` does not customise the associated immediate
+executor, the behaviour of the first optimisation is equivalent to `post(ex1,
+std::move(f))`.]
 
 [heading Completion handlers and exceptions]
 
