@@ -220,6 +220,47 @@ namespace into scope:
 
   using namespace asio::experimental::awaitable_operators;
 
+[heading Lightweight Coroutines Implementing Asynchonous Operations]
+
+The `experimental::co_composed` template facilitates a lightweight
+implementation of user-defined asynchronous operations using C++20 coroutines.
+The following example illustrates a simple asynchronous operation that
+implements an echo protocol in terms of a coroutine:
+
+  template <typename CompletionToken>
+  auto async_echo(tcp::socket& socket,
+      CompletionToken&& token)
+  {
+    return asio::async_initiate<
+      CompletionToken, void(asio::error_code)>(
+        asio::experimental::co_composed<
+          void(asio::error_code)>(
+            [](auto state, tcp::socket& socket) -> void
+            {
+              try
+              {
+                state.throw_if_cancelled(true);
+                state.reset_cancellation_state(
+                  asio::enable_terminal_cancellation());
+
+                for (;;)
+                {
+                  char data[1024];
+                  std::size_t n = co_await socket.async_read_some(
+                      asio::buffer(data), asio::deferred);
+
+                  co_await asio::async_write(socket,
+                      asio::buffer(data, n), asio::deferred);
+                }
+              }
+              catch (const asio::system_error& e)
+              {
+                co_return {e.code()};
+              }
+            }, socket),
+        token, std::ref(socket));
+  }
+
 [heading See Also]
 
 [link asio.reference.co_spawn co_spawn],
@@ -230,7 +271,7 @@ namespace into scope:
 [link asio.reference.use_awaitable_t use_awaitable_t],
 [link asio.reference.use_awaitable use_awaitable],
 [link asio.reference.this_coro__executor this_coro::executor],
-[link asio.reference.experimental__coro experimental::coro],
+[link asio.reference.experimental__co_composed experimental::co_composed],
 [link asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
 [link asio.overview.composition.coro Resumable C++20 Coroutines],
 [link asio.overview.composition.spawn Stackful Coroutines],
