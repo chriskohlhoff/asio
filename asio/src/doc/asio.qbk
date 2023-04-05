@@ -22,6 +22,7 @@
 [template mdash[] '''&mdash; ''']
 [template hr[] [br]'''<phrase role="silver">'''[mdash]'''</phrase>'''[br]]
 [template half_open_range[text] '''&#91;'''[text])]
+[template sub[x]'''<subscript>'''[x]'''</subscript>''']
 [template indexterm1[id term1] '''<indexterm id="'''[id]'''"><primary>'''[term1]'''</primary></indexterm>''']
 [template indexterm2[id term1 term2] '''<indexterm id="'''[id]'''"><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
 [template inline_note[text] \[['Note:] [text] '''&mdash;'''['end note]\] ]
