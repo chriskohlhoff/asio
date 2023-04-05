@@ -9,10 +9,10 @@
 
 [note This is an experimental feature.]
 
-The [link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_
-`experimental::promise`] type and [link asio.reference.experimental__use_promise
-`experimental::use_promise`] completion token allow eager execution and
-synchronisation of asynchronous operations. For example:
+The [link asio.reference.experimental__promise `experimental::promise`] type
+and [link asio.reference.experimental__use_promise `experimental::use_promise`]
+completion token allow eager execution and synchronisation of asynchronous
+operations. For example:
 
   auto promise = async_read(
       stream, asio::buffer(my_buffer),
@@ -90,7 +90,7 @@ or to wait for all to complete:
 
 [heading See Also]
 
-[link asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_ promise],
+[link asio.reference.experimental__promise promise],
 [link asio.reference.experimental__use_promise use_promise].
 
 [endsect]

@@ -286,7 +286,7 @@
             <member><link linkend="asio.reference.experimental__channel_traits">experimental::channel_traits</link></member>
             <member><link linkend="asio.reference.experimental__coro">experimental::coro</link></member>
             <member><link linkend="asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
-            <member><link linkend="asio.reference.experimental__promise_lt__void_lp_Ts_ellipsis__rp__comma__Executor__gt_">experimental::promise</link></member>
+            <member><link linkend="asio.reference.experimental__promise">experimental::promise</link></member>
             <member><link linkend="asio.reference.experimental__ranged_parallel_group">experimental::ranged_parallel_group</link></member>
             <member><link linkend="asio.reference.experimental__use_coro_t">experimental::use_coro_t</link></member>
             <member><link linkend="asio.reference.experimental__use_promise_t">experimental::use_promise_t</link></member>
