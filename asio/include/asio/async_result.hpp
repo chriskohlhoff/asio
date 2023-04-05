@@ -1320,7 +1320,7 @@ class async_result<detail::async_operation_probe, Sig0, Sig1, Sig2>
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-#if defined(GENERATION_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 
 /// The is_async_operation trait detects whether a type @c T and arguments
 /// @c Args... may be used to initiate an asynchronous operation.
