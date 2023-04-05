@@ -68,6 +68,11 @@ separately-compiled Asio as part of a shared library.
 If using Asio's SSL support, you will also need to add `#include
 <asio/ssl/impl/src.hpp>`.
 
+[heading Debugger support]
+
+Some debugger extensions for use with Asio may be found at
+[@https://github.com/chriskohlhoff/asio-debugger-extensions].
+
 [heading Building the tests and examples on Linux or UNIX]
 
 If the boost directory (e.g. the directory called `boost_1_34_1`) is in the
