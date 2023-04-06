@@ -39,7 +39,8 @@ address_v6::address_v6() ASIO_NOEXCEPT
 
 address_v6::address_v6(const address_v6::bytes_type& bytes,
     scope_id_type scope)
-  : scope_id_(scope)
+  : addr_(IN6ADDR_ANY_INIT)
+  , scope_id_(scope)
 {
 #if UCHAR_MAX > 0xFF
   for (std::size_t i = 0; i < bytes.size(); ++i)
@@ -49,8 +50,7 @@ address_v6::address_v6(const address_v6::bytes_type& bytes,
   }
 #endif // UCHAR_MAX > 0xFF
 
-  using namespace std; // For memcpy.
-  memcpy(addr_.s6_addr, bytes.data(), 16);
+  std::copy(bytes.begin(), bytes.end(), &addr_.s6_addr[0]);
 }
 
 address_v6::address_v6(const address_v6& other) ASIO_NOEXCEPT
@@ -85,13 +85,8 @@ address_v6& address_v6::operator=(address_v6&& other) ASIO_NOEXCEPT
 
 address_v6::bytes_type address_v6::to_bytes() const ASIO_NOEXCEPT
 {
-  using namespace std; // For memcpy.
   bytes_type bytes;
-#if defined(ASIO_HAS_STD_ARRAY)
-  memcpy(bytes.data(), addr_.s6_addr, 16);
-#else // defined(ASIO_HAS_STD_ARRAY)
-  memcpy(bytes.elems, addr_.s6_addr, 16);
-#endif // defined(ASIO_HAS_STD_ARRAY)
+  std::copy(&addr_.s6_addr[0], &addr_.s6_addr[16], &bytes[0]);
   return bytes;
 }
 
