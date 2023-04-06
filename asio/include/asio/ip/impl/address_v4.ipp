@@ -75,7 +75,7 @@ address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
 #if !defined(ASIO_NO_DEPRECATED)
 unsigned long address_v4::to_ulong() const
 {
-  return asio::detail::socket_ops::network_to_host_long(addr_.s_addr);
+  return to_uint();
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
