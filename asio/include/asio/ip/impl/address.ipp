@@ -157,20 +157,14 @@ address make_address(string_view str,
 asio::ip::address_v4 address::to_v4() const
 {
   if (type_ != ipv4)
-  {
-    bad_address_cast ex;
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(bad_address_cast());
   return ipv4_address_;
 }
 
 asio::ip::address_v6 address::to_v6() const
 {
   if (type_ != ipv6)
-  {
-    bad_address_cast ex;
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(bad_address_cast());
   return ipv6_address_;
 }
 
