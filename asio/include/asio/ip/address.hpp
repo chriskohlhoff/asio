@@ -51,57 +51,57 @@ class address
 {
 public:
   /// Default constructor.
-  ASIO_DECL address() ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address() ASIO_NOEXCEPT;
 
   /// Construct an address from an IPv4 address.
-  ASIO_DECL address(
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address(
       const asio::ip::address_v4& ipv4_address) ASIO_NOEXCEPT;
 
   /// Construct an address from an IPv6 address.
-  ASIO_DECL address(
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address(
       const asio::ip::address_v6& ipv6_address) ASIO_NOEXCEPT;
 
   /// Copy constructor.
-  ASIO_DECL address(const address& other) ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO ASIO_DECL address(const address& other) ASIO_NOEXCEPT;
 
 #if defined(ASIO_HAS_MOVE)
   /// Move constructor.
-  ASIO_DECL address(address&& other) ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO ASIO_DECL address(address&& other) ASIO_NOEXCEPT;
 #endif // defined(ASIO_HAS_MOVE)
 
   /// Assign from another address.
-  ASIO_DECL address& operator=(const address& other) ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address& operator=(const address& other) ASIO_NOEXCEPT;
 
 #if defined(ASIO_HAS_MOVE)
   /// Move-assign from another address.
-  ASIO_DECL address& operator=(address&& other) ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address& operator=(address&& other) ASIO_NOEXCEPT;
 #endif // defined(ASIO_HAS_MOVE)
 
   /// Assign from an IPv4 address.
-  ASIO_DECL address& operator=(
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address& operator=(
       const asio::ip::address_v4& ipv4_address) ASIO_NOEXCEPT;
 
   /// Assign from an IPv6 address.
-  ASIO_DECL address& operator=(
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address& operator=(
       const asio::ip::address_v6& ipv6_address) ASIO_NOEXCEPT;
 
   /// Get whether the address is an IP version 4 address.
-  bool is_v4() const ASIO_NOEXCEPT
+  ASIO_CONSTEXPR bool is_v4() const ASIO_NOEXCEPT
   {
     return type_ == ipv4;
   }
 
   /// Get whether the address is an IP version 6 address.
-  bool is_v6() const ASIO_NOEXCEPT
+  ASIO_CONSTEXPR bool is_v6() const ASIO_NOEXCEPT
   {
     return type_ == ipv6;
   }
 
   /// Get the address as an IP version 4 address.
-  ASIO_DECL asio::ip::address_v4 to_v4() const;
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL asio::ip::address_v4 to_v4() const;
 
   /// Get the address as an IP version 6 address.
-  ASIO_DECL asio::ip::address_v6 to_v6() const;
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL asio::ip::address_v6 to_v6() const;
 
   /// Get the address as a string.
   ASIO_DECL std::string to_string() const;
@@ -133,45 +133,45 @@ public:
 #endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
-  ASIO_DECL bool is_loopback() const ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO ASIO_DECL bool is_loopback() const ASIO_NOEXCEPT;
 
   /// Determine whether the address is unspecified.
-  ASIO_DECL bool is_unspecified() const ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO ASIO_DECL bool is_unspecified() const ASIO_NOEXCEPT;
 
   /// Determine whether the address is a multicast address.
-  ASIO_DECL bool is_multicast() const ASIO_NOEXCEPT;
+  ASIO_CONSTEXPR_HO ASIO_DECL bool is_multicast() const ASIO_NOEXCEPT;
 
   /// Compare two addresses for equality.
-  ASIO_DECL friend bool operator==(const address& a1,
+  ASIO_CONSTEXPR_HO ASIO_DECL friend bool operator==(const address& a1,
       const address& a2) ASIO_NOEXCEPT;
 
   /// Compare two addresses for inequality.
-  friend bool operator!=(const address& a1,
+  ASIO_CONSTEXPR_HO friend bool operator!=(const address& a1,
       const address& a2) ASIO_NOEXCEPT
   {
     return !(a1 == a2);
   }
 
   /// Compare addresses for ordering.
-  ASIO_DECL friend bool operator<(const address& a1,
+  ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL friend bool operator<(const address& a1,
       const address& a2) ASIO_NOEXCEPT;
 
   /// Compare addresses for ordering.
-  friend bool operator>(const address& a1,
+  ASIO_CONSTEXPR_HO_CXX20 friend bool operator>(const address& a1,
       const address& a2) ASIO_NOEXCEPT
   {
     return a2 < a1;
   }
 
   /// Compare addresses for ordering.
-  friend bool operator<=(const address& a1,
+  ASIO_CONSTEXPR_HO_CXX20 friend bool operator<=(const address& a1,
       const address& a2) ASIO_NOEXCEPT
   {
     return !(a2 < a1);
   }
 
   /// Compare addresses for ordering.
-  friend bool operator>=(const address& a1,
+  ASIO_CONSTEXPR_HO_CXX20 friend bool operator>=(const address& a1,
       const address& a2) ASIO_NOEXCEPT
   {
     return !(a1 < a2);

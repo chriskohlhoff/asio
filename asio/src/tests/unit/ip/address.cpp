@@ -28,6 +28,71 @@
 
 namespace ip_address_compile {
 
+ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::address addr1;
+  const ip::address_v4 const_addr_v4;
+  ip::address addr2(const_addr_v4);
+  const ip::address_v6 const_addr_v6;
+  ip::address addr3(const_addr_v6);
+  ip::address addr4(addr1);
+
+  addr1 = addr2;
+#if defined(ASIO_HAS_MOVE)
+  addr1 = std::move(addr2);
+#endif
+
+  addr1 = const_addr_v4;
+  addr1 = const_addr_v6;
+
+  ip::address_v4 addr_v4_value = addr2.to_v4();
+  (void)addr_v4_value;
+
+  ip::address_v6 addr_v6_value = addr3.to_v6();
+  (void)addr_v6_value;
+
+  bool b = addr1.is_v4();
+  (void)b;
+
+  b = addr1.is_v6();
+  (void)b;
+
+  b = addr3.is_loopback();
+  (void)b;
+
+  b = addr3.is_unspecified();
+  (void)b;
+
+  b = addr3.is_multicast();
+  (void)b;
+
+  b = (addr1 == addr2);
+  (void)b;
+
+  b = (addr1 != addr2);
+  (void)b;
+
+  b = (addr1 < addr2);
+  (void)b;
+
+  b = (addr1 > addr2);
+  (void)b;
+
+  b = (addr1 <= addr2);
+  (void)b;
+
+  b = (addr1 >= addr2);
+  (void)b;
+
+  b = addr2.is_loopback();
+  (void)b;
+
+  return true;
+}
+
 void test()
 {
   using namespace asio;
@@ -132,6 +197,9 @@ void test()
     std::size_t hash1 = std::hash<ip::address>()(addr1);
     (void)hash1;
 #endif // defined(ASIO_HAS_STD_HASH)
+
+    ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20Ret = testConstexpr20();
+    (void)testConstexpr20Ret;
   }
   catch (std::exception&)
   {
