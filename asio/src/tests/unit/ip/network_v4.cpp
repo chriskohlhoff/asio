@@ -29,6 +29,55 @@
 
 namespace ip_network_v4_compile {
 
+ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::network_v4 net1;
+  ip::network_v4 net2(net1);
+#if defined(ASIO_HAS_MOVE)
+  ip::network_v4 net3(net2);
+#endif
+
+  net1 = net2;
+  net1 = ip::make_network_v4(ip::address_v4(), 32);
+#if defined(ASIO_HAS_MOVE)
+  net1 = std::move(net2);
+#endif
+
+  net1 = ip::make_network_v4(ip::make_address_v4(0x0A000001), ip::make_address_v4(0xFFFFFF00));
+
+  unsigned short prefix_len = net1.prefix_length();
+  (void)prefix_len;
+
+  ip::address_v4 addr1 = net1.netmask();
+  (void)addr1;
+
+  ip::address_v4 addr2 = net1.network();
+  (void)addr2;
+
+  ip::address_v4 addr3 = net1.broadcast();
+  (void)addr3;
+
+  ip::network_v4 net4 = net1.canonical();
+  (void)net4;
+
+  bool b1 = net1.is_host();
+  (void)b1;
+
+  bool b2 = net1.is_subnet_of(net2);
+  (void)b2;
+
+  bool b3 = (net1 == net2);
+  (void)b3;
+
+  bool b4 = (net1 != net2);
+  (void)b4;
+
+  return true;
+}
+
 void test()
 {
   using namespace asio;
@@ -114,6 +163,9 @@ void test()
     std::wostringstream wos;
     wos << net1;
 #endif // !defined(BOOST_NO_STD_WSTREAMBUF)
+
+    ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20Ret = testConstexpr20();
+    (void)testConstexpr20Ret;
   }
   catch (std::exception&)
   {
