@@ -229,13 +229,9 @@ bool operator==(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
 
 bool operator<(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
 {
-  using namespace std; // For memcmp.
-  int memcmp_result = memcmp(&a1.addr_, &a2.addr_,
-      sizeof(asio::detail::in6_addr_type));
-  if (memcmp_result < 0)
-    return true;
-  if (memcmp_result > 0)
-    return false;
+  std::pair<const unsigned char*, const unsigned char*> result = std::mismatch(&a1.addr_.s6_addr[0], &a1.addr_.s6_addr[16], &a2.addr_.s6_addr[0]);
+  if (result.first != &a1.addr_.s6_addr[16])
+    return *result.first < *result.second;
   return a1.scope_id_ < a2.scope_id_;
 }
 
