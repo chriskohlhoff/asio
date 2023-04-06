@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <algorithm>
 #include <cstring>
 #include <stdexcept>
 #include <typeinfo>
@@ -222,10 +223,8 @@ bool address_v6::is_multicast_site_local() const ASIO_NOEXCEPT
 
 bool operator==(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
 {
-  using namespace std; // For memcmp.
-  return memcmp(&a1.addr_, &a2.addr_,
-      sizeof(asio::detail::in6_addr_type)) == 0
-    && a1.scope_id_ == a2.scope_id_;
+  return std::equal(&a1.addr_.s6_addr[0], &a1.addr_.s6_addr[16], &a2.addr_.s6_addr[0]) &&
+         a1.scope_id_ == a2.scope_id_;
 }
 
 bool operator<(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
