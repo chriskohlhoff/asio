@@ -36,10 +36,7 @@ network_v4::network_v4(const address_v4& addr, unsigned short prefix_len)
     prefix_length_(prefix_len)
 {
   if (prefix_len > 32)
-  {
-    std::out_of_range ex("prefix length too large");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("prefix length too large"));
 }
 
 network_v4::network_v4(const address_v4& addr, const address_v4& mask)
@@ -53,10 +50,7 @@ network_v4::network_v4(const address_v4& addr, const address_v4& mask)
     if (finished)
     {
       if (mask_bytes[i])
-      {
-        std::invalid_argument ex("non-contiguous netmask");
-        asio::detail::throw_exception(ex);
-      }
+        asio::detail::throw_exception(std::out_of_range("non-contiguous netmask"));
       continue;
     }
     else
@@ -84,8 +78,7 @@ network_v4::network_v4(const address_v4& addr, const address_v4& mask)
         finished = true;
         break;
       default:
-        std::out_of_range ex("non-contiguous netmask");
-        asio::detail::throw_exception(ex);
+        asio::detail::throw_exception(std::out_of_range("non-contiguous netmask"));
       }
     }
   }
