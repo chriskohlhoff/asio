@@ -30,7 +30,7 @@
 namespace asio {
 namespace ip {
 
-address_v4::address_v4(const address_v4::bytes_type& bytes)
+ASIO_CONSTEXPR_HO_CXX20 address_v4::address_v4(const address_v4::bytes_type& bytes)
 {
 #if UCHAR_MAX > 0xFF
   if (bytes[0] > 0xFF || bytes[1] > 0xFF
@@ -46,7 +46,7 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
 #endif
 }
 
-address_v4::address_v4(address_v4::uint_type addr)
+ASIO_CONSTEXPR_HO_CXX20 address_v4::address_v4(address_v4::uint_type addr)
 #if __cplusplus >= 201103L
   : address_v4(address_v4::bytes_type{
     (unsigned char)((addr >> 24) & 0xff),
@@ -65,7 +65,7 @@ address_v4::address_v4(address_v4::uint_type addr)
 #endif
 }
 
-address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
 {
 #if __cplusplus >= 202002L
   return std::bit_cast<address_v4::bytes_type>(addr_.s_addr);
@@ -81,7 +81,7 @@ address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
 #endif
 }
 
-address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
 {
   address_v4::bytes_type bytes = to_bytes();
   return bytes[0] << 24U |
@@ -124,12 +124,12 @@ std::string address_v4::to_string(asio::error_code& ec) const
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-bool address_v4::is_loopback() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool address_v4::is_loopback() const ASIO_NOEXCEPT
 {
   return (to_uint() & 0xFF000000) == 0x7F000000;
 }
 
-bool address_v4::is_unspecified() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool address_v4::is_unspecified() const ASIO_NOEXCEPT
 {
   return to_uint() == 0;
 }
@@ -151,7 +151,7 @@ bool address_v4::is_class_c() const
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-bool address_v4::is_multicast() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool address_v4::is_multicast() const ASIO_NOEXCEPT
 {
   return (to_uint() & 0xF0000000) == 0xE0000000;
 }
