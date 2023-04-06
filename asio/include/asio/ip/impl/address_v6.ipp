@@ -32,7 +32,7 @@ namespace asio {
 namespace ip {
 
 address_v6::address_v6() ASIO_NOEXCEPT
-  : addr_(),
+  : addr_(IN6ADDR_ANY_INIT),
     scope_id_(0)
 {
 }
