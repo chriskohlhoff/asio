@@ -35,10 +35,7 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
 #if UCHAR_MAX > 0xFF
   if (bytes[0] > 0xFF || bytes[1] > 0xFF
       || bytes[2] > 0xFF || bytes[3] > 0xFF)
-  {
-    std::out_of_range ex("address_v4 from bytes_type");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("address_v4 from bytes_type"));
 #endif // UCHAR_MAX > 0xFF
 
   using namespace std; // For memcpy.
@@ -48,10 +45,7 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
 address_v4::address_v4(address_v4::uint_type addr)
 {
   if ((std::numeric_limits<uint_type>::max)() > 0xFFFFFFFF)
-  {
-    std::out_of_range ex("address_v4 from unsigned integer");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("address_v4 from unsigned integer"));
 
   addr_.s_addr = asio::detail::socket_ops::host_to_network_long(
       static_cast<asio::detail::u_long_type>(addr));
