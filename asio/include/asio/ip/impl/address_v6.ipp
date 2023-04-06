@@ -32,13 +32,13 @@
 namespace asio {
 namespace ip {
 
-address_v6::address_v6() ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO address_v6::address_v6() ASIO_NOEXCEPT
   : addr_(IN6ADDR_ANY_INIT),
     scope_id_(0)
 {
 }
 
-address_v6::address_v6(const address_v6::bytes_type& bytes,
+ASIO_CONSTEXPR_HO_CXX14 address_v6::address_v6(const address_v6::bytes_type& bytes,
     scope_id_type scope)
   : addr_(IN6ADDR_ANY_INIT)
   , scope_id_(scope)
@@ -54,21 +54,21 @@ address_v6::address_v6(const address_v6::bytes_type& bytes,
   std::copy(bytes.begin(), bytes.end(), &addr_.s6_addr[0]);
 }
 
-address_v6::address_v6(const address_v6& other) ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO address_v6::address_v6(const address_v6& other) ASIO_NOEXCEPT
   : addr_(other.addr_),
     scope_id_(other.scope_id_)
 {
 }
 
 #if defined(ASIO_HAS_MOVE)
-address_v6::address_v6(address_v6&& other) ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO address_v6::address_v6(address_v6&& other) ASIO_NOEXCEPT
   : addr_(other.addr_),
     scope_id_(other.scope_id_)
 {
 }
 #endif // defined(ASIO_HAS_MOVE)
 
-address_v6& address_v6::operator=(const address_v6& other) ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX14 address_v6& address_v6::operator=(const address_v6& other) ASIO_NOEXCEPT
 {
   addr_ = other.addr_;
   scope_id_ = other.scope_id_;
@@ -76,7 +76,7 @@ address_v6& address_v6::operator=(const address_v6& other) ASIO_NOEXCEPT
 }
 
 #if defined(ASIO_HAS_MOVE)
-address_v6& address_v6::operator=(address_v6&& other) ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX14 address_v6& address_v6::operator=(address_v6&& other) ASIO_NOEXCEPT
 {
   addr_ = other.addr_;
   scope_id_ = other.scope_id_;
@@ -84,7 +84,7 @@ address_v6& address_v6::operator=(address_v6&& other) ASIO_NOEXCEPT
 }
 #endif // defined(ASIO_HAS_MOVE)
 
-address_v6::bytes_type address_v6::to_bytes() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 address_v6::bytes_type address_v6::to_bytes() const ASIO_NOEXCEPT
 {
   bytes_type bytes;
   std::copy(&addr_.s6_addr[0], &addr_.s6_addr[16], &bytes[0]);
@@ -131,7 +131,7 @@ address_v4 address_v6::to_v4() const
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-bool address_v6::is_loopback() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_loopback() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
       && (addr_.s6_addr[2] == 0) && (addr_.s6_addr[3] == 0)
@@ -143,7 +143,7 @@ bool address_v6::is_loopback() const ASIO_NOEXCEPT
       && (addr_.s6_addr[14] == 0) && (addr_.s6_addr[15] == 1));
 }
 
-bool address_v6::is_unspecified() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_unspecified() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
       && (addr_.s6_addr[2] == 0) && (addr_.s6_addr[3] == 0)
@@ -155,17 +155,17 @@ bool address_v6::is_unspecified() const ASIO_NOEXCEPT
       && (addr_.s6_addr[14] == 0) && (addr_.s6_addr[15] == 0));
 }
 
-bool address_v6::is_link_local() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_link_local() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xfe) && ((addr_.s6_addr[1] & 0xc0) == 0x80));
 }
 
-bool address_v6::is_site_local() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_site_local() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xfe) && ((addr_.s6_addr[1] & 0xc0) == 0xc0));
 }
 
-bool address_v6::is_v4_mapped() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_v4_mapped() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0) && (addr_.s6_addr[1] == 0)
       && (addr_.s6_addr[2] == 0) && (addr_.s6_addr[3] == 0)
@@ -191,43 +191,43 @@ bool address_v6::is_v4_compatible() const
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-bool address_v6::is_multicast() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_multicast() const ASIO_NOEXCEPT
 {
   return (addr_.s6_addr[0] == 0xff);
 }
 
-bool address_v6::is_multicast_global() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_multicast_global() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xff) && ((addr_.s6_addr[1] & 0x0f) == 0x0e));
 }
 
-bool address_v6::is_multicast_link_local() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_multicast_link_local() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xff) && ((addr_.s6_addr[1] & 0x0f) == 0x02));
 }
 
-bool address_v6::is_multicast_node_local() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_multicast_node_local() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xff) && ((addr_.s6_addr[1] & 0x0f) == 0x01));
 }
 
-bool address_v6::is_multicast_org_local() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_multicast_org_local() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xff) && ((addr_.s6_addr[1] & 0x0f) == 0x08));
 }
 
-bool address_v6::is_multicast_site_local() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO bool address_v6::is_multicast_site_local() const ASIO_NOEXCEPT
 {
   return ((addr_.s6_addr[0] == 0xff) && ((addr_.s6_addr[1] & 0x0f) == 0x05));
 }
 
-bool operator==(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool operator==(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
 {
   return std::equal(&a1.addr_.s6_addr[0], &a1.addr_.s6_addr[16], &a2.addr_.s6_addr[0]) &&
          a1.scope_id_ == a2.scope_id_;
 }
 
-bool operator<(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool operator<(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
 {
   std::pair<const unsigned char*, const unsigned char*> result = std::mismatch(&a1.addr_.s6_addr[0], &a1.addr_.s6_addr[16], &a2.addr_.s6_addr[0]);
   if (result.first != &a1.addr_.s6_addr[16])
@@ -235,7 +235,7 @@ bool operator<(const address_v6& a1, const address_v6& a2) ASIO_NOEXCEPT
   return a1.scope_id_ < a2.scope_id_;
 }
 
-address_v6 address_v6::loopback() ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX14 address_v6 address_v6::loopback() ASIO_NOEXCEPT
 {
   address_v6 tmp;
   tmp.addr_.s6_addr[15] = 1;
@@ -305,7 +305,7 @@ address_v6 make_address_v6(string_view str,
 
 #endif // defined(ASIO_HAS_STRING_VIEW)
 
-address_v4 make_address_v4(
+ASIO_CONSTEXPR_HO_CXX20 address_v4 make_address_v4(
     v4_mapped_t, const address_v6& v6_addr)
 {
   if (!v6_addr.is_v4_mapped())
@@ -317,7 +317,7 @@ address_v4 make_address_v4(
   return address_v4(v4_bytes);
 }
 
-address_v6 make_address_v6(
+ASIO_CONSTEXPR_HO_CXX20 address_v6 make_address_v6(
     v4_mapped_t, const address_v4& v4_addr)
 {
   address_v4::bytes_type v4_bytes = v4_addr.to_bytes();
