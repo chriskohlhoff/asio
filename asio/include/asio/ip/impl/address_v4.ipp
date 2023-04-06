@@ -65,7 +65,11 @@ address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
 
 address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
 {
-  return asio::detail::socket_ops::network_to_host_long(addr_.s_addr);
+  address_v4::bytes_type bytes = to_bytes();
+  return bytes[0] << 24U |
+         bytes[1] << 16U |
+         bytes[2] << 8U |
+         bytes[3];
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
