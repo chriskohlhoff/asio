@@ -45,10 +45,7 @@ address_v6::address_v6(const address_v6::bytes_type& bytes,
   for (std::size_t i = 0; i < bytes.size(); ++i)
   {
     if (bytes[i] > 0xFF)
-    {
-      std::out_of_range ex("address_v6 from bytes_type");
-      asio::detail::throw_exception(ex);
-    }
+      asio::detail::throw_exception(std::out_of_range("address_v6 from bytes_type"));
   }
 #endif // UCHAR_MAX > 0xFF
 
@@ -322,10 +319,7 @@ address_v4 make_address_v4(
     v4_mapped_t, const address_v6& v6_addr)
 {
   if (!v6_addr.is_v4_mapped())
-  {
-    bad_address_cast ex;
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(bad_address_cast());
 
   address_v6::bytes_type v6_bytes = v6_addr.to_bytes();
   address_v4::bytes_type v4_bytes = { { v6_bytes[12],
