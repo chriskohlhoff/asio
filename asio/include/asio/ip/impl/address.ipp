@@ -207,11 +207,10 @@ bool address::is_multicast() const ASIO_NOEXCEPT
 
 bool operator==(const address& a1, const address& a2) ASIO_NOEXCEPT
 {
-  if (a1.type_ != a2.type_)
-    return false;
-  if (a1.type_ == address::ipv6)
-    return a1.ipv6_address_ == a2.ipv6_address_;
-  return a1.ipv4_address_ == a2.ipv4_address_;
+  return (a1.type_ == a2.type_) &&
+         (a1.type_ == address::ipv6) ?
+           a1.ipv6_address_ == a2.ipv6_address_ :
+           a1.ipv4_address_ == a2.ipv4_address_;
 }
 
 bool operator<(const address& a1, const address& a2) ASIO_NOEXCEPT
