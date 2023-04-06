@@ -38,8 +38,12 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
     asio::detail::throw_exception(std::out_of_range("address_v4 from bytes_type"));
 #endif // UCHAR_MAX > 0xFF
 
+#if __cplusplus >= 202002L
+  addr_.s_addr = std::bit_cast<decltype(addr_.s_addr)>(bytes);
+#else
   using namespace std; // For memcpy.
   memcpy(&addr_.s_addr, bytes.data(), 4);
+#endif
 }
 
 address_v4::address_v4(address_v4::uint_type addr)
@@ -63,6 +67,9 @@ address_v4::address_v4(address_v4::uint_type addr)
 
 address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
 {
+#if __cplusplus >= 202002L
+  return std::bit_cast<address_v4::bytes_type>(addr_.s_addr);
+#else
   using namespace std; // For memcpy.
   bytes_type bytes;
 #if defined(ASIO_HAS_STD_ARRAY)
@@ -71,6 +78,7 @@ address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
   memcpy(bytes.elems, &addr_.s_addr, 4);
 #endif // defined(ASIO_HAS_STD_ARRAY)
   return bytes;
+#endif
 }
 
 address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
