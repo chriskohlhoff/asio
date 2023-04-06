@@ -100,8 +100,35 @@ void as_tuple_test()
        //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
+void as_tuple_constness_test()
+{
+#if defined(ASIO_HAS_STD_TUPLE) \
+  && defined(ASIO_HAS_VARIADIC_TEMPLATES)
+# if defined(ASIO_HAS_STD_FUTURE_CLASS)
+  asio::io_context io1;
+  asio::system_timer timer1(io1);
+
+  auto tok1 = asio::as_tuple(asio::use_future);
+  (void)timer1.async_wait(tok1);
+  (void)timer1.async_wait(std::move(tok1));
+
+  const auto tok2 = asio::as_tuple(asio::use_future);
+  (void)timer1.async_wait(tok2);
+  (void)timer1.async_wait(std::move(tok2));
+
+#  if defined(ASIO_HAS_CONSTEXPR)
+  constexpr auto tok3 = asio::as_tuple(asio::use_future);
+  (void)timer1.async_wait(tok3);
+  (void)timer1.async_wait(std::move(tok3));
+#  endif // defined(ASIO_HAS_CONSTEXPR)
+# endif // defined(ASIO_HAS_STD_FUTURE_CLASS)
+#endif // defined(ASIO_HAS_STD_TUPLE)
+       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
+}
+
 ASIO_TEST_SUITE
 (
   "as_tuple",
   ASIO_TEST_CASE(as_tuple_test)
+  ASIO_COMPILE_TEST_CASE(as_tuple_constness_test)
 )

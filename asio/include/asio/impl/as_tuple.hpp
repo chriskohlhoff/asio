@@ -199,19 +199,26 @@ struct async_result<as_tuple_t<CompletionToken>, Signatures...>
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
-  static ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken,
-      typename detail::as_tuple_signature<Signatures>::type...,
-      (async_initiate<CompletionToken,
-        typename detail::as_tuple_signature<Signatures>::type...>(
-          declval<init_wrapper<typename decay<Initiation>::type> >(),
-          declval<CompletionToken&>(),
-          declval<ASIO_MOVE_ARG(Args)>()...)))
+  static ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken,
+      typename detail::as_tuple_signature<Signatures>::type...)
   initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token,
       ASIO_MOVE_ARG(Args)... args)
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<
+        typename conditional<
+          is_const<typename remove_reference<RawCompletionToken>::type>::value,
+            const CompletionToken, CompletionToken>::type,
+        typename detail::as_tuple_signature<Signatures>::type...>(
+          init_wrapper<typename decay<Initiation>::type>(
+            ASIO_MOVE_CAST(Initiation)(initiation)),
+          token.token_, ASIO_MOVE_CAST(Args)(args)...)))
   {
-    return async_initiate<CompletionToken,
+    return async_initiate<
+      typename conditional<
+        is_const<typename remove_reference<RawCompletionToken>::type>::value,
+          const CompletionToken, CompletionToken>::type,
       typename detail::as_tuple_signature<Signatures>::type...>(
         init_wrapper<typename decay<Initiation>::type>(
           ASIO_MOVE_CAST(Initiation)(initiation)),
@@ -252,19 +259,26 @@ struct async_result<as_tuple_t<CompletionToken>, Signature>
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
-  static ASIO_INITFN_DEDUCED_RESULT_TYPE(CompletionToken,
-      typename detail::as_tuple_signature<Signature>::type,
-      (async_initiate<CompletionToken,
-        typename detail::as_tuple_signature<Signature>::type>(
-          declval<init_wrapper<typename decay<Initiation>::type> >(),
-          declval<CompletionToken&>(),
-          declval<ASIO_MOVE_ARG(Args)>()...)))
+  static ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(CompletionToken,
+      typename detail::as_tuple_signature<Signatures>::type...)
   initiate(
       ASIO_MOVE_ARG(Initiation) initiation,
       ASIO_MOVE_ARG(RawCompletionToken) token,
       ASIO_MOVE_ARG(Args)... args)
+    ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<
+        typename conditional<
+          is_const<typename remove_reference<RawCompletionToken>::type>::value,
+            const CompletionToken, CompletionToken>::type,
+        typename detail::as_tuple_signature<Signature>::type>(
+          init_wrapper<typename decay<Initiation>::type>(
+            ASIO_MOVE_CAST(Initiation)(initiation)),
+          token.token_, ASIO_MOVE_CAST(Args)(args)...)))
   {
-    return async_initiate<CompletionToken,
+    return async_initiate<
+      typename conditional<
+        is_const<typename remove_reference<RawCompletionToken>::type>::value,
+          const CompletionToken, CompletionToken>::type,
       typename detail::as_tuple_signature<Signature>::type>(
         init_wrapper<typename decay<Initiation>::type>(
           ASIO_MOVE_CAST(Initiation)(initiation)),
