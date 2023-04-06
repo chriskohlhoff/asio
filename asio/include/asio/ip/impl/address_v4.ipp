@@ -43,12 +43,22 @@ address_v4::address_v4(const address_v4::bytes_type& bytes)
 }
 
 address_v4::address_v4(address_v4::uint_type addr)
+#if __cplusplus >= 201103L
+  : address_v4(address_v4::bytes_type{
+    (unsigned char)((addr >> 24) & 0xff),
+    (unsigned char)((addr >> 16) & 0xff),
+    (unsigned char)((addr >>  8) & 0xff),
+    (unsigned char)((addr)       & 0xff),
+  })
+#endif
 {
   if ((std::numeric_limits<uint_type>::max)() > 0xFFFFFFFF)
     asio::detail::throw_exception(std::out_of_range("address_v4 from unsigned integer"));
 
+#if __cplusplus < 201103L
   addr_.s_addr = asio::detail::socket_ops::host_to_network_long(
       static_cast<asio::detail::u_long_type>(addr));
+#endif
 }
 
 address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
