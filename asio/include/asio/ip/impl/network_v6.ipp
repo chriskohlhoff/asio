@@ -36,10 +36,7 @@ network_v6::network_v6(const address_v6& addr, unsigned short prefix_len)
     prefix_length_(prefix_len)
 {
   if (prefix_len > 128)
-  {
-    std::out_of_range ex("prefix length too large");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("prefix length too large"));
 }
 
 ASIO_DECL address_v6 network_v6::network() const ASIO_NOEXCEPT
