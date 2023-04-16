@@ -331,6 +331,10 @@ protected:
 
 private:
   /// Destroy all user-defined handler objects owned by the service.
+  /**
+   * This function may be called more than once, so services should ensure
+   * that their implementation is idempotent.
+   */
   virtual void shutdown() = 0;
 
   /// Handle notification of a fork-related event to perform any necessary
