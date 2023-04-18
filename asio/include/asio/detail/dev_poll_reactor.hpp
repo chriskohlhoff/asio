@@ -108,7 +108,7 @@ public:
   {
     start_op(op_type, descriptor, descriptor_data,
         op, is_continuation, allow_speculative,
-        &epoll_reactor::call_post_immediate_completion, this);
+        &dev_poll_reactor::call_post_immediate_completion, this);
   }
 
 
