@@ -587,6 +587,10 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
   if (o == &task_operation_)
   {
     op_queue_.pop();
+
+    bool more_handlers = (!op_queue_.empty());
+    task_interrupted_ = more_handlers;
+
     lock.unlock();
 
     {
