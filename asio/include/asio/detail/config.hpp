@@ -1730,6 +1730,11 @@
 #   endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
 #  endif // defined(ASIO_HAS_EPOLL)
 # endif // !defined(ASIO_HAS_TIMERFD)
+#ifdef ASIO_HAS_IO_URING
+#  if LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0)
+    static_assert(false, "current LINUX KERNEL_VERSION don't support io_uring, 5.10 above is required");
+#  endif
+#endif
 #endif // defined(__linux__)
 
 // Linux: io_uring is used instead of epoll.
