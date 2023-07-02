@@ -37,6 +37,7 @@ PERFORMANCE_TEST_EXES = \
 
 UNIT_TEST_EXES = \
 	tests/unit/any_completion_executor.exe \
+	tests/unit/any_completion_handler.exe \
 	tests/unit/any_io_executor.exe \
 	tests/unit/associated_allocator.exe \
 	tests/unit/associated_executor.exe \

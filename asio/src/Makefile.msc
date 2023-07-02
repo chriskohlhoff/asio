@@ -116,6 +116,7 @@ PERFORMANCE_TEST_EXES = \
 
 UNIT_TEST_EXES = \
 	tests\unit\any_completion_executor.exe \
+	tests\unit\any_completion_handler.exe \
 	tests\unit\any_io_executor.exe \
 	tests\unit\append.exe \
 	tests\unit\as_tuple.exe \
