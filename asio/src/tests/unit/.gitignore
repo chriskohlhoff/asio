@@ -7,6 +7,7 @@
 *.manifest
 *.pdb
 *.tds
+any_completion_executor
 any_io_executor
 append
 as_tuple

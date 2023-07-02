@@ -12,6 +12,7 @@ endif
 SUBDIRS = properties
 
 check_PROGRAMS = \
+	unit/any_completion_executor \
 	unit/any_io_executor \
 	unit/append \
 	unit/as_tuple \
@@ -239,6 +240,7 @@ check_PROGRAMS += \
 endif
 
 TESTS = \
+	unit/any_completion_executor \
 	unit/any_io_executor \
 	unit/append \
 	unit/as_tuple \
@@ -464,6 +466,7 @@ performance_client_SOURCES = performance/client.cpp
 performance_server_SOURCES = performance/server.cpp
 endif
 
+unit_any_completion_executor_SOURCES = unit/any_completion_executor.cpp
 unit_any_io_executor_SOURCES = unit/any_io_executor.cpp
 unit_append_SOURCES = unit/append.cpp
 unit_as_tuple_SOURCES = unit/as_tuple.cpp
