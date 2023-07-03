@@ -370,6 +370,9 @@ jobs:
       run: |
         ./autogen.sh
         ./configure ${{ matrix.separate-compilation }} ${{ matrix.with-boost }}
+    - name: Line length check
+      working-directory: asio
+      run: perl ./boostify.pl --includes-only
     - name: Sanity check
       if: startsWith(matrix.build-type, 'sanity')
       working-directory: asio/src/tests

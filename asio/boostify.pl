@@ -4,6 +4,7 @@ use strict;
 use File::Path;
 
 our $boost_dir = "boostified";
+our $bad_lines = 0;
 
 sub print_line
 {
@@ -14,6 +15,7 @@ sub print_line
   {
     if ($from =~ /\.[chi]pp$/)
     {
+      ++$bad_lines;
       print("Warning: $from:$lineno: output >80 characters wide.\n");
     }
   }
@@ -684,11 +686,22 @@ sub copy_tools
   }
 }
 
+my $includes_only = 0;
+if (scalar(@ARGV) == 1 && $ARGV[0] eq "--includes-only")
+{
+  $includes_only = 1;
+}
+
 copy_include_files();
-create_lib_directory();
-copy_unit_tests();
-copy_latency_tests();
-copy_properties_tests();
-copy_examples();
-copy_doc();
-copy_tools();
+if (not $includes_only)
+{
+  create_lib_directory();
+  copy_unit_tests();
+  copy_latency_tests();
+  copy_properties_tests();
+  copy_examples();
+  copy_doc();
+  copy_tools();
+}
+
+exit($bad_lines > 0 ? 1 : 0);
