@@ -618,6 +618,7 @@ sub copy_examples
       "src/examples/cpp11/timers",
       "src/examples/cpp11/type_erasure",
       "src/examples/cpp14/deferred",
+      "src/examples/cpp14/echo",
       "src/examples/cpp14/executors",
       "src/examples/cpp14/iostreams",
       "src/examples/cpp14/operations",
