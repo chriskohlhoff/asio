@@ -2074,8 +2074,13 @@
 # endif // !defined(ASIO_DISABLE_HANDLER_HOOKS)
 #endif // !defined(ASIO_HAS_HANDLER_HOOKS)
 
-// Support for the __thread keyword extension.
+// Support for the __thread or thread_local keyword extension. Prefer __thread
+// over thread_local when possible for performance reasons.
 #if !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
+# if !defined(BOOST_NO_CXX11_THREAD_LOCAL)
+#  define BOOST_ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#  define BOOST_ASIO_THREAD_KEYWORD thread_local
+# endif // !defined(BOOST_NO_CXX11_THREAD_LOCAL)
 # if defined(__linux__)
 #  if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 #   if ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
@@ -2085,6 +2090,7 @@
 #     define ASIO_THREAD_KEYWORD __thread
 #    elif defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
 #     define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#     define BOOST_ASIO_THREAD_KEYWORD __thread
 #    endif // defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1100)
            // && !(defined(__clang__) && defined(__ANDROID__))
 #   endif // ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3)
