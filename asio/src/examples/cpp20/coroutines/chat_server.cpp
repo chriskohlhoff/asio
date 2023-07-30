@@ -1,3 +1,66 @@
+
+#include <chrono>
+#include <stdexcept>
+
+#include <asio/any_io_executor.hpp>
+#include <asio/awaitable.hpp>
+#include <asio/co_spawn.hpp>
+#include <asio/basic_waitable_timer.hpp>
+#include <asio/experimental/awaitable_operators.hpp>
+#include <asio/io_context.hpp>
+#include <asio/strand.hpp>
+#include <asio/this_coro.hpp>
+#include <asio/use_awaitable.hpp>
+#include <asio/use_future.hpp>
+
+using namespace asio;
+using namespace asio::experimental;
+using namespace std::chrono_literals;
+
+awaitable<void> sleep(std::chrono::milliseconds duration) {
+    auto executor = co_await this_coro::executor;
+    basic_waitable_timer<std::chrono::system_clock> timer(executor);
+    timer.expires_from_now(duration);
+    co_await timer.async_wait(use_awaitable);
+}
+
+awaitable<void> noop() {
+    co_return;
+}
+
+awaitable<void> throw_op() {
+    co_await sleep(1ms);
+    throw std::runtime_error("throw_op");
+}
+
+awaitable<void> spawn_throw_op(strand<any_io_executor>& strand) {
+    co_await co_spawn(strand, throw_op(), use_awaitable);
+}
+
+awaitable<void> spawn_noop_loop(strand<any_io_executor>& strand) {
+    while (true) {
+        co_await co_spawn(strand, noop(), use_awaitable);
+    }
+}
+
+awaitable<void> run() {
+    using namespace awaitable_operators;
+    auto executor = co_await this_coro::executor;
+    auto strand = make_strand(executor);
+
+    try {
+        co_await (sleep(1s) && spawn_throw_op(strand) && spawn_noop_loop(strand));
+    } catch (std::runtime_error&) {}
+}
+
+int main() {
+    io_context context;
+    auto run_future = co_spawn(context, run(), use_future);
+    context.run();
+    return 0;
+}
+
+/*
 //
 // chat_server.cpp
 // ~~~~~~~~~~~~~~~
@@ -220,3 +283,5 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
+*/

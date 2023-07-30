@@ -224,6 +224,8 @@ private:
   awaitable<T, Executor> awaitable_;
 };
 
+#include <execinfo.h>
+
 template <typename Handler, typename Executor, typename = void>
 class co_spawn_cancellation_handler
 {
@@ -233,6 +235,11 @@ public:
   {
   }
 
+  ~co_spawn_cancellation_handler() {
+    // frames_ = backtrace(callstack_, 128);
+    alive_--;
+  }
+
   cancellation_slot slot()
   {
     return signal_.slot();
@@ -240,13 +247,29 @@ public:
 
   void operator()(cancellation_type_t type)
   {
+    frames_ = backtrace(callstack_, 128);
     cancellation_signal* sig = &signal_;
-    asio::dispatch(ex_, [sig, type]{ sig->emit(type); });
+    int* p_alive = &alive_;
+    int old_alive = alive_;
+    dispatch(ex_, [=]{
+      if (*p_alive <= 0) {
+        puts("BAD dispatch");
+        backtrace_symbols_fd(callstack_, frames_, 1);
+        assert(false);
+      }
+      sig->emit(type);
+      if ((*p_alive <= 0) && (old_alive > 0)) {
+        puts("BAD dispatch");
+      }
+    });
   }
 
 private:
   cancellation_signal signal_;
   Executor ex_;
+  int alive_{1};
+  void* callstack_[128];
+  int frames_;
 };
 
 
