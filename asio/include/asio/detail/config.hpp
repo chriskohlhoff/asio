@@ -2074,7 +2074,7 @@
 # endif // !defined(ASIO_DISABLE_HANDLER_HOOKS)
 #endif // !defined(ASIO_HAS_HANDLER_HOOKS)
 
-// Support for the __thread keyword extension.
+// Support for the __thread keyword extension, or equivalent.
 #if !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 # if defined(__linux__)
 #  if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
@@ -2096,6 +2096,14 @@
 #   define ASIO_THREAD_KEYWORD __declspec(thread)
 #  endif // (_MSC_VER >= 1700)
 # endif // defined(ASIO_MSVC) && defined(ASIO_WINDOWS_RUNTIME)
+# if defined(__APPLE__)
+#  if defined(__clang__)
+#   if defined(__apple_build_version__)
+#    define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#    define ASIO_THREAD_KEYWORD __thread
+#   endif // defined(__apple_build_version__)
+#  endif // defined(__clang__)
+# endif // defined(__APPLE__)
 #endif // !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 #if !defined(ASIO_THREAD_KEYWORD)
 # define ASIO_THREAD_KEYWORD __thread
