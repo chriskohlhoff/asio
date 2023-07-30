@@ -45,10 +45,12 @@ namespace asio {
 namespace detail {
 
 #if defined(ASIO_HAS_STD_SHARED_PTR)
+using std::allocate_shared;
 using std::make_shared;
 using std::shared_ptr;
 using std::weak_ptr;
 #else // defined(ASIO_HAS_STD_SHARED_PTR)
+using boost::allocate_shared;
 using boost::make_shared;
 using boost::shared_ptr;
 using boost::weak_ptr;
