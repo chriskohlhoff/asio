@@ -3876,8 +3876,11 @@
 /doc/asio/reference/ip__address_v6/v4_compatible.html
 /doc/asio/reference/ip__address_v6/v4_mapped.html
 /doc/asio/reference/ip__bad_address_cast/
+/doc/asio/reference/ip__bad_address_cast/bad_address_cast/
 /doc/asio/reference/ip__bad_address_cast/_bad_address_cast.html
 /doc/asio/reference/ip__bad_address_cast/bad_address_cast.html
+/doc/asio/reference/ip__bad_address_cast/bad_address_cast/overload1.html
+/doc/asio/reference/ip__bad_address_cast/bad_address_cast/overload2.html
 /doc/asio/reference/ip__bad_address_cast.html
 /doc/asio/reference/ip__bad_address_cast/what.html
 /doc/asio/reference/ip__basic_address_iterator_lt__address_v4__gt_/
@@ -6998,6 +7001,9 @@
 /src/tests/properties/Makefile.am
 /src/tests/properties/Makefile.in
 /src/tests/unit/
+/src/tests/unit/any_completion_executor.cpp
+/src/tests/unit/any_completion_handler.cpp
+/src/tests/unit/any_io_executor.cpp
 /src/tests/unit/append.cpp
 /src/tests/unit/archetypes/
 /src/tests/unit/archetypes/async_ops.hpp
