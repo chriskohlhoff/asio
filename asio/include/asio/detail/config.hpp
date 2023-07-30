@@ -2104,6 +2104,14 @@
 #   endif // defined(__apple_build_version__)
 #  endif // defined(__clang__)
 # endif // defined(__APPLE__)
+# if !defined(ASIO_HAS_THREAD_KEYWORD_EXTENSION)
+#  if defined(ASIO_HAS_BOOST_CONFIG)
+#   if !defined(BOOST_NO_CXX11_THREAD_LOCAL)
+#    define ASIO_HAS_THREAD_KEYWORD_EXTENSION 1
+#    define ASIO_THREAD_KEYWORD thread_local
+#   endif // !defined(BOOST_NO_CXX11_THREAD_LOCAL)
+#  endif // defined(ASIO_HAS_BOOST_CONFIG)
+# endif // !defined(ASIO_HAS_THREAD_KEYWORD_EXTENSION)
 #endif // !defined(ASIO_DISABLE_THREAD_KEYWORD_EXTENSION)
 #if !defined(ASIO_THREAD_KEYWORD)
 # define ASIO_THREAD_KEYWORD __thread
