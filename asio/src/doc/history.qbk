@@ -7,6 +7,41 @@
 
 [section:history Revision History]
 
+[heading Asio 1.28.1]
+
+* Added missing compatibility with `associated_immediate_executor` to
+  `any_completion_handler`.
+
+* Fixed a null pointer dereference that occurs when using `query`, `require` or
+  `prefer` with an empty `any_executor`.
+
+* Added a workaround in `experimental::coro` for a spurious syntax error when
+  compiling with MSVC.
+
+* Fixed an integer truncation issue in per-operation cancellation, when using
+  the reactor backend on 64-bit Windows.
+
+* Added a compile-time check for a minimum Linux kernel version of 5.10, when
+  [^io_uring] support is enabled.
+
+* Fixed a compile error in the converting move constructors for
+  `experimental::basic_channel` and `experimental::basic_concurrent_channel`.
+
+* Fixed a memory leak on some `signal_set` error handling code paths.
+
+* Fixed `bad_address_cast` to not use a deprecated implicit copy constructor.
+
+* Fixed a copy/paste error in the `dev_poll_reactor` backend.
+
+* Fixed the [^io_uring] backend to ensure the internal timeout operations, used
+  to implement `io_context::run_for` and `io_context::run_until`, are
+  cleaned up correctly.
+
+* Eliminated some duplicated state in the `co_spawn` implementation's entry
+  point, reducing memory consumption.
+
+* Added c++14 echo examples to boostify script.
+
 [heading Asio 1.28.0]
 
 * Added missing handler tracking source location support to `awaitable<>`-based
