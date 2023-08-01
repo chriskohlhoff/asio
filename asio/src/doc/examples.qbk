@@ -681,6 +681,8 @@ Coroutines TS.
 
 Example showing how to use a channel in conjunction with C++20 coroutines.
 
+* [@../src/examples/cpp20/channels/mutual_exclusion_1.cpp]
+* [@../src/examples/cpp20/channels/mutual_exclusion_2.cpp]
 * [@../src/examples/cpp20/channels/throttling_proxy.cpp]
 
 
