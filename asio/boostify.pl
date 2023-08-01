@@ -584,6 +584,7 @@ sub copy_examples
       "src/examples/cpp11/timers",
       "src/examples/cpp14/deferred",
       "src/examples/cpp14/executors",
+      "src/examples/cpp14/iostreams",
       "src/examples/cpp14/operations",
       "src/examples/cpp14/parallel_group",
       "src/examples/cpp17/coroutines_ts");
@@ -615,6 +616,7 @@ sub copy_doc
       "src/doc/asio.qbk",
       "src/doc/examples.qbk",
       "src/doc/net_ts.qbk",
+      "src/doc/overview.qbk",
       "src/doc/reference.xsl",
       "src/doc/std_executors.qbk",
       "src/doc/tutorial.xsl",
