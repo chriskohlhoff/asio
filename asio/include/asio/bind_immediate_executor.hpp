@@ -471,22 +471,41 @@ bind_immediate_executor(const Executor& e, ASIO_MOVE_ARG(T) t)
 
 namespace detail {
 
-template <typename TargetAsyncResult,
-  typename Executor, typename = void>
-struct immediate_executor_binder_async_result_completion_handler_type
+template <typename TargetAsyncResult, typename Executor, typename = void>
+class immediate_executor_binder_completion_handler_async_result
 {
+public:
+  template <typename T>
+  explicit immediate_executor_binder_completion_handler_async_result(T&)
+  {
+  }
 };
 
 template <typename TargetAsyncResult, typename Executor>
-struct immediate_executor_binder_async_result_completion_handler_type<
+class immediate_executor_binder_completion_handler_async_result<
   TargetAsyncResult, Executor,
   typename void_type<
     typename TargetAsyncResult::completion_handler_type
   >::type>
 {
+public:
   typedef immediate_executor_binder<
     typename TargetAsyncResult::completion_handler_type, Executor>
       completion_handler_type;
+
+  explicit immediate_executor_binder_completion_handler_async_result(
+      typename TargetAsyncResult::completion_handler_type& handler)
+    : target_(handler)
+  {
+  }
+
+  typename TargetAsyncResult::return_type get()
+  {
+    return target_.get();
+  }
+
+private:
+  TargetAsyncResult target_;
 };
 
 template <typename TargetAsyncResult, typename = void>
@@ -508,20 +527,16 @@ struct immediate_executor_binder_async_result_return_type<
 
 template <typename T, typename Executor, typename Signature>
 class async_result<immediate_executor_binder<T, Executor>, Signature> :
-  public detail::immediate_executor_binder_async_result_completion_handler_type<
+  public detail::immediate_executor_binder_completion_handler_async_result<
     async_result<T, Signature>, Executor>,
   public detail::immediate_executor_binder_async_result_return_type<
     async_result<T, Signature> >
 {
 public:
   explicit async_result(immediate_executor_binder<T, Executor>& b)
-    : target_(b.get())
+    : detail::immediate_executor_binder_completion_handler_async_result<
+        async_result<T, Signature>, Executor>(b.get())
   {
-  }
-
-  typename async_result<T, Signature>::return_type get()
-  {
-    return target_.get();
   }
 
   template <typename Initiation>
