@@ -1,12 +1,14 @@
 # find . -name "*.*pp" | sed -e 's/^\.\///' | sed -e 's/^.*$/  & \\/' | sort
 nobase_include_HEADERS = \
 	asio/any_completion_executor.hpp \
+	asio/any_completion_handler.hpp \
 	asio/any_io_executor.hpp \
 	asio/append.hpp \
 	asio/as_tuple.hpp \
 	asio/associated_allocator.hpp \
 	asio/associated_cancellation_slot.hpp \
 	asio/associated_executor.hpp \
+	asio/associated_immediate_executor.hpp \
 	asio/associator.hpp \
 	asio/async_result.hpp \
 	asio/awaitable.hpp \
@@ -33,6 +35,7 @@ nobase_include_HEADERS = \
 	asio/bind_allocator.hpp \
 	asio/bind_cancellation_slot.hpp \
 	asio/bind_executor.hpp \
+	asio/bind_immediate_executor.hpp \
 	asio/buffered_read_stream_fwd.hpp \
 	asio/buffered_read_stream.hpp \
 	asio/buffered_stream_fwd.hpp \
@@ -166,6 +169,9 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_static_mutex.ipp \
 	asio/detail/impl/win_thread.ipp \
 	asio/detail/impl/win_tss_ptr.ipp \
+	asio/detail/initiate_defer.hpp \
+	asio/detail/initiate_dispatch.hpp \
+	asio/detail/initiate_post.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
 	asio/detail/io_uring_descriptor_read_at_op.hpp \
@@ -439,6 +445,7 @@ nobase_include_HEADERS = \
 	asio/handler_invoke_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/impl/any_completion_executor.ipp \
 	asio/impl/any_io_executor.ipp \
 	asio/impl/append.hpp \
 	asio/impl/as_tuple.hpp \
@@ -450,10 +457,9 @@ nobase_include_HEADERS = \
 	asio/impl/connect.hpp \
 	asio/impl/connect_pipe.hpp \
 	asio/impl/connect_pipe.ipp \
-	asio/impl/defer.hpp \
+	asio/impl/consign.hpp \
 	asio/impl/deferred.hpp \
 	asio/impl/detached.hpp \
-	asio/impl/dispatch.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
 	asio/impl/execution_context.hpp \
@@ -464,7 +470,6 @@ nobase_include_HEADERS = \
 	asio/impl/io_context.hpp \
 	asio/impl/io_context.ipp \
 	asio/impl/multiple_exceptions.ipp \
-	asio/impl/post.hpp \
 	asio/impl/prepend.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
@@ -537,6 +542,7 @@ nobase_include_HEADERS = \
 	asio/local/datagram_protocol.hpp \
 	asio/local/detail/endpoint.hpp \
 	asio/local/detail/impl/endpoint.ipp \
+	asio/local/seq_packet_protocol.hpp \
 	asio/local/stream_protocol.hpp \
 	asio/multiple_exceptions.hpp \
 	asio/packaged_task.hpp \
@@ -562,6 +568,7 @@ nobase_include_HEADERS = \
 	asio/require_concept.hpp \
 	asio/serial_port_base.hpp \
 	asio/serial_port.hpp \
+	asio/signal_set_base.hpp \
 	asio/signal_set.hpp \
 	asio/socket_base.hpp \
 	asio/spawn.hpp \

@@ -1,7 +1,7 @@
-AC_INIT(asio, [1.25.0])
+AC_INIT(asio, [1.28.1])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE([tar-ustar])
+AM_INIT_AUTOMAKE([tar-pax])
 
 AC_CANONICAL_HOST
 AM_PROG_CC_C_O
@@ -188,6 +188,10 @@ AC_COMPILE_IFELSE(
     [[# if (__clang_major__ >= 14)]]
     [[#  if (__cplusplus >= 202002) && (__cpp_impl_coroutine >= 201902)]]
     [[#   if __has_include(<coroutine>)]]
+    [[#    define ASIO_HAS_CO_AWAIT 1]]
+    [[#   endif]]
+    [[#  elif (__cplusplus >= 201703) && (__cpp_coroutines >= 201703)]]
+    [[#   if __has_include(<experimental/coroutine>)]]
     [[#    define ASIO_HAS_CO_AWAIT 1]]
     [[#   endif]]
     [[#  endif]]

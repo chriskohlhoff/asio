@@ -7,11 +7,15 @@
 *.manifest
 *.pdb
 *.tds
+any_completion_executor
+any_completion_handler
+any_io_executor
 append
 as_tuple
 associated_allocator
 associated_cancellation_slot
 associated_executor
+associated_immediate_executor
 associator
 async_result
 awaitable
@@ -34,6 +38,7 @@ basic_writable_pipe
 bind_allocator
 bind_cancellation_slot
 bind_executor
+bind_immediate_executor
 buffer
 buffer_registration
 buffered_read_stream
@@ -82,6 +87,7 @@ registered_buffer
 serial_port
 serial_port_base
 signal_set
+signal_set_base
 socket_base
 static_thread_pool
 steady_timer

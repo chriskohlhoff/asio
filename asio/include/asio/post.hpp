@@ -2,7 +2,7 @@
 // post.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/async_result.hpp"
+#include "asio/detail/initiate_post.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution_context.hpp"
 #include "asio/execution/blocking.hpp"
@@ -27,12 +28,6 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
-namespace detail {
-
-class initiate_post;
-template <typename> class initiate_post_with_executor;
-
-} // namespace detail
 
 /// Submits a completion token or function object for execution.
 /**
@@ -86,7 +81,11 @@ ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
     ASIO_MOVE_ARG(NullaryToken) token)
   ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_post>(), token)));
+        declval<detail::initiate_post>(), token)))
+{
+  return async_initiate<NullaryToken, void()>(
+      detail::initiate_post(), token);
+}
 
 /// Submits a completion token or function object for execution.
 /**
@@ -171,7 +170,11 @@ ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
     >::type = 0)
   ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<NullaryToken, void()>(
-        declval<detail::initiate_post_with_executor<Executor> >(), token)));
+        declval<detail::initiate_post_with_executor<Executor> >(), token)))
+{
+  return async_initiate<NullaryToken, void()>(
+      detail::initiate_post_with_executor<Executor>(ex), token);
+}
 
 /// Submits a completion token or function object for execution.
 /**
@@ -200,12 +203,16 @@ ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(NullaryToken, void()) post(
   ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<NullaryToken, void()>(
         declval<detail::initiate_post_with_executor<
-          typename ExecutionContext::executor_type> >(), token)));
+          typename ExecutionContext::executor_type> >(), token)))
+{
+  return async_initiate<NullaryToken, void()>(
+      detail::initiate_post_with_executor<
+        typename ExecutionContext::executor_type>(
+          ctx.get_executor()), token);
+}
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
-
-#include "asio/impl/post.hpp"
 
 #endif // ASIO_POST_HPP

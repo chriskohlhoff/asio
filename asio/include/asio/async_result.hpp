@@ -2,7 +2,7 @@
 // async_result.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1320,7 +1320,7 @@ class async_result<detail::async_operation_probe, Sig0, Sig1, Sig2>
 #endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 #endif // !defined(GENERATING_DOCUMENTATION)
 
-#if defined(GENERATION_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 
 /// The is_async_operation trait detects whether a type @c T and arguments
 /// @c Args... may be used to initiate an asynchronous operation.
@@ -1349,7 +1349,10 @@ struct is_async_operation :
 template <typename T, typename = void, typename = void, typename = void,
     typename = void, typename = void, typename = void, typename = void,
     typename = void, typename = void>
-struct is_async_operation :
+struct is_async_operation;
+
+template <typename T>
+struct is_async_operation<T> :
   detail::is_async_operation_call<
     T(detail::async_operation_probe)>
 {
@@ -1398,6 +1401,42 @@ namespace detail {
 
 struct completion_signature_probe {};
 
+#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
+template <typename... T>
+struct completion_signature_probe_result
+{
+  template <template <typename...> class Op>
+  struct apply
+  {
+    typedef Op<T...> type;
+  };
+};
+
+template <typename T>
+struct completion_signature_probe_result<T>
+{
+  typedef T type;
+
+  template <template <typename...> class Op>
+  struct apply
+  {
+    typedef Op<T> type;
+  };
+};
+
+template <>
+struct completion_signature_probe_result<void>
+{
+  template <template <typename...> class Op>
+  struct apply
+  {
+    typedef Op<> type;
+  };
+};
+
+#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
 template <typename T>
 struct completion_signature_probe_result
 {
@@ -1409,6 +1448,8 @@ struct completion_signature_probe_result<void>
 {
 };
 
+#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
+
 } // namespace detail
 
 #if !defined(GENERATING_DOCUMENTATION)
@@ -1418,7 +1459,7 @@ template <typename... Signatures>
 class async_result<detail::completion_signature_probe, Signatures...>
 {
 public:
-  typedef detail::completion_signature_probe_result<void> return_type;
+  typedef detail::completion_signature_probe_result<Signatures...> return_type;
 
   template <typename Initiation, typename... InitArgs>
   static return_type initiate(ASIO_MOVE_ARG(Initiation),
@@ -1536,7 +1577,10 @@ using completion_signature_of_t =
 template <typename T, typename = void, typename = void, typename = void,
     typename = void, typename = void, typename = void, typename = void,
     typename = void, typename = void>
-struct completion_signature_of :
+struct completion_signature_of;
+
+template <typename T>
+struct completion_signature_of<T> :
   result_of<T(detail::completion_signature_probe)>::type
 {
 };

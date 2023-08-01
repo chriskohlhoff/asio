@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -67,6 +67,11 @@ separately-compiled Asio as part of a shared library.
 
 If using Asio's SSL support, you will also need to add `#include
 <asio/ssl/impl/src.hpp>`.
+
+[heading Debugger support]
+
+Some debugger extensions for use with Asio may be found at
+[@https://github.com/chriskohlhoff/asio-debugger-extensions].
 
 [heading Building the tests and examples on Linux or UNIX]
 

@@ -24,6 +24,8 @@ noinst_PROGRAMS = \
 
 if HAVE_COROUTINES
 noinst_PROGRAMS += \
+	channels/mutual_exclusion_1 \
+	channels/mutual_exclusion_2 \
 	channels/throttling_proxy \
 	coroutines/chat_server \
 	coroutines/echo_server \
@@ -51,6 +53,8 @@ operations_composed_7_SOURCES = operations/composed_7.cpp
 operations_composed_8_SOURCES = operations/composed_8.cpp
 
 if HAVE_COROUTINES
+channels_mutual_exclusion_1_SOURCES = channels/mutual_exclusion_1.cpp
+channels_mutual_exclusion_2_SOURCES = channels/mutual_exclusion_2.cpp
 channels_throttling_proxy_SOURCES = channels/throttling_proxy.cpp
 coroutines_chat_server_SOURCES = coroutines/chat_server.cpp
 coroutines_echo_server_SOURCES = coroutines/echo_server.cpp

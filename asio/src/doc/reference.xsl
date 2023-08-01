@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,7 +30,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -133,7 +133,8 @@
             not(contains(compoundname, 'context_impl')) and
             not(contains(compoundname, 'initiate_')) and
             not(contains(compoundname, '_adapter')) and
-            not(contains(compoundname, '_is_deprecated'))">
+            not(contains(compoundname, '_is_deprecated')) or
+            contains(compoundname, 'asio::any_completion_handler')">
           <xsl:call-template name="class"/>
         </xsl:if>
       </xsl:when>
@@ -364,6 +365,12 @@
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
          select="concat(substring-before($name, ','), '_comma_', substring-after($name, ','))"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="contains($name, '&quot;')">
+      <xsl:call-template name="make-id">
+        <xsl:with-param name="name"
+         select="concat(substring-before($name, '&quot;'), '_quot_', substring-after($name, '&quot;'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '...')">
@@ -1644,6 +1651,9 @@
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'CancellationCondition'">
+          <xsl:value-of select="declname"/>
+        </xsl:when>
+        <xsl:when test="declname = 'Chars'">
           <xsl:value-of select="declname"/>
         </xsl:when>
         <xsl:when test="declname = 'Clock'">
