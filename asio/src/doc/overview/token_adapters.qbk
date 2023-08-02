@@ -20,7 +20,7 @@ adapters include:
 
 Asio includes a number of completion token adapters as described below.
 
-[heading bind_executor, bind_allocator, and bind_cancellation_slot]
+[heading bind_executor, bind_allocator, bind_cancellation_slot, and bind_immediate_executor]
 
 The [link asio.reference.bind_executor `bind_executor`] function adapts a
 completion token to imbue the completion handler with an [link
@@ -50,11 +50,13 @@ result is returned unmodified.
     // ...
   }
 
-The [link asio.reference.bind_allocator `bind_allocator`] and [link
-asio.reference.bind_cancellation_slot `bind_cancellation_slot`] adapters work
-similarly, to imbue the completion handler with an [link
-asio.overview.model.allocators associated allocator] or [link
-asio.overview.model.cancellation associated cancellation slot] respectively.
+The [link asio.reference.bind_allocator `bind_allocator`], [link
+asio.reference.bind_cancellation_slot `bind_cancellation_slot`], and [link
+asio.reference.bind_immediate_executor `bind_immediate_executor`] adapters
+work similarly, to imbue the completion handler with an [link
+asio.overview.model.allocators associated allocator], [link
+asio.overview.model.cancellation associated cancellation slot], and
+associated immediate executor respectively.
 
 [heading redirect_error]
 
