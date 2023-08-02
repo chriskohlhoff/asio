@@ -626,6 +626,7 @@ sub copy_examples
       "src/examples/cpp17/coroutines_ts",
       "src/examples/cpp20/channels",
       "src/examples/cpp20/coroutines",
+      "src/examples/cpp20/invocation",
       "src/examples/cpp20/operations",
       "src/examples/cpp20/type_erasure");
 

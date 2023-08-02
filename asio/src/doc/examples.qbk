@@ -702,6 +702,14 @@ Coroutines.
 * [@../src/examples/cpp20/coroutines/timeout.cpp]
 
 
+[heading Invocation]
+
+This example shows how to customise handler invocation using a user-defined
+completion executor.
+
+* [@../src/examples/cpp20/invocation/completion_executor.cpp]
+
+
 [heading Operations]
 
 Examples showing how to implement composed asynchronous operations as reusable library functions.

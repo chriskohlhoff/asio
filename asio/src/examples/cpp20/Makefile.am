@@ -10,6 +10,7 @@ LDADD = libasio.a
 endif
 
 noinst_PROGRAMS = \
+	invocation/completion_executor \
 	operations/c_callback_wrapper \
 	operations/callback_wrapper \
 	operations/composed_1 \
@@ -41,6 +42,7 @@ endif
 
 AM_CXXFLAGS = -I$(srcdir)/../../../include
 
+invocation_completion_executor_SOURCES = invocation/completion_executor.cpp
 operations_c_callback_wrapper_SOURCES = operations/c_callback_wrapper.cpp
 operations_callback_wrapper_SOURCES = operations/callback_wrapper.cpp
 operations_composed_1_SOURCES = operations/composed_1.cpp
