@@ -28,6 +28,107 @@
 
 namespace ip_address_v6_compile {
 
+ASIO_CONSTEXPR_CXX14 bool testConstexpr()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::address_v6 addr1;
+  ip::address_v6 addr2 = ip::address_v6::any();
+  ip::address_v6 addr3(addr2);
+#if defined(ASIO_HAS_MOVE)
+  ip::address_v6 addr4(std::move(addr3));
+#endif
+
+  bool b = addr1.is_unspecified();
+  (void)b;
+
+  b = addr1.is_loopback();
+  (void)b;
+
+  b = addr1.is_multicast();
+  (void)b;
+
+  b = addr1.is_link_local();
+  (void)b;
+
+  b = addr1.is_site_local();
+  (void)b;
+
+  b = addr1.is_v4_mapped();
+  (void)b;
+
+  b = addr1.is_multicast_node_local();
+  (void)b;
+
+  b = addr1.is_multicast_link_local();
+  (void)b;
+
+  b = addr1.is_multicast_site_local();
+  (void)b;
+
+  b = addr1.is_multicast_org_local();
+  (void)b;
+
+  b = addr1.is_multicast_global();
+  (void)b;
+
+  return true;
+}
+
+ASIO_CONSTEXPR_HO_CXX14 bool testConstexpr14()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::address_v6 addr1;
+  ip::address_v6 addr2 = ip::address_v6::loopback();
+
+  addr1 = addr2;
+#if defined(ASIO_HAS_MOVE)
+  addr1 = std::move(addr2);
+#endif
+
+  return true;
+}
+
+ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::address_v6 addr1;
+  const ip::address_v6::bytes_type const_bytes_value = { { 0 } };
+  ip::address_v6 addr2(const_bytes_value);
+
+  ip::address_v6::bytes_type bytes_value = addr1.to_bytes();
+  (void)bytes_value;
+
+  bool b = (addr1 == addr2);
+  (void)b;
+
+  b = (addr1 != addr2);
+  (void)b;
+
+  b = (addr1 < addr2);
+  (void)b;
+
+  b = (addr1 > addr2);
+  (void)b;
+
+  b = (addr1 <= addr2);
+  (void)b;
+
+  b = (addr1 >= addr2);
+  (void)b;
+
+  ip::address_v4 addr3;
+  addr1 = ip::make_address_v6(ip::v4_mapped, addr3);
+  addr3 = ip::make_address_v4(ip::v4_mapped, addr1);
+
+  return true;
+}
+
 void test()
 {
   using namespace asio;
@@ -175,6 +276,15 @@ void test()
     std::size_t hash1 = std::hash<ip::address_v6>()(addr1);
     (void)hash1;
 #endif // defined(ASIO_HAS_STD_HASH)
+
+    ASIO_CONSTEXPR_HO_CXX14 bool testConstexprRet = testConstexpr();
+    (void)testConstexprRet;
+
+    ASIO_CONSTEXPR_HO_CXX14 bool testConstexpr14Ret = testConstexpr14();
+    (void)testConstexpr14Ret;
+
+    ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20Ret = testConstexpr20();
+    (void)testConstexpr20Ret;
   }
   catch (std::exception&)
   {

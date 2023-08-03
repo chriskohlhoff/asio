@@ -29,6 +29,72 @@
 
 namespace ip_network_v6_compile {
 
+ASIO_CONSTEXPR_HO_CXX14 bool testConstexpr()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::network_v6 net1;
+  ip::network_v6 net2(net1);
+#if defined(ASIO_HAS_MOVE)
+  ip::network_v6 net3(net2);
+#endif
+
+  ip::address_v6 addr1 = net1.address();
+  (void)addr1;
+
+  unsigned short prefix_len = net1.prefix_length();
+  (void)prefix_len;
+
+  bool b1 = net1.is_host();
+  (void)b1;
+
+  return true;
+}
+
+ASIO_CONSTEXPR_HO_CXX14 bool testConstexpr14()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::network_v6 net1;
+  ip::network_v6 net2(ip::address_v6(), 64);
+
+  net1 = net2;
+  net1 = ip::make_network_v6(ip::address_v6(), 96);
+#if defined(ASIO_HAS_MOVE)
+  net1 = std::move(net2);
+#endif
+
+  return true;
+}
+
+ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  ip::network_v6 net1;
+  ip::network_v6 net2(net1);
+
+  ip::address_v6 addr1 = net1.network();
+  (void)addr1;
+
+  ip::network_v6 net3 = net1.canonical();
+  (void)net3;
+
+  bool b1 = net1.is_subnet_of(net2);
+  (void)b1;
+
+  bool b2 = (net1 == net2);
+  (void)b2;
+
+  bool b3 = (net1 != net2);
+  (void)b3;
+
+  return true;
+}
+
 void test()
 {
   using namespace asio;
@@ -106,6 +172,15 @@ void test()
     std::wostringstream wos;
     wos << net1;
 #endif // !defined(BOOST_NO_STD_WSTREAMBUF)
+
+    ASIO_CONSTEXPR_HO_CXX14 bool testConstexprRet = testConstexpr();
+    (void)testConstexprRet;
+
+    ASIO_CONSTEXPR_HO_CXX14 bool testConstexpr14Ret = testConstexpr14();
+    (void)testConstexpr14Ret;
+
+    ASIO_CONSTEXPR_HO_CXX20 bool testConstexpr20Ret = testConstexpr20();
+    (void)testConstexpr20Ret;
   }
   catch (std::exception&)
   {

@@ -30,35 +30,46 @@
 namespace asio {
 namespace ip {
 
-address_v4::address_v4(const address_v4::bytes_type& bytes)
+ASIO_CONSTEXPR_HO_CXX20 address_v4::address_v4(const address_v4::bytes_type& bytes)
 {
 #if UCHAR_MAX > 0xFF
   if (bytes[0] > 0xFF || bytes[1] > 0xFF
       || bytes[2] > 0xFF || bytes[3] > 0xFF)
-  {
-    std::out_of_range ex("address_v4 from bytes_type");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("address_v4 from bytes_type"));
 #endif // UCHAR_MAX > 0xFF
 
+#if __cplusplus >= 202002L
+  addr_.s_addr = std::bit_cast<decltype(addr_.s_addr)>(bytes);
+#else
   using namespace std; // For memcpy.
   memcpy(&addr_.s_addr, bytes.data(), 4);
+#endif
 }
 
-address_v4::address_v4(address_v4::uint_type addr)
+ASIO_CONSTEXPR_HO_CXX20 address_v4::address_v4(address_v4::uint_type addr)
+#if __cplusplus >= 201103L
+  : address_v4(address_v4::bytes_type{
+    (unsigned char)((addr >> 24) & 0xff),
+    (unsigned char)((addr >> 16) & 0xff),
+    (unsigned char)((addr >>  8) & 0xff),
+    (unsigned char)((addr)       & 0xff),
+  })
+#endif
 {
   if ((std::numeric_limits<uint_type>::max)() > 0xFFFFFFFF)
-  {
-    std::out_of_range ex("address_v4 from unsigned integer");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("address_v4 from unsigned integer"));
 
+#if __cplusplus < 201103L
   addr_.s_addr = asio::detail::socket_ops::host_to_network_long(
       static_cast<asio::detail::u_long_type>(addr));
+#endif
 }
 
-address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
 {
+#if __cplusplus >= 202002L
+  return std::bit_cast<address_v4::bytes_type>(addr_.s_addr);
+#else
   using namespace std; // For memcpy.
   bytes_type bytes;
 #if defined(ASIO_HAS_STD_ARRAY)
@@ -67,17 +78,22 @@ address_v4::bytes_type address_v4::to_bytes() const ASIO_NOEXCEPT
   memcpy(bytes.elems, &addr_.s_addr, 4);
 #endif // defined(ASIO_HAS_STD_ARRAY)
   return bytes;
+#endif
 }
 
-address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 address_v4::uint_type address_v4::to_uint() const ASIO_NOEXCEPT
 {
-  return asio::detail::socket_ops::network_to_host_long(addr_.s_addr);
+  address_v4::bytes_type bytes = to_bytes();
+  return bytes[0] << 24U |
+         bytes[1] << 16U |
+         bytes[2] << 8U |
+         bytes[3];
 }
 
 #if !defined(ASIO_NO_DEPRECATED)
 unsigned long address_v4::to_ulong() const
 {
-  return asio::detail::socket_ops::network_to_host_long(addr_.s_addr);
+  return to_uint();
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -108,12 +124,12 @@ std::string address_v4::to_string(asio::error_code& ec) const
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-bool address_v4::is_loopback() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool address_v4::is_loopback() const ASIO_NOEXCEPT
 {
   return (to_uint() & 0xFF000000) == 0x7F000000;
 }
 
-bool address_v4::is_unspecified() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool address_v4::is_unspecified() const ASIO_NOEXCEPT
 {
   return to_uint() == 0;
 }
@@ -135,7 +151,7 @@ bool address_v4::is_class_c() const
 }
 #endif // !defined(ASIO_NO_DEPRECATED)
 
-bool address_v4::is_multicast() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 bool address_v4::is_multicast() const ASIO_NOEXCEPT
 {
   return (to_uint() & 0xF0000000) == 0xE0000000;
 }

@@ -273,6 +273,41 @@
 #  define ASIO_CONSTEXPR
 # endif // defined(ASIO_HAS_CONSTEXPR)
 #endif // !defined(ASIO_CONSTEXPR)
+#if !defined(ASIO_CONSTEXPR_HO)
+# if defined(ASIO_HAS_CONSTEXPR) && defined(ASIO_HEADER_ONLY)
+#  define ASIO_CONSTEXPR_HO constexpr
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR_HO
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_CONSTEXPR)
+#if !defined(ASIO_CONSTEXPR_CXX14)
+# if defined(ASIO_HAS_CONSTEXPR) && __cplusplus >= 201402L
+#  define ASIO_CONSTEXPR_CXX14 constexpr
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR_CXX14
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_CONSTEXPR)
+#if !defined(ASIO_CONSTEXPR_HO_CXX14)
+# if defined(ASIO_HAS_CONSTEXPR) && defined(ASIO_HEADER_ONLY) && __cplusplus >= 201402L
+#  define ASIO_CONSTEXPR_HO_CXX14 constexpr
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR_HO_CXX14
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_CONSTEXPR)
+#if !defined(ASIO_CONSTEXPR_CXX20)
+# if defined(ASIO_HAS_CONSTEXPR) && __cplusplus >= 202002L
+#  define ASIO_CONSTEXPR_CXX20 constexpr
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR_CXX20
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_CONSTEXPR)
+#if !defined(ASIO_CONSTEXPR_HO_CXX20)
+# if defined(ASIO_HAS_CONSTEXPR) && defined(ASIO_HEADER_ONLY) && __cplusplus >= 202002L
+#  define ASIO_CONSTEXPR_HO_CXX20 constexpr
+# else // defined(ASIO_HAS_CONSTEXPR)
+#  define ASIO_CONSTEXPR_HO_CXX20
+# endif // defined(ASIO_HAS_CONSTEXPR)
+#endif // !defined(ASIO_CONSTEXPR)
 #if !defined(ASIO_STATIC_CONSTEXPR)
 # if defined(ASIO_HAS_CONSTEXPR)
 #  define ASIO_STATIC_CONSTEXPR(type, assignment) \

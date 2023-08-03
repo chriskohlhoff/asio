@@ -31,18 +31,15 @@
 namespace asio {
 namespace ip {
 
-network_v6::network_v6(const address_v6& addr, unsigned short prefix_len)
+ASIO_CONSTEXPR_HO_CXX14 network_v6::network_v6(const address_v6& addr, unsigned short prefix_len)
   : address_(addr),
     prefix_length_(prefix_len)
 {
   if (prefix_len > 128)
-  {
-    std::out_of_range ex("prefix length too large");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("prefix length too large"));
 }
 
-ASIO_DECL address_v6 network_v6::network() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 ASIO_DECL address_v6 network_v6::network() const ASIO_NOEXCEPT
 {
   address_v6::bytes_type bytes(address_.to_bytes());
   for (std::size_t i = 0; i < 16; ++i)
@@ -77,7 +74,7 @@ address_v6_range network_v6::hosts() const ASIO_NOEXCEPT
       ++address_v6_iterator(address_v6(end_bytes, address_.scope_id())));
 }
 
-bool network_v6::is_subnet_of(const network_v6& other) const
+ASIO_CONSTEXPR_HO_CXX20 bool network_v6::is_subnet_of(const network_v6& other) const
 {
   if (other.prefix_length_ >= prefix_length_)
     return false; // Only real subsets are allowed.

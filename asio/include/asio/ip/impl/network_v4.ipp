@@ -31,18 +31,15 @@
 namespace asio {
 namespace ip {
 
-network_v4::network_v4(const address_v4& addr, unsigned short prefix_len)
+ASIO_CONSTEXPR_HO_CXX20 network_v4::network_v4(const address_v4& addr, unsigned short prefix_len)
   : address_(addr),
     prefix_length_(prefix_len)
 {
   if (prefix_len > 32)
-  {
-    std::out_of_range ex("prefix length too large");
-    asio::detail::throw_exception(ex);
-  }
+    asio::detail::throw_exception(std::out_of_range("prefix length too large"));
 }
 
-network_v4::network_v4(const address_v4& addr, const address_v4& mask)
+ASIO_CONSTEXPR_HO_CXX20 network_v4::network_v4(const address_v4& addr, const address_v4& mask)
   : address_(addr),
     prefix_length_(0)
 {
@@ -53,10 +50,7 @@ network_v4::network_v4(const address_v4& addr, const address_v4& mask)
     if (finished)
     {
       if (mask_bytes[i])
-      {
-        std::invalid_argument ex("non-contiguous netmask");
-        asio::detail::throw_exception(ex);
-      }
+        asio::detail::throw_exception(std::out_of_range("non-contiguous netmask"));
       continue;
     }
     else
@@ -84,14 +78,13 @@ network_v4::network_v4(const address_v4& addr, const address_v4& mask)
         finished = true;
         break;
       default:
-        std::out_of_range ex("non-contiguous netmask");
-        asio::detail::throw_exception(ex);
+        asio::detail::throw_exception(std::out_of_range("non-contiguous netmask"));
       }
     }
   }
 }
 
-address_v4 network_v4::netmask() const ASIO_NOEXCEPT
+ASIO_CONSTEXPR_HO_CXX20 address_v4 network_v4::netmask() const ASIO_NOEXCEPT
 {
   uint32_t nmbits = 0xffffffff;
   if (prefix_length_ == 0)
@@ -108,7 +101,7 @@ address_v4_range network_v4::hosts() const ASIO_NOEXCEPT
     : address_v4_range(address_v4(network().to_uint() + 1), broadcast());
 }
 
-bool network_v4::is_subnet_of(const network_v4& other) const
+ASIO_CONSTEXPR_HO_CXX20 bool network_v4::is_subnet_of(const network_v4& other) const
 {
   if (other.prefix_length_ >= prefix_length_)
     return false; // Only real subsets are allowed.
