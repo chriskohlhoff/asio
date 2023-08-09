@@ -56,7 +56,6 @@ public:
   {
     return
     {
-      {
         asio::buffer(&version_, 1),
         asio::buffer(&command_, 1),
         asio::buffer(&port_high_byte_, 1),
@@ -64,7 +63,6 @@ public:
         asio::buffer(address_),
         asio::buffer(user_id_),
         asio::buffer(&null_byte_, 1)
-      }
     };
   }
 
@@ -99,13 +97,11 @@ public:
   {
     return
     {
-      {
         asio::buffer(&null_byte_, 1),
         asio::buffer(&status_, 1),
         asio::buffer(&port_high_byte_, 1),
         asio::buffer(&port_low_byte_, 1),
         asio::buffer(address_)
-      }
     };
   }
 

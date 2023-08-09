@@ -2547,9 +2547,9 @@ void test_3_arg_boost_array_buffers_async_read()
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  boost::array<asio::mutable_buffer, 2> buffers = { {
+  boost::array<asio::mutable_buffer, 2> buffers = {
     asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+    asio::buffer(read_buf) + 32 };
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -2610,9 +2610,9 @@ void test_3_arg_std_array_buffers_async_read()
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  std::array<asio::mutable_buffer, 2> buffers = { {
+  std::array<asio::mutable_buffer, 2> buffers = {
     asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+    asio::buffer(read_buf) + 32 };
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -3205,9 +3205,9 @@ void test_4_arg_boost_array_buffers_async_read()
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  boost::array<asio::mutable_buffer, 2> buffers = { {
+  boost::array<asio::mutable_buffer, 2> buffers = {
     asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+    asio::buffer(read_buf) + 32 };
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));
@@ -3549,9 +3549,9 @@ void test_4_arg_std_array_buffers_async_read()
   asio::io_context ioc;
   test_stream s(ioc);
   char read_buf[sizeof(read_data)];
-  std::array<asio::mutable_buffer, 2> buffers = { {
+  std::array<asio::mutable_buffer, 2> buffers = {
     asio::buffer(read_buf, 32),
-    asio::buffer(read_buf) + 32 } };
+    asio::buffer(read_buf) + 32 };
 
   s.reset(read_data, sizeof(read_data));
   memset(read_buf, 0, sizeof(read_buf));

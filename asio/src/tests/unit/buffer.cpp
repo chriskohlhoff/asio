@@ -85,12 +85,12 @@ void test()
 #if defined(ASIO_HAS_BOOST_ARRAY)
     boost::array<char, 1024> array_data;
     const boost::array<char, 1024>& const_array_data_1 = array_data;
-    boost::array<const char, 1024> const_array_data_2 = { { 0 } };
+    boost::array<const char, 1024> const_array_data_2 = { 0 };
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
 #if defined(ASIO_HAS_STD_ARRAY)
     std::array<char, 1024> std_array_data;
     const std::array<char, 1024>& const_std_array_data_1 = std_array_data;
-    std::array<const char, 1024> const_std_array_data_2 = { { 0 } };
+    std::array<const char, 1024> const_std_array_data_2 = { 0 };
 #endif // defined(ASIO_HAS_STD_ARRAY)
     std::vector<char> vector_data(1024);
     const std::vector<char>& const_vector_data = vector_data;

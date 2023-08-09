@@ -34,7 +34,7 @@ void get_daytime(asio::io_context& io_context, const char* hostname)
 
     udp::socket socket(io_context, udp::v4());
 
-    std::array<char, 1> send_buf  = {{ 0 }};
+    std::array<char, 1> send_buf  = { 0 };
     std::future<std::size_t> send_length =
       socket.async_send_to(asio::buffer(send_buf),
           *endpoints.get().begin(), // ... until here. This call may block.
