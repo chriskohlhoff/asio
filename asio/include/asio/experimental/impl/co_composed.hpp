@@ -123,7 +123,9 @@ public:
 
           Handler handler(std::move(promise.state().handler_));
           return_type result(
-              std::move(std::get<return_type>(promise.state().return_value_)));
+              std::move(
+                std::get<return_type>(promise.state().return_value_) // std::variant
+                ));
 
           co_composed_handler_base<Executors, Handler,
             Return>(std::move(composed_handler));
@@ -721,7 +723,9 @@ public:
 
         Handler handler(std::move(promise.state().handler_));
         return_type result(
-            std::move(std::get<return_type>(promise.state().return_value_)));
+            std::move(
+              std::get<return_type>(promise.state().return_value_) // std::variant
+            )); 
 
         co_composed_handler_base<Executors, Handler,
           Return>(std::move(composed_handler));
