@@ -2,7 +2,7 @@
 // experimental/detail/coro_completion_handler.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2021-2022 Klemens D. Morgenstern
+// Copyright (c) 2021-2023 Klemens D. Morgenstern
 //                         (klemens dot morgenstern at gmx dot net)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -105,7 +105,7 @@ auto coro_interpret_result(std::tuple<std::exception_ptr, Args...>&& args)
       [](auto, auto&&... rest)
       {
         return std::make_tuple(std::move(rest)...);
-      });
+      }, std::move(args));
 }
 
 template <typename... Args>
@@ -120,7 +120,7 @@ auto coro_interpret_result(
       [](auto, auto&&... rest)
       {
         return std::make_tuple(std::move(rest)...);
-      });
+      }, std::move(args));
 }
 
 template <typename  Arg>

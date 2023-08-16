@@ -2,7 +2,7 @@
 // bind_cancellation_slot.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -146,7 +146,9 @@ template <>
 class async_result<incrementer_token_v2, void(asio::error_code)>
 {
 public:
+#if !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
   typedef void return_type;
+#endif // !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
 #if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 

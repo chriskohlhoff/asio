@@ -2,7 +2,7 @@
 // impl/spawn.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -669,7 +669,7 @@ public:
 
   struct result_type
   {
-    exception_ptr ex_;
+    exception_ptr* ex_;
     return_type* value_;
   };
 
@@ -787,7 +787,7 @@ public:
 
   struct result_type
   {
-    exception_ptr ex_;
+    exception_ptr* ex_;
     return_type* value_;
   };
 

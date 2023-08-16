@@ -2,7 +2,7 @@
 // compose.hpp
 // ~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -338,6 +338,13 @@ struct associator<Associator,
  *
  * @param io_objects_or_executors Zero or more I/O objects or I/O executors for
  * which outstanding work must be maintained.
+ *
+ * @par Per-Operation Cancellation
+ * By default, terminal per-operation cancellation is enabled for
+ * composed operations that are implemented using @c async_compose. To
+ * disable cancellation for the composed operation, or to alter its
+ * supported cancellation types, call the @c self object's @c
+ * reset_cancellation_state function.
  *
  * @par Example:
  *

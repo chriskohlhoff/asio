@@ -2,7 +2,7 @@
 // buffer.hpp
 // ~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -892,6 +892,25 @@ private:
  * bufs2.push_back(asio::buffer(d2));
  * bufs2.push_back(asio::buffer(d3));
  * bytes_transferred = sock.send(bufs2); @endcode
+ *
+ * @par Buffer Literals
+ *
+ * The `_buf` literal suffix, defined in namespace
+ * <tt>asio::buffer_literals</tt>, may be used to create @c const_buffer
+ * objects from string, binary integer, and hexadecimal integer literals.
+ * For example:
+ *
+ * @code
+ * using namespace asio::buffer_literals;
+ *
+ * asio::const_buffer b1 = "hello"_buf;
+ * asio::const_buffer b2 = 0xdeadbeef_buf;
+ * asio::const_buffer b3 = 0x0123456789abcdef0123456789abcdef_buf;
+ * asio::const_buffer b4 = 0b1010101011001100_buf; @endcode
+ *
+ * Note that the memory associated with a buffer literal is valid for the
+ * lifetime of the program. This means that the buffer can be safely used with
+ * asynchronous operations.
  */
 /*@{*/
 
@@ -1568,6 +1587,14 @@ ASIO_NODISCARD inline ASIO_MUTABLE_BUFFER buffer(
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
       !is_const<
         typename remove_reference<
           typename std::iterator_traits<typename T::iterator>::reference
@@ -1595,6 +1622,14 @@ ASIO_NODISCARD inline ASIO_MUTABLE_BUFFER buffer(
     T& data, std::size_t max_size_in_bytes,
     typename constraint<
       is_contiguous_iterator<typename T::iterator>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
@@ -1627,6 +1662,14 @@ ASIO_NODISCARD inline ASIO_CONST_BUFFER buffer(
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
       is_const<
         typename remove_reference<
           typename std::iterator_traits<typename T::iterator>::reference
@@ -1657,6 +1700,14 @@ ASIO_NODISCARD inline ASIO_CONST_BUFFER buffer(
       defaulted_constraint
     >::type = defaulted_constraint(),
     typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
       is_const<
         typename remove_reference<
           typename std::iterator_traits<typename T::iterator>::reference
@@ -1684,6 +1735,14 @@ ASIO_NODISCARD inline ASIO_CONST_BUFFER buffer(
     typename constraint<
       is_contiguous_iterator<typename T::const_iterator>::value,
       defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
+      defaulted_constraint
     >::type = defaulted_constraint()) ASIO_NOEXCEPT
 {
   return ASIO_CONST_BUFFER(
@@ -1705,6 +1764,14 @@ ASIO_NODISCARD inline ASIO_CONST_BUFFER buffer(
     const T& data, std::size_t max_size_in_bytes,
     typename constraint<
       is_contiguous_iterator<typename T::const_iterator>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, const_buffer>::value,
+      defaulted_constraint
+    >::type = defaulted_constraint(),
+    typename constraint<
+      !is_convertible<T, mutable_buffer>::value,
       defaulted_constraint
     >::type = defaulted_constraint()) ASIO_NOEXCEPT
 {
@@ -2668,6 +2735,172 @@ struct is_dynamic_buffer
 #endif // defined(ASIO_NO_DYNAMIC_BUFFER_V1)
 {
 };
+
+#if (defined(ASIO_HAS_USER_DEFINED_LITERALS) \
+    && defined(ASIO_HAS_VARIADIC_TEMPLATES)) \
+  || defined(GENERATING_DOCUMENTATION)
+
+namespace buffer_literals {
+namespace detail {
+
+template <char... Chars>
+struct chars {};
+
+template <unsigned char... Bytes>
+struct bytes {};
+
+// Literal processor that converts binary literals to an array of bytes.
+
+template <typename Bytes, char... Chars>
+struct bin_literal;
+
+template <unsigned char... Bytes>
+struct bin_literal<bytes<Bytes...> >
+{
+  static const std::size_t size = sizeof...(Bytes);
+  static const unsigned char data[sizeof...(Bytes)];
+};
+
+template <unsigned char... Bytes>
+const unsigned char bin_literal<bytes<Bytes...> >::data[sizeof...(Bytes)]
+  = { Bytes... };
+
+template <unsigned char... Bytes, char Bit7, char Bit6, char Bit5,
+    char Bit4, char Bit3, char Bit2, char Bit1, char Bit0, char... Chars>
+struct bin_literal<bytes<Bytes...>, Bit7, Bit6,
+    Bit5, Bit4, Bit3, Bit2, Bit1, Bit0, Chars...> :
+  bin_literal<
+    bytes<Bytes...,
+      static_cast<unsigned char>(
+      (Bit7 == '1' ? 0x80 : 0) |
+        (Bit6 == '1' ? 0x40 : 0) |
+        (Bit5 == '1' ? 0x20 : 0) |
+        (Bit4 == '1' ? 0x10 : 0) |
+        (Bit3 == '1' ? 0x08 : 0) |
+        (Bit2 == '1' ? 0x04 : 0) |
+        (Bit1 == '1' ? 0x02 : 0) |
+        (Bit0 == '1' ? 0x01 : 0))
+    >, Chars...> {};
+
+template <unsigned char... Bytes, char... Chars>
+struct bin_literal<bytes<Bytes...>, Chars...>
+{
+  static_assert(sizeof...(Chars) == 0,
+      "number of digits in a binary buffer literal must be a multiple of 8");
+
+  static const std::size_t size = 0;
+  static const unsigned char data[1];
+};
+
+template <unsigned char... Bytes, char... Chars>
+const unsigned char bin_literal<bytes<Bytes...>, Chars...>::data[1] = {};
+
+// Literal processor that converts hexadecimal literals to an array of bytes.
+
+template <typename Bytes, char... Chars>
+struct hex_literal;
+
+template <unsigned char... Bytes>
+struct hex_literal<bytes<Bytes...> >
+{
+  static const std::size_t size = sizeof...(Bytes);
+  static const unsigned char data[sizeof...(Bytes)];
+};
+
+template <unsigned char... Bytes>
+const unsigned char hex_literal<bytes<Bytes...> >::data[sizeof...(Bytes)]
+  = { Bytes... };
+
+template <unsigned char... Bytes, char Hi, char Lo, char... Chars>
+struct hex_literal<bytes<Bytes...>, Hi, Lo, Chars...> :
+  hex_literal<
+    bytes<Bytes...,
+      static_cast<unsigned char>(
+        Lo >= 'A' && Lo <= 'F' ? Lo - 'A' + 10 :
+          (Lo >= 'a' && Lo <= 'f' ? Lo - 'a' + 10 : Lo - '0')) |
+      ((static_cast<unsigned char>(
+        Hi >= 'A' && Hi <= 'F' ? Hi - 'A' + 10 :
+          (Hi >= 'a' && Hi <= 'f' ? Hi - 'a' + 10 : Hi - '0'))) << 4)
+    >, Chars...> {};
+
+template <unsigned char... Bytes, char Char>
+struct hex_literal<bytes<Bytes...>, Char>
+{
+  static_assert(!Char,
+      "a hexadecimal buffer literal must have an even number of digits");
+
+  static const std::size_t size = 0;
+  static const unsigned char data[1];
+};
+
+template <unsigned char... Bytes, char Char>
+const unsigned char hex_literal<bytes<Bytes...>, Char>::data[1] = {};
+
+// Helper template that removes digit separators and then passes the cleaned
+// variadic pack of characters to the literal processor.
+
+template <template <typename, char...> class Literal,
+    typename Clean, char... Raw>
+struct remove_separators;
+
+template <template <typename, char...> class Literal,
+    char... Clean, char... Raw>
+struct remove_separators<Literal, chars<Clean...>, '\'', Raw...> :
+  remove_separators<Literal, chars<Clean...>, Raw...> {};
+
+template <template <typename, char...> class Literal,
+    char... Clean, char C, char... Raw>
+struct remove_separators<Literal, chars<Clean...>, C, Raw...> :
+  remove_separators<Literal, chars<Clean..., C>, Raw...> {};
+
+template <template <typename, char...> class Literal, char... Clean>
+struct remove_separators<Literal, chars<Clean...> > :
+  Literal<bytes<>, Clean...> {};
+
+// Helper template to determine the literal type based on the prefix.
+
+template <char... Chars>
+struct literal;
+
+template <char... Chars>
+struct literal<'0', 'b', Chars...> :
+  remove_separators<bin_literal, chars<>, Chars...>{};
+
+template <char... Chars>
+struct literal<'0', 'B', Chars...> :
+  remove_separators<bin_literal, chars<>, Chars...>{};
+
+template <char... Chars>
+struct literal<'0', 'x', Chars...> :
+  remove_separators<hex_literal, chars<>, Chars...>{};
+
+template <char... Chars>
+struct literal<'0', 'X', Chars...> :
+  remove_separators<hex_literal, chars<>, Chars...>{};
+
+} // namespace detail
+
+/// Literal operator for creating const_buffer objects from string literals.
+inline ASIO_CONST_BUFFER operator"" _buf(const char* data, std::size_t n)
+{
+  return ASIO_CONST_BUFFER(data, n);
+}
+
+/// Literal operator for creating const_buffer objects from unbounded binary or
+/// hexadecimal integer literals.
+template <char... Chars>
+inline ASIO_CONST_BUFFER operator"" _buf()
+{
+  return ASIO_CONST_BUFFER(
+      +detail::literal<Chars...>::data,
+      detail::literal<Chars...>::size);
+}
+
+} // namespace buffer_literals
+
+#endif // (defined(ASIO_HAS_USER_DEFINED_LITERALS)
+       //     && defined(ASIO_HAS_VARIADIC_TEMPLATES))
+       //   || defined(GENERATING_DOCUMENTATION)
 
 } // namespace asio
 

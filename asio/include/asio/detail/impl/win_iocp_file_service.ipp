@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_file_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -225,7 +225,8 @@ uint64_t win_iocp_file_service::seek(
     method = FILE_BEGIN;
     break;
   case file_base::seek_cur:
-    method = FILE_CURRENT;
+    method = FILE_BEGIN;
+    offset = static_cast<int64_t>(impl.offset_) + offset;
     break;
   case file_base::seek_end:
     method = FILE_END;

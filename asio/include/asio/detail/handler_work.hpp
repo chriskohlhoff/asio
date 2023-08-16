@@ -2,7 +2,7 @@
 // detail/handler_work.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,9 +16,13 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
+#include "asio/associated_immediate_executor.hpp"
 #include "asio/detail/handler_invoke_helpers.hpp"
+#include "asio/detail/initiate_dispatch.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/detail/work_dispatcher.hpp"
 #include "asio/execution/allocator.hpp"
 #include "asio/execution/blocking.hpp"
 #include "asio/execution/execute.hpp"
@@ -523,6 +527,34 @@ public:
       base1_type::dispatch(function, handler);
     }
   }
+};
+
+template <typename Handler, typename IoExecutor>
+class immediate_handler_work
+{
+public:
+  typedef handler_work<Handler, IoExecutor> handler_work_type;
+
+  explicit immediate_handler_work(ASIO_MOVE_ARG(handler_work_type) w)
+    : handler_work_(ASIO_MOVE_CAST(handler_work_type)(w))
+  {
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler, const void* io_ex)
+  {
+    typedef typename associated_immediate_executor<Handler, IoExecutor>::type
+      immediate_ex_type;
+
+    immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
+        handler, *static_cast<const IoExecutor*>(io_ex));
+
+    (initiate_dispatch_with_executor<immediate_ex_type>(immediate_ex))(
+        ASIO_MOVE_CAST(Function)(function));
+  }
+
+private:
+  handler_work_type handler_work_;
 };
 
 } // namespace detail

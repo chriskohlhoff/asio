@@ -2,7 +2,7 @@
 // bind_allocator.hpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -471,20 +471,40 @@ namespace detail {
 
 template <typename TargetAsyncResult,
   typename Allocator, typename = void>
-struct allocator_binder_async_result_completion_handler_type
+class allocator_binder_completion_handler_async_result
 {
+public:
+  template <typename T>
+  explicit allocator_binder_completion_handler_async_result(T&)
+  {
+  }
 };
 
 template <typename TargetAsyncResult, typename Allocator>
-struct allocator_binder_async_result_completion_handler_type<
+class allocator_binder_completion_handler_async_result<
   TargetAsyncResult, Allocator,
   typename void_type<
     typename TargetAsyncResult::completion_handler_type
   >::type>
 {
+public:
   typedef allocator_binder<
     typename TargetAsyncResult::completion_handler_type, Allocator>
       completion_handler_type;
+
+  explicit allocator_binder_completion_handler_async_result(
+      typename TargetAsyncResult::completion_handler_type& handler)
+    : target_(handler)
+  {
+  }
+
+  typename TargetAsyncResult::return_type get()
+  {
+    return target_.get();
+  }
+
+private:
+  TargetAsyncResult target_;
 };
 
 template <typename TargetAsyncResult, typename = void>
@@ -506,20 +526,16 @@ struct allocator_binder_async_result_return_type<
 
 template <typename T, typename Allocator, typename Signature>
 class async_result<allocator_binder<T, Allocator>, Signature> :
-  public detail::allocator_binder_async_result_completion_handler_type<
+  public detail::allocator_binder_completion_handler_async_result<
     async_result<T, Signature>, Allocator>,
   public detail::allocator_binder_async_result_return_type<
     async_result<T, Signature> >
 {
 public:
   explicit async_result(allocator_binder<T, Allocator>& b)
-    : target_(b.get())
+    : detail::allocator_binder_completion_handler_async_result<
+        async_result<T, Signature>, Allocator>(b.get())
   {
-  }
-
-  typename async_result<T, Signature>::return_type get()
-  {
-    return target_.get();
   }
 
   template <typename Initiation>
@@ -689,16 +705,17 @@ template <template <typename, typename> class Associator,
 struct associator<Associator,
     allocator_binder<T, Allocator>,
     DefaultCandidate>
+  : Associator<T, DefaultCandidate>
 {
-  typedef typename Associator<T, DefaultCandidate>::type type;
-
-  static type get(const allocator_binder<T, Allocator>& b) ASIO_NOEXCEPT
+  static typename Associator<T, DefaultCandidate>::type
+  get(const allocator_binder<T, Allocator>& b) ASIO_NOEXCEPT
   {
     return Associator<T, DefaultCandidate>::get(b.get());
   }
 
-  static ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
-      const allocator_binder<T, Allocator>& b,
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<T, DefaultCandidate>::type)
+  get(const allocator_binder<T, Allocator>& b,
       const DefaultCandidate& c) ASIO_NOEXCEPT
     ASIO_AUTO_RETURN_TYPE_SUFFIX((
       Associator<T, DefaultCandidate>::get(b.get(), c)))

@@ -115,6 +115,9 @@ PERFORMANCE_TEST_EXES = \
 	tests\performance\server.exe
 
 UNIT_TEST_EXES = \
+	tests\unit\any_completion_executor.exe \
+	tests\unit\any_completion_handler.exe \
+	tests\unit\any_io_executor.exe \
 	tests\unit\append.exe \
 	tests\unit\as_tuple.exe \
 	tests\unit\associated_allocator.exe \
@@ -142,6 +145,7 @@ UNIT_TEST_EXES = \
 	tests\unit\bind_allocator.exe \
 	tests\unit\bind_cancellation_slot.exe \
 	tests\unit\bind_executor.exe \
+	tests\unit\bind_immediate_executor.exe \
 	tests\unit\buffered_read_stream.exe \
 	tests\unit\buffered_stream.exe \
 	tests\unit\buffered_write_stream.exe \
@@ -242,6 +246,7 @@ UNIT_TEST_EXES = \
 	tests\unit\serial_port.exe \
 	tests\unit\serial_port_base.exe \
 	tests\unit\signal_set.exe \
+	tests\unit\signal_set_base.exe \
 	tests\unit\socket_base.exe \
 	tests\unit\static_thread_pool.exe \
 	tests\unit\steady_timer.exe \

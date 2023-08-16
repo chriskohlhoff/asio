@@ -199,6 +199,7 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          ASIO_EOF_ERROR(e)=implementation_defined \
                          ASIO_OS_ERROR(e1,e2)=implementation_defined \
                          ASIO_MOVE_ARG(a)=a&& \
+                         ASIO_MOVE_OR_LVALUE_ARG(a)=a&& \
                          ASIO_NONDEDUCED_MOVE_ARG(a)=a& \
                          ASIO_DECL= \
                          ASIO_CONSTEXPR=constexpr \

@@ -2,7 +2,7 @@
 // stream_descriptor.cpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -55,6 +55,7 @@ void test()
     char mutable_char_buffer[128] = "";
     const char const_char_buffer[128] = "";
     posix::descriptor_base::bytes_readable io_control_command;
+    archetypes::immediate_handler immediate;
     archetypes::lazy_handler lazy;
     asio::error_code ec;
 
@@ -134,6 +135,7 @@ void test()
     descriptor1.wait(posix::descriptor_base::wait_write, ec);
 
     descriptor1.async_wait(posix::descriptor_base::wait_read, &wait_handler);
+    descriptor1.async_wait(posix::descriptor_base::wait_read, immediate);
     int i1 = descriptor1.async_wait(posix::descriptor_base::wait_write, lazy);
     (void)i1;
 
@@ -152,6 +154,9 @@ void test()
         write_some_handler);
     descriptor1.async_write_some(null_buffers(),
         write_some_handler);
+    descriptor1.async_write_some(buffer(mutable_char_buffer), immediate);
+    descriptor1.async_write_some(buffer(const_char_buffer), immediate);
+    descriptor1.async_write_some(null_buffers(), immediate);
     int i2 = descriptor1.async_write_some(buffer(mutable_char_buffer), lazy);
     (void)i2;
     int i3 = descriptor1.async_write_some(buffer(const_char_buffer), lazy);
@@ -165,6 +170,8 @@ void test()
 
     descriptor1.async_read_some(buffer(mutable_char_buffer), read_some_handler);
     descriptor1.async_read_some(null_buffers(), read_some_handler);
+    descriptor1.async_read_some(buffer(mutable_char_buffer), immediate);
+    descriptor1.async_read_some(null_buffers(), immediate);
     int i5 = descriptor1.async_read_some(buffer(mutable_char_buffer), lazy);
     (void)i5;
     int i6 = descriptor1.async_read_some(null_buffers(), lazy);

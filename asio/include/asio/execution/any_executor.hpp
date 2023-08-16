@@ -2,7 +2,7 @@
 // execution/any_executor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -992,27 +992,34 @@ protected:
   static bool equal_ex(const any_executor_base& ex1,
       const any_executor_base& ex2)
   {
-    return *ex1.target<Ex>() == *ex2.target<Ex>();
+    const Ex* p1 = ex1.target<Ex>();
+    const Ex* p2 = ex2.target<Ex>();
+    ASIO_ASSUME(p1 != 0 && p2 != 0);
+    return *p1 == *p2;
   }
 
   template <typename Ex>
   static void execute_ex(const any_executor_base& ex,
       ASIO_MOVE_ARG(function) f)
   {
+    const Ex* p = ex.target<Ex>();
+    ASIO_ASSUME(p != 0);
 #if defined(ASIO_NO_DEPRECATED)
-    ex.target<Ex>()->execute(ASIO_MOVE_CAST(function)(f));
+    p->execute(ASIO_MOVE_CAST(function)(f));
 #else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(*ex.target<Ex>(), ASIO_MOVE_CAST(function)(f));
+    execution::execute(*p, ASIO_MOVE_CAST(function)(f));
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>
   static void blocking_execute_ex(const any_executor_base& ex, function_view f)
   {
+    const Ex* p = ex.target<Ex>();
+    ASIO_ASSUME(p != 0);
 #if defined(ASIO_NO_DEPRECATED)
-    ex.target<Ex>()->execute(f);
+    p->execute(f);
 #else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(*ex.target<Ex>(), f);
+    execution::execute(*p, f);
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
@@ -1816,6 +1823,11 @@ public:
         >::value
       >::type* = 0) const
   {
+    if (!target_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
     typedef find_convertible_property<Property> found;
     prop_fns_[found::index].query(0, object_fns_->target(*this),
         &static_cast<const typename found::type&>(p));
@@ -1835,6 +1847,11 @@ public:
         >::value
       >::type* = 0) const
   {
+    if (!target_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
     typedef find_convertible_property<Property> found;
     typename remove_reference<
       typename found::query_result_type>::type* result = 0;
@@ -1857,6 +1874,11 @@ public:
         >::value
       >::type* = 0) const
   {
+    if (!target_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
     typedef find_convertible_property<Property> found;
     typename found::query_result_type result;
     prop_fns_[found::index].query(&result, object_fns_->target(*this),
@@ -1882,6 +1904,11 @@ public:
         >::value
       >::type* = 0) const
   {
+    if (!target_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
     typedef find_convertible_property<Property> found;
     typename found::query_result_type* result;
     prop_fns_[found::index].query(&result, object_fns_->target(*this),
@@ -1902,6 +1929,11 @@ public:
         find_convertible_requirable_property<Property>::value
       >::type* = 0) const
   {
+    if (!target_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
     typedef find_convertible_requirable_property<Property> found;
     return prop_fns_[found::index].require(object_fns_->target(*this),
         &static_cast<const typename found::type&>(p));
@@ -1919,6 +1951,11 @@ public:
         find_convertible_preferable_property<Property>::value
       >::type* = 0) const
   {
+    if (!target_)
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
     typedef find_convertible_preferable_property<Property> found;
     return prop_fns_[found::index].prefer(object_fns_->target(*this),
         &static_cast<const typename found::type&>(p));
@@ -2299,6 +2336,11 @@ inline void swap(any_executor<SupportableProperties...>& a,
           >::value \
         >::type* = 0) const \
     { \
+      if (!target_) \
+      { \
+        bad_executor ex; \
+        asio::detail::throw_exception(ex); \
+      } \
       typedef find_convertible_property<Property> found; \
       prop_fns_[found::index].query(0, object_fns_->target(*this), \
           &static_cast<const typename found::type&>(p)); \
@@ -2318,6 +2360,11 @@ inline void swap(any_executor<SupportableProperties...>& a,
           >::value \
         >::type* = 0) const \
     { \
+      if (!target_) \
+      { \
+        bad_executor ex; \
+        asio::detail::throw_exception(ex); \
+      } \
       typedef find_convertible_property<Property> found; \
       typename remove_reference< \
         typename found::query_result_type>::type* result; \
@@ -2340,6 +2387,11 @@ inline void swap(any_executor<SupportableProperties...>& a,
           >::value \
         >::type* = 0) const \
     { \
+      if (!target_) \
+      { \
+        bad_executor ex; \
+        asio::detail::throw_exception(ex); \
+      } \
       typedef find_convertible_property<Property> found; \
       typename found::query_result_type result; \
       prop_fns_[found::index].query(&result, object_fns_->target(*this), \
@@ -2365,6 +2417,11 @@ inline void swap(any_executor<SupportableProperties...>& a,
           >::value \
         >::type* = 0) const \
     { \
+      if (!target_) \
+      { \
+        bad_executor ex; \
+        asio::detail::throw_exception(ex); \
+      } \
       typedef find_convertible_property<Property> found; \
       typename found::query_result_type* result; \
       prop_fns_[found::index].query(&result, object_fns_->target(*this), \
@@ -2385,6 +2442,11 @@ inline void swap(any_executor<SupportableProperties...>& a,
           find_convertible_requirable_property<Property>::value \
         >::type* = 0) const \
     { \
+      if (!target_) \
+      { \
+        bad_executor ex; \
+        asio::detail::throw_exception(ex); \
+      } \
       typedef find_convertible_requirable_property<Property> found; \
       return prop_fns_[found::index].require(object_fns_->target(*this), \
           &static_cast<const typename found::type&>(p)); \
@@ -2402,6 +2464,11 @@ inline void swap(any_executor<SupportableProperties...>& a,
           find_convertible_preferable_property<Property>::value \
         >::type* = 0) const \
     { \
+      if (!target_) \
+      { \
+        bad_executor ex; \
+        asio::detail::throw_exception(ex); \
+      } \
       typedef find_convertible_preferable_property<Property> found; \
       return prop_fns_[found::index].prefer(object_fns_->target(*this), \
           &static_cast<const typename found::type&>(p)); \

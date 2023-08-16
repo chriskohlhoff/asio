@@ -2,7 +2,7 @@
 // detail/impl/descriptor_ops.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -117,7 +117,7 @@ bool set_user_non_blocking(int d, state_type& state,
 # if defined(ENOTTY)
   if (ec.value() == ENOTTY)
   {
-    int result = ::fcntl(d, F_GETFL, 0);
+    result = ::fcntl(d, F_GETFL, 0);
     get_last_error(ec, result < 0);
     if (result >= 0)
     {
@@ -180,7 +180,7 @@ bool set_internal_non_blocking(int d, state_type& state,
 # if defined(ENOTTY)
   if (ec.value() == ENOTTY)
   {
-    int result = ::fcntl(d, F_GETFL, 0);
+    result = ::fcntl(d, F_GETFL, 0);
     get_last_error(ec, result < 0);
     if (result >= 0)
     {

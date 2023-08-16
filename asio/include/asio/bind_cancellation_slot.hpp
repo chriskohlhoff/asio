@@ -2,7 +2,7 @@
 // bind_cancellation_slot.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -473,20 +473,40 @@ namespace detail {
 
 template <typename TargetAsyncResult,
   typename CancellationSlot, typename = void>
-struct cancellation_slot_binder_async_result_completion_handler_type
+class cancellation_slot_binder_completion_handler_async_result
 {
+public:
+  template <typename T>
+  explicit cancellation_slot_binder_completion_handler_async_result(T&)
+  {
+  }
 };
 
 template <typename TargetAsyncResult, typename CancellationSlot>
-struct cancellation_slot_binder_async_result_completion_handler_type<
+class cancellation_slot_binder_completion_handler_async_result<
   TargetAsyncResult, CancellationSlot,
   typename void_type<
     typename TargetAsyncResult::completion_handler_type
   >::type>
 {
+public:
   typedef cancellation_slot_binder<
     typename TargetAsyncResult::completion_handler_type, CancellationSlot>
       completion_handler_type;
+
+  explicit cancellation_slot_binder_completion_handler_async_result(
+      typename TargetAsyncResult::completion_handler_type& handler)
+    : target_(handler)
+  {
+  }
+
+  typename TargetAsyncResult::return_type get()
+  {
+    return target_.get();
+  }
+
+private:
+  TargetAsyncResult target_;
 };
 
 template <typename TargetAsyncResult, typename = void>
@@ -508,20 +528,16 @@ struct cancellation_slot_binder_async_result_return_type<
 
 template <typename T, typename CancellationSlot, typename Signature>
 class async_result<cancellation_slot_binder<T, CancellationSlot>, Signature> :
-  public detail::cancellation_slot_binder_async_result_completion_handler_type<
+  public detail::cancellation_slot_binder_completion_handler_async_result<
     async_result<T, Signature>, CancellationSlot>,
   public detail::cancellation_slot_binder_async_result_return_type<
     async_result<T, Signature> >
 {
 public:
   explicit async_result(cancellation_slot_binder<T, CancellationSlot>& b)
-    : target_(b.get())
+    : detail::cancellation_slot_binder_completion_handler_async_result<
+        async_result<T, Signature>, CancellationSlot>(b.get())
   {
-  }
-
-  typename async_result<T, Signature>::return_type get()
-  {
-    return target_.get();
   }
 
   template <typename Initiation>
@@ -691,17 +707,18 @@ template <template <typename, typename> class Associator,
 struct associator<Associator,
     cancellation_slot_binder<T, CancellationSlot>,
     DefaultCandidate>
+  : Associator<T, DefaultCandidate>
 {
-  typedef typename Associator<T, DefaultCandidate>::type type;
-
-  static type get(const cancellation_slot_binder<T, CancellationSlot>& b)
+  static typename Associator<T, DefaultCandidate>::type
+  get(const cancellation_slot_binder<T, CancellationSlot>& b)
     ASIO_NOEXCEPT
   {
     return Associator<T, DefaultCandidate>::get(b.get());
   }
 
-  static ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(
-      const cancellation_slot_binder<T, CancellationSlot>& b,
+  static ASIO_AUTO_RETURN_TYPE_PREFIX2(
+      typename Associator<T, DefaultCandidate>::type)
+  get(const cancellation_slot_binder<T, CancellationSlot>& b,
       const DefaultCandidate& c) ASIO_NOEXCEPT
     ASIO_AUTO_RETURN_TYPE_SUFFIX((
       Associator<T, DefaultCandidate>::get(b.get(), c)))

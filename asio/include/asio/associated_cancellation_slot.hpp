@@ -2,7 +2,7 @@
 // associated_cancellation_slot.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -220,7 +220,7 @@ struct associated_cancellation_slot<reference_wrapper<T>, CancellationSlot>
   /// Forwards the request to get the cancellation slot to the associator
   /// specialisation for the unwrapped type @c T.
   static ASIO_AUTO_RETURN_TYPE_PREFIX(type) get(reference_wrapper<T> t,
-      const CancellationSlot& s = CancellationSlot()) ASIO_NOEXCEPT
+      const CancellationSlot& s) ASIO_NOEXCEPT
     ASIO_AUTO_RETURN_TYPE_SUFFIX((
       associated_cancellation_slot<T, CancellationSlot>::get(t.get(), s)))
   {

@@ -2,7 +2,7 @@
 // basic_socket_acceptor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -1924,8 +1924,10 @@ public:
   template <typename Executor1,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
-          Executor1>::other)) MoveAcceptToken
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+          typename constraint<is_executor<Executor1>::value
+            || execution::is_executor<Executor1>::value,
+              Executor1>::type>::other)) MoveAcceptToken
+                ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
@@ -2486,8 +2488,10 @@ public:
   template <typename Executor1,
       ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
-          Executor1>::other)) MoveAcceptToken
-            ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+          typename constraint<is_executor<Executor1>::value
+            || execution::is_executor<Executor1>::value,
+              Executor1>::type>::other)) MoveAcceptToken
+                ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
   ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (asio::error_code,
         typename Protocol::socket::template rebind_executor<
