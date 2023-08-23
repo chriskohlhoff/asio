@@ -49,44 +49,35 @@ struct is_executor_of_impl : false_type
 template <typename T, typename F>
 struct is_executor_of_impl<T, F,
 #if defined(ASIO_NO_DEPRECATED)
-  typename enable_if<
-    traits::execute_member<typename add_const<T>::type, F>::is_valid
-  >::type,
+  enable_if_t<
+    traits::execute_member<add_const_t<T>, F>::is_valid
+  >,
 #else // defined(ASIO_NO_DEPRECATED)
-  typename enable_if<
-    can_execute<typename add_const<T>::type, F>::value
-  >::type,
+  enable_if_t<
+    can_execute<add_const_t<T>, F>::value
+  >,
 #endif // defined(ASIO_NO_DEPRECATED)
-  typename void_type<
-    typename result_of<typename decay<F>::type&()>::type
-  >::type,
-  typename enable_if<
-    is_constructible<typename decay<F>::type, F>::value
-  >::type,
-  typename enable_if<
-    is_move_constructible<typename decay<F>::type>::value
-  >::type,
-#if defined(ASIO_HAS_NOEXCEPT)
-  typename enable_if<
+  void_t<
+    result_of_t<decay_t<F>&()>
+  >,
+  enable_if_t<
+    is_constructible<decay_t<F>, F>::value
+  >,
+  enable_if_t<
+    is_move_constructible<decay_t<F>>::value
+  >,
+  enable_if_t<
     is_nothrow_copy_constructible<T>::value
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_nothrow_destructible<T>::value
-  >::type,
-#else // defined(ASIO_HAS_NOEXCEPT)
-  typename enable_if<
-    is_copy_constructible<T>::value
-  >::type,
-  typename enable_if<
-    is_destructible<T>::value
-  >::type,
-#endif // defined(ASIO_HAS_NOEXCEPT)
-  typename enable_if<
+  >,
+  enable_if_t<
     traits::equality_comparable<T>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     traits::equality_comparable<T>::is_noexcept
-  >::type> : true_type
+  >> : true_type
 {
 };
 
@@ -97,10 +88,7 @@ struct executor_shape
 };
 
 template <typename T>
-struct executor_shape<T,
-    typename void_type<
-      typename T::shape_type
-    >::type>
+struct executor_shape<T, void_t<typename T::shape_type>>
 {
   typedef typename T::shape_type type;
 };
@@ -112,10 +100,7 @@ struct executor_index
 };
 
 template <typename T, typename Default>
-struct executor_index<T, Default,
-    typename void_type<
-      typename T::index_type
-    >::type>
+struct executor_index<T, Default, void_t<typename T::index_type>>
 {
   typedef typename T::index_type type;
 };
@@ -142,7 +127,7 @@ struct is_executor :
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T>
-ASIO_CONSTEXPR const bool is_executor_v = is_executor<T>::value;
+constexpr const bool is_executor_v = is_executor<T>::value;
 
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
@@ -182,7 +167,7 @@ struct is_executor_of :
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename T, typename F>
-ASIO_CONSTEXPR const bool is_executor_of_v =
+constexpr const bool is_executor_of_v =
   is_executor_of<T, F>::value;
 
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
@@ -220,12 +205,8 @@ struct executor_shape
 #endif // defined(GENERATING_DOCUMENTATION)
 };
 
-#if defined(ASIO_HAS_ALIAS_TEMPLATES)
-
 template <typename T>
 using executor_shape_t = typename executor_shape<T>::type;
-
-#endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
 
 /// The executor_index trait detects the type used by an executor to represent
 /// an index within a bulk operation.
@@ -247,12 +228,8 @@ struct executor_index
 #endif // defined(GENERATING_DOCUMENTATION)
 };
 
-#if defined(ASIO_HAS_ALIAS_TEMPLATES)
-
 template <typename T>
 using executor_index_t = typename executor_index<T>::type;
-
-#endif // defined(ASIO_HAS_ALIAS_TEMPLATES)
 
 } // namespace execution
 } // namespace asio

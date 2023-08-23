@@ -31,7 +31,7 @@ struct no_start
 
 struct const_member_start
 {
-  void start() const ASIO_NOEXCEPT
+  void start() const noexcept
   {
     ++call_count;
   }
@@ -45,8 +45,8 @@ namespace traits {
 template <>
 struct start_member<const const_member_start>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -57,7 +57,7 @@ struct start_member<const const_member_start>
 
 struct free_start_const_receiver
 {
-  friend void start(const free_start_const_receiver&) ASIO_NOEXCEPT
+  friend void start(const free_start_const_receiver&) noexcept
   {
     ++call_count;
   }
@@ -71,8 +71,8 @@ namespace traits {
 template <>
 struct start_free<const free_start_const_receiver>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -83,7 +83,7 @@ struct start_free<const free_start_const_receiver>
 
 struct non_const_member_start
 {
-  void start() ASIO_NOEXCEPT
+  void start() noexcept
   {
     ++call_count;
   }
@@ -97,8 +97,8 @@ namespace traits {
 template <>
 struct start_member<non_const_member_start>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -109,7 +109,7 @@ struct start_member<non_const_member_start>
 
 struct free_start_non_const_receiver
 {
-  friend void start(free_start_non_const_receiver&) ASIO_NOEXCEPT
+  friend void start(free_start_non_const_receiver&) noexcept
   {
     ++call_count;
   }
@@ -123,8 +123,8 @@ namespace traits {
 template <>
 struct start_free<free_start_non_const_receiver>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -135,43 +135,43 @@ struct start_free<free_start_non_const_receiver>
 
 void test_can_start()
 {
-  ASIO_CONSTEXPR bool b1 = exec::can_start<
+  constexpr bool b1 = exec::can_start<
       no_start&>::value;
   ASIO_CHECK(b1 == false);
 
-  ASIO_CONSTEXPR bool b2 = exec::can_start<
+  constexpr bool b2 = exec::can_start<
       const no_start&>::value;
   ASIO_CHECK(b2 == false);
 
-  ASIO_CONSTEXPR bool b3 = exec::can_start<
+  constexpr bool b3 = exec::can_start<
       const_member_start&>::value;
   ASIO_CHECK(b3 == true);
 
-  ASIO_CONSTEXPR bool b4 = exec::can_start<
+  constexpr bool b4 = exec::can_start<
       const const_member_start&>::value;
   ASIO_CHECK(b4 == true);
 
-  ASIO_CONSTEXPR bool b5 = exec::can_start<
+  constexpr bool b5 = exec::can_start<
       free_start_const_receiver&>::value;
   ASIO_CHECK(b5 == true);
 
-  ASIO_CONSTEXPR bool b6 = exec::can_start<
+  constexpr bool b6 = exec::can_start<
       const free_start_const_receiver&>::value;
   ASIO_CHECK(b6 == true);
 
-  ASIO_CONSTEXPR bool b7 = exec::can_start<
+  constexpr bool b7 = exec::can_start<
       non_const_member_start&>::value;
   ASIO_CHECK(b7 == true);
 
-  ASIO_CONSTEXPR bool b8 = exec::can_start<
+  constexpr bool b8 = exec::can_start<
       const non_const_member_start&>::value;
   ASIO_CHECK(b8 == false);
 
-  ASIO_CONSTEXPR bool b9 = exec::can_start<
+  constexpr bool b9 = exec::can_start<
       free_start_non_const_receiver&>::value;
   ASIO_CHECK(b9 == true);
 
-  ASIO_CONSTEXPR bool b10 = exec::can_start<
+  constexpr bool b10 = exec::can_start<
       const free_start_non_const_receiver&>::value;
   ASIO_CHECK(b10 == false);
 }

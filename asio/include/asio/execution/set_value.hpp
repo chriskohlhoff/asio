@@ -20,7 +20,6 @@
 #if !defined(ASIO_NO_DEPRECATED)
 
 #include "asio/detail/type_traits.hpp"
-#include "asio/detail/variadic_templates.hpp"
 #include "asio/traits/set_value_member.hpp"
 #include "asio/traits/set_value_free.hpp"
 
@@ -74,9 +73,9 @@ struct can_set_value :
 
 namespace asio_execution_set_value_fn {
 
-using asio::decay;
+using asio::decay_t;
 using asio::declval;
-using asio::enable_if;
+using asio::enable_if_t;
 using asio::traits::set_value_free;
 using asio::traits::set_value_member;
 
@@ -92,287 +91,57 @@ enum overload_type
 template <typename R, typename Vs, typename = void, typename = void>
 struct call_traits
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = ill_formed;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 template <typename R, typename Vs>
 struct call_traits<R, Vs,
-  typename enable_if<
+  enable_if_t<
     set_value_member<R, Vs>::is_valid
-  >::type> :
+  >> :
   set_value_member<R, Vs>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename R, typename Vs>
 struct call_traits<R, Vs,
-  typename enable_if<
+  enable_if_t<
     !set_value_member<R, Vs>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     set_value_free<R, Vs>::is_valid
-  >::type> :
+  >> :
   set_value_free<R, Vs>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 struct impl
 {
-#if defined(ASIO_HAS_MOVE)
-
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
   template <typename R, typename... Vs>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<R, void(Vs...)>::overload == call_member,
     typename call_traits<R, void(Vs...)>::result_type
-  >::type
+  >
   operator()(R&& r, Vs&&... v) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R, void(Vs...)>::is_noexcept))
+    noexcept(call_traits<R, void(Vs...)>::is_noexcept)
   {
-    return ASIO_MOVE_CAST(R)(r).set_value(ASIO_MOVE_CAST(Vs)(v)...);
+    return static_cast<R&&>(r).set_value(static_cast<Vs&&>(v)...);
   }
 
   template <typename R, typename... Vs>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<R, void(Vs...)>::overload == call_free,
     typename call_traits<R, void(Vs...)>::result_type
-  >::type
+  >
   operator()(R&& r, Vs&&... v) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R, void(Vs...)>::is_noexcept))
+    noexcept(call_traits<R, void(Vs...)>::is_noexcept)
   {
-    return set_value(ASIO_MOVE_CAST(R)(r),
-        ASIO_MOVE_CAST(Vs)(v)...);
+    return set_value(static_cast<R&&>(r), static_cast<Vs&&>(v)...);
   }
-
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R, void()>::overload == call_member,
-    typename call_traits<R, void()>::result_type
-  >::type
-  operator()(R&& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R, void()>::is_noexcept))
-  {
-    return ASIO_MOVE_CAST(R)(r).set_value();
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R, void()>::overload == call_free,
-    typename call_traits<R, void()>::result_type
-  >::type
-  operator()(R&& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R, void()>::is_noexcept))
-  {
-    return set_value(ASIO_MOVE_CAST(R)(r));
-  }
-
-#define ASIO_PRIVATE_SET_VALUE_CALL_DEF(n) \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_CONSTEXPR typename enable_if< \
-    call_traits<R, \
-      void(ASIO_VARIADIC_TARGS(n))>::overload == call_member, \
-    typename call_traits<R, void(ASIO_VARIADIC_TARGS(n))>::result_type \
-  >::type \
-  operator()(R&& r, ASIO_VARIADIC_MOVE_PARAMS(n)) const \
-    ASIO_NOEXCEPT_IF(( \
-      call_traits<R, void(ASIO_VARIADIC_TARGS(n))>::is_noexcept)) \
-  { \
-    return ASIO_MOVE_CAST(R)(r).set_value( \
-        ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_CONSTEXPR typename enable_if< \
-    call_traits<R, void(ASIO_VARIADIC_TARGS(n))>::overload == call_free, \
-    typename call_traits<R, void(ASIO_VARIADIC_TARGS(n))>::result_type \
-  >::type \
-  operator()(R&& r, ASIO_VARIADIC_MOVE_PARAMS(n)) const \
-    ASIO_NOEXCEPT_IF(( \
-      call_traits<R, void(ASIO_VARIADIC_TARGS(n))>::is_noexcept)) \
-  { \
-    return set_value(ASIO_MOVE_CAST(R)(r), \
-        ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  /**/
-ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_SET_VALUE_CALL_DEF)
-#undef ASIO_PRIVATE_SET_VALUE_CALL_DEF
-
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-#else // defined(ASIO_HAS_MOVE)
-
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-  template <typename R, typename... Vs>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&, void(const Vs&...)>::overload == call_member,
-    typename call_traits<R&, void(const Vs&...)>::result_type
-  >::type
-  operator()(R& r, const Vs&... v) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R&, void(const Vs&...)>::is_noexcept))
-  {
-    return r.set_value(v...);
-  }
-
-  template <typename R, typename... Vs>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&, void(const Vs&...)>::overload == call_member,
-    typename call_traits<const R&, void(const Vs&...)>::result_type
-  >::type
-  operator()(const R& r, const Vs&... v) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void(const Vs&...)>::is_noexcept))
-  {
-    return r.set_value(v...);
-  }
-
-  template <typename R, typename... Vs>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&, void(const Vs&...)>::overload == call_free,
-    typename call_traits<R&, void(const Vs&...)>::result_type
-  >::type
-  operator()(R& r, const Vs&... v) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R&, void(const Vs&...)>::is_noexcept))
-  {
-    return set_value(r, v...);
-  }
-
-  template <typename R, typename... Vs>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&, void(const Vs&...)>::overload == call_free,
-    typename call_traits<const R&, void(const Vs&...)>::result_type
-  >::type
-  operator()(const R& r, const Vs&... v) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void(const Vs&...)>::is_noexcept))
-  {
-    return set_value(r, v...);
-  }
-
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&, void()>::overload == call_member,
-    typename call_traits<R&, void()>::result_type
-  >::type
-  operator()(R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R&, void()>::is_noexcept))
-  {
-    return r.set_value();
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&, void()>::overload == call_member,
-    typename call_traits<const R&, void()>::result_type
-  >::type
-  operator()(const R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void()>::is_noexcept))
-  {
-    return r.set_value();
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&, void()>::overload == call_free,
-    typename call_traits<R&, void()>::result_type
-  >::type
-  operator()(R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R&, void()>::is_noexcept))
-  {
-    return set_value(r);
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&, void()>::overload == call_free,
-    typename call_traits<const R&, void()>::result_type
-  >::type
-  operator()(const R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<const R&, void()>::is_noexcept))
-  {
-    return set_value(r);
-  }
-
-#define ASIO_PRIVATE_SET_VALUE_CALL_DEF(n) \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_CONSTEXPR typename enable_if< \
-    call_traits<R&, \
-      void(ASIO_VARIADIC_TARGS(n))>::overload == call_member, \
-    typename call_traits<R&, void(ASIO_VARIADIC_TARGS(n))>::result_type \
-  >::type \
-  operator()(R& r, ASIO_VARIADIC_MOVE_PARAMS(n)) const \
-    ASIO_NOEXCEPT_IF(( \
-      call_traits<R&, void(ASIO_VARIADIC_TARGS(n))>::is_noexcept)) \
-  { \
-    return r.set_value(ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_CONSTEXPR typename enable_if< \
-    call_traits<const R&, \
-      void(ASIO_VARIADIC_TARGS(n))>::overload == call_member, \
-    typename call_traits<const R&, \
-      void(ASIO_VARIADIC_TARGS(n))>::result_type \
-  >::type \
-  operator()(const R& r, ASIO_VARIADIC_MOVE_PARAMS(n)) const \
-    ASIO_NOEXCEPT_IF(( \
-      call_traits<const R&, void(ASIO_VARIADIC_TARGS(n))>::is_noexcept)) \
-  { \
-    return r.set_value(ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_CONSTEXPR typename enable_if< \
-    call_traits<R&, \
-      void(ASIO_VARIADIC_TARGS(n))>::overload == call_free, \
-    typename call_traits<R&, void(ASIO_VARIADIC_TARGS(n))>::result_type \
-  >::type \
-  operator()(R& r, ASIO_VARIADIC_MOVE_PARAMS(n)) const \
-    ASIO_NOEXCEPT_IF(( \
-      call_traits<R&, void(ASIO_VARIADIC_TARGS(n))>::is_noexcept)) \
-  { \
-    return set_value(r, ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  ASIO_CONSTEXPR typename enable_if< \
-    call_traits<const R&, \
-      void(ASIO_VARIADIC_TARGS(n))>::overload == call_free, \
-    typename call_traits<const R&, \
-      void(ASIO_VARIADIC_TARGS(n))>::result_type \
-  >::type \
-  operator()(const R& r, ASIO_VARIADIC_MOVE_PARAMS(n)) const \
-    ASIO_NOEXCEPT_IF(( \
-      call_traits<const R&, void(ASIO_VARIADIC_TARGS(n))>::is_noexcept)) \
-  { \
-    return set_value(r, ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  /**/
-ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_SET_VALUE_CALL_DEF)
-#undef ASIO_PRIVATE_SET_VALUE_CALL_DEF
-
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 template <typename T = impl>
@@ -389,12 +158,10 @@ namespace asio {
 namespace execution {
 namespace {
 
-static ASIO_CONSTEXPR const asio_execution_set_value_fn::impl&
+static constexpr const asio_execution_set_value_fn::impl&
   set_value = asio_execution_set_value_fn::static_instance<>::instance;
 
 } // namespace
-
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 template <typename R, typename... Vs>
 struct can_set_value :
@@ -421,60 +188,9 @@ struct is_nothrow_set_value :
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename R, typename... Vs>
-constexpr bool is_nothrow_set_value_v
-  = is_nothrow_set_value<R, Vs...>::value;
+constexpr bool is_nothrow_set_value_v = is_nothrow_set_value<R, Vs...>::value;
 
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
-
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-template <typename R, typename = void,
-    typename = void, typename = void, typename = void, typename = void,
-    typename = void, typename = void, typename = void, typename = void>
-struct can_set_value;
-
-template <typename R, typename = void,
-    typename = void, typename = void, typename = void, typename = void,
-    typename = void, typename = void, typename = void, typename = void>
-struct is_nothrow_set_value;
-
-template <typename R>
-struct can_set_value<R> :
-  integral_constant<bool,
-    asio_execution_set_value_fn::call_traits<R, void()>::overload !=
-      asio_execution_set_value_fn::ill_formed>
-{
-};
-
-template <typename R>
-struct is_nothrow_set_value<R> :
-  integral_constant<bool,
-    asio_execution_set_value_fn::call_traits<R, void()>::is_noexcept>
-{
-};
-
-#define ASIO_PRIVATE_SET_VALUE_TRAITS_DEF(n) \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  struct can_set_value<R, ASIO_VARIADIC_TARGS(n)> : \
-    integral_constant<bool, \
-      asio_execution_set_value_fn::call_traits<R, \
-        void(ASIO_VARIADIC_TARGS(n))>::overload != \
-          asio_execution_set_value_fn::ill_formed> \
-  { \
-  }; \
-  \
-  template <typename R, ASIO_VARIADIC_TPARAMS(n)> \
-  struct is_nothrow_set_value<R, ASIO_VARIADIC_TARGS(n)> : \
-    integral_constant<bool, \
-      asio_execution_set_value_fn::call_traits<R, \
-        void(ASIO_VARIADIC_TARGS(n))>::is_noexcept> \
-  { \
-  }; \
-  /**/
-ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_SET_VALUE_TRAITS_DEF)
-#undef ASIO_PRIVATE_SET_VALUE_TRAITS_DEF
-
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 
 } // namespace execution
 } // namespace asio

@@ -38,11 +38,9 @@ struct concrete_handler<R(Arg1)>
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
   concrete_handler(concrete_handler&&) {}
 private:
   concrete_handler(const concrete_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 template <typename R, typename Arg1, typename Arg2>
@@ -67,16 +65,14 @@ struct immediate_concrete_handler : concrete_handler<Signature>
   {
   }
 
-  immediate_executor_type get_immediate_executor() const ASIO_NOEXCEPT
+  immediate_executor_type get_immediate_executor() const noexcept
   {
     return immediate_executor_type();
   }
 
-#if defined(ASIO_HAS_MOVE)
   immediate_concrete_handler(immediate_concrete_handler&&) {}
 private:
   immediate_concrete_handler(const immediate_concrete_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 template <typename Signature>
@@ -86,11 +82,9 @@ struct lazy_concrete_handler : concrete_handler<Signature>
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
   lazy_concrete_handler(lazy_concrete_handler&&) {}
 private:
   lazy_concrete_handler(const lazy_concrete_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 } // namespace archetypes
@@ -120,8 +114,8 @@ public:
 
 private:
   // Disallow copying and assignment.
-  async_result(const async_result&) ASIO_DELETED;
-  async_result& operator=(const async_result&) ASIO_DELETED;
+  async_result(const async_result&) = delete;
+  async_result& operator=(const async_result&) = delete;
 };
 
 template <typename Signature>
@@ -147,8 +141,8 @@ public:
 
 private:
   // Disallow copying and assignment.
-  async_result(const async_result&) ASIO_DELETED;
-  async_result& operator=(const async_result&) ASIO_DELETED;
+  async_result(const async_result&) = delete;
+  async_result& operator=(const async_result&) = delete;
 };
 
 } // namespace asio

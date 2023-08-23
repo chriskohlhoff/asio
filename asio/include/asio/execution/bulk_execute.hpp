@@ -104,15 +104,15 @@ struct can_bulk_execute :
 namespace asio_execution_bulk_execute_fn {
 
 using asio::declval;
-using asio::enable_if;
+using asio::enable_if_t;
 using asio::execution::bulk_guarantee_t;
 using asio::execution::detail::bulk_sender;
-using asio::execution::executor_index;
+using asio::execution::executor_index_t;
 using asio::execution::is_sender;
 using asio::is_convertible;
 using asio::is_same;
-using asio::remove_cvref;
-using asio::result_of;
+using asio::remove_cvref_t;
+using asio::result_of_t;
 using asio::traits::bulk_execute_free;
 using asio::traits::bulk_execute_member;
 using asio::traits::static_require;
@@ -131,204 +131,121 @@ template <typename S, typename Args, typename = void, typename = void,
     typename = void, typename = void, typename = void, typename = void>
 struct call_traits
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = ill_formed;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 template <typename S, typename F, typename N>
 struct call_traits<S, void(F, N),
-  typename enable_if<
+  enable_if_t<
     is_convertible<N, std::size_t>::value
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     bulk_execute_member<S, F, N>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_sender<
       typename bulk_execute_member<S, F, N>::result_type
     >::value
-  >::type> :
+  >> :
   bulk_execute_member<S, F, N>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename S, typename F, typename N>
 struct call_traits<S, void(F, N),
-  typename enable_if<
+  enable_if_t<
     is_convertible<N, std::size_t>::value
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !bulk_execute_member<S, F, N>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     bulk_execute_free<S, F, N>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_sender<
       typename bulk_execute_free<S, F, N>::result_type
     >::value
-  >::type> :
+  >> :
   bulk_execute_free<S, F, N>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 template <typename S, typename F, typename N>
 struct call_traits<S, void(F, N),
-  typename enable_if<
+  enable_if_t<
     is_convertible<N, std::size_t>::value
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !bulk_execute_member<S, F, N>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !bulk_execute_free<S, F, N>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_sender<S>::value
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     is_same<
-      typename result_of<
-        F(typename executor_index<typename remove_cvref<S>::type>::type)
-      >::type,
-      typename result_of<
-        F(typename executor_index<typename remove_cvref<S>::type>::type)
-      >::type
+      result_of_t<
+        F(executor_index_t<remove_cvref_t<S>>)
+      >,
+      result_of_t<
+        F(executor_index_t<remove_cvref_t<S>>)
+      >
     >::value
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     static_require<S, bulk_guarantee_t::unsequenced_t>::is_valid
-  >::type>
+  >>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = adapter;
+  static constexpr bool is_noexcept = false;
   typedef bulk_sender<S, F, N> result_type;
 };
 
 struct impl
 {
-#if defined(ASIO_HAS_MOVE)
   template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S, void(F, N)>::overload == call_member,
     typename call_traits<S, void(F, N)>::result_type
-  >::type
+  >
   operator()(S&& s, F&& f, N&& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(F, N)>::is_noexcept))
+    noexcept(call_traits<S, void(F, N)>::is_noexcept)
   {
-    return ASIO_MOVE_CAST(S)(s).bulk_execute(
-        ASIO_MOVE_CAST(F)(f), ASIO_MOVE_CAST(N)(n));
+    return static_cast<S&&>(s).bulk_execute(
+        static_cast<F&&>(f), static_cast<N&&>(n));
   }
 
   template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S, void(F, N)>::overload == call_free,
     typename call_traits<S, void(F, N)>::result_type
-  >::type
+  >
   operator()(S&& s, F&& f, N&& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(F, N)>::is_noexcept))
+    noexcept(call_traits<S, void(F, N)>::is_noexcept)
   {
-    return bulk_execute(ASIO_MOVE_CAST(S)(s),
-        ASIO_MOVE_CAST(F)(f), ASIO_MOVE_CAST(N)(n));
+    return bulk_execute(static_cast<S&&>(s),
+        static_cast<F&&>(f), static_cast<N&&>(n));
   }
 
   template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<S, void(F, N)>::overload == adapter,
     typename call_traits<S, void(F, N)>::result_type
-  >::type
+  >
   operator()(S&& s, F&& f, N&& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(F, N)>::is_noexcept))
+    noexcept(call_traits<S, void(F, N)>::is_noexcept)
   {
     return typename call_traits<S, void(F, N)>::result_type(
-        ASIO_MOVE_CAST(S)(s), ASIO_MOVE_CAST(F)(f),
-        ASIO_MOVE_CAST(N)(n));
+        static_cast<S&&>(s), static_cast<F&&>(f),
+        static_cast<N&&>(n));
   }
-#else // defined(ASIO_HAS_MOVE)
-  template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<S, void(const F&, const N&)>::overload == call_member,
-    typename call_traits<S, void(const F&, const N&)>::result_type
-  >::type
-  operator()(S& s, const F& f, const N& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(const F&, const N&)>::is_noexcept))
-  {
-    return s.bulk_execute(ASIO_MOVE_CAST(F)(f),
-        ASIO_MOVE_CAST(N)(n));
-  }
-
-  template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<S, void(const F&, const N&)>::overload == call_member,
-    typename call_traits<S, void(const F&, const N&)>::result_type
-  >::type
-  operator()(const S& s, const F& f, const N& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(const F&, const N&)>::is_noexcept))
-  {
-    return s.bulk_execute(ASIO_MOVE_CAST(F)(f),
-        ASIO_MOVE_CAST(N)(n));
-  }
-
-  template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<S, void(const F&, const N&)>::overload == call_free,
-    typename call_traits<S, void(const F&, const N&)>::result_type
-  >::type
-  operator()(S& s, const F& f, const N& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(const F&, const N&)>::is_noexcept))
-  {
-    return bulk_execute(s, ASIO_MOVE_CAST(F)(f),
-        ASIO_MOVE_CAST(N)(n));
-  }
-
-  template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<S, void(const F&, const N&)>::overload == call_free,
-    typename call_traits<S, void(const F&, const N&)>::result_type
-  >::type
-  operator()(const S& s, const F& f, const N& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(const F&, const N&)>::is_noexcept))
-  {
-    return bulk_execute(s, ASIO_MOVE_CAST(F)(f),
-        ASIO_MOVE_CAST(N)(n));
-  }
-
-  template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<S, void(const F&, const N&)>::overload == adapter,
-    typename call_traits<S, void(const F&, const N&)>::result_type
-  >::type
-  operator()(S& s, const F& f, const N& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(const F&, const N&)>::is_noexcept))
-  {
-    return typename call_traits<S, void(const F&, const N&)>::result_type(
-        s, ASIO_MOVE_CAST(F)(f), ASIO_MOVE_CAST(N)(n));
-  }
-
-  template <typename S, typename F, typename N>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<S, void(const F&, const N&)>::overload == adapter,
-    typename call_traits<S, void(const F&, const N&)>::result_type
-  >::type
-  operator()(const S& s, const F& f, const N& n) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<S, void(const F&, const N&)>::is_noexcept))
-  {
-    return typename call_traits<S, void(const F&, const N&)>::result_type(
-        s, ASIO_MOVE_CAST(F)(f), ASIO_MOVE_CAST(N)(n));
-  }
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 template <typename T = impl>
@@ -345,7 +262,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static ASIO_CONSTEXPR
+static constexpr
   const asio_execution_bulk_execute_fn::impl& bulk_execute =
     asio_execution_bulk_execute_fn::static_instance<>::instance;
 

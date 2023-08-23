@@ -31,22 +31,18 @@ struct write_some_handler
 {
   write_some_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   write_some_handler(write_some_handler&&) {}
 private:
   write_some_handler(const write_some_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct read_some_handler
 {
   read_some_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   read_some_handler(read_some_handler&&) {}
 private:
   read_some_handler(const read_some_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 void test()
@@ -73,20 +69,16 @@ void test()
     writable_pipe::native_handle_type native_pipe2 = pipe1.native_handle();
     writable_pipe pipe4(ioc_ex, native_pipe2);
 
-#if defined(ASIO_HAS_MOVE)
     writable_pipe pipe5(std::move(pipe4));
 
     basic_writable_pipe<io_context::executor_type> pipe6(ioc);
     writable_pipe pipe7(std::move(pipe6));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_writable_pipe operators.
 
-#if defined(ASIO_HAS_MOVE)
     pipe1 = writable_pipe(ioc);
     pipe1 = std::move(pipe2);
     pipe1 = std::move(pipe6);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

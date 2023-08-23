@@ -26,10 +26,8 @@ namespace execution {
 /// Exception reported via @c set_error when an exception escapes from
 /// @c set_value.
 class receiver_invocation_error
-  : public std::runtime_error
-#if defined(ASIO_HAS_STD_NESTED_EXCEPTION)
-  , public std::nested_exception
-#endif // defined(ASIO_HAS_STD_NESTED_EXCEPTION)
+  : public std::runtime_error,
+    public std::nested_exception
 {
 public:
   /// Constructor.

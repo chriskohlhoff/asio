@@ -80,19 +80,15 @@ void test()
     rp::socket socket4(ioc, rp(af_inet, ipproto_icmp), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_HAS_MOVE)
     rp::socket socket5(std::move(socket4));
     asio::ip::icmp::socket icmp_socket(ioc);
     rp::socket socket6(std::move(icmp_socket));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
-#if defined(ASIO_HAS_MOVE)
     socket1 = rp::socket(ioc);
     socket1 = std::move(socket2);
     socket1 = asio::ip::icmp::socket(ioc);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

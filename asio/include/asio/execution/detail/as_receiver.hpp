@@ -33,31 +33,31 @@ struct as_receiver
   Function f_;
 
   template <typename F>
-  explicit as_receiver(ASIO_MOVE_ARG(F) f, int)
-    : f_(ASIO_MOVE_CAST(F)(f))
+  explicit as_receiver(F&& f, int)
+    : f_(static_cast<F&&>(f))
   {
   }
 
-#if defined(ASIO_MSVC) && defined(ASIO_HAS_MOVE)
+#if defined(ASIO_MSVC)
   as_receiver(as_receiver&& other)
-    : f_(ASIO_MOVE_CAST(Function)(other.f_))
+    : f_(static_cast<Function&&>(other.f_))
   {
   }
-#endif // defined(ASIO_MSVC) && defined(ASIO_HAS_MOVE)
+#endif // defined(ASIO_MSVC)
 
   void set_value()
-    ASIO_NOEXCEPT_IF(noexcept(declval<Function&>()()))
+    noexcept(noexcept(declval<Function&>()()))
   {
     f_();
   }
 
   template <typename E>
-  void set_error(E) ASIO_NOEXCEPT
+  void set_error(E) noexcept
   {
     std::terminate();
   }
 
-  void set_done() ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 };
@@ -68,7 +68,7 @@ struct is_as_receiver : false_type
 };
 
 template <typename Function, typename T>
-struct is_as_receiver<as_receiver<Function, T> > : true_type
+struct is_as_receiver<as_receiver<Function, T>> : true_type
 {
 };
 
@@ -82,13 +82,8 @@ template <typename Function, typename T>
 struct set_value_member<
     asio::execution::detail::as_receiver<Function, T>, void()>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-#if defined(ASIO_HAS_NOEXCEPT)
-  ASIO_STATIC_CONSTEXPR(bool,
-      is_noexcept = noexcept(declval<Function&>()()));
-#else // defined(ASIO_HAS_NOEXCEPT)
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
-#endif // defined(ASIO_HAS_NOEXCEPT)
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = noexcept(declval<Function&>()());
   typedef void result_type;
 };
 
@@ -100,8 +95,8 @@ template <typename Function, typename T, typename E>
 struct set_error_member<
     asio::execution::detail::as_receiver<Function, T>, E>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -111,10 +106,10 @@ struct set_error_member<
 
 template <typename Function, typename T>
 struct set_done_member<
-    asio::execution::detail::as_receiver<Function, T> >
+    asio::execution::detail::as_receiver<Function, T>>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

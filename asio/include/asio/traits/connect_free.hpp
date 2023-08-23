@@ -18,13 +18,9 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 
-#if defined(ASIO_HAS_DECLTYPE) \
-  && defined(ASIO_HAS_NOEXCEPT) \
-  && defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#if defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # define ASIO_HAS_DEDUCED_CONNECT_FREE_TRAIT 1
-#endif // defined(ASIO_HAS_DECLTYPE)
-       //   && defined(ASIO_HAS_NOEXCEPT)
-       //   && defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#endif // defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
 #include "asio/detail/push_options.hpp"
 
@@ -42,8 +38,8 @@ namespace detail {
 
 struct no_connect_free
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = false);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = false;
+  static constexpr bool is_noexcept = false;
 };
 
 #if defined(ASIO_HAS_DEDUCED_CONNECT_FREE_TRAIT)
@@ -55,35 +51,35 @@ struct connect_free_trait : no_connect_free
 
 template <typename S, typename R>
 struct connect_free_trait<S, R,
-  typename void_type<
+  void_t<
     decltype(connect(declval<S>(), declval<R>()))
-  >::type>
+  >>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  static constexpr bool is_valid = true;
 
   using result_type = decltype(
     connect(declval<S>(), declval<R>()));
 
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = noexcept(
-    connect(declval<S>(), declval<R>())));
+  static constexpr bool is_noexcept =
+    noexcept(connect(declval<S>(), declval<R>()));
 };
 
 #else // defined(ASIO_HAS_DEDUCED_CONNECT_FREE_TRAIT)
 
 template <typename S, typename R, typename = void>
 struct connect_free_trait :
-  conditional<
-    is_same<S, typename remove_reference<S>::type>::value
-      && is_same<R, typename decay<R>::type>::value,
-    typename conditional<
-      is_same<S, typename add_const<S>::type>::value,
+  conditional_t<
+    is_same<S, remove_reference_t<S>>::value
+      && is_same<R, decay_t<R>>::value,
+    conditional_t<
+      is_same<S, add_const_t<S>>::value,
       no_connect_free,
-      traits::connect_free<typename add_const<S>::type, R>
-    >::type,
+      traits::connect_free<add_const_t<S>, R>
+    >,
     traits::connect_free<
-      typename remove_reference<S>::type,
-      typename decay<R>::type>
-  >::type
+      remove_reference_t<S>,
+      decay_t<R>>
+  >
 {
 };
 

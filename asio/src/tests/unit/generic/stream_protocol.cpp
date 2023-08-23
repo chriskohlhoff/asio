@@ -90,19 +90,15 @@ void test()
 #endif // defined(ASIO_WINDOWS_RUNTIME)
     sp::socket socket4(ioc, sp(af_inet, ipproto_tcp), native_socket1);
 
-#if defined(ASIO_HAS_MOVE)
     sp::socket socket5(std::move(socket4));
     asio::ip::tcp::socket tcp_socket(ioc);
     sp::socket socket6(std::move(tcp_socket));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_socket operators.
 
-#if defined(ASIO_HAS_MOVE)
     socket1 = sp::socket(ioc);
     socket1 = std::move(socket2);
     socket1 = asio::ip::tcp::socket(ioc);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

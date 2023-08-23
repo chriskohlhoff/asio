@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/connect_pipe.hpp"
 
+#include <functional>
 #include <string>
 #include "asio/io_context.hpp"
 #include "asio/read.hpp"
@@ -23,12 +24,6 @@
 #include "asio/writable_pipe.hpp"
 #include "asio/write.hpp"
 #include "unit_test.hpp"
-
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -98,11 +93,7 @@ void test()
   using namespace std; // For memcmp.
   using namespace asio;
 
-#if defined(ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
   using bindns::placeholders::_2;
 

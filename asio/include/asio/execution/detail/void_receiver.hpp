@@ -28,16 +28,16 @@ namespace detail {
 
 struct void_receiver
 {
-  void set_value() ASIO_NOEXCEPT
+  void set_value() noexcept
   {
   }
 
   template <typename E>
-  void set_error(ASIO_MOVE_ARG(E)) ASIO_NOEXCEPT
+  void set_error(E&&) noexcept
   {
   }
 
-  void set_done() ASIO_NOEXCEPT
+  void set_done() noexcept
   {
   }
 };
@@ -51,8 +51,8 @@ namespace traits {
 template <>
 struct set_value_member<asio::execution::detail::void_receiver, void()>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -63,8 +63,8 @@ struct set_value_member<asio::execution::detail::void_receiver, void()>
 template <typename E>
 struct set_error_member<asio::execution::detail::void_receiver, E>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -75,8 +75,8 @@ struct set_error_member<asio::execution::detail::void_receiver, E>
 template <>
 struct set_done_member<asio::execution::detail::void_receiver>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

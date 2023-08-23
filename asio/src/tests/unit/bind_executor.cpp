@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/bind_executor.hpp"
 
+#include <functional>
 #include "asio/io_context.hpp"
 #include "asio/steady_timer.hpp"
 #include "unit_test.hpp"
@@ -26,24 +27,13 @@
 # include "asio/steady_timer.hpp"
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
-
 using namespace asio;
-
-#if defined(ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 typedef deadline_timer timer;
 namespace chronons = boost::posix_time;
-#elif defined(ASIO_HAS_CHRONO)
+#else // defined(ASIO_HAS_BOOST_DATE_TIME)
 typedef steady_timer timer;
 namespace chronons = asio::chrono;
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
@@ -140,37 +130,13 @@ public:
   typedef void return_type;
 #endif // !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
   template <typename Initiation, typename... Args>
   static void initiate(Initiation initiation,
-      incrementer_token_v2 token, ASIO_MOVE_ARG(Args)... args)
+      incrementer_token_v2 token, Args&&... args)
   {
     initiation(bindns::bind(&increment, token.count),
-        ASIO_MOVE_CAST(Args)(args)...);
+        static_cast<Args&&>(args)...);
   }
-
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-  template <typename Initiation>
-  static void initiate(Initiation initiation, incrementer_token_v2 token)
-  {
-    initiation(bindns::bind(&increment, token.count));
-  }
-
-#define ASIO_PRIVATE_INITIATE_DEF(n) \
-  template <typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
-  static return_type initiate(Initiation initiation, \
-      incrementer_token_v2 token, ASIO_VARIADIC_MOVE_PARAMS(n)) \
-  { \
-    initiation(bindns::bind(&increment, token.count), \
-        ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  /**/
-  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_INITIATE_DEF)
-#undef ASIO_PRIVATE_INITIATE_DEF
-
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 };
 
 } // namespace asio

@@ -68,20 +68,16 @@ void test()
     HANDLE native_handle2 = INVALID_HANDLE_VALUE;
     win::random_access_handle handle4(ioc_ex, native_handle2);
 
-#if defined(ASIO_HAS_MOVE)
     win::random_access_handle handle5(std::move(handle4));
 
     win::basic_random_access_handle<io_context::executor_type> handle6(ioc);
     win::random_access_handle handle7(std::move(handle6));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_random_access_handle operators.
 
-#if defined(ASIO_HAS_MOVE)
     handle1 = win::random_access_handle(ioc);
     handle1 = std::move(handle4);
     handle1 = std::move(handle6);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

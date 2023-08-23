@@ -87,18 +87,18 @@ template <typename Executor, typename>
 class channel_operation::handler_work_base
 {
 public:
-  typedef typename decay<
-      typename prefer_result<Executor,
+  typedef decay_t<
+      prefer_result_t<Executor,
         execution::outstanding_work_t::tracked_t
-      >::type
-    >::type executor_type;
+      >
+    > executor_type;
 
   handler_work_base(int, const Executor& ex)
     : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
   {
   }
 
-  const executor_type& get_executor() const ASIO_NOEXCEPT
+  const executor_type& get_executor() const noexcept
   {
     return executor_;
   }
@@ -106,20 +106,20 @@ public:
   template <typename Function, typename Handler>
   void post(Function& function, Handler& handler)
   {
-    typename associated_allocator<Handler>::type allocator =
+    associated_allocator_t<Handler> allocator =
       (get_associated_allocator)(handler);
 
 #if defined(ASIO_NO_DEPRECATED)
     asio::prefer(
         asio::require(executor_, execution::blocking.never),
         execution::allocator(allocator)
-      ).execute(ASIO_MOVE_CAST(Function)(function));
+      ).execute(static_cast<Function&&>(function));
 #else // defined(ASIO_NO_DEPRECATED)
     execution::execute(
         asio::prefer(
           asio::require(executor_, execution::blocking.never),
           execution::allocator(allocator)),
-        ASIO_MOVE_CAST(Function)(function));
+        static_cast<Function&&>(function));
 #endif // defined(ASIO_NO_DEPRECATED)
   }
 
@@ -131,9 +131,9 @@ private:
 
 template <typename Executor>
 class channel_operation::handler_work_base<Executor,
-    typename enable_if<
+    enable_if_t<
       !execution::is_executor<Executor>::value
-    >::type>
+    >>
 {
 public:
   typedef Executor executor_type;
@@ -143,7 +143,7 @@ public:
   {
   }
 
-  executor_type get_executor() const ASIO_NOEXCEPT
+  executor_type get_executor() const noexcept
   {
     return work_.get_executor();
   }
@@ -151,11 +151,11 @@ public:
   template <typename Function, typename Handler>
   void post(Function& function, Handler& handler)
   {
-    typename associated_allocator<Handler>::type allocator =
+    associated_allocator_t<Handler> allocator =
       (get_associated_allocator)(handler);
 
     work_.get_executor().post(
-        ASIO_MOVE_CAST(Function)(function), allocator);
+        static_cast<Function&&>(function), allocator);
   }
 
 private:
@@ -168,16 +168,16 @@ template <typename Handler, typename IoExecutor, typename>
 class channel_operation::handler_work :
   channel_operation::handler_work_base<IoExecutor>,
   channel_operation::handler_work_base<
-      typename associated_executor<Handler, IoExecutor>::type, IoExecutor>
+      associated_executor_t<Handler, IoExecutor>, IoExecutor>
 {
 public:
   typedef channel_operation::handler_work_base<IoExecutor> base1_type;
 
   typedef channel_operation::handler_work_base<
-      typename associated_executor<Handler, IoExecutor>::type, IoExecutor>
+      associated_executor_t<Handler, IoExecutor>, IoExecutor>
     base2_type;
 
-  handler_work(Handler& handler, const IoExecutor& io_ex) ASIO_NOEXCEPT
+  handler_work(Handler& handler, const IoExecutor& io_ex) noexcept
     : base1_type(0, io_ex),
       base2_type(0, (get_associated_executor)(handler, io_ex))
   {
@@ -192,50 +192,50 @@ public:
   template <typename Function>
   void immediate(Function& function, Handler& handler, ...)
   {
-    typedef typename associated_immediate_executor<Handler,
-      typename base1_type::executor_type>::type immediate_ex_type;
+    typedef associated_immediate_executor_t<Handler,
+      typename base1_type::executor_type> immediate_ex_type;
 
     immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
         handler, base1_type::get_executor());
 
     (asio::detail::initiate_dispatch_with_executor<immediate_ex_type>(
-          immediate_ex))(ASIO_MOVE_CAST(Function)(function));
+          immediate_ex))(static_cast<Function&&>(function));
   }
 
   template <typename Function>
   void immediate(Function& function, Handler&,
-      typename enable_if<
+      enable_if_t<
         is_same<
           typename associated_immediate_executor<
-            typename conditional<false, Function, Handler>::type,
+            conditional_t<false, Function, Handler>,
             typename base1_type::executor_type>::
               asio_associated_immediate_executor_is_unspecialised,
           void
         >::value
-      >::type*)
+      >*)
   {
     (asio::detail::initiate_post_with_executor<
         typename base1_type::executor_type>(
           base1_type::get_executor()))(
-        ASIO_MOVE_CAST(Function)(function));
+        static_cast<Function&&>(function));
   }
 };
 
 template <typename Handler, typename IoExecutor>
 class channel_operation::handler_work<
     Handler, IoExecutor,
-    typename enable_if<
+    enable_if_t<
       is_same<
         typename associated_executor<Handler,
           IoExecutor>::asio_associated_executor_is_unspecialised,
         void
       >::value
-    >::type> : handler_work_base<IoExecutor>
+    >> : handler_work_base<IoExecutor>
 {
 public:
   typedef channel_operation::handler_work_base<IoExecutor> base1_type;
 
-  handler_work(Handler&, const IoExecutor& io_ex) ASIO_NOEXCEPT
+  handler_work(Handler&, const IoExecutor& io_ex) noexcept
     : base1_type(0, io_ex)
   {
   }
@@ -249,27 +249,27 @@ public:
   template <typename Function>
   void immediate(Function& function, Handler& handler, ...)
   {
-    typedef typename associated_immediate_executor<Handler,
-      typename base1_type::executor_type>::type immediate_ex_type;
+    typedef associated_immediate_executor_t<Handler,
+      typename base1_type::executor_type> immediate_ex_type;
 
     immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
         handler, base1_type::get_executor());
 
     (asio::detail::initiate_dispatch_with_executor<immediate_ex_type>(
-          immediate_ex))(ASIO_MOVE_CAST(Function)(function));
+          immediate_ex))(static_cast<Function&&>(function));
   }
 
   template <typename Function>
   void immediate(Function& function, Handler& handler,
-      typename enable_if<
+      enable_if_t<
         is_same<
           typename associated_immediate_executor<
-            typename conditional<false, Function, Handler>::type,
+            conditional_t<false, Function, Handler>,
             typename base1_type::executor_type>::
               asio_associated_immediate_executor_is_unspecialised,
           void
         >::value
-      >::type*)
+      >*)
   {
     base1_type::post(function, handler);
   }

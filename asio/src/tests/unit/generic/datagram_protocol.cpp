@@ -80,19 +80,15 @@ void test()
     dp::socket socket4(ioc, dp(af_inet, ipproto_udp), native_socket1);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_HAS_MOVE)
     dp::socket socket5(std::move(socket4));
     asio::ip::udp::socket udp_socket(ioc);
     dp::socket socket6(std::move(udp_socket));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
-#if defined(ASIO_HAS_MOVE)
     socket1 = dp::socket(ioc);
     socket1 = std::move(socket2);
     socket1 = asio::ip::udp::socket(ioc);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

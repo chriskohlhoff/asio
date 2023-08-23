@@ -17,6 +17,7 @@
 #include "asio/buffered_read_stream.hpp"
 
 #include <cstring>
+#include <functional>
 #include "archetypes/async_result.hpp"
 #include "asio/buffer.hpp"
 #include "asio/io_context.hpp"
@@ -29,12 +30,6 @@
 #else // defined(ASIO_HAS_BOOST_ARRAY)
 # include <array>
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
-
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
 
 typedef asio::buffered_read_stream<
     asio::ip::tcp::socket> stream_type;
@@ -247,11 +242,7 @@ void test_async_operations()
 {
   using namespace std; // For memcmp.
 
-#if defined(ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
   using bindns::placeholders::_2;
 

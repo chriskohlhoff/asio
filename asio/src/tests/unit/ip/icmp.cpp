@@ -38,33 +38,27 @@ struct connect_handler
 {
   connect_handler() {}
   void operator()(const asio::error_code&) {}
-#if defined(ASIO_HAS_MOVE)
   connect_handler(connect_handler&&) {}
 private:
   connect_handler(const connect_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct send_handler
 {
   send_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   send_handler(send_handler&&) {}
 private:
   send_handler(const send_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct receive_handler
 {
   receive_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   receive_handler(receive_handler&&) {}
 private:
   receive_handler(const receive_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 void test()
@@ -114,16 +108,12 @@ void test()
     ip::icmp::socket socket12(ioc_ex, ip::icmp::v4(), native_socket2);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_HAS_MOVE)
     ip::icmp::socket socket13(std::move(socket6));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_datagram_socket operators.
 
-#if defined(ASIO_HAS_MOVE)
     socket1 = ip::icmp::socket(ioc);
     socket1 = std::move(socket2);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
@@ -484,11 +474,9 @@ struct resolve_handler
   resolve_handler() {}
   void operator()(const asio::error_code&,
       asio::ip::icmp::resolver::results_type) {}
-#if defined(ASIO_HAS_MOVE)
   resolve_handler(resolve_handler&&) {}
 private:
   resolve_handler(const resolve_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 void test()
@@ -512,16 +500,12 @@ void test()
     ip::icmp::resolver resolver(ioc);
     ip::icmp::resolver resolver2(ioc_ex);
 
-#if defined(ASIO_HAS_MOVE)
     ip::icmp::resolver resolver3(std::move(resolver));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_resolver operators.
 
-#if defined(ASIO_HAS_MOVE)
     resolver = ip::icmp::resolver(ioc);
     resolver = std::move(resolver3);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

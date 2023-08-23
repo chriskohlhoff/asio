@@ -31,22 +31,18 @@ struct write_some_handler
 {
   write_some_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   write_some_handler(write_some_handler&&) {}
 private:
   write_some_handler(const write_some_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct read_some_handler
 {
   read_some_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   read_some_handler(read_some_handler&&) {}
 private:
   read_some_handler(const read_some_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 void test()
@@ -78,20 +74,16 @@ void test()
     stream_file::native_handle_type native_file2 = file1.native_handle();
     stream_file file8(ioc_ex, native_file2);
 
-#if defined(ASIO_HAS_MOVE)
     stream_file file9(std::move(file8));
 
     basic_stream_file<io_context::executor_type> file10(ioc);
     stream_file file11(std::move(file10));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_file operators.
 
-#if defined(ASIO_HAS_MOVE)
     file1 = stream_file(ioc);
     file1 = std::move(file2);
     file1 = std::move(file10);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 

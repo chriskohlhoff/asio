@@ -84,26 +84,26 @@ struct is_sender_to;
 namespace detail {
 
 template <typename S, typename R>
-void submit_helper(ASIO_MOVE_ARG(S) s, ASIO_MOVE_ARG(R) r);
+void submit_helper(S&& s, R&& r);
 
 } // namespace detail
 } // namespace execution
 } // namespace asio
 namespace asio_execution_execute_fn {
 
-using asio::conditional;
-using asio::decay;
+using asio::conditional_t;
+using asio::decay_t;
 using asio::declval;
-using asio::enable_if;
+using asio::enable_if_t;
 using asio::execution::detail::as_receiver;
 using asio::execution::detail::is_as_invocable;
 using asio::execution::is_sender_to;
 using asio::false_type;
-using asio::result_of;
+using asio::result_of_t;
 using asio::traits::execute_free;
 using asio::traits::execute_member;
 using asio::true_type;
-using asio::void_type;
+using asio::void_t;
 
 void execute();
 
@@ -119,53 +119,53 @@ template <typename Impl, typename T, typename F, typename = void,
     typename = void, typename = void, typename = void, typename = void>
 struct call_traits
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
+  static constexpr overload_type overload = ill_formed;
 };
 
 template <typename Impl, typename T, typename F>
 struct call_traits<Impl, T, void(F),
-  typename enable_if<
+  enable_if_t<
     execute_member<typename Impl::template proxy<T>::type, F>::is_valid
-  >::type> :
+  >> :
   execute_member<typename Impl::template proxy<T>::type, F>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename Impl, typename T, typename F>
 struct call_traits<Impl, T, void(F),
-  typename enable_if<
+  enable_if_t<
     !execute_member<typename Impl::template proxy<T>, F>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     execute_free<T, F>::is_valid
-  >::type> :
+  >> :
   execute_free<T, F>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 template <typename Impl, typename T, typename F>
 struct call_traits<Impl, T, void(F),
-  typename enable_if<
+  enable_if_t<
     !execute_member<typename Impl::template proxy<T>::type, F>::is_valid
-  >::type,
-  typename enable_if<
+  >,
+  enable_if_t<
     !execute_free<T, F>::is_valid
-  >::type,
-  typename void_type<
-   typename result_of<typename decay<F>::type&()>::type
-  >::type,
-  typename enable_if<
-    !is_as_invocable<typename decay<F>::type>::value
-  >::type,
-  typename enable_if<
-    is_sender_to<T, as_receiver<typename decay<F>::type, T> >::value
-  >::type>
+  >,
+  void_t<
+   result_of_t<decay_t<F>&()>
+  >,
+  enable_if_t<
+    !is_as_invocable<decay_t<F>>::value
+  >,
+  enable_if_t<
+    is_sender_to<T, as_receiver<decay_t<F>, T>>::value
+  >>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = adapter);
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = adapter;
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -178,16 +178,14 @@ struct impl
     struct type
     {
       template <typename F>
-      auto execute(ASIO_MOVE_ARG(F) f)
+      auto execute(F&& f)
         noexcept(
           noexcept(
-            declval<typename conditional<true, T, F>::type>().execute(
-              ASIO_MOVE_CAST(F)(f))
+            declval<conditional_t<true, T, F>>().execute(static_cast<F&&>(f))
           )
         )
         -> decltype(
-          declval<typename conditional<true, T, F>::type>().execute(
-            ASIO_MOVE_CAST(F)(f))
+          declval<conditional_t<true, T, F>>().execute(static_cast<F&&>(f))
         );
     };
 #else // defined(ASIO_HAS_DEDUCED_EXECUTE_MEMBER_TRAIT)
@@ -196,48 +194,37 @@ struct impl
   };
 
   template <typename T, typename F>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<impl, T, void(F)>::overload == call_member,
     typename call_traits<impl, T, void(F)>::result_type
-  >::type
-  operator()(
-      ASIO_MOVE_ARG(T) t,
-      ASIO_MOVE_ARG(F) f) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<impl, T, void(F)>::is_noexcept))
+  >
+  operator()(T&& t, F&& f) const
+    noexcept(call_traits<impl, T, void(F)>::is_noexcept)
   {
-    return ASIO_MOVE_CAST(T)(t).execute(ASIO_MOVE_CAST(F)(f));
+    return static_cast<T&&>(t).execute(static_cast<F&&>(f));
   }
 
   template <typename T, typename F>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<impl, T, void(F)>::overload == call_free,
     typename call_traits<impl, T, void(F)>::result_type
-  >::type
-  operator()(
-      ASIO_MOVE_ARG(T) t,
-      ASIO_MOVE_ARG(F) f) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<impl, T, void(F)>::is_noexcept))
+  >
+  operator()(T&& t, F&& f) const
+    noexcept(call_traits<impl, T, void(F)>::is_noexcept)
   {
-    return execute(ASIO_MOVE_CAST(T)(t), ASIO_MOVE_CAST(F)(f));
+    return execute(static_cast<T&&>(t), static_cast<F&&>(f));
   }
 
   template <typename T, typename F>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<impl, T, void(F)>::overload == adapter,
     typename call_traits<impl, T, void(F)>::result_type
-  >::type
-  operator()(
-      ASIO_MOVE_ARG(T) t,
-      ASIO_MOVE_ARG(F) f) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<impl, T, void(F)>::is_noexcept))
+  >
+  operator()(T&& t, F&& f) const
+    noexcept(call_traits<impl, T, void(F)>::is_noexcept)
   {
-    return asio::execution::detail::submit_helper(
-        ASIO_MOVE_CAST(T)(t),
-        as_receiver<typename decay<F>::type, T>(
-          ASIO_MOVE_CAST(F)(f), 0));
+    return asio::execution::detail::submit_helper(static_cast<T&&>(t),
+        as_receiver<decay_t<F>, T>(static_cast<F&&>(f), 0));
   }
 };
 
@@ -255,7 +242,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static ASIO_CONSTEXPR const asio_execution_execute_fn::impl&
+static constexpr const asio_execution_execute_fn::impl&
   execute = asio_execution_execute_fn::static_instance<>::instance;
 
 } // namespace

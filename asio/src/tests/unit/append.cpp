@@ -24,8 +24,6 @@
 
 void append_test()
 {
-#if defined(ASIO_HAS_STD_TUPLE) \
-  && defined(ASIO_HAS_VARIADIC_TEMPLATES)
   asio::io_context io1;
   asio::io_context io2;
   asio::system_timer timer1(io1);
@@ -51,8 +49,6 @@ void append_test()
   io2.run();
 
   ASIO_CHECK(count == 1);
-#endif // defined(ASIO_HAS_STD_TUPLE)
-       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
 }
 
 ASIO_TEST_SUITE

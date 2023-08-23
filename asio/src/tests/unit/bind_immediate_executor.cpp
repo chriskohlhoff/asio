@@ -16,6 +16,7 @@
 // Test that header file is self-contained.
 #include "asio/bind_immediate_executor.hpp"
 
+#include <functional>
 #include "asio/dispatch.hpp"
 #include "asio/io_context.hpp"
 #include "unit_test.hpp"
@@ -26,35 +27,24 @@
 # include "asio/steady_timer.hpp"
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
-
 using namespace asio;
-
-#if defined(ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 struct initiate_immediate
 {
   template <typename Handler>
-  void operator()(ASIO_MOVE_ARG(Handler) handler, io_context* ctx) const
+  void operator()(Handler&& handler, io_context* ctx) const
   {
     typename associated_immediate_executor<
       Handler, io_context::executor_type>::type ex =
         get_associated_immediate_executor(handler, ctx->get_executor());
-    dispatch(ex, ASIO_MOVE_CAST(Handler)(handler));
+    dispatch(ex, static_cast<Handler&&>(handler));
   }
 };
 
 template <ASIO_COMPLETION_TOKEN_FOR(void()) Token>
 ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(Token, void())
-async_immediate(io_context& ctx, ASIO_MOVE_ARG(Token) token)
+async_immediate(io_context& ctx, Token&& token)
   ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
     async_initiate<Token, void()>(declval<initiate_immediate>(), token)))
 {
@@ -151,37 +141,13 @@ public:
   typedef void return_type;
 #endif // !defined(ASIO_HAS_RETURN_TYPE_DEDUCTION)
 
-#if defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
   template <typename Initiation, typename... Args>
   static void initiate(Initiation initiation,
-      incrementer_token_v2 token, ASIO_MOVE_ARG(Args)... args)
+      incrementer_token_v2 token, Args&&... args)
   {
     initiation(bindns::bind(&increment, token.count),
-        ASIO_MOVE_CAST(Args)(args)...);
+        static_cast<Args&&>(args)...);
   }
-
-#else // defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-  template <typename Initiation>
-  static void initiate(Initiation initiation, incrementer_token_v2 token)
-  {
-    initiation(bindns::bind(&increment, token.count));
-  }
-
-#define ASIO_PRIVATE_INITIATE_DEF(n) \
-  template <typename Initiation, ASIO_VARIADIC_TPARAMS(n)> \
-  static return_type initiate(Initiation initiation, \
-      incrementer_token_v2 token, ASIO_VARIADIC_MOVE_PARAMS(n)) \
-  { \
-    initiation(bindns::bind(&increment, token.count), \
-        ASIO_VARIADIC_MOVE_ARGS(n)); \
-  } \
-  /**/
-  ASIO_VARIADIC_GENERATE(ASIO_PRIVATE_INITIATE_DEF)
-#undef ASIO_PRIVATE_INITIATE_DEF
-
-#endif // defined(ASIO_HAS_VARIADIC_TEMPLATES)
 };
 
 } // namespace asio

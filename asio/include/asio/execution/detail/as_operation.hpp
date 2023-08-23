@@ -32,23 +32,17 @@ namespace detail {
 template <typename Executor, typename Receiver>
 struct as_operation
 {
-  typename remove_cvref<Executor>::type ex_;
-  typename remove_cvref<Receiver>::type receiver_;
-#if !defined(ASIO_HAS_MOVE)
-  asio::detail::shared_ptr<asio::detail::atomic_count> ref_count_;
-#endif // !defined(ASIO_HAS_MOVE)
+  remove_cvref_t<Executor> ex_;
+  remove_cvref_t<Receiver> receiver_;
 
   template <typename E, typename R>
-  explicit as_operation(ASIO_MOVE_ARG(E) e, ASIO_MOVE_ARG(R) r)
-    : ex_(ASIO_MOVE_CAST(E)(e)),
-      receiver_(ASIO_MOVE_CAST(R)(r))
-#if !defined(ASIO_HAS_MOVE)
-      , ref_count_(new asio::detail::atomic_count(1))
-#endif // !defined(ASIO_HAS_MOVE)
+  explicit as_operation(E&& e, R&& r)
+    : ex_(static_cast<E&&>(e)),
+      receiver_(static_cast<R&&>(r))
   {
   }
 
-  void start() ASIO_NOEXCEPT
+  void start() noexcept
   {
 #if !defined(ASIO_NO_EXCEPTIONS)
     try
@@ -58,27 +52,16 @@ struct as_operation
       ex_.execute(
 #else // defined(ASIO_NO_DEPRECATED)
       execution::execute(
-          ASIO_MOVE_CAST(typename remove_cvref<Executor>::type)(ex_),
+          static_cast<remove_cvref_t<Executor>&&>(ex_),
 #endif // defined(ASIO_NO_DEPRECATED)
-          as_invocable<typename remove_cvref<Receiver>::type,
-              Executor>(receiver_
-#if !defined(ASIO_HAS_MOVE)
-                , ref_count_
-#endif // !defined(ASIO_HAS_MOVE)
-              ));
+          as_invocable<remove_cvref_t<Receiver>, Executor>(receiver_));
 #if !defined(ASIO_NO_EXCEPTIONS)
     }
     catch (...)
     {
-#if defined(ASIO_HAS_STD_EXCEPTION_PTR)
       execution::set_error(
-          ASIO_MOVE_OR_LVALUE(
-            typename remove_cvref<Receiver>::type)(
-              receiver_),
+          static_cast<remove_cvref_t<Receiver>&&>(receiver_),
           std::current_exception());
-#else // defined(ASIO_HAS_STD_EXCEPTION_PTR)
-      std::terminate();
-#endif // defined(ASIO_HAS_STD_EXCEPTION_PTR)
     }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
   }
@@ -92,10 +75,10 @@ namespace traits {
 
 template <typename Executor, typename Receiver>
 struct start_member<
-    asio::execution::detail::as_operation<Executor, Receiver> >
+    asio::execution::detail::as_operation<Executor, Receiver>>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 

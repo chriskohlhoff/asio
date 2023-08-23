@@ -18,13 +18,9 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 
-#if defined(ASIO_HAS_DECLTYPE) \
-  && defined(ASIO_HAS_NOEXCEPT) \
-  && defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#if defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # define ASIO_HAS_DEDUCED_SCHEDULE_FREE_TRAIT 1
-#endif // defined(ASIO_HAS_DECLTYPE)
-       //   && defined(ASIO_HAS_NOEXCEPT)
-       //   && defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#endif // defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
 #include "asio/detail/push_options.hpp"
 
@@ -42,8 +38,8 @@ namespace detail {
 
 struct no_schedule_free
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = false);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = false;
+  static constexpr bool is_noexcept = false;
 };
 
 #if defined(ASIO_HAS_DEDUCED_SCHEDULE_FREE_TRAIT)
@@ -55,31 +51,30 @@ struct schedule_free_trait : no_schedule_free
 
 template <typename T>
 struct schedule_free_trait<T,
-  typename void_type<
+  void_t<
     decltype(schedule(declval<T>()))
-  >::type>
+  >>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  static constexpr bool is_valid = true;
 
   using result_type = decltype(schedule(declval<T>()));
 
-  ASIO_STATIC_CONSTEXPR(bool,
-    is_noexcept = noexcept(schedule(declval<T>())));
+  static constexpr bool is_noexcept = noexcept(schedule(declval<T>()));
 };
 
 #else // defined(ASIO_HAS_DEDUCED_SCHEDULE_FREE_TRAIT)
 
 template <typename T, typename = void>
 struct schedule_free_trait :
-  conditional<
-    is_same<T, typename remove_reference<T>::type>::value,
-    typename conditional<
-      is_same<T, typename add_const<T>::type>::value,
+  conditional_t<
+    is_same<T, remove_reference_t<T>>::value,
+    conditional_t<
+      is_same<T, add_const_t<T>>::value,
       no_schedule_free,
-      traits::schedule_free<typename add_const<T>::type>
-    >::type,
-    traits::schedule_free<typename remove_reference<T>::type>
-  >::type
+      traits::schedule_free<add_const_t<T>>
+    >,
+    traits::schedule_free<remove_reference_t<T>>
+  >
 {
 };
 

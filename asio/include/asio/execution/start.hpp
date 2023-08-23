@@ -68,9 +68,9 @@ struct can_start :
 
 namespace asio_execution_start_fn {
 
-using asio::decay;
+using asio::decay_t;
 using asio::declval;
-using asio::enable_if;
+using asio::enable_if_t;
 using asio::traits::start_free;
 using asio::traits::start_member;
 
@@ -86,109 +86,49 @@ enum overload_type
 template <typename R, typename = void, typename = void>
 struct call_traits
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = ill_formed);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr overload_type overload = ill_formed;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
 template <typename R>
-struct call_traits<R,
-  typename enable_if<
-    start_member<R>::is_valid
-  >::type> :
-  start_member<R>
+struct call_traits<R, enable_if_t<start_member<R>::is_valid>> : start_member<R>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_member);
+  static constexpr overload_type overload = call_member;
 };
 
 template <typename R>
 struct call_traits<R,
-  typename enable_if<
-    !start_member<R>::is_valid
-  >::type,
-  typename enable_if<
-    start_free<R>::is_valid
-  >::type> :
+  enable_if_t<!start_member<R>::is_valid>,
+  enable_if_t<start_free<R>::is_valid>> :
   start_free<R>
 {
-  ASIO_STATIC_CONSTEXPR(overload_type, overload = call_free);
+  static constexpr overload_type overload = call_free;
 };
 
 struct impl
 {
-#if defined(ASIO_HAS_MOVE)
   template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<R>::overload == call_member,
     typename call_traits<R>::result_type
-  >::type
+  >
   operator()(R&& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R>::is_noexcept))
+    noexcept(call_traits<R>::is_noexcept)
   {
-    return ASIO_MOVE_CAST(R)(r).start();
+    return static_cast<R&&>(r).start();
   }
 
   template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
+  constexpr enable_if_t<
     call_traits<R>::overload == call_free,
     typename call_traits<R>::result_type
-  >::type
+  >
   operator()(R&& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R>::is_noexcept))
+    noexcept(call_traits<R>::is_noexcept)
   {
-    return start(ASIO_MOVE_CAST(R)(r));
+    return start(static_cast<R&&>(r));
   }
-#else // defined(ASIO_HAS_MOVE)
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&>::overload == call_member,
-    typename call_traits<R&>::result_type
-  >::type
-  operator()(R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R&>::is_noexcept))
-  {
-    return r.start();
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&>::overload == call_member,
-    typename call_traits<const R&>::result_type
-  >::type
-  operator()(const R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<const R&>::is_noexcept))
-  {
-    return r.start();
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<R&>::overload == call_free,
-    typename call_traits<R&>::result_type
-  >::type
-  operator()(R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<R&>::is_noexcept))
-  {
-    return start(r);
-  }
-
-  template <typename R>
-  ASIO_CONSTEXPR typename enable_if<
-    call_traits<const R&>::overload == call_free,
-    typename call_traits<const R&>::result_type
-  >::type
-  operator()(const R& r) const
-    ASIO_NOEXCEPT_IF((
-      call_traits<const R&>::is_noexcept))
-  {
-    return start(r);
-  }
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 template <typename T = impl>
@@ -205,7 +145,7 @@ namespace asio {
 namespace execution {
 namespace {
 
-static ASIO_CONSTEXPR const asio_execution_start_fn::impl&
+static constexpr const asio_execution_start_fn::impl&
   start = asio_execution_start_fn::static_instance<>::instance;
 
 } // namespace
@@ -235,8 +175,7 @@ struct is_nothrow_start :
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
 template <typename R>
-constexpr bool is_nothrow_start_v
-  = is_nothrow_start<R>::value;
+constexpr bool is_nothrow_start_v = is_nothrow_start<R>::value;
 
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 

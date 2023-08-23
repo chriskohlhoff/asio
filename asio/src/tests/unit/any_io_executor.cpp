@@ -17,28 +17,18 @@
 #include "asio/any_io_executor.hpp"
 
 #include <cstring>
+#include <functional>
 #include "asio/system_executor.hpp"
 #include "asio/thread_pool.hpp"
 #include "unit_test.hpp"
 
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
-
 using namespace asio;
-
-#if defined(ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 static bool next_nothrow_new_fails = false;
 
 void* operator new(std::size_t n,
-    const std::nothrow_t&) ASIO_NOEXCEPT_OR_NOTHROW
+    const std::nothrow_t&) noexcept
 {
   if (next_nothrow_new_fails)
   {
@@ -61,25 +51,25 @@ struct fat_executor
   {
   }
 
-  execution_context& query(execution::context_t) const ASIO_NOEXCEPT
+  execution_context& query(execution::context_t) const noexcept
   {
     return asio::query(system_executor(), execution::context);
   }
 
-  ASIO_CONSTEXPR static execution::blocking_t::never_t query(
-      execution::blocking_t) ASIO_NOEXCEPT
+  constexpr static execution::blocking_t::never_t query(
+      execution::blocking_t) noexcept
   {
     return execution::blocking.never;
   }
 
   friend bool operator==(const fat_executor& a,
-      const fat_executor& b) ASIO_NOEXCEPT
+      const fat_executor& b) noexcept
   {
     return a.id_ == b.id_;
   }
 
   friend bool operator!=(const fat_executor& a,
-      const fat_executor& b) ASIO_NOEXCEPT
+      const fat_executor& b) noexcept
   {
     return a.id_ != b.id_;
   }
@@ -96,8 +86,8 @@ namespace traits {
 template <typename F>
 struct execute_member<fat_executor, F>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = false;
   typedef void result_type;
 };
 
@@ -108,8 +98,8 @@ struct execute_member<fat_executor, F>
 template <>
 struct query_member<fat_executor, execution::context_t>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef execution_context& result_type;
 };
 
@@ -127,11 +117,11 @@ struct query_static_constexpr_member<fat_executor, Property,
     >::type
   >
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef execution::blocking_t::never_t result_type;
 
-  static ASIO_CONSTEXPR result_type value() ASIO_NOEXCEPT
+  static constexpr result_type value() noexcept
   {
     return result_type();
   }
@@ -144,8 +134,8 @@ struct query_static_constexpr_member<fat_executor, Property,
 template <>
 struct equality_comparable<fat_executor>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)
@@ -222,7 +212,6 @@ void any_io_executor_construction_test()
   ASIO_CHECK(ex9 == ex7);
   ASIO_CHECK(ex9 != ex8);
 
-#if defined(ASIO_HAS_MOVE)
   asio::any_io_executor ex10(std::move(ex1));
 
   ASIO_CHECK(ex10.target<void>() == 0);
@@ -246,7 +235,6 @@ void any_io_executor_construction_test()
   ASIO_CHECK(ex7 == null_ptr);
   ASIO_CHECK(ex12 == ex6);
   ASIO_CHECK(ex12 != ex8);
-#endif // defined(ASIO_HAS_MOVE)
 }
 
 void any_io_executor_nothrow_construction_test()
@@ -313,7 +301,6 @@ void any_io_executor_nothrow_construction_test()
   ASIO_CHECK(ex9 == ex7);
   ASIO_CHECK(ex9 != ex8);
 
-#if defined(ASIO_HAS_MOVE)
   asio::any_io_executor ex10(std::nothrow, std::move(ex1));
 
   ASIO_CHECK(ex10.target<void>() == 0);
@@ -337,7 +324,6 @@ void any_io_executor_nothrow_construction_test()
   ASIO_CHECK(ex7 == null_ptr);
   ASIO_CHECK(ex12 == ex6);
   ASIO_CHECK(ex12 != ex8);
-#endif // defined(ASIO_HAS_MOVE)
 
   next_nothrow_new_fails = true;
   asio::any_io_executor ex13(std::nothrow, fat_executor(3));
@@ -406,7 +392,6 @@ void any_io_executor_assignment_test()
   ASIO_CHECK(ex7 == ex5);
   ASIO_CHECK(ex7 != ex6);
 
-#if defined(ASIO_HAS_MOVE)
   asio::any_io_executor ex8;
   ex8 = std::move(ex1);
 
@@ -424,7 +409,6 @@ void any_io_executor_assignment_test()
   ASIO_CHECK(ex8.target<void>() != 0);
   ASIO_CHECK(ex5.target<void>() == 0);
   ASIO_CHECK(ex8 == ex7);
-#endif // defined(ASIO_HAS_MOVE)
 }
 
 void any_io_executor_swap_test()

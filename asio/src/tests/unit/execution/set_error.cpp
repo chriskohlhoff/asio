@@ -32,9 +32,9 @@ struct no_set_error
 struct const_member_set_error
 {
   template <typename E>
-  void set_error(ASIO_MOVE_ARG(E) e) const ASIO_NOEXCEPT
+  void set_error(E&& e) const noexcept
   {
-    typename asio::decay<E>::type tmp(ASIO_MOVE_CAST(E)(e));
+    typename asio::decay<E>::type tmp(static_cast<E&&>(e));
     (void)tmp;
     ++call_count;
   }
@@ -48,8 +48,8 @@ namespace traits {
 template <typename E>
 struct set_error_member<const const_member_set_error, E>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -62,9 +62,9 @@ struct free_set_error_const_receiver
 {
   template <typename E>
   friend void set_error(const free_set_error_const_receiver&,
-      ASIO_MOVE_ARG(E) e) ASIO_NOEXCEPT
+      E&& e) noexcept
   {
-    typename asio::decay<E>::type tmp(ASIO_MOVE_CAST(E)(e));
+    typename asio::decay<E>::type tmp(static_cast<E&&>(e));
     (void)tmp;
     ++call_count;
   }
@@ -78,8 +78,8 @@ namespace traits {
 template <typename E>
 struct set_error_free<const free_set_error_const_receiver, E>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -91,9 +91,9 @@ struct set_error_free<const free_set_error_const_receiver, E>
 struct non_const_member_set_error
 {
   template <typename E>
-  void set_error(ASIO_MOVE_ARG(E) e) ASIO_NOEXCEPT
+  void set_error(E&& e) noexcept
   {
-    typename asio::decay<E>::type tmp(ASIO_MOVE_CAST(E)(e));
+    typename asio::decay<E>::type tmp(static_cast<E&&>(e));
     (void)tmp;
     ++call_count;
   }
@@ -107,8 +107,8 @@ namespace traits {
 template <typename E>
 struct set_error_member<non_const_member_set_error, E>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -121,9 +121,9 @@ struct free_set_error_non_const_receiver
 {
   template <typename E>
   friend void set_error(free_set_error_non_const_receiver&,
-      ASIO_MOVE_ARG(E) e) ASIO_NOEXCEPT
+      E&& e) noexcept
   {
-    typename asio::decay<E>::type tmp(ASIO_MOVE_CAST(E)(e));
+    typename asio::decay<E>::type tmp(static_cast<E&&>(e));
     (void)tmp;
     ++call_count;
   }
@@ -137,8 +137,8 @@ namespace traits {
 template <typename E>
 struct set_error_free<free_set_error_non_const_receiver, E>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -149,43 +149,43 @@ struct set_error_free<free_set_error_non_const_receiver, E>
 
 void test_can_set_error()
 {
-  ASIO_CONSTEXPR bool b1 = exec::can_set_error<
+  constexpr bool b1 = exec::can_set_error<
       no_set_error&, asio::error_code>::value;
   ASIO_CHECK(b1 == false);
 
-  ASIO_CONSTEXPR bool b2 = exec::can_set_error<
+  constexpr bool b2 = exec::can_set_error<
       const no_set_error&, asio::error_code>::value;
   ASIO_CHECK(b2 == false);
 
-  ASIO_CONSTEXPR bool b3 = exec::can_set_error<
+  constexpr bool b3 = exec::can_set_error<
       const_member_set_error&, asio::error_code>::value;
   ASIO_CHECK(b3 == true);
 
-  ASIO_CONSTEXPR bool b4 = exec::can_set_error<
+  constexpr bool b4 = exec::can_set_error<
       const const_member_set_error&, asio::error_code>::value;
   ASIO_CHECK(b4 == true);
 
-  ASIO_CONSTEXPR bool b5 = exec::can_set_error<
+  constexpr bool b5 = exec::can_set_error<
       free_set_error_const_receiver&, asio::error_code>::value;
   ASIO_CHECK(b5 == true);
 
-  ASIO_CONSTEXPR bool b6 = exec::can_set_error<
+  constexpr bool b6 = exec::can_set_error<
       const free_set_error_const_receiver&, asio::error_code>::value;
   ASIO_CHECK(b6 == true);
 
-  ASIO_CONSTEXPR bool b7 = exec::can_set_error<
+  constexpr bool b7 = exec::can_set_error<
       non_const_member_set_error&, asio::error_code>::value;
   ASIO_CHECK(b7 == true);
 
-  ASIO_CONSTEXPR bool b8 = exec::can_set_error<
+  constexpr bool b8 = exec::can_set_error<
       const non_const_member_set_error&, asio::error_code>::value;
   ASIO_CHECK(b8 == false);
 
-  ASIO_CONSTEXPR bool b9 = exec::can_set_error<
+  constexpr bool b9 = exec::can_set_error<
       free_set_error_non_const_receiver&, asio::error_code>::value;
   ASIO_CHECK(b9 == true);
 
-  ASIO_CONSTEXPR bool b10 = exec::can_set_error<
+  constexpr bool b10 = exec::can_set_error<
       const free_set_error_non_const_receiver&, asio::error_code>::value;
   ASIO_CHECK(b10 == false);
 }

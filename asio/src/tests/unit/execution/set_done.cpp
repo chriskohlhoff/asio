@@ -31,7 +31,7 @@ struct no_set_done
 
 struct const_member_set_done
 {
-  void set_done() const ASIO_NOEXCEPT
+  void set_done() const noexcept
   {
     ++call_count;
   }
@@ -45,8 +45,8 @@ namespace traits {
 template <>
 struct set_done_member<const const_member_set_done>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -57,7 +57,7 @@ struct set_done_member<const const_member_set_done>
 
 struct free_set_done_const_receiver
 {
-  friend void set_done(const free_set_done_const_receiver&) ASIO_NOEXCEPT
+  friend void set_done(const free_set_done_const_receiver&) noexcept
   {
     ++call_count;
   }
@@ -71,8 +71,8 @@ namespace traits {
 template <>
 struct set_done_free<const free_set_done_const_receiver>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -83,7 +83,7 @@ struct set_done_free<const free_set_done_const_receiver>
 
 struct non_const_member_set_done
 {
-  void set_done() ASIO_NOEXCEPT
+  void set_done() noexcept
   {
     ++call_count;
   }
@@ -97,8 +97,8 @@ namespace traits {
 template <>
 struct set_done_member<non_const_member_set_done>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -109,7 +109,7 @@ struct set_done_member<non_const_member_set_done>
 
 struct free_set_done_non_const_receiver
 {
-  friend void set_done(free_set_done_non_const_receiver&) ASIO_NOEXCEPT
+  friend void set_done(free_set_done_non_const_receiver&) noexcept
   {
     ++call_count;
   }
@@ -123,8 +123,8 @@ namespace traits {
 template <>
 struct set_done_free<free_set_done_non_const_receiver>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -135,43 +135,43 @@ struct set_done_free<free_set_done_non_const_receiver>
 
 void test_can_set_done()
 {
-  ASIO_CONSTEXPR bool b1 = exec::can_set_done<
+  constexpr bool b1 = exec::can_set_done<
       no_set_done&>::value;
   ASIO_CHECK(b1 == false);
 
-  ASIO_CONSTEXPR bool b2 = exec::can_set_done<
+  constexpr bool b2 = exec::can_set_done<
       const no_set_done&>::value;
   ASIO_CHECK(b2 == false);
 
-  ASIO_CONSTEXPR bool b3 = exec::can_set_done<
+  constexpr bool b3 = exec::can_set_done<
       const_member_set_done&>::value;
   ASIO_CHECK(b3 == true);
 
-  ASIO_CONSTEXPR bool b4 = exec::can_set_done<
+  constexpr bool b4 = exec::can_set_done<
       const const_member_set_done&>::value;
   ASIO_CHECK(b4 == true);
 
-  ASIO_CONSTEXPR bool b5 = exec::can_set_done<
+  constexpr bool b5 = exec::can_set_done<
       free_set_done_const_receiver&>::value;
   ASIO_CHECK(b5 == true);
 
-  ASIO_CONSTEXPR bool b6 = exec::can_set_done<
+  constexpr bool b6 = exec::can_set_done<
       const free_set_done_const_receiver&>::value;
   ASIO_CHECK(b6 == true);
 
-  ASIO_CONSTEXPR bool b7 = exec::can_set_done<
+  constexpr bool b7 = exec::can_set_done<
       non_const_member_set_done&>::value;
   ASIO_CHECK(b7 == true);
 
-  ASIO_CONSTEXPR bool b8 = exec::can_set_done<
+  constexpr bool b8 = exec::can_set_done<
       const non_const_member_set_done&>::value;
   ASIO_CHECK(b8 == false);
 
-  ASIO_CONSTEXPR bool b9 = exec::can_set_done<
+  constexpr bool b9 = exec::can_set_done<
       free_set_done_non_const_receiver&>::value;
   ASIO_CHECK(b9 == true);
 
-  ASIO_CONSTEXPR bool b10 = exec::can_set_done<
+  constexpr bool b10 = exec::can_set_done<
       const free_set_done_non_const_receiver&>::value;
   ASIO_CHECK(b10 == false);
 }

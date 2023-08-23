@@ -12,7 +12,7 @@ jobs:
         build-type: ['sanity']
         runs-on: [ubuntu-20.04, ubuntu-22.04, macos-latest]
         compiler: [g++-7, g++-8, g++-9, g++-10, g++-11, g++-12, clang++-10, clang++-14, g++]
-        cxx-std: ['c++03', 'c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
+        cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
         separate-compilation: ['', '--enable-separate-compilation']
         optim-level: ['-O0']
         no-deprecated: ['']
@@ -73,6 +73,8 @@ jobs:
           - compiler: clang++-10
             cxx-std: c++20
           - compiler: clang++-14
+            cxx-std: c++20
+          - compiler: clang++-14
             cxx-std: c++2a
           - runs-on: macos-latest
             cxx-std: c++20
@@ -111,8 +113,6 @@ jobs:
             select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-11
             select-reactor: -DASIO_DISABLE_EPOLL
-          # C++03 builds are always explicitly included
-          - cxx-std: c++03
         include:
           #
           # Linux / g++-12 -std=c++20 -fcoroutines / -O2 / standalone
@@ -237,17 +237,6 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
           #
-          # Linux / g++-7 / -O2 / boost 1.80
-          #
-          - build-type: full
-            runs-on: ubuntu-20.04
-            compiler: g++-7
-            cxx-std: c++03
-            separate-compilation: --enable-separate-compilation
-            optim-level: -O2
-            with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_80_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
-          #
           # Linux / g++-7 -std=c++11 / -O2 / boost 1.80
           #
           - build-type: full
@@ -265,6 +254,7 @@ jobs:
             runs-on: ubuntu-22.04
             compiler: clang++-14
             cxx-std: c++2a
+            cxx-stdlib: -stdlib=libc++
             optim-level: -O2
           #
           # Linux / clang++-14 -std=c++11 / -O0 / standalone / separate compilation
@@ -276,6 +266,16 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
           #
+          # Linux / clang++-14 -std=c++20 / -O2 / standalone / separate compilation
+          #
+          - build-type: full
+            runs-on: ubuntu-22.04
+            compiler: clang++-14
+            cxx-std: c++20
+            cxx-stdlib: -stdlib=libc++
+            separate-compilation: --enable-separate-compilation
+            optim-level: -O2
+          #
           # Linux / clang++-10 -std=c++11 / -O2 / standalone
           #
           - build-type: full
@@ -283,17 +283,6 @@ jobs:
             compiler: clang++-10
             cxx-std: c++11
             optim-level: -O2
-          #
-          # Linux / clang++-10 -std=c++11 / -O0 / boost 1.80 / separate compilation
-          #
-          - build-type: full
-            runs-on: ubuntu-20.04
-            compiler: clang++-10
-            cxx-std: c++03
-            separate-compilation: --enable-separate-compilation
-            optim-level: -O0
-            with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_80_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
           #
           # macOS / c++2a -fcoroutines-ts / -O2 / standalone
           #
@@ -329,22 +318,22 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
           #
-          # macOS / c++03 / -O2 / boost 1.80
+          # macOS / c++11 / -O2 / boost 1.80
           #
           - build-type: full
             runs-on: macos-latest
             compiler: g++
-            cxx-std: c++03
+            cxx-std: c++11
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_80_0
             boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
           #
-          # macOS / c++03 / -O2 / boost 1.80 / separate compilation
+          # macOS / c++11 / -O2 / boost 1.80 / separate compilation
           #
           - build-type: full
             runs-on: macos-latest
             compiler: g++
-            cxx-std: c++03
+            cxx-std: c++11
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_80_0
@@ -352,7 +341,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
-      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }}
+      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }}
     steps:
     - uses: actions/checkout@v2
     - name: Install autotools

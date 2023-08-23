@@ -128,7 +128,7 @@ public:
   {
     return static_cast<T*>(
         asio_handler_alloc_helpers::allocate(
-          sizeof(T) * n, handler_, ASIO_ALIGNOF(T)));
+          sizeof(T) * n, handler_, alignof(T)));
   }
 
   void deallocate(T* p, std::size_t n)
@@ -179,7 +179,7 @@ struct get_hook_allocator
 };
 
 template <typename Handler, typename T>
-struct get_hook_allocator<Handler, std::allocator<T> >
+struct get_hook_allocator<Handler, std::allocator<T>>
 {
   typedef hook_allocator<Handler, T> type;
 

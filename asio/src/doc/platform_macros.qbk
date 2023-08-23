@@ -26,16 +26,16 @@ needs.
   [
     [`ASIO_HAS_ALIAS_TEMPLATES`]
     [
-      Support alias templates on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_ALIAS_TEMPLATES`]
+    []
   ]
   [
     [`ASIO_HAS_ALIGNOF`]
     [
-      Support for the alignof operator.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_ALIGNOF`]
+    []
   ]
   [
     [`ASIO_HAS_BOOST_ALIGN`]
@@ -166,9 +166,9 @@ needs.
   [
     [`ASIO_HAS_CONSTEXPR`]
     [
-      Support constexpr on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_CONSTEXPR`]
+    []
   ]
   [
     [`ASIO_HAS_CO_AWAIT`]
@@ -180,30 +180,30 @@ needs.
   [
     [`ASIO_HAS_CSTDINT`]
     [
-      Standard library support for the cstdint header.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_CSTDINT`]
+    []
   ]
   [
     [`ASIO_HAS_CXX11_ALLOCATORS`]
     [
-      Standard library support for the C++11 allocator additions.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_CXX11_ALLOCATORS`]
+    []
   ]
   [
     [`ASIO_HAS_DECLTYPE`]
     [
-      Support automatic type deduction on compilers known to support it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_DECLTYPE`]
+    []
   ]
   [
     [`ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS`]
     [
-      Support default function template arguments on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS`]
+    []
   ]
   [
     [`ASIO_HAS_DEV_POLL`]
@@ -215,21 +215,21 @@ needs.
   [
     [`ASIO_HAS_ENUM_CLASS`]
     [
-      Support enum classes on compilers known to allow them.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_ENUM_CLASS`]
+    []
   ]
   [
     [`ASIO_HAS_EPOLL`]
     [
-      Linux: epoll, eventfd and timerfd.
+      Linux: epoll, eventfd, timerfd and io_uring.
     ]
     [`ASIO_DISABLE_EPOLL`]
   ]
   [
     [`ASIO_HAS_EVENTFD`]
     [
-      Linux: epoll, eventfd and timerfd.
+      Linux: epoll, eventfd, timerfd and io_uring.
     ]
     [`ASIO_DISABLE_EVENTFD`]
   ]
@@ -285,9 +285,9 @@ needs.
   [
     [`ASIO_HAS_MOVE`]
     [
-      Support move construction and assignment on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_MOVE`]
+    []
   ]
   [
     [`ASIO_HAS_MSG_NOSIGNAL`]
@@ -299,9 +299,9 @@ needs.
   [
     [`ASIO_HAS_NOEXCEPT`]
     [
-      Support noexcept on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_NOEXCEPT`]
+    []
   ]
   [
     [`ASIO_HAS_NOEXCEPT_FUNCTION_TYPE`]
@@ -313,9 +313,9 @@ needs.
   [
     [`ASIO_HAS_NULLPTR`]
     [
-      Standard library support for the nullptr_t type.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_NULLPTR`]
+    []
   ]
   [
     [`ASIO_HAS_PIPE`]
@@ -341,9 +341,9 @@ needs.
   [
     [`ASIO_HAS_REF_QUALIFIED_FUNCTIONS`]
     [
-      Support ref-qualified functions on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_REF_QUALIFIED_FUNCTIONS`]
+    []
   ]
   [
     [`ASIO_HAS_RETURN_TYPE_DEDUCTION`]
@@ -388,6 +388,13 @@ needs.
     [`ASIO_DISABLE_SIGNAL`]
   ]
   [
+    [`ASIO_HAS_SNPRINTF`]
+    [
+      Standard library support for snprintf.
+    ]
+    [`ASIO_DISABLE_SNPRINTF`]
+  ]
+  [
     [`ASIO_HAS_SOURCE_LOCATION`]
     [
       Standard library has a source_location that we can use.
@@ -404,9 +411,16 @@ needs.
   [
     [`ASIO_HAS_STD_ADDRESSOF`]
     [
-      Standard library support for addressof.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_ADDRESSOF`]
+    []
+  ]
+  [
+    [`ASIO_HAS_STD_ALIGN`]
+    [
+      Always enabled. Retained for backwards compatibility in user code.
+    ]
+    []
   ]
   [
     [`ASIO_HAS_STD_ALIGNED_ALLOC`]
@@ -418,9 +432,9 @@ needs.
   [
     [`ASIO_HAS_STD_ALLOCATOR_ARG`]
     [
-      Standard library support for allocator_arg_t.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_ALLOCATOR_ARG`]
+    []
   ]
   [
     [`ASIO_HAS_STD_ANY`]
@@ -432,39 +446,28 @@ needs.
   [
     [`ASIO_HAS_STD_ARRAY`]
     [
-      Standard library support for arrays.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_ARRAY`]
+    []
   ]
   [
     [`ASIO_HAS_STD_ATOMIC`]
     [
-      Standard library support for atomic operations.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_ATOMIC`]
+    []
   ]
   [
     [`ASIO_HAS_STD_CALL_ONCE`]
     [
-      Standard library support for the call_once function.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_CALL_ONCE`]
+    []
   ]
   [
     [`ASIO_HAS_STD_CHRONO`]
     [
-      Standard library support for chrono. Some standard libraries (such as the
-      libstdc++ shipped with gcc 4.6) provide monotonic_clock as per early C++0x
-      drafts, rather than the eventually standardised name of steady_clock.
-    ]
-    [`ASIO_DISABLE_STD_CHRONO`]
-  ]
-  [
-    [`ASIO_HAS_STD_CHRONO_MONOTONIC_CLOCK`]
-    [
-      Standard library support for chrono. Some standard libraries (such as the
-      libstdc++ shipped with gcc 4.6) provide monotonic_clock as per early C++0x
-      drafts, rather than the eventually standardised name of steady_clock.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
     []
   ]
@@ -485,9 +488,9 @@ needs.
   [
     [`ASIO_HAS_STD_EXCEPTION_PTR`]
     [
-      Standard library support for std::exception_ptr and std::current_exception.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_EXCEPTION_PTR`]
+    []
   ]
   [
     [`ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION`]
@@ -506,23 +509,23 @@ needs.
   [
     [`ASIO_HAS_STD_FUNCTION`]
     [
-      Standard library support for the function class.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_FUNCTION`]
+    []
   ]
   [
     [`ASIO_HAS_STD_FUTURE`]
     [
-      Standard library support for futures.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_FUTURE`]
+    []
   ]
   [
     [`ASIO_HAS_STD_HASH`]
     [
-      Standard library support for std::hash.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_HASH`]
+    []
   ]
   [
     [`ASIO_HAS_STD_INDEX_SEQUENCE`]
@@ -541,37 +544,37 @@ needs.
   [
     [`ASIO_HAS_STD_IOSTREAM_MOVE`]
     [
-      Standard library support for iostream move construction and assignment.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_IOSTREAM_MOVE`]
+    []
   ]
   [
     [`ASIO_HAS_STD_MUTEX_AND_CONDVAR`]
     [
-      Standard library support for the mutex and condition variable classes.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_MUTEX_AND_CONDVAR`]
+    []
   ]
   [
     [`ASIO_HAS_STD_NESTED_EXCEPTION`]
     [
-      Standard library support for std::nested_exception.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_NESTED_EXCEPTION`]
+    []
   ]
   [
     [`ASIO_HAS_STD_REFERENCE_WRAPPER`]
     [
-      Standard library support for the reference_wrapper class.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_REFERENCE_WRAPPER`]
+    []
   ]
   [
     [`ASIO_HAS_STD_SHARED_PTR`]
     [
-      Standard library support for shared_ptr and weak_ptr.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_SHARED_PTR`]
+    []
   ]
   [
     [`ASIO_HAS_STD_STRING_VIEW`]
@@ -583,16 +586,16 @@ needs.
   [
     [`ASIO_HAS_STD_SYSTEM_ERROR`]
     [
-      Standard library support for system errors.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_SYSTEM_ERROR`]
+    []
   ]
   [
     [`ASIO_HAS_STD_THREAD`]
     [
-      Standard library support for the thread class.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_THREAD`]
+    []
   ]
   [
     [`ASIO_HAS_STD_TO_ADDRESS`]
@@ -604,16 +607,23 @@ needs.
   [
     [`ASIO_HAS_STD_TUPLE`]
     [
-      Standard library support for std::tuple.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_TUPLE`]
+    []
   ]
   [
     [`ASIO_HAS_STD_TYPE_TRAITS`]
     [
-      Standard library support for type traits.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_STD_TYPE_TRAITS`]
+    []
+  ]
+  [
+    [`ASIO_HAS_STD_VARIANT`]
+    [
+      Standard library support for std::variant.
+    ]
+    [`ASIO_DISABLE_STD_VARIANT`]
   ]
   [
     [`ASIO_HAS_STRING_VIEW`]
@@ -632,14 +642,14 @@ needs.
   [
     [`ASIO_HAS_THREAD_KEYWORD_EXTENSION`]
     [
-      Support for the __thread keyword extension.
+      Support for the __thread keyword extension, or equivalent.
     ]
     [`ASIO_DISABLE_THREAD_KEYWORD_EXTENSION`]
   ]
   [
     [`ASIO_HAS_TIMERFD`]
     [
-      Linux: epoll, eventfd and timerfd.
+      Linux: epoll, eventfd, timerfd and io_uring.
     ]
     []
   ]
@@ -649,6 +659,13 @@ needs.
       On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
       get access to the various platform feature macros, e.g. to be able to test
       for threads support.
+    ]
+    []
+  ]
+  [
+    [`ASIO_HAS_USER_DEFINED_LITERALS`]
+    [
+      Always enabled. Retained for backwards compatibility in user code.
     ]
     []
   ]
@@ -669,9 +686,9 @@ needs.
   [
     [`ASIO_HAS_VARIADIC_TEMPLATES`]
     [
-      Support variadic templates on compilers known to allow it.
+      Always enabled. Retained for backwards compatibility in user code.
     ]
-    [`ASIO_DISABLE_VARIADIC_TEMPLATES`]
+    []
   ]
   [
     [`ASIO_HAS_WINDOWS_OBJECT_HANDLE`]

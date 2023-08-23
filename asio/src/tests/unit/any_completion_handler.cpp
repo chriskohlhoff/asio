@@ -18,10 +18,7 @@
 
 #include "unit_test.hpp"
 
-#if defined(ASIO_HAS_STD_TUPLE) \
-  && defined(ASIO_HAS_MOVE) \
-  && defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
+#include <functional>
 #include "asio/bind_allocator.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/bind_executor.hpp"
@@ -29,17 +26,7 @@
 #include "asio/error.hpp"
 #include "asio/thread_pool.hpp"
 
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
-
-#if defined(ASIO_HAS_BOOST_BIND)
-namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
 namespace bindns = std;
-#endif
 
 void increment(int* count)
 {
@@ -271,17 +258,3 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(any_completion_handler_associator_test)
   ASIO_TEST_CASE(any_completion_handler_invocation_test)
 )
-
-#else // defined(ASIO_HAS_STD_TUPLE)
-      //   && defined(ASIO_HAS_MOVE)
-      //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)
-
-ASIO_TEST_SUITE
-(
-  "any_completion_handler",
-  ASIO_TEST_CASE(null_test)
-)
-
-#endif // defined(ASIO_HAS_STD_TUPLE)
-       //   && defined(ASIO_HAS_MOVE)
-       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES)

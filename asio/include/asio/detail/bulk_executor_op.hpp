@@ -35,10 +35,10 @@ public:
   ASIO_DEFINE_HANDLER_ALLOCATOR_PTR(bulk_executor_op);
 
   template <typename H>
-  bulk_executor_op(ASIO_MOVE_ARG(H) h,
+  bulk_executor_op(H&& h,
       const Alloc& allocator, std::size_t i)
     : Operation(&bulk_executor_op::do_complete),
-      handler_(ASIO_MOVE_CAST(H)(h)),
+      handler_(static_cast<H&&>(h)),
       allocator_(allocator),
       index_(i)
   {

@@ -16,16 +16,13 @@
 // Test that header file is self-contained.
 #include "asio/buffer.hpp"
 
+#include <array>
+#include <cstring>
 #include "unit_test.hpp"
 
 #if defined(ASIO_HAS_BOOST_ARRAY)
 # include <boost/array.hpp>
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
-
-#if defined(ASIO_HAS_STD_ARRAY)
-# include <array>
-# include <cstring>
-#endif // defined(ASIO_HAS_STD_ARRAY)
 
 //------------------------------------------------------------------------------
 
@@ -87,11 +84,9 @@ void test()
     const boost::array<char, 1024>& const_array_data_1 = array_data;
     boost::array<const char, 1024> const_array_data_2 = { { 0 } };
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
-#if defined(ASIO_HAS_STD_ARRAY)
     std::array<char, 1024> std_array_data;
     const std::array<char, 1024>& const_std_array_data_1 = std_array_data;
     std::array<const char, 1024> const_std_array_data_2 = { { 0 } };
-#endif // defined(ASIO_HAS_STD_ARRAY)
     std::vector<char> vector_data(1024);
     const std::vector<char>& const_vector_data = vector_data;
     std::string string_data(1024, ' ');
@@ -230,14 +225,12 @@ void test()
     cb1 = buffer(const_array_data_2);
     cb1 = buffer(const_array_data_2, 1024);
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
-#if defined(ASIO_HAS_STD_ARRAY)
     mb1 = buffer(std_array_data);
     mb1 = buffer(std_array_data, 1024);
     cb1 = buffer(const_std_array_data_1);
     cb1 = buffer(const_std_array_data_1, 1024);
     cb1 = buffer(const_std_array_data_2);
     cb1 = buffer(const_std_array_data_2, 1024);
-#endif // defined(ASIO_HAS_STD_ARRAY)
     mb1 = buffer(vector_data);
     mb1 = buffer(vector_data, 1024);
     cb1 = buffer(const_vector_data);
@@ -649,13 +642,11 @@ struct valid_const_a
   const_buffer* end() const { return 0; }
 };
 
-#if defined(ASIO_HAS_DECLTYPE)
 struct valid_const_b
 {
   const_buffer* begin() const { return 0; }
   const_buffer* end() const { return 0; }
 };
-#endif // defined(ASIO_HAS_DECLTYPE)
 
 struct valid_mutable_a
 {
@@ -665,13 +656,11 @@ struct valid_mutable_a
   mutable_buffer* end() const { return 0; }
 };
 
-#if defined(ASIO_HAS_DECLTYPE)
 struct valid_mutable_b
 {
   mutable_buffer* begin() const { return 0; }
   mutable_buffer* end() const { return 0; }
 };
-#endif // defined(ASIO_HAS_DECLTYPE)
 
 struct invalid_const_a
 {
@@ -692,7 +681,6 @@ struct invalid_const_c
   const_buffer* end() const { return 0; }
 };
 
-#if defined(ASIO_HAS_DECLTYPE)
 struct invalid_const_d
 {
   int* begin() const { return 0; }
@@ -708,7 +696,6 @@ struct invalid_const_f
 {
   const_buffer* end() const { return 0; }
 };
-#endif // defined(ASIO_HAS_DECLTYPE)
 
 struct invalid_mutable_a
 {
@@ -729,7 +716,6 @@ struct invalid_mutable_c
   mutable_buffer* end() const { return 0; }
 };
 
-#if defined(ASIO_HAS_DECLTYPE)
 struct invalid_mutable_d
 {
   int* begin() const { return 0; }
@@ -745,7 +731,6 @@ struct invalid_mutable_f
 {
   mutable_buffer* end() const { return 0; }
 };
-#endif // defined(ASIO_HAS_DECLTYPE)
 
 void test()
 {
@@ -800,14 +785,12 @@ void test()
   ASIO_CHECK(buffer_sequence_begin(b7) == b7.begin());
   ASIO_CHECK(buffer_sequence_end(b7) == b7.end());
 
-#if defined(ASIO_HAS_DECLTYPE)
   ASIO_CHECK(is_const_buffer_sequence<valid_const_b>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<valid_const_b>::value);
 
   valid_const_b b8;
   ASIO_CHECK(buffer_sequence_begin(b8) == b8.begin());
   ASIO_CHECK(buffer_sequence_end(b8) == b8.end());
-#endif // defined(ASIO_HAS_DECLTYPE)
 
   ASIO_CHECK(is_const_buffer_sequence<valid_mutable_a>::value);
   ASIO_CHECK(is_mutable_buffer_sequence<valid_mutable_a>::value);
@@ -816,14 +799,12 @@ void test()
   ASIO_CHECK(buffer_sequence_begin(b9) == b9.begin());
   ASIO_CHECK(buffer_sequence_end(b9) == b9.end());
 
-#if defined(ASIO_HAS_DECLTYPE)
   ASIO_CHECK(is_const_buffer_sequence<valid_mutable_b>::value);
   ASIO_CHECK(is_mutable_buffer_sequence<valid_mutable_b>::value);
 
   valid_mutable_b b10;
   ASIO_CHECK(buffer_sequence_begin(b10) == b10.begin());
   ASIO_CHECK(buffer_sequence_end(b10) == b10.end());
-#endif // defined(ASIO_HAS_DECLTYPE)
 
   ASIO_CHECK(!is_const_buffer_sequence<invalid_const_a>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_a>::value);
@@ -834,7 +815,6 @@ void test()
   ASIO_CHECK(!is_const_buffer_sequence<invalid_const_c>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_c>::value);
 
-#if defined(ASIO_HAS_DECLTYPE)
   ASIO_CHECK(!is_const_buffer_sequence<invalid_const_d>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_d>::value);
 
@@ -843,7 +823,6 @@ void test()
 
   ASIO_CHECK(!is_const_buffer_sequence<invalid_const_f>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_f>::value);
-#endif // defined(ASIO_HAS_DECLTYPE)
 
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_a>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_a>::value);
@@ -854,7 +833,6 @@ void test()
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_c>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_c>::value);
 
-#if defined(ASIO_HAS_DECLTYPE)
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_d>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_d>::value);
 
@@ -863,7 +841,6 @@ void test()
 
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_f>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_mutable_f>::value);
-#endif // defined(ASIO_HAS_DECLTYPE)
 }
 
 } // namespace buffer_sequence
@@ -872,8 +849,7 @@ namespace buffer_literals {
 
 void test()
 {
-#if (defined(ASIO_HAS_USER_DEFINED_LITERALS) \
-    && defined(ASIO_HAS_VARIADIC_TEMPLATES))
+#if defined(ASIO_HAS_USER_DEFINED_LITERALS)
   using namespace asio::buffer_literals;
   using namespace std; // For memcmp.
 
@@ -921,7 +897,6 @@ void test()
   ASIO_CHECK(b11.size() == 2);
   ASIO_CHECK(memcmp(b11.data(), "\xF0\x0F", 2) == 0);
 #endif // (defined(ASIO_HAS_USER_DEFINED_LITERALS)
-       //   && defined(ASIO_HAS_VARIADIC_TEMPLATES))
 }
 
 } // namespace buffer_literals

@@ -16,16 +16,9 @@
 // Test that header file is self-contained.
 #include "asio/buffers_iterator.hpp"
 
+#include <array>
 #include "asio/buffer.hpp"
 #include "unit_test.hpp"
-
-#if defined(ASIO_HAS_BOOST_ARRAY)
-# include <boost/array.hpp>
-#endif // defined(ASIO_HAS_BOOST_ARRAY)
-
-#if defined(ASIO_HAS_STD_ARRAY)
-# include <array>
-#endif // defined(ASIO_HAS_STD_ARRAY)
 
 //------------------------------------------------------------------------------
 
@@ -36,11 +29,7 @@
 
 namespace buffers_iterator_compile {
 
-#if defined(ASIO_HAS_BOOST_ARRAY)
-using boost::array;
-#elif defined(ASIO_HAS_STD_ARRAY)
 using std::array;
-#endif // defined(ASIO_HAS_BOOST_ARRAY)
 using std::vector;
 using namespace asio;
 

@@ -18,13 +18,9 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 
-#if defined(ASIO_HAS_DECLTYPE) \
-  && defined(ASIO_HAS_NOEXCEPT) \
-  && defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#if defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 # define ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT 1
-#endif // defined(ASIO_HAS_DECLTYPE)
-       //   && defined(ASIO_HAS_NOEXCEPT)
-       //   && defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
+#endif // defined(ASIO_HAS_WORKING_EXPRESSION_SFINAE)
 
 #include "asio/detail/push_options.hpp"
 
@@ -42,8 +38,8 @@ namespace detail {
 
 struct no_set_error_member
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = false);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = false);
+  static constexpr bool is_valid = false;
+  static constexpr bool is_noexcept = false;
 };
 
 #if defined(ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
@@ -55,35 +51,35 @@ struct set_error_member_trait : no_set_error_member
 
 template <typename T, typename E>
 struct set_error_member_trait<T, E,
-  typename void_type<
+  void_t<
     decltype(declval<T>().set_error(declval<E>()))
-  >::type>
+  >>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
+  static constexpr bool is_valid = true;
 
   using result_type = decltype(
     declval<T>().set_error(declval<E>()));
 
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = noexcept(
-    declval<T>().set_error(declval<E>())));
+  static constexpr bool is_noexcept =
+    noexcept(declval<T>().set_error(declval<E>()));
 };
 
 #else // defined(ASIO_HAS_DEDUCED_SET_ERROR_MEMBER_TRAIT)
 
 template <typename T, typename E, typename = void>
 struct set_error_member_trait :
-  conditional<
-    is_same<T, typename remove_reference<T>::type>::value
-      && is_same<E, typename decay<E>::type>::value,
-    typename conditional<
-      is_same<T, typename add_const<T>::type>::value,
+  conditional_t<
+    is_same<T, remove_reference_t<T>>::value
+      && is_same<E, decay_t<E>>::value,
+    conditional_t<
+      is_same<T, add_const_t<T>>::value,
       no_set_error_member,
-      traits::set_error_member<typename add_const<T>::type, E>
-    >::type,
+      traits::set_error_member<add_const_t<T>, E>
+    >,
     traits::set_error_member<
-      typename remove_reference<T>::type,
-      typename decay<E>::type>
-  >::type
+      remove_reference_t<T>,
+      decay_t<E>>
+  >
 {
 };
 

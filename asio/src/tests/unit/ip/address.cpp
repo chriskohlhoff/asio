@@ -128,10 +128,8 @@ void test()
     wos << addr1;
 #endif // !defined(BOOST_NO_STD_WSTREAMBUF)
 
-#if defined(ASIO_HAS_STD_HASH)
     std::size_t hash1 = std::hash<ip::address>()(addr1);
     (void)hash1;
-#endif // defined(ASIO_HAS_STD_HASH)
   }
   catch (std::exception&)
   {

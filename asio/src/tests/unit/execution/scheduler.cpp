@@ -32,28 +32,26 @@ struct executor
   {
   }
 
-  executor(const executor&) ASIO_NOEXCEPT
+  executor(const executor&) noexcept
   {
   }
 
-#if defined(ASIO_HAS_MOVE)
-  executor(executor&&) ASIO_NOEXCEPT
+  executor(executor&&) noexcept
   {
   }
-#endif // defined(ASIO_HAS_MOVE)
 
   template <typename F>
-  void execute(ASIO_MOVE_ARG(F) f) const ASIO_NOEXCEPT
+  void execute(F&& f) const noexcept
   {
     (void)f;
   }
 
-  bool operator==(const executor&) const ASIO_NOEXCEPT
+  bool operator==(const executor&) const noexcept
   {
     return true;
   }
 
-  bool operator!=(const executor&) const ASIO_NOEXCEPT
+  bool operator!=(const executor&) const noexcept
   {
     return false;
   }
@@ -67,8 +65,8 @@ namespace traits {
 template <typename F>
 struct execute_member<executor, F>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
   typedef void result_type;
 };
 
@@ -78,8 +76,8 @@ struct execute_member<executor, F>
 template <>
 struct equality_comparable<executor>
 {
-  ASIO_STATIC_CONSTEXPR(bool, is_valid = true);
-  ASIO_STATIC_CONSTEXPR(bool, is_noexcept = true);
+  static constexpr bool is_valid = true;
+  static constexpr bool is_noexcept = true;
 };
 
 #endif // !defined(ASIO_HAS_DEDUCED_EQUALITY_COMPARABLE_TRAIT)

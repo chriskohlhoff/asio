@@ -20,6 +20,7 @@
 #include "asio/ip/tcp.hpp"
 
 #include <cstring>
+#include <functional>
 #include "asio/io_context.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
@@ -34,12 +35,6 @@
 #else // defined(ASIO_HAS_BOOST_ARRAY)
 # include <array>
 #endif // defined(ASIO_HAS_BOOST_ARRAY)
-
-#if defined(ASIO_HAS_BOOST_BIND)
-# include <boost/bind/bind.hpp>
-#else // defined(ASIO_HAS_BOOST_BIND)
-# include <functional>
-#endif // defined(ASIO_HAS_BOOST_BIND)
 
 //------------------------------------------------------------------------------
 
@@ -71,10 +66,8 @@ void test()
     (void)static_cast<bool>(!no_delay1);
     (void)static_cast<bool>(no_delay1.value());
 
-#if defined(ASIO_HAS_STD_HASH)
     ip::tcp::endpoint ep;
     (void)static_cast<std::size_t>(std::hash<ip::tcp::endpoint>()(ep));
-#endif // defined(ASIO_HAS_STD_HASH)
   }
   catch (std::exception&)
   {
@@ -146,66 +139,54 @@ struct connect_handler
 {
   connect_handler() {}
   void operator()(const asio::error_code&) {}
-#if defined(ASIO_HAS_MOVE)
   connect_handler(connect_handler&&) {}
 private:
   connect_handler(const connect_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct wait_handler
 {
   wait_handler() {}
   void operator()(const asio::error_code&) {}
-#if defined(ASIO_HAS_MOVE)
   wait_handler(wait_handler&&) {}
 private:
   wait_handler(const wait_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct send_handler
 {
   send_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   send_handler(send_handler&&) {}
 private:
   send_handler(const send_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct receive_handler
 {
   receive_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   receive_handler(receive_handler&&) {}
 private:
   receive_handler(const receive_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct write_some_handler
 {
   write_some_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   write_some_handler(write_some_handler&&) {}
 private:
   write_some_handler(const write_some_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct read_some_handler
 {
   read_some_handler() {}
   void operator()(const asio::error_code&, std::size_t) {}
-#if defined(ASIO_HAS_MOVE)
   read_some_handler(read_some_handler&&) {}
 private:
   read_some_handler(const read_some_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 void test()
@@ -267,16 +248,12 @@ void test()
     ip::tcp::socket socket12(ioc_ex, ip::tcp::v4(), native_socket2);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_HAS_MOVE)
     ip::tcp::socket socket13(std::move(socket5));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_stream_socket operators.
 
-#if defined(ASIO_HAS_MOVE)
     socket1 = ip::tcp::socket(ioc);
     socket1 = std::move(socket2);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
@@ -622,11 +599,7 @@ void test()
   using namespace asio;
   namespace ip = asio::ip;
 
-#if defined(ASIO_HAS_BOOST_BIND)
-  namespace bindns = boost;
-#else // defined(ASIO_HAS_BOOST_BIND)
   namespace bindns = std;
-#endif // defined(ASIO_HAS_BOOST_BIND)
   using bindns::placeholders::_1;
   using bindns::placeholders::_2;
 
@@ -734,25 +707,20 @@ struct wait_handler
 {
   wait_handler() {}
   void operator()(const asio::error_code&) {}
-#if defined(ASIO_HAS_MOVE)
   wait_handler(wait_handler&&) {}
 private:
   wait_handler(const wait_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 struct accept_handler
 {
   accept_handler() {}
   void operator()(const asio::error_code&) {}
-#if defined(ASIO_HAS_MOVE)
   accept_handler(accept_handler&&) {}
 private:
   accept_handler(const accept_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
-#if defined(ASIO_HAS_MOVE)
 struct move_accept_handler
 {
   move_accept_handler() {}
@@ -773,7 +741,6 @@ struct move_accept_ioc_handler
 private:
   move_accept_ioc_handler(const move_accept_handler&) {}
 };
-#endif // defined(ASIO_HAS_MOVE)
 
 void test()
 {
@@ -823,16 +790,12 @@ void test()
     ip::tcp::acceptor acceptor12(ioc_ex, ip::tcp::v4(), native_acceptor2);
 #endif // !defined(ASIO_WINDOWS_RUNTIME)
 
-#if defined(ASIO_HAS_MOVE)
     ip::tcp::acceptor acceptor13(std::move(acceptor5));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_socket_acceptor operators.
 
-#if defined(ASIO_HAS_MOVE)
     acceptor1 = ip::tcp::acceptor(ioc);
     acceptor1 = std::move(acceptor2);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
@@ -926,7 +889,6 @@ void test()
     acceptor1.accept(peer_socket2, peer_endpoint);
     acceptor1.accept(peer_socket2, peer_endpoint, ec);
 
-#if defined(ASIO_HAS_MOVE)
     peer_socket1 = acceptor1.accept();
     peer_socket1 = acceptor1.accept(ioc);
     peer_socket1 = acceptor1.accept(ioc_ex);
@@ -940,7 +902,6 @@ void test()
     peer_socket2 = acceptor1.accept(ioc, peer_endpoint);
     peer_socket2 = acceptor1.accept(ioc_ex, peer_endpoint);
     (void)peer_socket2;
-#endif // defined(ASIO_HAS_MOVE)
 
     acceptor1.async_accept(peer_socket1, accept_handler());
     acceptor1.async_accept(peer_socket1, peer_endpoint, accept_handler());
@@ -960,7 +921,6 @@ void test()
     int i5 = acceptor1.async_accept(peer_socket2, peer_endpoint, lazy);
     (void)i5;
 
-#if defined(ASIO_HAS_MOVE)
     acceptor1.async_accept(move_accept_handler());
     acceptor1.async_accept(ioc, move_accept_handler());
     acceptor1.async_accept(ioc_ex, move_accept_handler());
@@ -975,7 +935,6 @@ void test()
     acceptor1.async_accept(peer_endpoint, immediate);
     acceptor1.async_accept(ioc, peer_endpoint, immediate);
     acceptor1.async_accept(ioc_ex, peer_endpoint, immediate);
-#endif // defined(ASIO_HAS_MOVE)
   }
   catch (std::exception&)
   {
@@ -1077,11 +1036,9 @@ struct resolve_handler
   resolve_handler() {}
   void operator()(const asio::error_code&,
       asio::ip::tcp::resolver::results_type) {}
-#if defined(ASIO_HAS_MOVE)
   resolve_handler(resolve_handler&&) {}
 private:
   resolve_handler(const resolve_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 
 #if !defined(ASIO_NO_DEPRECATED)
@@ -1090,11 +1047,9 @@ struct legacy_resolve_handler
   legacy_resolve_handler() {}
   void operator()(const asio::error_code&,
       asio::ip::tcp::resolver::iterator) {}
-#if defined(ASIO_HAS_MOVE)
   legacy_resolve_handler(legacy_resolve_handler&&) {}
 private:
   legacy_resolve_handler(const legacy_resolve_handler&);
-#endif // defined(ASIO_HAS_MOVE)
 };
 #endif // !defined(ASIO_NO_DEPRECATED)
 
@@ -1119,16 +1074,12 @@ void test()
     ip::tcp::resolver resolver(ioc);
     ip::tcp::resolver resolver2(ioc_ex);
 
-#if defined(ASIO_HAS_MOVE)
     ip::tcp::resolver resolver3(std::move(resolver));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_resolver operators.
 
-#if defined(ASIO_HAS_MOVE)
     resolver = ip::tcp::resolver(ioc);
     resolver = std::move(resolver3);
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_io_object functions.
 
@@ -1264,9 +1215,7 @@ void test()
     const ip::basic_resolver_entry<ip::tcp> entry1;
     ip::basic_resolver_entry<ip::tcp> entry2(endpoint, host_name, service_name);
     ip::basic_resolver_entry<ip::tcp> entry3(entry1);
-#if defined(ASIO_HAS_MOVE)
     ip::basic_resolver_entry<ip::tcp> entry4(std::move(entry2));
-#endif // defined(ASIO_HAS_MOVE)
 
     // basic_resolver_entry functions.
 
@@ -1327,19 +1276,15 @@ void test()
 
   ip::tcp::iostream ios1;
 
-#if defined(ASIO_HAS_STD_IOSTREAM_MOVE)
   ip::tcp::iostream ios2(std::move(sock));
-#endif // defined(ASIO_HAS_STD_IOSTREAM_MOVE)
 
   ip::tcp::iostream ios3("hostname", "service");
 
   // basic_socket_iostream operators.
 
-#if defined(ASIO_HAS_STD_IOSTREAM_MOVE)
   ios1 = ip::tcp::iostream();
 
   ios2 = std::move(ios1);
-#endif // defined(ASIO_HAS_STD_IOSTREAM_MOVE)
 
   // basic_socket_iostream members.
 
