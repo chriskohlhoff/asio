@@ -1063,6 +1063,8 @@
 /doc/html/boost_asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp
 /doc/html/boost_asio/example/cpp20/
 /doc/html/boost_asio/example/cpp20/channels/
+/doc/html/boost_asio/example/cpp20/channels/mutual_exclusion_1.cpp
+/doc/html/boost_asio/example/cpp20/channels/mutual_exclusion_2.cpp
 /doc/html/boost_asio/example/cpp20/channels/throttling_proxy.cpp
 /doc/html/boost_asio/example/cpp20/coroutines/
 /doc/html/boost_asio/example/cpp20/coroutines/chat_server.cpp
@@ -1074,6 +1076,8 @@
 /doc/html/boost_asio/example/cpp20/coroutines/echo_server_with_deferred_default.cpp
 /doc/html/boost_asio/example/cpp20/coroutines/refactored_echo_server.cpp
 /doc/html/boost_asio/example/cpp20/coroutines/timeout.cpp
+/doc/html/boost_asio/example/cpp20/invocation/
+/doc/html/boost_asio/example/cpp20/invocation/completion_executor.cpp
 /doc/html/boost_asio/example/cpp20/operations/
 /doc/html/boost_asio/example/cpp20/operations/callback_wrapper.cpp
 /doc/html/boost_asio/example/cpp20/operations/c_callback_wrapper.cpp
@@ -7195,6 +7199,9 @@
 /libs/asio/example/cpp17/coroutines_ts/refactored_echo_server.cpp
 /libs/asio/example/cpp20/
 /libs/asio/example/cpp20/channels/
+/libs/asio/example/cpp20/channels/Jamfile.v2
+/libs/asio/example/cpp20/channels/mutual_exclusion_1.cpp
+/libs/asio/example/cpp20/channels/mutual_exclusion_2.cpp
 /libs/asio/example/cpp20/channels/throttling_proxy.cpp
 /libs/asio/example/cpp20/coroutines/
 /libs/asio/example/cpp20/coroutines/chat_server.cpp
@@ -7207,6 +7214,9 @@
 /libs/asio/example/cpp20/coroutines/Jamfile.v2
 /libs/asio/example/cpp20/coroutines/refactored_echo_server.cpp
 /libs/asio/example/cpp20/coroutines/timeout.cpp
+/libs/asio/example/cpp20/invocation/
+/libs/asio/example/cpp20/invocation/completion_executor.cpp
+/libs/asio/example/cpp20/invocation/Jamfile.v2
 /libs/asio/example/cpp20/operations/
 /libs/asio/example/cpp20/operations/callback_wrapper.cpp
 /libs/asio/example/cpp20/operations/c_callback_wrapper.cpp
