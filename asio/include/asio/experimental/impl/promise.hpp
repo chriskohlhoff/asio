@@ -18,6 +18,8 @@
 #include "asio/detail/config.hpp"
 #include "asio/cancellation_signal.hpp"
 #include "asio/detail/utility.hpp"
+#include "asio/error.hpp"
+#include "asio/system_error.hpp"
 #include <tuple>
 
 #include "asio/detail/push_options.hpp"
