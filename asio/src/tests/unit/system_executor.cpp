@@ -72,13 +72,6 @@ void system_executor_query_test()
         asio::execution::relationship.fork)
       == asio::execution::relationship.fork);
 
-#if !defined(ASIO_NO_DEPRECATED)
-  ASIO_CHECK(
-      asio::query(system_executor(),
-        asio::execution::bulk_guarantee)
-      == asio::execution::bulk_guarantee.unsequenced);
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   ASIO_CHECK(
       asio::query(system_executor(),
         asio::execution::mapping)

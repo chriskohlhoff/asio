@@ -75,27 +75,13 @@ UNIT_TEST_EXES = \
 	tests/unit/execution/any_executor.exe \
 	tests/unit/execution/blocking.exe \
 	tests/unit/execution/blocking_adaptation.exe \
-	tests/unit/execution/bulk_execute.exe \
-	tests/unit/execution/bulk_guarantee.exe \
-	tests/unit/execution/connect.exe \
 	tests/unit/execution/context_as.exe \
-	tests/unit/execution/execute.exe \
 	tests/unit/execution/executor.exe \
 	tests/unit/execution/invocable_archetype.exe \
 	tests/unit/execution/mapping.exe \
-	tests/unit/execution/operation_state.exe \
 	tests/unit/execution/outstanding_work.exe \
 	tests/unit/execution/prefer_only.exe \
-	tests/unit/execution/receiver.exe \
 	tests/unit/execution/relationship.exe \
-	tests/unit/execution/schedule.exe \
-	tests/unit/execution/scheduler.exe \
-	tests/unit/execution/sender.exe \
-	tests/unit/execution/set_done.exe \
-	tests/unit/execution/set_error.exe \
-	tests/unit/execution/set_value.exe \
-	tests/unit/execution/start.exe \
-	tests/unit/execution/submit.exe \
 	tests/unit/executor.exe \
 	tests/unit/executor_work_guard.exe \
 	tests/unit/generic/basic_endpoint.exe \

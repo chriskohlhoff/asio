@@ -18,8 +18,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
-#include "asio/execution/scheduler.hpp"
-#include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/query.hpp"
 #include "asio/traits/query_free.hpp"
@@ -40,10 +38,9 @@ namespace execution {
 /// the calling context.
 struct relationship_t
 {
-  /// The relationship_t property applies to executors, senders, and schedulers.
+  /// The relationship_t property applies to executors.
   template <typename T>
-  static constexpr bool is_applicable_property_v =
-    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+  static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
   /// The top-level relationship_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -58,11 +55,9 @@ struct relationship_t
   /// continuation of the calling context.
   struct fork_t
   {
-    /// The relationship_t::fork_t property applies to executors, senders, and
-    /// schedulers.
+    /// The relationship_t::fork_t property applies to executors.
     template <typename T>
-    static constexpr bool is_applicable_property_v =
-      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+    static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
     /// The relationship_t::fork_t property can be required.
     static constexpr bool is_requirable = true;
@@ -87,11 +82,9 @@ struct relationship_t
   /// of the calling context.
   struct continuation_t
   {
-    /// The relationship_t::continuation_t property applies to executors,
-    /// senders, and schedulers.
+    /// The relationship_t::continuation_t property applies to executors.
     template <typename T>
-    static constexpr bool is_applicable_property_v =
-      is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+    static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
     /// The relationship_t::continuation_t property can be required.
     static constexpr bool is_requirable = true;
@@ -157,24 +150,8 @@ template <int I = 0>
 struct relationship_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = false;
@@ -394,24 +371,8 @@ template <int I = 0>
 struct fork_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = true;
@@ -493,24 +454,8 @@ template <int I = 0>
 struct continuation_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = true;
@@ -585,61 +530,19 @@ constexpr relationship_t relationship;
 
 template <typename T>
 struct is_applicable_property<T, execution::relationship_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::relationship_t::fork_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 
 template <typename T>
 struct is_applicable_property<T, execution::relationship_t::continuation_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 

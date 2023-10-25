@@ -29,7 +29,6 @@
 #include "asio/detail/throw_exception.hpp"
 #include "asio/execution/bad_executor.hpp"
 #include "asio/execution/blocking.hpp"
-#include "asio/execution/execute.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/prefer.hpp"
 #include "asio/query.hpp"
@@ -907,11 +906,7 @@ protected:
   {
     const Ex* p = ex.target<Ex>();
     ASIO_ASSUME(p != 0);
-#if defined(ASIO_NO_DEPRECATED)
     p->execute(static_cast<function&&>(f));
-#else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(*p, static_cast<function&&>(f));
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>
@@ -919,11 +914,7 @@ protected:
   {
     const Ex* p = ex.target<Ex>();
     ASIO_ASSUME(p != 0);
-#if defined(ASIO_NO_DEPRECATED)
     p->execute(f);
-#else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(*p, f);
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename Ex>

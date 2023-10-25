@@ -77,16 +77,9 @@ public:
   void operator()()
   {
     associated_allocator_t<Handler> alloc((get_associated_allocator)(handler_));
-#if defined(ASIO_NO_DEPRECATED)
     asio::prefer(executor_, execution::allocator(alloc)).execute(
         asio::detail::bind_handler(
           static_cast<Handler&&>(handler_)));
-#else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(
-        asio::prefer(executor_, execution::allocator(alloc)),
-        asio::detail::bind_handler(
-          static_cast<Handler&&>(handler_)));
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 private:

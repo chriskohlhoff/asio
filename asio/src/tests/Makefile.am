@@ -69,27 +69,13 @@ check_PROGRAMS = \
 	unit/execution/any_executor \
 	unit/execution/blocking \
 	unit/execution/blocking_adaptation \
-	unit/execution/bulk_execute \
-	unit/execution/bulk_guarantee \
-	unit/execution/connect \
 	unit/execution/context_as \
-	unit/execution/execute \
 	unit/execution/executor \
 	unit/execution/invocable_archetype \
 	unit/execution/mapping \
-	unit/execution/operation_state \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
-	unit/execution/receiver \
 	unit/execution/relationship \
-	unit/execution/schedule \
-	unit/execution/scheduler \
-	unit/execution/sender \
-	unit/execution/set_done \
-	unit/execution/set_error \
-	unit/execution/set_value \
-	unit/execution/start \
-	unit/execution/submit \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
@@ -297,27 +283,13 @@ TESTS = \
 	unit/execution/any_executor \
 	unit/execution/blocking \
 	unit/execution/blocking_adaptation \
-	unit/execution/bulk_execute \
-	unit/execution/bulk_guarantee \
-	unit/execution/connect \
 	unit/execution/context_as \
-	unit/execution/execute \
 	unit/execution/executor \
 	unit/execution/invocable_archetype \
 	unit/execution/mapping \
-	unit/execution/operation_state \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
-	unit/execution/receiver \
 	unit/execution/relationship \
-	unit/execution/schedule \
-	unit/execution/scheduler \
-	unit/execution/sender \
-	unit/execution/set_done \
-	unit/execution/set_error \
-	unit/execution/set_value \
-	unit/execution/start \
-	unit/execution/submit \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
@@ -525,27 +497,13 @@ unit_error_SOURCES = unit/error.cpp
 unit_execution_any_executor_SOURCES = unit/execution/any_executor.cpp
 unit_execution_blocking_SOURCES = unit/execution/blocking.cpp
 unit_execution_blocking_adaptation_SOURCES = unit/execution/blocking_adaptation.cpp
-unit_execution_bulk_execute_SOURCES = unit/execution/bulk_execute.cpp
-unit_execution_bulk_guarantee_SOURCES = unit/execution/bulk_guarantee.cpp
-unit_execution_connect_SOURCES = unit/execution/connect.cpp
 unit_execution_context_as_SOURCES = unit/execution/context_as.cpp
-unit_execution_execute_SOURCES = unit/execution/execute.cpp
 unit_execution_executor_SOURCES = unit/execution/executor.cpp
 unit_execution_invocable_archetype_SOURCES = unit/execution/invocable_archetype.cpp
 unit_execution_mapping_SOURCES = unit/execution/mapping.cpp
 unit_execution_outstanding_work_SOURCES = unit/execution/outstanding_work.cpp
-unit_execution_operation_state_SOURCES = unit/execution/operation_state.cpp
 unit_execution_prefer_only_SOURCES = unit/execution/prefer_only.cpp
-unit_execution_receiver_SOURCES = unit/execution/receiver.cpp
 unit_execution_relationship_SOURCES = unit/execution/relationship.cpp
-unit_execution_schedule_SOURCES = unit/execution/schedule.cpp
-unit_execution_scheduler_SOURCES = unit/execution/scheduler.cpp
-unit_execution_sender_SOURCES = unit/execution/sender.cpp
-unit_execution_set_done_SOURCES = unit/execution/set_done.cpp
-unit_execution_set_error_SOURCES = unit/execution/set_error.cpp
-unit_execution_set_value_SOURCES = unit/execution/set_value.cpp
-unit_execution_start_SOURCES = unit/execution/start.cpp
-unit_execution_submit_SOURCES = unit/execution/submit.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp
 unit_executor_work_guard_SOURCES = unit/executor_work_guard.cpp

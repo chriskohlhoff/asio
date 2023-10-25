@@ -102,22 +102,12 @@ public:
       {
         recycling_allocator<void> allocator;
         executor_type ex = this_->executor_;
-#if defined(ASIO_NO_DEPRECATED)
         asio::prefer(
             asio::require(
               static_cast<executor_type&&>(ex),
               execution::blocking.never),
             execution::allocator(allocator)
           ).execute(static_cast<invoker&&>(*this_));
-#else // defined(ASIO_NO_DEPRECATED)
-        execution::execute(
-            asio::prefer(
-              asio::require(
-                static_cast<executor_type&&>(ex),
-                execution::blocking.never),
-              execution::allocator(allocator)),
-            static_cast<invoker&&>(*this_));
-#endif // defined(ASIO_NO_DEPRECATED)
       }
     }
   };
@@ -257,11 +247,7 @@ void strand_executor_service::do_execute(const implementation_type& impl,
   p.v = p.p = 0;
   if (first)
   {
-#if defined(ASIO_NO_DEPRECATED)
     ex.execute(invoker<Executor>(impl, ex));
-#else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(ex, invoker<Executor>(impl, ex));
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 }
 

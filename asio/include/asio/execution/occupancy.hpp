@@ -18,8 +18,6 @@
 #include "asio/detail/config.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/executor.hpp"
-#include "asio/execution/scheduler.hpp"
-#include "asio/execution/sender.hpp"
 #include "asio/is_applicable_property.hpp"
 #include "asio/traits/query_static_constexpr_member.hpp"
 #include "asio/traits/static_query.hpp"
@@ -36,10 +34,9 @@ namespace execution {
 /// should occupy the associated execution context.
 struct occupancy_t
 {
-  /// The occupancy_t property applies to executors, senders, and schedulers.
+  /// The occupancy_t property applies to executors.
   template <typename T>
-  static constexpr bool is_applicable_property_v =
-    is_executor_v<T> || is_sender_v<T> || is_scheduler_v<T>;
+  static constexpr bool is_applicable_property_v = is_executor_v<T>;
 
   /// The occupancy_t property cannot be required.
   static constexpr bool is_requirable = false;
@@ -65,24 +62,8 @@ template <int I = 0>
 struct occupancy_t
 {
 #if defined(ASIO_HAS_VARIABLE_TEMPLATES)
-# if defined(ASIO_NO_DEPRECATED)
   template <typename T>
   static constexpr bool is_applicable_property_v = is_executor<T>::value;
-# else // defined(ASIO_NO_DEPRECATED)
-  template <typename T>
-  static constexpr bool is_applicable_property_v =
-      is_executor<T>::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_sender<T>
-          >::value
-        || conditional_t<
-            is_executor<T>::value,
-            false_type,
-            is_scheduler<T>
-          >::value;
-# endif // defined(ASIO_NO_DEPRECATED)
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
   static constexpr bool is_requirable = false;
@@ -158,21 +139,7 @@ constexpr occupancy_t occupancy;
 
 template <typename T>
 struct is_applicable_property<T, execution::occupancy_t>
-  : integral_constant<bool,
-      execution::is_executor<T>::value
-#if !defined(ASIO_NO_DEPRECATED)
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_sender<T>
-          >::value
-        || conditional_t<
-            execution::is_executor<T>::value,
-            false_type,
-            execution::is_scheduler<T>
-          >::value
-#endif // !defined(ASIO_NO_DEPRECATED)
-    >
+  : integral_constant<bool, execution::is_executor<T>::value>
 {
 };
 

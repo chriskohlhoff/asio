@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/blocking_executor_op.hpp"
-#include "asio/detail/bulk_executor_op.hpp"
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
@@ -37,12 +36,6 @@ inline thread_pool::executor_type
 thread_pool::executor() noexcept
 {
   return executor_type(*this);
-}
-
-inline thread_pool::scheduler_type
-thread_pool::scheduler() noexcept
-{
-  return scheduler_type(*this);
 }
 
 template <typename Allocator, unsigned int Bits>
@@ -184,70 +177,6 @@ void thread_pool::basic_executor_type<Allocator,
 
   pool_->scheduler_.post_immediate_completion(&op, false);
   op.wait();
-}
-
-template <typename Allocator, unsigned int Bits>
-template <typename Function>
-void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
-    Function&& f, std::size_t n, false_type) const
-{
-  typedef decay_t<Function> function_type;
-  typedef detail::bulk_executor_op<function_type, Allocator> op;
-
-  // Allocate and construct operations to wrap the function.
-  detail::op_queue<detail::scheduler_operation> ops;
-  for (std::size_t i = 0; i < n; ++i)
-  {
-    typename op::ptr p = { detail::addressof(allocator_),
-        op::ptr::allocate(allocator_), 0 };
-    p.p = new (p.v) op(static_cast<Function&&>(f), allocator_, i);
-    ops.push(p.p);
-
-    if ((bits_ & relationship_continuation) != 0)
-    {
-      ASIO_HANDLER_CREATION((*pool_, *p.p,
-            "thread_pool", pool_, 0, "bulk_execute(blk=never,rel=cont)"));
-    }
-    else
-    {
-      ASIO_HANDLER_CREATION((*pool_, *p.p,
-            "thread_pool", pool_, 0, "bulk)execute(blk=never,rel=fork)"));
-    }
-
-    p.v = p.p = 0;
-  }
-
-  pool_->scheduler_.post_immediate_completions(n,
-      ops, (bits_ & relationship_continuation) != 0);
-}
-
-template <typename Function>
-struct thread_pool_always_blocking_function_adapter
-{
-  decay_t<Function>* f;
-  std::size_t n;
-
-  void operator()()
-  {
-    for (std::size_t i = 0; i < n; ++i)
-    {
-      (*f)(i);
-    }
-  }
-};
-
-template <typename Allocator, unsigned int Bits>
-template <typename Function>
-void thread_pool::basic_executor_type<Allocator, Bits>::do_bulk_execute(
-    Function&& f, std::size_t n, true_type) const
-{
-  // Obtain a non-const instance of the function.
-  detail::non_const_lvalue<Function> f2(f);
-
-  thread_pool_always_blocking_function_adapter<Function>
-    adapter = { detail::addressof(f2.value), n };
-
-  this->do_execute(adapter, true_type());
 }
 
 #if !defined(ASIO_NO_TS_EXECUTORS)

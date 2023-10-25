@@ -109,18 +109,10 @@ public:
     associated_allocator_t<Handler> allocator =
       (get_associated_allocator)(handler);
 
-#if defined(ASIO_NO_DEPRECATED)
     asio::prefer(
         asio::require(executor_, execution::blocking.never),
         execution::allocator(allocator)
       ).execute(static_cast<Function&&>(function));
-#else // defined(ASIO_NO_DEPRECATED)
-    execution::execute(
-        asio::prefer(
-          asio::require(executor_, execution::blocking.never),
-          execution::allocator(allocator)),
-        static_cast<Function&&>(function));
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
 private:
