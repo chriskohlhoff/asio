@@ -19,7 +19,6 @@
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/associated_immediate_executor.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/initiate_dispatch.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/work_dispatcher.hpp"
@@ -196,12 +195,12 @@ public:
   }
 
   template <typename Function, typename Handler>
-  void dispatch(Function& function, Handler& handler)
+  void dispatch(Function& function, Handler&)
   {
     // When using a native implementation, I/O completion handlers are
     // already dispatched according to the execution context's executor's
     // rules. We can call the function directly.
-    asio_handler_invoke_helpers::invoke(function, handler);
+    static_cast<Function&&>(function)();
   }
 };
 
@@ -430,7 +429,7 @@ public:
       // When using a native implementation, I/O completion handlers are
       // already dispatched according to the execution context's executor's
       // rules. We can call the function directly.
-      asio_handler_invoke_helpers::invoke(function, handler);
+      static_cast<Function&&>(function)();
     }
     else
     {
@@ -467,7 +466,7 @@ public:
       // When using a native implementation, I/O completion handlers are
       // already dispatched according to the execution context's executor's
       // rules. We can call the function directly.
-      asio_handler_invoke_helpers::invoke(function, handler);
+      static_cast<Function&&>(function)();
     }
     else
     {

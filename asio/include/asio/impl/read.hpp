@@ -26,7 +26,6 @@
 #include "asio/detail/dependent_type.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
@@ -449,36 +448,6 @@ namespace detail
           this_handler->handler_);
   }
 
-  template <typename Function, typename AsyncReadStream,
-      typename MutableBufferSequence, typename MutableBufferIterator,
-      typename CompletionCondition, typename ReadHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(Function& function,
-      read_op<AsyncReadStream, MutableBufferSequence, MutableBufferIterator,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Function, typename AsyncReadStream,
-      typename MutableBufferSequence, typename MutableBufferIterator,
-      typename CompletionCondition, typename ReadHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(const Function& function,
-      read_op<AsyncReadStream, MutableBufferSequence, MutableBufferIterator,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
   template <typename AsyncReadStream, typename MutableBufferSequence,
       typename MutableBufferIterator, typename CompletionCondition,
       typename ReadHandler>
@@ -743,36 +712,6 @@ namespace detail
     return this_handler->start_ == 0 ? true
       : asio_handler_cont_helpers::is_continuation(
           this_handler->handler_);
-  }
-
-  template <typename Function, typename AsyncReadStream,
-      typename DynamicBuffer_v1, typename CompletionCondition,
-      typename ReadHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(Function& function,
-      read_dynbuf_v1_op<AsyncReadStream, DynamicBuffer_v1,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Function, typename AsyncReadStream,
-      typename DynamicBuffer_v1, typename CompletionCondition,
-      typename ReadHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(const Function& function,
-      read_dynbuf_v1_op<AsyncReadStream, DynamicBuffer_v1,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncReadStream>
@@ -1084,36 +1023,6 @@ namespace detail
     return this_handler->start_ == 0 ? true
       : asio_handler_cont_helpers::is_continuation(
           this_handler->handler_);
-  }
-
-  template <typename Function, typename AsyncReadStream,
-      typename DynamicBuffer_v2, typename CompletionCondition,
-      typename ReadHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(Function& function,
-      read_dynbuf_v2_op<AsyncReadStream, DynamicBuffer_v2,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Function, typename AsyncReadStream,
-      typename DynamicBuffer_v2, typename CompletionCondition,
-      typename ReadHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(const Function& function,
-      read_dynbuf_v2_op<AsyncReadStream, DynamicBuffer_v2,
-        CompletionCondition, ReadHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncReadStream>

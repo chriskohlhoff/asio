@@ -361,32 +361,6 @@ inline bool asio_handler_is_continuation(
     : asio_handler_cont_helpers::is_continuation(this_handler->handler_);
 }
 
-template <typename Function, typename Stream,
-    typename Operation, typename Handler>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    io_op<Stream, Operation, Handler>* this_handler)
-{
-  asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Stream,
-    typename Operation, typename Handler>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    io_op<Stream, Operation, Handler>* this_handler)
-{
-  asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
 template <typename Stream, typename Operation, typename Handler>
 inline void async_io(Stream& next_layer, stream_core& core,
     const Operation& op, Handler& handler)

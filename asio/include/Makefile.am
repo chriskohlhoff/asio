@@ -102,7 +102,6 @@ nobase_include_HEADERS = \
 	asio/detail/global.hpp \
 	asio/detail/handler_alloc_helpers.hpp \
 	asio/detail/handler_cont_helpers.hpp \
-	asio/detail/handler_invoke_helpers.hpp \
 	asio/detail/handler_tracking.hpp \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/handler_work.hpp \
@@ -411,7 +410,6 @@ nobase_include_HEADERS = \
 	asio/generic/stream_protocol.hpp \
 	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
-	asio/handler_invoke_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
 	asio/impl/any_completion_executor.ipp \

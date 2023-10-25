@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/memory.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -110,7 +109,7 @@ private:
     // Make the upcall if required.
     if (call)
     {
-      asio_handler_invoke_helpers::invoke(function, function);
+      static_cast<Function&&>(function)();
     }
   }
 

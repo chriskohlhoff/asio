@@ -100,7 +100,6 @@
 #include "asio/generic/stream_protocol.hpp"
 #include "asio/handler_alloc_hook.hpp"
 #include "asio/handler_continuation_hook.hpp"
-#include "asio/handler_invoke_hook.hpp"
 #include "asio/high_resolution_timer.hpp"
 #include "asio/io_context.hpp"
 #include "asio/io_context_strand.hpp"

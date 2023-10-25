@@ -25,7 +25,6 @@
 #include "asio/detail/dependent_type.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
@@ -414,36 +413,6 @@ namespace detail
           this_handler->handler_);
   }
 
-  template <typename Function, typename AsyncWriteStream,
-      typename ConstBufferSequence, typename ConstBufferIterator,
-      typename CompletionCondition, typename WriteHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(Function& function,
-      write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Function, typename AsyncWriteStream,
-      typename ConstBufferSequence, typename ConstBufferIterator,
-      typename CompletionCondition, typename WriteHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(const Function& function,
-      write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename ConstBufferIterator, typename CompletionCondition,
       typename WriteHandler>
@@ -669,36 +638,6 @@ namespace detail
   {
     return asio_handler_cont_helpers::is_continuation(
         this_handler->handler_);
-  }
-
-  template <typename Function, typename AsyncWriteStream,
-      typename DynamicBuffer_v1, typename CompletionCondition,
-      typename WriteHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(Function& function,
-      write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Function, typename AsyncWriteStream,
-      typename DynamicBuffer_v1, typename CompletionCondition,
-      typename WriteHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(const Function& function,
-      write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream>
@@ -968,36 +907,6 @@ namespace detail
   {
     return asio_handler_cont_helpers::is_continuation(
         this_handler->handler_);
-  }
-
-  template <typename Function, typename AsyncWriteStream,
-      typename DynamicBuffer_v2, typename CompletionCondition,
-      typename WriteHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(Function& function,
-      write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Function, typename AsyncWriteStream,
-      typename DynamicBuffer_v2, typename CompletionCondition,
-      typename WriteHandler>
-  inline asio_handler_invoke_is_deprecated
-  asio_handler_invoke(const Function& function,
-      write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_invoke_helpers::invoke(
-        function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
   }
 
   template <typename AsyncWriteStream>

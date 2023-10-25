@@ -64,8 +64,7 @@ namespace asio {
  * @li @c s.dispatch(a) happens-before @c s.dispatch(b), where both are
  * performed outside the strand
  *   
- * then @c asio_handler_invoke(a1, &a1) happens-before
- * @c asio_handler_invoke(b1, &b1).
+ * then @c a() happens-before @c b()
  * 
  * Note that in the following case:
  * @code async_op_1(..., s.wrap(a));

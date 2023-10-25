@@ -22,7 +22,6 @@
 #include "asio/detail/composed_work.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
-#include "asio/detail/handler_invoke_helpers.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -165,32 +164,6 @@ inline bool asio_handler_is_continuation(
   return this_handler->invocations_ > 1 ? true
     : asio_handler_cont_helpers::is_continuation(
         this_handler->handler_);
-}
-
-template <typename Function, typename Impl,
-    typename Work, typename Handler, typename Signature>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(Function& function,
-    composed_op<Impl, Work, Handler, Signature>* this_handler)
-{
-  asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Function, typename Impl,
-    typename Work, typename Handler, typename Signature>
-inline asio_handler_invoke_is_deprecated
-asio_handler_invoke(const Function& function,
-    composed_op<Impl, Work, Handler, Signature>* this_handler)
-{
-  asio_handler_invoke_helpers::invoke(
-      function, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_invoke_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
 }
 
 template <typename Signature, typename Executors>

@@ -128,8 +128,7 @@ struct io_context::initiate_dispatch
     if (self->impl_.can_dispatch())
     {
       detail::fenced_block b(detail::fenced_block::full);
-      asio_handler_invoke_helpers::invoke(
-          handler2.value, handler2.value);
+      static_cast<decay_t<LegacyCompletionHandler>&&>(handler2.value)();
     }
     else
     {
@@ -280,7 +279,7 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
     {
 #endif // !defined(ASIO_NO_EXCEPTIONS)
       detail::fenced_block b(detail::fenced_block::full);
-      asio_handler_invoke_helpers::invoke(tmp, tmp);
+      static_cast<function_type&&>(tmp)();
       return;
 #if !defined(ASIO_NO_EXCEPTIONS)
     }
@@ -344,7 +343,7 @@ void io_context::basic_executor_type<Allocator, Bits>::dispatch(
     function_type tmp(static_cast<Function&&>(f));
 
     detail::fenced_block b(detail::fenced_block::full);
-    asio_handler_invoke_helpers::invoke(tmp, tmp);
+    static_cast<function_type&&>(tmp)();
     return;
   }
 

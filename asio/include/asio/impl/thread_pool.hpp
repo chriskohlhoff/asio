@@ -107,7 +107,7 @@ void thread_pool::basic_executor_type<Allocator,
     {
 #endif // !defined(ASIO_NO_EXCEPTIONS)
       detail::fenced_block b(detail::fenced_block::full);
-      asio_handler_invoke_helpers::invoke(tmp, tmp);
+      static_cast<function_type&&>(tmp)();
       return;
 #if !defined(ASIO_NO_EXCEPTIONS)
     }
@@ -157,7 +157,7 @@ void thread_pool::basic_executor_type<Allocator,
     {
 #endif // !defined(ASIO_NO_EXCEPTIONS)
       detail::fenced_block b(detail::fenced_block::full);
-      asio_handler_invoke_helpers::invoke(f2.value, f2.value);
+      static_cast<decay_t<Function>&&>(f2.value)();
       return;
 #if !defined(ASIO_NO_EXCEPTIONS)
     }
@@ -215,7 +215,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::dispatch(
     function_type tmp(static_cast<Function&&>(f));
 
     detail::fenced_block b(detail::fenced_block::full);
-    asio_handler_invoke_helpers::invoke(tmp, tmp);
+    static_cast<function_type&&>(tmp)();
     return;
   }
 

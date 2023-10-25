@@ -463,28 +463,6 @@ struct promise_function_wrapper
   Function function_;
 };
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-template <typename Function, typename Signature, typename Allocator>
-inline void asio_handler_invoke(Function& f,
-    promise_handler<Signature, Allocator>* h)
-{
-  typename promise_handler<Signature, Allocator>::executor_type
-    ex(h->get_executor());
-  asio::dispatch(ex, promise_function_wrapper<Function>(f));
-}
-
-template <typename Function, typename Signature, typename Allocator>
-inline void asio_handler_invoke(const Function& f,
-    promise_handler<Signature, Allocator>* h)
-{
-  typename promise_handler<Signature, Allocator>::executor_type
-    ex(h->get_executor());
-  asio::dispatch(ex, promise_function_wrapper<Function>(f));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 // Helper base class for async_result specialisation.
 template <typename Signature, typename Allocator>
 class promise_async_result
@@ -556,30 +534,6 @@ private:
   Function function_;
   Allocator allocator_;
 };
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-template <typename Function,
-    typename Function1, typename Allocator, typename Result>
-inline void asio_handler_invoke(Function& f,
-    packaged_handler<Function1, Allocator, Result>* h)
-{
-  typename packaged_handler<Function1, Allocator, Result>::executor_type
-    ex(h->get_executor());
-  asio::dispatch(ex, promise_function_wrapper<Function>(f));
-}
-
-template <typename Function,
-    typename Function1, typename Allocator, typename Result>
-inline void asio_handler_invoke(const Function& f,
-    packaged_handler<Function1, Allocator, Result>* h)
-{
-  typename packaged_handler<Function1, Allocator, Result>::executor_type
-    ex(h->get_executor());
-  asio::dispatch(ex, promise_function_wrapper<Function>(f));
-}
-
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 // Helper base class for async_result specialisation.
 template <typename Function, typename Allocator, typename Result>
