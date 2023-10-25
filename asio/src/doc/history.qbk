@@ -7,6 +7,31 @@
 
 [section:history Revision History]
 
+[heading Asio 1.28.2]
+
+* Fixed the completion token adapters `bind_allocator`, `bind_cancellation_slot`
+  and `bind_immediate_executor` to not require a `return_type` type alias in
+  the adapted `async_result` specialisation.
+
+* Fixed a potental crash due to an object lifetime issue in the `co_spawn`
+  operation's cancellation support.
+
+* Enabled compiler-supported thread locals on more target platforms, using the
+  `thread_local` keyword if available.
+
+* Fixed the documentation of the per-operation cancellation behaviour for
+  `experimental::co_composed` to correctly state that terminal cancellation is
+  enabled by default.
+
+* Documented the per-operation cancellation behaviour of `async_compose`.
+
+* Added `bind_immediate_executor` to the `Completion Token Adapters` overview.
+
+* Added an example illustrating how to use an `experimental channel` for
+  mutual exclusion between cooperating asynchronous actors.
+
+* Added an example showing how to write a minimal completion executor.
+
 [heading Asio 1.28.1]
 
 * Added missing compatibility with `associated_immediate_executor` to
