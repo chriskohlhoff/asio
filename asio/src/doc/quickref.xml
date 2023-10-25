@@ -184,8 +184,6 @@
             <member><link linkend="asio.reference.as_tuple">as_tuple</link></member>
             <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
             <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
-            <member><link linkend="asio.reference.asio_handler_allocate">asio_handler_allocate</link> (deprecated)</member>
-            <member><link linkend="asio.reference.asio_handler_deallocate">asio_handler_deallocate</link> (deprecated)</member>
             <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
             <member><link linkend="asio.reference.async_compose">async_compose</link></member>
             <member><link linkend="asio.reference.async_initiate">async_initiate</link></member>

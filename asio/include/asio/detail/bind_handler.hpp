@@ -17,7 +17,6 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/associator.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/type_traits.hpp"
 
@@ -64,32 +63,6 @@ public:
 //private:
   Handler handler_;
 };
-
-template <typename Handler>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    binder0<Handler>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    binder0<Handler>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Handler>
 inline bool asio_handler_is_continuation(
@@ -151,32 +124,6 @@ public:
   Handler handler_;
   Arg1 arg1_;
 };
-
-template <typename Handler, typename Arg1>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    binder1<Handler, Arg1>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    binder1<Handler, Arg1>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Handler, typename Arg1>
 inline bool asio_handler_is_continuation(
@@ -245,32 +192,6 @@ public:
   Arg1 arg1_;
   Arg2 arg2_;
 };
-
-template <typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    binder2<Handler, Arg1, Arg2>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    binder2<Handler, Arg1, Arg2>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Handler, typename Arg1, typename Arg2>
 inline bool asio_handler_is_continuation(
@@ -346,32 +267,6 @@ public:
   Arg2 arg2_;
   Arg3 arg3_;
 };
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    binder3<Handler, Arg1, Arg2, Arg3>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
 inline bool asio_handler_is_continuation(
@@ -455,34 +350,6 @@ public:
   Arg3 arg3_;
   Arg4 arg4_;
 };
-
-template <typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1,
-    typename Arg2, typename Arg3, typename Arg4>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    binder4<Handler, Arg1, Arg2, Arg3, Arg4>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Handler, typename Arg1,
     typename Arg2, typename Arg3, typename Arg4>
@@ -577,34 +444,6 @@ public:
 
 template <typename Handler, typename Arg1, typename Arg2,
     typename Arg3, typename Arg4, typename Arg5>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1, typename Arg2,
-    typename Arg3, typename Arg4, typename Arg5>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1, typename Arg2,
-    typename Arg3, typename Arg4, typename Arg5>
 inline bool asio_handler_is_continuation(
     binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>* this_handler)
 {
@@ -651,32 +490,6 @@ public:
 };
 
 template <typename Handler, typename Arg1>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    move_binder1<Handler, Arg1>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    move_binder1<Handler, Arg1>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1>
 inline bool asio_handler_is_continuation(
     move_binder1<Handler, Arg1>* this_handler)
 {
@@ -715,32 +528,6 @@ public:
   Arg1 arg1_;
   Arg2 arg2_;
 };
-
-template <typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    move_binder2<Handler, Arg1, Arg2>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Handler, typename Arg1, typename Arg2>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    move_binder2<Handler, Arg1, Arg2>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Handler, typename Arg1, typename Arg2>
 inline bool asio_handler_is_continuation(

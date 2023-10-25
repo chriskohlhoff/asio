@@ -23,7 +23,6 @@
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/consuming_buffers.hpp"
 #include "asio/detail/dependent_type.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
@@ -372,38 +371,6 @@ namespace detail
   template <typename AsyncWriteStream, typename ConstBufferSequence,
       typename ConstBufferIterator, typename CompletionCondition,
       typename WriteHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncWriteStream, typename ConstBufferSequence,
-      typename ConstBufferIterator, typename CompletionCondition,
-      typename WriteHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncWriteStream, typename ConstBufferSequence,
-      typename ConstBufferIterator, typename CompletionCondition,
-      typename WriteHandler>
   inline bool asio_handler_is_continuation(
       write_op<AsyncWriteStream, ConstBufferSequence, ConstBufferIterator,
         CompletionCondition, WriteHandler>* this_handler)
@@ -599,36 +566,6 @@ namespace detail
     CompletionCondition completion_condition_;
     WriteHandler handler_;
   };
-
-  template <typename AsyncWriteStream, typename DynamicBuffer_v1,
-      typename CompletionCondition, typename WriteHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncWriteStream, typename DynamicBuffer_v1,
-      typename CompletionCondition, typename WriteHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      write_dynbuf_v1_op<AsyncWriteStream, DynamicBuffer_v1,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v1,
       typename CompletionCondition, typename WriteHandler>
@@ -868,36 +805,6 @@ namespace detail
     CompletionCondition completion_condition_;
     WriteHandler handler_;
   };
-
-  template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-      typename CompletionCondition, typename WriteHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename AsyncWriteStream, typename DynamicBuffer_v2,
-      typename CompletionCondition, typename WriteHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      write_dynbuf_v2_op<AsyncWriteStream, DynamicBuffer_v2,
-        CompletionCondition, WriteHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
 
   template <typename AsyncWriteStream, typename DynamicBuffer_v2,
       typename CompletionCondition, typename WriteHandler>

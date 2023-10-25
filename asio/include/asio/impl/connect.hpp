@@ -19,7 +19,6 @@
 #include "asio/associator.hpp"
 #include "asio/detail/base_from_cancellation_state.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
@@ -416,36 +415,6 @@ namespace detail
 
   template <typename Protocol, typename Executor, typename EndpointSequence,
       typename ConnectCondition, typename RangeConnectHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      range_connect_op<Protocol, Executor, EndpointSequence,
-        ConnectCondition, RangeConnectHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Protocol, typename Executor, typename EndpointSequence,
-      typename ConnectCondition, typename RangeConnectHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      range_connect_op<Protocol, Executor, EndpointSequence,
-        ConnectCondition, RangeConnectHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Protocol, typename Executor, typename EndpointSequence,
-      typename ConnectCondition, typename RangeConnectHandler>
   inline bool asio_handler_is_continuation(
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
@@ -602,36 +571,6 @@ namespace detail
     int start_;
     IteratorConnectHandler handler_;
   };
-
-  template <typename Protocol, typename Executor, typename Iterator,
-      typename ConnectCondition, typename IteratorConnectHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      iterator_connect_op<Protocol, Executor, Iterator,
-        ConnectCondition, IteratorConnectHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename Protocol, typename Executor, typename Iterator,
-      typename ConnectCondition, typename IteratorConnectHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      iterator_connect_op<Protocol, Executor, Iterator,
-        ConnectCondition, IteratorConnectHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
 
   template <typename Protocol, typename Executor, typename Iterator,
       typename ConnectCondition, typename IteratorConnectHandler>

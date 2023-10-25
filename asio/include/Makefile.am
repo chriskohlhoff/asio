@@ -408,7 +408,6 @@ nobase_include_HEADERS = \
 	asio/generic/raw_protocol.hpp \
 	asio/generic/seq_packet_protocol.hpp \
 	asio/generic/stream_protocol.hpp \
-	asio/handler_alloc_hook.hpp \
 	asio/handler_continuation_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
@@ -433,7 +432,6 @@ nobase_include_HEADERS = \
 	asio/impl/execution_context.ipp \
 	asio/impl/executor.hpp \
 	asio/impl/executor.ipp \
-	asio/impl/handler_alloc_hook.ipp \
 	asio/impl/io_context.hpp \
 	asio/impl/io_context.ipp \
 	asio/impl/multiple_exceptions.ipp \

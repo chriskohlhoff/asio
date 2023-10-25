@@ -24,7 +24,6 @@
 #include "asio/bind_executor.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/bind_handler.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"

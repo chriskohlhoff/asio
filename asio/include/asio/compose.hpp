@@ -20,7 +20,6 @@
 #include "asio/async_result.hpp"
 #include "asio/detail/base_from_cancellation_state.hpp"
 #include "asio/detail/composed_work.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/type_traits.hpp"
 
@@ -130,32 +129,6 @@ public:
   Handler handler_;
   unsigned invocations_;
 };
-
-template <typename Impl, typename Work, typename Handler, typename Signature>
-inline asio_handler_allocate_is_deprecated
-asio_handler_allocate(std::size_t size,
-    composed_op<Impl, Work, Handler, Signature>* this_handler)
-{
-#if defined(ASIO_NO_DEPRECATED)
-  asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-  return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-  return asio_handler_alloc_helpers::allocate(
-      size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-}
-
-template <typename Impl, typename Work, typename Handler, typename Signature>
-inline asio_handler_deallocate_is_deprecated
-asio_handler_deallocate(void* pointer, std::size_t size,
-    composed_op<Impl, Work, Handler, Signature>* this_handler)
-{
-  asio_handler_alloc_helpers::deallocate(
-      pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-  return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-}
 
 template <typename Impl, typename Work, typename Handler, typename Signature>
 inline bool asio_handler_is_continuation(

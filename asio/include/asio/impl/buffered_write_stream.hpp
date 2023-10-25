@@ -16,7 +16,6 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/associator.hpp"
-#include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
@@ -80,32 +79,6 @@ namespace detail
     detail::buffered_stream_storage& storage_;
     WriteHandler handler_;
   };
-
-  template <typename WriteHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      buffered_flush_handler<WriteHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename WriteHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      buffered_flush_handler<WriteHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
 
   template <typename WriteHandler>
   inline bool asio_handler_is_continuation(
@@ -281,34 +254,6 @@ namespace detail
     ConstBufferSequence buffers_;
     WriteHandler handler_;
   };
-
-  template <typename ConstBufferSequence, typename WriteHandler>
-  inline asio_handler_allocate_is_deprecated
-  asio_handler_allocate(std::size_t size,
-      buffered_write_some_handler<
-        ConstBufferSequence, WriteHandler>* this_handler)
-  {
-#if defined(ASIO_NO_DEPRECATED)
-    asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
-    return asio_handler_allocate_is_no_longer_used();
-#else // defined(ASIO_NO_DEPRECATED)
-    return asio_handler_alloc_helpers::allocate(
-        size, this_handler->handler_);
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
-
-  template <typename ConstBufferSequence, typename WriteHandler>
-  inline asio_handler_deallocate_is_deprecated
-  asio_handler_deallocate(void* pointer, std::size_t size,
-      buffered_write_some_handler<
-        ConstBufferSequence, WriteHandler>* this_handler)
-  {
-    asio_handler_alloc_helpers::deallocate(
-        pointer, size, this_handler->handler_);
-#if defined(ASIO_NO_DEPRECATED)
-    return asio_handler_deallocate_is_no_longer_used();
-#endif // defined(ASIO_NO_DEPRECATED)
-  }
 
   template <typename ConstBufferSequence, typename WriteHandler>
   inline bool asio_handler_is_continuation(
