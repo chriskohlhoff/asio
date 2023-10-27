@@ -44,7 +44,7 @@ for:
         - image: Visual Studio 2015
           MSVC: 1
     environment:
-      BOOSTDIR: C:\Libraries\boost_1_63_0
+      BOOSTDIR: C:\Libraries\boost_1_67_0
     build_script:
       - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
       - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
@@ -57,7 +57,7 @@ for:
         - image: Visual Studio 2015
           MINGW: 1
     environment:
-      BOOSTDIR: C:/Libraries/boost_1_63_0
+      BOOSTDIR: C:/Libraries/boost_1_67_0
     build_script:
       - PATH=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\msys64\usr\bin;%PATH%
       - cd asio\src
@@ -80,7 +80,7 @@ for:
       only:
         - image: Visual Studio 2019
     environment:
-      BOOSTDIR: C:\Libraries\boost_1_71_0
+      BOOSTDIR: C:\Libraries\boost_1_83_0
       _WIN32_WINNT: 0x0A00
     build_script:
       - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
@@ -96,6 +96,10 @@ matrix:
       CXXLATEST: 1
     - image: Visual Studio 2015
       WIN9X: 1
+    - image: Visual Studio 2015
+      USING_BOOST: 1
+    - image: Visual Studio 2015
+      MINGW: 1
     - image: Visual Studio 2017
       SEPARATE_COMPILATION: 1
     - image: Visual Studio 2017
@@ -110,7 +114,3 @@ matrix:
       HEADER_ONLY: 1
     - image: Visual Studio 2019
       WIN9X: 1
-    - image: Visual Studio 2019
-      USING_BOOST: 1
-    - image: Visual Studio 2019
-      MINGW: 1
