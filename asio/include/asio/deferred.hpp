@@ -61,8 +61,7 @@ class deferred_sequence_handler
 {
 public:
   template <typename H, typename T>
-  explicit deferred_sequence_handler(
-      H&& handler, T&& tail)
+  explicit deferred_sequence_handler(H&& handler, T&& tail)
     : handler_(static_cast<H&&>(handler)),
       tail_(static_cast<T&&>(tail))
   {
@@ -88,15 +87,11 @@ private:
   struct initiate
   {
     template <typename Handler>
-    void operator()(Handler&& handler,
-        Head head, Tail&& tail)
+    void operator()(Handler&& handler, Head head, Tail&& tail)
     {
       static_cast<Head&&>(head)(
-          deferred_sequence_handler<
-            decay_t<Handler>,
-            decay_t<Tail>>(
-              static_cast<Handler&&>(handler),
-              static_cast<Tail&&>(tail)));
+          deferred_sequence_handler<decay_t<Handler>, decay_t<Tail>>(
+            static_cast<Handler&&>(handler), static_cast<Tail&&>(tail)));
     }
   };
 
@@ -105,35 +100,30 @@ private:
 
 public:
   template <typename H, typename T>
-  constexpr explicit deferred_sequence_base(
-      H&& head, T&& tail)
+  constexpr explicit deferred_sequence_base(H&& head, T&& tail)
     : head_(static_cast<H&&>(head)),
       tail_(static_cast<T&&>(tail))
   {
   }
 
   template <ASIO_COMPLETION_TOKEN_FOR(Signatures...) CompletionToken>
-  auto operator()(
-      CompletionToken&& token) &&
+  auto operator()(CompletionToken&& token) &&
     -> decltype(
-        asio::async_initiate<CompletionToken, Signatures...>(
-          declval<initiate>(), token,
-          static_cast<Head&&>(this->head_),
-          static_cast<Tail&&>(this->tail_)))
+      async_initiate<CompletionToken, Signatures...>(
+        initiate(), token, static_cast<Head&&>(this->head_),
+        static_cast<Tail&&>(this->tail_)))
   {
-    return asio::async_initiate<CompletionToken, Signatures...>(
-        initiate(), token,
-        static_cast<Head&&>(head_),
-        static_cast<Tail&&>(tail_));
+    return async_initiate<CompletionToken, Signatures...>(initiate(),
+        token, static_cast<Head&&>(head_), static_cast<Tail&&>(tail_));
   }
 
   template <ASIO_COMPLETION_TOKEN_FOR(Signatures...) CompletionToken>
   auto operator()(CompletionToken&& token) const &
     -> decltype(
-        asio::async_initiate<CompletionToken, Signatures...>(
-          initiate(), token, this->head_, this->tail_))
+      async_initiate<CompletionToken, Signatures...>(
+        initiate(), token, this->head_, this->tail_))
   {
-    return asio::async_initiate<CompletionToken, Signatures...>(
+    return async_initiate<CompletionToken, Signatures...>(
         initiate(), token, head_, tail_);
   }
 };
@@ -196,8 +186,7 @@ class deferred_function
 public:
   /// Constructor. 
   template <typename F>
-  constexpr explicit deferred_function(
-      deferred_init_tag, F&& function)
+  constexpr explicit deferred_function(deferred_init_tag, F&& function)
     : function_(static_cast<F&&>(function))
   {
   }
@@ -209,11 +198,9 @@ public:
   template <typename... Args>
   auto operator()(Args&&... args) &&
     -> decltype(
-        static_cast<Function&&>(this->function_)(
-          static_cast<Args&&>(args)...))
+      static_cast<Function&&>(this->function_)(static_cast<Args&&>(args)...))
   {
-    return static_cast<Function&&>(function_)(
-        static_cast<Args&&>(args)...);
+    return static_cast<Function&&>(function_)(static_cast<Args&&>(args)...);
   }
 
   template <typename... Args>
@@ -243,35 +230,28 @@ private:
     template <typename Handler, typename... V>
     void operator()(Handler handler, V&&... values)
     {
-      static_cast<Handler&&>(handler)(
-          static_cast<V&&>(values)...);
+      static_cast<Handler&&>(handler)(static_cast<V&&>(values)...);
     }
   };
 
   template <typename CompletionToken, std::size_t... I>
-  auto invoke_helper(
-      CompletionToken&& token,
-      detail::index_sequence<I...>)
+  auto invoke_helper(CompletionToken&& token, detail::index_sequence<I...>)
     -> decltype(
-        asio::async_initiate<CompletionToken, void(Values...)>(
-          initiate(), token,
-          std::get<I>(
-            static_cast<std::tuple<Values...>&&>(this->values_))...))
+      async_initiate<CompletionToken, void(Values...)>(initiate(), token,
+        std::get<I>(static_cast<std::tuple<Values...>&&>(this->values_))...))
   {
-    return asio::async_initiate<CompletionToken, void(Values...)>(
-        initiate(), token,
+    return async_initiate<CompletionToken, void(Values...)>(initiate(), token,
         std::get<I>(static_cast<std::tuple<Values...>&&>(values_))...);
   }
 
   template <typename CompletionToken, std::size_t... I>
-  auto const_invoke_helper(
-      CompletionToken&& token,
+  auto const_invoke_helper(CompletionToken&& token,
       detail::index_sequence<I...>)
     -> decltype(
-        asio::async_initiate<CompletionToken, void(Values...)>(
-          initiate(), token, std::get<I>(values_)...))
+      async_initiate<CompletionToken, void(Values...)>(
+        initiate(), token, std::get<I>(values_)...))
   {
-    return asio::async_initiate<CompletionToken, void(Values...)>(
+    return async_initiate<CompletionToken, void(Values...)>(
         initiate(), token, std::get<I>(values_)...);
   }
 
@@ -289,9 +269,9 @@ public:
   template <ASIO_COMPLETION_TOKEN_FOR(void(Values...)) CompletionToken>
   auto operator()(CompletionToken&& token) &&
     -> decltype(
-        this->invoke_helper(
-          static_cast<CompletionToken&&>(token),
-          detail::index_sequence_for<Values...>()))
+      this->invoke_helper(
+        static_cast<CompletionToken&&>(token),
+        detail::index_sequence_for<Values...>()))
   {
     return this->invoke_helper(
         static_cast<CompletionToken&&>(token),
@@ -301,9 +281,9 @@ public:
   template <ASIO_COMPLETION_TOKEN_FOR(void(Values...)) CompletionToken>
   auto operator()(CompletionToken&& token) const &
     -> decltype(
-        this->const_invoke_helper(
-          static_cast<CompletionToken&&>(token),
-          detail::index_sequence_for<Values...>()))
+      this->const_invoke_helper(
+        static_cast<CompletionToken&&>(token),
+        detail::index_sequence_for<Values...>()))
   {
     return this->const_invoke_helper(
         static_cast<CompletionToken&&>(token),
@@ -329,28 +309,25 @@ private:
   init_args_t init_args_;
 
   template <typename CompletionToken, std::size_t... I>
-  auto invoke_helper(
-      CompletionToken&& token,
-      detail::index_sequence<I...>)
+  auto invoke_helper(CompletionToken&& token, detail::index_sequence<I...>)
     -> decltype(
-        asio::async_initiate<CompletionToken, Signature>(
-          static_cast<initiation_t&&>(initiation_), token,
-          std::get<I>(static_cast<init_args_t&&>(init_args_))...))
+      async_initiate<CompletionToken, Signature>(
+        static_cast<initiation_t&&>(initiation_), token,
+        std::get<I>(static_cast<init_args_t&&>(init_args_))...))
   {
-    return asio::async_initiate<CompletionToken, Signature>(
+    return async_initiate<CompletionToken, Signature>(
         static_cast<initiation_t&&>(initiation_), token,
         std::get<I>(static_cast<init_args_t&&>(init_args_))...);
   }
 
   template <typename CompletionToken, std::size_t... I>
-  auto const_invoke_helper(
-      CompletionToken&& token,
+  auto const_invoke_helper(CompletionToken&& token,
       detail::index_sequence<I...>) const &
     -> decltype(
-        asio::async_initiate<CompletionToken, Signature>(
-          initiation_t(initiation_), token, std::get<I>(init_args_)...))
-    {
-    return asio::async_initiate<CompletionToken, Signature>(
+      async_initiate<CompletionToken, Signature>(
+        initiation_t(initiation_), token, std::get<I>(init_args_)...))
+  {
+    return async_initiate<CompletionToken, Signature>(
         initiation_t(initiation_), token, std::get<I>(init_args_)...);
   }
 
@@ -359,8 +336,7 @@ public:
   /// initiation function object.
   template <typename I, typename... A>
   constexpr explicit deferred_async_operation(
-      deferred_init_tag, I&& initiation,
-      A&&... init_args)
+      deferred_init_tag, I&& initiation, A&&... init_args)
     : initiation_(static_cast<I&&>(initiation)),
       init_args_(static_cast<A&&>(init_args)...)
   {
@@ -370,9 +346,9 @@ public:
   template <ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
   auto operator()(CompletionToken&& token) &&
     -> decltype(
-        this->invoke_helper(
-          static_cast<CompletionToken&&>(token),
-          detail::index_sequence_for<InitArgs...>()))
+      this->invoke_helper(
+        static_cast<CompletionToken&&>(token),
+        detail::index_sequence_for<InitArgs...>()))
   {
     return this->invoke_helper(
         static_cast<CompletionToken&&>(token),
@@ -382,9 +358,9 @@ public:
   template <ASIO_COMPLETION_TOKEN_FOR(Signature) CompletionToken>
   auto operator()(CompletionToken&& token) const &
     -> decltype(
-        this->const_invoke_helper(
-          static_cast<CompletionToken&&>(token),
-          detail::index_sequence_for<InitArgs...>()))
+      this->const_invoke_helper(
+        static_cast<CompletionToken&&>(token),
+        detail::index_sequence_for<InitArgs...>()))
   {
     return this->const_invoke_helper(
         static_cast<CompletionToken&&>(token),
@@ -405,28 +381,25 @@ private:
   init_args_t init_args_;
 
   template <typename CompletionToken, std::size_t... I>
-  auto invoke_helper(
-      CompletionToken&& token,
-      detail::index_sequence<I...>)
+  auto invoke_helper(CompletionToken&& token, detail::index_sequence<I...>)
     -> decltype(
-        asio::async_initiate<CompletionToken, Signatures...>(
-          static_cast<initiation_t&&>(initiation_), token,
-          std::get<I>(static_cast<init_args_t&&>(init_args_))...))
+      async_initiate<CompletionToken, Signatures...>(
+        static_cast<initiation_t&&>(initiation_), token,
+        std::get<I>(static_cast<init_args_t&&>(init_args_))...))
   {
-    return asio::async_initiate<CompletionToken, Signatures...>(
+    return async_initiate<CompletionToken, Signatures...>(
         static_cast<initiation_t&&>(initiation_), token,
         std::get<I>(static_cast<init_args_t&&>(init_args_))...);
   }
 
   template <typename CompletionToken, std::size_t... I>
-  auto const_invoke_helper(
-      CompletionToken&& token,
+  auto const_invoke_helper(CompletionToken&& token,
       detail::index_sequence<I...>) const &
     -> decltype(
-        asio::async_initiate<CompletionToken, Signatures...>(
-          initiation_t(initiation_), token, std::get<I>(init_args_)...))
-    {
-    return asio::async_initiate<CompletionToken, Signatures...>(
+      async_initiate<CompletionToken, Signatures...>(
+        initiation_t(initiation_), token, std::get<I>(init_args_)...))
+  {
+    return async_initiate<CompletionToken, Signatures...>(
         initiation_t(initiation_), token, std::get<I>(init_args_)...);
   }
 
@@ -435,8 +408,7 @@ public:
   /// initiation function object.
   template <typename I, typename... A>
   constexpr explicit deferred_async_operation(
-      deferred_init_tag, I&& initiation,
-      A&&... init_args)
+      deferred_init_tag, I&& initiation, A&&... init_args)
     : initiation_(static_cast<I&&>(initiation)),
       init_args_(static_cast<A&&>(init_args)...)
   {
@@ -446,9 +418,9 @@ public:
   template <ASIO_COMPLETION_TOKEN_FOR(Signatures...) CompletionToken>
   auto operator()(CompletionToken&& token) &&
     -> decltype(
-        this->invoke_helper(
-          static_cast<CompletionToken&&>(token),
-          detail::index_sequence_for<InitArgs...>()))
+      this->invoke_helper(
+        static_cast<CompletionToken&&>(token),
+        detail::index_sequence_for<InitArgs...>()))
   {
     return this->invoke_helper(
         static_cast<CompletionToken&&>(token),
@@ -456,12 +428,11 @@ public:
   }
 
   template <ASIO_COMPLETION_TOKEN_FOR(Signatures...) CompletionToken>
-  auto operator()(
-      CompletionToken&& token) const &
+  auto operator()(CompletionToken&& token) const &
     -> decltype(
-        this->const_invoke_helper(
-          static_cast<CompletionToken&&>(token),
-          detail::index_sequence_for<InitArgs...>()))
+      this->const_invoke_helper(
+        static_cast<CompletionToken&&>(token),
+        detail::index_sequence_for<InitArgs...>()))
   {
     return this->const_invoke_helper(
         static_cast<CompletionToken&&>(token),
@@ -484,8 +455,7 @@ class ASIO_NODISCARD deferred_sequence :
 {
 public:
   template <typename H, typename T>
-  constexpr explicit deferred_sequence(deferred_init_tag,
-      H&& head, T&& tail)
+  constexpr explicit deferred_sequence(deferred_init_tag, H&& head, T&& tail)
     : detail::deferred_sequence_types<Head, Tail>::base(
         static_cast<H&&>(head), static_cast<T&&>(tail))
   {
@@ -508,8 +478,7 @@ struct is_deferred<deferred_sequence<Head, Tail>> : true_type
 #endif // !defined(GENERATING_DOCUMENTATION)
 
 /// Used to represent a deferred conditional branch.
-template <typename OnTrue = deferred_noop,
-    typename OnFalse = deferred_noop>
+template <typename OnTrue = deferred_noop, typename OnFalse = deferred_noop>
 class ASIO_NODISCARD deferred_conditional
 {
 private:
@@ -517,8 +486,7 @@ private:
 
   // Helper constructor.
   template <typename T, typename F>
-  explicit deferred_conditional(bool b, T&& on_true,
-      F&& on_false)
+  explicit deferred_conditional(bool b, T&& on_true, F&& on_false)
     : on_true_(static_cast<T&&>(on_true)),
       on_false_(static_cast<F&&>(on_false)),
       bool_(b)
@@ -539,22 +507,18 @@ public:
   {
   }
 
-  /// Invoke the conditional branch bsaed on the stored alue.
+  /// Invoke the conditional branch bsaed on the stored value.
   template <typename... Args>
   auto operator()(Args&&... args) &&
-    -> decltype(
-        static_cast<OnTrue&&>(on_true_)(
-          static_cast<Args&&>(args)...))
+    -> decltype(static_cast<OnTrue&&>(on_true_)(static_cast<Args&&>(args)...))
   {
     if (bool_)
     {
-      return static_cast<OnTrue&&>(on_true_)(
-          static_cast<Args&&>(args)...);
+      return static_cast<OnTrue&&>(on_true_)(static_cast<Args&&>(args)...);
     }
     else
     {
-      return static_cast<OnFalse&&>(on_false_)(
-          static_cast<Args&&>(args)...);
+      return static_cast<OnFalse&&>(on_false_)(static_cast<Args&&>(args)...);
     }
   }
 
