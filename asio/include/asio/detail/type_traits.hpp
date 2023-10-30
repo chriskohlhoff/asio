@@ -23,12 +23,12 @@ namespace asio {
 using std::add_const;
 
 template <typename T>
-using add_const_t = typename add_const<T>::type;
+using add_const_t = typename std::add_const<T>::type;
 
 using std::add_lvalue_reference;
 
 template <typename T>
-using add_lvalue_reference_t = typename add_lvalue_reference<T>::type;
+using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
 
 template <std::size_t N, std::size_t A>
 struct aligned_storage
@@ -47,19 +47,19 @@ using std::alignment_of;
 using std::conditional;
 
 template <bool C, typename T, typename U>
-using conditional_t = typename conditional<C, T, U>::type;
+using conditional_t = typename std::conditional<C, T, U>::type;
 
 using std::decay;
 
 template <typename T>
-using decay_t = typename decay<T>::type;
+using decay_t = typename std::decay<T>::type;
 
 using std::declval;
 
 using std::enable_if;
 
 template <bool C, typename T = void>
-using enable_if_t = typename enable_if<C, T>::type;
+using enable_if_t = typename std::enable_if<C, T>::type;
 
 using std::false_type;
 
@@ -100,10 +100,11 @@ using std::is_scalar;
 using std::remove_cv;
 
 template <typename T>
-using remove_cv_t = typename remove_cv<T>::type;
+using remove_cv_t = typename std::remove_cv<T>::type;
 
 template <typename T>
-struct remove_cvref : remove_cv<typename std::remove_reference<T>::type> {};
+struct remove_cvref :
+  std::remove_cv<typename std::remove_reference<T>::type> {};
 
 template <typename T>
 using remove_cvref_t = typename remove_cvref<T>::type;
@@ -111,12 +112,12 @@ using remove_cvref_t = typename remove_cvref<T>::type;
 using std::remove_pointer;
 
 template <typename T>
-using remove_pointer_t = typename remove_pointer<T>::type;
+using remove_pointer_t = typename std::remove_pointer<T>::type;
 
 using std::remove_reference;
 
 template <typename T>
-using remove_reference_t = typename remove_reference<T>::type;
+using remove_reference_t = typename std::remove_reference<T>::type;
 
 #if defined(ASIO_HAS_STD_INVOKE_RESULT)
 
@@ -125,14 +126,17 @@ template <typename> struct result_of;
 template <typename F, typename... Args>
 struct result_of<F(Args...)> : std::invoke_result<F, Args...> {};
 
+template <typename T>
+using result_of_t = typename result_of<T>::type;
+
 #else // defined(ASIO_HAS_STD_INVOKE_RESULT)
 
 using std::result_of;
 
-#endif // defined(ASIO_HAS_STD_INVOKE_RESULT)
-
 template <typename T>
-using result_of_t = typename result_of<T>::type;
+using result_of_t = typename std::result_of<T>::type;
+
+#endif // defined(ASIO_HAS_STD_INVOKE_RESULT)
 
 using std::true_type;
 
@@ -158,7 +162,7 @@ struct defaulted_constraint
 };
 
 template <bool Condition, typename Type = int>
-struct constraint : enable_if<Condition, Type> {};
+struct constraint : std::enable_if<Condition, Type> {};
 
 template <bool Condition, typename Type = int>
 using constraint_t = typename constraint<Condition, Type>::type;
