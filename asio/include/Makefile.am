@@ -58,6 +58,7 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \
 	asio/deferred.hpp \
+	asio/default_completion_token.hpp \
 	asio/detached.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
