@@ -54,19 +54,8 @@ for:
   -
     matrix:
       only:
-        - image: Visual Studio 2015
-          MINGW: 1
-    environment:
-      BOOSTDIR: C:/Libraries/boost_1_67_0
-    build_script:
-      - PATH=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\msys64\usr\bin;%PATH%
-      - cd asio\src
-      - mingw32-make -f Makefile.mgw
-      - mingw32-make -f Makefile.mgw check
-  -
-    matrix:
-      only:
         - image: Visual Studio 2017
+          MSVC: 1
     environment:
       BOOSTDIR: C:\Libraries\boost_1_69_0
       _WIN32_WINNT: 0x0603
@@ -79,6 +68,7 @@ for:
     matrix:
       only:
         - image: Visual Studio 2019
+          MSVC: 1
     environment:
       BOOSTDIR: C:\Libraries\boost_1_83_0
       _WIN32_WINNT: 0x0A00
@@ -87,6 +77,18 @@ for:
       - cd asio\src
       - nmake -f Makefile.msc
       - nmake -f Makefile.msc check
+  -
+    matrix:
+      only:
+        - image: Visual Studio 2019
+          MINGW: 1
+    environment:
+      BOOSTDIR: C:/Libraries/boost_1_83_0
+    build_script:
+      - PATH=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\msys64\usr\bin;%PATH%
+      - cd asio\src
+      - mingw32-make -f Makefile.mgw
+      - mingw32-make -f Makefile.mgw check
 
 matrix:
   exclude:
