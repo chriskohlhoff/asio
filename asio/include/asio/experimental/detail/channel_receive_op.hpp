@@ -38,9 +38,14 @@ public:
     func_(this, immediate_op, &payload);
   }
 
-  void complete(Payload payload)
+  void post(Payload payload)
   {
-    func_(this, complete_op, &payload);
+    func_(this, post_op, &payload);
+  }
+
+  void dispatch(Payload payload)
+  {
+    func_(this, dispatch_op, &payload);
   }
 
 protected:
@@ -94,8 +99,10 @@ public:
       ASIO_HANDLER_INVOCATION_BEGIN(());
       if (a == channel_operation::immediate_op)
         w.immediate(handler, handler.handler_, 0);
+      else if (a == channel_operation::dispatch_op)
+        w.dispatch(handler, handler.handler_);
       else
-        w.complete(handler, handler.handler_);
+        w.post(handler, handler.handler_);
       ASIO_HANDLER_INVOCATION_END;
     }
     else

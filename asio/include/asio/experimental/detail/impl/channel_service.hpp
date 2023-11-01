@@ -204,7 +204,7 @@ void channel_service<Mutex>::close(
     {
       impl.waiters_.pop();
       traits_type::invoke_receive_closed(
-          complete_receive<payload_type,
+          post_receive<payload_type,
             typename traits_type::receive_closed_signature>(
               static_cast<channel_receive<payload_type>*>(op)));
     }
@@ -238,7 +238,7 @@ void channel_service<Mutex>::cancel(
     {
       impl.waiters_.pop();
       traits_type::invoke_receive_cancelled(
-          complete_receive<payload_type,
+          post_receive<payload_type,
             typename traits_type::receive_cancelled_signature>(
               static_cast<channel_receive<payload_type>*>(op)));
     }
@@ -277,7 +277,7 @@ void channel_service<Mutex>::cancel_by_key(
       {
         impl.waiters_.pop();
         traits_type::invoke_receive_cancelled(
-            complete_receive<payload_type,
+            post_receive<payload_type,
               typename traits_type::receive_cancelled_signature>(
                 static_cast<channel_receive<payload_type>*>(op)));
       }
@@ -314,7 +314,7 @@ template <typename Message, typename Traits,
     typename... Signatures, typename... Args>
 bool channel_service<Mutex>::try_send(
     channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-    Args&&... args)
+    bool via_dispatch, Args&&... args)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::payload_type payload_type;
@@ -341,9 +341,13 @@ bool channel_service<Mutex>::try_send(
       channel_receive<payload_type>* receive_op =
         static_cast<channel_receive<payload_type>*>(impl.waiters_.front());
       impl.waiters_.pop();
-      receive_op->complete(static_cast<payload_type&&>(payload));
       if (impl.waiters_.empty())
         impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
+      lock.unlock();
+      if (via_dispatch)
+        receive_op->dispatch(static_cast<payload_type&&>(payload));
+      else
+        receive_op->post(static_cast<payload_type&&>(payload));
       return true;
     }
   case closed:
@@ -359,7 +363,7 @@ template <typename Message, typename Traits,
     typename... Signatures, typename... Args>
 std::size_t channel_service<Mutex>::try_send_n(
     channel_service<Mutex>::implementation_type<Traits, Signatures...>& impl,
-		std::size_t count, Args&&... args)
+		std::size_t count, bool via_dispatch, Args&&... args)
 {
   typedef typename implementation_type<Traits,
       Signatures...>::payload_type payload_type;
@@ -405,9 +409,13 @@ std::size_t channel_service<Mutex>::try_send_n(
         channel_receive<payload_type>* receive_op =
           static_cast<channel_receive<payload_type>*>(impl.waiters_.front());
         impl.waiters_.pop();
-        receive_op->complete(payload);
         if (impl.waiters_.empty())
           impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
+        lock.unlock();
+        if (via_dispatch)
+          receive_op->dispatch(payload);
+        else
+          receive_op->post(payload);
         break;
       }
     case closed:
@@ -456,9 +464,9 @@ void channel_service<Mutex>::start_send_op(
       channel_receive<payload_type>* receive_op =
         static_cast<channel_receive<payload_type>*>(impl.waiters_.front());
       impl.waiters_.pop();
-      receive_op->complete(send_op->get_payload());
       if (impl.waiters_.empty())
         impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
+      receive_op->post(send_op->get_payload());
       send_op->immediate();
       break;
     }
@@ -497,7 +505,7 @@ bool channel_service<Mutex>::try_receive(
         impl.buffer_pop();
         impl.buffer_push(send_op->get_payload());
         impl.waiters_.pop();
-        send_op->complete();
+        send_op->post();
       }
       else
       {
@@ -518,9 +526,9 @@ bool channel_service<Mutex>::try_receive(
         static_cast<channel_send<payload_type>*>(impl.waiters_.front());
       payload_type payload = send_op->get_payload();
       impl.waiters_.pop();
-      send_op->complete();
       if (impl.waiters_.front() == 0)
         impl.receive_state_ = (impl.send_state_ == closed) ? closed : block;
+      send_op->post();
       lock.unlock();
       asio::detail::non_const_lvalue<Handler> handler2(handler);
       channel_handler<payload_type, decay_t<Handler>>(
@@ -568,7 +576,7 @@ void channel_service<Mutex>::start_receive_op(
         impl.buffer_pop();
         impl.buffer_push(send_op->get_payload());
         impl.waiters_.pop();
-        send_op->complete();
+        send_op->post();
       }
       else
       {
@@ -586,9 +594,9 @@ void channel_service<Mutex>::start_receive_op(
         static_cast<channel_send<payload_type>*>(impl.waiters_.front());
       payload_type payload = send_op->get_payload();
       impl.waiters_.pop();
-      send_op->complete();
       if (impl.waiters_.front() == 0)
         impl.receive_state_ = (impl.send_state_ == closed) ? closed : block;
+      send_op->post();
       receive_op->immediate(static_cast<payload_type&&>(payload));
       break;
     }
@@ -596,7 +604,7 @@ void channel_service<Mutex>::start_receive_op(
   default:
     {
       traits_type::invoke_receive_closed(
-          complete_receive<payload_type,
+          post_receive<payload_type,
             typename traits_type::receive_closed_signature>(receive_op));
       break;
     }

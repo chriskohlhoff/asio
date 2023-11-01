@@ -658,6 +658,81 @@ void buffered_executor_send()
   ASIO_CHECK(!ec1);
 }
 
+void try_send_via_dispatch()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      bind_executor(asio::system_executor(),
+        [&](asio::error_code ec, std::string s)
+        {
+          ec1 = ec;
+          s1 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.poll();
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  std::string s2 = "0123456789";
+  ch1.try_send_via_dispatch(asio::error::eof, std::move(s2));
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "0123456789");
+  ASIO_CHECK(s2.empty());
+}
+
+void try_send_n_via_dispatch()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      bind_executor(asio::system_executor(),
+        [&](asio::error_code ec, std::string s)
+        {
+          ec1 = ec;
+          s1 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      bind_executor(asio::system_executor(),
+        [&](asio::error_code ec, std::string s)
+        {
+          ec2 = ec;
+          s2 = std::move(s);
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.poll();
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  std::string s3 = "0123456789";
+  ch1.try_send_n_via_dispatch(2, asio::error::eof, std::move(s3));
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "0123456789");
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "0123456789");
+  ASIO_CHECK(s3.empty());
+}
+
 ASIO_TEST_SUITE
 (
   "experimental/channel",
@@ -676,4 +751,6 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(buffered_non_immediate_send)
   ASIO_TEST_CASE(buffered_immediate_send)
   ASIO_TEST_CASE(buffered_executor_send)
+  ASIO_TEST_CASE(try_send_via_dispatch)
+  ASIO_TEST_CASE(try_send_n_via_dispatch)
 )

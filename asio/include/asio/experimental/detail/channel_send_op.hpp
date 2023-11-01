@@ -43,9 +43,9 @@ public:
     func_(this, immediate_op, 0);
   }
 
-  void complete()
+  void post()
   {
-    func_(this, complete_op, 0);
+    func_(this, post_op, 0);
   }
 
   void cancel()
@@ -129,7 +129,7 @@ public:
       if (a == channel_operation::immediate_op)
         w.immediate(handler, handler.handler_, 0);
       else
-        w.complete(handler, handler.handler_);
+        w.post(handler, handler.handler_);
       ASIO_HANDLER_INVOCATION_END;
     }
   }

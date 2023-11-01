@@ -137,13 +137,13 @@ public:
   template <typename Message, typename Traits,
       typename... Signatures, typename... Args>
   bool try_send(implementation_type<Traits, Signatures...>& impl,
-      Args&&... args);
+      bool via_dispatch, Args&&... args);
 
   // Synchronously send a number of new values into the channel.
   template <typename Message, typename Traits,
       typename... Signatures, typename... Args>
   std::size_t try_send_n(implementation_type<Traits, Signatures...>& impl,
-      std::size_t count, Args&&... args);
+      std::size_t count, bool via_dispatch, Args&&... args);
 
   // Asynchronously send a new value into the channel.
   template <typename Traits, typename... Signatures,
@@ -220,9 +220,9 @@ public:
 private:
   // Helper function object to handle a closed notification.
   template <typename Payload, typename Signature>
-  struct complete_receive
+  struct post_receive
   {
-    explicit complete_receive(channel_receive<Payload>* op)
+    explicit post_receive(channel_receive<Payload>* op)
       : op_(op)
     {
     }
@@ -230,7 +230,7 @@ private:
     template <typename... Args>
     void operator()(Args&&... args)
     {
-      op_->complete(
+      op_->post(
           channel_message<Signature>(0,
             static_cast<Args&&>(args)...));
     }

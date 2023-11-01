@@ -337,12 +337,36 @@ public:
   template <typename... Args>
   bool try_send(Args&&... args);
 
+  /// Try to send a message without blocking, using dispatch semantics to call
+  /// the receive operation's completion handler.
+  /**
+   * Fails if the buffer is full and there are no waiting receive operations.
+   *
+   * The receive operation's completion handler may be called from inside this
+   * function.
+   *
+   * @returns @c true on success, @c false on failure.
+   */
+  template <typename... Args>
+  bool try_send_via_dispatch(Args&&... args);
+
   /// Try to send a number of messages without blocking.
   /**
    * @returns The number of messages that were sent.
    */
   template <typename... Args>
   std::size_t try_send_n(std::size_t count, Args&&... args);
+
+  /// Try to send a number of messages without blocking, using dispatch
+  /// semantics to call the receive operations' completion handlers.
+  /**
+   * The receive operations' completion handlers may be called from inside this
+   * function.
+   *
+   * @returns The number of messages that were sent.
+   */
+  template <typename... Args>
+  std::size_t try_send_n_via_dispatch(std::size_t count, Args&&... args);
 
   /// Asynchronously send a message.
   /**

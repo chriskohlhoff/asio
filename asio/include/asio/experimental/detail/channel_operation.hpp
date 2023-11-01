@@ -55,9 +55,10 @@ protected:
   {
     destroy_op = 0,
     immediate_op = 1,
-    complete_op = 2,
-    cancel_op = 3,
-    close_op = 4
+    post_op = 2,
+    dispatch_op = 3,
+    cancel_op = 4,
+    close_op = 5
   };
 
   typedef void (*func_type)(channel_operation*, action, void*);
@@ -115,6 +116,17 @@ public:
       ).execute(static_cast<Function&&>(function));
   }
 
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    associated_allocator_t<Handler> allocator =
+      (get_associated_allocator)(handler);
+
+    asio::prefer(executor_,
+        execution::allocator(allocator)
+      ).execute(static_cast<Function&&>(function));
+  }
+
 private:
   executor_type executor_;
 };
@@ -150,6 +162,16 @@ public:
         static_cast<Function&&>(function), allocator);
   }
 
+  template <typename Function, typename Handler>
+  void dispatch(Function& function, Handler& handler)
+  {
+    associated_allocator_t<Handler> allocator =
+      (get_associated_allocator)(handler);
+
+    work_.get_executor().dispatch(
+        static_cast<Function&&>(function), allocator);
+  }
+
 private:
   executor_work_guard<Executor> work_;
 };
@@ -176,9 +198,15 @@ public:
   }
 
   template <typename Function>
-  void complete(Function& function, Handler& handler)
+  void post(Function& function, Handler& handler)
   {
     base2_type::post(function, handler);
+  }
+
+  template <typename Function>
+  void dispatch(Function& function, Handler& handler)
+  {
+    base2_type::dispatch(function, handler);
   }
 
   template <typename Function>
@@ -233,9 +261,15 @@ public:
   }
 
   template <typename Function>
-  void complete(Function& function, Handler& handler)
+  void post(Function& function, Handler& handler)
   {
     base1_type::post(function, handler);
+  }
+
+  template <typename Function>
+  void dispatch(Function& function, Handler& handler)
+  {
+    base1_type::dispatch(function, handler);
   }
 
   template <typename Function>
