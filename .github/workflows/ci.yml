@@ -338,12 +338,27 @@ jobs:
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_80_0
             boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.bz2
+          #
+          # Linux / liburing / c++20 / -O2 / separate compilation
+          #
+          - build-type: full
+            runs-on: ubuntu-22.04
+            compiler: g++-12
+            cxx-std: c++20
+            optim-level: -O2
+            separate-compilation: --enable-separate-compilation
+            select-reactor: -DASIO_HAS_IO_URING -DASIO_HAS_IO_URING_AS_DEFAULT
+            extra-libs: -luring
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
       CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }}
+      LIBS: ${{ matrix.extra-libs }}
     steps:
     - uses: actions/checkout@v2
+    - name: Install liburing
+      if: startsWith(matrix.runs-on, 'ubuntu-22.04')
+      run: sudo apt install liburing-dev
     - name: Install autotools
       if: startsWith(matrix.runs-on, 'macos')
       run: brew install automake
