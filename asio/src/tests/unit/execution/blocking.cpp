@@ -719,9 +719,18 @@ void test_prefer()
 void test_vars()
 {
   ASIO_CHECK(s() == exec::blocking);
+  ASIO_CHECK(s() != exec::blocking.possibly);
+  ASIO_CHECK(s() != exec::blocking.always);
+  ASIO_CHECK(s() != exec::blocking.never);
   ASIO_CHECK(n1() == exec::blocking.possibly);
+  ASIO_CHECK(n1() != exec::blocking.always);
+  ASIO_CHECK(n1() != exec::blocking.never);
   ASIO_CHECK(n2() == exec::blocking.always);
+  ASIO_CHECK(n2() != exec::blocking.possibly);
+  ASIO_CHECK(n2() != exec::blocking.never);
   ASIO_CHECK(n3() == exec::blocking.never);
+  ASIO_CHECK(n3() != exec::blocking.possibly);
+  ASIO_CHECK(n3() != exec::blocking.always);
 }
 
 ASIO_TEST_SUITE
