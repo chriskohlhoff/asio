@@ -521,16 +521,34 @@ struct thread_t
     return thread_t();
   }
 
-  friend constexpr bool operator==(
-      const thread_t&, const thread_t&)
+  friend constexpr bool operator==(const thread_t&, const thread_t&)
   {
     return true;
   }
 
-  friend constexpr bool operator!=(
-      const thread_t&, const thread_t&)
+  friend constexpr bool operator!=(const thread_t&, const thread_t&)
   {
     return false;
+  }
+
+  friend constexpr bool operator==(const thread_t&, const new_thread_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const thread_t&, const new_thread_t<I>&)
+  {
+    return true;
+  }
+
+  friend constexpr bool operator==(const thread_t&, const other_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const thread_t&, const other_t<I>&)
+  {
+    return true;
   }
 };
 
@@ -596,6 +614,26 @@ struct new_thread_t
   {
     return false;
   }
+
+  friend constexpr bool operator==(const new_thread_t&, const thread_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const new_thread_t&, const thread_t<I>&)
+  {
+    return true;
+  }
+
+  friend constexpr bool operator==(const new_thread_t&, const other_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const new_thread_t&, const other_t<I>&)
+  {
+    return true;
+  }
 };
 
 #if defined(ASIO_HAS_DEDUCED_STATIC_QUERY_TRAIT) \
@@ -660,6 +698,26 @@ struct other_t
   friend constexpr bool operator!=(const other_t&, const other_t&)
   {
     return false;
+  }
+
+  friend constexpr bool operator==(const other_t&, const thread_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const other_t&, const thread_t<I>&)
+  {
+    return true;
+  }
+
+  friend constexpr bool operator==(const other_t&, const new_thread_t<I>&)
+  {
+    return false;
+  }
+
+  friend constexpr bool operator!=(const other_t&, const new_thread_t<I>&)
+  {
+    return true;
   }
 };
 
