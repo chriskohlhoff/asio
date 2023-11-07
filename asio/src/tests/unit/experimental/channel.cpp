@@ -17,6 +17,7 @@
 #include "asio/experimental/channel.hpp"
 
 #include <utility>
+#include "asio/any_completion_handler.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/bind_immediate_executor.hpp"
 #include "asio/error.hpp"
@@ -826,6 +827,42 @@ void implicit_error_signature_channel_test()
   ASIO_CHECK(ec5 == asio::experimental::channel_errc::channel_closed);
 }
 
+void channel_with_any_completion_handler_test()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  ch1.async_receive(
+      asio::any_completion_handler<
+        void(asio::error_code, std::string)>(
+          [&](asio::error_code ec, std::string s)
+          {
+            ec1 = ec;
+            s1 = std::move(s);
+          }));
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2 = "zyxwvutsrqponmlkjihgfedcba";
+  ch1.async_send(asio::error::eof, std::move(s2),
+      asio::any_completion_handler<void(asio::error_code)>(
+        [&](asio::error_code ec)
+        {
+          ec2 = ec;
+        }));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+  ASIO_CHECK(ec2 == asio::error::would_block);
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "zyxwvutsrqponmlkjihgfedcba");
+  ASIO_CHECK(!ec2);
+}
+
 ASIO_TEST_SUITE
 (
   "experimental/channel",
@@ -847,4 +884,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(try_send_via_dispatch)
   ASIO_TEST_CASE(try_send_n_via_dispatch)
   ASIO_TEST_CASE(implicit_error_signature_channel_test)
+  ASIO_TEST_CASE(channel_with_any_completion_handler_test)
 )
