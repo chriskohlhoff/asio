@@ -796,8 +796,12 @@ void test_prefer()
 void test_vars()
 {
   ASIO_CHECK(s() == exec::blocking_adaptation);
+  ASIO_CHECK(s() != exec::blocking_adaptation.disallowed);
+  ASIO_CHECK(s() != exec::blocking_adaptation.allowed);
   ASIO_CHECK(n1() == exec::blocking_adaptation.disallowed);
+  ASIO_CHECK(n1() != exec::blocking_adaptation.allowed);
   ASIO_CHECK(n2() == exec::blocking_adaptation.allowed);
+  ASIO_CHECK(n2() != exec::blocking_adaptation.disallowed);
 }
 
 ASIO_TEST_SUITE
