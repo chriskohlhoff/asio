@@ -718,8 +718,12 @@ void test_prefer()
 void test_vars()
 {
   ASIO_CHECK(s() == exec::outstanding_work);
+  ASIO_CHECK(s() != exec::outstanding_work.untracked);
+  ASIO_CHECK(s() != exec::outstanding_work.tracked);
   ASIO_CHECK(n1() == exec::outstanding_work.untracked);
+  ASIO_CHECK(n1() != exec::outstanding_work.tracked);
   ASIO_CHECK(n2() == exec::outstanding_work.tracked);
+  ASIO_CHECK(n2() != exec::outstanding_work.untracked);
 }
 
 ASIO_TEST_SUITE
