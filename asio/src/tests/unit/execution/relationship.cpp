@@ -718,8 +718,12 @@ void test_prefer()
 void test_vars()
 {
   ASIO_CHECK(s() == exec::relationship);
+  ASIO_CHECK(s() != exec::relationship.fork);
+  ASIO_CHECK(s() != exec::relationship.continuation);
   ASIO_CHECK(n1() == exec::relationship.fork);
+  ASIO_CHECK(n1() != exec::relationship.continuation);
   ASIO_CHECK(n2() == exec::relationship.continuation);
+  ASIO_CHECK(n2() != exec::relationship.fork);
 }
 
 ASIO_TEST_SUITE
