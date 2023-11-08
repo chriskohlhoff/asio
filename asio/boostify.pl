@@ -160,6 +160,7 @@ sub copy_source_file
       $line =~ s/changes made in each release/changes made in each Boost release/g;
       $line =~ s/\[\$/[\$boost_asio\//g;
       $line =~ s/\[@\.\.\/src\/examples/[\@boost_asio\/example/g;
+      $line =~ s/asio\//boost\/asio\//g if $is_xsl;
       $line =~ s/include\/asio/boost\/asio/g;
       $line =~ s/\^asio/^boost\/asio/g;
       $line =~ s/namespaceasio/namespaceboost_1_1asio/g;
