@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         build-type: ['sanity']
-        runs-on: [ubuntu-20.04, ubuntu-22.04, macos-latest]
+        runs-on: [ubuntu-20.04, ubuntu-22.04, macos-latest, self-hosted]
         compiler: [g++-7, g++-8, g++-9, g++-10, g++-11, g++-12, clang++-10, clang++-14, g++]
         cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
         separate-compilation: ['', '--enable-separate-compilation']
