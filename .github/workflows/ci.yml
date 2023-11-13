@@ -12,7 +12,6 @@ jobs:
       matrix:
         build-type: ['full']
         runs-on: [self-hosted]
-        compiler: [clang++]
         cxx-std: ['c++20']
         separate-compilation: ['--enable-separate-compilation']
         optim-level: ['-O0']
@@ -23,7 +22,6 @@ jobs:
         boost-url: ['']
     runs-on: ${{ matrix.runs-on }}
     env:
-      CXX: ${{ matrix.compiler }}
       CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }}
     steps:
     - uses: actions/checkout@v2
