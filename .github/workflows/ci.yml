@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build-type: ['sanity']
+        build-type: ['full']
         runs-on: [self-hosted]
         compiler: [clang++]
         cxx-std: ['c++20']
