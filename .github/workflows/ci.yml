@@ -1,7 +1,6 @@
 name: asio CI
 
 on:
-  workflow_dispatch:
   push:
     branches: [ master, citest-*, tony_develop ]
 
@@ -12,8 +11,8 @@ jobs:
       matrix:
         build-type: ['sanity']
         runs-on: [self-hosted]
-        compiler: [clang++]
-        cxx-std: ['c++20']
+        compiler: [g++-7, g++-8, g++-9, g++-10, g++-11, g++-12, clang++-10, clang++-14, g++]
+        cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
         separate-compilation: ['', '--enable-separate-compilation']
         optim-level: ['-O0']
         no-deprecated: ['']
@@ -21,14 +20,67 @@ jobs:
         handler-tracking: ['']
         boost: ['']
         boost-url: ['']
+        exclude:
+          # Versioned g++ and clang++ don't run on macOS
+          - runs-on: self-hosted
+            compiler: g++-7
+          - runs-on: self-hosted
+            compiler: g++-8
+          - runs-on: self-hosted
+            compiler: g++-9
+          - runs-on: self-hosted
+            compiler: g++-10
+          - runs-on: self-hosted
+            compiler: g++-11
+          - runs-on: self-hosted
+            compiler: g++-12
+          - runs-on: self-hosted
+            compiler: clang++-10
+          - runs-on: self-hosted
+            compiler: clang++-14
+          - runs-on: self-hosted
+            cxx-std: c++20
+          - runs-on: self-hosted
+            select-reactor: -DASIO_DISABLE_EPOLL
+          - runs-on: self-hosted
+            cxx-std: c++14
+            separate-compilation: --enable-separate-compilation
+          - runs-on: self-hosted
+            cxx-std: c++17
+            separate-compilation: --enable-separate-compilation
         include:
+          #
+          # macOS / c++2a -fcoroutines-ts / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: self-hosted
+            compiler: g++
+            cxx-std: c++2a -fcoroutines-ts
+            optim-level: -O2
+          #
+          # macOS / c++11 / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: self-hosted
+            compiler: g++
+            cxx-std: c++11
+            optim-level: -O2
+          #
+          # macOS / c++11 / -O0 / standalone / kqueue disabled
+          #
+          - build-type: full
+            runs-on: self-hosted
+            compiler: g++
+            cxx-std: c++11
+            optim-level: -O0
+            select-reactor: -DASIO_DISABLE_KQUEUE
           #
           # macOS / c++11 / -O0 / standalone / separate compilation
           #
           - build-type: full
             runs-on: self-hosted
-            compiler: clang++
-            cxx-std: c++20
+            compiler: g++
+            cxx-std: c++11
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
     runs-on: ${{ matrix.runs-on }}
