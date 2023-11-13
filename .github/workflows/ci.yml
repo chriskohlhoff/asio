@@ -16,7 +16,7 @@ jobs:
         separate-compilation: ['--enable-separate-compilation']
         optim-level: ['-O0']
         no-deprecated: ['']
-        select-reactor: ['-DASIO_DISABLE_EPOLL']
+        select-reactor: ['-DASIO_DISABLE_KQUEUE']
         handler-tracking: ['']
         boost: ['']
         boost-url: ['']
