@@ -14,23 +14,13 @@ jobs:
         runs-on: [self-hosted]
         compiler: [clang++]
         cxx-std: ['c++20']
-        separate-compilation: ['', '--enable-separate-compilation']
+        separate-compilation: ['--enable-separate-compilation']
         optim-level: ['-O0']
         no-deprecated: ['']
-        select-reactor: ['', '-DASIO_DISABLE_EPOLL', '-DASIO_DISABLE_KQUEUE']
+        select-reactor: ['-DASIO_DISABLE_KQUEUE']
         handler-tracking: ['']
         boost: ['']
         boost-url: ['']
-        include:
-          #
-          # macOS / c++11 / -O0 / standalone / separate compilation
-          #
-          - build-type: full
-            runs-on: self-hosted
-            compiler: clang++
-            cxx-std: c++20
-            separate-compilation: --enable-separate-compilation
-            optim-level: -O0
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
