@@ -98,11 +98,13 @@ public:
           asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)),
       context_(asio::ssl::context::sslv23)
   {
+    using namespace boost::placeholders;
+
     context_.set_options(
         asio::ssl::context::default_workarounds
         | asio::ssl::context::no_sslv2
         | asio::ssl::context::single_dh_use);
-    context_.set_password_callback(boost::bind(&server::get_password, this));
+    context_.set_password_callback(boost::bind(&server::get_password, this, _1, _2));
     context_.use_certificate_chain_file("server.pem");
     context_.use_private_key_file("server.pem", asio::ssl::context::pem);
     context_.use_tmp_dh_file("dh4096.pem");
@@ -110,7 +112,7 @@ public:
     start_accept();
   }
 
-  std::string get_password() const
+  std::string get_password(std::size_t size, asio::ssl::context::password_purpose purpose) const
   {
     return "test";
   }
