@@ -559,7 +559,10 @@ public:
           = default_completion_token_t<executor_type>>
   auto async_handshake(handshake_type type, const ConstBufferSequence& buffers,
       BufferedHandshakeToken&& token
-        = default_completion_token_t<executor_type>())
+        = default_completion_token_t<executor_type>(),
+      constraint_t<
+        is_const_buffer_sequence<ConstBufferSequence>::value
+      > = 0)
     -> decltype(
       async_initiate<BufferedHandshakeToken,
         void (asio::error_code, std::size_t)>(
