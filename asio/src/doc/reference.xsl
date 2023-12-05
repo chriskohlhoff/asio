@@ -445,10 +445,20 @@
 
 
 <xsl:template match="codeline" mode="codeline">
+  <xsl:variable name="code">
+    <xsl:apply-templates mode="codeline"/>
+  </xsl:variable>
   <xsl:if test="string-length(.) &gt; 0">
-    <xsl:text>  </xsl:text>
+    <xsl:choose>
+      <xsl:when test="position() = 1 and starts-with($code, ' ')">
+        <xsl:text> </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>  </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:if>
-  <xsl:apply-templates mode="codeline"/>
+  <xsl:value-of select="$code"/>
   <xsl:value-of select="$newline"/>
 </xsl:template>
 
