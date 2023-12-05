@@ -340,6 +340,11 @@
     <xsl:value-of select="@refid"/>
   </xsl:variable>
   <xsl:choose>
+    <xsl:when test="$refid = 'index'">
+      <xsl:text>[link asio.tutorial </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
     <xsl:when test="$refid = 'asynchronous_operation'">
       <xsl:text>[link asio.overview.model.async_ops </xsl:text>
       <xsl:value-of select="."/>
@@ -394,12 +399,7 @@
     </xsl:call-template>
   </xsl:variable>
   <xsl:choose>
-    <xsl:when test="$refid='index_1index'">
-      <xsl:text>[link asio.tutorial </xsl:text>
-      <xsl:value-of select="$text"/>
-      <xsl:text>]</xsl:text>
-    </xsl:when>
-    <xsl:when test="@external='reference.tags'">
+    <xsl:when test="contains(@external, 'reference.tags')">
       <xsl:variable name="anchor">
         <xsl:call-template name="refid-to-anchor">
           <xsl:with-param name="text" select="$refid"/>
