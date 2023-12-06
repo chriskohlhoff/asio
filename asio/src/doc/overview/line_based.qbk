@@ -113,6 +113,6 @@ other types the trait must be explicitly specialised, as shown above.
 [link asio.reference.is_match_condition is_match_condition],
 [link asio.reference.read_until read_until()],
 [link asio.reference.streambuf streambuf],
-[link asio.examples.cpp03_examples.http_client HTTP client example].
+[link asio.examples.cpp11_examples.http_client HTTP client example].
 
 [endsect]

@@ -144,6 +144,6 @@ functions.
 [link asio.reference.ip__udp ip::udp],
 [link asio.reference.ip__icmp ip::icmp],
 [link asio.tutorial.tutdaytime1 daytime protocol tutorials],
-[link asio.examples.cpp03_examples.icmp ICMP ping example].
+[link asio.examples.cpp11_examples.icmp ICMP ping example].
 
 [endsect]

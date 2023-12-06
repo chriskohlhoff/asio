@@ -38,7 +38,6 @@ library maps console events like Ctrl+C to the equivalent signal.
 [heading See Also]
 
 [link asio.reference.signal_set signal_set],
-[link asio.examples.cpp03_examples.http_server HTTP server example (C++03)],
 [link asio.examples.cpp11_examples.http_server HTTP server example (C++11)].
 
 [endsect]

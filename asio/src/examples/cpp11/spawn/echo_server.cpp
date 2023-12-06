@@ -57,7 +57,7 @@ public:
         {
           while (socket_.is_open())
           {
-            asio::error_code ignored_ec;
+            std::error_code ignored_ec;
             timer_.async_wait(yield[ignored_ec]);
             if (timer_.expiry() <= asio::steady_timer::clock_type::now())
               socket_.close();
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 
           for (;;)
           {
-            asio::error_code ec;
+            std::error_code ec;
             tcp::socket socket(io_context);
             acceptor.async_accept(socket, yield[ec]);
             if (!ec)

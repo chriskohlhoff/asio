@@ -179,7 +179,6 @@ It can also be explicitly disabled by defining `ASIO_DISABLE_BUFFER_DEBUGGING`.
 [link asio.reference.streambuf streambuf],
 [link asio.reference.ConstBufferSequence ConstBufferSequence],
 [link asio.reference.MutableBufferSequence MutableBufferSequence],
-[link asio.examples.cpp03_examples.buffers buffers example (C++03)],
 [link asio.examples.cpp11_examples.buffers buffers example (c++11)].
 
 [endsect]

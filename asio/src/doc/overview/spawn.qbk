@@ -92,7 +92,6 @@ function object signature is actually:
 [link asio.reference.spawn spawn],
 [link asio.reference.yield_context yield_context],
 [link asio.reference.basic_yield_context basic_yield_context],
-[link asio.examples.cpp03_examples.spawn Spawn example (C++03)],
 [link asio.examples.cpp11_examples.spawn Spawn example (C++11)],
 [link asio.overview.composition.coroutine Stackless Coroutines].
 

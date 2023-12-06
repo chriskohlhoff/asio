@@ -39,7 +39,7 @@ public:
     // Only IPv4 is supported by the SOCKS 4 protocol.
     if (endpoint.protocol() != asio::ip::tcp::v4())
     {
-      throw asio::system_error(
+      throw std::system_error(
           asio::error::address_family_not_supported);
     }
 

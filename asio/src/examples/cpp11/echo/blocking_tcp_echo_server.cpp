@@ -26,12 +26,12 @@ void session(tcp::socket sock)
     {
       char data[max_length];
 
-      asio::error_code error;
+      std::error_code error;
       size_t length = sock.read_some(asio::buffer(data), error);
       if (error == asio::error::eof)
         break; // Connection closed cleanly by peer.
       else if (error)
-        throw asio::system_error(error); // Some other error.
+        throw std::system_error(error); // Some other error.
 
       asio::write(sock, asio::buffer(data, length));
     }

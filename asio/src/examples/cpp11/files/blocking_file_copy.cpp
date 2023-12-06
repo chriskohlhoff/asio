@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
           | asio::stream_file::truncate);
 
     char data[4096];
-    asio::error_code error;
+    std::error_code error;
     for (;;)
     {
       std::size_t n = from_file.read_some(asio::buffer(data), error);

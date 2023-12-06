@@ -45,7 +45,7 @@ documentation provides a complete description of these pseudo-keywords.
 [heading See Also]
 
 [link asio.reference.coroutine coroutine],
-[link asio.examples.cpp03_examples.http_server_4 HTTP Server 4 example],
+[link asio.examples.cpp11_examples.http_server_4 HTTP Server 4 example],
 [link asio.overview.composition.spawn Stackful Coroutines].
 
 [endsect]

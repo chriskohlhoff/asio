@@ -44,7 +44,7 @@ private:
           }
           else
           {
-            throw asio::system_error(ec);
+            throw std::system_error(ec);
           }
         });
   }
@@ -61,7 +61,7 @@ private:
           }
           else
           {
-            throw asio::system_error(ec);
+            throw std::system_error(ec);
           }
         });
   }

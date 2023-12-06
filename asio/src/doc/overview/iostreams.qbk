@@ -62,7 +62,7 @@ retrieve the error code from the most recent system call:
 
 [link asio.reference.ip__tcp.iostream ip::tcp::iostream],
 [link asio.reference.basic_socket_iostream basic_socket_iostream],
-[link asio.examples.cpp03_examples.iostreams iostreams examples].
+[link asio.examples.cpp11_examples.iostreams iostreams examples].
 
 [heading Notes]
 

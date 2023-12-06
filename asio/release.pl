@@ -201,27 +201,6 @@ sub build_asio_doc
   system("cp -vR src/doc/html/* doc");
 }
 
-sub build_example_diffs
-{
-  my @cpp11_files = `find src/examples/cpp11 -type f -name "*.*pp"`;
-  foreach my $cpp11_file (@cpp11_files)
-  {
-    chomp($cpp11_file);
-
-    my $cpp03_file = $cpp11_file;
-    $cpp03_file =~ s/\/cpp11\//\/cpp03\//;
-    my $output_diff = $cpp11_file;
-    $output_diff =~ s/src\/examples\/cpp11\///g;
-    my ($output_diff_name, $output_dir) = fileparse($output_diff);
-    my $output_html = $output_diff . ".html";
-
-    mkpath("doc/examples/diffs/$output_dir");
-    system("diff -U1000000 $cpp03_file $cpp11_file > doc/examples/diffs/$output_diff");
-    system("cd doc/examples/diffs && diff2html.py -i $output_diff -o $output_html");
-    unlink("doc/examples/diffs/$output_diff");
-  }
-}
-
 sub make_asio_packages
 {
   our $asio_name;
@@ -428,7 +407,6 @@ else
 if ($package_asio)
 {
   build_asio_doc();
-  build_example_diffs();
   make_asio_packages();
 }
 

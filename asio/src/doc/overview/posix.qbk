@@ -61,7 +61,7 @@ asio.reference.basic_socket.native_handle native_handle()] member function.
 [link asio.reference.local__stream_protocol.endpoint local::stream_protocol::endpoint],
 [link asio.reference.local__stream_protocol.iostream local::stream_protocol::iostream],
 [link asio.reference.local__stream_protocol.socket local::stream_protocol::socket],
-[link asio.examples.cpp03_examples.unix_domain_sockets UNIX domain sockets examples].
+[link asio.examples.cpp11_examples.unix_domain_sockets UNIX domain sockets examples].
 
 [heading Notes]
 
@@ -101,7 +101,6 @@ asio.reference.async_read_until async_read_until()] free functions.
 [heading See Also]
 
 [link asio.reference.posix__stream_descriptor posix::stream_descriptor],
-[link asio.examples.cpp03_examples.chat Chat example (C++03)],
 [link asio.examples.cpp11_examples.chat Chat example (C++11)].
 
 [heading Notes]
@@ -145,7 +144,7 @@ as required.
 [link asio.reference.io_context.notify_fork io_context::notify_fork()],
 [link asio.reference.io_context.fork_event io_context::fork_event],
 [link asio.reference.execution_context__service.notify_fork io_context::service::notify_fork()],
-[link asio.examples.cpp03_examples.fork Fork examples].
+[link asio.examples.cpp11_examples.fork Fork examples].
 
 [endsect]
 

@@ -39,6 +39,6 @@ stream-oriented descriptor classes.
 [link asio.reference.basic_socket.async_wait basic_socket::async_wait()],
 [link asio.reference.basic_socket.non_blocking basic_socket::non_blocking()],
 [link asio.reference.basic_socket.native_non_blocking basic_socket::native_non_blocking()],
-[link asio.examples.cpp03_examples.nonblocking nonblocking example].
+[link asio.examples.cpp11_examples.nonblocking nonblocking example].
 
 [endsect]

@@ -110,7 +110,6 @@ threaded programs.
 [link asio.reference.ssl__context ssl::context],
 [link asio.reference.ssl__host_name_verification ssl::host_name_verification],
 [link asio.reference.ssl__stream ssl::stream],
-[link asio.examples.cpp03_examples.ssl SSL example (C++03)],
 [link asio.examples.cpp11_examples.ssl SSL example (C++11)].
 
 [heading Notes]
