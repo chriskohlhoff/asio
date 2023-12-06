@@ -7,6 +7,19 @@
 
 [section:history Revision History]
 
+[heading Asio 1.30.0]
+
+* Fixed compatibility between `any_completion_handler` and compilation using
+  `ASIO_USE_TS_EXECUTOR_AS_DEFAULT`.
+
+* Fixed a crash that may occur when attempting to access a default-constructed
+  `any_completion_handler` object's associators.
+
+* Fixed `ssl::stream<>` class's `async_handshake` operation so that it works
+  with a defaulted completion token.
+
+* Updated all examples to use C++11 as the minimum language standard.
+
 [heading Asio 1.29.0]
 
 * Changed to require C++11 as the minimum language standard.
