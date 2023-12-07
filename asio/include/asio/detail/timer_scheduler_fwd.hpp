@@ -32,6 +32,8 @@ typedef class epoll_reactor timer_scheduler;
 typedef class kqueue_reactor timer_scheduler;
 #elif defined(ASIO_HAS_DEV_POLL)
 typedef class dev_poll_reactor timer_scheduler;
+#elif defined(ASIO_HAS_IONOTIFY)
+typedef class ionotify_reactor timer_scheduler;
 #else
 typedef class select_reactor timer_scheduler;
 #endif
