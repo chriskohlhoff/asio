@@ -419,19 +419,6 @@ completion token.
 * [@../src/examples/cpp14/deferred/deferred_7.cpp]
 
 
-[heading Echo]
-
-A collection of simple clients and servers, showing the use of both synchronous
-and asynchronous operations.
-
-* [@../src/examples/cpp14/echo/async_tcp_echo_server.cpp]
-* [@../src/examples/cpp14/echo/async_udp_echo_server.cpp]
-* [@../src/examples/cpp14/echo/blocking_tcp_echo_client.cpp]
-* [@../src/examples/cpp14/echo/blocking_tcp_echo_server.cpp]
-* [@../src/examples/cpp14/echo/blocking_udp_echo_client.cpp]
-* [@../src/examples/cpp14/echo/blocking_udp_echo_server.cpp]
-
-
 [heading Executors]
 
 Examples showing how to use the executor-related facilities.
