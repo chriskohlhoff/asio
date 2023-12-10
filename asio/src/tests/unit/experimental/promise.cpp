@@ -214,6 +214,32 @@ void test_cancel()
       ec.message());
 }
 
+void test_rvalue_ref_completion_handler()
+{
+  asio::io_context ctx;
+
+  asio::steady_timer timer{ctx};
+
+  timer.expires_at(std::chrono::steady_clock::now() + std::chrono::milliseconds(10));
+  auto p = timer.async_wait(asio::experimental::use_promise);
+
+  bool called = false;
+
+  struct handler_t {
+    bool& called_;
+
+    void operator()(asio::error_code) && {
+      called_ = true;
+    }
+  };
+
+  p(handler_t(called));
+
+  ctx.run();
+
+  ASIO_CHECK(called);
+}
+
 } // namespace promise
 
 ASIO_TEST_SUITE
@@ -223,4 +249,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(promise::promise_slot_tester)
   ASIO_TEST_CASE(promise::early_completion)
   ASIO_TEST_CASE(promise::test_cancel)
+  ASIO_TEST_CASE(promise::test_rvalue_ref_completion_handler)
 )
