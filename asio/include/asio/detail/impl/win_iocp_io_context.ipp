@@ -540,6 +540,7 @@ DWORD win_iocp_io_context::get_gqcs_timeout()
 
   if (!!::VerifyVersionInfo(&osvi, VER_MAJORVERSION, condition_mask))
     return INFINITE;
+#endif // !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
 
   return default_gqcs_timeout;
 #else // !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
