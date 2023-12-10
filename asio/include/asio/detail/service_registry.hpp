@@ -109,7 +109,7 @@ private:
 
   // Factory function for creating a service instance.
   template <typename Service, typename Owner>
-  static execution_context::service* create(void* owner);
+  ASIO_DECL static execution_context::service* create(void* owner);
 
   // Destroy a service instance.
   ASIO_DECL static void destroy(execution_context::service* service);
