@@ -692,6 +692,19 @@ private:
           handler2.value, self_->impl_.get_executor());
     }
 
+    template<typename Handler>
+    bool try_complete(ASIO_MOVE_ARG(Handler) handler) const
+    {
+      if (self_->expired_from_now() < duration_type())
+      {
+        ASIO_MOVE_CAST(Handler)(handler)(error_code());
+        return true;
+      }
+      else
+        return false;
+    }
+
+
   private:
     basic_deadline_timer* self_;
   };
