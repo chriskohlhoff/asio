@@ -40,8 +40,10 @@ using std::experimental::string_view;
 } // namespace asio
 
 # define ASIO_STRING_VIEW_PARAM asio::string_view
+# define ASIO_BASIC_STRING_VIEW_PARAM(...) asio::basic_string_view < __VA_ARGS__ >
 #else // defined(ASIO_HAS_STRING_VIEW)
 # define ASIO_STRING_VIEW_PARAM const std::string&
+# define ASIO_BASIC_STRING_VIEW_PARAM(...) const asio::basic_string < __VA_ARGS__ > &
 #endif // defined(ASIO_HAS_STRING_VIEW)
 
 #endif // ASIO_DETAIL_STRING_VIEW_HPP
