@@ -1125,6 +1125,7 @@ namespace detail
               // Full match. We're done.
               search_position_ = result.first - begin + delim_.length();
               bytes_to_read = 0;
+              start = 0;
             }
 
             // No match yet. Check if buffer is full.
