@@ -35,7 +35,7 @@ public:
   virtual std::pair<void*, std::size_t> destroy() noexcept = 0;
 
 protected:
-  ~cancellation_handler_base() {}
+  virtual ~cancellation_handler_base() {}
 };
 
 template <typename Handler>
