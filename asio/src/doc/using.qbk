@@ -115,6 +115,17 @@ following steps in a Command Prompt window:
 * Execute the command `nmake -f Makefile.msc check` to run a suite of tests to
   confirm that asio is working correctly.
 
+Alternatively, you can build and install asio using vcpkg dependency manager:
+
+  git clone https://github.com/Microsoft/vcpkg.git
+  cd vcpkg
+  ./bootstrap-vcpkg.sh
+  ./vcpkg integrate install
+  ./vcpkg install asio
+
+The asio port in vcpkg is kept up to date by microsoft team members and community contributors.
+If the version is out of date, please create an issue or pull request on the vcpkg repository.
+
 [heading Building the tests and examples with MinGW]
 
 To build using the MinGW g++ compiler from the command line, perform the
