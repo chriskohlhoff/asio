@@ -1,3 +1,7 @@
 /*.cpp
 /*.hpp
 /boost
+.vscode/*
+asio/build/*
+asio/cmake/*
+asio/tonyTests/*
