@@ -333,14 +333,14 @@ int close(socket_type s, state_type& state,
       ioctl_arg_type arg = 0;
       ::ioctlsocket(s, FIONBIO, &arg);
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-# if defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
+# if defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__) || defined(ASIO_DISABLE_FIONBIO)
       int flags = ::fcntl(s, F_GETFL, 0);
       if (flags >= 0)
         ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
-# else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
+# else // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__) || defined(ASIO_DISABLE_FIONBIO)
       ioctl_arg_type arg = 0;
       ::ioctl(s, FIONBIO, &arg);
-# endif // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
+# endif // defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__) || defined(ASIO_DISABLE_FIONBIO)
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
       state &= ~non_blocking;
 
@@ -369,7 +369,7 @@ bool set_user_non_blocking(socket_type s,
   ioctl_arg_type arg = (value ? 1 : 0);
   int result = ::ioctlsocket(s, FIONBIO, &arg);
   get_last_error(ec, result < 0);
-#elif defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
+#elif defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__) || defined(ASIO_DISABLE_FIONBIO)
   int result = ::fcntl(s, F_GETFL, 0);
   get_last_error(ec, result < 0);
   if (result >= 0)
@@ -423,7 +423,7 @@ bool set_internal_non_blocking(socket_type s,
   ioctl_arg_type arg = (value ? 1 : 0);
   int result = ::ioctlsocket(s, FIONBIO, &arg);
   get_last_error(ec, result < 0);
-#elif defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__)
+#elif defined(__SYMBIAN32__) || defined(__EMSCRIPTEN__) || defined(ASIO_DISABLE_FIONBIO)
   int result = ::fcntl(s, F_GETFL, 0);
   get_last_error(ec, result < 0);
   if (result >= 0)

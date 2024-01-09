@@ -240,6 +240,17 @@ functionality, and behaviour of Asio.
     ]
   ]
   [
+    [`ASIO_DISABLE_FIONBIO`]
+    [
+      Explicitly disables `FIONBIO` support, forcing the use of a `fcntl`-based
+      implementation.
+
+      `FIONBIO` is known to cause assorted problems, specially on FreeBSD
+      (e.g. capsicum, nested kqueue). Use this macro if you're one of the
+      affected users.
+    ]
+  ]
+  [
     [`ASIO_DISABLE_DEV_POLL`]
     [
       Explicitly disables [^/dev/poll] support on Solaris, forcing the use of
