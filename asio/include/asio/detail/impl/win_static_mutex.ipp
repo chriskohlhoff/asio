@@ -29,6 +29,7 @@
 namespace asio {
 namespace detail {
 
+#if _WIN32_WINNT < 0x0600
 void win_static_mutex::init()
 {
   int error = do_init();
@@ -125,6 +126,7 @@ int win_static_mutex::do_init()
   ::CloseHandle(mutex);
   return 0;
 }
+#endif // _WIN32_WINNT < 0x0600
 
 } // namespace detail
 } // namespace asio

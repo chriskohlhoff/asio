@@ -38,21 +38,33 @@ public:
   ASIO_DECL win_mutex();
 
   // Destructor.
+#if _WIN32_WINNT >= 0x0600
+  ~win_mutex() = default;
+#else // _WIN32_WINNT >= 0x0600
   ~win_mutex()
   {
     ::DeleteCriticalSection(&crit_section_);
   }
+#endif // _WIN32_WINNT >= 0x0600
 
   // Lock the mutex.
   void lock()
   {
+#if _WIN32_WINNT >= 0x0600
+    ::AcquireSRWLockExclusive(&srwlock_);
+#else // _WIN32_WINNT >= 0x0600
     ::EnterCriticalSection(&crit_section_);
+#endif // _WIN32_WINNT >= 0x0600
   }
 
   // Unlock the mutex.
   void unlock()
   {
+#if _WIN32_WINNT >= 0x0600
+    ::ReleaseSRWLockExclusive(&srwlock_);
+#else // _WIN32_WINNT >= 0x0600
     ::LeaveCriticalSection(&crit_section_);
+#endif // _WIN32_WINNT >= 0x0600
   }
 
 private:
@@ -61,7 +73,11 @@ private:
   // C++ exceptions in the same function.
   ASIO_DECL int do_init();
 
+#if _WIN32_WINNT >= 0x0600
+  ::SRWLOCK srwlock_;
+#else // _WIN32_WINNT >= 0x0600
   ::CRITICAL_SECTION crit_section_;
+#endif // _WIN32_WINNT >= 0x0600
 };
 
 } // namespace detail
