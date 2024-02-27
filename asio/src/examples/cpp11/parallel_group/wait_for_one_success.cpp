@@ -9,7 +9,6 @@
 //
 
 #include <asio.hpp>
-#include <asio/experimental/deferred.hpp>
 #include <asio/experimental/parallel_group.hpp>
 #include <iostream>
 
@@ -25,11 +24,8 @@ int main()
   char data[1024];
 
   asio::experimental::make_parallel_group(
-      in.async_read_some(
-        asio::buffer(data),
-        asio::deferred),
-      timer.async_wait(
-        asio::deferred)
+      in.async_read_some(asio::buffer(data)),
+      timer.async_wait()
     ).async_wait(
       asio::experimental::wait_for_one_success(),
       [](

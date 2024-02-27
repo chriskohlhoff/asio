@@ -69,8 +69,7 @@ namespace experimental {
  *             char data[1024];
  *             auto [e1, n1] =
  *               co_await socket.async_read_some(
- *                 asio::buffer(data),
- *                 asio::as_tuple(asio::deferred));
+ *                 asio::buffer(data));
  *
  *             if (e1)
  *               co_yield state.complete(e1);
@@ -81,8 +80,7 @@ namespace experimental {
  *
  *             auto [e2, n2] =
  *               co_await asio::async_write(socket,
- *                 asio::buffer(data, n1),
- *                 asio::as_tuple(asio::deferred));
+ *                 asio::buffer(data, n1));
  *
  *             if (e2)
  *               co_yield state.complete(e2);
@@ -116,10 +114,10 @@ namespace experimental {
  *               {
  *                 char data[1024];
  *                 std::size_t n = co_await socket.async_read_some(
- *                     asio::buffer(data), asio::deferred);
+ *                     asio::buffer(data));
  *
  *                 co_await asio::async_write(socket,
- *                     asio::buffer(data, n), asio::deferred);
+ *                     asio::buffer(data, n));
  *               }
  *             }
  *             catch (const std::system_error& e)

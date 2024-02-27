@@ -184,7 +184,7 @@ template <typename Function>
 class deferred_function
 {
 public:
-  /// Constructor. 
+  /// Constructor.
   template <typename F>
   constexpr explicit deferred_function(deferred_init_tag, F&& function)
     : function_(static_cast<F&&>(function))
@@ -592,8 +592,11 @@ struct is_deferred<deferred_conditional<OnTrue, OnFalse>> : true_type
  * The deferred_t class is used to indicate that an asynchronous operation
  * should return a function object which is itself an initiation function. A
  * deferred_t object may be passed as a completion token to an asynchronous
- * operation, typically using the special value @c asio::deferred. For
- * example:
+ * operation, typically as the default completion token:
+ *
+ * @code auto my_deferred_op = my_socket.async_read_some(my_buffer); @endcode
+ *
+ * or by explicitly passing the special value @c asio::deferred:
  *
  * @code auto my_deferred_op
  *   = my_socket.async_read_some(my_buffer,
