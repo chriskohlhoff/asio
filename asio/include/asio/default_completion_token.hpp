@@ -80,26 +80,6 @@ using default_completion_token_t = typename default_completion_token<T>::type;
 #define ASIO_DEFAULT_COMPLETION_TOKEN(e) \
   = typename ::asio::default_completion_token<e>::type()
 
-namespace detail {
-
-template <typename T, typename = void>
-struct default_completion_token_or_deferred
-{
-  typedef deferred_t type;
-};
-
-template <typename T>
-struct default_completion_token_or_deferred<T,
-  typename decay_t<T>::executor_type>
-{
-  typedef default_completion_token_t<typename decay_t<T>::executor_type> type;
-};
-
-template <typename T>
-using default_completion_token_or_deferred_t
-  = typename default_completion_token_or_deferred<T>::type;
-
-} // namespace detail
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
