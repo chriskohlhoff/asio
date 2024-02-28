@@ -47,7 +47,7 @@ protected:
   ASIO_DECL static void throw_on_error(data& d);
 };
 
-template <int Major = 2, int Minor = 0>
+template <int Major = 2, int Minor = 2>
 class winsock_init : private winsock_init_base
 {
 public:
