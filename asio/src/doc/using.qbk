@@ -11,7 +11,7 @@
 
 The following platform and compiler combinations are regularly tested:
 
-* Linux using g++ 4.6 or later
+* Linux using g++ 5.0 or later
 * Linux using clang 3.4 or later
 * FreeBSD using g++ 9 or later
 * macOS using Xcode 10 or later
