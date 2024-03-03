@@ -215,6 +215,7 @@
 
 <xsl:template name="cleanup-type">
   <xsl:param name="name"/>
+  <xsl:param name="function-name"/>
   <xsl:variable name="type">
     <xsl:choose>
       <xsl:when test="contains($name, 'ASIO_DECL ')">
@@ -232,7 +233,10 @@
   <xsl:choose>
     <xsl:when test="$type='void_or_deduced'">
       <xsl:text>``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]``</xsl:text>
-    </xsl:when>   
+    </xsl:when>
+    <xsl:when test="$type='auto' and starts-with($function-name, 'async_')">
+      <xsl:text>``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]``</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:value-of select="$type"/>
     </xsl:otherwise>   
@@ -1391,6 +1395,7 @@
  <xsl:variable name="stripped-type">
   <xsl:call-template name="cleanup-type">
     <xsl:with-param name="name" select="type"/>
+    <xsl:with-param name="function-name" select="name"/>
   </xsl:call-template>
  </xsl:variable>
  <xsl:if test="string-length($stripped-type) &gt; 0">
@@ -1608,6 +1613,7 @@
 <xsl:variable name="stripped-type">
  <xsl:call-template name="cleanup-type">
    <xsl:with-param name="name" select="type"/>
+   <xsl:with-param name="function-name" select="name"/>
  </xsl:call-template>
 </xsl:variable>
 <xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if 
@@ -2054,6 +2060,7 @@
 <xsl:variable name="stripped-type">
  <xsl:call-template name="cleanup-type">
    <xsl:with-param name="name" select="type"/>
+   <xsl:with-param name="function-name" select="$unqualified-name"/>
  </xsl:call-template>
 </xsl:variable>
 <xsl:if test="position() = 1 or not(briefdescription = preceding-sibling::memberdef[1]/briefdescription)">
