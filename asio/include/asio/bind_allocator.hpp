@@ -382,6 +382,9 @@ class allocator_binder_completion_handler_async_result<
     TargetAsyncResult, Allocator,
     void_t<typename TargetAsyncResult::completion_handler_type>>
 {
+private:
+  TargetAsyncResult target_;
+
 public:
   typedef allocator_binder<
     typename TargetAsyncResult::completion_handler_type, Allocator>
@@ -393,13 +396,10 @@ public:
   {
   }
 
-  typename TargetAsyncResult::return_type get()
+  auto get() -> decltype(target_.get())
   {
     return target_.get();
   }
-
-private:
-  TargetAsyncResult target_;
 };
 
 template <typename TargetAsyncResult, typename = void>

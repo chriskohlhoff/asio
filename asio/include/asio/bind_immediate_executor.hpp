@@ -391,6 +391,9 @@ class immediate_executor_binder_completion_handler_async_result<
     typename TargetAsyncResult::completion_handler_type
   >>
 {
+private:
+  TargetAsyncResult target_;
+
 public:
   typedef immediate_executor_binder<
     typename TargetAsyncResult::completion_handler_type, Executor>
@@ -402,13 +405,10 @@ public:
   {
   }
 
-  typename TargetAsyncResult::return_type get()
+  auto get() -> decltype(target_.get())
   {
     return target_.get();
   }
-
-private:
-  TargetAsyncResult target_;
 };
 
 template <typename TargetAsyncResult, typename = void>

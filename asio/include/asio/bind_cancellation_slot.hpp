@@ -389,6 +389,9 @@ class cancellation_slot_binder_completion_handler_async_result<
     TargetAsyncResult, CancellationSlot,
     void_t<typename TargetAsyncResult::completion_handler_type>>
 {
+private:
+  TargetAsyncResult target_;
+
 public:
   typedef cancellation_slot_binder<
     typename TargetAsyncResult::completion_handler_type, CancellationSlot>
@@ -400,13 +403,10 @@ public:
   {
   }
 
-  typename TargetAsyncResult::return_type get()
+  auto get() -> decltype(target_.get())
   {
     return target_.get();
   }
-
-private:
-  TargetAsyncResult target_;
 };
 
 template <typename TargetAsyncResult, typename = void>
