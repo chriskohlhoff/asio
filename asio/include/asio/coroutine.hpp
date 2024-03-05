@@ -266,6 +266,7 @@ class coroutine_ref
 public:
   coroutine_ref(coroutine& c) : value_(c.value_), modified_(false) {}
   coroutine_ref(coroutine* c) : value_(c->value_), modified_(false) {}
+  coroutine_ref(const coroutine_ref&) = default;
   ~coroutine_ref() { if (!modified_) value_ = -1; }
   operator int() const { return value_; }
   int& operator=(int v) { modified_ = true; return value_ = v; }
