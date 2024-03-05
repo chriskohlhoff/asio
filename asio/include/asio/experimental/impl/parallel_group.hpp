@@ -473,7 +473,8 @@ struct ranged_parallel_group_completion_handler
       (void)pushback_fold;
     }
 
-    std::move(handler_)(completion_order_, std::move(std::get<I>(vectors))...);
+    std::move(handler_)(std::move(completion_order_),
+        std::move(std::get<I>(vectors))...);
   }
 
   Handler handler_;
