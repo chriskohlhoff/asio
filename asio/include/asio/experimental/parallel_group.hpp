@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include <vector>
+#include "asio/async_result.hpp"
 #include "asio/detail/array.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/type_traits.hpp"
