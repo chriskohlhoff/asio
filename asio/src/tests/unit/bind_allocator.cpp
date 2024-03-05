@@ -112,6 +112,22 @@ void bind_allocator_to_function_object_test()
 
   ASIO_CHECK(count == 1);
   ASIO_CHECK(allocations == 0);
+
+  t.async_wait(
+      bind_allocator(
+        test_allocator<int>(&allocations),
+        bind_allocator(
+          std::allocator<void>(),
+          bindns::bind(&increment, &count))));
+
+  ASIO_CHECK(count == 1);
+  ASIO_CHECK(allocations == 1);
+
+  ioc.restart();
+  ioc.run();
+
+  ASIO_CHECK(count == 2);
+  ASIO_CHECK(allocations == 0);
 }
 
 struct incrementer_token_v1

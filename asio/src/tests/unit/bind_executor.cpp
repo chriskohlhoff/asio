@@ -63,6 +63,23 @@ void bind_executor_to_function_object_test()
   ioc2.run();
 
   ASIO_CHECK(count == 1);
+
+  t.async_wait(
+      bind_executor(
+        ioc2.get_executor(),
+        bind_executor(
+          asio::system_executor(),
+          bindns::bind(&increment, &count))));
+
+  ioc1.restart();
+  ioc1.run();
+
+  ASIO_CHECK(count == 1);
+
+  ioc2.restart();
+  ioc2.run();
+
+  ASIO_CHECK(count == 2);
 }
 
 struct incrementer_token_v1

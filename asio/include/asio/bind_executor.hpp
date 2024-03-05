@@ -297,7 +297,9 @@ public:
    * @c U.
    */
   template <typename U, typename OtherExecutor>
-  executor_binder(const executor_binder<U, OtherExecutor>& other)
+  executor_binder(const executor_binder<U, OtherExecutor>& other,
+      constraint_t<is_constructible<Executor, OtherExecutor>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : base_type(other.get_executor(), other.get())
   {
   }
@@ -310,7 +312,8 @@ public:
    */
   template <typename U, typename OtherExecutor>
   executor_binder(executor_arg_t, const executor_type& e,
-      const executor_binder<U, OtherExecutor>& other)
+      const executor_binder<U, OtherExecutor>& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : base_type(e, other.get())
   {
   }
@@ -331,7 +334,9 @@ public:
 
   /// Move construct from a different executor wrapper type.
   template <typename U, typename OtherExecutor>
-  executor_binder(executor_binder<U, OtherExecutor>&& other)
+  executor_binder(executor_binder<U, OtherExecutor>&& other,
+      constraint_t<is_constructible<Executor, OtherExecutor>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : base_type(static_cast<OtherExecutor&&>(other.get_executor()),
         static_cast<U&&>(other.get()))
   {
@@ -341,7 +346,8 @@ public:
   /// different executor.
   template <typename U, typename OtherExecutor>
   executor_binder(executor_arg_t, const executor_type& e,
-      executor_binder<U, OtherExecutor>&& other)
+      executor_binder<U, OtherExecutor>&& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : base_type(e, static_cast<U&&>(other.get()))
   {
   }

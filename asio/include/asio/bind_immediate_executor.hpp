@@ -260,7 +260,9 @@ public:
    */
   template <typename U, typename OtherExecutor>
   immediate_executor_binder(
-      const immediate_executor_binder<U, OtherExecutor>& other)
+      const immediate_executor_binder<U, OtherExecutor>& other,
+      constraint_t<is_constructible<Executor, OtherExecutor>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : executor_(other.get_immediate_executor()),
       target_(other.get())
   {
@@ -274,7 +276,8 @@ public:
    */
   template <typename U, typename OtherExecutor>
   immediate_executor_binder(const immediate_executor_type& e,
-      const immediate_executor_binder<U, OtherExecutor>& other)
+      const immediate_executor_binder<U, OtherExecutor>& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : executor_(e),
       target_(other.get())
   {
@@ -300,7 +303,9 @@ public:
   /// Move construct from a different immediate executor wrapper type.
   template <typename U, typename OtherExecutor>
   immediate_executor_binder(
-      immediate_executor_binder<U, OtherExecutor>&& other)
+      immediate_executor_binder<U, OtherExecutor>&& other,
+      constraint_t<is_constructible<Executor, OtherExecutor>::value> = 0,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : executor_(static_cast<OtherExecutor&&>(
           other.get_immediate_executor())),
       target_(static_cast<U&&>(other.get()))
@@ -311,7 +316,8 @@ public:
   /// specify a different immediate executor.
   template <typename U, typename OtherExecutor>
   immediate_executor_binder(const immediate_executor_type& e,
-      immediate_executor_binder<U, OtherExecutor>&& other)
+      immediate_executor_binder<U, OtherExecutor>&& other,
+      constraint_t<is_constructible<T, U>::value> = 0)
     : executor_(e),
       target_(static_cast<U&&>(other.get()))
   {
