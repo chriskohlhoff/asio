@@ -108,6 +108,17 @@ public:
     service_.construct(impl_);
   }
 
+  /// Copy constructor.
+  /**
+   * Creates a copy such that both strand objects share the same underlying
+   * state.
+   */
+  strand(const strand& other) noexcept
+    : service_(other.service_),
+      impl_(other.impl_)
+  {
+  }
+
   /// Destructor.
   /**
    * Destroys a strand.
