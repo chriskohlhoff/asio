@@ -467,8 +467,13 @@ template <typename SockLenType>
 inline int call_connect(SockLenType msghdr::*,
     socket_type s, const void* addr, std::size_t addrlen)
 {
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+  return ::WSAConnect(s, static_cast<const socket_addr_type*>(addr),
+      (SockLenType)addrlen, 0, 0, 0, 0);
+#else
   return ::connect(s, static_cast<const socket_addr_type*>(addr),
       (SockLenType)addrlen);
+#endif
 }
 
 int connect(socket_type s, const void* addr,
