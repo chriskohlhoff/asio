@@ -1,0 +1,160 @@
+#!/bin/sh
+
+#
+#	QNX specific build configuration nested level
+#
+NESTED_LEVEL="../../.."
+
+#
+#	Setup of essential configuration parameters
+#
+function hook_preconfigure {
+#
+# QNX specific changes are covered by prediefined '__QNX__'
+#       For examples: "fd_passing_stream_server" and "fd_passing_stream_client"
+#       For the testsuites:  unit/ip/multicast
+#
+	CXXFLAGS="$CXXFLAGS -DASIO_HAS_PTHREADS -DASIO_HAS_STD_STRING_VIEW -DASIO_HAS_CONSTEXPR -DASIO_HAS_STD_FUTURE_CLASS"
+
+#
+#	Add socket library
+#
+	LDFLAGS="$LDFLAGS -lsocket"
+
+#
+#	Distributive directory
+#
+	DIST_BASE="${PWD}/${NESTED_LEVEL}"
+
+#
+#	Setup correct pathes for install and build make commands
+#
+	configure_opts="--srcdir=${DIST_BASE}"
+	configure_opts="${configure_opts} --prefix=${INSTALL_ROOT_nto}/usr"
+	configure_opts="${configure_opts} --exec-prefix=${INSTALL_ROOT_nto}/${cpudir}/usr"
+}
+
+#
+#	Adjust relative path to ./configure tool
+#
+function hook_configure {
+    ${NESTED_LEVEL}/configure \
+        ${ac_host:+"--host=${ac_host}"} \
+        ${ac_build:+"--build=${ac_build}"} \
+        ${configure_opts} \
+        ${ac_params:+${CC:+"CC=${CC}"}} \
+        ${ac_params:+${CFLAGS:+"CFLAGS=-O2 ${CFLAGS}"}} \
+        ${ac_params:+${CPPFLAGS:+"CPPFLAGS=${CPPFLAGS}"}} \
+        ${ac_params:+${LDFLAGS:+"LDFLAGS=${LDFLAGS}"}} \
+        ${ac_params:+${CXX:+"CXX=${CXX}"}} \
+        ${ac_params:+${CXXFLAGS:+"CXXFLAGS=-O2 ${CXXFLAGS}"}} \
+        ${ac_params:+${ac_autotools:+${ac_autotools}}} \
+        || Error "configure failed";
+}
+
+function hook_premake {
+	if [ "${make_cmds}" == "check" ] && [ "${TARGET_SYSNAME}" == "nto" ]; then
+		echo "For target nto suppress tests execution."
+		echo "All tests have to be run on target system."
+		make_opts="${make_opts} TESTS=''"
+	fi
+}
+
+function hook_postmake {
+	red="\033[0;31m"
+	grn="\033[0;32m"
+	yel="\033[1;33m"
+	blu="\033[1;34m"
+	cls="\033[0m"
+	base_build=$PWD
+	base_testsuite="src/tests"
+	base_script="run_testsuites.sh"
+	testsuite_log="test-suite.log"
+	testsuite_script=$base_testsuite/$base_script
+	testsuite_sdp_bin=${INSTALL_ROOT_nto}/${cpudir}/usr/bin/asio_tests
+
+	#
+	# uninstall all asio test from SDP
+	#
+	if [ "${make_cmds}" == "uninstall" ] && [ -d ${testsuite_sdp_bin} ]; then
+		echo "we have to uninstall all asio tests"
+		(set -x; rm -rf ${testsuite_sdp_bin})
+	fi
+
+	#
+	# build and install all asio tests
+	#
+	if [ "${make_cmds}" == "check" ] && [ "${TARGET_SYSNAME}" == "nto" ] && [ "${SYSNAME}" == "linux" ]; then
+		if [ -d ${base_testsuite} ]; then
+
+			echo "${blu}=========================================================================${cls}"
+			echo "${blu}Generate script to run testsuites for the ${cpu}${cls}"
+			echo "${blu}=========================================================================${cls}"
+
+			echo "Remove old testsuite script ..."
+			#(set -x; <command> - print each command before executing )
+			(set -x; rm -f "$testsuite_script")
+
+			echo "Looking for tests executables..."
+			testsuite_list=$(find . -type f -executable | sed -n "s/^\.\/src\/tests\/\(\S*\)$/\1/p")
+
+			pkg_str=$(grep 'PACKAGE_STRING' Makefile | grep -oP '\d+\.\d+\.\d+' | head -1)
+
+			echo "Creating testsuites script..."
+			echo "#!/bin/sh"       > $testsuite_script || Error "Unexpected error during $testsuite_script initialization";
+			echo "_pass=0"        >> $testsuite_script || Error "Unexpected error during $testsuite_script initialization";
+			echo "_fail=0"        >> $testsuite_script || Error "Unexpected error during $testsuite_script initialization";
+			echo "echo \"### Testsuites log file ###\" > $testsuite_log" >> $testsuite_script || Error "Unexpected error during $testsuite_script initialization";
+
+
+			echo "Adding testsuites to the script:'$testsuite_script'..."
+			testsuite_number=0
+			for v in ${testsuite_list}; do
+				testsuite_number=$((testsuite_number+1));
+				echo "### Suite number: $testsuite_number" >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "result=\$($v 2>&1)"                  >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "if [ 0 -eq \$? ]; then"              >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "   _pass=\$((_pass+1))"              >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "   echo \"${grn}PASS${cls}:$v\""     >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "else"                                >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "   _fail=\$((_fail+1))"              >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "   echo \"${red}FAIL${cls}:$v\""     >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "fi"                                  >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "echo \"### Testsuite:$v ###\" >> $testsuite_log" >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "echo \"\${result}\" >> $testsuite_log"           >> $testsuite_script || Error "Unexpected error during $testsuite_script update by testsuite:'$v'";
+				echo "${blu}ADDED${cls}:$v";
+				#
+				# install testsuite into SDP
+				#
+				_dest_folder="${testsuite_sdp_bin}/$(dirname $v)"
+				_source_test="src/tests/$v"
+				[ -d "${_dest_folder}" ] || (set -x; mkdir -p ${_dest_folder})
+				(set -x; cp -f $_source_test $_dest_folder)
+			done
+
+			echo "echo \"${grn}=========================================================================${cls}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"${grn}Testsuite summary for asio ${pkg_str}${cls}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"${grn}=========================================================================${cls}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"# TOTAL: ${testsuite_number}\""  >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"# ${grn}PASS${cls}: \${_pass}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"# ${red}FAIL${cls}: \${_fail}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "if [ 0 -eq \${_fail} ]; then"           >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"${grn}=========================================================================${cls}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "else"                                   >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "echo \"${red}\${_fail} fails see test log:$testsuite_log ${cls}\"" >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+			echo "fi"                                     >> $testsuite_script || Error "Unexpected error during $testsuite_script update";
+
+			chmod +x $testsuite_script
+
+			#(set -x; <command> - print each command before executing )
+			(set -x; cp -f $testsuite_script $testsuite_sdp_bin)
+
+			echo "${blu}For asio ${pkg_str} total ${testsuite_number} testsuites were added into script:${testsuite_script}${cls}";
+			echo "${blu}All testsuites were installed into '${testsuite_sdp_bin}'${cls}";
+			echo "${blu}To run all tests please copy '${testsuite_sdp_bin}' to the target system and run test script '${testsuite_script}'${cls}";
+		else
+			echo "${red}Error - base testsuite:'${base_build}/${base_testsuite}' for asio ${pkg_str} was not found!${cls}";
+			exit 1;
+		fi
+	fi
+}

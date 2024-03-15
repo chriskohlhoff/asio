@@ -1,0 +1,79 @@
+#!/bin/bash
+
+. ${TOOL_DIR}/functions
+
+function brief()
+{
+    echo "--test-asio=[no|<path>]"
+}
+
+function help()
+{
+    brief
+    cat <<EOF
+    If this option is given with a <path> to the compiled asio tests tree, the full tree will be imported
+    on the target under /data/asio from which you can execute the asio test suite using:
+
+    cd /data/asio/
+    ./run_testsuites.sh
+
+    NOTE: You must compile the asio source tree of the desired target before building
+    the vm image.
+
+    The default is no.
+EOF
+}
+
+function validate() {
+
+	if [ ${OPT_TEST_ASIO} != "no" ]; then
+		if [ ! -d "${OPT_TEST_ASIO}" ]; then
+			echo "Invalid asio source tree '${OPT_TEST_ASIO}'"
+			exit 1;
+		fi
+	else
+		exit 0;
+	fi
+}
+
+function configure()
+{
+	rm -f output/option_files/*.opt_test_asio
+	if [ "$OPT_TEST_ASIO" != no ]; then
+		if [ "${OPT_VERBOSE}" == "yes" ]; then
+			echo "Building asio file list from ${OPT_TEST_ASIO}"
+		fi
+
+		for f in $(find ${OPT_TEST_ASIO} -type f); do
+			echo "[perms=0755] asio/${f#${OPT_TEST_ASIO}/}=${f}" >> output/option_files/data_files.opt_test_asio
+		done;
+
+		case ${OPT_ARCH} in
+		x86*)
+			ASIO_TEST_PREFIX="nto-${OPT_ARCH}-o";
+			;;
+		*aarch64*)
+			ASIO_TEST_PREFIX="nto-aarch64-le";
+			;;
+		esac
+
+		# export asio options"
+		echo "ASIO_TEST_PREFIX=${ASIO_TEST_PREFIX}" >> output/option_files/ifs_env.opt_test_asio
+
+	fi
+
+	exit 0
+}
+
+case "$1" in
+	brief)
+		brief;;
+	help)
+		help;;
+	validate)
+		validate;;
+	configure)
+		configure;;
+	default)
+		echo no;;
+esac
