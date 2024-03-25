@@ -1,0 +1,78 @@
+Claus-iMac:dev clausklein$ make spell-check | grep -v encode | grep -vw alives
+CMake Error at cmake/spell.cmake:27 (message):
+  Run again with FIX=YES to fix these errors.
+
+
+make[3]: *** [CMakeFiles/spell-check] Error 1
+make[2]: *** [CMakeFiles/spell-check.dir/all] Error 2
+make[1]: *** [CMakeFiles/spell-check.dir/rule] Error 2
+make: *** [spell-check] Error 2
+[100%] Checking spelling
+./include/asio/io_context.hpp:185: exeution ==> execution
+./include/asio/io_context.hpp:318: reponsibility ==> responsibility
+./include/asio/io_context.hpp:349: reponsibility ==> responsibility
+./include/asio/io_context.hpp:401: reponsibility ==> responsibility
+./include/asio/io_context.hpp:423: reponsibility ==> responsibility
+./include/asio/use_future.hpp:102: retuned ==> returned
+./include/asio/impl/use_future.hpp:203: exeption ==> exception, exemption
+./include/asio/experimental/deferred.hpp:375: alue ==> value
+./include/asio/experimental/impl/parallel_group.hpp:80: operatations ==> operations
+./include/asio/detail/executor_function.hpp:124: copyable ==> copiable
+./include/asio/detail/executor_function.hpp:171: copyable ==> copiable
+./include/asio/detail/service_registry.hpp:79: Initalise ==> Initialise
+./include/asio/detail/service_registry.hpp:84: Initalise ==> Initialise
+./include/asio/detail/win_iocp_io_context.hpp:267: resouce ==> resource
+./include/asio/detail/timer_queue_ptime.hpp:32: instantation ==> instantiation
+./include/asio/execution/any_executor.hpp:98: requre ==> require
+./include/asio/execution/impl/bad_executor.ipp:2: exection ==> execution
+./include/asio/execution/impl/receiver_invocation_error.ipp:2: exection ==> execution
+./include/asio/ip/detail/endpoint.hpp:31: implementating ==> implementing
+./src/examples/cpp11/timers/time_t_timer.cpp:66: absoluate ==> absolute
+./src/examples/cpp11/operations/composed_6.cpp:92: asychronous ==> asynchronous
+./src/examples/cpp11/operations/composed_7.cpp:59: asychronous ==> asynchronous
+./src/examples/cpp03/timers/time_t_timer.cpp:65: absoluate ==> absolute
+./src/examples/cpp03/porthopper/client.cpp:100: renegotation ==> renegotiation
+./src/examples/cpp03/porthopper/client.cpp:125: renegotation ==> renegotiation
+./src/examples/cpp03/porthopper/client.cpp:153: renegotation ==> renegotiation
+./src/examples/cpp03/porthopper/client.cpp:166: renegotation ==> renegotiation
+./src/examples/cpp14/operations/composed_6.cpp:103: asychronous ==> asynchronous
+./src/examples/cpp14/operations/composed_7.cpp:65: asychronous ==> asynchronous
+./src/examples/cpp14/operations/composed_7.cpp:111: asychronous ==> asynchronous
+./src/doc/using.qbk:227: Explictly ==> Explicitly
+./src/doc/history.qbk:137: occured ==> occurred
+./src/doc/history.qbk:984: compatiblity ==> compatibility
+./src/doc/history.qbk:1101: Lightening ==> Lightning, lighting
+./src/doc/history.qbk:1177: copyable ==> copiable
+./src/doc/history.qbk:1220: discconected ==> disconnected
+./src/doc/history.qbk:1382: compatability ==> compatibility
+./src/doc/history.qbk:1807: copyable ==> copiable
+./src/doc/history.qbk:1842: accomodate ==> accommodate
+./src/doc/history.qbk:2062: tranferred ==> transferred
+./src/doc/reference.qbk:1646: requre ==> require
+./src/doc/reference.qbk:83101: requre ==> require
+./src/doc/reference.qbk:96234: alue ==> value
+./src/doc/reference.qbk:96274: alue ==> value
+./src/doc/reference.qbk:103899: exeution ==> execution
+./src/doc/reference.qbk:104790: reponsibility ==> responsibility
+./src/doc/reference.qbk:104833: reponsibility ==> responsibility
+./src/doc/reference.qbk:104917: reponsibility ==> responsibility
+./src/doc/reference.qbk:104948: reponsibility ==> responsibility
+./src/doc/reference.qbk:107562: exeution ==> execution
+./src/doc/reference.qbk:157316: retuned ==> returned
+./src/doc/quickref.xml:17: thead ==> thread
+./src/doc/quickref.xml:26: thead ==> thread
+./src/doc/quickref.xml:180: thead ==> thread
+./src/doc/quickref.xml:186: thead ==> thread
+./src/doc/quickref.xml:356: thead ==> thread
+./src/doc/quickref.xml:362: thead ==> thread
+./src/doc/quickref.xml:463: thead ==> thread
+./src/doc/quickref.xml:469: thead ==> thread
+./src/doc/quickref.xml:613: thead ==> thread
+./src/doc/quickref.xml:628: thead ==> thread
+./src/doc/quickref.xml:729: thead ==> thread
+./src/doc/quickref.xml:741: thead ==> thread
+./src/doc/requirements/asynchronous_operations.qbk:309: asynchonous ==> asynchronous
+./src/doc/overview/coro.qbk:137: follwing ==> following
+./src/doc/overview/coro.qbk:194: direclty ==> directly
+Claus-iMac:dev clausklein$ 
+

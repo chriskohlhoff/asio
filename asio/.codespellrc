@@ -1,0 +1,6 @@
+[codespell]
+builtin = clear,rare,names,informal,code
+check-filenames =
+check-hidden =
+skip = */.git,*/build,*/prefix,*/stage
+quiet-level = 2

@@ -22,3 +22,21 @@ test-driver
 *.zip
 /*.cpp
 /*.hpp
+### cmake-init generated:
+# include/asio/asio.hpp
+.git
+.github/
+.idea/
+.vs/
+.vscode/
+build/
+cmake/open-cpp-coverage.cmake
+cmake-build-*/
+prefix/
+CMakeLists.txt.user
+# CMakeUserPresets.json
+# BUILDING.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+# HACKING.md
+README.md
