@@ -1,8 +1,8 @@
 {
-  "version": 2,
+  "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 14,
+    "minor": 25,
     "patch": 0
   },
   "configurePresets": [
@@ -73,6 +73,12 @@
       "configurePreset": "dev",
       "configuration": "Debug",
       "jobs": 12
+    },
+    {
+      "name": "verify",
+      "configurePreset": "dev",
+      "jobs": 12,
+      "targets": ["all_verify_interface_header_sets"]
     }
   ],
   "testPresets": [
@@ -87,6 +93,42 @@
         "jobs": 12,
         "noTestsAction": "error"
       }
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "generators": [
+        "TGZ"
+      ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "dev",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "dev"
+        },
+        {
+          "type": "build",
+          "name": "dev"
+        },
+        {
+          "type": "build",
+          "name": "verify"
+        },
+        {
+          "type": "test",
+          "name": "dev"
+        },
+        {
+          "type": "package",
+          "name": "dev"
+        }
+      ]
     }
   ]
 }
