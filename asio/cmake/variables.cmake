@@ -5,7 +5,7 @@
 # Targets necessary to build the project must be provided unconditionally, so
 # consumers can trivially build and package the project
 if(PROJECT_IS_TOP_LEVEL)
-  option(asio_DEVELOPER_MODE "Enable developer mode" ON)
+  option(asio_DEVELOPER_MODE "Enable developer mode" OFF)
 endif()
 
 # ---- Warning guard ----

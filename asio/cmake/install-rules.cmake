@@ -1,9 +1,11 @@
 if(PROJECT_IS_TOP_LEVEL)
-  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "")
+  set(CMAKE_INSTALL_INCLUDEDIR "include/asio-${PROJECT_VERSION}" CACHE PATH "")
 endif()
 
 # Project is configured with no languages, so tell GNUInstallDirs the lib dir
 set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "")
+
+include(cmake/AddUninstallTarget.cmake)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)

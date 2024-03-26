@@ -1,0 +1,194 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/*
+
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.8"}
+
+      - name: Install codespell
+        run: pip3 install codespell
+
+      - name: Lint
+        if: always()
+        working-directory: asio
+        run: cmake -D FORMAT_COMMAND=clang-format-14 -P cmake/lint.cmake || echo ignored
+
+      - name: Spell check
+        if: always()
+        working-directory: asio
+        run: cmake -P cmake/spell.cmake || echo ignored
+
+  coverage:
+    needs: [lint]
+
+    runs-on: ubuntu-22.04
+
+    # To enable coverage, delete the last line from the conditional below and
+    # edit the "<name>" placeholder to your GitHub name.
+    # If you do not wish to use codecov, then simply delete this job from the
+    # workflow.
+    if: github.repository_owner == '<name>'
+      && false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LCov
+        run: sudo apt-get update -q
+          && sudo apt-get install lcov -q -y
+
+      - name: Configure
+        working-directory: asio
+        run: cmake --preset=ci-coverage
+
+      - name: Build
+        working-directory: asio
+        run: cmake --build build/coverage -j 2
+
+      - name: Test
+        working-directory: asio/build/coverage
+        run: ctest --output-on-failure --no-tests=error -j 2
+
+      - name: Process coverage info
+        working-directory: asio
+        run: cmake --build build/coverage -t coverage
+
+      - name: Submit to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          file: build/coverage/coverage.info
+
+  sanitize:
+    needs: [lint]
+
+    runs-on: ubuntu-22.04
+
+    env: {CXX: clang++-14}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        working-directory: asio
+        run: cmake --preset=ci-sanitize
+
+      - name: Build
+        working-directory: asio
+        run: cmake --build build/sanitize -j 2
+
+      - name: Test
+        working-directory: asio/build/sanitize
+        env:
+          ASAN_OPTIONS: "strict_string_checks=1:\
+            detect_stack_use_after_return=1:\
+            check_initialization_order=1:\
+            strict_init_order=1:\
+            detect_leaks=1"
+          UBSAN_OPTIONS: print_stacktrace=1
+        run: ctest --output-on-failure --no-tests=error -j 2
+
+  test:
+    needs: [lint]
+
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-22.04, windows-2022]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install static analyzers
+        if: matrix.os == 'ubuntu-22.04'
+        run: >-
+          sudo apt-get install clang-tidy-14 cppcheck -y -q
+
+          sudo update-alternatives --install
+          /usr/bin/clang-tidy clang-tidy
+          /usr/bin/clang-tidy-14 140
+
+      - name: Setup MultiToolTask
+        if: matrix.os == 'windows-2022'
+        run: |
+          Add-Content "$env:GITHUB_ENV" 'UseMultiToolTask=true'
+          Add-Content "$env:GITHUB_ENV" 'EnforceProcessCountAcrossBuilds=true'
+
+      - name: Configure
+        shell: pwsh
+        working-directory: asio
+        run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
+
+      - name: Build
+        working-directory: asio
+        run: cmake --build build --config Release -j 2
+
+      - name: Install
+        working-directory: asio
+        run: cmake --install build --config Release --prefix prefix
+
+      - name: Test
+        working-directory: asio/build
+        run: ctest --output-on-failure --no-tests=error -C Release -j 2
+
+  docs:
+    # Deploy docs only when builds succeed
+    needs: [sanitize, test]
+
+    runs-on: ubuntu-22.04
+
+    # To enable, first you have to create an orphaned gh-pages branch:
+    #
+    #    git switch --orphan gh-pages
+    #    git commit --allow-empty -m "Initial commit"
+    #    git push -u origin gh-pages
+    #
+    # Edit the <name> placeholder below to your GitHub name, so this action
+    # runs only in your repository and no one else's fork. After these, delete
+    # this comment and the last line in the conditional below.
+    # If you do not wish to use GitHub Pages for deploying documentation, then
+    # simply delete this job similarly to the coverage one.
+    if: github.ref == 'refs/heads/master'
+      && github.event_name == 'push'
+      && github.repository_owner == '<name>'
+      && false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.8"}
+
+      - name: Install m.css dependencies
+        run: pip3 install jinja2 Pygments
+
+      - name: Install Doxygen
+        run: sudo apt-get update -q
+          && sudo apt-get install doxygen -q -y
+
+      - name: Build docs
+        working-directory: asio
+        run: cmake "-DPROJECT_SOURCE_DIR=$PWD" "-DPROJECT_BINARY_DIR=$PWD/build"
+          -P cmake/docs-ci.cmake
+
+      - name: Deploy docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/docs/html

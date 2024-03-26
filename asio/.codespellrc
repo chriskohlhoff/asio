@@ -2,5 +2,6 @@
 builtin = clear,rare,names,informal,code
 check-filenames =
 check-hidden =
-skip = */.git,*/build,*/prefix,*/stage
+skip = */.git,*/build,*/prefix,*/stage,.TODO.txt
 quiet-level = 2
+ignore-words-list = tim,deque,endcode,keep-alives,nmake

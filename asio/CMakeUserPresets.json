@@ -2,28 +2,77 @@
   "version": 2,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 14,
     "patch": 0
   },
   "configurePresets": [
     {
-      "name": "dev",
-      "binaryDir": "${sourceDir}/build/dev",
+      "name": "dev-common",
+      "hidden": true,
       "generator": "Ninja",
       "inherits": [
-        "dev-mode",
-        "ci-unix"
+        "dev-mode"
       ],
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "BUILD_MCSS_DOCS": "ON"
       }
+    },
+    {
+      "name": "dev-linux",
+      "binaryDir": "${sourceDir}/build/dev-linux",
+      "inherits": [
+        "dev-common",
+        "ci-linux"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "dev-darwin",
+      "binaryDir": "${sourceDir}/build/dev-darwin",
+      "inherits": [
+        "dev-common",
+        "ci-darwin"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "dev-win64",
+      "binaryDir": "${sourceDir}/build/dev-win64",
+      "inherits": [
+        "dev-common",
+        "ci-win64"
+      ],
+      "environment": {
+        "UseMultiToolTask": "true",
+        "EnforceProcessCountAcrossBuilds": "true"
+      }
+    },
+    {
+      "name": "dev",
+      "binaryDir": "${sourceDir}/build/dev",
+      "inherits": "dev-darwin"
+    },
+    {
+      "name": "dev-coverage",
+      "binaryDir": "${sourceDir}/build/coverage",
+      "inherits": [
+        "dev-mode",
+        "coverage-linux"
+      ]
     }
   ],
   "buildPresets": [
     {
       "name": "dev",
       "configurePreset": "dev",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "jobs": 12
     }
   ],
   "testPresets": [
@@ -33,6 +82,10 @@
       "configuration": "Debug",
       "output": {
         "outputOnFailure": true
+      },
+      "execution": {
+        "jobs": 12,
+        "noTestsAction": "error"
       }
     }
   ]

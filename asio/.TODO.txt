@@ -1,78 +1,91 @@
-Claus-iMac:dev clausklein$ make spell-check | grep -v encode | grep -vw alives
+ninja -C build/dev spell-check
+ninja: Entering directory `build/dev'
+[1/1] Checking spelling
+FAILED: CMakeFiles/spell-check /home/klein_cl/Workspace/cpp/asio/asio/build/dev/CMakeFiles/spell-check 
+cd /home/klein_cl/Workspace/cpp/asio/asio && /home/klein_cl/.local/lib/python3.10/site-packages/cmake/data/bin/cmake -D SPELL_COMMAND=codespell -P /home/klein_cl/Workspace/cpp/asio/asio/cmake/spell.cmake
+Used config files:
+    1: .codespellrc
+./src/examples/cpp14/operations/composed_7.cpp:73: asychronous ==> asynchronous
+./src/examples/cpp14/operations/composed_7.cpp:119: asychronous ==> asynchronous
+./src/examples/cpp14/operations/composed_6.cpp:111: asychronous ==> asynchronous
+./src/examples/cpp11/timers/time_t_timer.cpp:66: absoluate ==> absolute
+./src/examples/cpp11/porthopper/client.cpp:96: renegotation ==> renegotiation
+./src/examples/cpp11/porthopper/client.cpp:120: renegotation ==> renegotiation
+./src/examples/cpp11/porthopper/client.cpp:149: renegotation ==> renegotiation
+./src/examples/cpp11/porthopper/client.cpp:162: renegotation ==> renegotiation
+./src/examples/cpp11/operations/composed_7.cpp:60: asychronous ==> asynchronous
+./src/examples/cpp11/operations/composed_6.cpp:93: asychronous ==> asynchronous
+./src/examples/cpp20/operations/composed_7.cpp:74: asychronous ==> asynchronous
+./src/examples/cpp20/operations/composed_7.cpp:120: asychronous ==> asynchronous
+./src/examples/cpp20/operations/composed_6.cpp:116: asychronous ==> asynchronous
+./src/doc/reference.qbk:1697: requre ==> require
+./src/doc/reference.qbk:3966: requre ==> require
+./src/doc/reference.qbk:17885: ore ==> or
+./src/doc/reference.qbk:17947: ore ==> or
+./src/doc/reference.qbk:32144: ore ==> or
+./src/doc/reference.qbk:32206: ore ==> or
+./src/doc/reference.qbk:89453: requre ==> require
+./src/doc/reference.qbk:110672: reponsibility ==> responsibility
+./src/doc/reference.qbk:110715: reponsibility ==> responsibility
+./src/doc/reference.qbk:110799: reponsibility ==> responsibility
+./src/doc/reference.qbk:110833: reponsibility ==> responsibility
+./src/doc/reference.qbk:164642: retuned ==> returned
+./src/doc/history.qbk:41: potental ==> potential
+./src/doc/history.qbk:165: immmediate ==> immediate
+./src/doc/history.qbk:863: occured ==> occurred
+./src/doc/history.qbk:1710: compatiblity ==> compatibility
+./src/doc/history.qbk:1827: Lightening ==> Lightning, Lighting
+./src/doc/history.qbk:1903: copyable ==> copiable
+./src/doc/history.qbk:1946: discconected ==> disconnected
+./src/doc/history.qbk:2108: compatability ==> compatibility
+./src/doc/history.qbk:2533: copyable ==> copiable
+./src/doc/history.qbk:2568: accomodate ==> accommodate
+./src/doc/history.qbk:2788: tranferred ==> transferred
+./src/doc/history.qbk:2907: re-use ==> reuse
+./src/doc/quickref.xml:17: thead ==> thread
+./src/doc/quickref.xml:26: thead ==> thread
+./src/doc/quickref.xml:133: thead ==> thread
+./src/doc/quickref.xml:139: thead ==> thread
+./src/doc/quickref.xml:320: thead ==> thread
+./src/doc/quickref.xml:326: thead ==> thread
+./src/doc/quickref.xml:427: thead ==> thread
+./src/doc/quickref.xml:433: thead ==> thread
+./src/doc/quickref.xml:577: thead ==> thread
+./src/doc/quickref.xml:592: thead ==> thread
+./src/doc/quickref.xml:693: thead ==> thread
+./src/doc/quickref.xml:705: thead ==> thread
+./src/doc/using.qbk:232: Explictly ==> Explicitly
+./src/doc/requirements/asynchronous_operations.qbk:332: asynchonous ==> asynchronous
+./src/doc/overview/immediate_completion.qbk:16: immmediate ==> immediate
+./src/doc/overview/cpp20_coroutines.qbk:223: Asynchonous ==> Asynchronous
+./src/doc/overview/coro.qbk:15: transfomers ==> transformers
+./src/doc/overview/coro.qbk:136: dermined ==> determined
+./src/doc/overview/coro.qbk:137: follwing ==> following
+./src/doc/overview/coro.qbk:194: direclty ==> directly
+./src/doc/overview/implementation.qbk:63: asynchonous ==> asynchronous
+./cmake/install-rules.cmake:19: requierd ==> required
+./include/asio/io_context.hpp:300: reponsibility ==> responsibility
+./include/asio/io_context.hpp:331: reponsibility ==> responsibility
+./include/asio/io_context.hpp:381: reponsibility ==> responsibility
+./include/asio/io_context.hpp:403: reponsibility ==> responsibility
+./include/asio/basic_datagram_socket.hpp:348: ore ==> or
+./include/asio/basic_datagram_socket.hpp:380: ore ==> or
+./include/asio/use_future.hpp:102: retuned ==> returned
+./include/asio/basic_raw_socket.hpp:342: ore ==> or
+./include/asio/basic_raw_socket.hpp:373: ore ==> or
+./include/asio/detail/timer_queue_ptime.hpp:32: instantation ==> instantiation
+./include/asio/detail/executor_function.hpp:119: copyable ==> copiable
+./include/asio/detail/service_registry.hpp:79: Initalise ==> Initialise
+./include/asio/detail/service_registry.hpp:84: Initalise ==> Initialise
+./include/asio/detail/win_iocp_io_context.hpp:267: resouce ==> resource
+./include/asio/execution/any_executor.hpp:112: requre ==> require
+./include/asio/execution/impl/bad_executor.ipp:2: exection ==> execution
+./include/asio/experimental/impl/parallel_group.hpp:81: operatations ==> operations
+./include/asio/experimental/impl/parallel_group.hpp:396: operatations ==> operations
+./include/asio/ip/detail/endpoint.hpp:31: implementating ==> implementing
+./include/asio/impl/use_future.hpp:104: exeption ==> exception, exemption
 CMake Error at cmake/spell.cmake:27 (message):
   Run again with FIX=YES to fix these errors.
 
 
-make[3]: *** [CMakeFiles/spell-check] Error 1
-make[2]: *** [CMakeFiles/spell-check.dir/all] Error 2
-make[1]: *** [CMakeFiles/spell-check.dir/rule] Error 2
-make: *** [spell-check] Error 2
-[100%] Checking spelling
-./include/asio/io_context.hpp:185: exeution ==> execution
-./include/asio/io_context.hpp:318: reponsibility ==> responsibility
-./include/asio/io_context.hpp:349: reponsibility ==> responsibility
-./include/asio/io_context.hpp:401: reponsibility ==> responsibility
-./include/asio/io_context.hpp:423: reponsibility ==> responsibility
-./include/asio/use_future.hpp:102: retuned ==> returned
-./include/asio/impl/use_future.hpp:203: exeption ==> exception, exemption
-./include/asio/experimental/deferred.hpp:375: alue ==> value
-./include/asio/experimental/impl/parallel_group.hpp:80: operatations ==> operations
-./include/asio/detail/executor_function.hpp:124: copyable ==> copiable
-./include/asio/detail/executor_function.hpp:171: copyable ==> copiable
-./include/asio/detail/service_registry.hpp:79: Initalise ==> Initialise
-./include/asio/detail/service_registry.hpp:84: Initalise ==> Initialise
-./include/asio/detail/win_iocp_io_context.hpp:267: resouce ==> resource
-./include/asio/detail/timer_queue_ptime.hpp:32: instantation ==> instantiation
-./include/asio/execution/any_executor.hpp:98: requre ==> require
-./include/asio/execution/impl/bad_executor.ipp:2: exection ==> execution
-./include/asio/execution/impl/receiver_invocation_error.ipp:2: exection ==> execution
-./include/asio/ip/detail/endpoint.hpp:31: implementating ==> implementing
-./src/examples/cpp11/timers/time_t_timer.cpp:66: absoluate ==> absolute
-./src/examples/cpp11/operations/composed_6.cpp:92: asychronous ==> asynchronous
-./src/examples/cpp11/operations/composed_7.cpp:59: asychronous ==> asynchronous
-./src/examples/cpp03/timers/time_t_timer.cpp:65: absoluate ==> absolute
-./src/examples/cpp03/porthopper/client.cpp:100: renegotation ==> renegotiation
-./src/examples/cpp03/porthopper/client.cpp:125: renegotation ==> renegotiation
-./src/examples/cpp03/porthopper/client.cpp:153: renegotation ==> renegotiation
-./src/examples/cpp03/porthopper/client.cpp:166: renegotation ==> renegotiation
-./src/examples/cpp14/operations/composed_6.cpp:103: asychronous ==> asynchronous
-./src/examples/cpp14/operations/composed_7.cpp:65: asychronous ==> asynchronous
-./src/examples/cpp14/operations/composed_7.cpp:111: asychronous ==> asynchronous
-./src/doc/using.qbk:227: Explictly ==> Explicitly
-./src/doc/history.qbk:137: occured ==> occurred
-./src/doc/history.qbk:984: compatiblity ==> compatibility
-./src/doc/history.qbk:1101: Lightening ==> Lightning, lighting
-./src/doc/history.qbk:1177: copyable ==> copiable
-./src/doc/history.qbk:1220: discconected ==> disconnected
-./src/doc/history.qbk:1382: compatability ==> compatibility
-./src/doc/history.qbk:1807: copyable ==> copiable
-./src/doc/history.qbk:1842: accomodate ==> accommodate
-./src/doc/history.qbk:2062: tranferred ==> transferred
-./src/doc/reference.qbk:1646: requre ==> require
-./src/doc/reference.qbk:83101: requre ==> require
-./src/doc/reference.qbk:96234: alue ==> value
-./src/doc/reference.qbk:96274: alue ==> value
-./src/doc/reference.qbk:103899: exeution ==> execution
-./src/doc/reference.qbk:104790: reponsibility ==> responsibility
-./src/doc/reference.qbk:104833: reponsibility ==> responsibility
-./src/doc/reference.qbk:104917: reponsibility ==> responsibility
-./src/doc/reference.qbk:104948: reponsibility ==> responsibility
-./src/doc/reference.qbk:107562: exeution ==> execution
-./src/doc/reference.qbk:157316: retuned ==> returned
-./src/doc/quickref.xml:17: thead ==> thread
-./src/doc/quickref.xml:26: thead ==> thread
-./src/doc/quickref.xml:180: thead ==> thread
-./src/doc/quickref.xml:186: thead ==> thread
-./src/doc/quickref.xml:356: thead ==> thread
-./src/doc/quickref.xml:362: thead ==> thread
-./src/doc/quickref.xml:463: thead ==> thread
-./src/doc/quickref.xml:469: thead ==> thread
-./src/doc/quickref.xml:613: thead ==> thread
-./src/doc/quickref.xml:628: thead ==> thread
-./src/doc/quickref.xml:729: thead ==> thread
-./src/doc/quickref.xml:741: thead ==> thread
-./src/doc/requirements/asynchronous_operations.qbk:309: asynchonous ==> asynchronous
-./src/doc/overview/coro.qbk:137: follwing ==> following
-./src/doc/overview/coro.qbk:194: direclty ==> directly
-Claus-iMac:dev clausklein$ 
-
+ninja: build stopped: subcommand failed.
