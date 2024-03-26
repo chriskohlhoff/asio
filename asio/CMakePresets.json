@@ -40,7 +40,7 @@
       "name": "clang-tidy",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--header-filter=^${sourceDir}/"
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy-15;--header-filter=^${sourceDir}/"
       }
     },
     {
@@ -50,7 +50,7 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_EXTENSIONS": "OFF",
-        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD": "17",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON"
       }
     },
@@ -164,6 +164,7 @@
       "binaryDir": "${sourceDir}/build/sanitize",
       "inherits": [
         "ci-linux",
+        "clang-tidy",
         "dev-mode"
       ],
       "cacheVariables": {
