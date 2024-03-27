@@ -11,7 +11,9 @@ Checks: "*,\
   -llvm-include-order,\
   -llvmlibc-*,\
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,\
+  -cppcoreguidelines-avoid-do-while,\
   -*-magic-numbers,\
+  -performance-avoid-endl,
   -misc-include-cleaner,\
   -misc-header-include-cycle,\
   -misc-non-private-member-variables-in-classes"

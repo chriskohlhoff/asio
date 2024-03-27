@@ -118,7 +118,7 @@
         },
         {
           "type": "build",
-          "name": "verify"
+          "name": "dev"
         },
         {
           "type": "test",

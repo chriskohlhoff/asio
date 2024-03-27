@@ -13,11 +13,22 @@ include(GNUInstallDirs)
 # find_package(<package>) call for consumers to find this project
 set(package asio)
 
-install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT asio_Development)
+#NO! install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT asio_Development)
 
-install(TARGETS asio EXPORT asioTargets INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        FILE_SET HEADERS # NOTE: requierd from CMake to install the FILE_SET HEADERS again!
+install(TARGETS asio_header
+        EXPORT asioTargets
+        INCLUDES
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        FILE_SET HEADERS
 )
+if(TARGET asio)
+  install(TARGETS asio
+          EXPORT asioTargets
+          INCLUDES
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+          FILE_SET public_headers
+  )
+endif()
 
 write_basic_package_version_file("${package}ConfigVersion.cmake" COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
 

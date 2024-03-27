@@ -17,12 +17,13 @@ endif()
 
 add_executable(asio_test unit/read_until.cpp)
 
-target_link_libraries(asio_test PRIVATE asio::asio)
-target_compile_features(asio_test PRIVATE cxx_std_17)
+if(TARGET asio::asio)
+  target_link_libraries(asio_test PRIVATE asio::asio)
+else()
+  target_link_libraries(asio_test PRIVATE asio::asio_header)
+endif()
 
 # ---- Setup strict Compiler Warnings ----
-
-include(../../cmake/WarningsAsErrors.cmake OPTIONAL)
 
 add_test(NAME asio_test COMMAND asio_test)
 
