@@ -1,8 +1,8 @@
 {
-  "version": 3,
+  "version": 4,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 21,
+    "minor": 23,
     "patch": 0
   },
   "configurePresets": [
@@ -76,7 +76,7 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_FLAGS":
-            "-fstack-protector-strong -fcf-protection=full -Wall -Wextra -Wpedantic -Wno-conversion -Wno-sign-conversion -Wcast-qual -Wformat=2 -Wundef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wno-old-style-cast"
+            "-fstack-protector-strong -fcf-protection=full -Wall -Wextra -Wpedantic -Wno-conversion -Wno-sign-conversion -Wcast-qual -Wformat=2 -Wno-undef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wno-implicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wno-old-style-cast"
       },
       "condition": {
         "type": "equals",

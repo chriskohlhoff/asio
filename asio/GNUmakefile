@@ -8,7 +8,7 @@ check:
 	# ninja -C build/dev format-check
 
 test:
-	cmake --preset ci-ubuntu
+	cmake --preset ci-macos
 	DESTDIR=$(CURDIR)/stagedir cmake --build build --target install
 	cmake -G Ninja -B build/tests -S src/tests -D CMAKE_PREFIX_PATH=$(CURDIR)/stagedir/usr/local
 	cmake --build build/tests

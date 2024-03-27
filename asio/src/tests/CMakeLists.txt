@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21...3.29)
+cmake_minimum_required(VERSION 3.23...3.29)
 
 project(asio_test LANGUAGES CXX)
 

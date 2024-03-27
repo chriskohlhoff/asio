@@ -13,24 +13,12 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
 if(PROJECT_IS_TOP_LEVEL)
-  option(CMAKE_VERIFY_INTERFACE_HEADER_SETS "FIXME: some header in include/asio/detail fails!" OFF)
   include(CheckCXXSymbolExists)
   check_cxx_symbol_exists(snprintf cstdio ASIO_HAS_SNPRINTF)
   check_cxx_symbol_exists(sprintf_s cstdio ASIO_HAS_SECURE_RTL)
 endif()
 
 # ---- Declare library ----
-
-file(GLOB_RECURSE headers "include/asio/*.hpp")
-list(FILTER headers EXCLUDE REGEX [=[.*/experimental/.*\.hpp]=])
-list(FILTER headers EXCLUDE REGEX [=[.*/ssl\.hpp]=])
-
-set(public_headers ${headers})
-list(FILTER public_headers EXCLUDE REGEX [=[.*/impl/.*\.hpp]=])
-
-# foreach(header in LISTS ${public_headers})
-#   message(INFO "${header}")
-# endforeach()
 
 file(GLOB_RECURSE implementation "include/asio/*/*.hpp" "include/asio/*.ipp")
 list(FILTER implementation EXCLUDE REGEX [=[.*/experimental/.*]=])
@@ -49,7 +37,7 @@ endif()
 target_compile_definitions(asio_header INTERFACE ${CPPdefinitions})
 target_compile_features(asio_header INTERFACE cxx_std_17)
 
-# ---- add dependenc libraries ----
+# ---- add dependency libraries ----
 
 find_package(Threads REQUIRED)
 target_link_libraries(asio_header INTERFACE Threads::Threads)
@@ -61,6 +49,20 @@ if(ASIO_SEPARATE_COMPILATION)
   if(OpenSSL_FOUND)
     set(libasio_SOURCES ${libasio_SOURCES} src/asio_ssl.cpp)
   endif()
+
+  set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL})
+
+  file(GLOB_RECURSE headers "include/asio/*.hpp")
+  list(FILTER headers EXCLUDE REGEX [=[.*/experimental/.*\.hpp]=])
+  list(FILTER headers EXCLUDE REGEX [=[.*/ssl\.hpp]=])
+
+  # FIXME: some header in include/asio/detail fails CMAKE_VERIFY_INTERFACE_HEADER_SETS!
+  set(public_headers ${headers})
+  list(FILTER public_headers EXCLUDE REGEX [=[.*/detail/.*\.hpp]=])
+  list(FILTER public_headers EXCLUDE REGEX [=[.*/impl/.*\.hpp]=])
+  # foreach(header in LISTS ${public_headers})
+  #   message(INFO "${header}")
+  # endforeach()
 
   add_library(asio ${libasio_SOURCES})
   add_library(asio::asio ALIAS asio)
