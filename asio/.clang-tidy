@@ -12,6 +12,8 @@ Checks: "*,\
   -llvmlibc-*,\
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,\
   -*-magic-numbers,\
+  -misc-include-cleaner,\
+  -misc-header-include-cycle,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:

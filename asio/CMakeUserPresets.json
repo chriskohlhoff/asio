@@ -56,7 +56,7 @@
     {
       "name": "dev",
       "binaryDir": "${sourceDir}/build/dev",
-      "inherits": "dev-darwin"
+      "inherits": "dev-linux"
     },
     {
       "name": "dev-coverage",

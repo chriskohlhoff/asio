@@ -3,8 +3,9 @@ all: .init
 	cmake --workflow --preset dev
 
 check:
-	ninja -C build/dev spell-check
-	ninja -C build/dev format-check
+	run-clang-tidy -p build/dev -checks='-*,misc-header-*' src/tests
+	# ninja -C build/dev spell-check
+	# ninja -C build/dev format-check
 
 .init: requirements.txt
 	-pip3 install --user --upgrade -r requirements.txt
