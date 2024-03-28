@@ -16,6 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(HAVE_BOOST) || defined(GENERATING_DOCUMENTATION)
+#include <boost/coroutine/all.hpp>
 #include "asio/any_io_executor.hpp"
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
@@ -868,5 +871,7 @@ void spawn(ExecutionContext& ctx, Function&& function,
 #include "asio/detail/pop_options.hpp"
 
 #include "asio/impl/spawn.hpp"
+
+#endif // defined(HAVE_BOOST) || defined(GENERATING_DOCUMENTATION)
 
 #endif // ASIO_SPAWN_HPP

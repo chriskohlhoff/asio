@@ -96,6 +96,8 @@ private:
   size_t next_read_length_;
 };
 
+// NOLINTBEGIN
+
 static const char read_data[]
   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -1627,3 +1629,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_dynamic_string_async_read_until_match_condition)
   ASIO_TEST_CASE(test_streambuf_async_read_until_match_condition)
 )
+
+// NOLINTEND

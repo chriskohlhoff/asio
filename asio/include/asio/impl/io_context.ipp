@@ -16,7 +16,9 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/io_context.hpp"
+
+// warning: circular header file dependency detected while including 'io_context.hpp', please check the include path [misc-header-include-cycle]
+// XXX #include "asio/io_context.hpp"
 #include "asio/detail/concurrency_hint.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/scoped_ptr.hpp"
