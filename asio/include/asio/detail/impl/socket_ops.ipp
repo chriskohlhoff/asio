@@ -1980,7 +1980,8 @@ int setsockopt(socket_type s, state_type& state, int level, int optname,
   {
 #if defined(__MACH__) && defined(__APPLE__) \
   || defined(__NetBSD__) || defined(__FreeBSD__) \
-  || defined(__OpenBSD__) || defined(__QNX__)
+  || defined(__OpenBSD__) || defined(__QNX__) \
+  || (defined(__linux__) && defined(SO_REUSEPORT))
     // To implement portable behaviour for SO_REUSEADDR with UDP sockets we
     // need to also set SO_REUSEPORT on BSD-based platforms.
     if ((state & datagram_oriented)
