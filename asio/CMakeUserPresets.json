@@ -18,11 +18,11 @@
       }
     },
     {
-      "name": "dev-linux",
-      "binaryDir": "${sourceDir}/build/dev-linux",
+      "name": "dev-Linux",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "inherits": [
         "dev-common",
-        "ci-linux"
+        "ci-Linux"
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
@@ -30,11 +30,11 @@
       }
     },
     {
-      "name": "dev-darwin",
-      "binaryDir": "${sourceDir}/build/dev-darwin",
+      "name": "dev-Darwin",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "inherits": [
         "dev-common",
-        "ci-darwin"
+        "ci-Darwin"
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
@@ -42,11 +42,11 @@
       }
     },
     {
-      "name": "dev-win64",
-      "binaryDir": "${sourceDir}/build/dev-win64",
+      "name": "dev-Windows",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "inherits": [
         "dev-common",
-        "ci-win64"
+        "ci-windows"
       ],
       "environment": {
         "UseMultiToolTask": "true",
@@ -56,14 +56,14 @@
     {
       "name": "dev",
       "binaryDir": "${sourceDir}/build/dev",
-      "inherits": "dev-darwin"
+      "inherits": "dev-<hostSystemName>"
     },
     {
       "name": "dev-coverage",
       "binaryDir": "${sourceDir}/build/coverage",
       "inherits": [
         "dev-mode",
-        "coverage-linux"
+        "coverage-Linux"
       ]
     }
   ],
@@ -118,7 +118,7 @@
         },
         {
           "type": "build",
-          "name": "dev"
+          "name": "verify"
         },
         {
           "type": "test",

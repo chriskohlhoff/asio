@@ -18,34 +18,36 @@ if(PROJECT_IS_TOP_LEVEL)
   check_cxx_symbol_exists(sprintf_s cstdio ASIO_HAS_SECURE_RTL)
 endif()
 
-# ---- Declare library ----
-
-file(GLOB_RECURSE implementation "include/asio/*/*.hpp" "include/asio/*.ipp")
-list(FILTER implementation EXCLUDE REGEX [=[.*/experimental/.*]=])
-
-add_library(asio_header INTERFACE ${implementation})
-add_library(asio::asio_header ALIAS asio_header)
-
-target_sources(asio_header INTERFACE FILE_SET HEADERS BASE_DIRS include FILES ${implementation})
-
 set(CPPdefinitions ASIO_NO_DEPRECATED)
 if(ASIO_HAS_SECURE_RTL)
   list(APPEND CPPdefinitions ASIO_HAS_SECURE_RTL)
 elseif(ASIO_HAS_SNPRINTF)
   list(APPEND CPPdefinitions ASIO_HAS_SNPRINTF)
 endif()
-target_compile_definitions(asio_header INTERFACE ${CPPdefinitions})
-target_compile_features(asio_header INTERFACE cxx_std_17)
+
+option(ASIO_SEPARATE_COMPILATION "build asio lib too" ${PROJECT_IS_TOP_LEVEL})
 
 # ---- add dependency libraries ----
 
 find_package(Threads REQUIRED)
+
+# ---- Declare library ----
+
+file(GLOB_RECURSE implementation "include/asio/*/*.hpp" "include/asio/*.ipp")
+list(FILTER implementation EXCLUDE REGEX [=[.*/experimental/.*]=])
+
+add_library(asio_header INTERFACE)
+add_library(asio::asio_header ALIAS asio_header)
+target_sources(asio_header INTERFACE FILE_SET HEADERS BASE_DIRS include FILES ${implementation})
+
+target_compile_definitions(asio_header INTERFACE ${CPPdefinitions})
+target_compile_features(asio_header INTERFACE cxx_std_17)
 target_link_libraries(asio_header INTERFACE Threads::Threads)
 
-option(ASIO_SEPARATE_COMPILATION "build asio lib too" ${PROJECT_IS_TOP_LEVEL})
 if(ASIO_SEPARATE_COMPILATION)
   find_package(OpenSSL)
   set(libasio_SOURCES src/asio.cpp)
+
   if(OpenSSL_FOUND)
     set(libasio_SOURCES ${libasio_SOURCES} src/asio_ssl.cpp)
   endif()
@@ -57,6 +59,7 @@ if(ASIO_SEPARATE_COMPILATION)
   list(FILTER headers EXCLUDE REGEX [=[.*/ssl\.hpp]=])
 
   # FIXME: some header in include/asio/detail fails CMAKE_VERIFY_INTERFACE_HEADER_SETS!
+  # NOTE: we need them installed, but we used them install with asio_header INTERFACE! CK
   set(public_headers ${headers})
   list(FILTER public_headers EXCLUDE REGEX [=[.*/detail/.*\.hpp]=])
   list(FILTER public_headers EXCLUDE REGEX [=[.*/impl/.*\.hpp]=])
@@ -71,6 +74,7 @@ if(ASIO_SEPARATE_COMPILATION)
   target_compile_definitions(asio PUBLIC ASIO_SEPARATE_COMPILATION ${CPPdefinitions})
   target_link_libraries(asio PUBLIC Threads::Threads)
   target_compile_features(asio INTERFACE cxx_std_17)
+
   if(OpenSSL_FOUND)
     target_link_libraries(asio PUBLIC OpenSSL::SSL)
   endif()

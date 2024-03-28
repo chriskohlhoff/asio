@@ -55,7 +55,7 @@
       }
     },
     {
-      "name": "flags-linux",
+      "name": "flags-Linux",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_FLAGS":
@@ -72,7 +72,7 @@
       }
     },
     {
-      "name": "flags-darwin",
+      "name": "flags-Darwin",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_FLAGS":
@@ -85,7 +85,7 @@
       }
     },
     {
-      "name": "flags-windows",
+      "name": "flags-Windows",
       "description":
           "Note that all the flags after /W4 are required for MSVC to conform to the language standard",
       "hidden": true,
@@ -101,11 +101,11 @@
       }
     },
     {
-      "name": "ci-linux",
+      "name": "gen-Linux",
       "generator": "Unix Makefiles",
       "hidden": true,
       "inherits": [
-        "flags-linux",
+        "flags-Linux",
         "ci-std"
       ],
       "cacheVariables": {
@@ -113,11 +113,11 @@
       }
     },
     {
-      "name": "ci-darwin",
+      "name": "gen-Darwin",
       "generator": "Unix Makefiles",
       "hidden": true,
       "inherits": [
-        "flags-darwin",
+        "flags-Darwin",
         "ci-std"
       ],
       "cacheVariables": {
@@ -125,9 +125,9 @@
       }
     },
     {
-      "name": "ci-win64",
+      "name": "gen-win64",
       "inherits": [
-        "flags-windows",
+        "flags-Windows",
         "ci-std"
       ],
       "generator": "Visual Studio 17 2022",
@@ -135,9 +135,9 @@
       "hidden": true
     },
     {
-      "name": "coverage-linux",
+      "name": "coverage-Linux",
       "binaryDir": "${sourceDir}/build/coverage",
-      "inherits": "ci-linux",
+      "inherits": "gen-Linux",
       "hidden": true,
       "cacheVariables": {
         "ENABLE_COVERAGE": "ON",
@@ -152,7 +152,7 @@
     {
       "name": "ci-coverage",
       "inherits": [
-        "coverage-linux",
+        "coverage-Linux",
         "dev-mode"
       ],
       "cacheVariables": {
@@ -163,7 +163,7 @@
       "name": "ci-sanitize",
       "binaryDir": "${sourceDir}/build/sanitize",
       "inherits": [
-        "ci-linux",
+        "gen-Linux",
         "clang-tidy",
         "dev-mode"
       ],
@@ -180,26 +180,34 @@
       "hidden": true
     },
     {
-      "name": "ci-macos",
+      "name": "ci-Darwin",
       "inherits": [
         "ci-build",
-        "ci-darwin",
+        "gen-Darwin",
+        "dev-mode"
+      ]
+    },
+    {
+      "name": "ci-macos",
+      "inherits": "ci-Darwin"
+    },
+    {
+      "name": "ci-Linux",
+      "inherits": [
+        "ci-build",
+        "gen-Linux",
         "dev-mode"
       ]
     },
     {
       "name": "ci-ubuntu",
-      "inherits": [
-        "ci-build",
-        "ci-linux",
-        "dev-mode"
-      ]
+      "inherits": "ci-Linux"
     },
     {
       "name": "ci-windows",
       "inherits": [
         "ci-build",
-        "ci-win64",
+        "gen-win64",
         "dev-mode"
       ]
     }

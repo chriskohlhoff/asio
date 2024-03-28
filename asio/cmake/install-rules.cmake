@@ -15,19 +15,11 @@ set(package asio)
 
 #NO! install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT asio_Development)
 
-install(TARGETS asio_header
-        EXPORT asioTargets
-        INCLUDES
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        FILE_SET HEADERS
-)
+if(TARGET asio_header)
+  install(TARGETS asio_header EXPORT asioTargets FILE_SET HEADERS)
+endif()
 if(TARGET asio)
-  install(TARGETS asio
-          EXPORT asioTargets
-          INCLUDES
-          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-          FILE_SET public_headers
-  )
+  install(TARGETS asio EXPORT asioTargets FILE_SET public_headers)
 endif()
 
 write_basic_package_version_file("${package}ConfigVersion.cmake" COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
