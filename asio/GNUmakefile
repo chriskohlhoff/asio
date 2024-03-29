@@ -1,3 +1,11 @@
+# Standard stuff
+
+.SUFFIXES:
+$(VERBOSE).SILENT:
+
+MAKEFLAGS+= --no-builtin-rules
+MAKEFLAGS+= --warn-undefined-variables
+
 export hostSystemName=$(shell uname)
 
 .PHONY: all check test clean distclean
@@ -16,8 +24,8 @@ test:
 	cmake --build build/tests
 	ctest --test-dir build/tests
 
-.init: requirements.txt CMakeUserPresets.json
-	perl -p -i.bak -e 's/<hostSystemName>/${hostSystemName}/;' CMakeUserPresets.json
+.init: requirements.txt .CMakeUserPresets.json
+	perl -p -e 's/<hostSystemName>/${hostSystemName}/;' .CMakeUserPresets.json > CMakeUserPresets.json
 	-pip3 install --user --upgrade -r requirements.txt
 	touch .init
 
@@ -26,3 +34,12 @@ clean:
 
 distclean: clean
 	rm -rf stagedir .init tags *.bak
+
+GNUmakefile :: ;
+*.txt :: ;
+*.json :: ;
+
+# Anything we don't know how to build will use this rule.
+# The command is a do-nothing command.
+#
+% :: ;
