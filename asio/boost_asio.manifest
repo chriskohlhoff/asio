@@ -4607,8 +4607,11 @@
 /doc/html/boost_asio/reference/io_context__strand/post/overload1.html
 /doc/html/boost_asio/reference/io_context__strand/post/overload2.html
 /doc/html/boost_asio/reference/io_context__strand/running_in_this_thread.html
+/doc/html/boost_asio/reference/io_context__strand/strand/
 /doc/html/boost_asio/reference/io_context__strand/_strand.html
 /doc/html/boost_asio/reference/io_context__strand/strand.html
+/doc/html/boost_asio/reference/io_context__strand/strand/overload1.html
+/doc/html/boost_asio/reference/io_context__strand/strand/overload2.html
 /doc/html/boost_asio/reference/io_context__strand/wrap.html
 /doc/html/boost_asio/reference/io_context/use_service.html
 /doc/html/boost_asio/reference/io_context__work/
@@ -5047,6 +5050,8 @@
 /doc/html/boost_asio/reference/ip__basic_resolver_query/basic_resolver_query/overload2.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/basic_resolver_query/overload3.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/basic_resolver_query/overload4.html
+/doc/html/boost_asio/reference/ip__basic_resolver_query/basic_resolver_query/overload5.html
+/doc/html/boost_asio/reference/ip__basic_resolver_query/basic_resolver_query/overload6.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/canonical_name.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/flags.html
 /doc/html/boost_asio/reference/ip__basic_resolver_query/hints.html
@@ -7150,6 +7155,7 @@
 /libs/asio/test/experimental/coro/stack_test.cpp
 /libs/asio/test/experimental/coro/use_coro.cpp
 /libs/asio/test/experimental/Jamfile.v2
+/libs/asio/test/experimental/parallel_group.cpp
 /libs/asio/test/experimental/promise.cpp
 /libs/asio/test/file_base.cpp
 /libs/asio/test/generic/

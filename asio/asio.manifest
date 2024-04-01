@@ -3668,8 +3668,11 @@
 /doc/asio/reference/io_context__strand/post/overload1.html
 /doc/asio/reference/io_context__strand/post/overload2.html
 /doc/asio/reference/io_context__strand/running_in_this_thread.html
+/doc/asio/reference/io_context__strand/strand/
 /doc/asio/reference/io_context__strand/_strand.html
 /doc/asio/reference/io_context__strand/strand.html
+/doc/asio/reference/io_context__strand/strand/overload1.html
+/doc/asio/reference/io_context__strand/strand/overload2.html
 /doc/asio/reference/io_context__strand/wrap.html
 /doc/asio/reference/io_context/use_service.html
 /doc/asio/reference/io_context__work/
@@ -4108,6 +4111,8 @@
 /doc/asio/reference/ip__basic_resolver_query/basic_resolver_query/overload2.html
 /doc/asio/reference/ip__basic_resolver_query/basic_resolver_query/overload3.html
 /doc/asio/reference/ip__basic_resolver_query/basic_resolver_query/overload4.html
+/doc/asio/reference/ip__basic_resolver_query/basic_resolver_query/overload5.html
+/doc/asio/reference/ip__basic_resolver_query/basic_resolver_query/overload6.html
 /doc/asio/reference/ip__basic_resolver_query/canonical_name.html
 /doc/asio/reference/ip__basic_resolver_query/flags.html
 /doc/asio/reference/ip__basic_resolver_query/hints.html
@@ -6859,6 +6864,7 @@
 /src/tests/unit/experimental/coro/simple_test.cpp
 /src/tests/unit/experimental/coro/stack_test.cpp
 /src/tests/unit/experimental/coro/use_coro.cpp
+/src/tests/unit/experimental/parallel_group.cpp
 /src/tests/unit/experimental/promise.cpp
 /src/tests/unit/file_base.cpp
 /src/tests/unit/generic/
