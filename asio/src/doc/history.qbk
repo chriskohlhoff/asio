@@ -7,6 +7,29 @@
 
 [section:history Revision History]
 
+[heading Asio 1.30.1]
+
+* Fixed the `async_result` primary template's concept checking to correctly
+  handle lvalue-qualified completion signatures.
+
+* Fixed some compile errors that could arise when using the `bind_allocator`,
+  `bind_executor`, `bind_immediate_executor` and `bind_cancellation_slot`
+  completion token adapters to adapt each other.
+
+* Changed the `experimental::ranged_parallel_group` operation so that it moves
+  the `completion_order` vector when invoking the completion handler.
+
+* Fixed the [^asio/experimental/parallel_group.hpp] header so that it is
+  self-contained.
+
+* Fixed some warnings about deprecated implicit copy constructors on
+  `ip::basic_resolver_query`, `io_context::strand`, and `coroutine`.
+
+* Updated the version specification used to initialise Winsock.
+
+* Fixed the documentation hyperlinks for the deduced return types of
+  asynchronous operations' initiating functions.
+
 [heading Asio 1.30.0]
 
 * Fixed compatibility between `any_completion_handler` and compilation using
