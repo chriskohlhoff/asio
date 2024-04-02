@@ -150,7 +150,10 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
     bool switched = (co_await awaitable_thread_has_context_switched{});
     if (!switched)
+    {
+      co_await this_coro::throw_if_cancelled(false);
       (void) co_await co_spawn_post();
+    }
 
     (dispatch)(s.handler_work.get_executor(),
         [handler = std::move(s.handler), t = std::move(t)]() mutable
@@ -170,7 +173,10 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
   bool switched = (co_await awaitable_thread_has_context_switched{});
   if (!switched)
+  {
+    co_await this_coro::throw_if_cancelled(false);
     (void) co_await co_spawn_post();
+  }
 
   (dispatch)(s.handler_work.get_executor(),
       [handler = std::move(s.handler), e]() mutable
@@ -198,7 +204,10 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
   bool switched = (co_await awaitable_thread_has_context_switched{});
   if (!switched)
+  {
+    co_await this_coro::throw_if_cancelled(false);
     (void) co_await co_spawn_post();
+  }
 
   (dispatch)(s.handler_work.get_executor(),
       [handler = std::move(s.handler), e]() mutable
