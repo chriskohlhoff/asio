@@ -83,7 +83,7 @@ public:
   struct implementation_type;
 
   // Constructor.
-  channel_service(execution_context& ctx);
+  channel_service(asio::execution_context& ctx);
 
   // Destroy all user-defined handler objects owned by the service.
   void shutdown();

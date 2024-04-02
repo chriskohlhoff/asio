@@ -22,7 +22,8 @@ namespace experimental {
 namespace detail {
 
 template <typename Mutex>
-inline channel_service<Mutex>::channel_service(execution_context& ctx)
+inline channel_service<Mutex>::channel_service(
+    asio::execution_context& ctx)
   : asio::detail::execution_context_service_base<channel_service>(ctx),
     mutex_(),
     impl_list_(0)
