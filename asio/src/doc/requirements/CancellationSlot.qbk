@@ -48,15 +48,44 @@ denote identifiers.
     [Same as `!(x1 == x2)`.]
   ]
   [
+    [`x1.is_connected()`]
+    [`bool`]
+    [Returns `false` only if the slot can never cause the invocation of a
+     handler attached to the slot using `assign` or `emplace`.]
+  ]
+  [
+    [`x1.has_handler()`]
+    [`bool`]
+    [Returns `true` if a handler has been attached to the slot.]
+  ]
+  [
     [`x1.assign(h)`]
     [`H&`]
-    []
+    [Destroys the existing handler that is attached to the slot, if any, and
+     attaches a move-constructed decay-copy of the handler `h`.[br]
+     [br]
+     Returns a reference to the newly attached handler.[br]
+     [br]
+     post: `x1.has_handler() == true`.]
   ]
   [
     [`x1.emplace<H>(u0, ..., uN)`]
     [`H&`]
     [Requires that `is_constructible<H, decltype(u0), ...,
-     decltype(u0)>::value` be true.]
+     decltype(u0)>::value` be true.[br]
+     [br]
+     Destroys the existing handler that is attached to the slot, if any, and
+     attaches a handler of type `H` constructed with the specified arguments
+     `u0, ..., uN`.[br]
+     [br]
+     Returns a reference to the newly attached handler.[br]
+     [br]
+     post: `x1.has_handler() == true`.]
+  ]
+  [
+    [`x1.clear()`]
+    []
+    [Post: `x1.has_handler() == false`.]
   ]
 ]
 
