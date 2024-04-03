@@ -1,11 +1,47 @@
 [/
- / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
 [section:history Revision History]
+
+[heading Asio 1.30.1]
+
+* Fixed the `async_result` primary template's concept checking to correctly
+  handle lvalue-qualified completion signatures.
+
+* Fixed some compile errors that could arise when using the `bind_allocator`,
+  `bind_executor`, `bind_immediate_executor` and `bind_cancellation_slot`
+  completion token adapters to adapt each other.
+
+* Changed the `experimental::ranged_parallel_group` operation so that it moves
+  the `completion_order` vector when invoking the completion handler.
+
+* Fixed the [^asio/experimental/parallel_group.hpp] header so that it is
+  self-contained.
+
+* Fixed some warnings about deprecated implicit copy constructors on
+  `ip::basic_resolver_query`, `io_context::strand`, and `coroutine`.
+
+* Updated the version specification used to initialise Winsock.
+
+* Fixed the documentation hyperlinks for the deduced return types of
+  asynchronous operations' initiating functions.
+
+[heading Asio 1.30.0]
+
+* Fixed compatibility between `any_completion_handler` and compilation using
+  `ASIO_USE_TS_EXECUTOR_AS_DEFAULT`.
+
+* Fixed a crash that may occur when attempting to access a default-constructed
+  `any_completion_handler` object's associators.
+
+* Fixed `ssl::stream<>` class's `async_handshake` operation so that it works
+  with a defaulted completion token.
+
+* Updated all examples to use C++11 as the minimum language standard.
 
 [heading Asio 1.29.0]
 

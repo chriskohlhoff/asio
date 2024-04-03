@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <!--
-  Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -30,7 +30,7 @@
 -->
 <xsl:template match="/doxygen">
 <xsl:text>[/
- / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -82,18 +82,14 @@
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
 [include requirements/NullaryToken.qbk]
-[include requirements/OperationState.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RangeConnectHandler.qbk]
 [include requirements/RangeConnectToken.qbk]
 [include requirements/ReadHandler.qbk]
 [include requirements/ReadToken.qbk]
-[include requirements/Receiver.qbk]
 [include requirements/ResolveHandler.qbk]
 [include requirements/ResolveToken.qbk]
-[include requirements/Scheduler.qbk]
-[include requirements/Sender.qbk]
 [include requirements/Service.qbk]
 [include requirements/SettableSerialPortOption.qbk]
 [include requirements/SettableSocketOption.qbk]
@@ -215,6 +211,7 @@
 
 <xsl:template name="cleanup-type">
   <xsl:param name="name"/>
+  <xsl:param name="function-name"/>
   <xsl:variable name="type">
     <xsl:choose>
       <xsl:when test="contains($name, 'ASIO_DECL ')">
@@ -232,7 +229,10 @@
   <xsl:choose>
     <xsl:when test="$type='void_or_deduced'">
       <xsl:text>``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]``</xsl:text>
-    </xsl:when>   
+    </xsl:when>
+    <xsl:when test="$type='auto' and starts-with($function-name, 'async_')">
+      <xsl:text>``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]``</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:value-of select="$type"/>
     </xsl:otherwise>   
@@ -1391,6 +1391,7 @@
  <xsl:variable name="stripped-type">
   <xsl:call-template name="cleanup-type">
     <xsl:with-param name="name" select="type"/>
+    <xsl:with-param name="function-name" select="name"/>
   </xsl:call-template>
  </xsl:variable>
  <xsl:if test="string-length($stripped-type) &gt; 0">
@@ -1608,6 +1609,7 @@
 <xsl:variable name="stripped-type">
  <xsl:call-template name="cleanup-type">
    <xsl:with-param name="name" select="type"/>
+   <xsl:with-param name="function-name" select="name"/>
  </xsl:call-template>
 </xsl:variable>
 <xsl:text>  </xsl:text><xsl:if test="@static='yes'">static </xsl:if><xsl:if 
@@ -2054,6 +2056,7 @@
 <xsl:variable name="stripped-type">
  <xsl:call-template name="cleanup-type">
    <xsl:with-param name="name" select="type"/>
+   <xsl:with-param name="function-name" select="$unqualified-name"/>
  </xsl:call-template>
 </xsl:variable>
 <xsl:if test="position() = 1 or not(briefdescription = preceding-sibling::memberdef[1]/briefdescription)">

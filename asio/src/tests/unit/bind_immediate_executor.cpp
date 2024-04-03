@@ -2,7 +2,7 @@
 // bind_immediate_executor.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -75,6 +75,23 @@ void bind_immediate_executor_to_function_object_test()
   ioc2.run();
 
   ASIO_CHECK(count == 1);
+
+  async_immediate(ioc1,
+      bind_immediate_executor(
+        ioc2.get_executor(),
+        bind_immediate_executor(
+          asio::system_executor(),
+          bindns::bind(&increment, &count))));
+
+  ioc1.restart();
+  ioc1.run();
+
+  ASIO_CHECK(count == 1);
+
+  ioc2.restart();
+  ioc2.run();
+
+  ASIO_CHECK(count == 2);
 }
 
 struct incrementer_token_v1
