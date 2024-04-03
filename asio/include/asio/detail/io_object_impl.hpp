@@ -1,6 +1,6 @@
 //
-// io_object_impl.hpp
-// ~~~~~~~~~~~~~~~~~~
+// detail/io_object_impl.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

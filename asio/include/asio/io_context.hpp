@@ -642,10 +642,6 @@ private:
   impl_type& impl_;
 };
 
-namespace detail {
-
-} // namespace detail
-
 /// Executor implementation type used to submit functions to an io_context.
 template <typename Allocator, uintptr_t Bits>
 class io_context::basic_executor_type :
