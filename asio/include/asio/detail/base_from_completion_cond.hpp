@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/completion_condition.hpp"
+#include "asio/error_code.hpp"
 
 #include "asio/detail/push_options.hpp"
 

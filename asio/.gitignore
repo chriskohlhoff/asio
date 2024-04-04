@@ -35,3 +35,6 @@ stagedir/
 prefix/
 CMakeLists.txt.user
 CMakeUserPresets.json
+tags
+*.swp
+*.bak

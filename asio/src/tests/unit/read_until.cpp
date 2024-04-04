@@ -16,8 +16,10 @@
 // Test that header file is self-contained.
 #include "asio/read_until.hpp"
 
-#include <cstring>
-#include <functional>
+#include <cstring>                       // for memcpy
+#include <functional>                    // for _Bind_helper<>::type, bind
+#include "asio/error_code.hpp"           // for error_code
+#include "asio/buffer.hpp"               // for is_dynamic_buffer_v2
 #include "archetypes/async_result.hpp"
 #include "asio/io_context.hpp"
 #include "asio/post.hpp"
@@ -80,7 +82,7 @@ public:
   template <typename Mutable_Buffers, typename Handler>
   void async_read_some(const Mutable_Buffers& buffers, Handler handler)
   {
-    size_t bytes_transferred = read_some(buffers);
+    const size_t bytes_transferred = read_some(buffers);
     asio::post(get_executor(),
         asio::detail::bind_handler(
           static_cast<Handler&&>(handler),
@@ -91,9 +93,9 @@ private:
   asio::io_context& io_context_;
   enum { max_length = 8192 };
   char data_[max_length];
-  size_t length_;
-  size_t position_;
-  size_t next_read_length_;
+  size_t length_{0};
+  size_t position_{0};
+  size_t next_read_length_{0};
 };
 
 // NOLINTBEGIN

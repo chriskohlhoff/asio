@@ -13,7 +13,11 @@ all: .init
 	cmake --workflow --preset dev
 
 check:
-	run-clang-tidy -p build/dev -checks='-*,misc-header-*' src/tests
+	-iwyu_tool -p build/dev \
+		build/dev/asio_verify_interface_header_sets/asio/basic_readable_pipe.hpp.cxx \
+		build/dev/asio_verify_interface_header_sets/asio/detail/reactive_socket_send_op.hpp.cxx \
+		-- -Xiwyu --cxx17ns #XXX -Xiwyu --transitive_includes_only
+	run-clang-tidy -p build/dev -checks='-*,misc-header-*,misc-include-*' src/tests
 	# ninja -C build/dev spell-check
 	# ninja -C build/dev format-check
 
