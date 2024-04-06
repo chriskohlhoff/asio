@@ -49,7 +49,7 @@ struct occupancy_t
 };
 
 /// A special value used for accessing the occupancy_t property.
-constexpr occupancy_t occupancy;
+ASIO_INLINE_CONSTEXPR occupancy_t occupancy;
 
 } // namespace execution
 
@@ -131,7 +131,7 @@ const T occupancy_t<I>::static_query_v;
 
 typedef detail::occupancy_t<> occupancy_t;
 
-constexpr occupancy_t occupancy;
+ASIO_INLINE_CONSTEXPR occupancy_t occupancy;
 
 } // namespace execution
 
