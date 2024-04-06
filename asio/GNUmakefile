@@ -23,7 +23,8 @@ check:
 
 test:
 	cmake --preset ci-${hostSystemName}
-	DESTDIR=$(CURDIR)/stagedir cmake --build build --target install
+	cmake --build build
+	cmake --install build --prefix $(CURDIR)/stagedir
 	cmake -G Ninja -B build/tests -S src/tests -D CMAKE_PREFIX_PATH=$(CURDIR)/stagedir/usr/local
 	cmake --build build/tests
 	ctest --test-dir build/tests
