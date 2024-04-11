@@ -2,7 +2,7 @@
 // bind_cancellation_slot.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -67,6 +67,23 @@ void bind_cancellation_slot_to_function_object_test()
   ioc.run();
 
   ASIO_CHECK(count == 1);
+
+  t.async_wait(
+      bind_cancellation_slot(sig.slot(),
+        bind_cancellation_slot(sig.slot(),
+          bindns::bind(&increment_on_cancel,
+            &count, bindns::placeholders::_1))));
+
+  ioc.restart();
+  ioc.poll();
+
+  ASIO_CHECK(count == 1);
+
+  sig.emit(asio::cancellation_type::all);
+
+  ioc.run();
+
+  ASIO_CHECK(count == 2);
 }
 
 struct incrementer_token_v1

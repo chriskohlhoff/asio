@@ -192,7 +192,8 @@ check_PROGRAMS += \
 	unit/experimental/basic_concurrent_channel \
 	unit/experimental/channel \
 	unit/experimental/channel_traits \
-	unit/experimental/concurrent_channel
+	unit/experimental/concurrent_channel \
+	unit/experimental/parallel_group
 endif
 
 if HAVE_CXX20
@@ -391,7 +392,8 @@ TESTS += \
 	unit/experimental/basic_concurrent_channel \
 	unit/experimental/channel \
 	unit/experimental/channel_traits \
-	unit/experimental/concurrent_channel
+	unit/experimental/concurrent_channel \
+	unit/experimental/parallel_group
 endif
 
 if HAVE_CXX20
@@ -610,6 +612,7 @@ unit_experimental_basic_concurrent_channel_SOURCES = unit/experimental/basic_con
 unit_experimental_channel_SOURCES = unit/experimental/channel.cpp
 unit_experimental_channel_traits_SOURCES = unit/experimental/channel_traits.cpp
 unit_experimental_concurrent_channel_SOURCES = unit/experimental/concurrent_channel.cpp
+unit_experimental_parallel_group_SOURCES = unit/experimental/parallel_group.cpp
 endif
 
 if HAVE_CXX20

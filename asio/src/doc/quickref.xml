@@ -2,7 +2,7 @@
 <!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN" "../../../boost/tools/boostbook/dtd/boostbook.dtd">
 
 <!--
-  Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+  Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -60,6 +60,16 @@
             <member><link linkend="asio.reference.execution__bad_executor">execution::bad_executor</link></member>
             <member><link linkend="asio.reference.execution__invocable_archetype">execution::invocable_archetype</link></member>
           </simplelist>
+          <bridgehead renderas="sect3">Type Traits</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__is_executor">execution::is_executor</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Concepts</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.Executor1.standard_executors">executor</link></member>
+          </simplelist>
+        </entry>
+        <entry valign="top">
           <bridgehead renderas="sect3">Properties</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution__allocator_t">execution::allocator_t</link></member>
@@ -88,7 +98,7 @@
         </entry>
         <entry valign="top">
           <bridgehead renderas="sect3">Property Objects</bridgehead>
-          <simplelist type="vert" columns="2">
+          <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution__allocator">execution::allocator</link></member>
             <member><link linkend="asio.reference.execution__blocking">execution::blocking</link></member>
             <member><link linkend="asio.reference.execution__blocking_t.possibly">execution::blocking.possibly</link></member>
@@ -110,16 +120,6 @@
             <member><link linkend="asio.reference.execution__relationship">execution::relationship</link></member>
             <member><link linkend="asio.reference.execution__relationship_t.fork">execution::relationship.fork</link></member>
             <member><link linkend="asio.reference.execution__relationship_t.continuation">execution::relationship.continuation</link></member>
-          </simplelist>
-        </entry>
-        <entry valign="top">
-          <bridgehead renderas="sect3">Type Traits</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.execution__is_executor">execution::is_executor</link></member>
-          </simplelist>
-          <bridgehead renderas="sect3">Concepts</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.Executor1.standard_executors">executor</link></member>
           </simplelist>
         </entry>
       </row>
@@ -169,47 +169,12 @@
             <member><link linkend="asio.reference.system_context">system_context</link></member>
             <member><link linkend="asio.reference.system_error">system_error</link></member>
             <member><link linkend="asio.reference.system_executor">system_executor</link></member>
+            <member><link linkend="asio.reference.this_coro__cancellation_state_t">this_coro::cancellation_state_t</link></member>
             <member><link linkend="asio.reference.this_coro__executor_t">this_coro::executor_t</link></member>
             <member><link linkend="asio.reference.thread">thread</link></member>
             <member><link linkend="asio.reference.thread_pool">thread_pool</link></member>
             <member><link linkend="asio.reference.thread_pool.executor_type">thread_pool::executor_type</link></member>
             <member><link linkend="asio.reference.yield_context">yield_context</link></member>
-          </simplelist>
-        </entry>
-        <entry valign="top">
-          <bridgehead renderas="sect3">Free Functions</bridgehead>
-          <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.execution_context.add_service">add_service</link></member>
-            <member><link linkend="asio.reference.append">append</link></member>
-            <member><link linkend="asio.reference.as_tuple">as_tuple</link></member>
-            <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
-            <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
-            <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
-            <member><link linkend="asio.reference.async_compose">async_compose</link></member>
-            <member><link linkend="asio.reference.async_initiate">async_initiate</link></member>
-            <member><link linkend="asio.reference.bind_allocator">bind_allocator</link></member>
-            <member><link linkend="asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
-            <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
-            <member><link linkend="asio.reference.bind_immediate_executor">bind_immediate_executor</link></member>
-            <member><link linkend="asio.reference.co_spawn">co_spawn</link></member>
-            <member><link linkend="asio.reference.consign">consign</link></member>
-            <member><link linkend="asio.reference.dispatch">dispatch</link></member>
-            <member><link linkend="asio.reference.defer">defer</link></member>
-            <member><link linkend="asio.reference.experimental__co_composed">experimental::co_composed</link></member>
-            <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
-            <member><link linkend="asio.reference.get_associated_cancellation_slot">get_associated_cancellation_slot</link></member>
-            <member><link linkend="asio.reference.get_associated_executor">get_associated_executor</link></member>
-            <member><link linkend="asio.reference.get_associated_immediate_executor">get_associated_immediate_executor</link></member>
-            <member><link linkend="asio.reference.execution_context.has_service">has_service</link></member>
-            <member><link linkend="asio.reference.make_strand">make_strand</link></member>
-            <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
-            <member><link linkend="asio.reference.post">post</link></member>
-            <member><link linkend="asio.reference.prepend">prepend</link></member>
-            <member><link linkend="asio.reference.redirect_error">redirect_error</link></member>
-            <member><link linkend="asio.reference.spawn">spawn</link></member>
-            <member><link linkend="asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
-            <member><link linkend="asio.reference.this_coro__throw_if_cancelled">this_coro::throw_if_cancelled</link></member>
-            <member><link linkend="asio.reference.execution_context.use_service">use_service</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -253,17 +218,54 @@
             <member><link linkend="asio.reference.use_awaitable_t">use_awaitable_t</link></member>
             <member><link linkend="asio.reference.use_future_t">use_future_t</link></member>
           </simplelist>
+        </entry>
+        <entry valign="top">
+          <bridgehead renderas="sect3">Free Functions</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution_context.add_service">add_service</link> (deprecated)</member>
+            <member><link linkend="asio.reference.append">append</link></member>
+            <member><link linkend="asio.reference.as_tuple">as_tuple</link></member>
+            <member><link linkend="asio.reference.asio_handler_is_continuation">asio_handler_is_continuation</link></member>
+            <member><link linkend="asio.reference.async_compose">async_compose</link></member>
+            <member><link linkend="asio.reference.async_initiate">async_initiate</link></member>
+            <member><link linkend="asio.reference.bind_allocator">bind_allocator</link></member>
+            <member><link linkend="asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
+            <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
+            <member><link linkend="asio.reference.bind_immediate_executor">bind_immediate_executor</link></member>
+            <member><link linkend="asio.reference.co_spawn">co_spawn</link></member>
+            <member><link linkend="asio.reference.consign">consign</link></member>
+            <member><link linkend="asio.reference.defer">defer</link></member>
+            <member><link linkend="asio.reference.dispatch">dispatch</link></member>
+            <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
+            <member><link linkend="asio.reference.experimental__co_composed">experimental::co_composed</link></member>
+            <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
+            <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
+            <member><link linkend="asio.reference.get_associated_cancellation_slot">get_associated_cancellation_slot</link></member>
+            <member><link linkend="asio.reference.get_associated_executor">get_associated_executor</link></member>
+            <member><link linkend="asio.reference.get_associated_immediate_executor">get_associated_immediate_executor</link></member>
+            <member><link linkend="asio.reference.execution_context.has_service">has_service</link></member>
+            <member><link linkend="asio.reference.execution_context.make_service">make_service</link></member>
+            <member><link linkend="asio.reference.make_strand">make_strand</link></member>
+            <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
+            <member><link linkend="asio.reference.post">post</link></member>
+            <member><link linkend="asio.reference.prepend">prepend</link></member>
+            <member><link linkend="asio.reference.redirect_error">redirect_error</link></member>
+            <member><link linkend="asio.reference.spawn">spawn</link></member>
+            <member><link linkend="asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
+            <member><link linkend="asio.reference.this_coro__throw_if_cancelled">this_coro::throw_if_cancelled</link></member>
+            <member><link linkend="asio.reference.execution_context.use_service">use_service</link></member>
+          </simplelist>
           <bridgehead renderas="sect3">Special Values</bridgehead>
           <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.deferred">deferred</link></member>
             <member><link linkend="asio.reference.detached">detached</link></member>
             <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
-            <member><link linkend="asio.reference.deferred">deferred</link></member>
             <member><link linkend="asio.reference.experimental__use_coro">experimental::use_coro</link></member>
             <member><link linkend="asio.reference.experimental__use_promise">experimental::use_promise</link></member>
             <member><link linkend="asio.reference.this_coro__cancellation_state">this_coro::cancellation_state</link></member>
             <member><link linkend="asio.reference.this_coro__executor">this_coro::executor</link></member>
-            <member><link linkend="asio.reference.use_future">use_future</link></member>
             <member><link linkend="asio.reference.use_awaitable">use_awaitable</link></member>
+            <member><link linkend="asio.reference.use_future">use_future</link></member>
           </simplelist>
         </entry>
         <entry valign="top">
@@ -274,7 +276,7 @@
             <member><link linkend="asio.reference.error__addrinfo_errors">error::addrinfo_errors</link></member>
             <member><link linkend="asio.reference.error__misc_errors">error::misc_errors</link></member>
           </simplelist>
-          <bridgehead renderas="sect3">Boost.Bind Placeholders</bridgehead>
+          <bridgehead renderas="sect3">Bind Placeholders</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.placeholders__bytes_transferred">placeholders::bytes_transferred</link></member>
             <member><link linkend="asio.reference.placeholders__endpoint">placeholders::endpoint</link></member>

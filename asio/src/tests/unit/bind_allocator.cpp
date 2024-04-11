@@ -2,7 +2,7 @@
 // bind_allocator.cpp
 // ~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -111,6 +111,22 @@ void bind_allocator_to_function_object_test()
   ioc.run();
 
   ASIO_CHECK(count == 1);
+  ASIO_CHECK(allocations == 0);
+
+  t.async_wait(
+      bind_allocator(
+        test_allocator<int>(&allocations),
+        bind_allocator(
+          std::allocator<void>(),
+          bindns::bind(&increment, &count))));
+
+  ASIO_CHECK(count == 1);
+  ASIO_CHECK(allocations == 1);
+
+  ioc.restart();
+  ioc.run();
+
+  ASIO_CHECK(count == 2);
   ASIO_CHECK(allocations == 0);
 }
 
