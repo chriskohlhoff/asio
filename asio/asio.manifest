@@ -4491,7 +4491,6 @@
 /doc/asio/reference/null_buffers/end.html
 /doc/asio/reference/null_buffers.html
 /doc/asio/reference/null_buffers/value_type.html
-/doc/asio/reference/OperationState.html
 /doc/asio/reference/operator_pipe_.html
 /doc/asio/reference/placeholders__bytes_transferred.html
 /doc/asio/reference/placeholders__endpoint.html
@@ -4721,7 +4720,6 @@
 /doc/asio/reference/read_until/overload8.html
 /doc/asio/reference/read_until/overload9.html
 /doc/asio/reference/read_write_operations.html
-/doc/asio/reference/Receiver.html
 /doc/asio/reference/recycling_allocator/
 /doc/asio/reference/recycling_allocator/allocate.html
 /doc/asio/reference/recycling_allocator/deallocate.html
@@ -4778,8 +4776,6 @@
 /doc/asio/reference/ResolveHandler.html
 /doc/asio/reference/resolver_errc__try_again.html
 /doc/asio/reference/ResolveToken.html
-/doc/asio/reference/Scheduler.html
-/doc/asio/reference/Sender.html
 /doc/asio/reference/serial_port_base/
 /doc/asio/reference/serial_port_base__baud_rate/
 /doc/asio/reference/serial_port_base__baud_rate/baud_rate.html

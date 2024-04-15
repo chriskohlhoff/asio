@@ -5451,7 +5451,6 @@
 /doc/html/boost_asio/reference/null_buffers/end.html
 /doc/html/boost_asio/reference/null_buffers.html
 /doc/html/boost_asio/reference/null_buffers/value_type.html
-/doc/html/boost_asio/reference/OperationState.html
 /doc/html/boost_asio/reference/operator_pipe_.html
 /doc/html/boost_asio/reference/placeholders__bytes_transferred.html
 /doc/html/boost_asio/reference/placeholders__endpoint.html
@@ -5681,7 +5680,6 @@
 /doc/html/boost_asio/reference/read_until/overload8.html
 /doc/html/boost_asio/reference/read_until/overload9.html
 /doc/html/boost_asio/reference/read_write_operations.html
-/doc/html/boost_asio/reference/Receiver.html
 /doc/html/boost_asio/reference/recycling_allocator/
 /doc/html/boost_asio/reference/recycling_allocator/allocate.html
 /doc/html/boost_asio/reference/recycling_allocator/deallocate.html
@@ -5738,8 +5736,6 @@
 /doc/html/boost_asio/reference/ResolveHandler.html
 /doc/html/boost_asio/reference/resolver_errc__try_again.html
 /doc/html/boost_asio/reference/ResolveToken.html
-/doc/html/boost_asio/reference/Scheduler.html
-/doc/html/boost_asio/reference/Sender.html
 /doc/html/boost_asio/reference/serial_port_base/
 /doc/html/boost_asio/reference/serial_port_base__baud_rate/
 /doc/html/boost_asio/reference/serial_port_base__baud_rate/baud_rate.html
@@ -6653,7 +6649,6 @@
 /libs/asio/doc/requirements/MoveAcceptToken.qbk
 /libs/asio/doc/requirements/MutableBufferSequence.qbk
 /libs/asio/doc/requirements/NullaryToken.qbk
-/libs/asio/doc/requirements/OperationState.qbk
 /libs/asio/doc/requirements/ProtoAllocator.qbk
 /libs/asio/doc/requirements/Protocol.qbk
 /libs/asio/doc/requirements.qbk
@@ -6662,11 +6657,8 @@
 /libs/asio/doc/requirements/ReadHandler.qbk
 /libs/asio/doc/requirements/ReadToken.qbk
 /libs/asio/doc/requirements/read_write_operations.qbk
-/libs/asio/doc/requirements/Receiver.qbk
 /libs/asio/doc/requirements/ResolveHandler.qbk
 /libs/asio/doc/requirements/ResolveToken.qbk
-/libs/asio/doc/requirements/Scheduler.qbk
-/libs/asio/doc/requirements/Sender.qbk
 /libs/asio/doc/requirements/Service.qbk
 /libs/asio/doc/requirements/SettableSerialPortOption.qbk
 /libs/asio/doc/requirements/SettableSocketOption.qbk
