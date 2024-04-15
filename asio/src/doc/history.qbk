@@ -7,6 +7,27 @@
 
 [section:history Revision History]
 
+[heading Asio 1.30.2]
+
+* Fixed `co_spawn` to correctly propagate exceptions resulting from cancellation
+  to the completion handler.
+
+* Added calls to `std::launder` to fix undefined behaviour in `awaitable<>`
+  internal storage.
+
+* Added missing handling of the `file_base::append` flag in the Windows
+  implementation of file support.
+
+* Updated the socket and descriptor implementations to add more cases where they
+  will fall back to `fcntl` if a call to `ioctl` fails.
+
+* Fixed a compile error that occurred when channels and `experimental::coro`
+  were both used in the same translation unit.
+
+* Added missing CancellationSlot type requirements to documentation.
+
+* Minor documentation updates.
+
 [heading Asio 1.30.1]
 
 * Fixed the `async_result` primary template's concept checking to correctly
