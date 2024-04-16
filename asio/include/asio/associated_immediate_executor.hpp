@@ -49,7 +49,7 @@ struct has_immediate_executor_type<T,
 template <typename E, typename = void, typename = void>
 struct default_immediate_executor
 {
-  typedef require_result_t<E, execution::blocking_t::never_t> type;
+  typedef require_result_t<const E&, execution::blocking_t::never_t> type;
 
   static type get(const E& e) noexcept
   {
