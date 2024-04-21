@@ -381,6 +381,33 @@ sub copy_source_file
       print_line($output, "//", $from, $lineno);
       print_line($output, $line, $from, $lineno);
     }
+    elsif ($line =~ /(# *include )[<"]variant[>"]/)
+    {
+        print_line($output, $1 . "<boost/variant2.hpp>", $from, $lineno);
+    }
+    elsif ($line =~ /std::variant/)
+    {
+      $line =~ s/std::variant/boost::variant2::variant/g;
+      $line =~ s/std::monostate/boost::variant2::monostate/g;
+      $line =~ s/std::get/boost::variant2::get/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /std::visit/)
+    {
+      $line =~ s/std::visit/boost::variant2::visit/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /std::monostate/)
+    {
+      $line =~ s/std::monostate/boost::variant2::monostate/g;
+      print_line($output, $line, $from, $lineno);
+    }
+    elsif ($line =~ /std::in_place_index/)
+    {
+      $line =~ s/std::in_place_index/boost::variant2::in_place_index/g;
+      $line =~ s/std::get/boost::variant2::get/g;
+      print_line($output, $line, $from, $lineno);
+    }
     elsif ($is_quickref)
     {
       if ($line =~ /asio\.reference\.error_code">/)

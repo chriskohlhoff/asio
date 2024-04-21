@@ -122,8 +122,8 @@ awaitable<void> do_test_and_awaitable_operator()
   ASIO_CHECK(i == 0);
 
   ii = co_await (int_0() && int_1());
-  ASIO_CHECK(std::get<0>(ii) == 0);
-  ASIO_CHECK(std::get<1>(ii) == 1);
+  ASIO_CHECK(get<0>(ii) == 0);
+  ASIO_CHECK(get<1>(ii) == 1);
 
   i = co_await (void_ok() && void_ok() && int_0());
   ASIO_CHECK(i == 0);
@@ -132,17 +132,17 @@ awaitable<void> do_test_and_awaitable_operator()
   ASIO_CHECK(i == 0);
 
   ii = co_await (void_ok() && int_0() && int_1());
-  ASIO_CHECK(std::get<0>(ii) == 0);
-  ASIO_CHECK(std::get<1>(ii) == 1);
+  ASIO_CHECK(get<0>(ii) == 0);
+  ASIO_CHECK(get<1>(ii) == 1);
 
   ii = co_await (int_0() && void_ok() && int_1());
-  ASIO_CHECK(std::get<0>(ii) == 0);
-  ASIO_CHECK(std::get<1>(ii) == 1);
+  ASIO_CHECK(get<0>(ii) == 0);
+  ASIO_CHECK(get<1>(ii) == 1);
 
   iii = co_await (int_0() && int_1() && int_2());
-  ASIO_CHECK(std::get<0>(iii) == 0);
-  ASIO_CHECK(std::get<1>(iii) == 1);
-  ASIO_CHECK(std::get<2>(iii) == 2);
+  ASIO_CHECK(get<0>(iii) == 0);
+  ASIO_CHECK(get<1>(iii) == 1);
+  ASIO_CHECK(get<2>(iii) == 2);
 }
 
 void test_and_awaitable_operator()
@@ -181,15 +181,15 @@ awaitable<void> do_test_or_awaitable_operator()
 
   iv = co_await (int_0() || void_ex());
   ASIO_CHECK(iv.index() == 0);
-  ASIO_CHECK(std::get<0>(iv) == 0);
+  ASIO_CHECK(get<0>(iv) == 0);
 
   ii = co_await (int_0() || int_1());
   ASIO_CHECK(ii.index() == 0);
-  ASIO_CHECK(std::get<0>(ii) == 0);
+  ASIO_CHECK(get<0>(ii) == 0);
 
   ii = co_await (int_ex() || int_1());
   ASIO_CHECK(ii.index() == 1);
-  ASIO_CHECK(std::get<1>(ii) == 1);
+  ASIO_CHECK(get<1>(ii) == 1);
 
   vvv = co_await (void_ok() || void_ok() || void_ok());
   ASIO_CHECK(vvv.index() == 0);
@@ -208,78 +208,78 @@ awaitable<void> do_test_or_awaitable_operator()
 
   viv = co_await (void_ex() || int_0() || void_ok());
   ASIO_CHECK(viv.index() == 1);
-  ASIO_CHECK(std::get<1>(viv) == 0);
+  ASIO_CHECK(get<1>(viv) == 0);
 
   vii = co_await (void_ex() || int_0() || int_1());
   ASIO_CHECK(vii.index() == 1);
-  ASIO_CHECK(std::get<1>(vii) == 0);
+  ASIO_CHECK(get<1>(vii) == 0);
 
   ivv = co_await (int_0() || void_ok() || void_ok());
   ASIO_CHECK(ivv.index() == 0);
-  ASIO_CHECK(std::get<0>(ivv) == 0);
+  ASIO_CHECK(get<0>(ivv) == 0);
 
   ivv = co_await (int_ex() || void_ok() || void_ok());
   ASIO_CHECK(ivv.index() == 1);
 
   ivi = co_await (int_0() || void_ok() || int_1());
   ASIO_CHECK(ivi.index() == 0);
-  ASIO_CHECK(std::get<0>(ivi) == 0);
+  ASIO_CHECK(get<0>(ivi) == 0);
 
   ivi = co_await (int_ex() || void_ok() || int_1());
   ASIO_CHECK(ivi.index() == 1);
 
   iiv = co_await (int_0() || int_1() || void_ok());
   ASIO_CHECK(iiv.index() == 0);
-  ASIO_CHECK(std::get<0>(iiv) == 0);
+  ASIO_CHECK(get<0>(iiv) == 0);
 
   iiv = co_await (int_ex() || int_1() || void_ok());
   ASIO_CHECK(iiv.index() == 1);
-  ASIO_CHECK(std::get<0>(iiv) == 1);
+  ASIO_CHECK(get<0>(iiv) == 1);
 
   iiv = co_await (int_ex() || int_ex() || void_ok());
   ASIO_CHECK(iiv.index() == 2);
 
   iii = co_await (int_0() || int_1() || int_2());
   ASIO_CHECK(iii.index() == 0);
-  ASIO_CHECK(std::get<0>(iii) == 0);
+  ASIO_CHECK(get<0>(iii) == 0);
 
   iii = co_await (int_ex() || int_1() || int_2());
   ASIO_CHECK(iii.index() == 1);
-  ASIO_CHECK(std::get<1>(iii) == 1);
+  ASIO_CHECK(get<1>(iii) == 1);
 
   iii = co_await (int_ex() || int_ex() || int_2());
   ASIO_CHECK(iii.index() == 2);
-  ASIO_CHECK(std::get<2>(iii) == 2);
+  ASIO_CHECK(get<2>(iii) == 2);
 
   std::variant<move_only, int> mi = co_await (move_only_0() || int_1());
   ASIO_CHECK(mi.index() == 0);
-  ASIO_CHECK(std::get<0>(mi).value == 0);
+  ASIO_CHECK(get<0>(mi).value == 0);
 
   mi = co_await (move_only_ex() || int_1());
   ASIO_CHECK(mi.index() == 1);
-  ASIO_CHECK(std::get<1>(mi) == 1);
+  ASIO_CHECK(get<1>(mi) == 1);
 
   std::variant<move_only, move_only> mm =
     co_await (move_only_0() || move_only_1());
   ASIO_CHECK(mm.index() == 0);
-  ASIO_CHECK(std::get<0>(mm).value == 0);
+  ASIO_CHECK(get<0>(mm).value == 0);
 
   mm = co_await (move_only_ex() || move_only_1());
   ASIO_CHECK(mm.index() == 1);
-  ASIO_CHECK(std::get<1>(mm).value == 1);
+  ASIO_CHECK(get<1>(mm).value == 1);
 
   std::variant<move_only, move_only, move_only> mmm =
     co_await (move_only_0() || move_only_1() || move_only_2());
   ASIO_CHECK(mmm.index() == 0);
-  ASIO_CHECK(std::get<0>(mmm).value == 0);
+  ASIO_CHECK(get<0>(mmm).value == 0);
 
   mmm = co_await (move_only_ex() || move_only_1() || move_only_2());
   ASIO_CHECK(mmm.index() == 1);
-  ASIO_CHECK(std::get<1>(mmm).value == 1);
+  ASIO_CHECK(get<1>(mmm).value == 1);
 
   mmm = co_await (move_only_ex() || move_only_ex() || move_only_2());
   ASIO_CHECK(mmm.index() == 2);
-  ASIO_CHECK(std::get<2>(mmm).value == 2);
+  ASIO_CHECK(get<2>(mmm).value == 2);
 }
 
 void test_or_awaitable_operator()
