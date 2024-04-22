@@ -81,7 +81,7 @@ public:
   }
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown()
+  void shutdown() override
   {
   }
 

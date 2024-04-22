@@ -31,7 +31,7 @@ public:
   ASIO_DECL bad_executor() noexcept;
 
   /// Obtain message associated with exception.
-  ASIO_DECL virtual const char* what() const noexcept;
+  ASIO_DECL virtual const char* what() const noexcept override;
 };
 
 } // namespace execution

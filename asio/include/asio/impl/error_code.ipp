@@ -37,12 +37,12 @@ namespace detail {
 class system_category : public error_category
 {
 public:
-  const char* name() const noexcept
+  const char* name() const noexcept override
   {
     return "asio.system";
   }
 
-  std::string message(int value) const
+  std::string message(int value) const override
   {
 #if defined(ASIO_WINDOWS_RUNTIME) || defined(ASIO_WINDOWS_APP)
     std::wstring wmsg(128, wchar_t());

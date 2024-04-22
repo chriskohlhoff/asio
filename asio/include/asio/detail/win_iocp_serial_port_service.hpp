@@ -45,7 +45,7 @@ public:
   ASIO_DECL win_iocp_serial_port_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Construct a new serial port implementation.
   void construct(implementation_type& impl)

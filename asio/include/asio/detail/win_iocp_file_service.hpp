@@ -54,7 +54,7 @@ public:
   ASIO_DECL win_iocp_file_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Construct a new file implementation.
   void construct(implementation_type& impl)

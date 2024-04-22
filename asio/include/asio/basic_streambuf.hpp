@@ -260,7 +260,7 @@ protected:
   /**
    * Behaves according to the specification of @c std::streambuf::underflow().
    */
-  int_type underflow()
+  int_type underflow() override
   {
     if (gptr() < pptr())
     {
@@ -280,7 +280,7 @@ protected:
    * the character to the input sequence would require the condition
    * <tt>size() > max_size()</tt> to be true.
    */
-  int_type overflow(int_type c)
+  int_type overflow(int_type c) override
   {
     if (!traits_type::eq_int_type(c, traits_type::eof()))
     {
