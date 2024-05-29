@@ -45,14 +45,22 @@ awaitable<void> echo(tcp::socket socket)
   }
 }
 
-awaitable<void> listener()
+awaitable<void> listener(asio::io_context& io_context)
 {
-  auto executor = co_await this_coro::executor;
-  tcp::acceptor acceptor(executor, {tcp::v4(), 55555});
-  for (;;)
+  try
   {
-    tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
-    co_spawn(executor, echo(std::move(socket)), detached);
+    auto executor = co_await this_coro::executor;
+    tcp::acceptor acceptor(executor, {tcp::v4(), 55557});
+    for (;;)
+    {
+      tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+      co_spawn(executor, echo(std::move(socket)), detached);
+    }
+  }
+  catch (std::exception& e)
+  {
+    std::printf("Exception: %s\n", e.what());
+    io_context.stop();
   }
 }
 
@@ -65,7 +73,7 @@ int main()
     asio::signal_set signals(io_context, SIGINT, SIGTERM);
     signals.async_wait([&](auto, auto){ io_context.stop(); });
 
-    co_spawn(io_context, listener(), detached);
+    co_spawn(io_context, listener(io_context), detached);
 
     io_context.run();
   }

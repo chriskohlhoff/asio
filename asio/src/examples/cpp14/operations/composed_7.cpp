@@ -169,7 +169,7 @@ void test_callback()
 {
   asio::io_context io_context;
 
-  tcp::acceptor acceptor(io_context, {tcp::v4(), 55555});
+  tcp::acceptor acceptor(io_context, {tcp::v4(), 55557});
   tcp::socket socket = acceptor.accept();
 
   // Test our asynchronous operation using a lambda as a callback.
@@ -195,7 +195,7 @@ void test_deferred()
 {
   asio::io_context io_context;
 
-  tcp::acceptor acceptor(io_context, {tcp::v4(), 55555});
+  tcp::acceptor acceptor(io_context, {tcp::v4(), 55557});
   tcp::socket socket = acceptor.accept();
 
   // Test our asynchronous operation using the deferred completion token. This
@@ -228,7 +228,7 @@ void test_future()
 {
   asio::io_context io_context;
 
-  tcp::acceptor acceptor(io_context, {tcp::v4(), 55555});
+  tcp::acceptor acceptor(io_context, {tcp::v4(), 55557});
   tcp::socket socket = acceptor.accept();
 
   // Test our asynchronous operation using the use_future completion token.
