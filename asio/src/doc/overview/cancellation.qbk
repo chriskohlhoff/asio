@@ -201,7 +201,7 @@ occur.
 
 Furthermore, a stronger guarantee always satisfies the requirements of a weaker
 guarantee. The `partial` guarantee still satisfies the `terminal` guarantee.
-The `total` guarantee satisfies both `partial` and `total`. This means that
+The `total` guarantee satisfies both `partial` and `terminal`. This means that
 when an operation supports a given cancellation type as its strongest
 guarantee, it should honour cancellation requests for any of the weaker
 guarantees.
