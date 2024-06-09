@@ -212,21 +212,10 @@ public:
     hints_.ai_next = 0;
   }
 
-  /// Copy construct a @c basic_resolver_query from another.
-  basic_resolver_query(const basic_resolver_query& other)
-    : hints_(other.hints_),
-      host_name_(other.host_name_),
-      service_name_(other.service_name_)
-  {
-  }
-
-  /// Move construct a @c basic_resolver_query from another.
-  basic_resolver_query(basic_resolver_query&& other)
-    : hints_(other.hints_),
-      host_name_(static_cast<std::string&&>(other.host_name_)),
-      service_name_(static_cast<std::string&&>(other.service_name_))
-  {
-  }
+  basic_resolver_query(const basic_resolver_query& other) = default;
+  basic_resolver_query& operator= (const basic_resolver_query& other) = default;
+  basic_resolver_query(basic_resolver_query&& other) = default;
+  basic_resolver_query& operator= (basic_resolver_query&& other) = default;
 
   /// Get the hints associated with the query.
   const asio::detail::addrinfo_type& hints() const
