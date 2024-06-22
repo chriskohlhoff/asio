@@ -59,6 +59,8 @@
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffered_write_stream.hpp"
 #include "asio/buffers_iterator.hpp"
+#include "asio/cancel_after.hpp"
+#include "asio/cancel_at.hpp"
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
 #include "asio/cancellation_type.hpp"

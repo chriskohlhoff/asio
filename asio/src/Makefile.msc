@@ -152,6 +152,8 @@ UNIT_TEST_EXES = \
 	tests\unit\buffer.exe \
 	tests\unit\buffer_registration.exe \
 	tests\unit\buffers_iterator.exe \
+	tests\unit\cancel_after.exe \
+	tests\unit\cancel_at.exe \
 	tests\unit\cancellation_signal.exe \
 	tests\unit\cancellation_state.exe \
 	tests\unit\cancellation_type.exe \

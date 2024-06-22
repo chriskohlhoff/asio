@@ -45,6 +45,8 @@ buffered_read_stream
 buffered_stream
 buffered_write_stream
 buffers_iterator
+cancel_after
+cancel_at
 cancellation_signal
 cancellation_state
 cancellation_type

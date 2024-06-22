@@ -45,6 +45,7 @@ nobase_include_HEADERS = \
 	asio/buffer.hpp \
 	asio/buffer_registration.hpp \
 	asio/buffers_iterator.hpp \
+	asio/cancel_at.hpp \
 	asio/cancellation_signal.hpp \
 	asio/cancellation_state.hpp \
 	asio/cancellation_type.hpp \
@@ -75,6 +76,9 @@ nobase_include_HEADERS = \
 	asio/detail/chrono.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
+	asio/detail/completion_message.hpp \
+	asio/detail/completion_payload.hpp \
+	asio/detail/completion_payload_handler.hpp \
 	asio/detail/composed_work.hpp \
 	asio/detail/concurrency_hint.hpp \
 	asio/detail/conditionally_enabled_event.hpp \
@@ -167,6 +171,7 @@ nobase_include_HEADERS = \
 	asio/detail/initiate_defer.hpp \
 	asio/detail/initiate_dispatch.hpp \
 	asio/detail/initiate_post.hpp \
+	asio/detail/initiation_base.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
 	asio/detail/io_uring_descriptor_read_at_op.hpp \
@@ -375,10 +380,7 @@ nobase_include_HEADERS = \
 	asio/experimental/coro.hpp \
 	asio/experimental/coro_traits.hpp \
 	asio/experimental/deferred.hpp \
-	asio/experimental/detail/channel_handler.hpp \
-	asio/experimental/detail/channel_message.hpp \
 	asio/experimental/detail/channel_operation.hpp \
-	asio/experimental/detail/channel_payload.hpp \
 	asio/experimental/detail/channel_receive_op.hpp \
 	asio/experimental/detail/channel_send_functions.hpp \
 	asio/experimental/detail/channel_send_op.hpp \
@@ -419,6 +421,8 @@ nobase_include_HEADERS = \
 	asio/impl/awaitable.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
+	asio/impl/cancel_after.hpp \
+	asio/impl/cancel_at.hpp \
 	asio/impl/cancellation_signal.ipp \
 	asio/impl/co_spawn.hpp \
 	asio/impl/connect.hpp \

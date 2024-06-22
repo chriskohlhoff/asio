@@ -61,6 +61,11 @@ UNIT_TEST_EXES = \
 	tests/unit/buffered_write_stream.exe \
 	tests/unit/buffer.exe \
 	tests/unit/buffers_iterator.exe \
+	tests/unit/cancel_after.exe \
+	tests/unit/cancel_at.exe \
+	tests/unit/cancellation_signal.exe \
+	tests/unit/cancellation_state.exe \
+	tests/unit/cancellation_type.exe \
 	tests/unit/co_spawn.exe \
 	tests/unit/completion_condition.exe \
 	tests/unit/compose.exe \

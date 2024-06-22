@@ -50,6 +50,8 @@ check_PROGRAMS = \
 	unit/buffer \
 	unit/buffer_registration \
 	unit/buffers_iterator \
+	unit/cancel_after \
+	unit/cancel_at \
 	unit/cancellation_signal \
 	unit/cancellation_state \
 	unit/cancellation_type \
@@ -266,6 +268,8 @@ TESTS = \
 	unit/buffer \
 	unit/buffer_registration \
 	unit/buffers_iterator \
+	unit/cancel_after \
+	unit/cancel_at \
 	unit/cancellation_signal \
 	unit/cancellation_state \
 	unit/cancellation_type \
@@ -480,6 +484,8 @@ unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp
 unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
+unit_cancel_after_SOURCES = unit/cancel_after.cpp
+unit_cancel_at_SOURCES = unit/cancel_at.cpp
 unit_cancellation_signal_SOURCES = unit/cancellation_signal.cpp
 unit_cancellation_state_SOURCES = unit/cancellation_state.cpp
 unit_cancellation_type_SOURCES = unit/cancellation_type.cpp

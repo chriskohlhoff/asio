@@ -52,6 +52,7 @@ system_context::system_context()
   thread_function f = { &scheduler_ };
   num_threads_ = detail::thread::hardware_concurrency() * 2;
   num_threads_ = num_threads_ ? num_threads_ : 2;
+  std::printf("creating threads!\n");
   threads_.create_threads(f, num_threads_);
 }
 
