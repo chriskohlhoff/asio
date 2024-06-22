@@ -1,4 +1,4 @@
-AC_INIT(asio, [1.30.2])
+AC_INIT([asio],[1.30.2])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE([tar-pax])
@@ -13,7 +13,7 @@ PKG_INSTALLDIR
 AC_DEFINE(_REENTRANT, [1], [Define this])
 
 AC_ARG_WITH(boost,
-  AC_HELP_STRING([--with-boost=DIR],[location of boost distribution]),
+  AS_HELP_STRING([--with-boost=DIR],[location of boost distribution]),
 [
   if test "${withval}" = no; then
     STANDALONE="yes"
@@ -52,7 +52,7 @@ if test "$STANDALONE" != yes; then
 fi
 
 AC_ARG_WITH(openssl,
-  AC_HELP_STRING([--with-openssl=DIR],[location of openssl]),
+  AS_HELP_STRING([--with-openssl=DIR],[location of openssl]),
 [
   CPPFLAGS="$CPPFLAGS -I${withval}/include"
   LIBS="$LIBS -L${withval}/lib"
@@ -246,7 +246,7 @@ AM_CONDITIONAL(HAVE_COROUTINES,test x$HAVE_COROUTINES = xyes)
 
 AC_CONFIG_FILES([asio.pc])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
   Makefile
   include/Makefile
   src/Makefile
@@ -256,3 +256,4 @@ AC_OUTPUT([
   src/examples/cpp14/Makefile
   src/examples/cpp17/Makefile
   src/examples/cpp20/Makefile])
+AC_OUTPUT
