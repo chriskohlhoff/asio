@@ -16,11 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include "asio/detail/type_traits.hpp"
 #include "asio/associated_allocator.hpp"
 #include "asio/associated_executor.hpp"
 #include "asio/associator.hpp"
 #include "asio/async_result.hpp"
+#include "asio/detail/initiation_base.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -478,35 +479,28 @@ public:
   }
 
   template <typename Initiation>
-  struct init_wrapper
+  struct init_wrapper : detail::initiation_base<Initiation>
   {
-    template <typename Init>
-    init_wrapper(const Allocator& allocator, Init&& init)
-      : allocator_(allocator),
-        initiation_(static_cast<Init&&>(init))
-    {
-    }
+    using detail::initiation_base<Initiation>::initiation_base;
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args)
+    void operator()(Handler&& handler, const Allocator& a, Args&&... args) &&
     {
-      static_cast<Initiation&&>(initiation_)(
+      static_cast<Initiation&&>(*this)(
           allocator_binder<decay_t<Handler>, Allocator>(
-              allocator_, static_cast<Handler&&>(handler)),
+              a, static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
 
     template <typename Handler, typename... Args>
-    void operator()(Handler&& handler, Args&&... args) const
+    void operator()(Handler&& handler,
+        const Allocator& a, Args&&... args) const &
     {
-      initiation_(
+      static_cast<const Initiation&>(*this)(
           allocator_binder<decay_t<Handler>, Allocator>(
-              allocator_, static_cast<Handler&&>(handler)),
+              a, static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
-
-    Allocator allocator_;
-    Initiation initiation_;
   };
 
   template <typename Initiation, typename RawCompletionToken, typename... Args>
@@ -518,15 +512,15 @@ public:
           is_const<remove_reference_t<RawCompletionToken>>::value, const T, T>,
         Signature>(
         declval<init_wrapper<decay_t<Initiation>>>(),
-        token.get(), static_cast<Args&&>(args)...))
+        token.get(), token.get_allocator(), static_cast<Args&&>(args)...))
   {
     return async_initiate<
       conditional_t<
         is_const<remove_reference_t<RawCompletionToken>>::value, const T, T>,
       Signature>(
-        init_wrapper<decay_t<Initiation>>(token.get_allocator(),
+        init_wrapper<decay_t<Initiation>>(
           static_cast<Initiation&&>(initiation)),
-        token.get(), static_cast<Args&&>(args)...);
+        token.get(), token.get_allocator(), static_cast<Args&&>(args)...);
   }
 
 private:
