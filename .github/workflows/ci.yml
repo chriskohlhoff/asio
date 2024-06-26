@@ -11,7 +11,7 @@ jobs:
       matrix:
         build-type: ['sanity']
         runs-on: [ubuntu-20.04, ubuntu-22.04, macos-latest]
-        compiler: [g++-7, g++-8, g++-9, g++-10, g++-11, g++-12, clang++-10, clang++-14, g++]
+        compiler: [g++-8, g++-9, g++-10, g++-12, clang++-10, clang++-14, g++]
         cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
         separate-compilation: ['', '--enable-separate-compilation']
         optim-level: ['-O0']
@@ -28,8 +28,6 @@ jobs:
             compiler: clang++-14
           # Older compilers don't run on ubuntu 22.04
           - runs-on: ubuntu-22.04
-            compiler: g++-7
-          - runs-on: ubuntu-22.04
             compiler: g++-8
           - runs-on: ubuntu-22.04
             compiler: clang++-10
@@ -40,15 +38,11 @@ jobs:
             compiler: g++
           # Versioned g++ and clang++ don't run on macOS
           - runs-on: macos-latest
-            compiler: g++-7
-          - runs-on: macos-latest
             compiler: g++-8
           - runs-on: macos-latest
             compiler: g++-9
           - runs-on: macos-latest
             compiler: g++-10
-          - runs-on: macos-latest
-            compiler: g++-11
           - runs-on: macos-latest
             compiler: g++-12
           - runs-on: macos-latest
@@ -56,17 +50,11 @@ jobs:
           - runs-on: macos-latest
             compiler: clang++-14
           # Older compilers don't support newer std variants
-          - compiler: g++-7
-            cxx-std: c++2a
-          - compiler: g++-7
-            cxx-std: c++20
           - compiler: g++-8
             cxx-std: c++20
           - compiler: g++-9
             cxx-std: c++20
           - compiler: g++-10
-            cxx-std: c++2a
-          - compiler: g++-11
             cxx-std: c++2a
           - compiler: g++-12
             cxx-std: c++2a
@@ -86,15 +74,11 @@ jobs:
           - runs-on: macos-latest
             select-reactor: -DASIO_DISABLE_EPOLL
           # Trim builds that use separate compilation
-          - compiler: g++-7
-            separate-compilation: --enable-separate-compilation
           - compiler: g++-8
             separate-compilation: --enable-separate-compilation
           - compiler: g++-9
             separate-compilation: --enable-separate-compilation
           - compiler: g++-10
-            separate-compilation: --enable-separate-compilation
-          - compiler: g++-11
             separate-compilation: --enable-separate-compilation
           - runs-on: macos-latest
             cxx-std: c++14
@@ -103,15 +87,11 @@ jobs:
             cxx-std: c++17
             separate-compilation: --enable-separate-compilation
           # Trim builds that use select reactor
-          - compiler: g++-7
-            select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-8
             select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-9
             select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-10
-            select-reactor: -DASIO_DISABLE_EPOLL
-          - compiler: g++-11
             select-reactor: -DASIO_DISABLE_EPOLL
         include:
           #
@@ -132,15 +112,6 @@ jobs:
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_76_0
             boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2
-          #
-          # Linux / g++-11 -std=c++14 / -O0 / standalone / separate compilation
-          #
-          - build-type: full
-            runs-on: ubuntu-22.04
-            compiler: g++-11
-            cxx-std: c++14
-            separate-compilation: --enable-separate-compilation
-            optim-level: -O0
           #
           # Linux / g++-10 / -O2 / standalone
           #
@@ -220,28 +191,28 @@ jobs:
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
             boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
-          # Linux / g++-7 / -O2 / standalone
+          # Linux / g++-8 / -O2 / standalone
           #
           - build-type: full
             runs-on: ubuntu-20.04
-            compiler: g++-7
+            compiler: g++-8
             cxx-std: c++11
             optim-level: -O2
           #
-          # Linux / g++-7 / -O0 / standalone / separate compilation
+          # Linux / g++-8 / -O0 / standalone / separate compilation
           #
           - build-type: full
             runs-on: ubuntu-20.04
-            compiler: g++-7
+            compiler: g++-8
             cxx-std: c++11
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
           #
-          # Linux / g++-7 -std=c++11 / -O2 / boost 1.83
+          # Linux / g++-8 -std=c++11 / -O2 / boost 1.83
           #
           - build-type: full
             runs-on: ubuntu-20.04
-            compiler: g++-7
+            compiler: g++-8
             cxx-std: c++11
             separate-compilation: --enable-separate-compilation
             optim-level: -O2
