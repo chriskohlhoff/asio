@@ -157,8 +157,7 @@ public:
   }
 
   template <typename Handler, typename Impl>
-  void operator()(Handler&& handler,
-      Impl&& impl) const
+  void operator()(Handler&& handler, Impl&& impl) const
   {
     composed_op<decay_t<Impl>, composed_work<Executors>,
       decay_t<Handler>, Signature>(
@@ -169,6 +168,26 @@ public:
 
 private:
   composed_io_executors<Executors> executors_;
+};
+
+template <typename Signature>
+class initiate_composed_op<Signature, void()>
+{
+public:
+  template <typename T>
+  explicit initiate_composed_op(int, T&&)
+  {
+  }
+
+  template <typename Handler, typename Impl>
+  void operator()(Handler&& handler, Impl&& impl) const
+  {
+    composed_op<decay_t<Impl>, composed_work<void()>,
+      decay_t<Handler>, Signature>(
+        static_cast<Impl&&>(impl),
+        composed_work<void()>(composed_io_executors<void()>()),
+        static_cast<Handler&&>(handler))();
+  }
 };
 
 template <typename Signature, typename Executors>
