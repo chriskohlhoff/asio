@@ -116,6 +116,11 @@ public:
  */
 struct partial_as_tuple
 {
+  /// Default constructor.
+  constexpr partial_as_tuple()
+  {
+  }
+
   /// Adapt a @ref completion_token to specify that the completion handler
   /// arguments should be combined into a single tuple argument.
   template <typename CompletionToken>
