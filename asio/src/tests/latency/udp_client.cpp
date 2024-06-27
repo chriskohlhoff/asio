@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
     asio::error_code ec;
     socket.send_to(asio::buffer(write_buf), target, 0, ec);
-    
+
     do socket.receive(asio::buffer(read_buf), 0, ec);
     while (ec == asio::error::would_block);
 

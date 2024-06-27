@@ -119,7 +119,6 @@ public:
   cancellation_type_t cancel_type_;
 };
 
-
 /// A function object type that adapts a @ref completion_token to cancel an
 /// operation at a given time.
 /**

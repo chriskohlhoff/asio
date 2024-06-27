@@ -105,7 +105,7 @@ private:
       stop();
     }
   }
- 
+
   awaitable<void> send_heartbeats()
   {
     steady_timer timer{socket_.get_executor()};

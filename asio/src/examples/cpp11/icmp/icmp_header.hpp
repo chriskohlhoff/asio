@@ -18,7 +18,7 @@
 // ICMP header for both IPv4 and IPv6.
 //
 // The wire format of an ICMP header is:
-// 
+//
 // 0               8               16                             31
 // +---------------+---------------+------------------------------+      ---
 // |               |               |                              |       ^

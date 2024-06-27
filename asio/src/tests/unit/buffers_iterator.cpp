@@ -48,7 +48,6 @@ void test()
     vector<const_buffer> cb3;
     cb3.push_back(buffer(cdata1));
 
-
     // buffers_iterator constructors.
 
     buffers_iterator<mutable_buffer, char> bi1;

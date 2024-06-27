@@ -24,7 +24,7 @@
 // Prevent use of intrinsic for strcmp.
 # include <cstring>
 # undef strcmp
- 
+
 // Suppress error about condition always being true.
 # pragma option -w-ccc
 

@@ -33,7 +33,7 @@ private:
   void do_handshake()
   {
     auto self(shared_from_this());
-    socket_.async_handshake(asio::ssl::stream_base::server, 
+    socket_.async_handshake(asio::ssl::stream_base::server,
         [this, self](const std::error_code& error)
         {
           if (!error)

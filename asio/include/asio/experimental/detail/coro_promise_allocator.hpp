@@ -64,7 +64,6 @@ constexpr std::size_t variadic_first(std::size_t = 0u)
   return std::numeric_limits<std::size_t>::max();
 }
 
-
 template <typename T, typename First, typename... Args>
 constexpr std::size_t variadic_first(std::size_t pos = 0u)
 {

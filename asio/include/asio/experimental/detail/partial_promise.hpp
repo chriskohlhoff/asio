@@ -110,9 +110,7 @@ struct partial_promise : partial_promise_base<Allocator>
   }
 };
 
-
-
-}; // namespace detail
+} // namespace detail
 } // namespace experimental
 } // namespace asio
 

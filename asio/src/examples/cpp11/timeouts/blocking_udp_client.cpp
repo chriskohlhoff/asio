@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 
       if (error)
       {
-        std::cout << "Receive error: " << error.message() << "\n"; 
+        std::cout << "Receive error: " << error.message() << "\n";
       }
       else
       {
