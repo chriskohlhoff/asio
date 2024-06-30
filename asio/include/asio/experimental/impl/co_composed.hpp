@@ -1056,6 +1056,50 @@ private:
   composed_io_executors<Executors> executors_;
 };
 
+template <typename Implementation, typename... Signatures>
+class initiate_co_composed<Implementation, void(), Signatures...>
+{
+public:
+  template <typename I>
+  initiate_co_composed(I&& impl, composed_io_executors<void()>&&)
+    : implementation_(std::forward<I>(impl))
+  {
+  }
+
+  template <typename Handler, typename... InitArgs>
+  void operator()(Handler&& handler, InitArgs&&... init_args) const &
+  {
+    using handler_type = decay_t<Handler>;
+    using returns_type = co_composed_returns<Signatures...>;
+    co_composed_on_suspend on_suspend{};
+    implementation_(
+        co_composed_state<void(), handler_type, returns_type>(
+          composed_io_executors<void()>(),
+          std::forward<Handler>(handler), on_suspend),
+        std::forward<InitArgs>(init_args)...);
+    if (on_suspend.fn_)
+      on_suspend.fn_(on_suspend.arg_);
+  }
+
+  template <typename Handler, typename... InitArgs>
+  void operator()(Handler&& handler, InitArgs&&... init_args) &&
+  {
+    using handler_type = decay_t<Handler>;
+    using returns_type = co_composed_returns<Signatures...>;
+    co_composed_on_suspend on_suspend{};
+    std::move(implementation_)(
+        co_composed_state<void(), handler_type, returns_type>(
+          composed_io_executors<void()>(),
+          std::forward<Handler>(handler), on_suspend),
+        std::forward<InitArgs>(init_args)...);
+    if (on_suspend.fn_)
+      on_suspend.fn_(on_suspend.arg_);
+  }
+
+private:
+  Implementation implementation_;
+};
+
 template <typename... Signatures, typename Implementation, typename Executors>
 inline initiate_co_composed<Implementation, Executors, Signatures...>
 make_initiate_co_composed(Implementation&& implementation,
