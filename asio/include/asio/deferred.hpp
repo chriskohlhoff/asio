@@ -325,7 +325,8 @@ private:
       detail::index_sequence<I...>) const &
     -> decltype(
       async_initiate<CompletionToken, Signature>(
-        initiation_t(initiation_), token, std::get<I>(init_args_)...))
+        conditional_t<true, initiation_t, CompletionToken>(initiation_),
+        token, std::get<I>(init_args_)...))
   {
     return async_initiate<CompletionToken, Signature>(
         initiation_t(initiation_), token, std::get<I>(init_args_)...);
