@@ -239,24 +239,16 @@ struct async_result<
   static auto initiate(Initiation&& initiation,
       RawCompletionToken&& token, Args&&... args)
     -> decltype(
-      async_initiate<
-        const cancel_after_timer<
+      async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        cancel_after_timer<
           default_completion_token_t<associated_executor_t<Initiation>>,
-          Clock, WaitTraits, Executor>&,
-        Signatures...>(
-          static_cast<Initiation&&>(initiation),
-          cancel_after_timer<
-            default_completion_token_t<associated_executor_t<Initiation>>,
-            Clock, WaitTraits, Executor>(
-              default_completion_token_t<associated_executor_t<Initiation>>{},
-              token.timer_, token.timeout_, token.cancel_type_),
-          static_cast<Args&&>(args)...))
+          Clock, WaitTraits, Executor>(
+            default_completion_token_t<associated_executor_t<Initiation>>{},
+            token.timer_, token.timeout_, token.cancel_type_),
+        static_cast<Args&&>(args)...))
   {
-    return async_initiate<
-      const cancel_after_timer<
-        default_completion_token_t<associated_executor_t<Initiation>>,
-        Clock, WaitTraits, Executor>&,
-      Signatures...>(
+    return async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         cancel_after_timer<
           default_completion_token_t<associated_executor_t<Initiation>>,

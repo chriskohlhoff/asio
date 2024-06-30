@@ -550,23 +550,15 @@ struct async_result<partial_cancellation_slot_binder<CancellationSlot>,
   static auto initiate(Initiation&& initiation,
       RawCompletionToken&& token, Args&&... args)
     -> decltype(
-      async_initiate<
-        const cancellation_slot_binder<
+      async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        cancellation_slot_binder<
           default_completion_token_t<associated_executor_t<Initiation>>,
-          CancellationSlot>&,
-        Signatures...>(
-          static_cast<Initiation&&>(initiation),
-          cancellation_slot_binder<
-            default_completion_token_t<associated_executor_t<Initiation>>,
-            CancellationSlot>(token.cancellation_slot_,
-              default_completion_token_t<associated_executor_t<Initiation>>{}),
-          static_cast<Args&&>(args)...))
+          CancellationSlot>(token.cancellation_slot_,
+            default_completion_token_t<associated_executor_t<Initiation>>{}),
+        static_cast<Args&&>(args)...))
   {
-    return async_initiate<
-      const cancellation_slot_binder<
-        default_completion_token_t<associated_executor_t<Initiation>>,
-        CancellationSlot>&,
-      Signatures...>(
+    return async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         cancellation_slot_binder<
           default_completion_token_t<associated_executor_t<Initiation>>,

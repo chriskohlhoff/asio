@@ -260,21 +260,15 @@ struct async_result<partial_redirect_error, Signatures...>
   static auto initiate(Initiation&& initiation,
       RawCompletionToken&& token, Args&&... args)
     -> decltype(
-      async_initiate<
-        const redirect_error_t<
-          default_completion_token_t<associated_executor_t<Initiation>>>&,
-        Signatures...>(
-          static_cast<Initiation&&>(initiation),
-          redirect_error_t<
-            default_completion_token_t<associated_executor_t<Initiation>>>(
-              default_completion_token_t<associated_executor_t<Initiation>>{},
-              token.ec_),
-          static_cast<Args&&>(args)...))
+      async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        redirect_error_t<
+          default_completion_token_t<associated_executor_t<Initiation>>>(
+            default_completion_token_t<associated_executor_t<Initiation>>{},
+            token.ec_),
+        static_cast<Args&&>(args)...))
   {
-    return async_initiate<
-      const redirect_error_t<
-        default_completion_token_t<associated_executor_t<Initiation>>>&,
-      Signatures...>(
+    return async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         redirect_error_t<
           default_completion_token_t<associated_executor_t<Initiation>>>(

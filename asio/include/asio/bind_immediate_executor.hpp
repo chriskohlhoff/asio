@@ -553,23 +553,15 @@ struct async_result<partial_immediate_executor_binder<Executor>, Signatures...>
   static auto initiate(Initiation&& initiation,
       RawCompletionToken&& token, Args&&... args)
     -> decltype(
-      async_initiate<
-        const immediate_executor_binder<
+      async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        immediate_executor_binder<
           default_completion_token_t<associated_executor_t<Initiation>>,
-          Executor>&,
-        Signatures...>(
-          static_cast<Initiation&&>(initiation),
-          immediate_executor_binder<
-            default_completion_token_t<associated_executor_t<Initiation>>,
-            Executor>(token.executor_,
-              default_completion_token_t<associated_executor_t<Initiation>>{}),
-          static_cast<Args&&>(args)...))
+          Executor>(token.executor_,
+            default_completion_token_t<associated_executor_t<Initiation>>{}),
+        static_cast<Args&&>(args)...))
   {
-    return async_initiate<
-      const immediate_executor_binder<
-        default_completion_token_t<associated_executor_t<Initiation>>,
-        Executor>&,
-      Signatures...>(
+    return async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         immediate_executor_binder<
           default_completion_token_t<associated_executor_t<Initiation>>,

@@ -253,19 +253,13 @@ struct async_result<partial_as_tuple, Signatures...>
   static auto initiate(Initiation&& initiation,
       RawCompletionToken&&, Args&&... args)
     -> decltype(
-      async_initiate<
-        const as_tuple_t<
-          default_completion_token_t<associated_executor_t<Initiation>>>&,
-        Signatures...>(
-          static_cast<Initiation&&>(initiation),
-          as_tuple_t<
-            default_completion_token_t<associated_executor_t<Initiation>>>{},
-          static_cast<Args&&>(args)...))
+      async_initiate<Signatures...>(
+        static_cast<Initiation&&>(initiation),
+        as_tuple_t<
+          default_completion_token_t<associated_executor_t<Initiation>>>{},
+        static_cast<Args&&>(args)...))
   {
-    return async_initiate<
-      const as_tuple_t<
-        default_completion_token_t<associated_executor_t<Initiation>>>&,
-      Signatures...>(
+    return async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         as_tuple_t<
           default_completion_token_t<associated_executor_t<Initiation>>>{},
