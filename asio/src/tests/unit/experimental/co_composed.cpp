@@ -499,6 +499,39 @@ void test_throw_on_cancel()
   ASIO_CHECK(count == 100);
 }
 
+void test_no_signatures_detached()
+{
+  asio::io_context ctx(1);
+  int count1 = 0;
+  int count2 = 0;
+
+  asio::async_initiate(
+      asio::experimental::co_composed(
+        [](auto, asio::io_context& ctx, int& count1, int& count2) -> void
+        {
+          for (;;)
+          {
+            ++count1;
+            co_await asio::post(ctx, asio::deferred);
+            ++count2;
+          }
+        }), asio::detached, std::ref(ctx), std::ref(count1), std::ref(count2));
+
+  ASIO_ASSERT(count1 == 1);
+  ASIO_ASSERT(count2 == 0);
+
+  ctx.run_one();
+
+  ASIO_ASSERT(count1 == 2);
+  ASIO_ASSERT(count2 == 1);
+
+  ctx.restart();
+  ctx.run_one();
+
+  ASIO_ASSERT(count1 == 3);
+  ASIO_ASSERT(count2 == 2);
+}
+
 ASIO_TEST_SUITE
 (
   "experimental/co_composed",
@@ -515,4 +548,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_complete_on_cancel)
   ASIO_TEST_CASE(test_complete_with_default_on_cancel)
   ASIO_TEST_CASE(test_throw_on_cancel)
+  ASIO_TEST_CASE(test_no_signatures_detached)
 )

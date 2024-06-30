@@ -67,6 +67,12 @@ struct are_completion_signatures : false_type
 {
 };
 
+template <>
+struct are_completion_signatures<>
+  : true_type
+{
+};
+
 template <typename T0>
 struct are_completion_signatures<T0>
   : is_completion_signature<T0>
