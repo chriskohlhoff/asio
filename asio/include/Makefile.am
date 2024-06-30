@@ -52,6 +52,7 @@ nobase_include_HEADERS = \
 	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
 	asio/compose.hpp \
+	asio/composed.hpp \
 	asio/connect.hpp \
 	asio/connect_pipe.hpp \
 	asio/consign.hpp \

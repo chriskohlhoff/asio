@@ -69,6 +69,7 @@ UNIT_TEST_EXES = \
 	tests/unit/co_spawn.exe \
 	tests/unit/completion_condition.exe \
 	tests/unit/compose.exe \
+	tests/unit/composed.exe \
 	tests/unit/connect.exe \
 	tests/unit/coroutine.exe \
 	tests/unit/deadline_timer.exe \

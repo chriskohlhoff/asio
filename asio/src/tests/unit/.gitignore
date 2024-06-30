@@ -53,6 +53,7 @@ cancellation_type
 co_spawn
 completion_condition
 compose
+composed
 connect
 connect_pipe
 consign
