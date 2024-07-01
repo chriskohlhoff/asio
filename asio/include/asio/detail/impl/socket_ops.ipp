@@ -41,6 +41,10 @@
 #endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
        // || defined(__MACH__) && defined(__APPLE__)
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1800)
+# include <malloc.h>
+#endif
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
