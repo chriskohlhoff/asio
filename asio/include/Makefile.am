@@ -49,6 +49,7 @@ nobase_include_HEADERS = \
 	asio/cancellation_signal.hpp \
 	asio/cancellation_state.hpp \
 	asio/cancellation_type.hpp \
+	asio/co_composed.hpp \
 	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
 	asio/compose.hpp \
@@ -393,7 +394,6 @@ nobase_include_HEADERS = \
 	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/channel_error.ipp \
-	asio/experimental/impl/co_composed.hpp \
 	asio/experimental/impl/coro.hpp \
 	asio/experimental/impl/parallel_group.hpp \
 	asio/experimental/impl/promise.hpp \

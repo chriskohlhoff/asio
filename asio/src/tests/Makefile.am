@@ -55,6 +55,7 @@ check_PROGRAMS = \
 	unit/cancellation_signal \
 	unit/cancellation_state \
 	unit/cancellation_type \
+	unit/co_composed \
 	unit/co_spawn \
 	unit/completion_condition \
 	unit/compose \
@@ -274,6 +275,7 @@ TESTS = \
 	unit/cancellation_signal \
 	unit/cancellation_state \
 	unit/cancellation_type \
+	unit/co_composed \
 	unit/co_spawn \
 	unit/completion_condition \
 	unit/compose \
@@ -491,6 +493,7 @@ unit_cancel_at_SOURCES = unit/cancel_at.cpp
 unit_cancellation_signal_SOURCES = unit/cancellation_signal.cpp
 unit_cancellation_state_SOURCES = unit/cancellation_state.cpp
 unit_cancellation_type_SOURCES = unit/cancellation_type.cpp
+unit_co_composed_SOURCES = unit/co_composed.cpp
 unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp

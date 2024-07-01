@@ -222,10 +222,10 @@ namespace into scope:
 
 [heading Lightweight Coroutines Implementing Asynchonous Operations]
 
-The `experimental::co_composed` template facilitates a lightweight
-implementation of user-defined asynchronous operations using C++20 coroutines.
-The following example illustrates a simple asynchronous operation that
-implements an echo protocol in terms of a coroutine:
+The `co_composed` template facilitates a lightweight implementation of
+user-defined asynchronous operations using C++20 coroutines. The following
+example illustrates a simple asynchronous operation that implements an echo
+protocol in terms of a coroutine:
 
   template <typename CompletionToken>
   auto async_echo(tcp::socket& socket,
@@ -233,7 +233,7 @@ implements an echo protocol in terms of a coroutine:
   {
     return asio::async_initiate<
       CompletionToken, void(asio::error_code)>(
-        asio::experimental::co_composed<
+        asio::co_composed<
           void(asio::error_code)>(
             [](auto state, tcp::socket& socket) -> void
             {
@@ -271,7 +271,7 @@ implements an echo protocol in terms of a coroutine:
 [link asio.reference.use_awaitable_t use_awaitable_t],
 [link asio.reference.use_awaitable use_awaitable],
 [link asio.reference.this_coro__executor this_coro::executor],
-[link asio.reference.experimental__co_composed experimental::co_composed],
+[link asio.reference.co_composed co_composed],
 [link asio.examples.cpp17_examples.coroutines_ts_support Coroutines examples],
 [link asio.overview.composition.coro Resumable C++20 Coroutines],
 [link asio.overview.composition.spawn Stackful Coroutines],

@@ -232,12 +232,12 @@
             <member><link linkend="asio.reference.bind_cancellation_slot">bind_cancellation_slot</link></member>
             <member><link linkend="asio.reference.bind_executor">bind_executor</link></member>
             <member><link linkend="asio.reference.bind_immediate_executor">bind_immediate_executor</link></member>
+            <member><link linkend="asio.reference.co_composed">co_composed</link></member>
             <member><link linkend="asio.reference.co_spawn">co_spawn</link></member>
             <member><link linkend="asio.reference.consign">consign</link></member>
             <member><link linkend="asio.reference.defer">defer</link></member>
             <member><link linkend="asio.reference.dispatch">dispatch</link></member>
             <member><link linkend="asio.reference.experimental__as_single">experimental::as_single</link></member>
-            <member><link linkend="asio.reference.experimental__co_composed">experimental::co_composed</link></member>
             <member><link linkend="asio.reference.experimental__make_parallel_group">experimental::make_parallel_group</link></member>
             <member><link linkend="asio.reference.get_associated_allocator">get_associated_allocator</link></member>
             <member><link linkend="asio.reference.get_associated_cancellation_slot">get_associated_cancellation_slot</link></member>

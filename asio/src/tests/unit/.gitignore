@@ -50,6 +50,7 @@ cancel_at
 cancellation_signal
 cancellation_state
 cancellation_type
+co_composed
 co_spawn
 completion_condition
 compose

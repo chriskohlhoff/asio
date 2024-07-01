@@ -64,6 +64,7 @@
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
 #include "asio/cancellation_type.hpp"
+#include "asio/co_composed.hpp"
 #include "asio/co_spawn.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/compose.hpp"
