@@ -444,8 +444,18 @@ void kqueue_reactor::run(long usec, op_queue<operation>& ops)
   lock.unlock();
 
   // Block on the kqueue descriptor.
-  struct kevent events[128];
-  int num_events = kevent(kqueue_fd_, 0, 0, events, 128, timeout);
+  struct kevent *events = event_loop_field_.events;
+  int &num_events = event_loop_field_.num_events;
+
+  if (!event_loop_field_.has_event) {
+    num_events = kevent(kqueue_fd_, 0, 0, events, 128, timeout);
+    if (event_loop_field_.is_wait) {
+      event_loop_field_.has_event = true;
+      return;
+    }
+  } else {
+    event_loop_field_.has_event = false;
+  }
 
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
   // Trace the waiting events.
@@ -540,6 +550,10 @@ void kqueue_reactor::run(long usec, op_queue<operation>& ops)
 
   lock.lock();
   timer_queues_.get_ready_timers(ops);
+}
+
+void kqueue_reactor::mask_wait_only() {
+  event_loop_field_.is_wait = true;
 }
 
 void kqueue_reactor::interrupt()

@@ -77,6 +77,9 @@ public:
   // Poll for one operation without blocking.
   ASIO_DECL std::size_t poll_one(asio::error_code& ec);
 
+  // Wait until timeout, interrupted, or one operation event.
+  ASIO_DECL void wait_event(long usec, asio::error_code& ec);
+
   // Interrupt the event processing loop.
   ASIO_DECL void stop();
 

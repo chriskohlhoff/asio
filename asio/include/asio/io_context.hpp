@@ -482,6 +482,30 @@ public:
   ASIO_DECL count_type poll_one(asio::error_code& ec);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
+  /// Run the io_context object's event processing loop for a specified duration
+  /// do not execute any handler, just wait.
+  /**
+   * The wait_one_for() function blocks until one handler has been dispatched,
+   * until the io_context has been stopped, or until the specified duration has
+   * elapsed.
+   *
+   * @param rel_time The duration for which the call may block.
+   */
+  template <typename Rep, typename Period>
+  void wait_one_for(const chrono::duration<Rep, Period>& rel_time);
+
+  /// Run the io_context object's event processing loop until a specified time
+  /// do not execute any handler, just wait.
+  /**
+   * The wait_one_until() function blocks until one handler has been dispatched,
+   * until the io_context has been stopped, or until the specified time has
+   * been reached.
+   *
+   * @param abs_time The time point until which the call may block.
+   */
+  template <typename Clock, typename Duration>
+  void wait_one_until(const chrono::time_point<Clock, Duration>& abs_time);
+
   /// Stop the io_context object's event processing loop.
   /**
    * This function does not block, but instead simply signals the io_context to

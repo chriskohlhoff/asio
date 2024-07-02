@@ -230,6 +230,12 @@ std::size_t scheduler::run_one(asio::error_code& ec)
   return do_run_one(lock, this_thread, ec);
 }
 
+void scheduler::wait_event(long usec, asio::error_code &ec)
+{
+  task_->mask_wait_only();
+  wait_one(usec, ec);
+}
+
 std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 {
   ec = asio::error_code();
