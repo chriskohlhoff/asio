@@ -19,12 +19,14 @@
 #include <exception>
 #include <new>
 #include <tuple>
+#include <unordered_map>
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
 #include "asio/detail/thread_context.hpp"
 #include "asio/detail/thread_info_base.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/experimental/awaitable_specific_ptr.hpp"
 #include "asio/error.hpp"
 #include "asio/post.hpp"
 #include "asio/system_error.hpp"
@@ -393,7 +395,89 @@ public:
     return result{this, throw_if_cancelled.value};
   }
 
-  // This await transformation is used to run an async operation's initiation
+  template<typename T>
+  auto await_transform(asio::experimental::detail::awaitable_specific_ptr_base::get_t<T> get)
+  noexcept
+  {
+    struct result
+    {
+      const awaitable_frame_base* this_;
+      const asio::experimental::detail::awaitable_specific_ptr_base *base_;
+
+      bool await_ready() const noexcept
+      {
+        return true;
+      }
+
+      void await_suspend(coroutine_handle<void>) noexcept
+      {
+      }
+
+      auto await_resume()
+      {
+        return (T *) this_->attached_thread_->get_storage(base_);
+      }
+    };
+
+    return result{this, get.base};
+  }
+
+  template<typename T>
+  auto await_transform(asio::experimental::detail::awaitable_specific_ptr_base::release_t<T> release)
+  noexcept
+  {
+    struct result
+    {
+        awaitable_frame_base* this_;
+        asio::experimental::detail::awaitable_specific_ptr_base *base_;
+
+        bool await_ready() const noexcept
+        {
+          return true;
+        }
+
+        void await_suspend(coroutine_handle<void>) noexcept
+        {
+        }
+
+        auto await_resume()
+        {
+          return (T *) this_->attached_thread_->release_storage(base_);
+        }
+    };
+
+    return result{this, release.base};
+  }
+
+  template<typename T>
+  auto await_transform(asio::experimental::detail::awaitable_specific_ptr_base::reset_t<T> reset)
+  noexcept
+  {
+    struct result
+    {
+        awaitable_frame_base* this_;
+        asio::experimental::detail::awaitable_specific_ptr_base *base_;
+        T *value_;
+
+        bool await_ready() const noexcept
+        {
+          return true;
+        }
+
+        void await_suspend(coroutine_handle<void>) noexcept
+        {
+        }
+
+        auto await_resume()
+        {
+          return this_->attached_thread_->set_storage(base_, value_);
+        }
+    };
+
+    return result{this, reset.base, reset.value};
+  }
+
+    // This await transformation is used to run an async operation's initiation
   // function object after the coroutine has been suspended. This ensures that
   // immediate resumption of the coroutine in another thread does not cause a
   // race condition.
@@ -519,6 +603,7 @@ protected:
   awaitable_frame_base<Executor>* caller_ = nullptr;
   std::exception_ptr pending_exception_ = nullptr;
   resume_context* resume_context_ = nullptr;
+  experimental::detail::awaitable_storage_class storage_;
 };
 
 template <typename T, typename Executor>
@@ -756,6 +841,18 @@ public:
   {
     bottom_of_stack_.frame_->top_of_stack_->attach_thread(this);
     pump();
+  }
+
+  void *get_storage(const asio::experimental::detail::awaitable_specific_ptr_base *ptr) const {
+    return bottom_of_stack_.frame_->storage_.get(ptr);
+  }
+
+  void set_storage(asio::experimental::detail::awaitable_specific_ptr_base *ptr, void *value) {
+    bottom_of_stack_.frame_->storage_.set(ptr, value);
+  }
+
+  void *release_storage(asio::experimental::detail::awaitable_specific_ptr_base *ptr) {
+    return bottom_of_stack_.frame_->storage_.release(ptr);
   }
 
 protected:
