@@ -36,6 +36,29 @@ cancellation_signal::~cancellation_signal()
   }
 }
 
+#if defined(ASIO_HAS_MOVE)
+cancellation_signal::cancellation_signal(cancellation_signal&& other) ASIO_NOEXCEPT
+  : handler_(other.handler_)
+{
+  other.handler_ = 0;
+}
+
+cancellation_signal& cancellation_signal::operator=(cancellation_signal&& other) ASIO_NOEXCEPT
+{
+  if (handler_)
+  {
+    std::pair<void*, std::size_t> mem = handler_->destroy();
+    detail::thread_info_base::deallocate(
+    detail::thread_info_base::cancellation_signal_tag(),
+    detail::thread_context::top_of_thread_call_stack(),
+    mem.first, mem.second);
+  }
+  handler_ = other.handler_;
+  other.handler_ = 0;
+  return *this;
+}
+#endif // defined(ASIO_HAS_MOVE)
+
 void cancellation_slot::clear()
 {
   if (handler_ != 0 && *handler_ != 0)

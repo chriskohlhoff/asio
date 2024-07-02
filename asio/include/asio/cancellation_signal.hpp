@@ -91,6 +91,12 @@ public:
 
   ASIO_DECL ~cancellation_signal();
 
+#if defined(ASIO_HAS_MOVE)
+  ASIO_DECL cancellation_signal(cancellation_signal&& other) ASIO_NOEXCEPT;
+
+  ASIO_DECL cancellation_signal& operator=(cancellation_signal&& other) ASIO_NOEXCEPT;
+#endif // defined(ASIO_HAS_MOVE)
+
   /// Emits the signal and causes invocation of the slot's handler, if any.
   void emit(cancellation_type_t type)
   {
