@@ -11,6 +11,8 @@
 #ifndef ASIO_SSL_CONTEXT_HPP
 #define ASIO_SSL_CONTEXT_HPP
 
+#define KEYLOG_DATA 29001
+
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
@@ -668,6 +670,29 @@ public:
   ASIO_DECL ASIO_SYNC_OP_VOID use_tmp_dh_file(
       const std::string& filename, asio::error_code& ec);
 
+  /// Log OpenSSL key exchange data to for debugging purposes
+  /**
+   * This function is use to log SSL key exchange data to use for debugging
+   * programs like Wireshark.
+   *
+   * @param filename The name of the file that will hold the SSL key information
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  ASIO_DECL void use_keylog_file(const std::string& filename);
+
+  /// Log OpenSSL key exchange data to for debugging purposes
+  /**
+   * This function is use to log SSL key exchange data to use for debugging
+   * programs like Wireshark.
+   *
+   * @param filename The name of the file that will hold the SSL key information
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  ASIO_DECL ASIO_SYNC_OP_VOID use_keylog_file(
+      const std::string& filename, asio::error_code& ec);
+
   /// Set the password callback.
   /**
    * This function is used to specify a callback function to obtain password
@@ -715,6 +740,8 @@ private:
   struct evp_pkey_cleanup;
   struct rsa_cleanup;
   struct dh_cleanup;
+
+  ASIO_DECL static void keylog_callback( const SSL *ssl, const char *line );
 
   // Helper function used to set a peer certificate verification callback.
   ASIO_DECL ASIO_SYNC_OP_VOID do_set_verify_callback(
