@@ -53,7 +53,7 @@ struct context_t
 };
 
 /// A special value used for accessing the context_t property.
-constexpr context_t context;
+ASIO_INLINE_CONSTEXPR context_t context;
 
 } // namespace execution
 
@@ -138,7 +138,7 @@ const T context_t<I>::static_query_v;
 
 typedef detail::context_t<> context_t;
 
-constexpr context_t context;
+ASIO_INLINE_CONSTEXPR context_t context;
 
 } // namespace execution
 

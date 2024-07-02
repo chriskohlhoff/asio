@@ -1419,4 +1419,10 @@
 # endif // !defined(ASIO_DISABLE_SNPRINTF)
 #endif // !defined(ASIO_HAS_SNPRINTF)
 
+#if defined(__cpp_inline_variables) && __cpp_inline_variables >= 201606L
+#define ASIO_INLINE_CONSTEXPR constexpr inline
+#else
+#define ASIO_INLINE_CONSTEXPR constexpr
+#endif
+
 #endif // ASIO_DETAIL_CONFIG_HPP
