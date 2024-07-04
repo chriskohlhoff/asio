@@ -161,9 +161,10 @@ auto async_write_messages(tcp::socket& socket,
         // We no longer have any future work coming for the I/O executor.
         io_work_.reset();
 
-        // Deallocate the encoded message before calling the user-supplied
-        // completion handler.
+        // Deallocate the encoded message and delay timer before calling the
+        // user-supplied completion handler.
         encoded_message_.reset();
+        delay_timer_.reset();
 
         // Call the user-supplied handler with the result of the operation.
         handler_(error);
