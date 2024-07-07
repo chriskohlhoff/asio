@@ -17,33 +17,12 @@
 #include "asio/bind_immediate_executor.hpp"
 
 #include <functional>
-#include "asio/dispatch.hpp"
+#include "asio/immediate.hpp"
 #include "asio/io_context.hpp"
 #include "unit_test.hpp"
 
 using namespace asio;
 namespace bindns = std;
-
-struct initiate_immediate
-{
-  template <typename Handler>
-  void operator()(Handler&& handler, io_context* ctx) const
-  {
-    typename associated_immediate_executor<
-      Handler, io_context::executor_type>::type ex =
-        get_associated_immediate_executor(handler, ctx->get_executor());
-    dispatch(ex, static_cast<Handler&&>(handler));
-  }
-};
-
-template <ASIO_COMPLETION_TOKEN_FOR(void()) Token>
-ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(Token, void())
-async_immediate(io_context& ctx, Token&& token)
-  ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
-    async_initiate<Token, void()>(declval<initiate_immediate>(), token, &ctx)))
-{
-  return async_initiate<Token, void()>(initiate_immediate(), token, &ctx);
-}
 
 void increment(int* count)
 {
@@ -70,7 +49,7 @@ void bind_immediate_executor_to_function_object_test()
 
   ASIO_CHECK(count == 1);
 
-  async_immediate(ioc1,
+  async_immediate(ioc1.get_executor(),
       bind_immediate_executor(
         ioc2.get_executor(),
         bind_immediate_executor(

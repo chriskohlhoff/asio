@@ -415,6 +415,7 @@ nobase_include_HEADERS = \
 	asio/handler_continuation_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/immediate.hpp \
 	asio/impl/any_completion_executor.ipp \
 	asio/impl/any_io_executor.ipp \
 	asio/impl/append.hpp \
