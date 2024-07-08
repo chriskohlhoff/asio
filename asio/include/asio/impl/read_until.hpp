@@ -68,6 +68,19 @@ namespace detail
     }
     return std::make_pair(last1, false);
   }
+
+#if !defined(ASIO_NO_EXTENSIONS)
+#if defined(ASIO_HAS_BOOST_REGEX)
+  struct regex_match_flags
+  {
+    template <typename T>
+    operator T() const
+    {
+      return T::match_default | T::match_partial;
+    }
+  };
+#endif // !defined(ASIO_NO_EXTENSIONS)
+#endif // defined(ASIO_HAS_BOOST_REGEX)
 } // namespace detail
 
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
@@ -230,19 +243,6 @@ std::size_t read_until(SyncReadStream& s,
 
 #if !defined(ASIO_NO_EXTENSIONS)
 #if defined(ASIO_HAS_BOOST_REGEX)
-
-namespace detail {
-
-struct regex_match_flags
-{
-  template <typename T>
-  operator T() const
-  {
-    return T::match_default | T::match_partial;
-  }
-};
-
-} // namespace detail
 
 template <typename SyncReadStream, typename DynamicBuffer_v1, typename Traits>
 inline std::size_t read_until(SyncReadStream& s, DynamicBuffer_v1&& buffers,
