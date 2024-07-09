@@ -1649,6 +1649,9 @@
 <xsl:text>
       </xsl:text><xsl:value-of select="$type"/><xsl:text> </xsl:text>
       <xsl:choose>
+        <xsl:when test="$declname = '_'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
         <xsl:when test="$declname = 'A'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
