@@ -465,7 +465,7 @@ std::size_t read_at(SyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -575,7 +575,7 @@ inline auto async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -671,7 +671,7 @@ inline auto async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -771,7 +771,7 @@ inline auto async_read_at(AsyncRandomAccessReadDevice& d,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode

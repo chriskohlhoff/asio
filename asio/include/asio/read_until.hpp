@@ -1602,7 +1602,7 @@ std::size_t read_until(SyncReadStream& s, DynamicBuffer_v2 buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -1725,7 +1725,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -1860,7 +1860,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -2002,7 +2002,7 @@ inline auto async_read_until(AsyncReadStream& s, DynamicBuffer_v1&& buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond that which matched the function
@@ -2164,7 +2164,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -2279,7 +2279,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -2403,7 +2403,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -2536,7 +2536,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @note After a successful async_read_until operation, the streambuf may
  * contain additional data beyond that which matched the function object. An
@@ -2690,7 +2690,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -2810,7 +2810,7 @@ inline auto async_read_until(AsyncReadStream& s,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -2941,7 +2941,7 @@ inline auto async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @par Completion Signature
  * @code void(asio::error_code, std::size_t) @endcode
@@ -3080,7 +3080,7 @@ inline auto async_read_until(AsyncReadStream& s, DynamicBuffer_v2 buffers,
  * Regardless of whether the asynchronous operation completes immediately or
  * not, the completion handler will not be invoked from within this function.
  * On immediate completion, invocation of the handler will be performed in a
- * manner equivalent to using asio::post().
+ * manner equivalent to using asio::async_immediate().
  *
  * @note After a successful async_read_until operation, the dynamic buffer
  * sequence may contain additional data beyond that which matched the function
