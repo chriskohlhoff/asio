@@ -1157,7 +1157,7 @@ public:
 
 private:
   /// Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL virtual void shutdown();
+  ASIO_DECL virtual void shutdown() override;
 
 #if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use shutdown().) Destroy all user-defined handler objects
@@ -1172,7 +1172,7 @@ private:
    * implement it if necessary. The default implementation does nothing.
    */
   ASIO_DECL virtual void notify_fork(
-      execution_context::fork_event event);
+      execution_context::fork_event event) override;
 
 #if !defined(ASIO_NO_DEPRECATED)
   /// (Deprecated: Use notify_fork().) Handle notification of a fork-related
