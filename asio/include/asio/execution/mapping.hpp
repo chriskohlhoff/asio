@@ -163,7 +163,7 @@ struct mapping_t
 };
 
 /// A special value used for accessing the mapping_t property.
-constexpr mapping_t mapping;
+ASIO_INLINE_CONSTEXPR mapping_t mapping;
 
 } // namespace execution
 
@@ -733,7 +733,7 @@ const T other_t<I>::static_query_v;
 
 typedef detail::mapping_t<> mapping_t;
 
-constexpr mapping_t mapping;
+ASIO_INLINE_CONSTEXPR mapping_t mapping;
 
 } // namespace execution
 
