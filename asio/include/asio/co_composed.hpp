@@ -1103,7 +1103,7 @@ private:
 };
 
 template <typename... Signatures, typename Implementation, typename Executors>
-inline initiate_co_composed<Implementation, Executors, Signatures...>
+inline initiate_co_composed<decay_t<Implementation>, Executors, Signatures...>
 make_initiate_co_composed(Implementation&& implementation,
     composed_io_executors<Executors>&& executors)
 {
