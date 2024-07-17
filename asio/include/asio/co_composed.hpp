@@ -962,7 +962,7 @@ public:
 
             Handler handler(std::move(a.promise_.state_.handler_));
             std::tuple<decay_t<Args>...> result(
-                std::move(static_cast<std::tuple<Args&&...>>(a.result_)));
+                std::move(static_cast<std::tuple<Args&&...>&>(a.result_)));
 
             co_composed_handler_base<Executors, Handler,
               Return>(std::move(composed_handler));
