@@ -30,21 +30,21 @@ namespace asio {
 namespace detail {
 
 // Class to adapt a redirect_error_t as a completion handler.
-template <typename Handler>
+template <typename Handler, typename Error>
 class redirect_error_handler
 {
 public:
   typedef void result_type;
 
   template <typename CompletionToken>
-  redirect_error_handler(redirect_error_t<CompletionToken> e)
+  redirect_error_handler(redirect_error_t<CompletionToken, Error> e)
     : ec_(e.ec_),
       handler_(static_cast<CompletionToken&&>(e.token_))
   {
   }
 
   template <typename RedirectedHandler>
-  redirect_error_handler(asio::error_code& ec,
+  redirect_error_handler(Error& ec,
       RedirectedHandler&& h)
     : ec_(ec),
       handler_(static_cast<RedirectedHandler&&>(h))
@@ -58,7 +58,7 @@ public:
 
   template <typename Arg, typename... Args>
   enable_if_t<
-    !is_same<decay_t<Arg>, asio::error_code>::value
+    !is_same<decay_t<Arg>, Error>::value
   >
   operator()(Arg&& arg, Args&&... args)
   {
@@ -68,20 +68,20 @@ public:
   }
 
   template <typename... Args>
-  void operator()(const asio::error_code& ec, Args&&... args)
+  void operator()(const Error& ec, Args&&... args)
   {
     ec_ = ec;
     static_cast<Handler&&>(handler_)(static_cast<Args&&>(args)...);
   }
 
 //private:
-  asio::error_code& ec_;
+  Error& ec_;
   Handler handler_;
 };
 
-template <typename Handler>
+template <typename Handler, typename Error>
 inline bool asio_handler_is_continuation(
-    redirect_error_handler<Handler>* this_handler)
+    redirect_error_handler<Handler, Error>* this_handler)
 {
   return asio_handler_cont_helpers::is_continuation(
         this_handler->handler_);
@@ -93,82 +93,82 @@ struct redirect_error_signature
   typedef Signature type;
 };
 
-template <typename R, typename... Args>
-struct redirect_error_signature<R(asio::error_code, Args...)>
+template <typename R, typename Error, typename... Args>
+struct redirect_error_signature<R(Error, Args...)>
 {
   typedef R type(Args...);
 };
 
-template <typename R, typename... Args>
-struct redirect_error_signature<R(const asio::error_code&, Args...)>
+template <typename R, typename Error, typename... Args>
+struct redirect_error_signature<R(const Error&, Args...)>
 {
   typedef R type(Args...);
 };
 
-template <typename R, typename... Args>
-struct redirect_error_signature<R(asio::error_code, Args...) &>
+template <typename R, typename Error, typename... Args>
+struct redirect_error_signature<R(Error, Args...) &>
 {
   typedef R type(Args...) &;
 };
 
-template <typename R, typename... Args>
-struct redirect_error_signature<R(const asio::error_code&, Args...) &>
+template <typename R, typename Error, typename... Args>
+struct redirect_error_signature<R(const Error&, Args...) &>
 {
   typedef R type(Args...) &;
 };
 
-template <typename R, typename... Args>
-struct redirect_error_signature<R(asio::error_code, Args...) &&>
+template <typename R, typename Error, typename... Args>
+struct redirect_error_signature<R(Error, Args...) &&>
 {
   typedef R type(Args...) &&;
 };
 
-template <typename R, typename... Args>
-struct redirect_error_signature<R(const asio::error_code&, Args...) &&>
+template <typename R, typename Error, typename... Args>
+struct redirect_error_signature<R(const Error&, Args...) &&>
 {
   typedef R type(Args...) &&;
 };
 
 #if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
 
-template <typename R, typename... Args>
+template <typename R, typename Error, typename... Args>
 struct redirect_error_signature<
-  R(asio::error_code, Args...) noexcept>
+  R(Error, Args...) noexcept>
 {
   typedef R type(Args...) & noexcept;
 };
 
-template <typename R, typename... Args>
+template <typename R, typename Error, typename... Args>
 struct redirect_error_signature<
-  R(const asio::error_code&, Args...) noexcept>
+  R(const Error&, Args...) noexcept>
 {
   typedef R type(Args...) & noexcept;
 };
 
-template <typename R, typename... Args>
+template <typename R, typename Error, typename... Args>
 struct redirect_error_signature<
-  R(asio::error_code, Args...) & noexcept>
+  R(Error, Args...) & noexcept>
 {
   typedef R type(Args...) & noexcept;
 };
 
-template <typename R, typename... Args>
+template <typename R, typename Error, typename... Args>
 struct redirect_error_signature<
-  R(const asio::error_code&, Args...) & noexcept>
+  R(const Error&, Args...) & noexcept>
 {
   typedef R type(Args...) & noexcept;
 };
 
-template <typename R, typename... Args>
+template <typename R, typename Error, typename... Args>
 struct redirect_error_signature<
-  R(asio::error_code, Args...) && noexcept>
+  R(Error, Args...) && noexcept>
 {
   typedef R type(Args...) && noexcept;
 };
 
-template <typename R, typename... Args>
+template <typename R, typename Error, typename... Args>
 struct redirect_error_signature<
-  R(const asio::error_code&, Args...) && noexcept>
+  R(const Error&, Args...) && noexcept>
 {
   typedef R type(Args...) && noexcept;
 };
@@ -179,8 +179,8 @@ struct redirect_error_signature<
 
 #if !defined(GENERATING_DOCUMENTATION)
 
-template <typename CompletionToken, typename Signature>
-struct async_result<redirect_error_t<CompletionToken>, Signature>
+template <typename CompletionToken, typename Error, typename Signature>
+struct async_result<redirect_error_t<CompletionToken, Error>, Signature>
   : async_result<CompletionToken,
       typename detail::redirect_error_signature<Signature>::type>
 {
@@ -191,20 +191,20 @@ struct async_result<redirect_error_t<CompletionToken>, Signature>
 
     template <typename Handler, typename... Args>
     void operator()(Handler&& handler,
-        asio::error_code* ec, Args&&... args) &&
+        Error* ec, Args&&... args) &&
     {
       static_cast<Initiation&&>(*this)(
-          detail::redirect_error_handler<decay_t<Handler>>(
+          detail::redirect_error_handler<decay_t<Handler>, Error>(
             *ec, static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
 
     template <typename Handler, typename... Args>
     void operator()(Handler&& handler,
-        asio::error_code* ec, Args&&... args) const &
+                    Error* ec, Args&&... args) const &
     {
       static_cast<const Initiation&>(*this)(
-          detail::redirect_error_handler<decay_t<Handler>>(
+          detail::redirect_error_handler<decay_t<Handler>, Error>(
             *ec, static_cast<Handler&&>(handler)),
           static_cast<Args&&>(args)...);
     }
@@ -234,18 +234,18 @@ struct async_result<redirect_error_t<CompletionToken>, Signature>
 };
 
 template <template <typename, typename> class Associator,
-    typename Handler, typename DefaultCandidate>
+    typename Handler, typename Error, typename DefaultCandidate>
 struct associator<Associator,
-    detail::redirect_error_handler<Handler>, DefaultCandidate>
+    detail::redirect_error_handler<Handler, Error>, DefaultCandidate>
   : Associator<Handler, DefaultCandidate>
 {
   static typename Associator<Handler, DefaultCandidate>::type get(
-      const detail::redirect_error_handler<Handler>& h) noexcept
+      const detail::redirect_error_handler<Handler, Error>& h) noexcept
   {
     return Associator<Handler, DefaultCandidate>::get(h.handler_);
   }
 
-  static auto get(const detail::redirect_error_handler<Handler>& h,
+  static auto get(const detail::redirect_error_handler<Handler, Error>& h,
       const DefaultCandidate& c) noexcept
     -> decltype(Associator<Handler, DefaultCandidate>::get(h.handler_, c))
   {
@@ -253,8 +253,8 @@ struct associator<Associator,
   }
 };
 
-template <typename... Signatures>
-struct async_result<partial_redirect_error, Signatures...>
+template <typename Error, typename... Signatures>
+struct async_result<partial_redirect_error<Error>, Signatures...>
 {
   template <typename Initiation, typename RawCompletionToken, typename... Args>
   static auto initiate(Initiation&& initiation,
@@ -263,7 +263,7 @@ struct async_result<partial_redirect_error, Signatures...>
       async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         redirect_error_t<
-          default_completion_token_t<associated_executor_t<Initiation>>>(
+          default_completion_token_t<associated_executor_t<Initiation>>, Error>(
             default_completion_token_t<associated_executor_t<Initiation>>{},
             token.ec_),
         static_cast<Args&&>(args)...))
@@ -271,7 +271,7 @@ struct async_result<partial_redirect_error, Signatures...>
     return async_initiate<Signatures...>(
         static_cast<Initiation&&>(initiation),
         redirect_error_t<
-          default_completion_token_t<associated_executor_t<Initiation>>>(
+          default_completion_token_t<associated_executor_t<Initiation>>, Error>(
             default_completion_token_t<associated_executor_t<Initiation>>{},
             token.ec_),
         static_cast<Args&&>(args)...);
