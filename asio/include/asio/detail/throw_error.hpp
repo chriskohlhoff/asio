@@ -24,7 +24,7 @@
 namespace asio {
 namespace detail {
 
-ASIO_DECL void do_throw_error(
+ASIO_NORETURN ASIO_DECL void do_throw_error(
     const asio::error_code& err
     ASIO_SOURCE_LOCATION_PARAM);
 

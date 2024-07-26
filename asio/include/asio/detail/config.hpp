@@ -1375,6 +1375,22 @@
 # define ASIO_NODISCARD
 #endif // !defined(ASIO_NODISCARD)
 
+
+// Compiler support for the the [[nodiscard]] attribute.
+#if !defined(ASIO_NORETURN)
+# if defined(__has_cpp_attribute)
+#  if __has_cpp_attribute(noreturn)
+#   if (__cplusplus >= 201103L)
+#    define ASIO_NORETURN [[noreturn]]
+#   endif // (__cplusplus >= 201103L)
+#  endif // __has_cpp_attribute(noreturn)
+# endif // defined(__has_cpp_attribute)
+#endif // !defined(ASIO_NORETURN)
+#if !defined(ASIO_NORETURN)
+# define ASIO_NORETURN
+#endif // !defined(ASIO_NORETURN)
+
+
 // Kernel support for MSG_NOSIGNAL.
 #if !defined(ASIO_HAS_MSG_NOSIGNAL)
 # if defined(__linux__)
