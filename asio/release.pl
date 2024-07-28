@@ -58,7 +58,7 @@ sub determine_version_from_configure()
   while (my $line = <$input>)
   {
     chomp($line);
-    if ($line =~ /^AC_INIT\(asio.*\[(.*)\]\)$/)
+    if ($line =~ /^AC_INIT\(\[asio\],\[(.*)\]\)$/)
     {
       our $asio_name = "asio-$1";
       our $boost_asio_name = "boost_asio_$1";
@@ -79,9 +79,9 @@ sub update_configure_ac
   while (my $line = <$input>)
   {
     chomp($line);
-    if ($line =~ /^AC_INIT\(asio.*\)$/)
+    if ($line =~ /^AC_INIT\(\[asio\].*\)$/)
     {
-      $line = "AC_INIT(asio, [";
+      $line = "AC_INIT([asio],[";
       $line .= "$version_major.$version_minor.$version_sub_minor";
       $line .= "])";
     }
@@ -406,7 +406,7 @@ else
 
 if ($package_asio)
 {
-  build_asio_doc();
+#build_asio_doc();
   make_asio_packages();
 }
 
