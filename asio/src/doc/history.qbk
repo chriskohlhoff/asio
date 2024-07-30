@@ -7,6 +7,197 @@
 
 [section:history Revision History]
 
+[heading Asio 1.30.1]
+
+* Changed the `default_completion_token` trait's primary template to select
+  `deferred` as the default completion token. As a result, most asynchronous
+  operations' initiating functions will return a deferred asynchronous operation
+  by default. For example, the completion token can be omitted when calling
+  asynchronous operations from an `awaitable` coroutine:[br]
+  ``
+  awaitable<void> echo(ip::tcp::socket& my_socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      std::size_t n = co_await my_socket.async_read_some(buffer(data));
+      co_await async_write(my_socket, buffer(data, n));
+    }
+  }
+  ``
+  or when using an operation that accepts asynchronous operations as function
+  objects, such as `experimental::make_parallel_group`:[br]
+  ``
+  experimental::make_parallel_group(
+      my_socket.async_read_some(buffer(data)),
+      my_timer.async_wait()
+    ).async_wait(/* ... */);
+  ``
+
+* Added the `is_completion_condition` trait and used it to add the missing
+  default completion tokens to overloads of `async_read`, `async_read_at`,
+  `async_write`, and `async_write_at`.
+
+* Added the `is_connect_condition` trait and used it disambiguate overloads of
+  `async_connect` when the completion token is defaulted.
+
+* Extended the completion token adapters `as_tuple`, `bind_allocator`,
+  `bind_cancellation_slot`, `bind_executor`, `bind_immediate_executor`, and
+  `redirect_error` to allow them to be used as ['partial completion token
+  adapters]. This means that they can be created without explicitly supplying a
+  completion token. Instead, when the adapter is passed to an asynchronous
+  operation, it will automatically determine the operation's default completion
+  token and adapt it. For example, the expression:[br]
+  ``
+  my_socket.async_read_some(my_buffer, as_tuple)
+  ``
+  will return a deferred asynchronous operation with the completion arguments
+  packaged in a tuple. They may also be applied using the `deferred` operations'
+  pipe operator:[br]
+  ``
+  error_code e;
+  co_await (async_write(my_socket, my_buffer) | redirect_error(e));
+  ``
+
+* Added the `cancel_after` and `cancel_at` completion token adapters. These
+  may be used to adapt any asynchronous operation to emit a cancellation signal
+  after a specified duration or at an absolute time point. For example:[br]
+  ``
+  my_socket.async_read_some(my_buffer,
+      cancel_after(std::chrono::seconds(10),
+        [](error_code e, std::size_t n)
+        {
+          // ...
+        }));
+  ``
+  This cancellation is implemented internally using a `basic_waitable_timer`.
+  By default, this timer is created using the asynchronous operation's I/O
+  executor. If the operation does specify its I/O executor, a timer may be
+  explicitly supplied:[br]
+  ``
+  my_socket.async_read_some(my_buffer,
+      cancel_after(my_timer, std::chrono::seconds(10),
+        [](error_code e, std::size_t n)
+        {
+          // ...
+        }));
+  ``
+  These adapters may also be used as partial completion token adapters, as
+  in:[br]
+  ``
+  co_await my_socket.async_read_some(my_buffer, cancel_after(5s));
+  ``
+  or:[br]
+  ``
+  co_await (
+      async_write(my_socket, my_buffer) | as_tuple
+        | cancel_after(std::chronos::seconds(10)
+    );
+  ``
+  or to adapt other partial completion token adapters:[br]
+  ``
+  co_await my_socket.async_read_some(my_buffer, cancel_after(5s, as_tuple));
+  ``
+  Note that, since the implementation in terms of a timer introduces a parallel
+  `async_wait` operation, it is the responsibility of the caller to ensure that
+  the asynchronous operation is performed in an implicit or explicit strand.
+
+* Changed all completion token adapters to ensure they correctly propagate the
+  asynchronous operation's I/O executor during adaptation.
+
+* Fixed `async_compose` and `co_composed` to correctly indicate if they have
+  an I/O executor.
+
+* Moved `co_composed` out of the `experimental` namespace.
+
+* Added `composed`, which creates an initiation function object from a stateful
+  implementation. It is similar to `co_composed`, but for regular function
+  objects rather than C++20 coroutines. For example:
+  ``
+  struct async_echo_implementation
+  {
+    tcp::socket& socket_;
+    mutable_buffer buffer_;
+    enum { starting, reading, writing } state_;
+
+    template <typename Self>
+    void operator()(Self& self,
+        error_code error,
+        std::size_t n)
+    {
+      switch (state_)
+      {
+        // ...
+      }
+    }
+  };
+
+  template <typename CompletionToken>
+  auto async_echo(tcp::socket& socket,
+      mutable_buffer buffer,
+      CompletionToken&& token)
+  {
+    return async_initiate<CompletionToken,
+      void(error_code, std::size_t)>(
+        composed(
+          async_echo_implementation{socket, buffer,
+            async_echo_implementation::starting}, socket),
+        token, error_code{}, 0);
+  }
+  ``
+  The `async_compose` function has been changed to be a thin wrapper around
+  `composed`. However, unlike `async_compose`, `composed` allows arguments to be
+  passed to the stateful implementation when the operation is initiated.
+
+* Changed the `detached` completion token to work with asynchronous operations
+  that have multiple completion signatures.
+
+* Changed `async_initiate` to allow an empty variadic list of completion
+  signatures, which would indicate that an asynchronous operation never
+  completes.
+
+* Added overloads of `async_initiate` that automatically deduce the type of
+  the completion token. For example:[br]
+  ``
+  async_initiate(co_composed(/* ... */), detached, arg_1, arg_2);
+  ``
+  will deduce the token type from the argument `detached`.
+
+* Added `async_immediate` which implements a trivial asynchronous operation that
+  completes immediately, using an associated immediate executor if available.
+  It is intended for use within asynchronous compositions to make it easier to
+  provide optimised immediate completion.
+
+* Updated the documentation for various asynchronous operations to specify
+  immediate completion in terms of `async_immediate`.
+
+* Enabled SFINAE-based partial specialisation of the `associator` trait.
+
+* Changed to use the recycling allocator as the fallback for all operations,
+  rather than calling the underlying recycling allocation helper functions
+  directly.
+
+* Fixed the `deferred` implementation to ensure that the wrapped initiation
+  function object's copyability is correctly propagated.
+
+* Fixed `experimental::coro` compatibility with clang 15.
+
+* Fixed deduction of a completion handler's default immediate executor type.
+
+* Don't use `ioctl` to modify the non-blocking mode on socket or descriptors
+  that have been assigned, as they may originate from an external source.
+
+* Don't call `fcntl` with `F_SETFL` if the flags aren't changing.
+
+* Don't enable non-blocking mode when performing an `async_wait` operation on
+  sockets or descriptors.
+
+* Update some composed operation examples to destroy the timer object before
+  calling the completion handler.
+
+* Fix `read_until` regex support when `BOOST_ASIO_NO_DYNAMIC_BUFFER_V1` is
+  defined.
+
 [heading Asio 1.30.2]
 
 * Fixed `co_spawn` to correctly propagate exceptions resulting from cancellation
