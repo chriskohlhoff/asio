@@ -45,6 +45,7 @@ nobase_include_HEADERS = \
 	asio/buffer.hpp \
 	asio/buffer_registration.hpp \
 	asio/buffers_iterator.hpp \
+	asio/cancel_after.hpp \
 	asio/cancel_at.hpp \
 	asio/cancellation_signal.hpp \
 	asio/cancellation_state.hpp \
@@ -289,6 +290,7 @@ nobase_include_HEADERS = \
 	asio/detail/thread_info_base.hpp \
 	asio/detail/throw_error.hpp \
 	asio/detail/throw_exception.hpp \
+	asio/detail/timed_cancel_op.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue.hpp \
 	asio/detail/timer_queue_ptime.hpp \
