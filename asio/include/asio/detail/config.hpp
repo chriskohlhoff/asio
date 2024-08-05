@@ -1300,7 +1300,10 @@
 // Support the co_await keyword on compilers known to allow it.
 #if !defined(ASIO_HAS_CO_AWAIT)
 # if !defined(ASIO_DISABLE_CO_AWAIT)
-#  if defined(ASIO_MSVC)
+#  if (__cplusplus >= 202002) \
+     && (__cpp_impl_coroutine >= 201902) && (__cpp_lib_coroutine >= 201902)
+#   define ASIO_HAS_CO_AWAIT 1
+#  elif defined(ASIO_MSVC)
 #   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705) && !defined(__clang__)
 #    define ASIO_HAS_CO_AWAIT 1
 #   elif (_MSC_FULL_VER >= 190023506)
