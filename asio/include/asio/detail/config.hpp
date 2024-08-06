@@ -366,6 +366,19 @@
 # endif // !defined(ASIO_DISABLE_VARIADIC_LAMBDA_CAPTURES)
 #endif // !defined(ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
 
+// Support for inline variables.
+#if !defined(ASIO_HAS_INLINE_VARIABLES)
+# if !defined(ASIO_DISABLE_INLINE_VARIABLES)
+#  if (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
+#   define ASIO_HAS_INLINE_VARIABLES 1
+#   define ASIO_INLINE_VARIABLE inline
+#  endif // (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
+# endif // !defined(ASIO_DISABLE_INLINE_VARIABLES)
+#endif // !defined(ASIO_HAS_INLINE_VARIABLES)
+#if !defined(ASIO_INLINE_VARIABLE)
+# define ASIO_INLINE_VARIABLE
+#endif // !defined(ASIO_INLINE_VARIABLE)
+
 // Default alignment.
 #if defined(__STDCPP_DEFAULT_NEW_ALIGNMENT__)
 # define ASIO_DEFAULT_ALIGN __STDCPP_DEFAULT_NEW_ALIGNMENT__
