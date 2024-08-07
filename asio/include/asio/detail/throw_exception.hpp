@@ -30,7 +30,7 @@ using boost::throw_exception;
 
 // Declare the throw_exception function for all targets.
 template <typename Exception>
-void throw_exception(
+ASIO_NORETURN void throw_exception(
     const Exception& e
     ASIO_SOURCE_LOCATION_DEFAULTED_PARAM);
 
@@ -39,7 +39,7 @@ void throw_exception(
 // function.
 # if !defined(ASIO_NO_EXCEPTIONS)
 template <typename Exception>
-void throw_exception(
+ASIO_NORETURN void throw_exception(
     const Exception& e
     ASIO_SOURCE_LOCATION_PARAM)
 {

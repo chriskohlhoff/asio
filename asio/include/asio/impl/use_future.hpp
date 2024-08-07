@@ -21,6 +21,7 @@
 #include "asio/detail/memory.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/error_code.hpp"
+#include "asio/error_traits.hpp"
 #include "asio/execution.hpp"
 #include "asio/packaged_task.hpp"
 #include "asio/system_error.hpp"
@@ -228,37 +229,24 @@ public:
   }
 };
 
-// For completion signature void(error_code).
-class promise_handler_ec_0
-  : public promise_creator<void>
+// For completion signature void(Error, T1, ..., Tn);
+template <typename Error>
+class promise_handler_error_0
+    : public promise_creator<void>
 {
-public:
-  void operator()(const asio::error_code& ec)
+ public:
+  template <typename... Args>
+  void operator()(const Error& ec)
   {
-    if (ec)
-    {
-      this->p_->set_exception(
-          std::make_exception_ptr(
-            asio::system_error(ec)));
-    }
-    else
-    {
-      this->p_->set_value();
-    }
-  }
-};
-
-// For completion signature void(exception_ptr).
-class promise_handler_ex_0
-  : public promise_creator<void>
-{
-public:
-  void operator()(const std::exception_ptr& ex)
-  {
-    if (ex)
-    {
-      this->p_->set_exception(ex);
-    }
+    if (error_traits<Error>::is_failure(ec))
+      try
+      {
+        error_traits<Error>::throw_error(ec);
+      }
+      catch(...)
+      {
+        this->p_->set_exception(std::current_exception());
+      }
     else
     {
       this->p_->set_value();
@@ -279,43 +267,31 @@ public:
   }
 };
 
-// For completion signature void(error_code, T).
-template <typename T>
-class promise_handler_ec_1
-  : public promise_creator<T>
+// For completion signature void(Error, T1, ..., Tn);
+template <typename T, typename Error>
+class promise_handler_error_1
+    : public promise_creator<T>
 {
-public:
+ public:
   template <typename Arg>
-  void operator()(const asio::error_code& ec,
-      Arg&& arg)
+  void operator()(const Error& ec, Arg && arg)
   {
-    if (ec)
-    {
-      this->p_->set_exception(
-          std::make_exception_ptr(
-            asio::system_error(ec)));
-    }
+    if (error_traits<Error>::is_failure(ec))
+      try
+      {
+        error_traits<Error>::throw_error(ec);
+      }
+      catch(...)
+      {
+        this->p_->set_exception(std::current_exception());
+      }
     else
+    {
       this->p_->set_value(static_cast<Arg&&>(arg));
+    }
   }
 };
 
-// For completion signature void(exception_ptr, T).
-template <typename T>
-class promise_handler_ex_1
-  : public promise_creator<T>
-{
-public:
-  template <typename Arg>
-  void operator()(const std::exception_ptr& ex,
-      Arg&& arg)
-  {
-    if (ex)
-      this->p_->set_exception(ex);
-    else
-      this->p_->set_value(static_cast<Arg&&>(arg));
-  }
-};
 
 // For completion signature void(T1, ..., Tn);
 template <typename T>
@@ -332,90 +308,67 @@ public:
   }
 };
 
-// For completion signature void(error_code, T1, ..., Tn);
-template <typename T>
-class promise_handler_ec_n
-  : public promise_creator<T>
+// For completion signature void(Error, T1, ..., Tn);
+template <typename T, typename Error>
+class promise_handler_error_n
+    : public promise_creator<T>
 {
-public:
+ public:
   template <typename... Args>
-  void operator()(const asio::error_code& ec, Args&&... args)
+  void operator()(const Error& ec, Args&&... args)
   {
-    if (ec)
+    if (error_traits<Error>::is_failure(ec))
+    try
     {
-      this->p_->set_exception(
-          std::make_exception_ptr(
-            asio::system_error(ec)));
+      error_traits<Error>::throw_error(ec);
+    }
+    catch(...)
+    {
+      this->p_->set_exception(std::current_exception());
     }
     else
     {
       this->p_->set_value(
           std::forward_as_tuple(
-            static_cast<Args&&>(args)...));
+              static_cast<Args&&>(args)...));
     }
   }
 };
 
-// For completion signature void(exception_ptr, T1, ..., Tn);
-template <typename T>
-class promise_handler_ex_n
-  : public promise_creator<T>
-{
-public:
-  template <typename... Args>
-  void operator()(const std::exception_ptr& ex,
-      Args&&... args)
-  {
-    if (ex)
-      this->p_->set_exception(ex);
-    else
-    {
-      this->p_->set_value(
-          std::forward_as_tuple(
-            static_cast<Args&&>(args)...));
-    }
-  }
-};
 
 // Helper template to choose the appropriate concrete promise handler
 // implementation based on the supplied completion signature.
-template <typename> class promise_handler_selector;
+template <typename, typename = void> class promise_handler_selector;
 
 template <>
-class promise_handler_selector<void()>
+class promise_handler_selector<void(), void>
   : public promise_handler_0 {};
 
-template <>
-class promise_handler_selector<void(asio::error_code)>
-  : public promise_handler_ec_0 {};
-
-template <>
-class promise_handler_selector<void(std::exception_ptr)>
-  : public promise_handler_ex_0 {};
+template <typename Error>
+class promise_handler_selector<void(Error), typename enable_if<is_error<Error>::value>::type>
+  : public promise_handler_error_0<Error> {};
 
 template <typename Arg>
-class promise_handler_selector<void(Arg)>
+class promise_handler_selector<void(Arg),  typename enable_if<!is_error<Arg>::value>::type>
   : public promise_handler_1<Arg> {};
 
-template <typename Arg>
-class promise_handler_selector<void(asio::error_code, Arg)>
-  : public promise_handler_ec_1<Arg> {};
+template <typename Error, typename Arg>
+class promise_handler_selector<void(Error, Arg), typename enable_if<is_error<Error>::value>::type>
+  : public promise_handler_error_1<Arg, Error> {};
 
-template <typename Arg>
-class promise_handler_selector<void(std::exception_ptr, Arg)>
-  : public promise_handler_ex_1<Arg> {};
+template <typename Arg1, typename Arg2>
+class promise_handler_selector<void(Arg1, Arg2), typename enable_if<!is_error<Arg1>::value>::type>
+ : public promise_handler_n<std::tuple<Arg1, Arg2>> {};
 
-template <typename... Arg>
-class promise_handler_selector<void(Arg...)>
-  : public promise_handler_n<std::tuple<Arg...>> {};
 
-template <typename... Arg>
-class promise_handler_selector<void(asio::error_code, Arg...)>
-  : public promise_handler_ec_n<std::tuple<Arg...>> {};
 
-template <typename... Arg>
-class promise_handler_selector<void(std::exception_ptr, Arg...)>
-  : public promise_handler_ex_n<std::tuple<Arg...>> {};
+template <typename First, typename... Arg>
+class promise_handler_selector<void(First, Arg...), typename enable_if<!is_error<First>::value>::type>
+  : public promise_handler_n<std::tuple<First, Arg...>> {};
+
+template <typename Error, typename... Arg>
+class promise_handler_selector<void(Error, Arg...), typename enable_if<is_error<Error>::value>::type>
+  : public promise_handler_error_n<std::tuple<Arg...>, Error> {};
 
 // Completion handlers produced from the use_future completion token, when not
 // using use_future::operator().

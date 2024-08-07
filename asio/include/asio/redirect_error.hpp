@@ -29,13 +29,13 @@ namespace asio {
  * The redirect_error_t class is used to indicate that any error_code produced
  * by an asynchronous operation is captured to a specified variable.
  */
-template <typename CompletionToken>
+template <typename CompletionToken, typename Error>
 class redirect_error_t
 {
 public:
   /// Constructor.
   template <typename T>
-  redirect_error_t(T&& completion_token, asio::error_code& ec)
+  redirect_error_t(T&& completion_token, Error& ec)
     : token_(static_cast<T&&>(completion_token)),
       ec_(ec)
   {
@@ -43,7 +43,7 @@ public:
 
 //private:
   CompletionToken token_;
-  asio::error_code& ec_;
+  Error& ec_;
 };
 
 /// A function object type that adapts a @ref completion_token to capture
@@ -53,11 +53,12 @@ public:
  * asynchronous operation's default completion token (or asio::deferred
  * if no default is available).
  */
+template<typename Error>
 class partial_redirect_error
 {
 public:
   /// Constructor that specifies the variable used to capture error_code values.
-  explicit partial_redirect_error(asio::error_code& ec)
+  explicit partial_redirect_error(Error& ec)
     : ec_(ec)
   {
   }
@@ -66,32 +67,34 @@ public:
   /// should capture error_code values to a variable.
   template <typename CompletionToken>
   ASIO_NODISCARD inline
-  constexpr redirect_error_t<decay_t<CompletionToken>>
+  constexpr redirect_error_t<decay_t<CompletionToken>, Error>
   operator()(CompletionToken&& completion_token) const
   {
-    return redirect_error_t<decay_t<CompletionToken>>(
+    return redirect_error_t<decay_t<CompletionToken>, Error>(
         static_cast<CompletionToken&&>(completion_token), ec_);
   }
 
 //private:
-  asio::error_code& ec_;
+  Error& ec_;
 };
 
 /// Create a partial completion token adapter that captures error_code values
 /// to a variable.
-ASIO_NODISCARD inline partial_redirect_error
-redirect_error(asio::error_code& ec)
+template<typename Error>
+ASIO_NODISCARD inline partial_redirect_error<Error>
+redirect_error(Error& ec, typename enable_if<is_error<Error>::value>::type * = 0)
 {
   return partial_redirect_error(ec);
 }
 
 /// Adapt a @ref completion_token to capture error_code values to a variable.
-template <typename CompletionToken>
-ASIO_NODISCARD inline redirect_error_t<decay_t<CompletionToken>>
+template <typename CompletionToken, typename Error>
+ASIO_NODISCARD inline redirect_error_t<decay_t<CompletionToken>, Error>
 redirect_error(CompletionToken&& completion_token,
-    asio::error_code& ec)
+               Error& ec,
+               typename enable_if<is_error<Error>::value>::type * = 0)
 {
-  return redirect_error_t<decay_t<CompletionToken>>(
+  return redirect_error_t<decay_t<CompletionToken>, Error>(
       static_cast<CompletionToken&&>(completion_token), ec);
 }
 

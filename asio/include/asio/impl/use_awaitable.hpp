@@ -54,10 +54,39 @@ protected:
 };
 
 template <typename, typename...>
-class awaitable_handler;
+class awaitable_handler_no_error;
+
+template <typename, typename, typename...>
+class awaitable_handler_error;
+
+template<typename Executor, typename ... Ts>
+struct awaitable_handler :
+    conditional<
+        signature_has_error<void(Ts...)>::value,
+        awaitable_handler_error<Executor, Ts...>,
+        awaitable_handler_no_error<Executor, Ts...>>::type
+{
+    using base_type = conditional<
+              signature_has_error<void(Ts...)>::value,
+              awaitable_handler_error<Executor, Ts...>,
+              awaitable_handler_no_error<Executor, Ts...>>::type;
+    using base_type::base_type;
+};
+
+template<typename Executor>
+struct awaitable_handler<Executor> : awaitable_handler_no_error<Executor>
+{
+  using awaitable_handler_no_error<Executor>::awaitable_handler_no_error;
+};
+
+template<typename Executor>
+struct awaitable_handler<Executor, void> : awaitable_handler_no_error<Executor>
+{
+  using awaitable_handler_no_error<Executor>::awaitable_handler_no_error;
+};
 
 template <typename Executor>
-class awaitable_handler<Executor>
+class awaitable_handler_no_error<Executor>
   : public awaitable_handler_base<Executor, void>
 {
 public:
@@ -73,38 +102,18 @@ public:
   }
 };
 
-template <typename Executor>
-class awaitable_handler<Executor, asio::error_code>
+template <typename Executor, typename Error>
+class awaitable_handler_error<Executor, Error>
   : public awaitable_handler_base<Executor, void>
 {
 public:
   using awaitable_handler_base<Executor, void>::awaitable_handler_base;
 
-  void operator()(const asio::error_code& ec)
+  void operator()(const Error& e)
   {
     this->frame()->attach_thread(this);
-    if (ec)
-      this->frame()->set_error(ec);
-    else
-      this->frame()->return_void();
-    this->frame()->clear_cancellation_slot();
-    this->frame()->pop_frame();
-    this->pump();
-  }
-};
-
-template <typename Executor>
-class awaitable_handler<Executor, std::exception_ptr>
-  : public awaitable_handler_base<Executor, void>
-{
-public:
-  using awaitable_handler_base<Executor, void>::awaitable_handler_base;
-
-  void operator()(std::exception_ptr ex)
-  {
-    this->frame()->attach_thread(this);
-    if (ex)
-      this->frame()->set_except(ex);
+    if (error_traits<Error>::is_failure(e))
+      this->frame()->set_error(e);
     else
       this->frame()->return_void();
     this->frame()->clear_cancellation_slot();
@@ -114,7 +123,7 @@ public:
 };
 
 template <typename Executor, typename T>
-class awaitable_handler<Executor, T>
+class awaitable_handler_no_error<Executor, T>
   : public awaitable_handler_base<Executor, T>
 {
 public:
@@ -131,40 +140,19 @@ public:
   }
 };
 
-template <typename Executor, typename T>
-class awaitable_handler<Executor, asio::error_code, T>
+template <typename Executor, typename Error, typename T>
+class awaitable_handler_error<Executor, Error, T>
   : public awaitable_handler_base<Executor, T>
 {
 public:
   using awaitable_handler_base<Executor, T>::awaitable_handler_base;
 
   template <typename Arg>
-  void operator()(const asio::error_code& ec, Arg&& arg)
+  void operator()(const Error& e, Arg&& arg)
   {
     this->frame()->attach_thread(this);
-    if (ec)
-      this->frame()->set_error(ec);
-    else
-      this->frame()->return_value(std::forward<Arg>(arg));
-    this->frame()->clear_cancellation_slot();
-    this->frame()->pop_frame();
-    this->pump();
-  }
-};
-
-template <typename Executor, typename T>
-class awaitable_handler<Executor, std::exception_ptr, T>
-  : public awaitable_handler_base<Executor, T>
-{
-public:
-  using awaitable_handler_base<Executor, T>::awaitable_handler_base;
-
-  template <typename Arg>
-  void operator()(std::exception_ptr ex, Arg&& arg)
-  {
-    this->frame()->attach_thread(this);
-    if (ex)
-      this->frame()->set_except(ex);
+    if (error_traits<Error>::is_failure(e))
+      this->frame()->set_error(e);
     else
       this->frame()->return_value(std::forward<Arg>(arg));
     this->frame()->clear_cancellation_slot();
@@ -174,7 +162,7 @@ public:
 };
 
 template <typename Executor, typename... Ts>
-class awaitable_handler
+class awaitable_handler_no_error
   : public awaitable_handler_base<Executor, std::tuple<Ts...>>
 {
 public:
@@ -192,8 +180,8 @@ public:
   }
 };
 
-template <typename Executor, typename... Ts>
-class awaitable_handler<Executor, asio::error_code, Ts...>
+template <typename Executor, typename Error, typename... Ts>
+class awaitable_handler_error
   : public awaitable_handler_base<Executor, std::tuple<Ts...>>
 {
 public:
@@ -201,11 +189,11 @@ public:
     std::tuple<Ts...>>::awaitable_handler_base;
 
   template <typename... Args>
-  void operator()(const asio::error_code& ec, Args&&... args)
+  void operator()(const Error& e, Args&&... args)
   {
     this->frame()->attach_thread(this);
-    if (ec)
-      this->frame()->set_error(ec);
+    if (error_traits<Error>::is_failure(e))
+      this->frame()->set_error(e);
     else
       this->frame()->return_values(std::forward<Args>(args)...);
     this->frame()->clear_cancellation_slot();
@@ -214,27 +202,6 @@ public:
   }
 };
 
-template <typename Executor, typename... Ts>
-class awaitable_handler<Executor, std::exception_ptr, Ts...>
-  : public awaitable_handler_base<Executor, std::tuple<Ts...>>
-{
-public:
-  using awaitable_handler_base<Executor,
-    std::tuple<Ts...>>::awaitable_handler_base;
-
-  template <typename... Args>
-  void operator()(std::exception_ptr ex, Args&&... args)
-  {
-    this->frame()->attach_thread(this);
-    if (ex)
-      this->frame()->set_except(ex);
-    else
-      this->frame()->return_values(std::forward<Args>(args)...);
-    this->frame()->clear_cancellation_slot();
-    this->frame()->pop_frame();
-    this->pump();
-  }
-};
 
 } // namespace detail
 
@@ -257,7 +224,7 @@ template <typename Executor, typename R, typename... Args>
 class async_result<use_awaitable_t<Executor>, R(Args...)>
 {
 public:
-  typedef typename detail::awaitable_handler<
+  typedef detail::awaitable_handler<
       Executor, decay_t<Args>...> handler_type;
   typedef typename handler_type::awaitable_type return_type;
 
