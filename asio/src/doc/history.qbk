@@ -7,7 +7,45 @@
 
 [section:history Revision History]
 
-[heading Asio 1.30.1]
+[heading Asio 1.32.0]
+
+* Fixed an issue in `co_composed` caused by a missing `decay`.
+
+* Fixed an issue in `co_composed` due to a missing reference in a cast to a base
+  class type.
+
+* Changed to use the standard C++20 coroutine feature test macro by default.
+
+* Changed to use `std::aligned_alloc` on Android, when available.
+
+* Fixed an integer conversion warning in `ip::address_v6`, on iOS/tvOS.
+
+* Added missing include of `<malloc.h>` required for `_alloca`.
+
+* Changed to use a standard feature test macro to check if the standard library
+  supports `std::invoke_result`.
+
+* Fixed handling of `file_base::append` in Windows file support.
+
+* Fixed some warnings in IP address to string conversion.
+
+* Added support for using `co_spawn` when exceptions are disabled.
+
+* Fixed `spawn.hpp` header to be self-contained.
+
+* Enabled TLS v1.3 options for WolfSSL.
+
+* Fixed `experimental::coro` implementation to use the correct cancellation
+  slot.
+
+* Fixed `io_context::strand::wrap()` so that its return value has an associated
+  executor.
+
+* Marked `constexpr` global variables as `inline`.
+
+* Documentation fixes.
+
+[heading Asio 1.31.0]
 
 * Changed the `default_completion_token` trait's primary template to select
   `deferred` as the default completion token. As a result, most asynchronous
