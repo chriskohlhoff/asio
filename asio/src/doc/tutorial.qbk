@@ -654,6 +654,11 @@ Just as it would with a call from a single thread, concurrent calls to asio::io\
   ``''''''``  asio::io_context io;
   ``''''''``  printer p(io);
   ``''''''``  std::thread t([&]{ io.run(); });
+  ``''''''``  io.run();
+  ``''''''``  t.join();
+
+  ``''''''``  return 0;
+  ``''''''``}
 
 See the [link asio.tutorial.tuttimer5.src full source listing]
 

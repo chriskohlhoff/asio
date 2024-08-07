@@ -365,6 +365,7 @@ asio::io_context::run() will continue to execute while there is "work" left to
 do. The background thread will not exit until all asynchronous operations have
 completed.
 
+\until join
 \until }
 
 See the \ref tuttimer5src "full source listing" \n
