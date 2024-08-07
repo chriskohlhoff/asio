@@ -208,6 +208,8 @@ public:
   // Run the kqueue loop.
   ASIO_DECL void run(long usec, op_queue<operation>& ops);
 
+  ASIO_DECL void mask_wait_only();
+
   // Interrupt the kqueue loop.
   ASIO_DECL void interrupt();
 
@@ -254,6 +256,14 @@ private:
 
   // Keep track of all registered descriptors.
   object_pool<descriptor_state> registered_descriptors_;
+
+  // Save fired events
+  struct {
+    struct kevent events[128];
+    int num_events;
+    std::atomic_bool has_event;
+    std::atomic_bool is_wait;
+  } event_loop_field_ {};
 };
 
 } // namespace detail

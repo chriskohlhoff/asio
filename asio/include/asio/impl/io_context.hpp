@@ -106,6 +106,31 @@ std::size_t io_context::run_one_until(
   return 0;
 }
 
+template <typename Rep, typename Period>
+void io_context::wait_one_for(const chrono::duration<Rep, Period>& rel_time)
+{
+  this->wait_one_until(chrono::steady_clock::now() + rel_time);
+}
+
+template <typename Clock, typename Duration>
+void io_context::wait_one_until(
+    const chrono::time_point<Clock, Duration> &abs_time)
+{
+  typename Clock::time_point now = Clock::now();
+  if (now < abs_time) {
+    typename Clock::duration rel_time = abs_time - now;
+    if (rel_time > chrono::seconds(1))
+      rel_time = chrono::seconds(1);
+
+    asio::error_code ec;
+    impl_.wait_event(
+        static_cast<long>(
+            chrono::duration_cast<chrono::microseconds>(rel_time).count()),
+        ec);
+    asio::detail::throw_error(ec);
+  }
+}
+
 #if !defined(ASIO_NO_DEPRECATED)
 
 inline void io_context::reset()

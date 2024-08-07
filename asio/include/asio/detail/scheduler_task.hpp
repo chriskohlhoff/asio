@@ -31,6 +31,11 @@ public:
   // Run the task once until interrupted or events are ready to be dispatched.
   virtual void run(long usec, op_queue<scheduler_operation>& ops) = 0;
 
+  // Mask just wait event for this time call run
+  virtual void mask_wait_only() {
+    throw_error(std::make_error_code(std::errc::operation_not_supported));
+  };
+
   // Interrupt the task.
   virtual void interrupt() = 0;
 
