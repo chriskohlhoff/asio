@@ -208,6 +208,7 @@ check_PROGRAMS += \
 if HAVE_COROUTINES
 check_PROGRAMS += \
 	unit/experimental/awaitable_operators \
+	unit/experimental/awaitable_specific_ptr \
 	unit/experimental/co_composed \
 	unit/experimental/coro/allocator \
 	unit/experimental/coro/cancel \
@@ -413,6 +414,7 @@ TESTS += \
 if HAVE_COROUTINES
 TESTS += \
 	unit/experimental/awaitable_operators \
+	unit/experimental/awaitable_specific_ptr \
 	unit/experimental/co_composed \
 	unit/experimental/coro/allocator \
 	unit/experimental/coro/cancel \
@@ -635,6 +637,7 @@ unit_experimental_promise_SOURCES = unit/experimental/promise.cpp
 
 if HAVE_COROUTINES
 unit_experimental_awaitable_operators_SOURCES = unit/experimental/awaitable_operators.cpp
+unit_experimental_awaitable_specific_ptr_SOURCES = unit/experimental/awaitable_specific_ptr.cpp
 unit_experimental_co_composed_SOURCES = unit/experimental/co_composed.cpp
 unit_experimental_coro_allocator_SOURCES = unit/experimental/coro/allocator.cpp
 unit_experimental_coro_cancel_SOURCES = unit/experimental/coro/cancel.cpp
