@@ -406,7 +406,7 @@ else
 
 if ($package_asio)
 {
-#build_asio_doc();
+  build_asio_doc();
   make_asio_packages();
 }
 
