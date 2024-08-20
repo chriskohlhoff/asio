@@ -22,3 +22,19 @@ test-driver
 *.zip
 /*.cpp
 /*.hpp
+### cmake-init generated:
+.git
+.github/
+.idea/
+.vs/
+.vscode/
+.init
+build/
+cmake-build-*/
+stagedir/
+prefix/
+CMakeLists.txt.user
+CMakeUserPresets.json
+tags
+*.swp
+*.bak

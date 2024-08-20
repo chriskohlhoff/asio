@@ -24,6 +24,7 @@
 #include "asio/detail/memory.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/socket_ops.hpp"
+#include "asio/socket_base.hpp"
 
 #include "asio/detail/push_options.hpp"
 
