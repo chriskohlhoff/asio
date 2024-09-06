@@ -56,7 +56,7 @@ public:
   ASIO_DECL ~scheduler();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Initialise the task, if required.
   ASIO_DECL void init_task();

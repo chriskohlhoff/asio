@@ -50,12 +50,12 @@ public:
   {
   }
 
-  void call(cancellation_type_t type)
+  void call(cancellation_type_t type) override
   {
     handler_(type);
   }
 
-  std::pair<void*, std::size_t> destroy() noexcept
+  std::pair<void*, std::size_t> destroy() noexcept override
   {
     std::pair<void*, std::size_t> mem(this, size_);
     this->cancellation_handler::~cancellation_handler();
