@@ -133,14 +133,18 @@ void epoll_reactor::notify_fork(
     for (descriptor_state* state = registered_descriptors_.first();
         state != 0; state = state->next_)
     {
-      ev.events = state->registered_events_;
-      ev.data.ptr = state;
-      int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, state->descriptor_, &ev);
-      if (result != 0)
+      if (state->registered_events_ != 0)
       {
-        asio::error_code ec(errno,
-            asio::error::get_system_category());
-        asio::detail::throw_error(ec, "epoll re-registration");
+        ev.events = state->registered_events_;
+        ev.data.ptr = state;
+        int result = epoll_ctl(epoll_fd_,
+            EPOLL_CTL_ADD, state->descriptor_, &ev);
+        if (result != 0)
+        {
+          asio::error_code ec(errno,
+              asio::error::get_system_category());
+          asio::detail::throw_error(ec, "epoll re-registration");
+        }
       }
     }
   }
