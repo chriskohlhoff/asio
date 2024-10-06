@@ -378,14 +378,21 @@ public:
 
   /// Forwarding function call operator.
   template <typename... Args>
-  result_of_t<T(Args...)> operator()(Args&&... args)
+  result_of_t<T(Args...)> operator()(Args&&... args) &
   {
     return this->target_(static_cast<Args&&>(args)...);
   }
 
   /// Forwarding function call operator.
   template <typename... Args>
-  result_of_t<T(Args...)> operator()(Args&&... args) const
+  result_of_t<T(Args...)> operator()(Args&&... args) &&
+  {
+    return static_cast<T&&>(this->target_)(static_cast<Args&&>(args)...);
+  }
+
+  /// Forwarding function call operator.
+  template <typename... Args>
+  result_of_t<T(Args...)> operator()(Args&&... args) const&
   {
     return this->target_(static_cast<Args&&>(args)...);
   }
