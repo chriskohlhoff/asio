@@ -223,6 +223,11 @@ check_PROGRAMS += \
 endif
 endif
 
+if HAVE_BOOST_COROUTINE
+check_PROGRAMS += \
+	unit/spawn
+endif
+
 if HAVE_OPENSSL
 check_PROGRAMS += \
 	unit/ssl/context_base \
@@ -407,6 +412,11 @@ TESTS += \
 	unit/experimental/channel_traits \
 	unit/experimental/concurrent_channel \
 	unit/experimental/parallel_group
+endif
+
+if HAVE_BOOST_COROUTINE
+TESTS += \
+	unit/spawn
 endif
 
 if HAVE_CXX20
@@ -632,6 +642,11 @@ unit_experimental_channel_SOURCES = unit/experimental/channel.cpp
 unit_experimental_channel_traits_SOURCES = unit/experimental/channel_traits.cpp
 unit_experimental_concurrent_channel_SOURCES = unit/experimental/concurrent_channel.cpp
 unit_experimental_parallel_group_SOURCES = unit/experimental/parallel_group.cpp
+endif
+
+if HAVE_BOOST_COROUTINE
+unit_spawn_SOURCES = unit/spawn.cpp
+unit_spawn_LDADD = -lboost_context
 endif
 
 if HAVE_CXX20

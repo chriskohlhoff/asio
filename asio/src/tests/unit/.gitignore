@@ -96,6 +96,7 @@ serial_port_base
 signal_set
 signal_set_base
 socket_base
+spawn
 static_thread_pool
 steady_timer
 strand
