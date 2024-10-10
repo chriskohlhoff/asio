@@ -843,7 +843,11 @@ public:
   {
     if (owner_)
       *owner_ = this;
+#if !defined(ASIO_NO_EXCEPTIONS)
     throw;
+#else // !defined(ASIO_NO_EXCEPTIONS)
+    std::terminate();
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   }
 
   template <ASIO_ASYNC_OPERATION Op>
