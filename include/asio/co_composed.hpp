@@ -843,7 +843,11 @@ public:
   {
     if (owner_)
       *owner_ = this;
+#if !defined(ASIO_NO_EXCEPTIONS)
     throw;
+#else
+    ::abort();
+#endif
   }
 
   template <ASIO_ASYNC_OPERATION Op>
