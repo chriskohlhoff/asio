@@ -1446,11 +1446,7 @@
 // Standard library support for coroutines.
 #if !defined(ASIO_HAS_STD_COROUTINE)
 # if !defined(ASIO_DISABLE_STD_COROUTINE)
-#  if defined(ASIO_MSVC)
-#   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
-#    define ASIO_HAS_STD_COROUTINE 1
-#   endif // (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
-#  elif defined(__clang__)
+#  if defined(__clang__)
 #   if (__clang_major__ >= 14)
 #    if (__cplusplus >= 202002) && (__cpp_impl_coroutine >= 201902)
 #     if __has_include(<coroutine>)
@@ -1465,6 +1461,11 @@
 #    endif // __has_include(<coroutine>)
 #   endif // (__cplusplus >= 201709) && (__cpp_impl_coroutine >= 201902)
 #  endif // defined(__GNUC__)
+#  if defined(ASIO_MSVC)
+#   if (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
+#    define ASIO_HAS_STD_COROUTINE 1
+#   endif // (_MSC_VER >= 1928) && (_MSVC_LANG >= 201705)
+#  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_STD_COROUTINE)
 #endif // !defined(ASIO_HAS_STD_COROUTINE)
 
