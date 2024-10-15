@@ -288,6 +288,9 @@ inline const asio::error_category& get_addrinfo_category()
 extern ASIO_DECL
 const asio::error_category& get_misc_category();
 
+extern ASIO_DECL
+const asio::error_category& get_codecvt_category();
+
 static const asio::error_category&
   system_category ASIO_UNUSED_VARIABLE
   = asio::error::get_system_category();
@@ -300,6 +303,9 @@ static const asio::error_category&
 static const asio::error_category&
   misc_category ASIO_UNUSED_VARIABLE
   = asio::error::get_misc_category();
+static const asio::error_category&
+  codecvt_category ASIO_UNUSED_VARIABLE
+  = asio::error::get_codecvt_category();
 
 } // namespace error
 } // namespace asio

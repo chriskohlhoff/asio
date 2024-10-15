@@ -64,11 +64,13 @@ check_PROGRAMS = \
 	unit/connect_pipe \
 	unit/consign \
 	unit/coroutine \
+	unit/cstring_view \
 	unit/deadline_timer \
 	unit/defer \
 	unit/deferred \
 	unit/detached \
 	unit/dispatch \
+	unit/environment \
 	unit/error \
 	unit/execution/any_executor \
 	unit/execution/blocking \
@@ -290,6 +292,7 @@ TESTS = \
 	unit/detached \
 	unit/dispatch \
 	unit/error \
+	unit/environment \
 	unit/execution/any_executor \
 	unit/execution/blocking \
 	unit/execution/blocking_adaptation \
@@ -504,11 +507,13 @@ unit_connect_SOURCES = unit/connect.cpp
 unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
 unit_consign_SOURCES = unit/consign.cpp
 unit_coroutine_SOURCES = unit/coroutine.cpp
+unit_cstring_view_SOURCES = unit/cstring_view.cpp
 unit_deadline_timer_SOURCES = unit/deadline_timer.cpp
 unit_defer_SOURCES = unit/defer.cpp
 unit_deferred_SOURCES = unit/deferred.cpp
 unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
+unit_environment_SOURCES = unit/environment.cpp
 unit_error_SOURCES = unit/error.cpp
 unit_execution_any_executor_SOURCES = unit/execution/any_executor.cpp
 unit_execution_blocking_SOURCES = unit/execution/blocking.cpp
