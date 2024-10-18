@@ -193,6 +193,32 @@ void test_spawn_exception()
   }
 }
 
+std::unique_ptr<int> factory_coroutine(asio::yield_context)
+{
+  return std::make_unique<int>(42);
+}
+
+void test_spawn_return_moveonly()
+{
+  asio::io_context ctx;
+
+  std::unique_ptr<int> result;
+  bool called = false;
+  asio::spawn(ctx, factory_coroutine,
+      [&](std::exception_ptr, std::unique_ptr<int> r)
+      {
+        result = std::move(r);
+        called = true;
+      });
+
+  ctx.poll();
+  ASIO_CHECK(ctx.stopped());
+
+  ASIO_CHECK(called);
+  ASIO_CHECK(result);
+  ASIO_CHECK(*result == 42);
+}
+
 ASIO_TEST_SUITE
 (
   "spawn",
@@ -200,4 +226,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_spawn_deferred)
   ASIO_TEST_CASE(test_spawn_cancel)
   ASIO_TEST_CASE(test_spawn_exception)
+  ASIO_TEST_CASE(test_spawn_return_moveonly)
 )
