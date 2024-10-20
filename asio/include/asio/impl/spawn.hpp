@@ -49,137 +49,6 @@ inline void spawned_thread_rethrow(void* ex)
 }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-
-// Spawned thread implementation using Boost.Coroutine.
-class spawned_coroutine_thread : public spawned_thread_base
-{
-public:
-#if defined(BOOST_COROUTINES_UNIDIRECT) || defined(BOOST_COROUTINES_V2)
-  typedef boost::coroutines::pull_coroutine<void> callee_type;
-  typedef boost::coroutines::push_coroutine<void> caller_type;
-#else
-  typedef boost::coroutines::coroutine<void()> callee_type;
-  typedef boost::coroutines::coroutine<void()> caller_type;
-#endif
-
-  spawned_coroutine_thread(caller_type& caller)
-    : caller_(caller),
-      on_suspend_fn_(0),
-      on_suspend_arg_(0)
-  {
-  }
-
-  template <typename F>
-  static spawned_thread_base* spawn(F&& f,
-      const boost::coroutines::attributes& attributes,
-      cancellation_slot parent_cancel_slot = cancellation_slot(),
-      cancellation_state cancel_state = cancellation_state())
-  {
-    spawned_coroutine_thread* spawned_thread = 0;
-    callee_type callee(entry_point<decay_t<F>>(
-          static_cast<F&&>(f), &spawned_thread), attributes);
-    spawned_thread->callee_.swap(callee);
-    spawned_thread->parent_cancellation_slot_ = parent_cancel_slot;
-    spawned_thread->cancellation_state_ = cancel_state;
-    return spawned_thread;
-  }
-
-  template <typename F>
-  static spawned_thread_base* spawn(F&& f,
-      cancellation_slot parent_cancel_slot = cancellation_slot(),
-      cancellation_state cancel_state = cancellation_state())
-  {
-    return spawn(static_cast<F&&>(f), boost::coroutines::attributes(),
-        parent_cancel_slot, cancel_state);
-  }
-
-  void resume()
-  {
-    callee_();
-    if (on_suspend_fn_)
-    {
-      void (*fn)(void*) = on_suspend_fn_;
-      void* arg = on_suspend_arg_;
-      on_suspend_fn_ = 0;
-      fn(arg);
-    }
-  }
-
-  void suspend_with(void (*fn)(void*), void* arg)
-  {
-    if (throw_if_cancelled_)
-      if (!!cancellation_state_.cancelled())
-        throw_error(asio::error::operation_aborted, "yield");
-    has_context_switched_ = true;
-    on_suspend_fn_ = fn;
-    on_suspend_arg_ = arg;
-    caller_();
-  }
-
-  void destroy()
-  {
-    callee_type callee;
-    callee.swap(callee_);
-    if (terminal_)
-      callee();
-  }
-
-private:
-  template <typename Function>
-  class entry_point
-  {
-  public:
-    template <typename F>
-    entry_point(F&& f,
-        spawned_coroutine_thread** spawned_thread_out)
-      : function_(static_cast<F&&>(f)),
-        spawned_thread_out_(spawned_thread_out)
-    {
-    }
-
-    void operator()(caller_type& caller)
-    {
-      Function function(static_cast<Function&&>(function_));
-      spawned_coroutine_thread spawned_thread(caller);
-      *spawned_thread_out_ = &spawned_thread;
-      spawned_thread_out_ = 0;
-      spawned_thread.suspend();
-#if !defined(ASIO_NO_EXCEPTIONS)
-      try
-#endif // !defined(ASIO_NO_EXCEPTIONS)
-      {
-        function(&spawned_thread);
-        spawned_thread.terminal_ = true;
-        spawned_thread.suspend();
-      }
-#if !defined(ASIO_NO_EXCEPTIONS)
-      catch (const boost::coroutines::detail::forced_unwind&)
-      {
-        throw;
-      }
-      catch (...)
-      {
-        exception_ptr ex = current_exception();
-        spawned_thread.terminal_ = true;
-        spawned_thread.suspend_with(spawned_thread_rethrow, &ex);
-      }
-#endif // !defined(ASIO_NO_EXCEPTIONS)
-    }
-
-  private:
-    Function function_;
-    spawned_coroutine_thread** spawned_thread_out_;
-  };
-
-  caller_type& caller_;
-  callee_type callee_;
-  void (*on_suspend_fn_)(void*);
-  void* on_suspend_arg_;
-};
-
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
-
 #if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 
 // Spawned thread implementation using Boost.Context's fiber.
@@ -312,8 +181,6 @@ private:
 
 #if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 typedef spawned_fiber_thread default_spawned_thread_type;
-#elif defined(ASIO_HAS_BOOST_COROUTINE)
-typedef spawned_coroutine_thread default_spawned_thread_type;
 #else
 # error No spawn() implementation available
 #endif
@@ -879,12 +746,6 @@ private:
       throw;
     }
 # endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
-# if defined(ASIO_HAS_BOOST_COROUTINE)
-    catch (const boost::coroutines::detail::forced_unwind&)
-    {
-      throw;
-    }
-# endif // defined(ASIO_HAS_BOOST_COROUTINE)
     catch (...)
     {
       exception_ptr ex = current_exception();
@@ -917,12 +778,6 @@ private:
       throw;
     }
 # endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
-# if defined(ASIO_HAS_BOOST_COROUTINE)
-    catch (const boost::coroutines::detail::forced_unwind&)
-    {
-      throw;
-    }
-# endif // defined(ASIO_HAS_BOOST_COROUTINE)
     catch (...)
     {
       exception_ptr ex = current_exception();
@@ -1101,14 +956,6 @@ template <typename Executor, typename F,
     ASIO_COMPLETION_TOKEN_FOR(typename detail::spawn_signature<
       result_of_t<F(basic_yield_context<Executor>)>>::type) CompletionToken>
 inline auto spawn(const Executor& ex, F&& function, CompletionToken&& token,
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-    constraint_t<
-      !is_same<
-        decay_t<CompletionToken>,
-        boost::coroutines::attributes
-      >::value
-    >,
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
     constraint_t<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
     >)
@@ -1131,14 +978,6 @@ template <typename ExecutionContext, typename F,
       result_of_t<F(basic_yield_context<
         typename ExecutionContext::executor_type>)>>::type) CompletionToken>
 inline auto spawn(ExecutionContext& ctx, F&& function, CompletionToken&& token,
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-    constraint_t<
-      !is_same<
-        decay_t<CompletionToken>,
-        boost::coroutines::attributes
-      >::value
-    >,
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
     constraint_t<
       is_convertible<ExecutionContext&, execution_context&>::value
     >)
@@ -1161,14 +1000,6 @@ template <typename Executor, typename F,
         CompletionToken>
 inline auto spawn(const basic_yield_context<Executor>& ctx,
     F&& function, CompletionToken&& token,
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-    constraint_t<
-      !is_same<
-        decay_t<CompletionToken>,
-        boost::coroutines::attributes
-      >::value
-    >,
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
     constraint_t<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
     >)
@@ -1258,140 +1089,6 @@ inline auto spawn(const basic_yield_context<Executor>& ctx, allocator_arg_t,
 }
 
 #endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
-
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-
-namespace detail {
-
-template <typename Executor, typename Function, typename Handler>
-class old_spawn_entry_point
-{
-public:
-  template <typename F, typename H>
-  old_spawn_entry_point(const Executor& ex, F&& f, H&& h)
-    : executor_(ex),
-      function_(static_cast<F&&>(f)),
-      handler_(static_cast<H&&>(h))
-  {
-  }
-
-  void operator()(spawned_thread_base* spawned_thread)
-  {
-    const basic_yield_context<Executor> yield(spawned_thread, executor_);
-    this->call(yield,
-        void_type<result_of_t<Function(basic_yield_context<Executor>)>>());
-  }
-
-private:
-  void call(const basic_yield_context<Executor>& yield, void_type<void>)
-  {
-    function_(yield);
-    static_cast<Handler&&>(handler_)();
-  }
-
-  template <typename T>
-  void call(const basic_yield_context<Executor>& yield, void_type<T>)
-  {
-    static_cast<Handler&&>(handler_)(function_(yield));
-  }
-
-  Executor executor_;
-  Function function_;
-  Handler handler_;
-};
-
-inline void default_spawn_handler() {}
-
-} // namespace detail
-
-template <typename Function>
-inline void spawn(Function&& function,
-    const boost::coroutines::attributes& attributes)
-{
-  associated_executor_t<decay_t<Function>> ex(
-      (get_associated_executor)(function));
-
-  asio::spawn(ex, static_cast<Function&&>(function), attributes);
-}
-
-template <typename Handler, typename Function>
-void spawn(Handler&& handler, Function&& function,
-    const boost::coroutines::attributes& attributes,
-    constraint_t<
-      !is_executor<decay_t<Handler>>::value &&
-      !execution::is_executor<decay_t<Handler>>::value &&
-      !is_convertible<Handler&, execution_context&>::value>)
-{
-  typedef associated_executor_t<decay_t<Handler>> executor_type;
-  executor_type ex((get_associated_executor)(handler));
-
-  (dispatch)(ex,
-      detail::spawned_thread_resumer(
-        detail::spawned_coroutine_thread::spawn(
-          detail::old_spawn_entry_point<executor_type,
-            decay_t<Function>, void (*)()>(
-              ex, static_cast<Function&&>(function),
-              &detail::default_spawn_handler), attributes)));
-}
-
-template <typename Executor, typename Function>
-void spawn(basic_yield_context<Executor> ctx, Function&& function,
-    const boost::coroutines::attributes& attributes)
-{
-  (dispatch)(ctx.get_executor(),
-      detail::spawned_thread_resumer(
-        detail::spawned_coroutine_thread::spawn(
-          detail::old_spawn_entry_point<Executor,
-            decay_t<Function>, void (*)()>(
-              ctx.get_executor(), static_cast<Function&&>(function),
-              &detail::default_spawn_handler), attributes)));
-}
-
-template <typename Function, typename Executor>
-inline void spawn(const Executor& ex, Function&& function,
-    const boost::coroutines::attributes& attributes,
-    constraint_t<
-      is_executor<Executor>::value || execution::is_executor<Executor>::value
-    >)
-{
-  asio::spawn(asio::strand<Executor>(ex),
-      static_cast<Function&&>(function), attributes);
-}
-
-template <typename Function, typename Executor>
-inline void spawn(const strand<Executor>& ex, Function&& function,
-    const boost::coroutines::attributes& attributes)
-{
-  asio::spawn(asio::bind_executor(
-        ex, &detail::default_spawn_handler),
-      static_cast<Function&&>(function), attributes);
-}
-
-#if !defined(ASIO_NO_TS_EXECUTORS)
-
-template <typename Function>
-inline void spawn(const asio::io_context::strand& s, Function&& function,
-    const boost::coroutines::attributes& attributes)
-{
-  asio::spawn(asio::bind_executor(
-        s, &detail::default_spawn_handler),
-      static_cast<Function&&>(function), attributes);
-}
-
-#endif // !defined(ASIO_NO_TS_EXECUTORS)
-
-template <typename Function, typename ExecutionContext>
-inline void spawn(ExecutionContext& ctx, Function&& function,
-    const boost::coroutines::attributes& attributes,
-    constraint_t<
-      is_convertible<ExecutionContext&, execution_context&>::value
-    >)
-{
-  asio::spawn(ctx.get_executor(),
-      static_cast<Function&&>(function), attributes);
-}
-
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
 
 } // namespace asio
 

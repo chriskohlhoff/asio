@@ -26,10 +26,6 @@
 #include "asio/is_executor.hpp"
 #include "asio/strand.hpp"
 
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-# include <boost/coroutine/all.hpp>
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
-
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -405,14 +401,6 @@ template <typename Executor, typename F,
         CompletionToken = default_completion_token_t<Executor>>
 auto spawn(const Executor& ex, F&& function,
     CompletionToken&& token = default_completion_token_t<Executor>(),
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-    constraint_t<
-      !is_same<
-        decay_t<CompletionToken>,
-        boost::coroutines::attributes
-      >::value
-    > = 0,
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
     constraint_t<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
     > = 0)
@@ -461,14 +449,6 @@ template <typename ExecutionContext, typename F,
 auto spawn(ExecutionContext& ctx, F&& function,
     CompletionToken&& token
       = default_completion_token_t<typename ExecutionContext::executor_type>(),
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-    constraint_t<
-      !is_same<
-        decay_t<CompletionToken>,
-        boost::coroutines::attributes
-      >::value
-    > = 0,
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
     constraint_t<
       is_convertible<ExecutionContext&, execution_context&>::value
     > = 0)
@@ -518,14 +498,6 @@ template <typename Executor, typename F,
         CompletionToken = default_completion_token_t<Executor>>
 auto spawn(const basic_yield_context<Executor>& ctx, F&& function,
     CompletionToken&& token = default_completion_token_t<Executor>(),
-#if defined(ASIO_HAS_BOOST_COROUTINE)
-    constraint_t<
-      !is_same<
-        decay_t<CompletionToken>,
-        boost::coroutines::attributes
-      >::value
-    > = 0,
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
     constraint_t<
       is_executor<Executor>::value || execution::is_executor<Executor>::value
     > = 0)
@@ -705,159 +677,6 @@ auto spawn(const basic_yield_context<Executor>& ctx, allocator_arg_t,
           static_cast<F&&>(function)));
 
 #endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
-       //   || defined(GENERATING_DOCUMENTATION)
-
-#if defined(ASIO_HAS_BOOST_COROUTINE) \
-  || defined(GENERATING_DOCUMENTATION)
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine, calling the specified handler when it completes.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_yield_context<Executor> yield); @endcode
- * where Executor is the associated executor type of @c Function.
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Function>
-void spawn(Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes());
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine, calling the specified handler when it completes.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param handler A handler to be called when the coroutine exits. More
- * importantly, the handler provides an execution context (via the the handler
- * invocation hook) for the coroutine. The handler must have the signature:
- * @code void handler(); @endcode
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_yield_context<Executor> yield); @endcode
- * where Executor is the associated executor type of @c Handler.
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Handler, typename Function>
-void spawn(Handler&& handler, Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes(),
-    constraint_t<
-      !is_executor<decay_t<Handler>>::value &&
-      !execution::is_executor<decay_t<Handler>>::value &&
-      !is_convertible<Handler&, execution_context&>::value
-    > = 0);
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine, inheriting the execution context of another.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param ctx Identifies the current coroutine as a parent of the new
- * coroutine. This specifies that the new coroutine should inherit the
- * execution context of the parent. For example, if the parent coroutine is
- * executing in a particular strand, then the new coroutine will execute in the
- * same strand.
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(basic_yield_context<Executor> yield); @endcode
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Executor, typename Function>
-void spawn(basic_yield_context<Executor> ctx, Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes());
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine that executes on a given executor.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param ex Identifies the executor that will run the coroutine. The new
- * coroutine is automatically given its own explicit strand within this
- * executor.
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(yield_context yield); @endcode
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Function, typename Executor>
-void spawn(const Executor& ex, Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes(),
-    constraint_t<
-      is_executor<Executor>::value || execution::is_executor<Executor>::value
-    > = 0);
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine that executes on a given strand.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param ex Identifies the strand that will run the coroutine.
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(yield_context yield); @endcode
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Function, typename Executor>
-void spawn(const strand<Executor>& ex, Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes());
-
-#if !defined(ASIO_NO_TS_EXECUTORS)
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine that executes in the context of a strand.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param s Identifies a strand. By starting multiple coroutines on the same
- * strand, the implementation ensures that none of those coroutines can execute
- * simultaneously.
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(yield_context yield); @endcode
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Function>
-void spawn(const asio::io_context::strand& s, Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes());
-
-#endif // !defined(ASIO_NO_TS_EXECUTORS)
-
-/// (Deprecated: Use overloads with a completion token.) Start a new stackful
-/// coroutine that executes on a given execution context.
-/**
- * This function is used to launch a new coroutine.
- *
- * @param ctx Identifies the execution context that will run the coroutine. The
- * new coroutine is implicitly given its own strand within this execution
- * context.
- *
- * @param function The coroutine function. The function must have the signature:
- * @code void function(yield_context yield); @endcode
- *
- * @param attributes Boost.Coroutine attributes used to customise the coroutine.
- */
-template <typename Function, typename ExecutionContext>
-void spawn(ExecutionContext& ctx, Function&& function,
-    const boost::coroutines::attributes& attributes
-      = boost::coroutines::attributes(),
-    constraint_t<
-      is_convertible<ExecutionContext&, execution_context&>::value
-    > = 0);
-
-#endif // defined(ASIO_HAS_BOOST_COROUTINE)
        //   || defined(GENERATING_DOCUMENTATION)
 
 /*@}*/

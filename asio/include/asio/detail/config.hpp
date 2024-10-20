@@ -464,13 +464,6 @@
 # endif // !defined(ASIO_DISABLE_BOOST_DATE_TIME)
 #endif // !defined(ASIO_HAS_BOOST_DATE_TIME)
 
-// Boost support for the Coroutine library.
-#if !defined(ASIO_HAS_BOOST_COROUTINE)
-# if !defined(ASIO_DISABLE_BOOST_COROUTINE)
-#  define ASIO_HAS_BOOST_COROUTINE 1
-# endif // !defined(ASIO_DISABLE_BOOST_COROUTINE)
-#endif // !defined(ASIO_HAS_BOOST_COROUTINE)
-
 // Boost support for the Context library's fibers.
 #if !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 # if !defined(ASIO_DISABLE_BOOST_CONTEXT_FIBER)
