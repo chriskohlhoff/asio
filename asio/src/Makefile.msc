@@ -329,7 +329,6 @@ SSL_UNIT_TEST_EXES = \
 	tests\unit\ssl\context.exe \
 	tests\unit\ssl\context_base.exe \
 	tests\unit\ssl\context_service.exe \
-	tests\unit\ssl\rfc2818_verification.exe \
 	tests\unit\ssl\stream.exe \
 	tests\unit\ssl\stream_base.exe \
 	tests\unit\ssl\stream_service.exe

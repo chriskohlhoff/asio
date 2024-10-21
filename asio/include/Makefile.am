@@ -565,9 +565,7 @@ nobase_include_HEADERS = \
 	asio/ssl/impl/context.ipp \
 	asio/ssl/impl/error.ipp \
 	asio/ssl/impl/host_name_verification.ipp \
-	asio/ssl/impl/rfc2818_verification.ipp \
 	asio/ssl/impl/src.hpp \
-	asio/ssl/rfc2818_verification.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
 	asio/ssl/verify_context.hpp \

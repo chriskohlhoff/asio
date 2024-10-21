@@ -24,6 +24,5 @@
 #include "asio/ssl/detail/impl/engine.ipp"
 #include "asio/ssl/detail/impl/openssl_init.ipp"
 #include "asio/ssl/impl/host_name_verification.ipp"
-#include "asio/ssl/impl/rfc2818_verification.ipp"
 
 #endif // ASIO_SSL_IMPL_SRC_HPP

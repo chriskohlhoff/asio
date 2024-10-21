@@ -227,7 +227,6 @@ check_PROGRAMS += \
 	unit/ssl/context \
 	unit/ssl/error \
 	unit/ssl/host_name_verification \
-	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
 	unit/ssl/stream
 endif
@@ -432,7 +431,6 @@ TESTS += \
 	unit/ssl/context \
 	unit/ssl/error \
 	unit/ssl/host_name_verification \
-	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
 	unit/ssl/stream
 endif
@@ -654,7 +652,6 @@ unit_ssl_context_SOURCES = unit/ssl/context.cpp
 unit_ssl_error_SOURCES = unit/ssl/error.cpp
 unit_ssl_stream_base_SOURCES = unit/ssl/stream_base.cpp
 unit_ssl_host_name_verification_SOURCES = unit/ssl/host_name_verification.cpp
-unit_ssl_rfc2818_verification_SOURCES = unit/ssl/rfc2818_verification.cpp
 unit_ssl_stream_SOURCES = unit/ssl/stream.cpp
 endif
 
