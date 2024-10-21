@@ -27,7 +27,7 @@ asio.reference.ReadHandler read handler] requirements.
     [
       Initiates an asynchronous operation to read one or more bytes of data
       from the device `a` at the offset `o`. The operation is performed via the
-      `io_service` object `a.get_io_service()` and behaves according to [link
+      I/O executor `a.get_executor()` and behaves according to [link
       asio.reference.asynchronous_operations asynchronous operation]
       requirements.[br]
       [br]

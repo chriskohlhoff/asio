@@ -27,7 +27,7 @@ asio.reference.WriteHandler write handler] requirements.
     [
       Initiates an asynchronous operation to write one or more bytes of data to
       the device `a` at offset `o`. The operation is performed via the
-      `io_service` object `a.get_io_service()` and behaves according to [link
+      I/O executor `a.get_executor()` and behaves according to [link
       asio.reference.asynchronous_operations asynchronous operation]
       requirements.[br]
       [br]

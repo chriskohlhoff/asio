@@ -108,8 +108,6 @@
 #include "asio/immediate.hpp"
 #include "asio/io_context.hpp"
 #include "asio/io_context_strand.hpp"
-#include "asio/io_service.hpp"
-#include "asio/io_service_strand.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v4_iterator.hpp"
