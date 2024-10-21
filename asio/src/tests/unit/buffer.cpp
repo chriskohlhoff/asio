@@ -498,6 +498,17 @@ struct valid_mutable_b
   mutable_buffer* end() const { return 0; }
 };
 
+struct custom_const_buffer_sequence
+{
+  operator const_buffer() const { return const_buffer(0, 0); }
+};
+
+struct custom_mutable_buffer_sequence
+{
+  operator mutable_buffer() const { return mutable_buffer(0, 0); }
+  operator const_buffer() const { return mutable_buffer(0, 0); }
+};
+
 struct invalid_const_a
 {
   typedef int value_type;
@@ -625,6 +636,24 @@ void test()
   valid_mutable_b b8;
   ASIO_CHECK(buffer_sequence_begin(b8) == b8.begin());
   ASIO_CHECK(buffer_sequence_end(b8) == b8.end());
+
+  ASIO_CHECK(is_const_buffer_sequence<
+      custom_const_buffer_sequence>::value);
+  ASIO_CHECK(!is_mutable_buffer_sequence<
+      custom_const_buffer_sequence>::value);
+
+  custom_const_buffer_sequence b11;
+  ASIO_CHECK(buffer_sequence_begin(b11) == &b11);
+  ASIO_CHECK(buffer_sequence_end(b11) == &b11 + 1);
+
+  ASIO_CHECK(is_const_buffer_sequence<
+      custom_mutable_buffer_sequence>::value);
+  ASIO_CHECK(is_mutable_buffer_sequence<
+      custom_mutable_buffer_sequence>::value);
+
+  custom_mutable_buffer_sequence b12;
+  ASIO_CHECK(buffer_sequence_begin(b12) == &b12);
+  ASIO_CHECK(buffer_sequence_end(b12) == &b12 + 1);
 
   ASIO_CHECK(!is_const_buffer_sequence<invalid_const_a>::value);
   ASIO_CHECK(!is_mutable_buffer_sequence<invalid_const_a>::value);

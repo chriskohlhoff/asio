@@ -381,11 +381,37 @@ inline const const_buffer* buffer_sequence_begin(const ConstBuffer& b,
 }
 
 /// Get an iterator to the first element in a buffer sequence.
+template <typename ConvertibleToBuffer>
+inline const ConvertibleToBuffer* buffer_sequence_begin(
+    const ConvertibleToBuffer& b,
+    constraint_t<
+      !is_convertible<const ConvertibleToBuffer*, const mutable_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<const ConvertibleToBuffer*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      is_convertible<ConvertibleToBuffer, mutable_buffer>::value
+        || is_convertible<ConvertibleToBuffer, const_buffer>::value
+    > = 0) noexcept
+{
+  return detail::addressof(b);
+}
+
+/// Get an iterator to the first element in a buffer sequence.
 template <typename C>
 inline auto buffer_sequence_begin(C& c,
     constraint_t<
       !is_convertible<const C*, const mutable_buffer*>::value
-        && !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, mutable_buffer>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, const_buffer>::value
     > = 0) noexcept -> decltype(c.begin())
 {
   return c.begin();
@@ -396,7 +422,15 @@ template <typename C>
 inline auto buffer_sequence_begin(const C& c,
     constraint_t<
       !is_convertible<const C*, const mutable_buffer*>::value
-        && !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, mutable_buffer>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, const_buffer>::value
     > = 0) noexcept -> decltype(c.begin())
 {
   return c.begin();
@@ -432,11 +466,37 @@ inline const const_buffer* buffer_sequence_end(const ConstBuffer& b,
 }
 
 /// Get an iterator to one past the end element in a buffer sequence.
+template <typename ConvertibleToBuffer>
+inline const ConvertibleToBuffer* buffer_sequence_end(
+    const ConvertibleToBuffer& b,
+    constraint_t<
+      !is_convertible<const ConvertibleToBuffer*, const mutable_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<const ConvertibleToBuffer*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      is_convertible<ConvertibleToBuffer, mutable_buffer>::value
+        || is_convertible<ConvertibleToBuffer, const_buffer>::value
+    > = 0) noexcept
+{
+  return detail::addressof(b) + 1;
+}
+
+/// Get an iterator to one past the end element in a buffer sequence.
 template <typename C>
 inline auto buffer_sequence_end(C& c,
     constraint_t<
       !is_convertible<const C*, const mutable_buffer*>::value
-        && !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, mutable_buffer>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, const_buffer>::value
     > = 0) noexcept -> decltype(c.end())
 {
   return c.end();
@@ -447,7 +507,15 @@ template <typename C>
 inline auto buffer_sequence_end(const C& c,
     constraint_t<
       !is_convertible<const C*, const mutable_buffer*>::value
-        && !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<const C*, const const_buffer*>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, mutable_buffer>::value
+    > = 0,
+    constraint_t<
+      !is_convertible<C, const_buffer>::value
     > = 0) noexcept -> decltype(c.end())
 {
   return c.end();
