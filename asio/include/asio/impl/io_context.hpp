@@ -397,30 +397,6 @@ void io_context::basic_executor_type<Allocator, Bits>::defer(
 }
 #endif // !defined(ASIO_NO_TS_EXECUTORS)
 
-#if !defined(ASIO_NO_DEPRECATED)
-inline io_context::work::work(asio::io_context& io_context)
-  : io_context_impl_(io_context.impl_)
-{
-  io_context_impl_.work_started();
-}
-
-inline io_context::work::work(const work& other)
-  : io_context_impl_(other.io_context_impl_)
-{
-  io_context_impl_.work_started();
-}
-
-inline io_context::work::~work()
-{
-  io_context_impl_.work_finished();
-}
-
-inline asio::io_context& io_context::work::get_io_context()
-{
-  return static_cast<asio::io_context&>(io_context_impl_.context());
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 inline asio::io_context& io_context::service::get_io_context()
 {
   return static_cast<asio::io_context&>(context());

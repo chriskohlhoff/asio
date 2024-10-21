@@ -162,7 +162,6 @@
             <member><link linkend="asio.reference.io_context.executor_type">io_context::executor_type</link></member>
             <member><link linkend="asio.reference.io_context__service">io_context::service</link></member>
             <member><link linkend="asio.reference.io_context__strand">io_context::strand</link></member>
-            <member><link linkend="asio.reference.io_context__work">io_context::work</link> (deprecated)</member>
             <member><link linkend="asio.reference.multiple_exceptions">multiple_exceptions</link></member>
             <member><link linkend="asio.reference.partial_as_tuple">partial_as_tuple</link></member>
             <member><link linkend="asio.reference.partial_redirect_error">partial_redirect_error</link></member>

@@ -212,11 +212,6 @@ public:
   /// Executor used to submit functions to an io_context.
   typedef basic_executor_type<std::allocator<void>, 0> executor_type;
 
-#if !defined(ASIO_NO_DEPRECATED)
-  class work;
-  friend class work;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   class service;
 
 #if !defined(ASIO_NO_EXTENSIONS) \
@@ -1095,57 +1090,6 @@ private:
   // The underlying io_context and runtime bits.
   uintptr_t target_;
 };
-
-#if !defined(ASIO_NO_DEPRECATED)
-/// (Deprecated: Use executor_work_guard.) Class to inform the io_context when
-/// it has work to do.
-/**
- * The work class is used to inform the io_context when work starts and
- * finishes. This ensures that the io_context object's run() function will not
- * exit while work is underway, and that it does exit when there is no
- * unfinished work remaining.
- *
- * The work class is copy-constructible so that it may be used as a data member
- * in a handler class. It is not assignable.
- */
-class io_context::work
-{
-public:
-  /// Constructor notifies the io_context that work is starting.
-  /**
-   * The constructor is used to inform the io_context that some work has begun.
-   * This ensures that the io_context object's run() function will not exit
-   * while the work is underway.
-   */
-  explicit work(asio::io_context& io_context);
-
-  /// Copy constructor notifies the io_context that work is starting.
-  /**
-   * The constructor is used to inform the io_context that some work has begun.
-   * This ensures that the io_context object's run() function will not exit
-   * while the work is underway.
-   */
-  work(const work& other);
-
-  /// Destructor notifies the io_context that the work is complete.
-  /**
-   * The destructor is used to inform the io_context that some work has
-   * finished. Once the count of unfinished work reaches zero, the io_context
-   * object's run() function is permitted to exit.
-   */
-  ~work();
-
-  /// Get the io_context associated with the work.
-  asio::io_context& get_io_context();
-
-private:
-  // Prevent assignment.
-  void operator=(const work& other);
-
-  // The io_context implementation.
-  detail::io_context_impl& io_context_impl_;
-};
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 /// Base class for all io_context services.
 class io_context::service
