@@ -71,6 +71,25 @@ public:
   const_iterator end() const { return 0; }
 };
 
+template <typename T, std::size_t Extent>
+struct span
+{
+  T* data() const { return 0; }
+  std::size_t size() const { return 0; }
+  friend span<const T, Extent> as_bytes(const span&) { return {}; }
+  span<T, static_cast<std::size_t>(-1)>
+    subspan(std::size_t, std::size_t = 0) const { return {}; }
+};
+
+template <typename T, std::size_t Extent>
+struct span<const T, Extent>
+{
+  T* data() const { return 0; }
+  std::size_t size() const { return 0; }
+  span<const T, static_cast<std::size_t>(-1)>
+    subspan(std::size_t, std::size_t = 0) const { return {}; }
+};
+
 void test()
 {
   try
@@ -79,6 +98,8 @@ void test()
     const char const_raw_data[1024] = "";
     void* void_ptr_data = raw_data;
     const void* const_void_ptr_data = const_raw_data;
+    span<char, 1> span_1;
+    span<const char, 1> span_2;
 #if defined(ASIO_HAS_BOOST_ARRAY)
     boost::array<char, 1024> array_data;
     const boost::array<char, 1024>& const_array_data_1 = array_data;
@@ -107,8 +128,10 @@ void test()
 
     mutable_buffer mb1;
     mutable_buffer mb2(void_ptr_data, 1024);
-    mutable_buffer mb3(mb1);
+    mutable_buffer mb3(span_1);
     (void)mb3;
+    mutable_buffer mb4(mb1);
+    (void)mb4;
 
     // mutable_buffer functions.
 
@@ -128,10 +151,14 @@ void test()
 
     const_buffer cb1;
     const_buffer cb2(const_void_ptr_data, 1024);
-    const_buffer cb3(cb1);
+    const_buffer cb3(span_1);
     (void)cb3;
-    const_buffer cb4(mb1);
+    const_buffer cb4(span_2);
     (void)cb4;
+    const_buffer cb5(cb1);
+    (void)cb5;
+    const_buffer cb6(mb1);
+    (void)cb6;
 
     // const_buffer functions.
 
@@ -264,11 +291,11 @@ void test()
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
     dynamic_string_buffer<char, std::string::traits_type,
       std::string::allocator_type>::const_buffers_type
-        cb5 = db1.data();
-    (void)cb5;
+        cb7 = db1.data();
+    (void)cb7;
     dynamic_vector_buffer<char, std::allocator<char> >::const_buffers_type
-      cb6 = db3.data();
-    (void)cb6;
+      cb8 = db3.data();
+    (void)cb8;
 
     dynamic_string_buffer<char, std::string::traits_type,
       std::string::allocator_type>::mutable_buffers_type mb5
@@ -292,14 +319,14 @@ void test()
 
     dynamic_string_buffer<char, std::string::traits_type,
       std::string::allocator_type>::const_buffers_type
-        cb7 = static_cast<const dynamic_string_buffer<char,
+        cb9 = static_cast<const dynamic_string_buffer<char,
           std::string::traits_type,
             std::string::allocator_type>&>(db1).data(0, 1);
-    (void)cb7;
+    (void)cb9;
     dynamic_vector_buffer<char, std::allocator<char> >::const_buffers_type
-      cb8 = static_cast<const dynamic_vector_buffer<char,
+      cb10 = static_cast<const dynamic_vector_buffer<char,
         std::allocator<char> >&>(db3).data(0, 1);
-    (void)cb8;
+    (void)cb10;
 
     db1.grow(1024);
     db3.grow(1024);
