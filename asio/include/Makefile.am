@@ -381,7 +381,6 @@ nobase_include_HEADERS = \
 	asio/experimental/concurrent_channel.hpp \
 	asio/experimental/coro.hpp \
 	asio/experimental/coro_traits.hpp \
-	asio/experimental/deferred.hpp \
 	asio/experimental/detail/channel_operation.hpp \
 	asio/experimental/detail/channel_receive_op.hpp \
 	asio/experimental/detail/channel_send_functions.hpp \
