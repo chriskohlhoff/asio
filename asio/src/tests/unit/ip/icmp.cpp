@@ -115,7 +115,7 @@ void test()
     socket1 = ip::icmp::socket(ioc);
     socket1 = std::move(socket2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::icmp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
@@ -504,7 +504,7 @@ void test()
     resolver = ip::icmp::resolver(ioc);
     resolver = std::move(resolver3);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::icmp::resolver::executor_type ex = resolver.get_executor();
     (void)ex;

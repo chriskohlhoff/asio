@@ -82,7 +82,7 @@ void test()
     int native_socket2 = ::socket(AF_UNIX, SOCK_STREAM, 0);
     sp::socket socket8(ioc_ex, sp(), native_socket2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     sp::socket::executor_type ex = socket1.get_executor();
     (void)ex;

@@ -56,7 +56,7 @@ void test()
     signal_set set7(ioc_ex, 1, 2);
     signal_set set8(ioc_ex, 1, 2, 3);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     signal_set::executor_type ex = set1.get_executor();
     (void)ex;

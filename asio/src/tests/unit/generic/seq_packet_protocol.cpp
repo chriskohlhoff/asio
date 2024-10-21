@@ -86,7 +86,7 @@ void test()
     socket1 = spp::socket(ioc);
     socket1 = std::move(socket2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     spp::socket::executor_type ex = socket1.get_executor();
     (void)ex;

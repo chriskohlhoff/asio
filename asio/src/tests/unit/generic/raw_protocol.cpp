@@ -90,7 +90,7 @@ void test()
     socket1 = std::move(socket2);
     socket1 = asio::ip::icmp::socket(ioc);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     rp::socket::executor_type ex = socket1.get_executor();
     (void)ex;

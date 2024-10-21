@@ -187,7 +187,7 @@
             <member><link linkend="asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="asio.reference.awaitable">awaitable</link></member>
-            <member><link linkend="asio.reference.basic_io_object">basic_io_object</link></member>
+            <member><link linkend="asio.reference.basic_io_object">basic_io_object (deprecated)</link></member>
             <member><link linkend="asio.reference.basic_system_executor">basic_system_executor</link></member>
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.cancel_after_t">cancel_after_t</link></member>

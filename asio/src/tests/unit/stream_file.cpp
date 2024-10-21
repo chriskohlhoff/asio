@@ -85,7 +85,7 @@ void test()
     file1 = std::move(file2);
     file1 = std::move(file10);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     stream_file::executor_type ex = file1.get_executor();
     (void)ex;

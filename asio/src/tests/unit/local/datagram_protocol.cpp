@@ -74,7 +74,7 @@ void test()
     int native_socket2 = ::socket(AF_UNIX, SOCK_DGRAM, 0);
     dp::socket socket8(ioc_ex, dp(), native_socket2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     dp::socket::executor_type ex = socket1.get_executor();
     (void)ex;

@@ -80,7 +80,7 @@ void test()
     pipe1 = std::move(pipe2);
     pipe1 = std::move(pipe6);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     readable_pipe::executor_type ex = pipe1.get_executor();
     (void)ex;

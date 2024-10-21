@@ -72,7 +72,7 @@ void test()
     handle1 = std::move(handle3);
     handle1 = std::move(handle6);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     win::object_handle::executor_type ex = handle1.get_executor();
     (void)ex;

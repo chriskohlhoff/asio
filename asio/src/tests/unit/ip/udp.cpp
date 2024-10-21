@@ -124,7 +124,7 @@ void test()
     socket1 = ip::udp::socket(ioc);
     socket1 = std::move(socket2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::udp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
@@ -588,7 +588,7 @@ void test()
     resolver = ip::udp::resolver(ioc);
     resolver = std::move(resolver3);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::udp::resolver::executor_type ex = resolver.get_executor();
     (void)ex;

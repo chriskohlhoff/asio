@@ -255,7 +255,7 @@ void test()
     socket1 = ip::tcp::socket(ioc);
     socket1 = std::move(socket2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::tcp::socket::executor_type ex = socket1.get_executor();
     (void)ex;
@@ -797,7 +797,7 @@ void test()
     acceptor1 = ip::tcp::acceptor(ioc);
     acceptor1 = std::move(acceptor2);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::tcp::acceptor::executor_type ex = acceptor1.get_executor();
     (void)ex;
@@ -1066,7 +1066,7 @@ void test()
     resolver = ip::tcp::resolver(ioc);
     resolver = std::move(resolver3);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ip::tcp::resolver::executor_type ex = resolver.get_executor();
     (void)ex;

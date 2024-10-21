@@ -90,7 +90,7 @@ void test()
     port1 = std::move(port2);
     port1 = std::move(port8);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     serial_port::executor_type ex = port1.get_executor();
     (void)ex;

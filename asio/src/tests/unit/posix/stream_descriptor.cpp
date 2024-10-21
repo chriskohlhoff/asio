@@ -78,7 +78,7 @@ void test()
     descriptor1 = std::move(descriptor2);
     descriptor1 = std::move(descriptor6);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     posix::stream_descriptor::executor_type ex = descriptor1.get_executor();
     (void)ex;

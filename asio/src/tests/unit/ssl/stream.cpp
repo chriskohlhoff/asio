@@ -83,7 +83,7 @@ void test()
 
     stream3 = std::move(stream4);
 
-    // basic_io_object functions.
+    // I/O object functions.
 
     ssl::stream<ip::tcp::socket>::executor_type ex = stream1.get_executor();
     (void)ex;
