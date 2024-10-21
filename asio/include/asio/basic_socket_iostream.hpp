@@ -113,22 +113,12 @@ public:
   typedef Clock clock_type;
 
 #if defined(GENERATING_DOCUMENTATION)
-  /// (Deprecated: Use time_point.) The time type.
-  typedef typename WaitTraits::time_type time_type;
-
   /// The time type.
   typedef typename WaitTraits::time_point time_point;
-
-  /// (Deprecated: Use duration.) The duration type.
-  typedef typename WaitTraits::duration_type duration_type;
 
   /// The duration type.
   typedef typename WaitTraits::duration duration;
 #else
-# if !defined(ASIO_NO_DEPRECATED)
-  typedef typename traits_helper::time_type time_type;
-  typedef typename traits_helper::duration_type duration_type;
-# endif // !defined(ASIO_NO_DEPRECATED)
   typedef typename traits_helper::time_type time_point;
   typedef typename traits_helper::duration_type duration;
 #endif
@@ -240,18 +230,6 @@ public:
     return rdbuf()->error();
   }
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use expiry().) Get the stream's expiry time as an absolute
-  /// time.
-  /**
-   * @return An absolute time value representing the stream's expiry time.
-   */
-  time_point expires_at() const
-  {
-    return rdbuf()->expires_at();
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Get the stream's expiry time as an absolute time.
   /**
    * @return An absolute time value representing the stream's expiry time.
@@ -288,32 +266,6 @@ public:
   {
     rdbuf()->expires_after(expiry_time);
   }
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use expiry().) Get the stream's expiry time relative to now.
-  /**
-   * @return A relative time value representing the stream's expiry time.
-   */
-  duration expires_from_now() const
-  {
-    return rdbuf()->expires_from_now();
-  }
-
-  /// (Deprecated: Use expires_after().) Set the stream's expiry time relative
-  /// to now.
-  /**
-   * This function sets the expiry time associated with the stream. Stream
-   * operations performed after this time (where the operations cannot be
-   * completed using the internal buffers) will fail with the error
-   * asio::error::operation_aborted.
-   *
-   * @param expiry_time The expiry time to be used for the timer.
-   */
-  void expires_from_now(const duration& expiry_time)
-  {
-    rdbuf()->expires_from_now(expiry_time);
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   // Disallow copying and assignment.
