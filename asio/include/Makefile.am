@@ -401,7 +401,6 @@ nobase_include_HEADERS = \
 	asio/experimental/impl/use_coro.hpp \
 	asio/experimental/impl/use_promise.hpp \
 	asio/experimental/parallel_group.hpp \
-	asio/experimental/prepend.hpp \
 	asio/experimental/promise.hpp \
 	asio/experimental/use_coro.hpp \
 	asio/experimental/use_promise.hpp \
