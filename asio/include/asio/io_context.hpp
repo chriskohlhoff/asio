@@ -429,20 +429,6 @@ public:
   ASIO_DECL void restart();
 
 #if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use restart().) Reset the io_context in preparation for a
-  /// subsequent run() invocation.
-  /**
-   * This function must be called prior to any second or later set of
-   * invocations of the run(), run_one(), poll() or poll_one() functions when a
-   * previous invocation of these functions returned due to the io_context
-   * being stopped or running out of work. After a call to restart(), the
-   * io_context object's stopped() function will return @c false.
-   *
-   * This function must not be called while there are any unfinished calls to
-   * the run(), run_one(), poll() or poll_one() functions.
-   */
-  void reset();
-
   /// (Deprecated: Use asio::dispatch().) Request the io_context to
   /// invoke the given handler.
   /**

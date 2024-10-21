@@ -108,11 +108,6 @@ std::size_t io_context::run_one_until(
 
 #if !defined(ASIO_NO_DEPRECATED)
 
-inline void io_context::reset()
-{
-  restart();
-}
-
 struct io_context::initiate_dispatch
 {
   template <typename LegacyCompletionHandler>
