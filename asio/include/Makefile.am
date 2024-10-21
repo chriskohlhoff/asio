@@ -369,7 +369,6 @@ nobase_include_HEADERS = \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
 	asio/experimental/as_single.hpp \
-	asio/experimental/as_tuple.hpp \
 	asio/experimental/awaitable_operators.hpp \
 	asio/experimental/basic_channel.hpp \
 	asio/experimental/basic_concurrent_channel.hpp \
