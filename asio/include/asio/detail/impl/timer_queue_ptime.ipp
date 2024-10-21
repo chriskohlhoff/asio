@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 
 #include "asio/detail/timer_queue_ptime.hpp"
@@ -93,5 +95,7 @@ void timer_queue<time_traits<boost::posix_time::ptime>>::move_timer(
 #include "asio/detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP

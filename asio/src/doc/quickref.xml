@@ -609,21 +609,21 @@
         <entry valign="top">
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.deadline_timer">deadline_timer</link></member>
+            <member><link linkend="asio.reference.deadline_timer">deadline_timer (deprecated)</link></member>
             <member><link linkend="asio.reference.high_resolution_timer">high_resolution_timer</link></member>
             <member><link linkend="asio.reference.steady_timer">steady_timer</link></member>
             <member><link linkend="asio.reference.system_timer">system_timer</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer</link></member>
+            <member><link linkend="asio.reference.basic_deadline_timer">basic_deadline_timer (deprecated)</link></member>
             <member><link linkend="asio.reference.basic_waitable_timer">basic_waitable_timer</link></member>
-            <member><link linkend="asio.reference.time_traits_lt__ptime__gt_">time_traits</link></member>
+            <member><link linkend="asio.reference.time_traits_lt__ptime__gt_">time_traits (deprecated)</link></member>
             <member><link linkend="asio.reference.wait_traits">wait_traits</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">
-            <member><link linkend="asio.reference.TimeTraits">TimeTraits</link></member>
+            <member><link linkend="asio.reference.TimeTraits">TimeTraits (deprecated)</link></member>
             <member><link linkend="asio.reference.WaitHandler">WaitHandler</link></member>
             <member><link linkend="asio.reference.WaitToken">WaitToken</link></member>
             <member><link linkend="asio.reference.WaitTraits">WaitTraits</link></member>

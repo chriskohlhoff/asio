@@ -21,25 +21,15 @@
 #include "asio/bind_executor.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/post.hpp"
+#include "asio/steady_timer.hpp"
 #include "asio/thread.hpp"
 #include "unit_test.hpp"
-
-#if defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/deadline_timer.hpp"
-#else // defined(ASIO_HAS_BOOST_DATE_TIME)
-# include "asio/steady_timer.hpp"
-#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 using namespace asio;
 namespace bindns = std;
 
-#if defined(ASIO_HAS_BOOST_DATE_TIME)
-typedef deadline_timer timer;
-namespace chronons = boost::posix_time;
-#else // defined(ASIO_HAS_BOOST_DATE_TIME)
 typedef steady_timer timer;
 namespace chronons = asio::chrono;
-#endif // defined(ASIO_HAS_BOOST_DATE_TIME)
 
 void increment(int* count)
 {

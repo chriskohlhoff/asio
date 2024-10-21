@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -27,12 +29,15 @@
 
 namespace asio {
 
-/// Typedef for the typical usage of timer. Uses a UTC clock.
+/// (Deprecated: Use system_timer.) Typedef for the typical usage of timer. Uses
+/// a UTC clock.
 typedef basic_deadline_timer<boost::posix_time::ptime> deadline_timer;
 
 } // namespace asio
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
        // || defined(GENERATING_DOCUMENTATION)
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_DEADLINE_TIMER_HPP

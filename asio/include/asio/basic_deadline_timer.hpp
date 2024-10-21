@@ -17,6 +17,8 @@
 
 #include "asio/detail/config.hpp"
 
+#if !defined(ASIO_NO_DEPRECATED)
+
 #if defined(ASIO_HAS_BOOST_DATE_TIME) \
   || defined(GENERATING_DOCUMENTATION)
 
@@ -35,7 +37,8 @@
 
 namespace asio {
 
-/// Provides waitable timer functionality.
+/// (Deprecated: Use basic_waitable_timer.) Provides waitable timer
+/// functionality.
 /**
  * The basic_deadline_timer class template provides the ability to perform a
  * blocking or asynchronous wait for a timer to expire.
@@ -706,5 +709,7 @@ private:
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
        // || defined(GENERATING_DOCUMENTATION)
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_BASIC_DEADLINE_TIMER_HPP
