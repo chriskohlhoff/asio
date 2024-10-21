@@ -368,7 +368,6 @@ nobase_include_HEADERS = \
 	asio/execution/relationship.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
-	asio/experimental/append.hpp \
 	asio/experimental/as_single.hpp \
 	asio/experimental/as_tuple.hpp \
 	asio/experimental/awaitable_operators.hpp \
