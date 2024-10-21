@@ -99,32 +99,6 @@ public:
   /// Get the address as a string.
   ASIO_DECL std::string to_string() const;
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use other overload.) Get the address as a string.
-  ASIO_DECL std::string to_string(asio::error_code& ec) const;
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(const char* str);
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(const char* str, asio::error_code& ec);
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(const std::string& str);
-
-  /// (Deprecated: Use make_address().) Create an address from an IPv4 address
-  /// string in dotted decimal form, or from an IPv6 address in hexadecimal
-  /// notation.
-  static address from_string(
-      const std::string& str, asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Determine whether the address is a loopback address.
   ASIO_DECL bool is_loopback() const noexcept;
 
