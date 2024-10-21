@@ -65,13 +65,6 @@ io_context::count_type io_context::run()
   return s;
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-io_context::count_type io_context::run(asio::error_code& ec)
-{
-  return impl_.run(ec);
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 io_context::count_type io_context::run_one()
 {
   asio::error_code ec;
@@ -79,13 +72,6 @@ io_context::count_type io_context::run_one()
   asio::detail::throw_error(ec);
   return s;
 }
-
-#if !defined(ASIO_NO_DEPRECATED)
-io_context::count_type io_context::run_one(asio::error_code& ec)
-{
-  return impl_.run_one(ec);
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 io_context::count_type io_context::poll()
 {
@@ -95,13 +81,6 @@ io_context::count_type io_context::poll()
   return s;
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-io_context::count_type io_context::poll(asio::error_code& ec)
-{
-  return impl_.poll(ec);
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 io_context::count_type io_context::poll_one()
 {
   asio::error_code ec;
@@ -109,13 +88,6 @@ io_context::count_type io_context::poll_one()
   asio::detail::throw_error(ec);
   return s;
 }
-
-#if !defined(ASIO_NO_DEPRECATED)
-io_context::count_type io_context::poll_one(asio::error_code& ec)
-{
-  return impl_.poll_one(ec);
-}
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 void io_context::stop()
 {

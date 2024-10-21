@@ -299,38 +299,6 @@ public:
    */
   ASIO_DECL count_type run();
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
-  /// event processing loop.
-  /**
-   * The run() function blocks until all work has finished and there are no
-   * more handlers to be dispatched, or until the io_context has been stopped.
-   *
-   * Multiple threads may call the run() function to set up a pool of threads
-   * from which the io_context may execute handlers. All threads that are
-   * waiting in the pool are equivalent and the io_context may choose any one
-   * of them to invoke a handler.
-   *
-   * A normal exit from the run() function implies that the io_context object
-   * is stopped (the stopped() function returns @c true). Subsequent calls to
-   * run(), run_one(), poll() or poll_one() will return immediately unless there
-   * is a prior call to restart().
-   *
-   * @param ec Set to indicate what error occurred, if any.
-   *
-   * @return The number of handlers that were executed.
-   *
-   * @note Calling the run() function from a thread that is currently calling
-   * one of run(), run_one(), run_for(), run_until(), poll() or poll_one() on
-   * the same io_context object may introduce the potential for deadlock. It is
-   * the caller's reponsibility to avoid this.
-   *
-   * The poll() function may also be used to dispatch ready handlers, but
-   * without blocking.
-   */
-  ASIO_DECL count_type run(asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Run the io_context object's event processing loop for a specified
   /// duration.
   /**
@@ -377,29 +345,6 @@ public:
    */
   ASIO_DECL count_type run_one();
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
-  /// event processing loop to execute at most one handler.
-  /**
-   * The run_one() function blocks until one handler has been dispatched, or
-   * until the io_context has been stopped.
-   *
-   * @return The number of handlers that were executed. A zero return value
-   * implies that the io_context object is stopped (the stopped() function
-   * returns @c true). Subsequent calls to run(), run_one(), poll() or
-   * poll_one() will return immediately unless there is a prior call to
-   * restart().
-   *
-   * @return The number of handlers that were executed.
-   *
-   * @note Calling the run_one() function from a thread that is currently
-   * calling one of run(), run_one(), run_for(), run_until(), poll() or
-   * poll_one() on the same io_context object may introduce the potential for
-   * deadlock. It is the caller's reponsibility to avoid this.
-   */
-  ASIO_DECL count_type run_one(asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Run the io_context object's event processing loop for a specified duration
   /// to execute at most one handler.
   /**
@@ -439,20 +384,6 @@ public:
    */
   ASIO_DECL count_type poll();
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
-  /// event processing loop to execute ready handlers.
-  /**
-   * The poll() function runs handlers that are ready to run, without blocking,
-   * until the io_context has been stopped or there are no more ready handlers.
-   *
-   * @param ec Set to indicate what error occurred, if any.
-   *
-   * @return The number of handlers that were executed.
-   */
-  ASIO_DECL count_type poll(asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Run the io_context object's event processing loop to execute one ready
   /// handler.
   /**
@@ -462,20 +393,6 @@ public:
    * @return The number of handlers that were executed.
    */
   ASIO_DECL count_type poll_one();
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use non-error_code overload.) Run the io_context object's
-  /// event processing loop to execute one ready handler.
-  /**
-   * The poll_one() function runs at most one handler that is ready to run,
-   * without blocking.
-   *
-   * @param ec Set to indicate what error occurred, if any.
-   *
-   * @return The number of handlers that were executed.
-   */
-  ASIO_DECL count_type poll_one(asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Stop the io_context object's event processing loop.
   /**
