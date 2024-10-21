@@ -309,7 +309,7 @@ namespace detail
       non_const_lvalue<ReadHandler> handler2(handler);
       if (buffer_size(buffers) == 0 || !storage->empty())
       {
-        next_layer_.async_read_some(ASIO_MUTABLE_BUFFER(0, 0),
+        next_layer_.async_read_some(mutable_buffer(0, 0),
             buffered_read_some_handler<MutableBufferSequence,
               decay_t<ReadHandler>>(
                 *storage, buffers, handler2.value));

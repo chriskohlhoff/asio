@@ -83,27 +83,7 @@ namespace detail
     typedef add_const_t<ByteType> byte_type;
     typedef const const_buffer* const_iterator;
   };
-
-#if !defined(ASIO_NO_DEPRECATED)
-
-  template <typename ByteType>
-  struct buffers_iterator_types<mutable_buffers_1, ByteType>
-  {
-    typedef mutable_buffer buffer_type;
-    typedef ByteType byte_type;
-    typedef const mutable_buffer* const_iterator;
-  };
-
-  template <typename ByteType>
-  struct buffers_iterator_types<const_buffers_1, ByteType>
-  {
-    typedef const_buffer buffer_type;
-    typedef add_const_t<ByteType> byte_type;
-    typedef const const_buffer* const_iterator;
-  };
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-}
+} // namespace detail
 
 /// A random access iterator over the bytes in a buffer sequence.
 template <typename BufferSequence, typename ByteType = char>

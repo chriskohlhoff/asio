@@ -111,7 +111,7 @@ class coroutine_ref;
  *
  * @code yield
  * {
- *   mutable_buffers_1 b = buffer(*buffer_);
+ *   mutable_buffer b = buffer(*buffer_);
  *   socket_->async_read_some(b, *this);
  * } @endcode
  *

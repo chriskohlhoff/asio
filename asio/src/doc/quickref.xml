@@ -349,8 +349,6 @@
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.const_buffer">const_buffer</link></member>
             <member><link linkend="asio.reference.mutable_buffer">mutable_buffer</link></member>
-            <member><link linkend="asio.reference.const_buffers_1">const_buffers_1 </link> (deprecated)</member>
-            <member><link linkend="asio.reference.mutable_buffers_1">mutable_buffers_1 </link> (deprecated)</member>
             <member><link linkend="asio.reference.const_registered_buffer">const_registered_buffer</link></member>
             <member><link linkend="asio.reference.mutable_registered_buffer">mutable_registered_buffer</link></member>
             <member><link linkend="asio.reference.null_buffers">null_buffers</link> (deprecated)</member>
