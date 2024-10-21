@@ -120,38 +120,8 @@ public:
   /// Get the address as an unsigned integer in host byte order.
   ASIO_DECL uint_type to_uint() const noexcept;
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use to_uint().) Get the address as an unsigned long in host
-  /// byte order.
-  ASIO_DECL unsigned long to_ulong() const;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// Get the address as a string in dotted decimal format.
   ASIO_DECL std::string to_string() const;
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use other overload.) Get the address as a string in dotted
-  /// decimal format.
-  ASIO_DECL std::string to_string(asio::error_code& ec) const;
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(const char* str);
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(
-      const char* str, asio::error_code& ec);
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(const std::string& str);
-
-  /// (Deprecated: Use make_address_v4().) Create an address from an IP address
-  /// string in dotted decimal form.
-  static address_v4 from_string(
-      const std::string& str, asio::error_code& ec);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a loopback address.
   /**
@@ -171,20 +141,6 @@ public:
    * @returns <tt>to_uint() == 0</tt>.
    */
   ASIO_DECL bool is_unspecified() const noexcept;
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
-  /// class A address.
-  ASIO_DECL bool is_class_a() const;
-
-  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
-  /// class B address.
-  ASIO_DECL bool is_class_b() const;
-
-  /// (Deprecated: Use network_v4 class.) Determine whether the address is a
-  /// class C address.
-  ASIO_DECL bool is_class_c() const;
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Determine whether the address is a multicast address.
   /**
@@ -293,18 +249,6 @@ public:
   {
     return address_v4(0xFFFFFFFF);
   }
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use network_v4 class.) Obtain an address object that
-  /// represents the broadcast address that corresponds to the specified
-  /// address and netmask.
-  ASIO_DECL static address_v4 broadcast(
-      const address_v4& addr, const address_v4& mask);
-
-  /// (Deprecated: Use network_v4 class.) Obtain the netmask that corresponds
-  /// to the address, based on its address class.
-  ASIO_DECL static address_v4 netmask(const address_v4& addr);
-#endif // !defined(ASIO_NO_DEPRECATED)
 
 private:
   // The underlying IPv4 address.
