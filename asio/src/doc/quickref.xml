@@ -376,7 +376,6 @@
             <member><link linkend="asio.reference.async_write">async_write</link></member>
             <member><link linkend="asio.reference.async_write_at">async_write_at</link></member>
             <member><link linkend="asio.reference.buffer">buffer</link></member>
-            <member><link linkend="asio.reference.buffer_cast">buffer_cast </link> (deprecated)</member>
             <member><link linkend="asio.reference.buffer_copy">buffer_copy</link></member>
             <member><link linkend="asio.reference.buffer_size">buffer_size</link></member>
             <member><link linkend="asio.reference.buffer_sequence_begin">buffer_sequence_begin</link></member>

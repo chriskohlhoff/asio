@@ -432,49 +432,6 @@ inline std::size_t buffer_size(const BufferSequence& b) noexcept
       asio::buffer_sequence_end(b));
 }
 
-#if !defined(ASIO_NO_DEPRECATED)
-
-/** @defgroup buffer_cast asio::buffer_cast
- *
- * @brief (Deprecated: Use the @c data() member function.) The
- * asio::buffer_cast function is used to obtain a pointer to the
- * underlying memory region associated with a buffer.
- *
- * @par Examples:
- *
- * To access the memory of a non-modifiable buffer, use:
- * @code asio::const_buffer b1 = ...;
- * const unsigned char* p1 = asio::buffer_cast<const unsigned char*>(b1);
- * @endcode
- *
- * To access the memory of a modifiable buffer, use:
- * @code asio::mutable_buffer b2 = ...;
- * unsigned char* p2 = asio::buffer_cast<unsigned char*>(b2);
- * @endcode
- *
- * The asio::buffer_cast function permits violations of type safety, so
- * uses of it in application code should be carefully considered.
- */
-/*@{*/
-
-/// Cast a non-modifiable buffer to a specified pointer to POD type.
-template <typename PointerToPodType>
-inline PointerToPodType buffer_cast(const mutable_buffer& b) noexcept
-{
-  return static_cast<PointerToPodType>(b.data());
-}
-
-/// Cast a non-modifiable buffer to a specified pointer to POD type.
-template <typename PointerToPodType>
-inline PointerToPodType buffer_cast(const const_buffer& b) noexcept
-{
-  return static_cast<PointerToPodType>(b.data());
-}
-
-/*@}*/
-
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 /// Create a new modifiable buffer that is offset from the start of another.
 /**
  * @relates mutable_buffer

@@ -158,15 +158,6 @@ void test()
     std::size_t size4 = buffer_size(const_buffer_sequence);
     (void)size4;
 
-    // buffer_cast function overloads.
-
-#if !defined(ASIO_NO_DEPRECATED)
-    void* ptr3 = buffer_cast<void*>(mb1);
-    (void)ptr3;
-    const void* ptr4 = buffer_cast<const void*>(cb1);
-    (void)ptr4;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
     // buffer function overloads.
 
     mb1 = buffer(mb2);
