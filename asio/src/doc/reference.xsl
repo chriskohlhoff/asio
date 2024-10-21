@@ -77,7 +77,6 @@
 [include requirements/IoObjectService.qbk]
 [include requirements/IteratorConnectHandler.qbk]
 [include requirements/IteratorConnectToken.qbk]
-[include requirements/LegacyCompletionHandler.qbk]
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]

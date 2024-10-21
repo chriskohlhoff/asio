@@ -197,11 +197,6 @@ private:
   friend class detail::win_iocp_overlapped_ptr;
 #endif
 
-#if !defined(ASIO_NO_DEPRECATED)
-  struct initiate_dispatch;
-  struct initiate_post;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
 public:
   template <typename Allocator, uintptr_t Bits>
   class basic_executor_type;
@@ -429,63 +424,6 @@ public:
   ASIO_DECL void restart();
 
 #if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use asio::dispatch().) Request the io_context to
-  /// invoke the given handler.
-  /**
-   * This function is used to ask the io_context to execute the given handler.
-   *
-   * The io_context guarantees that the handler will only be called in a thread
-   * in which the run(), run_one(), poll() or poll_one() member functions is
-   * currently being invoked. The handler may be executed inside this function
-   * if the guarantee can be met.
-   *
-   * @param handler The handler to be called. The io_context will make
-   * a copy of the handler object as required. The function signature of the
-   * handler must be: @code void handler(); @endcode
-   *
-   * @note This function throws an exception only if:
-   *
-   * @li the handler's associated allocator; or
-   *
-   * @li the handler's copy constructor
-   *
-   * throws an exception.
-   */
-  template <typename LegacyCompletionHandler>
-  auto dispatch(LegacyCompletionHandler&& handler)
-    -> decltype(
-      async_initiate<LegacyCompletionHandler, void ()>(
-        declval<initiate_dispatch>(), handler, this));
-
-  /// (Deprecated: Use asio::post().) Request the io_context to invoke
-  /// the given handler and return immediately.
-  /**
-   * This function is used to ask the io_context to execute the given handler,
-   * but without allowing the io_context to call the handler from inside this
-   * function.
-   *
-   * The io_context guarantees that the handler will only be called in a thread
-   * in which the run(), run_one(), poll() or poll_one() member functions is
-   * currently being invoked.
-   *
-   * @param handler The handler to be called. The io_context will make
-   * a copy of the handler object as required. The function signature of the
-   * handler must be: @code void handler(); @endcode
-   *
-   * @note This function throws an exception only if:
-   *
-   * @li the handler's associated allocator; or
-   *
-   * @li the handler's copy constructor
-   *
-   * throws an exception.
-   */
-  template <typename LegacyCompletionHandler>
-  auto post(LegacyCompletionHandler&& handler)
-    -> decltype(
-      async_initiate<LegacyCompletionHandler, void ()>(
-        declval<initiate_post>(), handler, this));
-
   /// (Deprecated: Use asio::bind_executor().) Create a new handler that
   /// automatically dispatches the wrapped handler on the io_context.
   /**
@@ -506,7 +444,8 @@ public:
    * then the return value is a function object with the signature
    * @code void g(A1 a1, ... An an); @endcode
    * that, when invoked, executes code equivalent to:
-   * @code io_context.dispatch(boost::bind(f, a1, ... an)); @endcode
+   * @code asio::dispatch(io_context,
+   *     boost::bind(f, a1, ... an)); @endcode
    */
   template <typename Handler>
 #if defined(GENERATING_DOCUMENTATION)
