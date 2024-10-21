@@ -85,14 +85,6 @@ public:
   /// The endpoint type.
   typedef typename InternetProtocol::endpoint endpoint_type;
 
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated.) The query type.
-  typedef basic_resolver_query<InternetProtocol> query;
-
-  /// (Deprecated.) The iterator type.
-  typedef basic_resolver_iterator<InternetProtocol> iterator;
-#endif // !defined(ASIO_NO_DEPRECATED)
-
   /// The results type.
   typedef basic_resolver_results<InternetProtocol> results_type;
 
@@ -231,48 +223,6 @@ public:
   {
     return impl_.get_service().cancel(impl_.get_implementation());
   }
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use overload with separate host and service parameters.)
-  /// Perform forward resolution of a query to a list of entries.
-  /**
-   * This function is used to resolve a query into a list of endpoint entries.
-   *
-   * @param q A query object that determines what endpoints will be returned.
-   *
-   * @returns A range object representing the list of endpoint entries. A
-   * successful call to this function is guaranteed to return a non-empty
-   * range.
-   *
-   * @throws asio::system_error Thrown on failure.
-   */
-  results_type resolve(const query& q)
-  {
-    asio::error_code ec;
-    results_type r = impl_.get_service().resolve(
-        impl_.get_implementation(), q, ec);
-    asio::detail::throw_error(ec, "resolve");
-    return r;
-  }
-
-  /// (Deprecated: Use overload with separate host and service parameters.)
-  /// Perform forward resolution of a query to a list of entries.
-  /**
-   * This function is used to resolve a query into a list of endpoint entries.
-   *
-   * @param q A query object that determines what endpoints will be returned.
-   *
-   * @param ec Set to indicate what error occurred, if any.
-   *
-   * @returns A range object representing the list of endpoint entries. An
-   * empty range is returned if an error occurs. A successful call to this
-   * function is guaranteed to return a non-empty range.
-   */
-  results_type resolve(const query& q, asio::error_code& ec)
-  {
-    return impl_.get_service().resolve(impl_.get_implementation(), q, ec);
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Perform forward resolution of a query to a list of entries.
   /**
@@ -639,52 +589,6 @@ public:
         static_cast<std::string>(service), resolve_flags);
     return impl_.get_service().resolve(impl_.get_implementation(), q, ec);
   }
-
-#if !defined(ASIO_NO_DEPRECATED)
-  /// (Deprecated: Use overload with separate host and service parameters.)
-  /// Asynchronously perform forward resolution of a query to a list of entries.
-  /**
-   * This function is used to asynchronously resolve a query into a list of
-   * endpoint entries. It is an initiating function for an @ref
-   * asynchronous_operation, and always returns immediately.
-   *
-   * @param q A query object that determines what endpoints will be returned.
-   *
-   * @param token The @ref completion_token that will be used to produce a
-   * completion handler, which will be called when the resolve completes.
-   * Potential completion tokens include @ref use_future, @ref use_awaitable,
-   * @ref yield_context, or a function object with the correct completion
-   * signature. The function signature of the completion handler must be:
-   * @code void handler(
-   *   const asio::error_code& error, // Result of operation.
-   *   resolver::results_type results // Resolved endpoints as a range.
-   * ); @endcode
-   * Regardless of whether the asynchronous operation completes immediately or
-   * not, the completion handler will not be invoked from within this function.
-   * On immediate completion, invocation of the handler will be performed in a
-   * manner equivalent to using asio::async_immediate().
-   *
-   * A successful resolve operation is guaranteed to pass a non-empty range to
-   * the handler.
-   *
-   * @par Completion Signature
-   * @code void(asio::error_code, results_type) @endcode
-   */
-  template <
-      ASIO_COMPLETION_TOKEN_FOR(void (asio::error_code,
-        results_type)) ResolveToken = default_completion_token_t<executor_type>>
-  auto async_resolve(const query& q,
-      ResolveToken&& token = default_completion_token_t<executor_type>())
-    -> decltype(
-      asio::async_initiate<ResolveToken,
-        void (asio::error_code, results_type)>(
-          declval<initiate_async_resolve>(), token, q))
-  {
-    return asio::async_initiate<ResolveToken,
-      void (asio::error_code, results_type)>(
-        initiate_async_resolve(this), token, q);
-  }
-#endif // !defined(ASIO_NO_DEPRECATED)
 
   /// Asynchronously perform forward resolution of a query to a list of entries.
   /**

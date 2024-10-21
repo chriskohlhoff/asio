@@ -48,11 +48,7 @@ namespace ip {
  */
 template <typename InternetProtocol>
 class basic_resolver_results
-#if !defined(ASIO_NO_DEPRECATED)
-  : public basic_resolver_iterator<InternetProtocol>
-#else // !defined(ASIO_NO_DEPRECATED)
   : private basic_resolver_iterator<InternetProtocol>
-#endif // !defined(ASIO_NO_DEPRECATED)
 {
 public:
   /// The protocol type associated with the results.
