@@ -100,10 +100,8 @@ engine& engine::operator=(engine&& other) noexcept
 {
   if (this != &other)
   {
-    ssl_ = other.ssl_;
-    ext_bio_ = other.ext_bio_;
-    other.ssl_ = 0;
-    other.ext_bio_ = 0;
+    std::swap(ssl_, other.ssl_);
+    std::swap(ext_bio_, other.ext_bio_);
   }
   return *this;
 }
