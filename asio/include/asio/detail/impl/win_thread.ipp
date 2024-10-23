@@ -75,6 +75,7 @@ void win_thread::start_thread(func_base* arg, unsigned int stack_size)
     asio::detail::throw_error(ec, "thread.entry_event");
   }
 
+  // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)
   arg->exit_event_ = exit_event_ = ::CreateEventW(0, true, false, 0);
   if (!exit_event_)
   {
@@ -86,6 +87,7 @@ void win_thread::start_thread(func_base* arg, unsigned int stack_size)
   }
 
   unsigned int thread_id = 0;
+  // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)
   thread_ = reinterpret_cast<HANDLE>(::_beginthreadex(0,
         stack_size, win_thread_function, arg, 0, &thread_id));
   if (!thread_)
