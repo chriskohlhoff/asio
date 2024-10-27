@@ -64,6 +64,7 @@ defer
 deferred
 detached
 dispatch
+disposition
 error
 error_handler
 execution_context

@@ -77,6 +77,8 @@ using std::is_convertible;
 
 using std::is_copy_constructible;
 
+using std::is_nothrow_default_constructible;
+
 using std::is_destructible;
 
 using std::is_function;
@@ -84,6 +86,8 @@ using std::is_function;
 using std::is_move_constructible;
 
 using std::is_nothrow_copy_constructible;
+
+using std::is_nothrow_copy_assignable;
 
 using std::is_nothrow_destructible;
 

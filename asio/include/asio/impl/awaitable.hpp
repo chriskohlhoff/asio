@@ -21,10 +21,12 @@
 #include <tuple>
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
+#include "asio/detail/memory.hpp"
 #include "asio/detail/thread_context.hpp"
 #include "asio/detail/thread_info_base.hpp"
 #include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/disposition.hpp"
 #include "asio/error.hpp"
 #include "asio/post.hpp"
 #include "asio/system_error.hpp"
@@ -42,7 +44,7 @@ namespace asio {
 namespace detail {
 
 struct awaitable_thread_has_context_switched {};
-template <typename, typename> class awaitable_async_op_handler;
+template <typename, typename, typename> class awaitable_async_op_handler;
 template <typename, typename, typename> class awaitable_async_op;
 
 // An awaitable_thread represents a thread-of-execution that is composed of one
@@ -135,19 +137,15 @@ public:
     return result{this};
   }
 
-  void set_except(std::exception_ptr e) noexcept
+  template <typename Disposition>
+  void set_disposition(Disposition&& d) noexcept
   {
-    pending_exception_ = e;
-  }
-
-  void set_error(const asio::error_code& ec)
-  {
-    this->set_except(std::make_exception_ptr(asio::system_error(ec)));
+    pending_exception_ = (to_exception_ptr)(static_cast<Disposition&&>(d));
   }
 
   void unhandled_exception()
   {
-    set_except(std::current_exception());
+    set_disposition(std::current_exception());
   }
 
   void rethrow_exception()
@@ -634,7 +632,8 @@ public:
 
 private:
   template <typename> friend class awaitable_frame_base;
-  template <typename, typename> friend class awaitable_async_op_handler;
+  template <typename, typename, typename>
+    friend class awaitable_async_op_handler;
   template <typename, typename> friend class awaitable_handler_base;
   template <typename> friend class awaitable_thread;
 
@@ -780,7 +779,7 @@ protected:
   awaitable<awaitable_thread_entry_point, Executor> bottom_of_stack_;
 };
 
-template <typename Signature, typename Executor>
+template <typename Signature, typename Executor, typename = void>
 class awaitable_async_op_handler;
 
 template <typename R, typename Executor>
@@ -808,74 +807,9 @@ public:
   }
 };
 
-template <typename R, typename Executor>
-class awaitable_async_op_handler<R(asio::error_code), Executor>
-  : public awaitable_thread<Executor>
-{
-public:
-  typedef asio::error_code* result_type;
-
-  awaitable_async_op_handler(
-      awaitable_thread<Executor>* h, result_type& result)
-    : awaitable_thread<Executor>(std::move(*h)),
-      result_(result)
-  {
-  }
-
-  void operator()(asio::error_code ec)
-  {
-    result_ = &ec;
-    this->entry_point()->top_of_stack_->attach_thread(this);
-    this->entry_point()->top_of_stack_->clear_cancellation_slot();
-    this->pump();
-  }
-
-  static void resume(result_type& result)
-  {
-    throw_error(*result);
-  }
-
-private:
-  result_type& result_;
-};
-
-template <typename R, typename Executor>
-class awaitable_async_op_handler<R(std::exception_ptr), Executor>
-  : public awaitable_thread<Executor>
-{
-public:
-  typedef std::exception_ptr* result_type;
-
-  awaitable_async_op_handler(
-      awaitable_thread<Executor>* h, result_type& result)
-    : awaitable_thread<Executor>(std::move(*h)),
-      result_(result)
-  {
-  }
-
-  void operator()(std::exception_ptr ex)
-  {
-    result_ = &ex;
-    this->entry_point()->top_of_stack_->attach_thread(this);
-    this->entry_point()->top_of_stack_->clear_cancellation_slot();
-    this->pump();
-  }
-
-  static void resume(result_type& result)
-  {
-    if (*result)
-    {
-      std::exception_ptr ex = std::exchange(*result, nullptr);
-      std::rethrow_exception(ex);
-    }
-  }
-
-private:
-  result_type& result_;
-};
-
 template <typename R, typename T, typename Executor>
-class awaitable_async_op_handler<R(T), Executor>
+class awaitable_async_op_handler<R(T), Executor,
+    enable_if_t<!is_disposition<T>::value>>
   : public awaitable_thread<Executor>
 {
 public:
@@ -890,7 +824,7 @@ public:
 
   void operator()(T result)
   {
-    result_ = &result;
+    result_ = detail::addressof(result);
     this->entry_point()->top_of_stack_->attach_thread(this);
     this->entry_point()->top_of_stack_->clear_cancellation_slot();
     this->pump();
@@ -905,16 +839,13 @@ private:
   result_type& result_;
 };
 
-template <typename R, typename T, typename Executor>
-class awaitable_async_op_handler<R(asio::error_code, T), Executor>
+template <typename R, typename Disposition, typename Executor>
+class awaitable_async_op_handler<R(Disposition), Executor,
+    enable_if_t<is_disposition<Disposition>::value>>
   : public awaitable_thread<Executor>
 {
 public:
-  struct result_type
-  {
-    asio::error_code* ec_;
-    T* value_;
-  };
+  typedef Disposition* result_type;
 
   awaitable_async_op_handler(
       awaitable_thread<Executor>* h, result_type& result)
@@ -923,33 +854,36 @@ public:
   {
   }
 
-  void operator()(asio::error_code ec, T value)
+  void operator()(Disposition d)
   {
-    result_.ec_ = &ec;
-    result_.value_ = &value;
+    result_ = detail::addressof(d);
     this->entry_point()->top_of_stack_->attach_thread(this);
     this->entry_point()->top_of_stack_->clear_cancellation_slot();
     this->pump();
   }
 
-  static T resume(result_type& result)
+  static void resume(result_type& result)
   {
-    throw_error(*result.ec_);
-    return std::move(*result.value_);
+    if (*result != no_error)
+    {
+      Disposition d = std::exchange(*result, Disposition());
+      asio::throw_exception(static_cast<Disposition&&>(d));
+    }
   }
 
 private:
   result_type& result_;
 };
 
-template <typename R, typename T, typename Executor>
-class awaitable_async_op_handler<R(std::exception_ptr, T), Executor>
+template <typename R, typename Disposition, typename T, typename Executor>
+class awaitable_async_op_handler<R(Disposition, T), Executor,
+    enable_if_t<is_disposition<Disposition>::value>>
   : public awaitable_thread<Executor>
 {
 public:
   struct result_type
   {
-    std::exception_ptr* ex_;
+    Disposition* disposition_;
     T* value_;
   };
 
@@ -960,10 +894,10 @@ public:
   {
   }
 
-  void operator()(std::exception_ptr ex, T value)
+  void operator()(Disposition d, T value)
   {
-    result_.ex_ = &ex;
-    result_.value_ = &value;
+    result_.disposition_ = detail::addressof(d);
+    result_.value_ = detail::addressof(value);
     this->entry_point()->top_of_stack_->attach_thread(this);
     this->entry_point()->top_of_stack_->clear_cancellation_slot();
     this->pump();
@@ -971,10 +905,10 @@ public:
 
   static T resume(result_type& result)
   {
-    if (*result.ex_)
+    if (*result.disposition_ != no_error)
     {
-      std::exception_ptr ex = std::exchange(*result.ex_, nullptr);
-      std::rethrow_exception(ex);
+      Disposition d = std::exchange(*result.disposition_, Disposition());
+      asio::throw_exception(d);
     }
     return std::move(*result.value_);
   }
@@ -983,12 +917,13 @@ private:
   result_type& result_;
 };
 
-template <typename R, typename... Ts, typename Executor>
-class awaitable_async_op_handler<R(Ts...), Executor>
+template <typename R, typename T, typename... Ts, typename Executor>
+class awaitable_async_op_handler<R(T, Ts...), Executor,
+    enable_if_t<!is_disposition<T>::value>>
   : public awaitable_thread<Executor>
 {
 public:
-  typedef std::tuple<Ts...>* result_type;
+  typedef std::tuple<T, Ts...>* result_type;
 
   awaitable_async_op_handler(
       awaitable_thread<Executor>* h, result_type& result)
@@ -1000,14 +935,14 @@ public:
   template <typename... Args>
   void operator()(Args&&... args)
   {
-    std::tuple<Ts...> result(std::forward<Args>(args)...);
-    result_ = &result;
+    std::tuple<T, Ts...> result(std::forward<Args>(args)...);
+    result_ = detail::addressof(result);
     this->entry_point()->top_of_stack_->attach_thread(this);
     this->entry_point()->top_of_stack_->clear_cancellation_slot();
     this->pump();
   }
 
-  static std::tuple<Ts...> resume(result_type& result)
+  static std::tuple<T, Ts...> resume(result_type& result)
   {
     return std::move(*result);
   }
@@ -1016,14 +951,15 @@ private:
   result_type& result_;
 };
 
-template <typename R, typename... Ts, typename Executor>
-class awaitable_async_op_handler<R(asio::error_code, Ts...), Executor>
+template <typename R, typename Disposition, typename... Ts, typename Executor>
+class awaitable_async_op_handler<R(Disposition, Ts...), Executor,
+    enable_if_t<is_disposition<Disposition>::value>>
   : public awaitable_thread<Executor>
 {
 public:
   struct result_type
   {
-    asio::error_code* ec_;
+    Disposition* disposition_;
     std::tuple<Ts...>* value_;
   };
 
@@ -1035,11 +971,11 @@ public:
   }
 
   template <typename... Args>
-  void operator()(asio::error_code ec, Args&&... args)
+  void operator()(Disposition d, Args&&... args)
   {
-    result_.ec_ = &ec;
+    result_.disposition_ = detail::addressof(d);
     std::tuple<Ts...> value(std::forward<Args>(args)...);
-    result_.value_ = &value;
+    result_.value_ = detail::addressof(value);
     this->entry_point()->top_of_stack_->attach_thread(this);
     this->entry_point()->top_of_stack_->clear_cancellation_slot();
     this->pump();
@@ -1047,49 +983,10 @@ public:
 
   static std::tuple<Ts...> resume(result_type& result)
   {
-    throw_error(*result.ec_);
-    return std::move(*result.value_);
-  }
-
-private:
-  result_type& result_;
-};
-
-template <typename R, typename... Ts, typename Executor>
-class awaitable_async_op_handler<R(std::exception_ptr, Ts...), Executor>
-  : public awaitable_thread<Executor>
-{
-public:
-  struct result_type
-  {
-    std::exception_ptr* ex_;
-    std::tuple<Ts...>* value_;
-  };
-
-  awaitable_async_op_handler(
-      awaitable_thread<Executor>* h, result_type& result)
-    : awaitable_thread<Executor>(std::move(*h)),
-      result_(result)
-  {
-  }
-
-  template <typename... Args>
-  void operator()(std::exception_ptr ex, Args&&... args)
-  {
-    result_.ex_ = &ex;
-    std::tuple<Ts...> value(std::forward<Args>(args)...);
-    result_.value_ = &value;
-    this->entry_point()->top_of_stack_->attach_thread(this);
-    this->entry_point()->top_of_stack_->clear_cancellation_slot();
-    this->pump();
-  }
-
-  static std::tuple<Ts...> resume(result_type& result)
-  {
-    if (*result.ex_)
+    if (*result.disposition_ != no_error)
     {
-      std::exception_ptr ex = std::exchange(*result.ex_, nullptr);
-      std::rethrow_exception(ex);
+      Disposition d = std::exchange(*result.disposition_, Disposition());
+      asio::throw_exception(d);
     }
     return std::move(*result.value_);
   }

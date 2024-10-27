@@ -169,6 +169,7 @@ UNIT_TEST_EXES = \
 	tests\unit\deferred.exe \
 	tests\unit\detached.exe \
 	tests\unit\dispatch.exe \
+	tests\unit\disposition.exe \
 	tests\unit\error.exe \
 	tests\unit\execution_context.exe \
 	tests\unit\execution\any_executor.exe \

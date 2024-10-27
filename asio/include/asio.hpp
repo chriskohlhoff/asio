@@ -79,6 +79,7 @@
 #include "asio/default_completion_token.hpp"
 #include "asio/detached.hpp"
 #include "asio/dispatch.hpp"
+#include "asio/disposition.hpp"
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution.hpp"
