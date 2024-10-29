@@ -218,6 +218,9 @@ private:
   // The concurrency hint used to initialise the scheduler.
   const int concurrency_hint_;
 
+  // The time limit on running the scheduler task, in microseconds.
+  const long task_usec_;
+
   // The thread that is running the scheduler.
   asio::detail::thread* thread_;
 };

@@ -120,6 +120,7 @@ scheduler::scheduler(asio::execution_context& ctx,
     stopped_(false),
     shutdown_(false),
     concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
+    task_usec_(config(ctx).get("scheduler", "task_usec", -1)),
     thread_(0)
 {
   ASIO_HANDLER_TRACKING_INIT;
@@ -468,7 +469,8 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
         // Run the task. May throw an exception. Only block if the operation
         // queue is empty and we're not polling, otherwise we want to return
         // as soon as possible.
-        task_->run(more_handlers ? 0 : -1, this_thread.private_op_queue);
+        task_->run(more_handlers ? 0 : task_usec_,
+            this_thread.private_op_queue);
       }
       else
       {
