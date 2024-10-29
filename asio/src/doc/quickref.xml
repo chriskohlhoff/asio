@@ -155,6 +155,7 @@
             <member><link linkend="asio.reference.execution_context">execution_context</link></member>
             <member><link linkend="asio.reference.execution_context__id">execution_context::id</link></member>
             <member><link linkend="asio.reference.execution_context__service">execution_context::service</link></member>
+            <member><link linkend="asio.reference.execution_context__service_maker">execution_context::service_maker</link></member>
             <member><link linkend="asio.reference.executor">executor</link></member>
             <member><link linkend="asio.reference.executor_arg_t">executor_arg_t</link></member>
             <member><link linkend="asio.reference.invalid_service_owner">invalid_service_owner</link></member>
@@ -163,6 +164,7 @@
             <member><link linkend="asio.reference.io_context__service">io_context::service</link></member>
             <member><link linkend="asio.reference.io_context__strand">io_context::strand</link></member>
             <member><link linkend="asio.reference.multiple_exceptions">multiple_exceptions</link></member>
+            <member><link linkend="asio.reference.no_error_t">no_error_t</link></member>
             <member><link linkend="asio.reference.partial_as_tuple">partial_as_tuple</link></member>
             <member><link linkend="asio.reference.partial_redirect_error">partial_redirect_error</link></member>
             <member><link linkend="asio.reference.service_already_exists">service_already_exists</link></member>
@@ -196,6 +198,7 @@
             <member><link linkend="asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
             <member><link linkend="asio.reference.consign_t">consign_t</link></member>
             <member><link linkend="asio.reference.deferred_t">deferred_t</link></member>
+            <member><link linkend="asio.reference.disposition_traits">disposition_traits</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
@@ -267,6 +270,8 @@
             <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>
             <member><link linkend="asio.reference.this_coro__throw_if_cancelled">this_coro::throw_if_cancelled</link></member>
+            <member><link linkend="asio.reference.throw_exception">throw_exception</link></member>
+            <member><link linkend="asio.reference.to_exception_ptr">to_exception_ptr</link></member>
             <member><link linkend="asio.reference.execution_context.use_service">use_service</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Special Values</bridgehead>
@@ -277,6 +282,7 @@
             <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
             <member><link linkend="asio.reference.experimental__use_coro">experimental::use_coro</link></member>
             <member><link linkend="asio.reference.experimental__use_promise">experimental::use_promise</link></member>
+            <member><link linkend="asio.reference.no_error">no_error</link></member>
             <member><link linkend="asio.reference.this_coro__cancellation_state">this_coro::cancellation_state</link></member>
             <member><link linkend="asio.reference.this_coro__executor">this_coro::executor</link></member>
             <member><link linkend="asio.reference.use_awaitable">use_awaitable</link></member>

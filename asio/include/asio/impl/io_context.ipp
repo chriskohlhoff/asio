@@ -45,6 +45,13 @@ io_context::io_context(int concurrency_hint)
 {
 }
 
+io_context::io_context(const execution_context::service_maker& initial_services)
+  : execution_context(initial_services),
+    impl_(add_impl(new impl_type(*this,
+          ASIO_CONCURRENCY_HINT_DEFAULT, false)))
+{
+}
+
 io_context::impl_type& io_context::add_impl(io_context::impl_type* impl)
 {
   asio::detail::scoped_ptr<impl_type> scoped_impl(impl);

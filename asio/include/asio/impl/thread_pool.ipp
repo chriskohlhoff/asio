@@ -94,6 +94,19 @@ thread_pool::thread_pool(std::size_t num_threads)
   threads_.create_threads(f, static_cast<std::size_t>(num_threads_));
 }
 
+thread_pool::thread_pool(std::size_t num_threads,
+    const execution_context::service_maker& initial_services)
+  : execution_context(initial_services),
+    scheduler_(add_scheduler(new detail::scheduler(
+          *this, num_threads == 1 ? 1 : 0, false))),
+    num_threads_(detail::clamp_thread_pool_size(num_threads))
+{
+  scheduler_.work_started();
+
+  thread_function f = { &scheduler_ };
+  threads_.create_threads(f, static_cast<std::size_t>(num_threads_));
+}
+
 thread_pool::~thread_pool()
 {
   stop();

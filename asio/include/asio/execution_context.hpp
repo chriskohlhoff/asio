@@ -107,10 +107,22 @@ class execution_context
 public:
   class id;
   class service;
+  class service_maker;
 
 public:
   /// Constructor.
   ASIO_DECL execution_context();
+
+  /// Constructor.
+  /**
+   * Construct with a service maker, to create an initial set of services that
+   * will be installed into the execution context at construction time.
+   *
+   * @param initial_services Used to create the initial services. The @c make
+   * function will be called once at the end of execution_context construction.
+   */
+  ASIO_DECL explicit execution_context(
+      const service_maker& initial_services);
 
   /// Destructor.
   ASIO_DECL ~execution_context();
@@ -287,7 +299,7 @@ public:
   id() {}
 };
 
-/// Base class for all io_context services.
+/// Base class for all execution context services.
 class execution_context::service
   : private noncopyable
 {
@@ -328,6 +340,23 @@ private:
 
   execution_context& owner_;
   service* next_;
+};
+
+/// Base class for all execution context service makers.
+/**
+ * A service maker is called by the execution context to create services that
+ * need to be installed into the execution context at construction time.
+ */
+class execution_context::service_maker
+  : private noncopyable
+{
+public:
+  /// Make services to be added to the execution context.
+  virtual void make(execution_context& context) const = 0;
+
+protected:
+  /// Destructor.
+  ASIO_DECL virtual ~service_maker();
 };
 
 /// Exception thrown when trying to add a duplicate service to an

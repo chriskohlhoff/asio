@@ -28,6 +28,13 @@ execution_context::execution_context()
 {
 }
 
+execution_context::execution_context(
+    const execution_context::service_maker& initial_services)
+  : service_registry_(new asio::detail::service_registry(*this))
+{
+  initial_services.make(*this);
+}
+
 execution_context::~execution_context()
 {
   shutdown();
@@ -62,6 +69,10 @@ execution_context::service::~service()
 }
 
 void execution_context::service::notify_fork(execution_context::fork_event)
+{
+}
+
+execution_context::service_maker::~service_maker()
 {
 }
 

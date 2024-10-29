@@ -99,6 +99,40 @@ private:
 asio::execution_context::id test_service::id;
 #endif // defined(ASIO_NO_TYPEID)
 
+class test_context_service : public asio::execution_context::service
+{
+public:
+  static asio::execution_context::id id;
+
+  test_context_service(asio::execution_context& c, int value = 0)
+    : asio::execution_context::service(c),
+      value_(value)
+  {
+  }
+
+  int get_value() const
+  {
+    return value_;
+  }
+
+private:
+  virtual void shutdown() {}
+
+  int value_;
+};
+
+asio::execution_context::id test_context_service::id;
+
+class test_context_service_maker :
+  public asio::execution_context::service_maker
+{
+public:
+  void make(asio::execution_context& ctx) const override
+  {
+    (void)asio::make_service<test_context_service>(ctx, 42);
+  }
+};
+
 void thread_pool_service_test()
 {
   asio::thread_pool pool1(1);
@@ -154,6 +188,14 @@ void thread_pool_service_test()
   delete svc4;
 
   ASIO_CHECK(!asio::has_service<test_service>(pool3));
+
+  // Initial service registration.
+
+  asio::thread_pool pool4{1, test_context_service_maker{}};
+
+  ASIO_CHECK(asio::has_service<test_context_service>(pool4));
+  ASIO_CHECK(asio::use_service<test_context_service>(pool4).get_value()
+      == 42);
 }
 
 void thread_pool_executor_query_test()

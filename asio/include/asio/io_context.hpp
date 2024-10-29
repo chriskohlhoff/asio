@@ -230,6 +230,17 @@ public:
    */
   ASIO_DECL explicit io_context(int concurrency_hint);
 
+  /// Constructor.
+  /**
+   * Construct with a service maker, to create an initial set of services that
+   * will be installed into the execution context at construction time.
+   *
+   * @param initial_services Used to create the initial services. The @c make
+   * function will be called once at the end of execution_context construction.
+   */
+  ASIO_DECL explicit io_context(
+      const execution_context::service_maker& initial_services);
+
   /// Destructor.
   /**
    * On destruction, the io_context performs the following sequence of

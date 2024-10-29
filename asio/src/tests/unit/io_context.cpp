@@ -268,13 +268,55 @@ class test_service : public asio::io_context::service
 {
 public:
   static asio::io_context::id id;
+
   test_service(asio::io_context& s)
-    : asio::io_context::service(s) {}
+    : asio::io_context::service(s)
+  {
+  }
+
 private:
-  virtual void shutdown() {}
+  void shutdown() override
+  {
+  }
 };
 
 asio::io_context::id test_service::id;
+
+class test_context_service : public asio::execution_context::service
+{
+public:
+  static asio::execution_context::id id;
+
+  test_context_service(asio::execution_context& c, int value = 0)
+    : asio::execution_context::service(c),
+      value_(value)
+  {
+  }
+
+  int get_value() const
+  {
+    return value_;
+  }
+
+private:
+  void shutdown() override
+  {
+  }
+
+  int value_;
+};
+
+asio::execution_context::id test_context_service::id;
+
+class test_context_service_maker :
+  public asio::execution_context::service_maker
+{
+public:
+  void make(asio::execution_context& ctx) const override
+  {
+    (void)asio::make_service<test_context_service>(ctx, 42);
+  }
+};
 
 void io_context_service_test()
 {
@@ -332,6 +374,14 @@ void io_context_service_test()
   delete svc4;
 
   ASIO_CHECK(!asio::has_service<test_service>(ioc3));
+
+  // Initial service registration.
+
+  asio::io_context ioc4{test_context_service_maker{}};
+
+  ASIO_CHECK(asio::has_service<test_context_service>(ioc4));
+  ASIO_CHECK(asio::use_service<test_context_service>(ioc4).get_value()
+      == 42);
 }
 
 void io_context_executor_query_test()
