@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/config.hpp"
 #include "asio/detail/resolver_service_base.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -43,8 +44,9 @@ private:
 
 resolver_service_base::resolver_service_base(execution_context& context)
   : scheduler_(asio::use_service<scheduler_impl>(context)),
-    work_scheduler_(new scheduler_impl(context, -1, false)),
-    work_thread_(0)
+    work_scheduler_(new scheduler_impl(context, false)),
+    work_thread_(0),
+    scheduler_locking_(config(context).get("scheduler", "locking", true))
 {
   work_scheduler_->work_started();
 }
@@ -126,8 +128,7 @@ void resolver_service_base::cancel(
 
 void resolver_service_base::start_resolve_op(resolve_op* op)
 {
-  if (ASIO_CONCURRENCY_HINT_IS_LOCKING(SCHEDULER,
-        scheduler_.concurrency_hint()))
+  if (scheduler_locking_)
   {
     start_work_thread();
     scheduler_.work_started();

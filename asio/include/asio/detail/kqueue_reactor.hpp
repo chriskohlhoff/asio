@@ -249,6 +249,9 @@ private:
   // Whether the service has been shut down.
   bool shutdown_;
 
+  // Whether I/O locking is enabled.
+  const bool io_locking_;
+
   // Mutex to protect access to the registered descriptors.
   mutex registered_descriptors_mutex_;
 

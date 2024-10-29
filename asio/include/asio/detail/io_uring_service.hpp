@@ -277,6 +277,9 @@ private:
   // Whether the service has been shut down.
   bool shutdown_;
 
+  // Whether I/O locking is enabled.
+  const bool io_locking_;
+
   // The timer queues.
   timer_queue_set timer_queues_;
 

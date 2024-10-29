@@ -21,6 +21,7 @@
 
 #include <cstddef>
 #include <sys/epoll.h>
+#include "asio/config.hpp"
 #include "asio/detail/epoll_reactor.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/throw_error.hpp"
@@ -38,12 +39,12 @@ namespace detail {
 epoll_reactor::epoll_reactor(asio::execution_context& ctx)
   : execution_context_service_base<epoll_reactor>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
-    mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          REACTOR_REGISTRATION, scheduler_.concurrency_hint())),
+    mutex_(config(ctx).get("reactor", "registration_locking", true)),
     interrupter_(),
     epoll_fd_(do_epoll_create()),
     timer_fd_(do_timerfd_create()),
     shutdown_(false),
+    io_locking_(config(ctx).get("reactor", "io_locking", true)),
     registered_descriptors_mutex_(mutex_.enabled())
 {
   // Add the interrupter's descriptor to epoll.
@@ -663,8 +664,7 @@ int epoll_reactor::do_timerfd_create()
 epoll_reactor::descriptor_state* epoll_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
-  return registered_descriptors_.alloc(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-        REACTOR_IO, scheduler_.concurrency_hint()));
+  return registered_descriptors_.alloc(io_locking_);
 }
 
 void epoll_reactor::free_descriptor_state(epoll_reactor::descriptor_state* s)

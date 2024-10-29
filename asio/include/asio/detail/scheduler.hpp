@@ -46,10 +46,9 @@ public:
   typedef scheduler_task* (*get_task_func_type)(
       asio::execution_context&);
 
-  // Constructor. Specifies the number of concurrent threads that are likely to
-  // run the scheduler. If set to 1 certain optimisation are performed.
+  // Constructor.
   ASIO_DECL scheduler(asio::execution_context& ctx,
-      int concurrency_hint = 0, bool own_thread = true,
+      bool own_thread = true,
       get_task_func_type get_task = &scheduler::get_default_task);
 
   // Destructor.
@@ -134,12 +133,6 @@ public:
   // Process unfinished operations as part of a shutdownoperation. Assumes that
   // work_started() was previously called for the operations.
   ASIO_DECL void abandon_operations(op_queue<operation>& ops);
-
-  // Get the concurrency hint that was used to initialise the scheduler.
-  int concurrency_hint() const
-  {
-    return concurrency_hint_;
-  }
 
 private:
   // The mutex type used by this scheduler.

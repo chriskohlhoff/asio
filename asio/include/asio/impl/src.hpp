@@ -22,6 +22,7 @@
 #include "asio/impl/any_completion_executor.ipp"
 #include "asio/impl/any_io_executor.ipp"
 #include "asio/impl/cancellation_signal.ipp"
+#include "asio/impl/config.ipp"
 #include "asio/impl/connect_pipe.ipp"
 #include "asio/impl/error.ipp"
 #include "asio/impl/error_code.ipp"

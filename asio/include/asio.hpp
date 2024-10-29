@@ -69,6 +69,7 @@
 #include "asio/completion_condition.hpp"
 #include "asio/compose.hpp"
 #include "asio/composed.hpp"
+#include "asio/config.hpp"
 #include "asio/connect.hpp"
 #include "asio/connect_pipe.hpp"
 #include "asio/consign.hpp"

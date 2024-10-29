@@ -60,6 +60,7 @@ check_PROGRAMS = \
 	unit/completion_condition \
 	unit/compose \
 	unit/composed \
+	unit/config \
 	unit/connect \
 	unit/connect_pipe \
 	unit/consign \
@@ -281,6 +282,7 @@ TESTS = \
 	unit/completion_condition \
 	unit/compose \
 	unit/composed \
+	unit/config \
 	unit/connect \
 	unit/connect_pipe \
 	unit/consign \
@@ -500,6 +502,7 @@ unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp
 unit_composed_SOURCES = unit/composed.cpp
+unit_config_SOURCES = unit/config.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
 unit_consign_SOURCES = unit/consign.cpp

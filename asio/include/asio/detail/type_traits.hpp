@@ -83,6 +83,8 @@ using std::is_destructible;
 
 using std::is_function;
 
+using std::is_integral;
+
 using std::is_move_constructible;
 
 using std::is_nothrow_copy_constructible;
@@ -100,6 +102,8 @@ using std::is_reference;
 using std::is_same;
 
 using std::is_scalar;
+
+using std::is_unsigned;
 
 using std::remove_cv;
 

@@ -35,13 +35,13 @@ namespace detail {
 io_uring_service::io_uring_service(asio::execution_context& ctx)
   : execution_context_service_base<io_uring_service>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
-    mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          REACTOR_REGISTRATION, scheduler_.concurrency_hint())),
+    mutex_(config(ctx).get("reactor", "registration_locking", true)),
     outstanding_work_(0),
     submit_sqes_op_(this),
     pending_sqes_(0),
     pending_submit_sqes_op_(false),
     shutdown_(false),
+    io_locking_(config(ctx).get("reactor", "io_locking", true)),
     timeout_(),
     registration_mutex_(mutex_.enabled()),
     reactor_(use_service<reactor>(ctx)),
@@ -612,9 +612,7 @@ void io_uring_service::register_with_reactor()
 io_uring_service::io_object* io_uring_service::allocate_io_object()
 {
   mutex::scoped_lock registration_lock(registration_mutex_);
-  return registered_io_objects_.alloc(
-      ASIO_CONCURRENCY_HINT_IS_LOCKING(
-        REACTOR_IO, scheduler_.concurrency_hint()));
+  return registered_io_objects_.alloc(io_locking_);
 }
 
 void io_uring_service::free_io_object(io_uring_service::io_object* io_obj)

@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#include "asio/detail/concurrency_hint.hpp"
+#include "asio/config.hpp"
 #include "asio/detail/event.hpp"
 #include "asio/detail/limits.hpp"
 #include "asio/detail/scheduler.hpp"
@@ -109,22 +109,17 @@ struct scheduler::work_cleanup
 };
 
 scheduler::scheduler(asio::execution_context& ctx,
-    int concurrency_hint, bool own_thread, get_task_func_type get_task)
+    bool own_thread, get_task_func_type get_task)
   : asio::detail::execution_context_service_base<scheduler>(ctx),
-    one_thread_(concurrency_hint == 1
-        || !ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, concurrency_hint)
-        || !ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          REACTOR_IO, concurrency_hint)),
-    mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          SCHEDULER, concurrency_hint)),
+    one_thread_(config(ctx).get("scheduler", "concurrency_hint", 0) == 1),
+    mutex_(config(ctx).get("scheduler", "locking", true)),
     task_(0),
     get_task_(get_task),
     task_interrupted_(true),
     outstanding_work_(0),
     stopped_(false),
     shutdown_(false),
-    concurrency_hint_(concurrency_hint),
+    concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
     thread_(0)
 {
   ASIO_HANDLER_TRACKING_INIT;

@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_IOCP)
 
+#include "asio/config.hpp"
 #include "asio/error.hpp"
 #include "asio/detail/cstdint.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
@@ -78,7 +79,7 @@ struct win_iocp_io_context::timer_thread_function
 };
 
 win_iocp_io_context::win_iocp_io_context(
-    asio::execution_context& ctx, int concurrency_hint, bool own_thread)
+    asio::execution_context& ctx, bool own_thread)
   : execution_context_service_base<win_iocp_io_context>(ctx),
     iocp_(),
     outstanding_work_(0),
@@ -87,12 +88,13 @@ win_iocp_io_context::win_iocp_io_context(
     shutdown_(0),
     gqcs_timeout_(get_gqcs_timeout()),
     dispatch_required_(0),
-    concurrency_hint_(concurrency_hint)
+    concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", -1))
 {
   ASIO_HANDLER_TRACKING_INIT;
 
   iocp_.handle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0,
-      static_cast<DWORD>(concurrency_hint >= 0 ? concurrency_hint : DWORD(~0)));
+      static_cast<DWORD>(concurrency_hint_ >= 0
+        ? concurrency_hint_ : DWORD(~0)));
   if (!iocp_.handle)
   {
     DWORD last_error = ::GetLastError();

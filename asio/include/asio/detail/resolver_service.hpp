@@ -21,7 +21,6 @@
 
 #include "asio/ip/basic_resolver_query.hpp"
 #include "asio/ip/basic_resolver_results.hpp"
-#include "asio/detail/concurrency_hint.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/resolve_endpoint_op.hpp"
 #include "asio/detail/resolve_query_op.hpp"

@@ -20,6 +20,7 @@
 
 #if defined(ASIO_HAS_KQUEUE)
 
+#include "asio/config.hpp"
 #include "asio/detail/kqueue_reactor.hpp"
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/throw_error.hpp"
@@ -46,11 +47,11 @@ namespace detail {
 kqueue_reactor::kqueue_reactor(asio::execution_context& ctx)
   : execution_context_service_base<kqueue_reactor>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
-    mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          REACTOR_REGISTRATION, scheduler_.concurrency_hint())),
+    mutex_(config(ctx).get("reactor", "registration_locking", true)),
     kqueue_fd_(do_kqueue_create()),
     interrupter_(),
     shutdown_(false),
+    io_locking_(config(ctx).get("reactor", "io_locking", true)),
     registered_descriptors_mutex_(mutex_.enabled())
 {
   struct kevent events[1];
@@ -562,8 +563,7 @@ int kqueue_reactor::do_kqueue_create()
 kqueue_reactor::descriptor_state* kqueue_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
-  return registered_descriptors_.alloc(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-        REACTOR_IO, scheduler_.concurrency_hint()));
+  return registered_descriptors_.alloc(io_locking_);
 }
 
 void kqueue_reactor::free_descriptor_state(kqueue_reactor::descriptor_state* s)

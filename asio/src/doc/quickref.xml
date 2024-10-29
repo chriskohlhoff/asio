@@ -149,6 +149,12 @@
             <member><link linkend="asio.reference.cancellation_slot">cancellation_slot</link></member>
             <member><link linkend="asio.reference.cancellation_state">cancellation_state</link></member>
             <member><link linkend="asio.reference.cancellation_type">cancellation_type</link></member>
+            <member><link linkend="asio.reference.config">config</link></member>
+            <member><link linkend="asio.reference.config_service">config_service</link></member>
+            <member><link linkend="asio.reference.config_from_concurrency_hint">config_from_concurrency_hint</link></member>
+            <member><link linkend="asio.reference.config_from_env">config_from_env</link></member>
+            <member><link linkend="asio.reference.config_from_string">config_from_string</link></member>
+            <member><link linkend="asio.reference.config_service">config_service</link></member>
             <member><link linkend="asio.reference.coroutine">coroutine</link></member>
             <member><link linkend="asio.reference.detached_t">detached_t</link></member>
             <member><link linkend="asio.reference.error_code">error_code</link></member>

@@ -45,7 +45,7 @@ struct system_context::thread_function
 };
 
 system_context::system_context()
-  : scheduler_(add_scheduler(new detail::scheduler(*this, 0, false)))
+  : scheduler_(add_scheduler(new detail::scheduler(*this, false)))
 {
   scheduler_.work_started();
 

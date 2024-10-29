@@ -55,6 +55,7 @@ co_spawn
 completion_condition
 compose
 composed
+config
 connect
 connect_pipe
 consign
