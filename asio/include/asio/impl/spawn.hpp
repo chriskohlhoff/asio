@@ -767,8 +767,9 @@ private:
       T result(function_(yield));
       if (!yield.spawned_thread_->has_context_switched())
         (post)(yield);
-      detail::binder2<Handler, exception_ptr, T>
-        handler(handler_, exception_ptr(), static_cast<T&&>(result));
+      detail::move_binder2<Handler, exception_ptr, T>
+        handler(0, static_cast<Handler&&>(handler_),
+          exception_ptr(), static_cast<T&&>(result));
       work_.complete(handler, handler.handler_);
     }
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -783,7 +784,8 @@ private:
       exception_ptr ex = current_exception();
       if (!yield.spawned_thread_->has_context_switched())
         (post)(yield);
-      detail::binder2<Handler, exception_ptr, T> handler(handler_, ex, T());
+      detail::move_binder2<Handler, exception_ptr, T>
+        handler(0, static_cast<Handler&&>(handler_), ex, T());
       work_.complete(handler, handler.handler_);
     }
 #endif // !defined(ASIO_NO_EXCEPTIONS)
