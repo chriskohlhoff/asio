@@ -23,6 +23,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include "archetypes/async_ops.hpp"
 #include "asio/any_completion_handler.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/deferred.hpp"
@@ -223,6 +224,357 @@ void test_spawn_return_move_only()
   ASIO_CHECK(*result == 42);
 }
 
+int coroutine_using_async_ops_0(asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    async_op_0(yield);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ec_0(true, yield);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ec_0(false, yield);
+    ASIO_CHECK(false);
+  }
+  catch (asio::system_error& e)
+  {
+    ASIO_CHECK(e.code() == asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ex_0(true, yield);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    async_op_ex_0(false, yield);
+    ASIO_CHECK(false);
+  }
+  catch (std::exception& e)
+  {
+    ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  return 123;
+}
+
+int coroutine_using_async_ops_1(asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    int i = async_op_1(yield);
+    ASIO_CHECK(i == 42);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ec_1(true, yield);
+    ASIO_CHECK(i == 42);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ec_1(false, yield);
+    ASIO_CHECK(false);
+    (void)i;
+  }
+  catch (asio::system_error& e)
+  {
+    ASIO_CHECK(e.code() == asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ex_1(true, yield);
+    ASIO_CHECK(i == 42);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i = async_op_ex_1(false, yield);
+    ASIO_CHECK(false);
+    (void)i;
+  }
+  catch (std::exception& e)
+  {
+    ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  return 234;
+}
+
+int coroutine_using_async_ops_2(asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    int i;
+    double d;
+    std::tie(i, d) = async_op_2(yield);
+    ASIO_CHECK(i == 42);
+    ASIO_CHECK(d == 2.0);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    std::tie(i, d) = async_op_ec_2(true, yield);
+    ASIO_CHECK(i == 42);
+    ASIO_CHECK(d == 2.0);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double> t = async_op_ec_2(false, yield);
+    ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (asio::system_error& e)
+  {
+    ASIO_CHECK(e.code() == asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    std::tie(i, d) = async_op_ex_2(true, yield);
+    ASIO_CHECK(i == 42);
+    ASIO_CHECK(d == 2.0);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double> t = async_op_ex_2(false, yield);
+    ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (std::exception& e)
+  {
+    ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  return 345;
+}
+
+int coroutine_using_async_ops_3(asio::yield_context yield)
+{
+  using namespace archetypes;
+
+  try
+  {
+    int i;
+    double d;
+    char c;
+    std::tie(i, d, c) = async_op_3(yield);
+    ASIO_CHECK(i == 42);
+    ASIO_CHECK(d == 2.0);
+    ASIO_CHECK(c == 'a');
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    char c;
+    std::tie(i, d, c) = async_op_ec_3(true, yield);
+    ASIO_CHECK(i == 42);
+    ASIO_CHECK(d == 2.0);
+    ASIO_CHECK(c == 'a');
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double, char> t = async_op_ec_3(false, yield);
+    ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (asio::system_error& e)
+  {
+    ASIO_CHECK(e.code() == asio::error::operation_aborted);
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    int i;
+    double d;
+    char c;
+    std::tie(i, d, c) = async_op_ex_3(true, yield);
+    ASIO_CHECK(i == 42);
+    ASIO_CHECK(d == 2.0);
+    ASIO_CHECK(c == 'a');
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  try
+  {
+    std::tuple<int, double, char> t = async_op_ex_3(false, yield);
+    ASIO_CHECK(false);
+    (void)t;
+  }
+  catch (std::exception& e)
+  {
+    ASIO_CHECK(e.what() == std::string("blah"));
+  }
+  catch (...)
+  {
+    ASIO_CHECK(false);
+  }
+
+  return 456;
+}
+
+void test_spawn_async_ops()
+{
+  asio::io_context ctx;
+
+  bool called = false;
+  asio::spawn(ctx, coroutine_using_async_ops_0,
+      [&](std::exception_ptr, int i)
+      {
+        ASIO_CHECK(i == 123);
+        called = true;
+      });
+
+  ASIO_CHECK(!called);
+
+  ctx.run();
+
+  ASIO_CHECK(called);
+
+  called = false;
+  asio::spawn(ctx, coroutine_using_async_ops_1,
+      [&](std::exception_ptr, int i)
+      {
+        ASIO_CHECK(i == 234);
+        called = true;
+      });
+
+  ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(called);
+
+  called = false;
+  asio::spawn(ctx, coroutine_using_async_ops_2,
+      [&](std::exception_ptr, int i)
+      {
+        ASIO_CHECK(i == 345);
+        called = true;
+      });
+
+  ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(called);
+
+  called = false;
+  asio::spawn(ctx, coroutine_using_async_ops_3,
+      [&](std::exception_ptr, int i)
+      {
+        ASIO_CHECK(i == 456);
+        called = true;
+      });
+
+  ASIO_CHECK(!called);
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(called);
+}
+
 ASIO_TEST_SUITE
 (
   "spawn",
@@ -231,6 +583,7 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_spawn_cancel)
   ASIO_TEST_CASE(test_spawn_exception)
   ASIO_TEST_CASE(test_spawn_return_move_only)
+  ASIO_TEST_CASE(test_spawn_async_ops)
 )
 
 #else // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)

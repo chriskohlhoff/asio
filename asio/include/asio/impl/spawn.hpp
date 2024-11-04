@@ -29,6 +29,7 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/utility.hpp"
+#include "asio/disposition.hpp"
 #include "asio/error.hpp"
 #include "asio/system_error.hpp"
 
@@ -303,7 +304,7 @@ protected:
 };
 
 // Completion handlers for when basic_yield_context is used as a token.
-template <typename Executor, typename Signature>
+template <typename Executor, typename Signature, typename = void>
 class spawn_handler;
 
 template <typename Executor, typename R>
@@ -366,13 +367,14 @@ private:
   result_type& result_;
 };
 
-template <typename Executor, typename R>
-class spawn_handler<Executor, R(exception_ptr)>
-  : public spawn_handler_base<Executor>
+template <typename Executor, typename R, typename Disposition>
+class spawn_handler<Executor, R(Disposition),
+    enable_if_t<is_disposition<Disposition>::value>
+  > : public spawn_handler_base<Executor>
 {
 public:
   typedef void return_type;
-  typedef exception_ptr* result_type;
+  typedef Disposition* result_type;
 
   spawn_handler(const basic_yield_context<Executor>& yield, result_type& result)
     : spawn_handler_base<Executor>(yield),
@@ -380,16 +382,16 @@ public:
   {
   }
 
-  void operator()(exception_ptr ex)
+  void operator()(Disposition d)
   {
-    result_ = &ex;
+    result_ = detail::addressof(d);
     this->resume();
   }
 
   static return_type on_resume(result_type& result)
   {
-    if (*result)
-      rethrow_exception(*result);
+    if (*result != no_error)
+      asio::throw_exception(*result);
   }
 
 private:
@@ -397,8 +399,9 @@ private:
 };
 
 template <typename Executor, typename R, typename T>
-class spawn_handler<Executor, R(T)>
-  : public spawn_handler_base<Executor>
+class spawn_handler<Executor, R(T),
+    enable_if_t<!is_disposition<T>::value>
+  > : public spawn_handler_base<Executor>
 {
 public:
   typedef T return_type;
@@ -412,7 +415,7 @@ public:
 
   void operator()(T value)
   {
-    result_ = &value;
+    result_ = detail::addressof(value);
     this->resume();
   }
 
@@ -453,7 +456,7 @@ public:
     }
     else
       result_.ec_ = &ec;
-    result_.value_ = &value;
+    result_.value_ = detail::addressof(value);
     this->resume();
   }
 
@@ -468,16 +471,17 @@ private:
   result_type& result_;
 };
 
-template <typename Executor, typename R, typename T>
-class spawn_handler<Executor, R(exception_ptr, T)>
-  : public spawn_handler_base<Executor>
+template <typename Executor, typename R, typename Disposition, typename T>
+class spawn_handler<Executor, R(Disposition, T),
+    enable_if_t<is_disposition<Disposition>::value>
+  > : public spawn_handler_base<Executor>
 {
 public:
   typedef T return_type;
 
   struct result_type
   {
-    exception_ptr* ex_;
+    Disposition* disposition_;
     return_type* value_;
   };
 
@@ -487,17 +491,17 @@ public:
   {
   }
 
-  void operator()(exception_ptr ex, T value)
+  void operator()(Disposition d, T value)
   {
-    result_.ex_ = &ex;
-    result_.value_ = &value;
+    result_.disposition_ = detail::addressof(d);
+    result_.value_ = detail::addressof(value);
     this->resume();
   }
 
   static return_type on_resume(result_type& result)
   {
-    if (*result.ex_)
-      rethrow_exception(*result.ex_);
+    if (*result.disposition_ != no_error)
+      asio::throw_exception(*result.disposition_);
     return static_cast<return_type&&>(*result.value_);
   }
 
@@ -505,12 +509,13 @@ private:
   result_type& result_;
 };
 
-template <typename Executor, typename R, typename... Ts>
-class spawn_handler<Executor, R(Ts...)>
-  : public spawn_handler_base<Executor>
+template <typename Executor, typename R, typename T, typename... Ts>
+class spawn_handler<Executor, R(T, Ts...),
+    enable_if_t<!is_disposition<T>::value>
+  > : public spawn_handler_base<Executor>
 {
 public:
-  typedef std::tuple<Ts...> return_type;
+  typedef std::tuple<T, Ts...> return_type;
 
   typedef return_type* result_type;
 
@@ -524,7 +529,7 @@ public:
   void operator()(Args&&... args)
   {
     return_type value(static_cast<Args&&>(args)...);
-    result_ = &value;
+    result_ = detail::addressof(value);
     this->resume();
   }
 
@@ -568,7 +573,7 @@ public:
     }
     else
       result_.ec_ = &ec;
-    result_.value_ = &value;
+    result_.value_ = detail::addressof(value);
     this->resume();
   }
 
@@ -583,16 +588,17 @@ private:
   result_type& result_;
 };
 
-template <typename Executor, typename R, typename... Ts>
-class spawn_handler<Executor, R(exception_ptr, Ts...)>
-  : public spawn_handler_base<Executor>
+template <typename Executor, typename R, typename Disposition, typename... Ts>
+class spawn_handler<Executor, R(Disposition, Ts...),
+    enable_if_t<is_disposition<Disposition>::value>
+  > : public spawn_handler_base<Executor>
 {
 public:
   typedef std::tuple<Ts...> return_type;
 
   struct result_type
   {
-    exception_ptr* ex_;
+    Disposition* disposition_;
     return_type* value_;
   };
 
@@ -603,18 +609,18 @@ public:
   }
 
   template <typename... Args>
-  void operator()(exception_ptr ex, Args&&... args)
+  void operator()(Disposition d, Args&&... args)
   {
     return_type value(static_cast<Args&&>(args)...);
-    result_.ex_ = &ex;
-    result_.value_ = &value;
+    result_.disposition_ = detail::addressof(d);
+    result_.value_ = detail::addressof(value);
     this->resume();
   }
 
   static return_type on_resume(result_type& result)
   {
-    if (*result.ex_)
-      rethrow_exception(*result.ex_);
+    if (*result.disposition_ != no_error)
+      asio::throw_exception(*result.disposition_);
     return static_cast<return_type&&>(*result.value_);
   }
 
