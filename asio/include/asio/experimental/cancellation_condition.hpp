@@ -16,9 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
-#include <exception>
 #include "asio/cancellation_type.hpp"
-#include "asio/error_code.hpp"
+#include "asio/disposition.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -78,23 +77,17 @@ public:
   }
 
   template <typename E, typename... Args>
-  constexpr constraint_t<
-    !is_same<decay_t<E>, asio::error_code>::value
-      && !is_same<decay_t<E>, std::exception_ptr>::value,
-    cancellation_type_t
-  > operator()(const E&, Args&&...) const noexcept
+  constexpr constraint_t<!is_disposition<E>::value, cancellation_type_t>
+  operator()(const E&, Args&&...) const noexcept
   {
     return cancel_type_;
   }
 
   template <typename E, typename... Args>
-  constexpr constraint_t<
-      is_same<decay_t<E>, asio::error_code>::value
-        || is_same<decay_t<E>, std::exception_ptr>::value,
-      cancellation_type_t
-  > operator()(const E& e, Args&&...) const noexcept
+  constexpr constraint_t<is_disposition<E>::value, cancellation_type_t>
+  operator()(const E& e, Args&&...) const noexcept
   {
-    return !!e ? cancellation_type::none : cancel_type_;
+    return e != no_error ? cancellation_type::none : cancel_type_;
   }
 
 private:
@@ -121,23 +114,17 @@ public:
   }
 
   template <typename E, typename... Args>
-  constexpr constraint_t<
-    !is_same<decay_t<E>, asio::error_code>::value
-      && !is_same<decay_t<E>, std::exception_ptr>::value,
-    cancellation_type_t
-  > operator()(const E&, Args&&...) const noexcept
+  constexpr constraint_t<!is_disposition<E>::value, cancellation_type_t>
+  operator()(const E&, Args&&...) const noexcept
   {
     return cancellation_type::none;
   }
 
   template <typename E, typename... Args>
-  constexpr constraint_t<
-      is_same<decay_t<E>, asio::error_code>::value
-        || is_same<decay_t<E>, std::exception_ptr>::value,
-      cancellation_type_t
-  > operator()(const E& e, Args&&...) const noexcept
+  constexpr constraint_t<is_disposition<E>::value, cancellation_type_t>
+  operator()(const E& e, Args&&...) const noexcept
   {
-    return !!e ? cancel_type_ : cancellation_type::none;
+    return e != no_error ? cancel_type_ : cancellation_type::none;
   }
 
 private:
