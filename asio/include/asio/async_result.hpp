@@ -817,21 +817,21 @@ struct is_async_operation :
 template <typename T, typename... Args>
 ASIO_CONCEPT async_operation = is_async_operation<T, Args...>::value;
 
-#define ASIO_ASYNC_OPERATION(t) \
-  ::asio::async_operation<t>
-#define ASIO_ASYNC_OPERATION1(t, a0) \
-  ::asio::async_operation<t, a0>
-#define ASIO_ASYNC_OPERATION2(t, a0, a1) \
-  ::asio::async_operation<t, a0, a1>
-#define ASIO_ASYNC_OPERATION3(t, a0, a1, a2) \
-  ::asio::async_operation<t, a0, a1, a2>
+#define ASIO_ASYNC_OPERATION \
+  ::asio::async_operation
+#define ASIO_ASYNC_OPERATION1(a0) \
+  ::asio::async_operation<a0>
+#define ASIO_ASYNC_OPERATION2(a0, a1) \
+  ::asio::async_operation<a0, a1>
+#define ASIO_ASYNC_OPERATION3(a0, a1, a2) \
+  ::asio::async_operation<a0, a1, a2>
 
 #else // defined(ASIO_HAS_CONCEPTS)
 
-#define ASIO_ASYNC_OPERATION(t) typename
-#define ASIO_ASYNC_OPERATION1(t, a0) typename
-#define ASIO_ASYNC_OPERATION2(t, a0, a1) typename
-#define ASIO_ASYNC_OPERATION3(t, a0, a1, a2) typename
+#define ASIO_ASYNC_OPERATION typename
+#define ASIO_ASYNC_OPERATION1(a0) typename
+#define ASIO_ASYNC_OPERATION2(a0, a1) typename
+#define ASIO_ASYNC_OPERATION3(a0, a1, a2) typename
 
 #endif // defined(ASIO_HAS_CONCEPTS)
 
