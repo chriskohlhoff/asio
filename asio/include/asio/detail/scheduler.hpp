@@ -221,6 +221,9 @@ private:
   // The time limit on running the scheduler task, in microseconds.
   const long task_usec_;
 
+  // The time limit on waiting when the queue is empty, in microseconds.
+  const long wait_usec_;
+
   // The thread that is running the scheduler.
   asio::detail::thread* thread_;
 };
