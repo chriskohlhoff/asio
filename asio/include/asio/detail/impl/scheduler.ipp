@@ -120,7 +120,7 @@ scheduler::scheduler(asio::execution_context& ctx,
     stopped_(false),
     shutdown_(false),
     concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
-    task_usec_(config(ctx).get("scheduler", "task_usec", -1)),
+    task_usec_(config(ctx).get("scheduler", "task_usec", -1L)),
     thread_(0)
 {
   ASIO_HANDLER_TRACKING_INIT;
@@ -456,7 +456,7 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 
       if (o == &task_operation_)
       {
-        task_interrupted_ = more_handlers;
+        task_interrupted_ = more_handlers || task_usec_ == 0;
 
         if (more_handlers && !one_thread_)
           wakeup_event_.unlock_and_signal_one(lock);
@@ -523,7 +523,8 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
     op_queue_.pop();
     bool more_handlers = (!op_queue_.empty());
 
-    task_interrupted_ = more_handlers;
+    usec = (task_usec_ >= 0 && task_usec_ < usec) ? task_usec_ : usec;
+    task_interrupted_ = more_handlers || usec == 0;
 
     if (more_handlers && !one_thread_)
       wakeup_event_.unlock_and_signal_one(lock);
