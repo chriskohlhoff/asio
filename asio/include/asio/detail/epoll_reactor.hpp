@@ -71,7 +71,7 @@ public:
     bool try_speculative_[max_ops];
     bool shutdown_;
 
-    ASIO_DECL descriptor_state(bool locking);
+    ASIO_DECL descriptor_state(bool locking, int spin_count);
     void set_ready_events(uint32_t events) { task_result_ = events; }
     void add_ready_events(uint32_t events) { task_result_ |= events; }
     ASIO_DECL operation* perform_io(uint32_t events);
@@ -271,6 +271,9 @@ private:
 
   // Whether I/O locking is enabled.
   const bool io_locking_;
+
+  // How any times to spin waiting for the I/O mutex.
+  const int io_locking_spin_count_;
 
   // Mutex to protect access to the registered descriptors.
   mutex registered_descriptors_mutex_;

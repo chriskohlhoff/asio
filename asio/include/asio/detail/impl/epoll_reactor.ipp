@@ -39,15 +39,19 @@ namespace detail {
 epoll_reactor::epoll_reactor(asio::execution_context& ctx)
   : execution_context_service_base<epoll_reactor>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
-    mutex_(config(ctx).get("reactor", "registration_locking", true)),
+    mutex_(config(ctx).get("reactor", "registration_locking", true),
+        config(ctx).get("reactor", "registration_locking_spin_count", 0)),
     interrupter_(),
     epoll_fd_(do_epoll_create()),
     timer_fd_(do_timerfd_create()),
     shutdown_(false),
     io_locking_(config(ctx).get("reactor", "io_locking", true)),
-    registered_descriptors_mutex_(mutex_.enabled()),
+    io_locking_spin_count_(
+        config(ctx).get("reactor", "io_locking_spin_count", 0)),
+    registered_descriptors_mutex_(mutex_.enabled(), mutex_.spin_count()),
     registered_descriptors_(
-        config(ctx).get("reactor", "preallocated_io_objects", 0U), io_locking_)
+        config(ctx).get("reactor", "preallocated_io_objects", 0U),
+        io_locking_, io_locking_spin_count_)
 {
   // Add the interrupter's descriptor to epoll.
   epoll_event ev = { 0, { 0 } };
@@ -670,7 +674,7 @@ int epoll_reactor::do_timerfd_create()
 epoll_reactor::descriptor_state* epoll_reactor::allocate_descriptor_state()
 {
   mutex::scoped_lock descriptors_lock(registered_descriptors_mutex_);
-  return registered_descriptors_.alloc(io_locking_);
+  return registered_descriptors_.alloc(io_locking_, io_locking_spin_count_);
 }
 
 void epoll_reactor::free_descriptor_state(epoll_reactor::descriptor_state* s)
@@ -762,9 +766,9 @@ struct epoll_reactor::perform_io_cleanup_on_block_exit
   operation* first_op_;
 };
 
-epoll_reactor::descriptor_state::descriptor_state(bool locking)
+epoll_reactor::descriptor_state::descriptor_state(bool locking, int spin_count)
   : operation(&epoll_reactor::descriptor_state::do_complete),
-    mutex_(locking)
+    mutex_(locking, spin_count)
 {
 }
 

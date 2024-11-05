@@ -129,6 +129,12 @@ public:
     return enabled_;
   }
 
+  // Get the spin count.
+  int spin_count() const
+  {
+    return spin_count_;
+  }
+
   // Lock the mutex.
   void lock()
   {
