@@ -69,7 +69,7 @@ T config_get(const config_service& service, const char* section,
     unsigned long long result = std::strtoll(str, &end, 0);
     if (errno == ERANGE || (result != 0 && result != 1))
       detail::throw_exception(std::out_of_range("config out of range"));
-    return static_cast<T>(result);
+    return static_cast<T>(result != 0);
   }
   return default_value;
 }

@@ -276,6 +276,11 @@ void config_from_string::make(execution_context& ctx) const
 
 namespace detail {
 
+#if defined(ASIO_MSVC)
+# pragma warning (push)
+# pragma warning (disable:4996) // suppress unsafe warning for std::getenv
+#endif // defined(ASIO_MSVC)
+
 class config_from_env_service : public config_service
 {
 public:
@@ -307,6 +312,10 @@ public:
 private:
   std::string prefix_;
 };
+
+#if defined(ASIO_MSVC)
+# pragma warning (pop)
+#endif // defined(ASIO_MSVC)
 
 } // namespace detail
 
