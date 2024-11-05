@@ -845,7 +845,11 @@ public:
     throw;
   }
 
+#ifdef ASIO_DISABLE_CONCEPTS
+  template <typename Op>
+#else
   template <async_operation Op>
+#endif
   auto await_transform(Op&& op
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
 # if defined(ASIO_HAS_SOURCE_LOCATION)
