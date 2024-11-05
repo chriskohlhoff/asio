@@ -100,6 +100,12 @@ engine& engine::operator=(engine&& other) noexcept
 {
   if (this != &other)
   {
+    if (ext_bio_)
+      ::BIO_free(ext_bio_);
+
+    if (ssl_)
+      ::SSL_free(ssl_);
+
     ssl_ = other.ssl_;
     ext_bio_ = other.ext_bio_;
     other.ssl_ = 0;
