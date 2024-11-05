@@ -52,7 +52,9 @@ kqueue_reactor::kqueue_reactor(asio::execution_context& ctx)
     interrupter_(),
     shutdown_(false),
     io_locking_(config(ctx).get("reactor", "io_locking", true)),
-    registered_descriptors_mutex_(mutex_.enabled())
+    registered_descriptors_mutex_(mutex_.enabled()),
+    registered_descriptors_(
+        config(ctx).get("reactor", "preallocated_io_objects", 0U), io_locking_)
 {
   struct kevent events[1];
   ASIO_KQUEUE_EV_SET(&events[0], interrupter_.read_descriptor(),

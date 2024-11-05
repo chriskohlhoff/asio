@@ -45,7 +45,9 @@ epoll_reactor::epoll_reactor(asio::execution_context& ctx)
     timer_fd_(do_timerfd_create()),
     shutdown_(false),
     io_locking_(config(ctx).get("reactor", "io_locking", true)),
-    registered_descriptors_mutex_(mutex_.enabled())
+    registered_descriptors_mutex_(mutex_.enabled()),
+    registered_descriptors_(
+        config(ctx).get("reactor", "preallocated_io_objects", 0U), io_locking_)
 {
   // Add the interrupter's descriptor to epoll.
   epoll_event ev = { 0, { 0 } };
