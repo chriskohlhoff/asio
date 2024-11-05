@@ -43,6 +43,12 @@ public:
     ::DeleteCriticalSection(&crit_section_);
   }
 
+  // Try to lock the mutex.
+  bool try_lock()
+  {
+    return ::TryEnterCriticalSection(&crit_section_) != 0;
+  }
+
   // Lock the mutex.
   void lock()
   {

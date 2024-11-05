@@ -45,6 +45,12 @@ public:
     ::pthread_mutex_destroy(&mutex_); // Ignore EBUSY.
   }
 
+  // Try to lock the mutex.
+  bool try_lock()
+  {
+    return ::pthread_mutex_trylock(&mutex_) == 0; // Ignore EINVAL.
+  }
+
   // Lock the mutex.
   void lock()
   {
