@@ -19,8 +19,8 @@ using asio::ip::tcp;
 class session : public std::enable_shared_from_this<session>
 {
 public:
-  session(asio::ssl::stream<tcp::socket> socket)
-    : socket_(std::move(socket))
+  session(tcp::socket socket, asio::ssl::context& context)
+    : socket_(std::move(socket), context)
   {
   }
 
@@ -106,9 +106,7 @@ private:
         {
           if (!error)
           {
-            std::make_shared<session>(
-                asio::ssl::stream<tcp::socket>(
-                  std::move(socket), context_))->start();
+            std::make_shared<session>(std::move(socket), context_)->start();
           }
 
           do_accept();
