@@ -63,7 +63,7 @@ public:
     {
       ::io_uring_prep_read_fixed(sqe, o->descriptor_,
           o->bufs_.buffers()->iov_base, o->bufs_.buffers()->iov_len,
-          0, o->bufs_.registered_id().native_handle());
+          -1, o->bufs_.registered_id().native_handle());
     }
     else
     {
