@@ -70,7 +70,7 @@ public:
     }
     else
     {
-      ::io_uring_prep_sendmsg(sqe, o->socket_, &o->msghdr_, o->flags_);
+      ::io_uring_prep_sendmsg_zc(sqe, o->socket_, &o->msghdr_, o->flags_);
     }
   }
 
