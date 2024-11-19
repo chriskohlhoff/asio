@@ -112,13 +112,13 @@ public:
   }
 
   // Whether there are no timers in the queue.
-  virtual bool empty() const
+  virtual bool empty() const override
   {
     return timers_ == 0;
   }
 
   // Get the time for the timer that is earliest in the queue.
-  virtual long wait_duration_msec(long max_duration) const
+  virtual long wait_duration_msec(long max_duration) const override
   {
     if (heap_.empty())
       return max_duration;
@@ -130,7 +130,7 @@ public:
   }
 
   // Get the time for the timer that is earliest in the queue.
-  virtual long wait_duration_usec(long max_duration) const
+  virtual long wait_duration_usec(long max_duration) const override
   {
     if (heap_.empty())
       return max_duration;
@@ -142,7 +142,7 @@ public:
   }
 
   // Dequeue all timers not later than the current time.
-  virtual void get_ready_timers(op_queue<operation>& ops)
+  virtual void get_ready_timers(op_queue<operation>& ops) override
   {
     if (!heap_.empty())
     {
@@ -162,7 +162,7 @@ public:
   }
 
   // Dequeue all timers.
-  virtual void get_all_timers(op_queue<operation>& ops)
+  virtual void get_all_timers(op_queue<operation>& ops) override
   {
     while (timers_)
     {

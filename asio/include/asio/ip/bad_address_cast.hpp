@@ -49,7 +49,7 @@ public:
   virtual ~bad_address_cast() noexcept {}
 
   /// Get the message associated with the exception.
-  virtual const char* what() const noexcept
+  virtual const char* what() const noexcept override
   {
     return "bad address cast";
   }
