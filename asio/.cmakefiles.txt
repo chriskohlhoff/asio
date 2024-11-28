@@ -3,11 +3,17 @@
 # git ls-files '::*.md' '::*.cmake' '::*CMakeLists.txt' '::*.json' '::*.cmake.in'
 #
 files='
-GNUMakefile
-requirements.txt
-.cmakefiles.txt
-.TODO.txt
 .CMakeUserPresets.json
+.TODO.txt
+.clang-format
+.clang-tidy
+.cmake-format
+.cmakefiles.txt
+.codespellrc
+.gitignore
+GNUMakefile
+docs
+requirements.txt
 BUILDING.md
 CMakeLists.txt
 CMakePresets.json
