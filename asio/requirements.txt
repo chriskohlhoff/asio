@@ -1,7 +1,8 @@
 #
-# usage: pip install -U -r requirements.txt
+# usage: pip install --user --upgrade -r requirements.txt
 #
 Pygments
+PyYAML
 cmake-init>=0.40.5
 cmake>=3.28.4
 cmakelint>=1.4.2

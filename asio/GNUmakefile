@@ -10,7 +10,7 @@ export hostSystemName=$(shell uname)
 
 .PHONY: all check test clean distclean
 all: .init
-	cmake --workflow --preset dev
+	cmake --workflow --preset dev --fresh
 
 check:
 	-iwyu_tool -p build/dev \

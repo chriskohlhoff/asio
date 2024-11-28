@@ -45,11 +45,11 @@ target_compile_features(asio_header INTERFACE cxx_std_17)
 target_link_libraries(asio_header INTERFACE Threads::Threads)
 
 if(ASIO_SEPARATE_COMPILATION)
-  find_package(OpenSSL)
+  #XXX find_package(OpenSSL)
   set(libasio_SOURCES src/asio.cpp)
 
   if(OpenSSL_FOUND)
-    set(libasio_SOURCES ${libasio_SOURCES} src/asio_ssl.cpp)
+    #XXX set(libasio_SOURCES ${libasio_SOURCES} src/asio_ssl.cpp)
   endif()
 
   set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL})
@@ -57,12 +57,14 @@ if(ASIO_SEPARATE_COMPILATION)
   file(GLOB_RECURSE headers "include/asio/*.hpp")
   list(FILTER headers EXCLUDE REGEX [=[.*/experimental/.*\.hpp]=])
   list(FILTER headers EXCLUDE REGEX [=[.*/ssl\.hpp]=])
+  list(FILTER headers EXCLUDE REGEX [=[.*/ssl/\.*]=])
 
   # FIXME: some header in include/asio/detail fails CMAKE_VERIFY_INTERFACE_HEADER_SETS!
   # NOTE: we need them installed, but we used them install with asio_header INTERFACE! CK
   set(public_headers ${headers})
   list(FILTER public_headers EXCLUDE REGEX [=[.*/detail/.*\.hpp]=])
   list(FILTER public_headers EXCLUDE REGEX [=[.*/impl/.*\.hpp]=])
+  list(FILTER public_headers EXCLUDE REGEX [=[.*/ssl/\.*]=])
   # foreach(header in LISTS ${public_headers})
   #   message(INFO "${header}")
   # endforeach()
