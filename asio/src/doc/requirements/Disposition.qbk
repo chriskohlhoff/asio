@@ -8,7 +8,7 @@
 [section:Disposition Disposition]
 
 A type `X` satisfies the `disposition` concept if it is nothrow
-default-constructible, nothrow copy-constructible, nothrow copy-assignable, as
+default-constructible, nothrow move-constructible, nothrow move-assignable, as
 well as satisfying the additional requirements listed below. In the following
 table `x` denotes a glvalue of type `X`.
 

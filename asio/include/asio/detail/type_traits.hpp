@@ -93,6 +93,10 @@ using std::is_nothrow_copy_assignable;
 
 using std::is_nothrow_destructible;
 
+using std::is_nothrow_move_constructible;
+
+using std::is_nothrow_move_assignable;
+
 using std::is_object;
 
 using std::is_pointer;

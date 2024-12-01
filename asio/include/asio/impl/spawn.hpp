@@ -391,7 +391,7 @@ public:
   static return_type on_resume(result_type& result)
   {
     if (*result != no_error)
-      asio::throw_exception(*result);
+      asio::throw_exception(static_cast<Disposition&&>(*result));
   }
 
 private:
@@ -501,7 +501,10 @@ public:
   static return_type on_resume(result_type& result)
   {
     if (*result.disposition_ != no_error)
-      asio::throw_exception(*result.disposition_);
+    {
+      asio::throw_exception(
+          static_cast<Disposition&&>(*result.disposition_));
+    }
     return static_cast<return_type&&>(*result.value_);
   }
 
@@ -620,7 +623,10 @@ public:
   static return_type on_resume(result_type& result)
   {
     if (*result.disposition_ != no_error)
-      asio::throw_exception(*result.disposition_);
+    {
+      asio::throw_exception(
+          static_cast<Disposition&&>(*result.disposition_));
+    }
     return static_cast<return_type&&>(*result.value_);
   }
 

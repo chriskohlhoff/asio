@@ -908,7 +908,7 @@ public:
     if (*result.disposition_ != no_error)
     {
       Disposition d = std::exchange(*result.disposition_, Disposition());
-      asio::throw_exception(d);
+      asio::throw_exception(static_cast<Disposition&&>(d));
     }
     return std::move(*result.value_);
   }
@@ -986,7 +986,7 @@ public:
     if (*result.disposition_ != no_error)
     {
       Disposition d = std::exchange(*result.disposition_, Disposition());
-      asio::throw_exception(d);
+      asio::throw_exception(static_cast<Disposition&&>(d));
     }
     return std::move(*result.value_);
   }
