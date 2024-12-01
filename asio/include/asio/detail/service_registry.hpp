@@ -76,12 +76,12 @@ public:
   bool has_service() const;
 
 private:
-  // Initalise a service's key when the key_type typedef is not available.
+  // Initialise a service's key when the key_type typedef is not available.
   template <typename Service>
   static void init_key(execution_context::service::key& key, ...);
 
 #if !defined(ASIO_NO_TYPEID)
-  // Initalise a service's key when the key_type typedef is available.
+  // Initialise a service's key when the key_type typedef is available.
   template <typename Service>
   static void init_key(execution_context::service::key& key,
       enable_if_t<is_base_of<typename Service::key_type, Service>::value>*);

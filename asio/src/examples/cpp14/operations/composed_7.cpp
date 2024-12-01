@@ -70,7 +70,7 @@ auto async_write_messages(tcp::socket& socket,
   std::unique_ptr<asio::steady_timer> delay_timer(
       new asio::steady_timer(socket.get_executor()));
 
-  // To manage the cycle between the multiple underlying asychronous
+  // To manage the cycle between the multiple underlying asynchronous
   // operations, our implementation is a state machine.
   enum { starting, waiting, writing };
 
@@ -116,7 +116,7 @@ auto async_write_messages(tcp::socket& socket,
         // A steady timer used for introducing a delay.
         delay_timer = std::move(delay_timer),
 
-        // To manage the cycle between the multiple underlying asychronous
+        // To manage the cycle between the multiple underlying asynchronous
         // operations, our implementation is a state machine.
         state = starting
       ]

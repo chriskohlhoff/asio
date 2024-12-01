@@ -78,7 +78,7 @@ private:
   bool has_value_;
 };
 
-// Proxy completion handler for the group of parallel operatations. Unpacks and
+// Proxy completion handler for the group of parallel operations. Unpacks and
 // concatenates the individual operations' results, and invokes the user's
 // completion handler.
 template <typename Handler, typename... Ops>
@@ -393,7 +393,7 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
         Condition, Handler, Ops...>>(state);
 }
 
-// Proxy completion handler for the ranged group of parallel operatations.
+// Proxy completion handler for the ranged group of parallel operations.
 // Unpacks and recombines the individual operations' results, and invokes the
 // user's completion handler.
 template <typename Handler, typename Op, typename Allocator>

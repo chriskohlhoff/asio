@@ -113,7 +113,7 @@ auto async_write_messages(tcp::socket& socket,
       // A steady timer used for introducing a delay.
       std::unique_ptr<asio::steady_timer> delay_timer_;
 
-      // To manage the cycle between the multiple underlying asychronous
+      // To manage the cycle between the multiple underlying asynchronous
       // operations, our intermediate completion handler is implemented as a
       // state machine.
       enum { starting, waiting, writing } state_;

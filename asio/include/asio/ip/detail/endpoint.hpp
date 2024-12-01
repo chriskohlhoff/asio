@@ -28,7 +28,7 @@ namespace asio {
 namespace ip {
 namespace detail {
 
-// Helper class for implementating an IP endpoint.
+// Helper class for implementing an IP endpoint.
 class endpoint
 {
 public:

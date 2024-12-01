@@ -1,6 +1,6 @@
 //
-// exection/impl/bad_executor.ipp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// execution/impl/bad_executor.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

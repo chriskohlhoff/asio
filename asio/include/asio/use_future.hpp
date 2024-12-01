@@ -90,7 +90,7 @@ public:
   /**
    * The @c package function is used to adapt a function object as a packaged
    * task. When this adapter is passed as a completion token to an asynchronous
-   * operation, the result of the function object is retuned via a std::future.
+   * operation, the result of the function object is returned via a std::future.
    *
    * @par Example
    *

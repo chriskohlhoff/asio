@@ -26,7 +26,7 @@
 
 namespace asio {
 
-/// Traits type to adapt arbtirary error types as dispositions.
+/// Traits type to adapt arbitrary error types as dispositions.
 /**
  * This type may be specialised for user-defined types, to allow them to be
  * treated as a disposition by asio.

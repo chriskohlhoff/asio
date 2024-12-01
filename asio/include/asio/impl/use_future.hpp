@@ -102,7 +102,7 @@ private:
   decay_t<F> f_;
 };
 
-// An executor that adapts the system_executor to capture any exeption thrown
+// An executor that adapts the system_executor to capture any exception thrown
 // by a submitted function object and save it into a promise.
 template <typename T, typename Blocking = execution::blocking_t::possibly_t>
 class promise_executor

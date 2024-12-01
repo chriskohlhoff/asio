@@ -63,7 +63,7 @@ struct time_t_wait_traits
   }
 
   // Determine how long until the clock should be next polled to determine
-  // whether the absoluate time has been reached.
+  // whether the absolute time has been reached.
   static time_t_clock::duration to_wait_duration(
       const time_t_clock::time_point& t)
   {
