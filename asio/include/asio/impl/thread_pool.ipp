@@ -86,7 +86,8 @@ inline long clamp_thread_pool_size(std::size_t n)
 thread_pool::thread_pool(std::size_t num_threads)
   : execution_context(config_from_concurrency_hint(num_threads == 1 ? 1 : 0)),
     scheduler_(add_scheduler(new detail::scheduler(*this, false))),
-    num_threads_(detail::clamp_thread_pool_size(num_threads))
+    num_threads_(detail::clamp_thread_pool_size(num_threads)),
+    joinable_(true)
 {
   scheduler_.work_started();
 
@@ -98,7 +99,8 @@ thread_pool::thread_pool(std::size_t num_threads,
     const execution_context::service_maker& initial_services)
   : execution_context(initial_services),
     scheduler_(add_scheduler(new detail::scheduler(*this, false))),
-    num_threads_(detail::clamp_thread_pool_size(num_threads))
+    num_threads_(detail::clamp_thread_pool_size(num_threads)),
+    joinable_(true)
 {
   scheduler_.work_started();
 
@@ -127,11 +129,12 @@ void thread_pool::attach()
 
 void thread_pool::join()
 {
-  if (num_threads_)
+  if (joinable_)
+  {
+    joinable_ = false;
     scheduler_.work_finished();
-
-  if (!threads_.empty())
     threads_.join();
+  }
 }
 
 detail::scheduler& thread_pool::add_scheduler(detail::scheduler* s)
@@ -143,8 +146,7 @@ detail::scheduler& thread_pool::add_scheduler(detail::scheduler* s)
 
 void thread_pool::wait()
 {
-  scheduler_.work_finished();
-  threads_.join();
+  join();
 }
 
 } // namespace asio
