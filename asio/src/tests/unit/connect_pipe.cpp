@@ -100,8 +100,6 @@ void test()
   try
   {
     asio::io_context io_context;
-    asio::error_code ec1;
-    asio::error_code ec2;
 
     readable_pipe p1(io_context);
     writable_pipe p2(io_context);
