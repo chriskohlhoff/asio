@@ -7,6 +7,23 @@
 
 [section:history Revision History]
 
+[heading Asio 1.34.0]
+
+* Relaxed disposition requirements to require only nothrow move, rather than
+  copy.
+
+* Fixed compile error when threading support is disabled.
+
+* Fixed compile error when `ASIO_DISABLE_SMALL_BLOCK_RECYCLING` is defined.
+
+* Fixed compile error when using Clang 19.
+
+* Changed `thread_pool::join()` to ensure that it stops threads that are
+  subsequently added to the pool using `thread_pool::attach()`.
+
+* Fixed the offsets passed to `io_uring_prep_write_fixed` and
+  `io_uring_prep_read_fixed`, when they are used for stream-oriented operations.
+
 [heading Asio 1.33.0]
 
 * Added support for using byte spans and sequences of byte spans as buffer
