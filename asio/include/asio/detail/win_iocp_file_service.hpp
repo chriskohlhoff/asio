@@ -99,8 +99,10 @@ public:
   }
 
   // Open the file using the specified path name.
+  template<typename CharacterType,
+           std::enable_if_t<std::is_same_v<CharacterType, char> || std::is_same_v<CharacterType, wchar_t>, bool> = true>
   ASIO_DECL asio::error_code open(implementation_type& impl,
-      const char* path, file_base::flags open_flags,
+      const CharacterType* path, file_base::flags open_flags,
       asio::error_code& ec);
 
   // Assign a native handle to a file implementation.

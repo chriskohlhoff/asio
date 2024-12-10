@@ -130,8 +130,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
+  template<typename CharacterType = char>
   basic_stream_file(const executor_type& ex,
-      const char* path, file_base::flags open_flags)
+      const CharacterType* path, file_base::flags open_flags)
     : basic_file<Executor>(ex)
   {
     asio::error_code ec;
@@ -158,9 +159,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    */
-  template <typename ExecutionContext>
+  template <typename ExecutionContext, typename CharacterType = char>
   basic_stream_file(ExecutionContext& context,
-      const char* path, file_base::flags open_flags,
+      const CharacterType* path, file_base::flags open_flags,
       constraint_t<
         is_convertible<ExecutionContext&, execution_context&>::value,
         defaulted_constraint

@@ -129,8 +129,9 @@ public:
    * @param open_flags A set of flags that determine how the file should be
    * opened.
    */
+  template<typename CharacterType = char>
   explicit basic_file(const executor_type& ex,
-      const char* path, file_base::flags open_flags)
+      const CharacterType* path, file_base::flags open_flags)
     : impl_(0, ex)
   {
     asio::error_code ec;
@@ -151,9 +152,9 @@ public:
    * @param open_flags A set of flags that determine how the file should be
    * opened.
    */
-  template <typename ExecutionContext>
+  template <typename ExecutionContext, typename CharacterType = char>
   explicit basic_file(ExecutionContext& context,
-      const char* path, file_base::flags open_flags,
+      const CharacterType* path, file_base::flags open_flags,
       constraint_t<
         is_convertible<ExecutionContext&, execution_context&>::value,
         defaulted_constraint
@@ -360,7 +361,8 @@ public:
    * file.open("/path/to/my/file", asio::stream_file::read_only);
    * @endcode
    */
-  void open(const char* path, file_base::flags open_flags)
+  template<typename CharacterType = char>
+  void open(const CharacterType* path, file_base::flags open_flags)
   {
     asio::error_code ec;
     impl_.get_service().open(impl_.get_implementation(), path, open_flags, ec);
@@ -389,7 +391,8 @@ public:
    * }
    * @endcode
    */
-  ASIO_SYNC_OP_VOID open(const char* path,
+  template<typename CharacterType = char>
+  ASIO_SYNC_OP_VOID open(const CharacterType* path,
       file_base::flags open_flags, asio::error_code& ec)
   {
     impl_.get_service().open(impl_.get_implementation(), path, open_flags, ec);
