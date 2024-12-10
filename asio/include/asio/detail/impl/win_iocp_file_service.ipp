@@ -99,7 +99,6 @@ asio::error_code win_iocp_file_service::open(
   auto wpath = std::make_unique<wchar_t[]>(len);
   std::mbstowcs(wpath.get(), path, len);
   HANDLE handle = ::CreateFileW(wpath.get(), access, share, 0, disposition, flags, 0);
-  delete[] wpath;
   if (handle != INVALID_HANDLE_VALUE)
   {
     if (disposition == OPEN_ALWAYS)
