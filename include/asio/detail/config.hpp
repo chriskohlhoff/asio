@@ -809,6 +809,17 @@
 # endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_HAS_IOCP)
 
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+# if defined(ASIO_HAS_IOCP)
+#  include <sdkddkver.h>
+#  if defined(NTDDI_VERSION) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+#   if defined(ASIO_ENABLE_IOCP_HIRES_TIMERS)
+#    define ASIO_HAS_IOCP_HIRES_TIMERS 1
+#   endif // defined(ASIO_ENABLE_IOCP_HIRES_TIMERS)
+#  endif // defined(NTDDI_VERSION) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+# endif // defined(ASIO_HAS_IOCP)
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+
 // On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
 // get access to the various platform feature macros, e.g. to be able to test
 // for threads support.

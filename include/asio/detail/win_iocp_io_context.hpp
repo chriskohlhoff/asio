@@ -224,6 +224,18 @@ private:
   typedef ULONG_PTR ulong_ptr_t;
 #endif // defined(WINVER) && (WINVER < 0x0500)
 
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+  typedef LONG(NTAPI* NtCreateWaitCompletionPacket_fn)(PHANDLE, ACCESS_MASK, PVOID);
+
+  typedef LONG(NTAPI* NtAssociateWaitCompletionPacket_fn)(
+      HANDLE WaitCompletionPacketHandle, HANDLE IoCompletionHandle,
+      HANDLE TargetObjectHandle, PVOID KeyContext,
+      PVOID ApcContext, LONG IoStatus,
+      ULONG_PTR IoStatusInformation, PBOOLEAN AlreadySignaled);
+
+  typedef ULONG(NTAPI* RtlNtStatusToDosError_fn)(LONG Status);
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+
   // Dequeues at most one operation from the I/O completion port, and then
   // executes it. Returns the number of operations that were dequeued (i.e.
   // either 0 or 1).
@@ -303,15 +315,25 @@ private:
   struct thread_function;
   friend struct thread_function;
 
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   // Function object for processing timeouts in a background thread.
   struct timer_thread_function;
   friend struct timer_thread_function;
 
   // Background thread used for processing timeouts.
   asio::detail::thread timer_thread_;
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 
   // A waitable timer object used for waiting for timeouts.
   auto_handle waitable_timer_;
+
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+  auto_handle iocp_wait_handle_;
+
+  NtCreateWaitCompletionPacket_fn NtCreateWaitCompletionPacket_;
+  NtAssociateWaitCompletionPacket_fn NtAssociateWaitCompletionPacket_;
+  RtlNtStatusToDosError_fn RtlNtStatusToDosError_;
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 
   // Non-zero if timers or completed operations need to be dispatched.
   long dispatch_required_;
