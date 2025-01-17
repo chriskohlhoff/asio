@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2025 Pavlo Kleymonov (pkleymonov at qnx dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -47,6 +48,11 @@ std::size_t posix_thread::hardware_concurrency()
 {
 #if defined(_SC_NPROCESSORS_ONLN)
   long result = sysconf(_SC_NPROCESSORS_ONLN);
+
+#if defined(__QNX__)
+  result &= 0xFFFFFFFF;
+#endif //defined(__QNX__)
+
   if (result > 0)
     return result;
 #endif // defined(_SC_NPROCESSORS_ONLN)

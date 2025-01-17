@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2025 Pavlo Kleymonov (pkleymonov at qnx dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -146,17 +147,20 @@ void test()
 #if (defined(__MACH__) && defined(__APPLE__)) \
   || defined(__FreeBSD__) \
   || defined(__NetBSD__) \
-  || defined(__OpenBSD__)
+  || defined(__OpenBSD__) \
+  || defined(__QNX__)
   const ip::address multicast_address_v6 = ip::make_address("ff02::1%lo0", ec);
 #else // (defined(__MACH__) && defined(__APPLE__))
       //   || defined(__FreeBSD__)
       //   || defined(__NetBSD__)
       //   || defined(__OpenBSD__)
+      //   || defined(__QNX__)
   const ip::address multicast_address_v6 = ip::make_address("ff01::1", ec);
 #endif // (defined(__MACH__) && defined(__APPLE__))
        //   || defined(__FreeBSD__)
        //   || defined(__NetBSD__)
        //   || defined(__OpenBSD__)
+       //   || defined(__QNX__)
   ASIO_CHECK(!have_v6 || !ec);
 
   // join_group class.
@@ -207,11 +211,11 @@ void test()
 
   if (have_v6)
   {
-#if defined(__hpux)
+#if defined(__hpux) || defined(__QNX__)
     ip::multicast::outbound_interface outbound_interface(if_nametoindex("lo0"));
 #else
     ip::multicast::outbound_interface outbound_interface(1);
-#endif
+#endif // defined(__hpux) || defined(__QNX__)
     sock_v6.set_option(outbound_interface, ec);
     ASIO_CHECK_MESSAGE(!ec, ec.value() << ", " << ec.message());
   }

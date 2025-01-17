@@ -4,6 +4,7 @@
 //
 // Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2021 Heiko Hund (heiko at openvpn dot net)
+// Copyright (c) 2025 Pavlo Kleymonov (pkleymonov at qnx dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,6 +23,14 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#if defined(__QNX__)
+   #undef CMSG_ALIGN
+   #define CMSG_ALIGN(len) (((len) + sizeof (size_t) - 1) & (size_t) ~(sizeof (size_t) - 1))
+
+   #undef CMSG_SPACE
+   #define CMSG_SPACE(len) (CMSG_ALIGN (len) + CMSG_ALIGN (sizeof (struct cmsghdr)))
+#endif //defined(__QNX__)
 
 using asio::local::stream_protocol;
 
