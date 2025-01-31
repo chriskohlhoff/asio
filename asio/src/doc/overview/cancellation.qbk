@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -201,7 +201,7 @@ occur.
 
 Furthermore, a stronger guarantee always satisfies the requirements of a weaker
 guarantee. The `partial` guarantee still satisfies the `terminal` guarantee.
-The `total` guarantee satisfies both `partial` and `total`. This means that
+The `total` guarantee satisfies both `partial` and `terminal`. This means that
 when an operation supports a given cancellation type as its strongest
 guarantee, it should honour cancellation requests for any of the weaker
 guarantees.

@@ -2,7 +2,7 @@
 // detail/conditionally_enabled_mutex.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -70,6 +70,14 @@ public:
     {
       if (mutex_.enabled_ && !locked_)
       {
+        for (int n = mutex_.spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
+        {
+          if (mutex_.mutex_.try_lock())
+          {
+            locked_ = true;
+            return;
+          }
+        }
         mutex_.mutex_.lock();
         locked_ = true;
       }
@@ -104,8 +112,9 @@ public:
   };
 
   // Constructor.
-  explicit conditionally_enabled_mutex(bool enabled)
-    : enabled_(enabled)
+  explicit conditionally_enabled_mutex(bool enabled, int spin_count = 0)
+    : spin_count_(spin_count),
+      enabled_(enabled)
   {
   }
 
@@ -120,11 +129,22 @@ public:
     return enabled_;
   }
 
+  // Get the spin count.
+  int spin_count() const
+  {
+    return spin_count_;
+  }
+
   // Lock the mutex.
   void lock()
   {
     if (enabled_)
+    {
+      for (int n = spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
+        if (mutex_.try_lock())
+          return;
       mutex_.lock();
+    }
   }
 
   // Unlock the mutex.
@@ -138,6 +158,7 @@ private:
   friend class scoped_lock;
   friend class conditionally_enabled_event;
   asio::detail::mutex mutex_;
+  const int spin_count_;
   const bool enabled_;
 };
 

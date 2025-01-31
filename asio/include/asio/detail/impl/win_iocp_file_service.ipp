@@ -2,7 +2,7 @@
 // detail/impl/win_iocp_file_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -94,25 +94,48 @@ asio::error_code win_iocp_file_service::open(
   if ((open_flags & file_base::sync_all_on_write) != 0)
     flags |= FILE_FLAG_WRITE_THROUGH;
 
+  impl.offset_ = 0;
   HANDLE handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
   if (handle != INVALID_HANDLE_VALUE)
   {
-    if (disposition == OPEN_ALWAYS && (open_flags & file_base::truncate) != 0)
+    if (disposition == OPEN_ALWAYS)
     {
-      if (!::SetEndOfFile(handle))
+      if ((open_flags & file_base::truncate) != 0)
       {
-        DWORD last_error = ::GetLastError();
-        ::CloseHandle(handle);
-        ec.assign(last_error, asio::error::get_system_category());
-        ASIO_ERROR_LOCATION(ec);
-        return ec;
+        if (!::SetEndOfFile(handle))
+        {
+          DWORD last_error = ::GetLastError();
+          ::CloseHandle(handle);
+          ec.assign(last_error, asio::error::get_system_category());
+          ASIO_ERROR_LOCATION(ec);
+          return ec;
+        }
+      }
+    }
+    if (disposition == OPEN_ALWAYS || disposition == OPEN_EXISTING)
+    {
+      if ((open_flags & file_base::append) != 0)
+      {
+        LARGE_INTEGER distance, new_offset;
+        distance.QuadPart = 0;
+        if (::SetFilePointerEx(handle, distance, &new_offset, FILE_END))
+        {
+          impl.offset_ = static_cast<uint64_t>(new_offset.QuadPart);
+        }
+        else
+        {
+          DWORD last_error = ::GetLastError();
+          ::CloseHandle(handle);
+          ec.assign(last_error, asio::error::get_system_category());
+          ASIO_ERROR_LOCATION(ec);
+          return ec;
+        }
       }
     }
 
     handle_service_.assign(impl, handle, ec);
     if (ec)
       ::CloseHandle(handle);
-    impl.offset_ = 0;
     ASIO_ERROR_LOCATION(ec);
     return ec;
   }

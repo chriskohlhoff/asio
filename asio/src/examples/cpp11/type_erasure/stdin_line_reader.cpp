@@ -2,7 +2,7 @@
 // stdin_line_reader.cpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,14 +19,14 @@ stdin_line_reader::stdin_line_reader(asio::any_io_executor ex)
 }
 
 void stdin_line_reader::async_read_line_impl(std::string prompt,
-    asio::any_completion_handler<void(asio::error_code, std::string)> handler)
+    asio::any_completion_handler<void(std::error_code, std::string)> handler)
 {
   std::cout << prompt;
   std::cout.flush();
 
   asio::async_read_until(stdin_, asio::dynamic_buffer(buffer_), '\n',
       asio::deferred(
-        [this](asio::error_code ec, std::size_t n)
+        [this](std::error_code ec, std::size_t n)
         {
           if (!ec)
           {

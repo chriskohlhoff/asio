@@ -114,9 +114,9 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./../examples/cpp03/tutorial/index_dox.txt \
-                         ./../examples/cpp03/tutorial/timer_dox.txt \
-                         ./../examples/cpp03/tutorial/daytime_dox.txt \
+INPUT                  = ./../examples/cpp11/tutorial/index_dox.txt \
+                         ./../examples/cpp11/tutorial/timer_dox.txt \
+                         ./../examples/cpp11/tutorial/daytime_dox.txt \
                          ./boost_bind_dox.txt
 INPUT_ENCODING         = UTF-8
 INPUT_FILE_ENCODING    =

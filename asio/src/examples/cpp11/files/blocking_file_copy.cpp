@@ -2,7 +2,7 @@
 // blocking_file_copy.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
           | asio::stream_file::truncate);
 
     char data[4096];
-    asio::error_code error;
+    std::error_code error;
     for (;;)
     {
       std::size_t n = from_file.read_some(asio::buffer(data), error);

@@ -2,7 +2,7 @@
 // detail/deadline_timer_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -103,7 +103,11 @@ public:
   void move_construct(implementation_type& impl,
       implementation_type& other_impl)
   {
-    scheduler_.move_timer(timer_queue_, impl.timer_data, other_impl.timer_data);
+    if (other_impl.might_have_pending_waits)
+    {
+      scheduler_.move_timer(timer_queue_,
+          impl.timer_data, other_impl.timer_data);
+    }
 
     impl.expiry = other_impl.expiry;
     other_impl.expiry = time_type();

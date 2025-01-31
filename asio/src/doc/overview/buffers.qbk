@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -173,13 +173,10 @@ It can also be explicitly disabled by defining `ASIO_DISABLE_BUFFER_DEBUGGING`.
 [link asio.reference.buffers_end buffers_end],
 [link asio.reference.buffers_iterator buffers_iterator],
 [link asio.reference.const_buffer const_buffer],
-[link asio.reference.const_buffers_1 const_buffers_1],
 [link asio.reference.mutable_buffer mutable_buffer],
-[link asio.reference.mutable_buffers_1 mutable_buffers_1],
 [link asio.reference.streambuf streambuf],
 [link asio.reference.ConstBufferSequence ConstBufferSequence],
 [link asio.reference.MutableBufferSequence MutableBufferSequence],
-[link asio.examples.cpp03_examples.buffers buffers example (C++03)],
 [link asio.examples.cpp11_examples.buffers buffers example (c++11)].
 
 [endsect]

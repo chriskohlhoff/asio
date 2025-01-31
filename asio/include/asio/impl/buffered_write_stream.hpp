@@ -2,7 +2,7 @@
 // impl/buffered_write_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -295,7 +295,7 @@ namespace detail
       non_const_lvalue<WriteHandler> handler2(handler);
       if (buffer_size(buffers) == 0 || storage->size() < storage->capacity())
       {
-        next_layer_.async_write_some(ASIO_CONST_BUFFER(0, 0),
+        next_layer_.async_write_some(const_buffer(0, 0),
             buffered_write_some_handler<ConstBufferSequence,
               decay_t<WriteHandler>>(
                 *storage, buffers, handler2.value));

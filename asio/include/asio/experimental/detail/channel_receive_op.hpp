@@ -2,7 +2,7 @@
 // experimental/detail/channel_receive_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,11 +17,10 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/bind_handler.hpp"
+#include "asio/detail/completion_handler.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/error.hpp"
-#include "asio/experimental/detail/channel_handler.hpp"
 #include "asio/experimental/detail/channel_operation.hpp"
-#include "asio/experimental/detail/channel_payload.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -92,7 +91,7 @@ public:
     if (a != channel_operation::destroy_op)
     {
       Payload* payload = static_cast<Payload*>(v);
-      channel_handler<Payload, Handler> handler(
+      asio::detail::completion_payload_handler<Payload, Handler> handler(
           static_cast<Payload&&>(*payload), o->handler_);
       p.h = asio::detail::addressof(handler.handler_);
       p.reset();

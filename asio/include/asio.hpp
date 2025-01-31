@@ -2,7 +2,7 @@
 // asio.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -59,12 +59,17 @@
 #include "asio/buffered_write_stream_fwd.hpp"
 #include "asio/buffered_write_stream.hpp"
 #include "asio/buffers_iterator.hpp"
+#include "asio/cancel_after.hpp"
+#include "asio/cancel_at.hpp"
 #include "asio/cancellation_signal.hpp"
 #include "asio/cancellation_state.hpp"
 #include "asio/cancellation_type.hpp"
+#include "asio/co_composed.hpp"
 #include "asio/co_spawn.hpp"
 #include "asio/completion_condition.hpp"
 #include "asio/compose.hpp"
+#include "asio/composed.hpp"
+#include "asio/config.hpp"
 #include "asio/connect.hpp"
 #include "asio/connect_pipe.hpp"
 #include "asio/consign.hpp"
@@ -72,8 +77,10 @@
 #include "asio/deadline_timer.hpp"
 #include "asio/defer.hpp"
 #include "asio/deferred.hpp"
+#include "asio/default_completion_token.hpp"
 #include "asio/detached.hpp"
 #include "asio/dispatch.hpp"
+#include "asio/disposition.hpp"
 #include "asio/error.hpp"
 #include "asio/error_code.hpp"
 #include "asio/execution.hpp"
@@ -100,10 +107,9 @@
 #include "asio/generic/stream_protocol.hpp"
 #include "asio/handler_continuation_hook.hpp"
 #include "asio/high_resolution_timer.hpp"
+#include "asio/immediate.hpp"
 #include "asio/io_context.hpp"
 #include "asio/io_context_strand.hpp"
-#include "asio/io_service.hpp"
-#include "asio/io_service_strand.hpp"
 #include "asio/ip/address.hpp"
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/address_v4_iterator.hpp"

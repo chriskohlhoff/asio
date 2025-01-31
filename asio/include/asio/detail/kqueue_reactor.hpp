@@ -2,7 +2,7 @@
 // detail/kqueue_reactor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2005 Stefan Arentz (stefan at soze dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -65,7 +65,8 @@ public:
   // Per-descriptor queues.
   struct descriptor_state
   {
-    descriptor_state(bool locking) : mutex_(locking) {}
+    descriptor_state(bool locking, int spin_count)
+      : mutex_(locking, spin_count) {}
 
     friend class kqueue_reactor;
     friend class object_pool_access;
@@ -248,6 +249,12 @@ private:
 
   // Whether the service has been shut down.
   bool shutdown_;
+
+  // Whether I/O locking is enabled.
+  const bool io_locking_;
+
+  // How any times to spin waiting for the I/O mutex.
+  const int io_locking_spin_count_;
 
   // Mutex to protect access to the registered descriptors.
   mutex registered_descriptors_mutex_;

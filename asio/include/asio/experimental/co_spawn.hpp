@@ -18,10 +18,10 @@
 #include "asio/detail/config.hpp"
 #include <utility>
 #include "asio/compose.hpp"
+#include "asio/deferred.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/experimental/coro.hpp"
-#include "asio/experimental/deferred.hpp"
-#include "asio/experimental/prepend.hpp"
+#include "asio/prepend.hpp"
 #include "asio/redirect_error.hpp"
 
 #include "asio/detail/push_options.hpp"

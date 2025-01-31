@@ -2,7 +2,7 @@
 // experimental/basic_concurrent_channel.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -110,7 +110,8 @@ private:
 
   template <typename... PayloadSignatures,
       ASIO_COMPLETION_TOKEN_FOR(PayloadSignatures...) CompletionToken>
-  auto do_async_receive(detail::channel_payload<PayloadSignatures...>*,
+  auto do_async_receive(
+      asio::detail::completion_payload<PayloadSignatures...>*,
       CompletionToken&& token)
     -> decltype(
         async_initiate<CompletionToken, PayloadSignatures...>(

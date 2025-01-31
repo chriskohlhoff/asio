@@ -2,7 +2,7 @@
 // impl/thread_pool.ipp
 // ~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -59,7 +59,7 @@ inline long default_thread_pool_size()
 } // namespace detail
 
 thread_pool::thread_pool()
-  : scheduler_(add_scheduler(new detail::scheduler(*this, 0, false))),
+  : scheduler_(add_scheduler(new detail::scheduler(*this, false))),
     num_threads_(detail::default_thread_pool_size())
 {
   scheduler_.work_started();
@@ -84,8 +84,20 @@ inline long clamp_thread_pool_size(std::size_t n)
 } // namespace detail
 
 thread_pool::thread_pool(std::size_t num_threads)
-  : scheduler_(add_scheduler(new detail::scheduler(
-          *this, num_threads == 1 ? 1 : 0, false))),
+  : execution_context(config_from_concurrency_hint(num_threads == 1 ? 1 : 0)),
+    scheduler_(add_scheduler(new detail::scheduler(*this, false))),
+    num_threads_(detail::clamp_thread_pool_size(num_threads))
+{
+  scheduler_.work_started();
+
+  thread_function f = { &scheduler_ };
+  threads_.create_threads(f, static_cast<std::size_t>(num_threads_));
+}
+
+thread_pool::thread_pool(std::size_t num_threads,
+    const execution_context::service_maker& initial_services)
+  : execution_context(initial_services),
+    scheduler_(add_scheduler(new detail::scheduler(*this, false))),
     num_threads_(detail::clamp_thread_pool_size(num_threads))
 {
   scheduler_.work_started();

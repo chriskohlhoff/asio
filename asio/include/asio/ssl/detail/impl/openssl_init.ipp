@@ -3,7 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2005 Voipster / Indrek dot Juhani at voipster dot com
-// Copyright (c) 2005-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2005-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -37,7 +37,7 @@ public:
   {
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
     ::SSL_library_init();
-    ::SSL_load_error_strings();        
+    ::SSL_load_error_strings();
     ::OpenSSL_add_all_algorithms();
 
     mutexes_.resize(::CRYPTO_num_locks());
@@ -123,7 +123,7 @@ private:
 #endif // (OPENSSL_VERSION_NUMBER < 0x10000000L)
 
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
-  static void openssl_locking_func(int mode, int n, 
+  static void openssl_locking_func(int mode, int n,
     const char* /*file*/, int /*line*/)
   {
     if (mode & CRYPTO_LOCK)

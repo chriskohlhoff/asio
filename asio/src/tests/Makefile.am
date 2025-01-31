@@ -50,12 +50,17 @@ check_PROGRAMS = \
 	unit/buffer \
 	unit/buffer_registration \
 	unit/buffers_iterator \
+	unit/cancel_after \
+	unit/cancel_at \
 	unit/cancellation_signal \
 	unit/cancellation_state \
 	unit/cancellation_type \
+	unit/co_composed \
 	unit/co_spawn \
 	unit/completion_condition \
 	unit/compose \
+	unit/composed \
+	unit/config \
 	unit/connect \
 	unit/connect_pipe \
 	unit/consign \
@@ -65,6 +70,7 @@ check_PROGRAMS = \
 	unit/deferred \
 	unit/detached \
 	unit/dispatch \
+	unit/disposition \
 	unit/error \
 	unit/execution/any_executor \
 	unit/execution/blocking \
@@ -86,6 +92,7 @@ check_PROGRAMS = \
 	unit/generic/seq_packet_protocol \
 	unit/generic/stream_protocol \
 	unit/high_resolution_timer \
+	unit/immediate \
 	unit/io_context \
 	unit/io_context_strand \
 	unit/ip/address \
@@ -176,14 +183,16 @@ check_PROGRAMS = \
 	unit/write \
 	unit/write_at
 
-if !STANDALONE
 noinst_PROGRAMS = \
+	performance/client \
+	performance/server
+
+if !STANDALONE
+noinst_PROGRAMS += \
 	latency/tcp_client \
 	latency/tcp_server \
 	latency/udp_client \
-	latency/udp_server \
-	performance/client \
-	performance/server
+	latency/udp_server
 endif
 
 if HAVE_CXX11
@@ -192,7 +201,8 @@ check_PROGRAMS += \
 	unit/experimental/basic_concurrent_channel \
 	unit/experimental/channel \
 	unit/experimental/channel_traits \
-	unit/experimental/concurrent_channel
+	unit/experimental/concurrent_channel \
+	unit/experimental/parallel_group
 endif
 
 if HAVE_CXX20
@@ -215,13 +225,17 @@ check_PROGRAMS += \
 endif
 endif
 
+if HAVE_BOOST_COROUTINE
+check_PROGRAMS += \
+	unit/spawn
+endif
+
 if HAVE_OPENSSL
 check_PROGRAMS += \
 	unit/ssl/context_base \
 	unit/ssl/context \
 	unit/ssl/error \
 	unit/ssl/host_name_verification \
-	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
 	unit/ssl/stream
 endif
@@ -265,12 +279,17 @@ TESTS = \
 	unit/buffer \
 	unit/buffer_registration \
 	unit/buffers_iterator \
+	unit/cancel_after \
+	unit/cancel_at \
 	unit/cancellation_signal \
 	unit/cancellation_state \
 	unit/cancellation_type \
+	unit/co_composed \
 	unit/co_spawn \
 	unit/completion_condition \
 	unit/compose \
+	unit/composed \
+	unit/config \
 	unit/connect \
 	unit/connect_pipe \
 	unit/consign \
@@ -279,6 +298,7 @@ TESTS = \
 	unit/deferred \
 	unit/detached \
 	unit/dispatch \
+	unit/disposition \
 	unit/error \
 	unit/execution/any_executor \
 	unit/execution/blocking \
@@ -295,6 +315,7 @@ TESTS = \
 	unit/executor_work_guard \
 	unit/file_base \
 	unit/high_resolution_timer \
+	unit/immediate \
 	unit/io_context \
 	unit/io_context_strand \
 	unit/ip/address \
@@ -391,7 +412,13 @@ TESTS += \
 	unit/experimental/basic_concurrent_channel \
 	unit/experimental/channel \
 	unit/experimental/channel_traits \
-	unit/experimental/concurrent_channel
+	unit/experimental/concurrent_channel \
+	unit/experimental/parallel_group
+endif
+
+if HAVE_BOOST_COROUTINE
+TESTS += \
+	unit/spawn
 endif
 
 if HAVE_CXX20
@@ -420,7 +447,6 @@ TESTS += \
 	unit/ssl/context \
 	unit/ssl/error \
 	unit/ssl/host_name_verification \
-	unit/ssl/rfc2818_verification \
 	unit/ssl/stream_base \
 	unit/ssl/stream
 endif
@@ -431,13 +457,14 @@ noinst_HEADERS = \
 
 AM_CXXFLAGS = -I$(srcdir)/../../include
 
+performance_client_SOURCES = performance/client.cpp
+performance_server_SOURCES = performance/server.cpp
+
 if !STANDALONE
 latency_tcp_client_SOURCES = latency/tcp_client.cpp
 latency_tcp_server_SOURCES = latency/tcp_server.cpp
 latency_udp_client_SOURCES = latency/udp_client.cpp
 latency_udp_server_SOURCES = latency/udp_server.cpp
-performance_client_SOURCES = performance/client.cpp
-performance_server_SOURCES = performance/server.cpp
 endif
 
 unit_any_completion_executor_SOURCES = unit/any_completion_executor.cpp
@@ -478,12 +505,17 @@ unit_buffers_iterator_SOURCES = unit/buffers_iterator.cpp
 unit_buffered_read_stream_SOURCES = unit/buffered_read_stream.cpp
 unit_buffered_stream_SOURCES = unit/buffered_stream.cpp
 unit_buffered_write_stream_SOURCES = unit/buffered_write_stream.cpp
+unit_cancel_after_SOURCES = unit/cancel_after.cpp
+unit_cancel_at_SOURCES = unit/cancel_at.cpp
 unit_cancellation_signal_SOURCES = unit/cancellation_signal.cpp
 unit_cancellation_state_SOURCES = unit/cancellation_state.cpp
 unit_cancellation_type_SOURCES = unit/cancellation_type.cpp
+unit_co_composed_SOURCES = unit/co_composed.cpp
 unit_co_spawn_SOURCES = unit/co_spawn.cpp
 unit_completion_condition_SOURCES = unit/completion_condition.cpp
 unit_compose_SOURCES = unit/compose.cpp
+unit_composed_SOURCES = unit/composed.cpp
+unit_config_SOURCES = unit/config.cpp
 unit_connect_SOURCES = unit/connect.cpp
 unit_connect_pipe_SOURCES = unit/connect_pipe.cpp
 unit_consign_SOURCES = unit/consign.cpp
@@ -493,6 +525,7 @@ unit_defer_SOURCES = unit/defer.cpp
 unit_deferred_SOURCES = unit/deferred.cpp
 unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
+unit_disposition_SOURCES = unit/disposition.cpp
 unit_error_SOURCES = unit/error.cpp
 unit_execution_any_executor_SOURCES = unit/execution/any_executor.cpp
 unit_execution_blocking_SOURCES = unit/execution/blocking.cpp
@@ -514,6 +547,7 @@ unit_generic_raw_protocol_SOURCES = unit/generic/raw_protocol.cpp
 unit_generic_seq_packet_protocol_SOURCES = unit/generic/seq_packet_protocol.cpp
 unit_generic_stream_protocol_SOURCES = unit/generic/stream_protocol.cpp
 unit_high_resolution_timer_SOURCES = unit/high_resolution_timer.cpp
+unit_immediate_SOURCES = unit/immediate.cpp
 unit_io_context_SOURCES = unit/io_context.cpp
 unit_io_context_strand_SOURCES = unit/io_context_strand.cpp
 unit_ip_address_SOURCES = unit/ip/address.cpp
@@ -610,6 +644,12 @@ unit_experimental_basic_concurrent_channel_SOURCES = unit/experimental/basic_con
 unit_experimental_channel_SOURCES = unit/experimental/channel.cpp
 unit_experimental_channel_traits_SOURCES = unit/experimental/channel_traits.cpp
 unit_experimental_concurrent_channel_SOURCES = unit/experimental/concurrent_channel.cpp
+unit_experimental_parallel_group_SOURCES = unit/experimental/parallel_group.cpp
+endif
+
+if HAVE_BOOST_COROUTINE
+unit_spawn_SOURCES = unit/spawn.cpp
+unit_spawn_LDADD = -lboost_context
 endif
 
 if HAVE_CXX20
@@ -636,7 +676,6 @@ unit_ssl_context_SOURCES = unit/ssl/context.cpp
 unit_ssl_error_SOURCES = unit/ssl/error.cpp
 unit_ssl_stream_base_SOURCES = unit/ssl/stream_base.cpp
 unit_ssl_host_name_verification_SOURCES = unit/ssl/host_name_verification.cpp
-unit_ssl_rfc2818_verification_SOURCES = unit/ssl/rfc2818_verification.cpp
 unit_ssl_stream_SOURCES = unit/ssl/stream.cpp
 endif
 

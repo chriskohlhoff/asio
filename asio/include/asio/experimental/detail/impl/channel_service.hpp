@@ -2,7 +2,7 @@
 // experimental/detail/impl/channel_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -22,7 +22,8 @@ namespace experimental {
 namespace detail {
 
 template <typename Mutex>
-inline channel_service<Mutex>::channel_service(execution_context& ctx)
+inline channel_service<Mutex>::channel_service(
+    asio::execution_context& ctx)
   : asio::detail::execution_context_service_base<channel_service>(ctx),
     mutex_(),
     impl_list_(0)
@@ -516,7 +517,8 @@ bool channel_service<Mutex>::try_receive(
       }
       lock.unlock();
       asio::detail::non_const_lvalue<Handler> handler2(handler);
-      channel_handler<payload_type, decay_t<Handler>>(
+      asio::detail::completion_payload_handler<
+        payload_type, decay_t<Handler>>(
           static_cast<payload_type&&>(payload), handler2.value)();
       return true;
     }
@@ -531,7 +533,8 @@ bool channel_service<Mutex>::try_receive(
       send_op->post();
       lock.unlock();
       asio::detail::non_const_lvalue<Handler> handler2(handler);
-      channel_handler<payload_type, decay_t<Handler>>(
+      asio::detail::completion_payload_handler<
+        payload_type, decay_t<Handler>>(
           static_cast<payload_type&&>(payload), handler2.value)();
       return true;
     }

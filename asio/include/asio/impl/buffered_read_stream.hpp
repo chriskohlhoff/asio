@@ -2,7 +2,7 @@
 // impl/buffered_read_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -309,7 +309,7 @@ namespace detail
       non_const_lvalue<ReadHandler> handler2(handler);
       if (buffer_size(buffers) == 0 || !storage->empty())
       {
-        next_layer_.async_read_some(ASIO_MUTABLE_BUFFER(0, 0),
+        next_layer_.async_read_some(mutable_buffer(0, 0),
             buffered_read_some_handler<MutableBufferSequence,
               decay_t<ReadHandler>>(
                 *storage, buffers, handler2.value));

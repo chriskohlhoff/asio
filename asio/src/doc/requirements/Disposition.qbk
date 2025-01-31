@@ -1,0 +1,35 @@
+[/
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:Disposition Disposition]
+
+A type `X` satisfies the `disposition` concept if it is nothrow
+default-constructible, nothrow copy-constructible, nothrow copy-assignable, as
+well as satisfying the additional requirements listed below. In the following
+table `x` denotes a glvalue of type `X`.
+
+[table Disposition requirements
+  [[expression] [return type] [assertion/note[br]pre/post-conditions]]
+  [
+    [`asio::disposition_traits<X>::not_an_error(x)`]
+    [`bool`]
+    []
+  ]
+  [
+    [`asio::disposition_traits<X>::throw_exception(x)`]
+    []
+    [pre: `asio::disposition_traits<X>::not_an_error(x)` is `false.`\n
+     This function call must exit via an exception.]
+  ]
+  [
+    [`asio::disposition_traits<X>::to_exception_ptr(x)`]
+    [`std::exception_ptr`]
+    []
+  ]
+]
+
+[endsect]

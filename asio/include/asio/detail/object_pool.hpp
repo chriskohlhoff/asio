@@ -2,7 +2,7 @@
 // detail/object_pool.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/noncopyable.hpp"
+#include <cstddef>
 
 #include "asio/detail/push_options.hpp"
 
@@ -34,10 +35,10 @@ public:
     return new Object;
   }
 
-  template <typename Object, typename Arg>
-  static Object* create(Arg arg)
+  template <typename Object, typename... Args>
+  static Object* create(Args... args)
   {
-    return new Object(arg);
+    return new Object(args...);
   }
 
   template <typename Object>
@@ -65,10 +66,19 @@ class object_pool
 {
 public:
   // Constructor.
-  object_pool()
+  template <typename... Args>
+  object_pool(unsigned int preallocated, Args... args)
     : live_list_(0),
       free_list_(0)
   {
+    while (preallocated > 0)
+    {
+      Object* o = object_pool_access::create<Object>(args...);
+      object_pool_access::next(o) = free_list_;
+      object_pool_access::prev(o) = 0;
+      free_list_ = o;
+      --preallocated;
+    }
   }
 
   // Destructor destroys all objects.
@@ -84,33 +94,15 @@ public:
     return live_list_;
   }
 
-  // Allocate a new object.
-  Object* alloc()
-  {
-    Object* o = free_list_;
-    if (o)
-      free_list_ = object_pool_access::next(free_list_);
-    else
-      o = object_pool_access::create<Object>();
-
-    object_pool_access::next(o) = live_list_;
-    object_pool_access::prev(o) = 0;
-    if (live_list_)
-      object_pool_access::prev(live_list_) = o;
-    live_list_ = o;
-
-    return o;
-  }
-
   // Allocate a new object with an argument.
-  template <typename Arg>
-  Object* alloc(Arg arg)
+  template <typename... Args>
+  Object* alloc(Args... args)
   {
     Object* o = free_list_;
     if (o)
       free_list_ = object_pool_access::next(free_list_);
     else
-      o = object_pool_access::create<Object>(arg);
+      o = object_pool_access::create<Object>(args...);
 
     object_pool_access::next(o) = live_list_;
     object_pool_access::prev(o) = 0;

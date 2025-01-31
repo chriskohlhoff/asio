@@ -2,7 +2,7 @@
 // detail/impl/io_uring_service.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -35,15 +35,21 @@ namespace detail {
 io_uring_service::io_uring_service(asio::execution_context& ctx)
   : execution_context_service_base<io_uring_service>(ctx),
     scheduler_(use_service<scheduler>(ctx)),
-    mutex_(ASIO_CONCURRENCY_HINT_IS_LOCKING(
-          REACTOR_REGISTRATION, scheduler_.concurrency_hint())),
+    mutex_(config(ctx).get("reactor", "registration_locking", true),
+        config(ctx).get("reactor", "registration_locking_spin_count", 0)),
     outstanding_work_(0),
     submit_sqes_op_(this),
     pending_sqes_(0),
     pending_submit_sqes_op_(false),
     shutdown_(false),
+    io_locking_(config(ctx).get("reactor", "io_locking", true)),
+    io_locking_spin_count_(
+        config(ctx).get("reactor", "io_locking_spin_count", 0)),
     timeout_(),
     registration_mutex_(mutex_.enabled()),
+    registered_io_objects_(
+        config(ctx).get("reactor", "preallocated_io_objects", 0U),
+        io_locking_, io_locking_spin_count_),
     reactor_(use_service<reactor>(ctx)),
     reactor_data_(),
     event_fd_(-1)
@@ -612,9 +618,7 @@ void io_uring_service::register_with_reactor()
 io_uring_service::io_object* io_uring_service::allocate_io_object()
 {
   mutex::scoped_lock registration_lock(registration_mutex_);
-  return registered_io_objects_.alloc(
-      ASIO_CONCURRENCY_HINT_IS_LOCKING(
-        REACTOR_IO, scheduler_.concurrency_hint()));
+  return registered_io_objects_.alloc(io_locking_, io_locking_spin_count_);
 }
 
 void io_uring_service::free_io_object(io_uring_service::io_object* io_obj)
@@ -899,8 +903,8 @@ void io_uring_service::io_queue::do_complete(void* owner, operation* base,
   }
 }
 
-io_uring_service::io_object::io_object(bool locking)
-  : mutex_(locking)
+io_uring_service::io_object::io_object(bool locking, int spin_count)
+  : mutex_(locking, spin_count)
 {
 }
 

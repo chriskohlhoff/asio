@@ -2,7 +2,7 @@
 // detail/epoll_reactor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -71,7 +71,7 @@ public:
     bool try_speculative_[max_ops];
     bool shutdown_;
 
-    ASIO_DECL descriptor_state(bool locking);
+    ASIO_DECL descriptor_state(bool locking, int spin_count);
     void set_ready_events(uint32_t events) { task_result_ = events; }
     void add_ready_events(uint32_t events) { task_result_ |= events; }
     ASIO_DECL operation* perform_io(uint32_t events);
@@ -268,6 +268,12 @@ private:
 
   // Whether the service has been shut down.
   bool shutdown_;
+
+  // Whether I/O locking is enabled.
+  const bool io_locking_;
+
+  // How any times to spin waiting for the I/O mutex.
+  const int io_locking_spin_count_;
 
   // Mutex to protect access to the registered descriptors.
   mutex registered_descriptors_mutex_;

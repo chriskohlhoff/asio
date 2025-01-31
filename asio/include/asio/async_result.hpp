@@ -2,7 +2,7 @@
 // async_result.hpp
 // ~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,9 +21,6 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
-
-#if defined(ASIO_HAS_CONCEPTS)
-
 namespace detail {
 
 template <typename T>
@@ -70,6 +67,12 @@ struct are_completion_signatures : false_type
 {
 };
 
+template <>
+struct are_completion_signatures<>
+  : true_type
+{
+};
+
 template <typename T0>
 struct are_completion_signatures<T0>
   : is_completion_signature<T0>
@@ -84,6 +87,12 @@ struct are_completion_signatures<T0, TN...>
 {
 };
 
+} // namespace detail
+
+#if defined(ASIO_HAS_CONCEPTS)
+
+namespace detail {
+
 template <typename T, typename... Args>
 ASIO_CONCEPT callable_with = requires(T&& t, Args&&... args)
 {
@@ -97,19 +106,19 @@ struct is_completion_handler_for : false_type
 
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...)>
-  : integral_constant<bool, (callable_with<T, Args...>)>
+  : integral_constant<bool, (callable_with<decay_t<T>, Args...>)>
 {
 };
 
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...) &>
-  : integral_constant<bool, (callable_with<T&, Args...>)>
+  : integral_constant<bool, (callable_with<decay_t<T>&, Args...>)>
 {
 };
 
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...) &&>
-  : integral_constant<bool, (callable_with<T&&, Args...>)>
+  : integral_constant<bool, (callable_with<decay_t<T>&&, Args...>)>
 {
 };
 
@@ -117,19 +126,19 @@ struct is_completion_handler_for<T, R(Args...) &&>
 
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...) noexcept>
-  : integral_constant<bool, (callable_with<T, Args...>)>
+  : integral_constant<bool, (callable_with<decay_t<T>, Args...>)>
 {
 };
 
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...) & noexcept>
-  : integral_constant<bool, (callable_with<T&, Args...>)>
+  : integral_constant<bool, (callable_with<decay_t<T>&, Args...>)>
 {
 };
 
 template <typename T, typename R, typename... Args>
 struct is_completion_handler_for<T, R(Args...) && noexcept>
-  : integral_constant<bool, (callable_with<T&&, Args...>)>
+  : integral_constant<bool, (callable_with<decay_t<T>&&, Args...>)>
 {
 };
 
@@ -176,36 +185,83 @@ ASIO_CONCEPT completion_handler_for =
 namespace detail {
 
 template <typename T>
-struct is_simple_completion_signature : false_type
+struct is_lvalue_completion_signature : false_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_lvalue_completion_signature<R(Args...) &> : true_type
+{
+};
+
+# if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct is_lvalue_completion_signature<R(Args...) & noexcept> : true_type
+{
+};
+
+# endif // defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename... Signatures>
+struct are_any_lvalue_completion_signatures : false_type
+{
+};
+
+template <typename Sig0>
+struct are_any_lvalue_completion_signatures<Sig0>
+  : is_lvalue_completion_signature<Sig0>
+{
+};
+
+template <typename Sig0, typename... SigN>
+struct are_any_lvalue_completion_signatures<Sig0, SigN...>
+  : integral_constant<bool, (
+      is_lvalue_completion_signature<Sig0>::value
+        || are_any_lvalue_completion_signatures<SigN...>::value)>
+{
+};
+
+template <typename T>
+struct is_rvalue_completion_signature : false_type
+{
+};
+
+template <typename R, typename... Args>
+struct is_rvalue_completion_signature<R(Args...) &&> : true_type
+{
+};
+
+# if defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename R, typename... Args>
+struct is_rvalue_completion_signature<R(Args...) && noexcept> : true_type
+{
+};
+
+# endif // defined(ASIO_HAS_NOEXCEPT_FUNCTION_TYPE)
+
+template <typename... Signatures>
+struct are_any_rvalue_completion_signatures : false_type
+{
+};
+
+template <typename Sig0>
+struct are_any_rvalue_completion_signatures<Sig0>
+  : is_rvalue_completion_signature<Sig0>
+{
+};
+
+template <typename Sig0, typename... SigN>
+struct are_any_rvalue_completion_signatures<Sig0, SigN...>
+  : integral_constant<bool, (
+      is_rvalue_completion_signature<Sig0>::value
+        || are_any_rvalue_completion_signatures<SigN...>::value)>
 {
 };
 
 template <typename T>
 struct simple_completion_signature;
-
-template <typename R, typename... Args>
-struct is_simple_completion_signature<R(Args...)> : true_type
-{
-};
-
-template <typename... Signatures>
-struct are_simple_completion_signatures : false_type
-{
-};
-
-template <typename Sig0>
-struct are_simple_completion_signatures<Sig0>
-  : is_simple_completion_signature<Sig0>
-{
-};
-
-template <typename Sig0, typename... SigN>
-struct are_simple_completion_signatures<Sig0, SigN...>
-  : integral_constant<bool, (
-      is_simple_completion_signature<Sig0>::value
-        && are_simple_completion_signatures<SigN...>::value)>
-{
-};
 
 template <typename R, typename... Args>
 struct simple_completion_signature<R(Args...)>
@@ -344,7 +400,8 @@ template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE... Signatures>
 class async_result :
   public conditional_t<
-      detail::are_simple_completion_signatures<Signatures...>::value,
+      detail::are_any_lvalue_completion_signatures<Signatures...>::value
+        || !detail::are_any_rvalue_completion_signatures<Signatures...>::value,
       detail::completion_handler_async_result<CompletionToken, Signatures...>,
       async_result<CompletionToken,
         typename detail::simple_completion_signature<Signatures>::type...>
@@ -352,7 +409,8 @@ class async_result :
 {
 public:
   typedef conditional_t<
-      detail::are_simple_completion_signatures<Signatures...>::value,
+      detail::are_any_lvalue_completion_signatures<Signatures...>::value
+        || !detail::are_any_rvalue_completion_signatures<Signatures...>::value,
       detail::completion_handler_async_result<CompletionToken, Signatures...>,
       async_result<CompletionToken,
         typename detail::simple_completion_signature<Signatures>::type...>
@@ -557,14 +615,36 @@ template <typename CompletionToken,
     typename Initiation, typename... Args>
 inline auto async_initiate(Initiation&& initiation,
     type_identity_t<CompletionToken>& token, Args&&... args)
-  -> constraint_t<
-    detail::async_result_has_initiate_memfn<
-      CompletionToken, Signatures...>::value,
-    decltype(
-      async_result<decay_t<CompletionToken>, Signatures...>::initiate(
-        static_cast<Initiation&&>(initiation),
-        static_cast<CompletionToken&&>(token),
-        static_cast<Args&&>(args)...))>
+  -> decltype(enable_if_t<
+    enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>>::initiate(
+      static_cast<Initiation&&>(initiation),
+      static_cast<CompletionToken&&>(token),
+      static_cast<Args&&>(args)...))
+{
+  return async_result<decay_t<CompletionToken>, Signatures...>::initiate(
+      static_cast<Initiation&&>(initiation),
+      static_cast<CompletionToken&&>(token),
+      static_cast<Args&&>(args)...);
+}
+
+template <
+    ASIO_COMPLETION_SIGNATURE... Signatures,
+    typename CompletionToken, typename Initiation, typename... Args>
+inline auto async_initiate(Initiation&& initiation,
+    CompletionToken&& token, Args&&... args)
+  -> decltype(enable_if_t<
+    enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>>::initiate(
+      static_cast<Initiation&&>(initiation),
+      static_cast<CompletionToken&&>(token),
+      static_cast<Args&&>(args)...))
 {
   return async_result<decay_t<CompletionToken>, Signatures...>::initiate(
       static_cast<Initiation&&>(initiation),
@@ -575,12 +655,38 @@ inline auto async_initiate(Initiation&& initiation,
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE... Signatures,
     typename Initiation, typename... Args>
-inline constraint_t<
-    !detail::async_result_has_initiate_memfn<
-      CompletionToken, Signatures...>::value,
-    typename async_result<decay_t<CompletionToken>, Signatures...>::return_type>
+inline typename enable_if_t<
+    !enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>
+  >::return_type
 async_initiate(Initiation&& initiation,
     type_identity_t<CompletionToken>& token, Args&&... args)
+{
+  async_completion<CompletionToken, Signatures...> completion(token);
+
+  static_cast<Initiation&&>(initiation)(
+      static_cast<
+        typename async_result<decay_t<CompletionToken>,
+          Signatures...>::completion_handler_type&&>(
+            completion.completion_handler),
+      static_cast<Args&&>(args)...);
+
+  return completion.result.get();
+}
+
+template <ASIO_COMPLETION_SIGNATURE... Signatures,
+    typename CompletionToken, typename Initiation, typename... Args>
+inline typename enable_if_t<
+    !enable_if_t<
+      detail::are_completion_signatures<Signatures...>::value,
+      detail::async_result_has_initiate_memfn<
+        CompletionToken, Signatures...>>::value,
+    async_result<decay_t<CompletionToken>, Signatures...>
+  >::return_type
+async_initiate(Initiation&& initiation, CompletionToken&& token, Args&&... args)
 {
   async_completion<CompletionToken, Signatures...> completion(token);
 
@@ -711,21 +817,21 @@ struct is_async_operation :
 template <typename T, typename... Args>
 ASIO_CONCEPT async_operation = is_async_operation<T, Args...>::value;
 
-#define ASIO_ASYNC_OPERATION(t) \
-  ::asio::async_operation<t>
-#define ASIO_ASYNC_OPERATION1(t, a0) \
-  ::asio::async_operation<t, a0>
-#define ASIO_ASYNC_OPERATION2(t, a0, a1) \
-  ::asio::async_operation<t, a0, a1>
-#define ASIO_ASYNC_OPERATION3(t, a0, a1, a2) \
-  ::asio::async_operation<t, a0, a1, a2>
+#define ASIO_ASYNC_OPERATION \
+  ::asio::async_operation
+#define ASIO_ASYNC_OPERATION1(a0) \
+  ::asio::async_operation<a0>
+#define ASIO_ASYNC_OPERATION2(a0, a1) \
+  ::asio::async_operation<a0, a1>
+#define ASIO_ASYNC_OPERATION3(a0, a1, a2) \
+  ::asio::async_operation<a0, a1, a2>
 
 #else // defined(ASIO_HAS_CONCEPTS)
 
-#define ASIO_ASYNC_OPERATION(t) typename
-#define ASIO_ASYNC_OPERATION1(t, a0) typename
-#define ASIO_ASYNC_OPERATION2(t, a0, a1) typename
-#define ASIO_ASYNC_OPERATION3(t, a0, a1, a2) typename
+#define ASIO_ASYNC_OPERATION typename
+#define ASIO_ASYNC_OPERATION1(a0) typename
+#define ASIO_ASYNC_OPERATION2(a0, a1) typename
+#define ASIO_ASYNC_OPERATION3(a0, a1, a2) typename
 
 #endif // defined(ASIO_HAS_CONCEPTS)
 
@@ -833,61 +939,10 @@ template <typename T, typename... Args>
 using completion_signature_of_t =
   typename completion_signature_of<T, Args...>::type;
 
-namespace detail {
-
-template <typename T, typename = void>
-struct default_completion_token_impl
-{
-  typedef void type;
-};
-
-template <typename T>
-struct default_completion_token_impl<T,
-    void_t<typename T::default_completion_token_type>
-  >
-{
-  typedef typename T::default_completion_token_type type;
-};
-
-} // namespace detail
-
-#if defined(GENERATING_DOCUMENTATION)
-
-/// Traits type used to determine the default completion token type associated
-/// with a type (such as an executor).
-/**
- * A program may specialise this traits type if the @c T template parameter in
- * the specialisation is a user-defined type.
- *
- * Specialisations of this trait may provide a nested typedef @c type, which is
- * a default-constructible completion token type.
- */
-template <typename T>
-struct default_completion_token
-{
-  /// If @c T has a nested type @c default_completion_token_type,
-  /// <tt>T::default_completion_token_type</tt>. Otherwise the typedef @c type
-  /// is not defined.
-  typedef see_below type;
-};
-#else
-template <typename T>
-struct default_completion_token
-  : detail::default_completion_token_impl<T>
-{
-};
-#endif
-
-template <typename T>
-using default_completion_token_t = typename default_completion_token<T>::type;
-
-#define ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(e) \
-  = typename ::asio::default_completion_token<e>::type
-#define ASIO_DEFAULT_COMPLETION_TOKEN(e) \
-  = typename ::asio::default_completion_token<e>::type()
-
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
+
+#include "asio/default_completion_token.hpp"
 
 #endif // ASIO_ASYNC_RESULT_HPP

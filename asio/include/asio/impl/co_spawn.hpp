@@ -2,7 +2,7 @@
 // impl/co_spawn.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -142,7 +142,9 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
   (co_await awaitable_thread_has_context_switched{}) = false;
   std::exception_ptr e = nullptr;
   bool done = false;
+#if !defined(ASIO_NO_EXCEPTIONS)
   try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   {
     T t = co_await s.function();
 
@@ -150,7 +152,10 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
     bool switched = (co_await awaitable_thread_has_context_switched{});
     if (!switched)
+    {
+      co_await this_coro::throw_if_cancelled(false);
       (void) co_await co_spawn_post();
+    }
 
     (dispatch)(s.handler_work.get_executor(),
         [handler = std::move(s.handler), t = std::move(t)]() mutable
@@ -160,6 +165,7 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
     co_return;
   }
+#if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
     if (done)
@@ -167,10 +173,14 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
     e = std::current_exception();
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 
   bool switched = (co_await awaitable_thread_has_context_switched{});
   if (!switched)
+  {
+    co_await this_coro::throw_if_cancelled(false);
     (void) co_await co_spawn_post();
+  }
 
   (dispatch)(s.handler_work.get_executor(),
       [handler = std::move(s.handler), e]() mutable
@@ -187,18 +197,25 @@ awaitable<awaitable_thread_entry_point, Executor> co_spawn_entry_point(
 
   (co_await awaitable_thread_has_context_switched{}) = false;
   std::exception_ptr e = nullptr;
+#if !defined(ASIO_NO_EXCEPTIONS)
   try
+#endif // !defined(ASIO_NO_EXCEPTIONS)
   {
     co_await s.function();
   }
+#if !defined(ASIO_NO_EXCEPTIONS)
   catch (...)
   {
     e = std::current_exception();
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 
   bool switched = (co_await awaitable_thread_has_context_switched{});
   if (!switched)
+  {
+    co_await this_coro::throw_if_cancelled(false);
     (void) co_await co_spawn_post();
+  }
 
   (dispatch)(s.handler_work.get_executor(),
       [handler = std::move(s.handler), e]() mutable

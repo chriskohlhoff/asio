@@ -2,7 +2,7 @@
 // detail/timer_queue_ptime.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_NO_DEPRECATED)
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 
@@ -99,5 +101,7 @@ private:
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_DETAIL_TIMER_QUEUE_PTIME_HPP

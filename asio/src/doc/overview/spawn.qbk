@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -92,7 +92,6 @@ function object signature is actually:
 [link asio.reference.spawn spawn],
 [link asio.reference.yield_context yield_context],
 [link asio.reference.basic_yield_context basic_yield_context],
-[link asio.examples.cpp03_examples.spawn Spawn example (C++03)],
 [link asio.examples.cpp11_examples.spawn Spawn example (C++11)],
 [link asio.overview.composition.coroutine Stackless Coroutines].
 

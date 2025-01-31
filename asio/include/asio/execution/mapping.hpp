@@ -2,7 +2,7 @@
 // execution/mapping.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -733,7 +733,7 @@ const T other_t<I>::static_query_v;
 
 typedef detail::mapping_t<> mapping_t;
 
-constexpr mapping_t mapping;
+ASIO_INLINE_VARIABLE constexpr mapping_t mapping;
 
 } // namespace execution
 

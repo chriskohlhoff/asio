@@ -2,7 +2,7 @@
 // ssl/detail/impl/engine.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -100,6 +100,12 @@ engine& engine::operator=(engine&& other) noexcept
 {
   if (this != &other)
   {
+    if (ext_bio_)
+      ::BIO_free(ext_bio_);
+
+    if (ssl_)
+      ::SSL_free(ssl_);
+
     ssl_ = other.ssl_;
     ext_bio_ = other.ext_bio_;
     other.ssl_ = 0;

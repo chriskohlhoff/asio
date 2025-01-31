@@ -2,7 +2,7 @@
 // detail/impl/timer_queue_ptime.ipp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,8 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if !defined(ASIO_NO_DEPRECATED)
 
 #if defined(ASIO_HAS_BOOST_DATE_TIME)
 
@@ -93,5 +95,7 @@ void timer_queue<time_traits<boost::posix_time::ptime>>::move_timer(
 #include "asio/detail/pop_options.hpp"
 
 #endif // defined(ASIO_HAS_BOOST_DATE_TIME)
+
+#endif // !defined(ASIO_NO_DEPRECATED)
 
 #endif // ASIO_DETAIL_IMPL_TIMER_QUEUE_PTIME_IPP

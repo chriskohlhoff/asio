@@ -45,12 +45,17 @@ nobase_include_HEADERS = \
 	asio/buffer.hpp \
 	asio/buffer_registration.hpp \
 	asio/buffers_iterator.hpp \
+	asio/cancel_after.hpp \
+	asio/cancel_at.hpp \
 	asio/cancellation_signal.hpp \
 	asio/cancellation_state.hpp \
 	asio/cancellation_type.hpp \
+	asio/co_composed.hpp \
 	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
 	asio/compose.hpp \
+	asio/composed.hpp \
+	asio/config.hpp \
 	asio/connect.hpp \
 	asio/connect_pipe.hpp \
 	asio/consign.hpp \
@@ -58,6 +63,7 @@ nobase_include_HEADERS = \
 	asio/deadline_timer.hpp \
 	asio/defer.hpp \
 	asio/deferred.hpp \
+	asio/default_completion_token.hpp \
 	asio/detached.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
@@ -74,6 +80,9 @@ nobase_include_HEADERS = \
 	asio/detail/chrono.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
+	asio/detail/completion_message.hpp \
+	asio/detail/completion_payload.hpp \
+	asio/detail/completion_payload_handler.hpp \
 	asio/detail/composed_work.hpp \
 	asio/detail/concurrency_hint.hpp \
 	asio/detail/conditionally_enabled_event.hpp \
@@ -166,6 +175,7 @@ nobase_include_HEADERS = \
 	asio/detail/initiate_defer.hpp \
 	asio/detail/initiate_dispatch.hpp \
 	asio/detail/initiate_post.hpp \
+	asio/detail/initiation_base.hpp \
 	asio/detail/io_control.hpp \
 	asio/detail/io_object_impl.hpp \
 	asio/detail/io_uring_descriptor_read_at_op.hpp \
@@ -281,6 +291,7 @@ nobase_include_HEADERS = \
 	asio/detail/thread_info_base.hpp \
 	asio/detail/throw_error.hpp \
 	asio/detail/throw_exception.hpp \
+	asio/detail/timed_cancel_op.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue.hpp \
 	asio/detail/timer_queue_ptime.hpp \
@@ -337,6 +348,7 @@ nobase_include_HEADERS = \
 	asio/detail/work_dispatcher.hpp \
 	asio/detail/wrapped_handler.hpp \
 	asio/dispatch.hpp \
+	asio/disposition.hpp \
 	asio/error_code.hpp \
 	asio/error.hpp \
 	asio/execution.hpp \
@@ -358,9 +370,7 @@ nobase_include_HEADERS = \
 	asio/execution/relationship.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
-	asio/experimental/append.hpp \
 	asio/experimental/as_single.hpp \
-	asio/experimental/as_tuple.hpp \
 	asio/experimental/awaitable_operators.hpp \
 	asio/experimental/basic_channel.hpp \
 	asio/experimental/basic_concurrent_channel.hpp \
@@ -373,11 +383,7 @@ nobase_include_HEADERS = \
 	asio/experimental/concurrent_channel.hpp \
 	asio/experimental/coro.hpp \
 	asio/experimental/coro_traits.hpp \
-	asio/experimental/deferred.hpp \
-	asio/experimental/detail/channel_handler.hpp \
-	asio/experimental/detail/channel_message.hpp \
 	asio/experimental/detail/channel_operation.hpp \
-	asio/experimental/detail/channel_payload.hpp \
 	asio/experimental/detail/channel_receive_op.hpp \
 	asio/experimental/detail/channel_send_functions.hpp \
 	asio/experimental/detail/channel_send_op.hpp \
@@ -389,14 +395,12 @@ nobase_include_HEADERS = \
 	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/channel_error.ipp \
-	asio/experimental/impl/co_composed.hpp \
 	asio/experimental/impl/coro.hpp \
 	asio/experimental/impl/parallel_group.hpp \
 	asio/experimental/impl/promise.hpp \
 	asio/experimental/impl/use_coro.hpp \
 	asio/experimental/impl/use_promise.hpp \
 	asio/experimental/parallel_group.hpp \
-	asio/experimental/prepend.hpp \
 	asio/experimental/promise.hpp \
 	asio/experimental/use_coro.hpp \
 	asio/experimental/use_promise.hpp \
@@ -411,6 +415,7 @@ nobase_include_HEADERS = \
 	asio/handler_continuation_hook.hpp \
 	asio/high_resolution_timer.hpp \
 	asio.hpp \
+	asio/immediate.hpp \
 	asio/impl/any_completion_executor.ipp \
 	asio/impl/any_io_executor.ipp \
 	asio/impl/append.hpp \
@@ -418,8 +423,12 @@ nobase_include_HEADERS = \
 	asio/impl/awaitable.hpp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
+	asio/impl/cancel_after.hpp \
+	asio/impl/cancel_at.hpp \
 	asio/impl/cancellation_signal.ipp \
 	asio/impl/co_spawn.hpp \
+	asio/impl/config.hpp \
+	asio/impl/config.ipp \
 	asio/impl/connect.hpp \
 	asio/impl/connect_pipe.hpp \
 	asio/impl/connect_pipe.ipp \
@@ -455,8 +464,6 @@ nobase_include_HEADERS = \
 	asio/impl/write.hpp \
 	asio/io_context.hpp \
 	asio/io_context_strand.hpp \
-	asio/io_service.hpp \
-	asio/io_service_strand.hpp \
 	asio/ip/address.hpp \
 	asio/ip/address_v4.hpp \
 	asio/ip/address_v4_iterator.hpp \
@@ -560,9 +567,7 @@ nobase_include_HEADERS = \
 	asio/ssl/impl/context.ipp \
 	asio/ssl/impl/error.ipp \
 	asio/ssl/impl/host_name_verification.ipp \
-	asio/ssl/impl/rfc2818_verification.ipp \
 	asio/ssl/impl/src.hpp \
-	asio/ssl/rfc2818_verification.hpp \
 	asio/ssl/stream_base.hpp \
 	asio/ssl/stream.hpp \
 	asio/ssl/verify_context.hpp \

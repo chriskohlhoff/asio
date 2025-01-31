@@ -2,7 +2,7 @@
 // detail/io_uring_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -82,7 +82,7 @@ public:
     io_queue queues_[max_ops];
     bool shutdown_;
 
-    ASIO_DECL io_object(bool locking);
+    ASIO_DECL io_object(bool locking, int spin_count);
   };
 
   // Per I/O object data.
@@ -276,6 +276,12 @@ private:
 
   // Whether the service has been shut down.
   bool shutdown_;
+
+  // Whether I/O locking is enabled.
+  const bool io_locking_;
+
+  // How any times to spin waiting for the I/O mutex.
+  const int io_locking_spin_count_;
 
   // The timer queues.
   timer_queue_set timer_queues_;

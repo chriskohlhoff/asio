@@ -2,7 +2,7 @@
 // thread_pool.hpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -91,6 +91,19 @@ public:
 
   /// Constructs a pool with a specified number of threads.
   ASIO_DECL thread_pool(std::size_t num_threads);
+
+  /// Constructs a pool with a specified number of threads.
+  /**
+   * Construct with a service maker, to create an initial set of services that
+   * will be installed into the execution context at construction time.
+   *
+   * @param num_threads The number of threads required.
+   *
+   * @param initial_services Used to create the initial services. The @c make
+   * function will be called once at the end of execution_context construction.
+   */
+  ASIO_DECL thread_pool(std::size_t num_threads,
+      const execution_context::service_maker& initial_services);
 
   /// Destructor.
   /**

@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -62,7 +62,7 @@ retrieve the error code from the most recent system call:
 
 [link asio.reference.ip__tcp.iostream ip::tcp::iostream],
 [link asio.reference.basic_socket_iostream basic_socket_iostream],
-[link asio.examples.cpp03_examples.iostreams iostreams examples].
+[link asio.examples.cpp11_examples.iostreams iostreams examples].
 
 [heading Notes]
 
