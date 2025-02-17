@@ -1,5 +1,5 @@
 freebsd_instance:
-  image_family: freebsd-14-0
+  image_family: freebsd-14-2
   cpu: 1
 
 env:
