@@ -227,7 +227,11 @@ int epoll_reactor::register_internal_descriptor(
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
   if (result != 0)
+  {
+    // Don't try to re-register internal descriptor after fork().
+    descriptor_data->registered_events_ = 0;
     return errno;
+  }
 
   return 0;
 }
