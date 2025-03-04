@@ -32,7 +32,8 @@ T config_get(const config_service& service, const char* section,
 {
   if (is_unsigned<T>::value)
   {
-    char buf[std::numeric_limits<unsigned long long>::max_digits10 + 1];
+    char buf[std::numeric_limits<unsigned long long>::digits10
+        + 1 /* sign */ + 1 /* partial digit */ + 1 /* NUL */];
     if (const char* str = service.get_value(section, key, buf, sizeof(buf)))
     {
       char* end = nullptr;
@@ -44,7 +45,8 @@ T config_get(const config_service& service, const char* section,
   }
   else
   {
-    char buf[std::numeric_limits<long long>::max_digits10 + 1];
+    char buf[std::numeric_limits<unsigned long long>::digits10
+        + 1 /* sign */ + 1 /* partial digit */ + 1 /* NUL */];
     if (const char* str = service.get_value(section, key, buf, sizeof(buf)))
     {
       char* end = nullptr;
@@ -62,7 +64,8 @@ template <typename T>
 T config_get(const config_service& service, const char* section,
     const char* key, T default_value, true_type /*is_bool*/)
 {
-  char buf[std::numeric_limits<unsigned long long>::max_digits10 + 1];
+  char buf[std::numeric_limits<unsigned long long>::digits10
+      + 1 /* sign */ + 1 /* partial digit */ + 1 /* NUL */];
   if (const char* str = service.get_value(section, key, buf, sizeof(buf)))
   {
     char* end = nullptr;
