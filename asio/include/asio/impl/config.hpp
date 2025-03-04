@@ -37,6 +37,7 @@ T config_get(const config_service& service, const char* section,
     if (const char* str = service.get_value(section, key, buf, sizeof(buf)))
     {
       char* end = nullptr;
+      errno = 0;
       unsigned long long result = std::strtoull(str, &end, 0);
       if (errno == ERANGE || result > (std::numeric_limits<T>::max)())
         detail::throw_exception(std::out_of_range("config out of range"));
@@ -50,6 +51,7 @@ T config_get(const config_service& service, const char* section,
     if (const char* str = service.get_value(section, key, buf, sizeof(buf)))
     {
       char* end = nullptr;
+      errno = 0;
       long long result = std::strtoll(str, &end, 0);
       if (errno == ERANGE || result < (std::numeric_limits<T>::min)()
           || result > (std::numeric_limits<T>::max)())
@@ -69,6 +71,7 @@ T config_get(const config_service& service, const char* section,
   if (const char* str = service.get_value(section, key, buf, sizeof(buf)))
   {
     char* end = nullptr;
+    errno = 0;
     unsigned long long result = std::strtoll(str, &end, 0);
     if (errno == ERANGE || (result != 0 && result != 1))
       detail::throw_exception(std::out_of_range("config out of range"));
