@@ -32,7 +32,7 @@ namespace asio {
 namespace local {
 namespace detail {
 
-endpoint::endpoint()
+endpoint::endpoint() noexcept
 {
   init("", 0);
 }
@@ -93,12 +93,12 @@ void endpoint::path(const std::string& p)
   init(p.data(), p.length());
 }
 
-bool operator==(const endpoint& e1, const endpoint& e2)
+bool operator==(const endpoint& e1, const endpoint& e2) noexcept
 {
   return e1.path() == e2.path();
 }
 
-bool operator<(const endpoint& e1, const endpoint& e2)
+bool operator<(const endpoint& e1, const endpoint& e2) noexcept
 {
   return e1.path() < e2.path();
 }
