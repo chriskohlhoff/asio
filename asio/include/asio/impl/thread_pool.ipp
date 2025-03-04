@@ -60,7 +60,8 @@ inline long default_thread_pool_size()
 
 thread_pool::thread_pool()
   : scheduler_(add_scheduler(new detail::scheduler(*this, false))),
-    num_threads_(detail::default_thread_pool_size())
+    num_threads_(detail::default_thread_pool_size()),
+    joinable_(true)
 {
   scheduler_.work_started();
 
