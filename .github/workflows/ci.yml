@@ -111,7 +111,7 @@ jobs:
             cxx-std: c++17
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_76_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.bz2
           #
           # Linux / g++-10 / -O2 / standalone
           #
@@ -167,7 +167,7 @@ jobs:
             cxx-std: c++14
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # Linux / g++-10 / -O0 / boost 1.83 / epoll disabled
           #
@@ -177,7 +177,7 @@ jobs:
             cxx-std: c++14
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
             select-reactor: -DASIO_DISABLE_EPOLL
           #
           # Linux / g++-10 / -O0 / boost 1.83 / separate compilation
@@ -189,7 +189,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # Linux / g++-8 / -O2 / standalone
           #
@@ -217,7 +217,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # Linux / clang++-14 -std=c++2a / -O2 / standalone
           #
@@ -297,7 +297,7 @@ jobs:
             cxx-std: c++11
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # macOS / c++11 / -O2 / boost 1.83 / separate compilation
           #
@@ -308,7 +308,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
