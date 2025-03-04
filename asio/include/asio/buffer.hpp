@@ -859,9 +859,6 @@ private:
  */
 /*@{*/
 
-# define mutable_buffer mutable_buffer
-# define const_buffer const_buffer
-
 /// Create a new modifiable buffer from an existing buffer.
 /**
  * @returns <tt>mutable_buffer(b)</tt>.
