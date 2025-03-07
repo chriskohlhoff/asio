@@ -196,10 +196,13 @@ struct promise_handler<void(Ts...), Executor, Allocator>
   using promise_type = promise<void(Ts...), Executor, Allocator>;
 
   promise_handler(
-      Allocator allocator, Executor executor) // get_associated_allocator(exec)
-    : impl_(
-        std::allocate_shared<promise_impl<void(Ts...), Executor, Allocator>>(
-          allocator, allocator, executor))
+      const Allocator& allocator, const Executor& executor)
+    : impl_(make_promise_impl(executor, allocator))
+  {
+  }
+
+  promise_handler(const Executor& executor)
+    : impl_(make_promise_impl(executor))
   {
   }
 
@@ -243,6 +246,19 @@ struct promise_handler<void(Ts...), Executor, Allocator>
 
     if (impl_->completion)
       impl_->complete_with_result();
+  }
+
+ private:
+  std::shared_ptr<promise_impl<void(Ts...), Executor, Allocator>>
+  make_promise_impl(const Executor& executor, const Allocator& allocator) {
+    return std::allocate_shared<promise_impl<void(Ts...), Executor, Allocator>>(
+        allocator, allocator, executor);
+  }
+
+  std::shared_ptr<promise_impl<void(Ts...), Executor, Allocator>>
+  make_promise_impl(const Executor& executor) {
+    return make_promise_impl(
+        executor, get_associated_allocator(executor, std::allocator<void>{}));
   }
 };
 
