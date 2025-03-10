@@ -128,11 +128,11 @@ public:
   ASIO_DECL ~signal_set_service();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Perform fork-related housekeeping.
   ASIO_DECL void notify_fork(
-      asio::execution_context::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev) override;
 
   // Construct a new signal_set implementation.
   ASIO_DECL void construct(implementation_type& impl);

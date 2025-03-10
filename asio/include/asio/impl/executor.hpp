@@ -183,64 +183,64 @@ public:
   {
   }
 
-  impl_base* clone() const noexcept
+  impl_base* clone() const noexcept override
   {
     return const_cast<impl_base*>(static_cast<const impl_base*>(this));
   }
 
-  void destroy() noexcept
+  void destroy() noexcept override
   {
   }
 
-  void on_work_started() noexcept
+  void on_work_started() noexcept override
   {
     executor_.on_work_started();
   }
 
-  void on_work_finished() noexcept
+  void on_work_finished() noexcept override
   {
     executor_.on_work_finished();
   }
 
-  execution_context& context() noexcept
+  execution_context& context() noexcept override
   {
     return executor_.context();
   }
 
-  void dispatch(function&& f)
+  void dispatch(function&& f) override
   {
     executor_.dispatch(static_cast<function&&>(f),
         std::allocator<void>());
   }
 
-  void post(function&& f)
+  void post(function&& f) override
   {
     executor_.post(static_cast<function&&>(f),
         std::allocator<void>());
   }
 
-  void defer(function&& f)
+  void defer(function&& f) override
   {
     executor_.defer(static_cast<function&&>(f),
         std::allocator<void>());
   }
 
-  type_id_result_type target_type() const noexcept
+  type_id_result_type target_type() const noexcept override
   {
     return type_id<system_executor>();
   }
 
-  void* target() noexcept
+  void* target() noexcept override
   {
     return &executor_;
   }
 
-  const void* target() const noexcept
+  const void* target() const noexcept override
   {
     return &executor_;
   }
 
-  bool equals(const impl_base* e) const noexcept
+  bool equals(const impl_base* e) const noexcept override
   {
     return this == e;
   }

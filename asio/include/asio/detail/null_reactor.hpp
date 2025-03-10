@@ -56,17 +56,17 @@ public:
   }
 
   // Destroy all user-defined handler objects owned by the service.
-  void shutdown()
+  void shutdown() override
   {
   }
 
   // No-op because should never be called.
-  void run(long /*usec*/, op_queue<scheduler_operation>& /*ops*/)
+  void run(long /*usec*/, op_queue<scheduler_operation>& /*ops*/) override
   {
   }
 
   // No-op.
-  void interrupt()
+  void interrupt() override
   {
   }
 };

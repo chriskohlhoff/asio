@@ -32,7 +32,7 @@ public:
 
   /// Obtain message associated with exception.
   ASIO_DECL virtual const char* what() const
-    noexcept;
+    noexcept override;
 
   /// Obtain a pointer to the first exception.
   ASIO_DECL std::exception_ptr first_exception() const;
