@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <asio.hpp>
+#include <boost/bind/bind.hpp>
 
 using asio::ip::udp;
 
@@ -39,7 +40,7 @@ private:
   {
     socket_.async_receive_from(
         asio::buffer(recv_buffer_), remote_endpoint_,
-        std::bind(&udp_server::handle_receive, this,
+        boost::bind(&udp_server::handle_receive, this,
           asio::placeholders::error,
           asio::placeholders::bytes_transferred));
   }
@@ -53,7 +54,7 @@ private:
           new std::string(make_daytime_string()));
 
       socket_.async_send_to(asio::buffer(*message), remote_endpoint_,
-          std::bind(&udp_server::handle_send, this, message,
+          boost::bind(&udp_server::handle_send, this, message,
             asio::placeholders::error,
             asio::placeholders::bytes_transferred));
 
