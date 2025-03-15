@@ -40,8 +40,8 @@ private:
     socket_.async_receive_from(
         asio::buffer(recv_buffer_), remote_endpoint_,
         std::bind(&udp_server::handle_receive, this,
-          asio::placeholders::error,
-          asio::placeholders::bytes_transferred));
+          std::placeholders::_1,
+          std::placeholders::_2));
   }
 
   void handle_receive(const std::error_code& error,
@@ -54,8 +54,8 @@ private:
 
       socket_.async_send_to(asio::buffer(*message), remote_endpoint_,
           std::bind(&udp_server::handle_send, this, message,
-            asio::placeholders::error,
-            asio::placeholders::bytes_transferred));
+            std::placeholders::_1,
+            std::placeholders::_2));
 
       start_receive();
     }
