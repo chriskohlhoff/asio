@@ -654,7 +654,7 @@
 // Boost support for source_location and system errors.
 #if !defined(ASIO_HAS_BOOST_SOURCE_LOCATION)
 # if !defined(ASIO_DISABLE_BOOST_SOURCE_LOCATION)
-#  if defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 107900)
+#  if defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 107900) && !defined(BOOST_NO_EXCEPTIONS)
 #   define ASIO_HAS_BOOST_SOURCE_LOCATION 1
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && (BOOST_VERSION >= 107900)
 # endif // !defined(ASIO_DISABLE_BOOST_SOURCE_LOCATION)
