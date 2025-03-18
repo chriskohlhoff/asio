@@ -112,7 +112,8 @@ bool address_v6::is_loopback() const noexcept
       && (addr_.s6_addr[8] == 0) && (addr_.s6_addr[9] == 0)
       && (addr_.s6_addr[10] == 0) && (addr_.s6_addr[11] == 0)
       && (addr_.s6_addr[12] == 0) && (addr_.s6_addr[13] == 0)
-      && (addr_.s6_addr[14] == 0) && (addr_.s6_addr[15] == 1));
+      && (addr_.s6_addr[14] == 0) && (addr_.s6_addr[15] == 1))
+      || (is_v4_mapped() && (addr_.s6_addr[12] == 0x7f));
 }
 
 bool address_v6::is_unspecified() const noexcept
