@@ -127,6 +127,7 @@ INPUT                  = ./../../include/asio.hpp \
                          ./../../include/asio/experimental \
                          ./model_dox.txt \
                          ./noncopyable_dox.txt \
+                         ./requirements_dox.txt \
                          ./std_exception_dox.txt
 INPUT_ENCODING         = UTF-8
 INPUT_FILE_ENCODING    =

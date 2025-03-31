@@ -734,6 +734,11 @@
       <xsl:value-of select="."/>
       <xsl:text>]</xsl:text>
     </xsl:when>
+    <xsl:when test="@refid = 'async_result_requirements'">
+      <xsl:text>[link asio.reference.asynchronous_operations.completion_tokens_and_handlers </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:text>`</xsl:text>
       <xsl:value-of select="."/>
