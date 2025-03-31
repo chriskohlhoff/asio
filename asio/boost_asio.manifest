@@ -7450,7 +7450,6 @@
 /libs/asio/test/ssl/error.cpp
 /libs/asio/test/ssl/host_name_verification.cpp
 /libs/asio/test/ssl/Jamfile.v2
-/libs/asio/test/ssl/rfc2818_verification.cpp
 /libs/asio/test/ssl/stream_base.cpp
 /libs/asio/test/ssl/stream.cpp
 /libs/asio/test/static_thread_pool.cpp
