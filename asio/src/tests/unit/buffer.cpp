@@ -197,6 +197,10 @@ void test()
     mb1 = buffer(raw_data, 1024);
     cb1 = buffer(const_raw_data);
     cb1 = buffer(const_raw_data, 1024);
+    mb1 = buffer(span_1);
+    mb1 = buffer(span_1, 128);
+    cb1 = buffer(span_2);
+    cb1 = buffer(span_2, 128);
 #if defined(ASIO_HAS_BOOST_ARRAY)
     mb1 = buffer(array_data);
     mb1 = buffer(array_data, 1024);
