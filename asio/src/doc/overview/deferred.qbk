@@ -44,6 +44,15 @@ The deferred token also supports chaining, to create simple compositions:
   ...
   std::future<void> = std::move(deferred_op)(asio::use_future);
 
+[heading Deferred as the Default Completion Token]
+
+Most asynchronous operations provided by Asio have a default completion token.
+Although this default token can be changed by specifying a custom executor, it
+is normally asio::deferred. This means that we can omit the token and simply
+write:
+
+  auto deferred_op = timer.async_wait();
+
 [heading See Also]
 
 [link asio.reference.deferred deferred],
