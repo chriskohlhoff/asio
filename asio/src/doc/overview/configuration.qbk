@@ -1,0 +1,299 @@
+[/
+ / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:configuration Runtime Configuration and Concurrency Hints]
+
+Asio provides a number of runtime configuration options that can be used to
+fine tune Asio's behaviour, such as enabling or disabling specific
+optimisations. The configuration options available are listed in the table
+below.
+
+[table
+  [[Section][Key][Type][Default][Description]]
+  [
+    [`scheduler`]
+    [`concurrency_hint`]
+    [`int`]
+    [`0`]
+    [
+      This is a suggestion to the `io_context` implementation as to the number
+      of active threads that should be used for running completion handlers.
+
+      When the Windows I/O completion port backend is in use, this value is
+      passed to [^CreateIoCompletionPort].
+
+      When a reactor-based backend is used, the implementation recognises the
+      value `1` as an indication that the `io_context` will be run from a
+      single thread, and applies several optimisations based on this
+      assumption. For example, when a handler is posted from within another
+      handler, the new handler is added to a fast thread-local queue (with the
+      consequence that the new handler is held back until the currently
+      executing handler finishes).
+
+      No matter what value is specified for this configuration option, the
+      `io_context` or `thread_pool` still provides full thread safety, and
+      distinct I/O objects may be used from any thread.
+    ]
+  ]
+  [
+    [`scheduler`]
+    [`locking`]
+    [`bool`]
+    [`true`]
+    [
+      This is used to enable or disable locking in the scheduler, when using a
+      reactor-based backend. When set to `false`, this option has the following
+      restrictions:
+
+      [mdash] Care must be taken to ensure that all operations on the
+      `io_context` and any of its associated I/O objects (such as sockets and
+      timers) occur in only one thread at a time.
+
+      [mdash] Asynchronous resolve operations fail with `operation_not_supported`.
+
+      [mdash] If a `signal_set` is used with the `io_context`, `signal_set`
+      objects cannot be used with any other io_context in the program.
+    ]
+  ]
+  [
+    [`scheduler`]
+    [`locking_spin_count`]
+    [`int`]
+    [`0`]
+    [
+      The number of times to first attempt to acquire the scheduler's internal
+      lock without blocking, when using a reactor-based backend.
+    ]
+  ]
+  [
+    [`scheduler`]
+    [`task_usec`]
+    [`int`]
+    [`-1`]
+    [
+      The maximum time, in microseconds, that the scheduler will wait for its
+      reactor task to complete. A value of `-1` means that no limit is placed
+      on this wait time. May be set to `0` to enable CPU-bound spinning.
+    ]
+  ]
+  [
+    [`scheduler`]
+    [`wait_usec`]
+    [`int`]
+    [`-1`]
+    [
+      The maximum time, in microseconds, that the scheduler will wait on its
+      wake-up event in an idle thread (i.e. a thread that is not otherwise
+      executing a handler or waiting on the reactor). A value of `-1` means
+      that no limit is placed on this wait time. May be set to `0` to enable
+      CPU-bound spinning in an execution context that is being run on multiple
+      threads.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`preallocated_io_objects`]
+    [`int`]
+    [`0`]
+    [
+      The number of internal reactor I/O object states to allocate at
+      construction.
+
+      The reactor implementation uses per I/O object state to track things like
+      the queue of outstanding operations. These state objects are recycled
+      once the I/O object is destroyed, but new ones are allocated if there are
+      no unused state objects currently available.
+
+      If an upper bound on the number of I/O objects is known at construction
+      time, this configuration option can be set to ensure that no allocations
+      occur after construction is complete.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`registration_locking`]
+    [`bool`]
+    [`true`]
+    [
+      Enables or disables locking in the reactor around I/O object registration
+      and deregistration.
+
+      If set to `false`, care must be taken not to concurrently open or close
+      I/O objects.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`registration_locking_spin_count`]
+    [`int`]
+    [`0`]
+    [
+      The number of times to first attempt to acquire the reactor's lock
+      without blocking, when performing I/O object registration or
+      deregistration.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`io_locking`]
+    [`bool`]
+    [`true`]
+    [
+      Enables or disables per I/O object locking in the reactor
+
+      If set to `false`, care must be taken to ensure that the ['run functions]
+      on the `io_context` (i.e. `run`, `run_for`, `run_until`, `run_one`,
+      `run_one_for`, `run_one_until`, `poll`, and `poll_one`), and all
+      operations on the context's associated I/O objects (such as sockets and
+      timers), occur in only one thread at a time.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`io_locking_spin_count`]
+    [`int`]
+    [`0`]
+    [
+      The number of times to first attempt to acquire the reactor's per I/O
+      object locks without blocking.
+    ]
+  ]
+]
+
+These configuration options are associated with an execution context (such as
+[link asio.reference.io_context `io_context`] or [link
+asio.reference.thread_pool `thread_pool`]. In order to use non-default values,
+a configuration service must be installed into the execution context at
+construction. A number of ways to achieve this are illustrated in the sections
+below.
+
+[heading Configuration From String]
+
+To read configuration options from a string, construct the execution context
+with a [link asio.reference.config_from_string `config_from_string`] object:
+
+    asio::io_context my_io_context{
+        asio::config_from_string{
+          "scheduler.concurrency_hint=10\n"
+          "scheduler.locking=1"}};
+
+Each variable must be on a line of its own, and of the form:
+
+    section.key=value
+
+or, if an optional prefix is specified:
+
+    prefix.section.key=value
+
+Blank lines and lines starting with `#` are ignored. It is also permitted to
+include a comment starting with `#` after the value.
+
+[heading Configuration From Environment Variables]
+
+To read configuration options from environment variables, construct the
+execution context with a [link asio.reference.config_from_env
+`config_from_env`] object:
+
+    asio::io_context my_io_context{
+        asio::config_from_env{"my_app"}};
+
+The environment variable names are formed by concatenating the prefix,
+section, and key, with underscore as delimiter, and then converting the
+resulting string to upper case. For example, given a prefix `"my_app"` and
+the `"scheduler"` / `"concurrency_hint" option, the value is read from an
+environment variable named `MY_APP_SCHEDULER_CONCURRENCY_HINT`.
+
+[heading Configuration From Concurrency Hint]
+
+For backwards compatibility, the [link asio.reference.io_context.io_context
+`io_context` constructor] can be passed a concurrency hint as an integer. This
+is used to initialise the configuration options as described in the table
+below.
+
+[table
+  [[concurrency_hint Value][Effect]]
+  [
+    [`n`, where `n < 0xFFFF`]
+    [
+      Equivalent to setting:
+
+      [mdash] `"scheduler"` / `"concurrency_hint"` to `n`.
+
+      [mdash] `"scheduler"` / `"locking"` to `true`.
+
+      [mdash] `"reactor"` / `"registration_locking"` to `true`.
+
+      [mdash] `"reactor"` / `"io_locking"` to `true`.
+    ]
+  ]
+  [
+    [`ASIO_CONCURRENCY_HINT_UNSAFE`]
+    [
+      [mdash] `"scheduler"` / `"concurrency_hint"` to `1`.
+
+      [mdash] `"scheduler"` / `"locking"` to `false`.
+
+      [mdash] `"reactor"` / `"registration_locking"` to `false`.
+
+      [mdash] `"reactor"` / `"io_locking"` to `false`.
+    ]
+  ]
+  [
+    [`ASIO_CONCURRENCY_HINT_UNSAFE_IO`]
+    [
+      [mdash] `"scheduler"` / `"concurrency_hint"` to `1`.
+
+      [mdash] `"scheduler"` / `"locking"` to `true`.
+
+      [mdash] `"reactor"` / `"registration_locking"` to `false`.
+
+      [mdash] `"reactor"` / `"io_locking"` to `false`.
+    ]
+  ]
+  [
+    [`ASIO_CONCURRENCY_HINT_SAFE`]
+    [
+      [mdash] `"scheduler"` / `"concurrency_hint"` to `1`.
+
+      [mdash] `"scheduler"` / `"locking"` to `true`.
+
+      [mdash] `"reactor"` / `"registration_locking"` to `true`.
+
+      [mdash] `"reactor"` / `"io_locking"` to `true`.
+    ]
+  ]
+]
+
+[teletype]
+The concurrency hint used by default-constructed `io_context` objects can be
+overridden at compile time by defining the `ASIO_CONCURRENCY_HINT_DEFAULT`
+macro. For example, specifying
+
+    -DASIO_CONCURRENCY_HINT_DEFAULT=1
+
+on the compiler command line means that a concurrency hint of `1` is used for
+all default-constructed `io_context` objects in the program. Similarly, the
+concurrency hint used by `io_context` objects constructed with `1` can be
+overridden by defining `ASIO_CONCURRENCY_HINT_1`. For example, passing
+
+    -DASIO_CONCURRENCY_HINT_1=ASIO_CONCURRENCY_HINT_UNSAFE
+  
+to the compiler will disable thread safety for all of these objects.
+
+[heading Custom Configuration Options]
+
+[c++]
+Applications and third-party libraries can utilise the [link
+asio.reference.config `config`] class to associate their own configuration
+options with an execution context, or to access the configuration options
+listed above. The configuration parameters' values are accessed by passing a
+section, key and default value to the `get` member function:[br]
+
+    asio::config cfg{ctx};
+    bool enable_locking = cfg.get("scheduler", "locking", true);
+
+[endsect]
