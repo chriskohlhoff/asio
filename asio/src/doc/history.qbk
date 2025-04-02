@@ -2924,8 +2924,8 @@
 
 * Added reactor-related (i.e. descriptor readiness) events to handler tracking.
 
-* Added special [link asio.overview.core.concurrency_hint concurrency
-  hint] values that may be used to disable locking on a per `io_context` basis.
+* Added special concurrency hint values that may be used to disable locking on
+  a per `io_context` basis.
 
 * Enabled perfect forwarding for the first `ssl::stream<>` constructor argument.
 

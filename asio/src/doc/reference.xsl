@@ -1711,6 +1711,9 @@
         <xsl:when test="$declname = 'Context_Service'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
+        <xsl:when test="$declname = 'ConvertibleToBuffer'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
         <xsl:when test="$declname = 'DefaultCandidate'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
@@ -1743,6 +1746,9 @@
         </xsl:when>
         <xsl:when test="$declname = 'Executor2'">
           <xsl:value-of select="concat('``[link asio.reference.Executor1 ', $declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="$declname = 'Extent'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
         <xsl:when test="$declname = 'F'">
           <xsl:value-of select="$declname"/>
@@ -1908,6 +1914,9 @@
         </xsl:when>
         <xsl:when test="$declname = 'SocketService1' or $declname = 'SocketService2'">
           <xsl:value-of select="concat('``[link asio.reference.SocketService ', $declname, ']``')"/>
+        </xsl:when>
+        <xsl:when test="$declname = 'Span'">
+          <xsl:value-of select="$declname"/>
         </xsl:when>
         <xsl:when test="$declname = 'StackAllocator'">
           <xsl:value-of select="$declname"/>

@@ -642,6 +642,8 @@ inline bool asio_handler_is_continuation(spawn_handler<Executor, Signature>*)
 
 } // namespace detail
 
+#if !defined(GENERATING_DOCUMENTATION)
+
 template <typename Executor, typename Signature>
 class async_result<basic_yield_context<Executor>, Signature>
 {
@@ -713,6 +715,8 @@ public:
 
 #endif // defined(ASIO_HAS_VARIADIC_LAMBDA_CAPTURES)
 };
+
+#endif // !defined(GENERATING_DOCUMENTATION)
 
 namespace detail {
 
