@@ -2,7 +2,7 @@
 // fd_passing_stream_client.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2021 Heiko Hund (heiko at openvpn dot net)
 // Copyright (c) 2025 Pavlo Kleymonov (pkleymonov at qnx dot com)
 //

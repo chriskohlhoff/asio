@@ -2,7 +2,7 @@
 // disposition.hpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,7 +26,7 @@
 
 namespace asio {
 
-/// Traits type to adapt arbtirary error types as dispositions.
+/// Traits type to adapt arbitrary error types as dispositions.
 /**
  * This type may be specialised for user-defined types, to allow them to be
  * treated as a disposition by asio.
@@ -65,10 +65,10 @@ struct is_disposition_impl<T,
     is_nothrow_default_constructible<T>::value
   >,
   enable_if_t<
-    is_nothrow_copy_constructible<T>::value
+    is_nothrow_move_constructible<T>::value
   >,
   enable_if_t<
-    is_nothrow_copy_assignable<T>::value
+    is_nothrow_move_assignable<T>::value
   >,
   enable_if_t<
     is_same<
@@ -94,7 +94,7 @@ struct is_disposition_impl<T,
 /// disposition.
 /**
  * To be a valid disposition, a type must be nothrow default-constructible,
- * nothrow copy-constructible, nothrow copy-assignable, and there must be a
+ * nothrow move-constructible, nothrow move-assignable, and there must be a
  * specialisation of the disposition_traits template for the type that provides
  * the following static member functions:
  * @li @c not_an_error: Takes an argument of type <tt>const T&</tt> and returns

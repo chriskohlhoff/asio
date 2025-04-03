@@ -10,8 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         build-type: ['sanity']
-        runs-on: [ubuntu-20.04, ubuntu-22.04, macos-latest]
-        compiler: [g++-8, g++-9, g++-10, g++-12, clang++-10, clang++-14, g++]
+        runs-on: [ubuntu-22.04, ubuntu-24.04, macos-latest]
+        compiler: [g++-9, g++-10, g++-12, g++-14, clang++-14, clang++-18, g++]
         cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
         separate-compilation: ['', '--enable-separate-compilation']
         optim-level: ['-O0']
@@ -21,24 +21,24 @@ jobs:
         boost: ['']
         boost-url: ['']
         exclude:
-          # New compilers don't run on ubuntu 20.04
-          - runs-on: ubuntu-20.04
-            compiler: g++-12
-          - runs-on: ubuntu-20.04
+          # New compilers don't run on ubuntu 22.04
+          - runs-on: ubuntu-22.04
+            compiler: g++-14
+          - runs-on: ubuntu-22.04
+            compiler: clang++-18
+          # Older compilers don't run on ubuntu 24.04
+          - runs-on: ubuntu-24.04
+            compiler: g++-9
+          - runs-on: ubuntu-24.04
+            compiler: g++-10
+          - runs-on: ubuntu-24.04
             compiler: clang++-14
-          # Older compilers don't run on ubuntu 22.04
-          - runs-on: ubuntu-22.04
-            compiler: g++-8
-          - runs-on: ubuntu-22.04
-            compiler: clang++-10
           # Unversioned g++ doesn't run on ubuntu
-          - runs-on: ubuntu-20.04
-            compiler: g++
           - runs-on: ubuntu-22.04
+            compiler: g++
+          - runs-on: ubuntu-24.04
             compiler: g++
           # Versioned g++ and clang++ don't run on macOS
-          - runs-on: macos-latest
-            compiler: g++-8
           - runs-on: macos-latest
             compiler: g++-9
           - runs-on: macos-latest
@@ -46,20 +46,18 @@ jobs:
           - runs-on: macos-latest
             compiler: g++-12
           - runs-on: macos-latest
-            compiler: clang++-10
+            compiler: g++-14
           - runs-on: macos-latest
             compiler: clang++-14
+          - runs-on: macos-latest
+            compiler: clang++-18
           # Older compilers don't support newer std variants
-          - compiler: g++-8
-            cxx-std: c++20
           - compiler: g++-9
             cxx-std: c++20
           - compiler: g++-10
             cxx-std: c++2a
           - compiler: g++-12
             cxx-std: c++2a
-          - compiler: clang++-10
-            cxx-std: c++20
           - compiler: clang++-14
             cxx-std: c++20
           - compiler: clang++-14
@@ -67,18 +65,18 @@ jobs:
           - runs-on: macos-latest
             cxx-std: c++20
           # Specifying the select reactor is OS-specific
-          - runs-on: ubuntu-20.04
-            select-reactor: -DASIO_DISABLE_KQUEUE
           - runs-on: ubuntu-22.04
+            select-reactor: -DASIO_DISABLE_KQUEUE
+          - runs-on: ubuntu-24.04
             select-reactor: -DASIO_DISABLE_KQUEUE
           - runs-on: macos-latest
             select-reactor: -DASIO_DISABLE_EPOLL
           # Trim builds that use separate compilation
-          - compiler: g++-8
-            separate-compilation: --enable-separate-compilation
           - compiler: g++-9
             separate-compilation: --enable-separate-compilation
           - compiler: g++-10
+            separate-compilation: --enable-separate-compilation
+          - compiler: g++-11
             separate-compilation: --enable-separate-compilation
           - runs-on: macos-latest
             cxx-std: c++14
@@ -87,18 +85,18 @@ jobs:
             cxx-std: c++17
             separate-compilation: --enable-separate-compilation
           # Trim builds that use select reactor
-          - compiler: g++-8
-            select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-9
             select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-10
+            select-reactor: -DASIO_DISABLE_EPOLL
+          - compiler: g++-12
             select-reactor: -DASIO_DISABLE_EPOLL
         include:
           #
           # Linux / g++-12 -std=c++20 -fcoroutines / -O2 / standalone
           #
           - build-type: full
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             compiler: g++-12
             cxx-std: c++20 -fcoroutines
             optim-level: -O2
@@ -106,17 +104,17 @@ jobs:
           # Linux / g++-12 -std=c++17 / -O2 / boost 1.76
           #
           - build-type: full
-            runs-on: ubuntu-22.04
+            runs-on: ubuntu-24.04
             compiler: g++-12
             cxx-std: c++17
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_76_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.bz2
           #
           # Linux / g++-10 / -O2 / standalone
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             optim-level: -O2
@@ -124,7 +122,7 @@ jobs:
           # Linux / g++-10 / -O0 / standalone / handler tracking
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             optim-level: -O0
@@ -133,7 +131,7 @@ jobs:
           # Linux / g++-10 / -O0 / standalone / epoll disabled
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             optim-level: -O0
@@ -142,7 +140,7 @@ jobs:
           # Linux / g++-10 / -O0 / standalone / separate compilation / handler tracking
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             separate-compilation: --enable-separate-compilation
@@ -152,7 +150,7 @@ jobs:
           # Linux / g++-10 / -O0 / standalone / separate compilation / epoll disabled
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             separate-compilation: --enable-separate-compilation
@@ -162,62 +160,62 @@ jobs:
           # Linux / g++-10 / -O2 / boost 1.83
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # Linux / g++-10 / -O0 / boost 1.83 / epoll disabled
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
             select-reactor: -DASIO_DISABLE_EPOLL
           #
           # Linux / g++-10 / -O0 / boost 1.83 / separate compilation
           #
           - build-type: full
-            runs-on: ubuntu-20.04
+            runs-on: ubuntu-22.04
             compiler: g++-10
             cxx-std: c++14
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
-          # Linux / g++-8 / -O2 / standalone
+          # Linux / g++-9 / -O2 / standalone
           #
           - build-type: full
-            runs-on: ubuntu-20.04
-            compiler: g++-8
+            runs-on: ubuntu-22.04
+            compiler: g++-9
             cxx-std: c++11
             optim-level: -O2
           #
-          # Linux / g++-8 / -O0 / standalone / separate compilation
+          # Linux / g++-9 / -O0 / standalone / separate compilation
           #
           - build-type: full
-            runs-on: ubuntu-20.04
-            compiler: g++-8
+            runs-on: ubuntu-22.04
+            compiler: g++-9
             cxx-std: c++11
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
           #
-          # Linux / g++-8 -std=c++11 / -O2 / boost 1.83
+          # Linux / g++-9 -std=c++11 / -O2 / boost 1.83
           #
           - build-type: full
-            runs-on: ubuntu-20.04
-            compiler: g++-8
+            runs-on: ubuntu-22.04
+            compiler: g++-9
             cxx-std: c++11
             separate-compilation: --enable-separate-compilation
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # Linux / clang++-14 -std=c++2a / -O2 / standalone
           #
@@ -225,7 +223,6 @@ jobs:
             runs-on: ubuntu-22.04
             compiler: clang++-14
             cxx-std: c++2a
-            cxx-stdlib: -stdlib=libc++
             optim-level: -O2
           #
           # Linux / clang++-14 -std=c++11 / -O0 / standalone / separate compilation
@@ -237,21 +234,20 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
           #
-          # Linux / clang++-14 -std=c++20 / -O2 / standalone / separate compilation
+          # Linux / clang++-18 -std=c++20 / -O2 / standalone / separate compilation
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04
+            compiler: clang++-18
+            cxx-std: c++20
+            separate-compilation: --enable-separate-compilation
+            optim-level: -O2
+          #
+          # Linux / clang++-14 -std=c++11 / -O2 / standalone
           #
           - build-type: full
             runs-on: ubuntu-22.04
             compiler: clang++-14
-            cxx-std: c++20
-            cxx-stdlib: -stdlib=libc++
-            separate-compilation: --enable-separate-compilation
-            optim-level: -O2
-          #
-          # Linux / clang++-10 -std=c++11 / -O2 / standalone
-          #
-          - build-type: full
-            runs-on: ubuntu-20.04
-            compiler: clang++-10
             cxx-std: c++11
             optim-level: -O2
           #
@@ -297,7 +293,7 @@ jobs:
             cxx-std: c++11
             optim-level: -O2
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
           #
           # macOS / c++11 / -O2 / boost 1.83 / separate compilation
           #
@@ -308,7 +304,7 @@ jobs:
             separate-compilation: --enable-separate-compilation
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
-            boost-url: https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.bz2
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}

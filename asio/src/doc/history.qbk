@@ -1,11 +1,144 @@
 [/
- / Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
 [section:history Revision History]
+
+[heading Asio 1.34.0]
+
+* Relaxed disposition requirements to require only nothrow move, rather than
+  copy.
+
+* Fixed compile error when threading support is disabled.
+
+* Fixed compile error when `ASIO_DISABLE_SMALL_BLOCK_RECYCLING` is defined.
+
+* Fixed compile error when using Clang 19.
+
+* Changed `thread_pool::join()` to ensure that it stops threads that are
+  subsequently added to the pool using `thread_pool::attach()`.
+
+* Fixed the offsets passed to `io_uring_prep_write_fixed` and
+  `io_uring_prep_read_fixed`, when they are used for stream-oriented operations.
+
+[heading Asio 1.33.0]
+
+* Added support for using byte spans and sequences of byte spans as buffer
+  sequences. This means that they can be passed directly to I/O operations such
+  as `async_read`.
+
+* Added support for dispositions, which are types that can be used to test
+  whether an asynchronous operation completed without error. This includes
+  `error_code` and `exception_ptr`, but can be extended to user types via
+  specialisation of the `disposition_traits` class template. Generic code that
+  is intended to work in terms of dispositions should not use
+  `asio::disposition_traits` directly, but instead:
+  * Test whether a disposition holds no error by comparing against
+    `asio::no_error` (of type `asio::no_error_t`).
+  * Use `asio::to_exception_ptr` to convert a disposition to a
+    `std::exception_ptr`.
+  * Use `asio::throw_exception` to throw an exception that corresponds to
+    the disposition, after first testing the disposition against
+    `asio::no_error`.
+
+* Added disposition support to the `asio::use_future` completion token,
+  `asio::awaitable<>`-based coroutines, `asio::spawn()`, and
+  `asio::experimental::cancellation_condition`.
+
+* Added the `execution_context::service_maker` abstract base class. A
+  `service_maker` is an object that is passed to an execution context's
+  constructor, and allows services to be added at context construction time.
+  Additional constructor overloads have been added to `io_context` and
+  `thread_pool` that accept a `service_maker`.
+
+* Added `asio::config`. The `config` class provides access to
+  configuration parameters that are associated with an execution context. The
+  class is intended for use by asio internals, or by libraries or user-provided
+  abstractions that build on top of asio. These configuration parameters will
+  typically be used to fine tune behaviour, such as enabling or disabling
+  certain optimisations. When constructing an execution context, such as an
+  `io_context`, the caller may optionally pass a `service_maker` to install a
+  concrete configuration service into the context. For example:[br]
+  ``
+    asio::io_context ctx{asio::config_from_env{}};
+  ``
+  The configuration parameters' values are accessed using the `config` class,
+  passing a section, key and default value:[br]
+  ``
+    asio::config cfg{ctx};
+    bool enable_locking = cfg.get("scheduler", "locking", true);
+  ``
+
+* Added an initial set of configuration parameters recognised by asio's
+  `io_context` and `thread_pool` implementations:
+  * "scheduler" / "concurrency_hint" (int, default `0`) - A suggestion to the
+    scheduler of how many active should be used for running completion handlers.
+  * "scheduler" / "locking" (bool, default `true`) - May be set to `false` to
+    disable locking in the scheduler, in which case care must be taken not to
+    perform concurrent operations on the execution context or its I/O objects.
+  * "scheduler" / "locking_spin_count" (int, default `0`) - The number of times
+    to first attempt to acquire the lock without blocking.
+  * "scheduler" / "task_usec" (long, default `-1`) - The maximum time that the
+    scheduler will wait for its reactor task to complete.
+  * "scheduler" / "wait_usec" (long, default `-1`) - The maximum time that the
+    scheduler will wait on its wakeup event in an idle thread.
+  * "reactor" / "preallocated_io_objects" (unsigned int, default `0`) - The
+    number of internal reactor I/O object states to allocate at construction.
+  * "reactor" / "registration_locking" (bool, default `true`) - May be set to
+    `false` to disable locking in the reactor around I/O object registration,
+    in which case care must be taken not to concurrently open or close I/O 
+    objects.
+  * "reactor" / "registration_locking_spin_count" (int, default `0`) - The
+    number of times to first attempt to acquire the lock without blocking.
+  * "reactor" / "io_locking" (bool, default `true`) - May be set to `false` to
+    disable per I/O object locking in the reactor, in which case the execution
+    context must be single-threaded and care must be taken not to perform
+    concurrent calls to I/O operations' initiating functions.
+  * "reactor" / "io_locking_spin_count" (int, default `0`) - The number of times
+    to first attempt to acquire the lock without blocking.
+
+* Removed some previously deprecated facilities:
+  * Removed Boost.Coroutine-based `spawn()` overloads. The `spawn()` function
+    now works only with the fiber support in Boost.Context.
+  * Removed deprecated `asio::connect` overloads.
+  * Removed deprecated `ip::address_v4` member functions.
+  * Removed deprecated `ip::address_v6` member functions.
+  * Removed deprecated constant `socket_base::max_connections`.
+  * Removed deprecated classes `const_buffers_1` and `mutable_buffers_1`.
+  * Removed deprecated function `buffer_cast`.
+  * Removed deprecated `use_future_t::operator[]`.
+  * Removed deprecated alias `experimental::append`.
+  * Removed deprecated alias `experimental::prepend`.
+  * Removed deprecated alias `experimental::as_tuple`.
+  * Removed deprecated alias `experimental::deferred`.
+  * Removed deprecated class `ssl::rfc2818_verification`.
+  * Removed deprecated alias `io_service`.
+  * Removed deprecated class `io_context::work`.
+  * Removed deprecated `io_context` ['run functions].
+  * Removed deprecated function `io_context::reset`.
+  * Removed deprecated `io_context::service` member functions.
+  * Removed deprecated `dispatch` and `post` members from `io_context` andxi
+    `io_context::strand`.
+
+* Deprecated `basic_io_object`.
+
+* Deprecated `deadline_timer` and associated types.
+
+* Added rvalue-qualified `operator()` overloads to associating binders.
+
+* Added support for modular build structure.
+
+* Fixed `spawn()` of functions that return move-only types.
+
+* Fixed `co_composed` to not require concepts support.
+
+* Fixed the epoll reactor to not try to re-register regular file descriptors
+  after fork.
+
+* Fixed a leak in `ssl::detail::engine` move assignment.
 
 [heading Asio 1.32.0]
 

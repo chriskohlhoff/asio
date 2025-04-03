@@ -2,7 +2,7 @@
 // detail/io_uring_socket_send_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -69,7 +69,7 @@ public:
     {
       ::io_uring_prep_write_fixed(sqe, o->socket_,
           o->bufs_.buffers()->iov_base, o->bufs_.buffers()->iov_len,
-          0, o->bufs_.registered_id().native_handle());
+          -1, o->bufs_.registered_id().native_handle());
     }
     else
     {

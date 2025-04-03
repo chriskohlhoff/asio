@@ -2,7 +2,7 @@
 // thread_pool.hpp
 // ~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -40,6 +40,17 @@ namespace detail {
 /**
  * The thread pool class is an execution context where functions are permitted
  * to run on one of a fixed number of threads.
+ *
+ * @par Thread Safety
+ * @e Distinct @e objects: Safe.@n
+ * @e Shared @e objects: Safe, with the specific exceptions of the join()
+ * wait() and notify_fork() functions. The join() and wait() functions must not
+ * be called at the same time as other calls to join() or wait() on the same
+ * pool. The notify_fork() function should not be called while any thread_pool
+ * function, or any function on an I/O object that is associated with the
+ * thread_pool, is being called in another thread. (In effect, this means that
+ * notify_fork() is safe only on a thread pool that has no internal or attached
+ * threads at the time.)
  *
  * @par Submitting tasks to the pool
  *
@@ -145,6 +156,8 @@ public:
    * This function blocks until the threads in the pool have completed. If @c
    * stop() is not called prior to @c wait(), the @c wait() call will wait
    * until the pool has no more outstanding work.
+   *
+   * @note @c wait() is synonymous with @c join().
    */
   ASIO_DECL void wait();
 
@@ -165,6 +178,9 @@ private:
 
   // The current number of threads in the pool.
   detail::atomic_count num_threads_;
+
+  // Whether a join call will have any effect.
+  bool joinable_;
 };
 
 /// Executor implementation type used to submit functions to a thread pool.

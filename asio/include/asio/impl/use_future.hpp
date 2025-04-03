@@ -2,7 +2,7 @@
 // impl/use_future.hpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2024 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -102,7 +102,7 @@ private:
   decay_t<F> f_;
 };
 
-// An executor that adapts the system_executor to capture any exeption thrown
+// An executor that adapts the system_executor to capture any exception thrown
 // by a submitted function object and save it into a promise.
 template <typename T, typename Blocking = execution::blocking_t::possibly_t>
 class promise_executor
@@ -235,11 +235,12 @@ class promise_handler_d_0
   : public promise_creator<void>
 {
 public:
-  void operator()(const Disposition& d)
+  void operator()(Disposition d)
   {
     if (d != no_error)
     {
-      this->p_->set_exception((to_exception_ptr)(d));
+      this->p_->set_exception(
+          (to_exception_ptr)(static_cast<Disposition&&>(d)));
     }
     else
     {
@@ -268,11 +269,12 @@ class promise_handler_d_1
 {
 public:
   template <typename Arg>
-  void operator()(const Disposition& d, Arg&& arg)
+  void operator()(Disposition d, Arg&& arg)
   {
     if (d != no_error)
     {
-      this->p_->set_exception((to_exception_ptr)(d));
+      this->p_->set_exception(
+          (to_exception_ptr)(static_cast<Disposition&&>(d)));
     }
     else
       this->p_->set_value(static_cast<Arg&&>(arg));
@@ -301,11 +303,12 @@ class promise_handler_d_n
 {
 public:
   template <typename... Args>
-  void operator()(const Disposition& d, Args&&... args)
+  void operator()(Disposition d, Args&&... args)
   {
     if (d != no_error)
     {
-      this->p_->set_exception((to_exception_ptr)(d));
+      this->p_->set_exception(
+          (to_exception_ptr)(static_cast<Disposition&&>(d)));
     }
     else
     {
