@@ -27,9 +27,9 @@
 # include "asio/detail/kqueue_reactor.hpp"
 #elif defined(ASIO_HAS_DEV_POLL)
 # include "asio/detail/dev_poll_reactor.hpp"
-#else
 #elif defined(ASIO_HAS_IONOTIFY)
 # include "asio/detail/ionotify_reactor.hpp"
+#else
 # include "asio/detail/select_reactor.hpp"
 #endif
 
