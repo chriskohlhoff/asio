@@ -130,6 +130,7 @@ void test()
 #endif // defined(ASIO_HAS_STRING_VIEW)
 
     // address_v6 IPv4-mapped conversion.
+    ip::address_v4 addr3;
     addr1 = ip::make_address_v6(ip::v4_mapped, addr3);
     addr3 = ip::make_address_v4(ip::v4_mapped, addr1);
 
