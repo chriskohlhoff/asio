@@ -28,6 +28,8 @@
 #elif defined(ASIO_HAS_DEV_POLL)
 # include "asio/detail/dev_poll_reactor.hpp"
 #else
+#elif defined(ASIO_HAS_IONOTIFY)
+# include "asio/detail/ionotify_reactor.hpp"
 # include "asio/detail/select_reactor.hpp"
 #endif
 
@@ -44,6 +46,8 @@ typedef epoll_reactor reactor;
 typedef kqueue_reactor reactor;
 #elif defined(ASIO_HAS_DEV_POLL)
 typedef dev_poll_reactor reactor;
+#elif defined(ASIO_HAS_IONOTIFY)
+typedef ionotify_reactor reactor;
 #else
 typedef select_reactor reactor;
 #endif
