@@ -19,6 +19,7 @@
 
 #if defined(ASIO_HAS_IOCP) \
   || (!defined(ASIO_HAS_DEV_POLL) \
+      && !defined(ASIO_HAS_IONOTIFY) \
       && !defined(ASIO_HAS_EPOLL) \
       && !defined(ASIO_HAS_KQUEUE) \
       && !defined(ASIO_WINDOWS_RUNTIME))
@@ -284,6 +285,7 @@ private:
 
 #endif // defined(ASIO_HAS_IOCP)
        //   || (!defined(ASIO_HAS_DEV_POLL)
+       //       && !defined(ASIO_HAS_IONOTIFY)
        //       && !defined(ASIO_HAS_EPOLL)
        //       && !defined(ASIO_HAS_KQUEUE)
        //       && !defined(ASIO_WINDOWS_RUNTIME))

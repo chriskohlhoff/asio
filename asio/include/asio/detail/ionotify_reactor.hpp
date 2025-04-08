@@ -275,8 +275,3 @@ private:
 #endif // defined(ASIO_HAS_IONOTIFY)
 
 #endif // ASIO_DETAIL_IONOTIFY_REACTOR_HPP
-
-#if defined(__QNXNTO__) && defined(__USESRCVERSION)
-#include <sys/srcversion.h>
-__SRCVERSION("$URL: http://svn.ott.qnx.com/product/private/scratch/adas/autosar/projects/boost/boost/asio/detail/ionotify_reactor.hpp $ $Rev: 936906 $")
-#endif

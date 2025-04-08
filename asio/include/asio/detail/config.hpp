@@ -11,15 +11,6 @@
 #ifndef ASIO_DETAIL_CONFIG_HPP
 #define ASIO_DETAIL_CONFIG_HPP
 
-// Macros need to be set for QNX target-OS
-#if defined(QNX)
-// on our specific QNX version SA_RESTART is not defined, so make it 0 such that  is no-op for logical "or" and force to 0 for logical "and"
-# define SA_RESTART   0x0
-// on our specific QNX version <experimental/string_view> is a fake file which would still define experimental support
-// so disabled explicitly
-# define ASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW
-#endif
-
 // boostify: non-boost code starts here
 #if !defined(ASIO_STANDALONE)
 # if !defined(ASIO_ENABLE_BOOST)
