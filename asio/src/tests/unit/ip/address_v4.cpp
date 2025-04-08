@@ -150,7 +150,7 @@ void test()
   ASIO_CHECK(a1.to_bytes()[1] == 0);
   ASIO_CHECK(a1.to_bytes()[2] == 0);
   ASIO_CHECK(a1.to_bytes()[3] == 0);
-  ASIO_CHECK(a1.to_uint() == 0);	
+  ASIO_CHECK(a1.to_uint() == 0);
 
   address_v4::bytes_type b1 = {{ 1, 2, 3, 4 }};
   address_v4 a2(b1);
