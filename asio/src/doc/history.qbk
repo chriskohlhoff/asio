@@ -7,6 +7,19 @@
 
 [section:history Revision History]
 
+[heading Asio 1.34.2]
+
+* Fixed an ambiguous overload issue that occurred when passing a `std::span` to
+  the `asio::buffer` function.
+
+* Added overview documentation on the available runtime configuration options.
+
+* Updated the overview documentation to reflect the use of `deferred` as the
+  default completion token.
+
+* Updated the `async_result` documentation to reflect the current type
+  requirements placed on specialisations of the trait.
+
 [heading Asio 1.34.1]
 
 * Added `noexcept` qualifiers to various `local::basic_endpoint` member
