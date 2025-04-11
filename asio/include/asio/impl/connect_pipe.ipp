@@ -55,15 +55,25 @@ void create_pipe(native_pipe_handle p[2], asio::error_code& ec)
     ? ::InterlockedIncrement(&counter2)
     : ::InterlockedExchangeAdd(&counter2, 0);
 
-  wchar_t pipe_name[128];
+  // https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters:
+  //  "The entire pipe name string can be up to 256 characters long."
+  // Yet 128 characters are enough to accommodate the worst-case name
+  // formatted below for 64-bit architectures (54+10+16+11+11+1==103).
+  wchar_t pipe_name[128]; // see also "128" and "127" below
 #if defined(ASIO_HAS_SECURE_RTL)
   swprintf_s(
 #else // defined(ASIO_HAS_SECURE_RTL)
   _snwprintf(
 #endif // defined(ASIO_HAS_SECURE_RTL)
-      pipe_name, 128,
-      L"\\\\.\\pipe\\asio-A0812896-741A-484D-AF23-BE51BF620E22-%u-%ld-%ld",
-      static_cast<unsigned int>(::GetCurrentProcessId()), n1, n2);
+      pipe_name, /*count=*/ 128,
+      L"\\\\.\\pipe\\asio-A0812896-741A-484D-AF23-BE51BF620E22-%u-%p-%ld-%ld",
+      // We need the pointer to unclash Boost instances in plug-in DLLs
+      static_cast<unsigned int>(::GetCurrentProcessId()), &counter1, n1, n2);
+  // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/snprintf-snprintf-snprintf-l-snwprintf-snwprintf-l#remarks:
+  //  "Because the **`_snprintf`** functions do not guarantee null termination—
+  //   in particular, when the return value is _`count`_—make sure that they
+  //   are followed by code that adds the null terminator."
+  pipe_name[127] = L'\0'; // future-proof
 
   p[0] = ::CreateNamedPipeW(pipe_name,
       PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
