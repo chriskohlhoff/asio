@@ -48,9 +48,11 @@ void win_iocp_file_service::shutdown()
   handle_service_.shutdown();
 }
 
+template<typename CharacterType,
+         std::enable_if_t<std::is_same_v<CharacterType, char> || std::is_same_v<CharacterType, wchar_t>, bool> = true>
 asio::error_code win_iocp_file_service::open(
     win_iocp_file_service::implementation_type& impl,
-    const char* path, file_base::flags open_flags,
+    const CharacterType* path, file_base::flags open_flags,
     asio::error_code& ec)
 {
   if (is_open(impl))
@@ -95,7 +97,15 @@ asio::error_code win_iocp_file_service::open(
     flags |= FILE_FLAG_WRITE_THROUGH;
 
   impl.offset_ = 0;
-  HANDLE handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
+  HANDLE handle = INVALID_HANDLE_VALUE;
+  if constexpr(std::is_same_v<CharacterType, char>)
+  {
+    handle = ::CreateFileA(path, access, share, 0, disposition, flags, 0);
+  }
+  if constexpr(std::is_same_v<CharacterType, wchar_t>)
+  {
+    handle = ::CreateFileW(path, access, share, 0, disposition, flags, 0);
+  }
   if (handle != INVALID_HANDLE_VALUE)
   {
     if (disposition == OPEN_ALWAYS)
