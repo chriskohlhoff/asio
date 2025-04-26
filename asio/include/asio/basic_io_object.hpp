@@ -30,7 +30,7 @@ namespace detail
 {
   // Type trait used to determine whether a service supports move.
   template <typename IoObjectService>
-  class service_has_move
+  class ASIO_DEPRECATED service_has_move
   {
   private:
     typedef IoObjectService service_type;
@@ -60,7 +60,7 @@ template <typename IoObjectService>
 template <typename IoObjectService,
     bool Movable = detail::service_has_move<IoObjectService>::value>
 #endif
-class basic_io_object
+class ASIO_DEPRECATED basic_io_object
 {
 public:
   /// The type of the service that will be used to provide I/O operations.
@@ -190,7 +190,7 @@ private:
 
 // Specialisation for movable objects.
 template <typename IoObjectService>
-class basic_io_object<IoObjectService, true>
+class ASIO_DEPRECATED basic_io_object<IoObjectService, true>
 {
 public:
   typedef IoObjectService service_type;

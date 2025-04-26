@@ -328,7 +328,9 @@ private:
 /// (Deprecated: Use the socket/descriptor wait() and async_wait() member
 /// functions.) An implementation of both the ConstBufferSequence and
 /// MutableBufferSequence concepts to represent a null buffer sequence.
-class null_buffers
+class ASIO_DEPRECATED_X(
+  "Use the socket/descriptor wait() and async_wait() member functions")
+null_buffers
 {
 public:
   /// The type for each element in the list of buffers.

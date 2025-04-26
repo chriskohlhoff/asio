@@ -33,7 +33,7 @@ struct forwarding_posix_time_traits : time_traits<boost::posix_time::ptime> {};
 
 // Template specialisation for the commonly used instantiation.
 template <>
-class timer_queue<time_traits<boost::posix_time::ptime>>
+class ASIO_DEPRECATED timer_queue<time_traits<boost::posix_time::ptime>>
   : public timer_queue_base
 {
 public:
