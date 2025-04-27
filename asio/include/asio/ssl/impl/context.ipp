@@ -1196,6 +1196,38 @@ ASIO_SYNC_OP_VOID context::do_use_tmp_dh(
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
+void context::use_keylog_file(const std::string& filename)
+{
+  asio::error_code ec;
+  use_keylog_file(filename, ec);
+  asio::detail::throw_error(ec, "use_keylog_file");
+}
+
+ASIO_SYNC_OP_VOID context::use_keylog_file(
+      const std::string& filename, asio::error_code& ec)
+{
+  ::ERR_clear_error();
+
+  if (BIO *b = (BIO *) SSL_CTX_get_app_data(handle_)) {
+    BIO_free( b );
+  }
+
+  BIO* bio = ::BIO_new_file(filename.c_str(), "w");
+
+  if (bio)
+  {
+    ::SSL_CTX_set_ex_data( handle_, KEYLOG_DATA, bio );
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+    ::SSL_CTX_set_keylog_callback( handle_, keylog_callback );
+#endif // (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+  }
+
+  ec = asio::error_code(
+      static_cast<int>(::ERR_get_error()),
+      asio::error::get_ssl_category());
+  ASIO_SYNC_OP_VOID_RETURN(ec);
+}
+
 ASIO_SYNC_OP_VOID context::do_set_verify_callback(
     detail::verify_callback_base* callback, asio::error_code& ec)
 {
@@ -1313,6 +1345,18 @@ asio::error_code context::translate_error(long error)
   return asio::error_code(static_cast<int>(error),
       asio::error::get_ssl_category());
 }
+
+void context::keylog_callback( const SSL *ssl, const char *line )
+{
+    if( SSL_CTX* handle = ::SSL_get_SSL_CTX( ssl ) ) {
+        if( BIO *b = (BIO *)::SSL_CTX_get_ex_data( handle, KEYLOG_DATA ) ) {
+            BIO_printf( b, "%s\n", line );
+            BIO_flush( b );
+        }
+    }
+}
+
+
 
 } // namespace ssl
 } // namespace asio
