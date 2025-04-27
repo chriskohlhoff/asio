@@ -90,11 +90,11 @@ public:
   ASIO_DECL ~epoll_reactor();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void notify_fork(
-      asio::execution_context::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev) override;
 
   // Initialise the task.
   ASIO_DECL void init_task();
@@ -206,10 +206,10 @@ public:
       typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run epoll once until interrupted or events are ready to be dispatched.
-  ASIO_DECL void run(long usec, op_queue<operation>& ops);
+  ASIO_DECL void run(long usec, op_queue<operation>& ops) override;
 
   // Interrupt the select loop.
-  ASIO_DECL void interrupt();
+  ASIO_DECL void interrupt() override;
 
 private:
   // The hint to pass to epoll_create to size its data structures.

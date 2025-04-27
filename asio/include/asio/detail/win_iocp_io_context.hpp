@@ -53,7 +53,7 @@ public:
   ASIO_DECL ~win_iocp_io_context();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Initialise the task. Nothing to do here.
   void init_task()

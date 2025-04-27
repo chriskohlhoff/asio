@@ -82,7 +82,7 @@ public:
   ASIO_DECL reactive_descriptor_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Construct a new descriptor implementation.
   ASIO_DECL void construct(implementation_type& impl);

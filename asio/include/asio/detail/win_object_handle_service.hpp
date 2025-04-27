@@ -87,7 +87,7 @@ public:
   ASIO_DECL win_object_handle_service(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Construct a new handle implementation.
   ASIO_DECL void construct(implementation_type& impl);

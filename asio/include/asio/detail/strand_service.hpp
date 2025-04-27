@@ -78,7 +78,7 @@ public:
   ASIO_DECL explicit strand_service(asio::io_context& io_context);
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Construct a new strand implementation.
   ASIO_DECL void construct(implementation_type& impl);

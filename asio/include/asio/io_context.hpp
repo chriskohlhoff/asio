@@ -954,7 +954,7 @@ public:
 
 private:
   /// Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL virtual void shutdown();
+  ASIO_DECL virtual void shutdown() override;
 
   /// Handle notification of a fork-related event to perform any necessary
   /// housekeeping.
@@ -963,7 +963,7 @@ private:
    * implement it if necessary. The default implementation does nothing.
    */
   ASIO_DECL virtual void notify_fork(
-      execution_context::fork_event event);
+      execution_context::fork_event event) override;
 
 protected:
   /// Constructor.

@@ -74,11 +74,11 @@ public:
   ASIO_DECL ~select_reactor();
 
   // Destroy all user-defined handler objects owned by the service.
-  ASIO_DECL void shutdown();
+  ASIO_DECL void shutdown() override;
 
   // Recreate internal descriptors following a fork.
   ASIO_DECL void notify_fork(
-      asio::execution_context::fork_event fork_ev);
+      asio::execution_context::fork_event fork_ev) override;
 
   // Initialise the task, but only if the reactor is not in its own thread.
   ASIO_DECL void init_task();

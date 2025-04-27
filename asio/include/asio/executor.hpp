@@ -41,7 +41,7 @@ public:
 
   /// Obtain message associated with exception.
   ASIO_DECL virtual const char* what() const
-    noexcept;
+    noexcept override;
 };
 
 /// Polymorphic wrapper for executors.
