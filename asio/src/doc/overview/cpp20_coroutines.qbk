@@ -25,8 +25,8 @@ keyword, as shown in the following example:
       char data[1024];
       for (;;)
       {
-        std::size_t n = co_await socket.async_read_some(asio::buffer(data), asio::use_awaitable);
-        co_await async_write(socket, asio::buffer(data, n), asio::use_awaitable);
+        std::size_t n = co_await socket.async_read_some(asio::buffer(data));
+        co_await async_write(socket, asio::buffer(data, n));
       }
     }
     catch (std::exception& e)
@@ -56,13 +56,20 @@ asio.reference.detached `asio::detached`], which is used to explicitly ignore
 the result of an asynchronous operation.
 
 In this example the body of the coroutine is implemented in the `echo`
-function. When the `use_awaitable` completion token is passed to an
-asynchronous operation, the operation's initiating function returns an
-`awaitable` that may be used with the `co_await` keyword:
+function. When an asynchronous operation is called without explicitly specifying
+a completion token, the default completion token [link asio.reference.deferred
+`deferred`] is used. This causes the operation's initiating function to return
+a deferred asynchronous operation object that may be used with the `co_await`
+keyword:
+
+  std::size_t n = co_await socket.async_read_some(asio::buffer(data));
+
+Alternatively, we can specify the `use_awaitable` completion token:
 
   std::size_t n = co_await socket.async_read_some(asio::buffer(data), asio::use_awaitable);
 
-Where an asynchronous operation's handler signature has the form:
+With either of those completion tokens, when an asynchronous operation's handler
+signature has the form:
 
   void handler(asio::error_code ec, result_type result);
 
@@ -94,6 +101,25 @@ the awaited operation. For example:
     for (;;)
     {
       std::tuple<asio::error_code, std::size_t> result =
+        co_await socket.async_read_some(
+          asio::buffer(data), asio::as_tuple);
+      if (!std::get<0>(result))
+      {
+        // success
+      }
+
+      // ...
+    }
+  }
+
+or if explicitly specifying the `use_awaitable` completion token:
+
+  asio::awaitable<void> echo(tcp::socket socket)
+  {
+    char data[1024];
+    for (;;)
+    {
+      std::tuple<asio::error_code, std::size_t> result =
         co_await socket.async_read_some(asio::buffer(data),
           asio::as_tuple(asio::use_awaitable));
       if (!std::get<0>(result))
@@ -113,7 +139,7 @@ The result can also be captured directly into a structured binding:
     for (;;)
     {
       auto [ec, n] = co_await socket.async_read_some(
-          asio::buffer(data), asio::as_tuple(asio::use_awaitable));
+          asio::buffer(data), asio::as_tuple);
       if (!ec)
       {
         // success
@@ -132,8 +158,8 @@ capture the error into a supplied `error_code` variable:
     for (;;)
     {
       asio::error_code ec;
-      std::size_t n = co_await socket.async_read_some(asio::buffer(data),
-          asio::redirect_error(asio::use_awaitable, ec));
+      std::size_t n = co_await socket.async_read_some(
+          asio::buffer(data), asio::redirect_error(ec));
       if (!ec)
       {
         // success
@@ -220,6 +246,9 @@ namespace into scope:
 
   using namespace asio::experimental::awaitable_operators;
 
+Note: To use these operators we must explicitly specify the `use_awaitable`
+completion token.
+
 [heading Lightweight Coroutines Implementing Asynchonous Operations]
 
 The `co_composed` template facilitates a lightweight implementation of
@@ -246,11 +275,12 @@ protocol in terms of a coroutine:
                 for (;;)
                 {
                   char data[1024];
-                  std::size_t n = co_await socket.async_read_some(
-                      asio::buffer(data), asio::deferred);
+                  std::size_t n =
+                    co_await socket.async_read_some(
+                      asio::buffer(data));
 
                   co_await asio::async_write(socket,
-                      asio::buffer(data, n), asio::deferred);
+                      asio::buffer(data, n));
                 }
               }
               catch (const asio::system_error& e)

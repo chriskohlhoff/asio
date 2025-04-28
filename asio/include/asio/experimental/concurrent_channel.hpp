@@ -58,9 +58,15 @@ struct concurrent_channel_type<ExecutorOrSignature,
 } // namespace detail
 
 /// Template type alias for common use of channel.
+#if defined(GENERATING_DOCUMENTATION)
+template <typename ExecutorOrSignature, typename... Signatures>
+using concurrent_channel = basic_concurrent_channel<
+    specified_executor_or_any_io_executor, channel_traits<>, signatures...>;
+#else // defined(GENERATING_DOCUMENTATION)
 template <typename ExecutorOrSignature, typename... Signatures>
 using concurrent_channel = typename detail::concurrent_channel_type<
     ExecutorOrSignature>::template inner<Signatures...>::type;
+#endif // defined(GENERATING_DOCUMENTATION)
 
 } // namespace experimental
 } // namespace asio

@@ -343,34 +343,54 @@ private:
 
 /// An interface for customising the behaviour of an initiating function.
 /**
- * The async_result traits class is used for determining:
+ * The async_result trait is a customisation point that is used within the
+ * initiating function for an @ref asynchronous_operation. The trait combines:
+ *
+ * @li the completion signature (or signatures) that describe the arguments that
+ * an asynchronous operation will pass to a completion handler;
+ *
+ * @li the @ref completion_token type supplied by the caller; and
+ *
+ * @li the operation's internal implementation.
+ *
+ * Specialisations of the trait must satisfy the @ref async_result_requirements,
+ * and are reponsible for determining:
  *
  * @li the concrete completion handler type to be called at the end of the
  * asynchronous operation;
  *
- * @li the initiating function return type; and
+ * @li the initiating function return type;
  *
- * @li how the return value of the initiating function is obtained.
+ * @li how the return value of the initiating function is obtained; and
  *
- * The trait allows the handler and return types to be determined at the point
- * where the specific completion handler signature is known.
+ * @li how and when to launch the operation by invoking the supplied initiation
+ * function object.
  *
  * This template may be specialised for user-defined completion token types.
- * The primary template assumes that the CompletionToken is the completion
- * handler.
+ * The primary template assumes that the CompletionToken is the already a
+ * concrete completion handler.
+ *
+ * @note For backwards compatibility, the primary template implements member
+ * types and functions that are associated with legacy forms of the async_result
+ * trait. These are annotated as "Legacy" in the documentation below. User
+ * specialisations of this trait do not need to implement these in order to
+ * satisfy the @ref async_result_requirements.
+ *
+ * In general, implementers of asynchronous operations should use the
+ * async_initiate function rather than using the async_result trait directly.
  */
 template <typename CompletionToken,
     ASIO_COMPLETION_SIGNATURE... Signatures>
 class async_result
 {
 public:
-  /// The concrete completion handler type for the specific signature.
+  /// (Legacy.) The concrete completion handler type for the specific signature.
   typedef CompletionToken completion_handler_type;
 
-  /// The return type of the initiating function.
+  /// (Legacy.) The return type of the initiating function.
   typedef void return_type;
 
-  /// Construct an async result from a given handler.
+  /// (Legacy.) Construct an async result from a given handler.
   /**
    * When using a specalised async_result, the constructor has an opportunity
    * to initialise some state associated with the completion handler, which is
@@ -378,7 +398,7 @@ public:
    */
   explicit async_result(completion_handler_type& h);
 
-  /// Obtain the value to be returned from the initiating function.
+  /// (Legacy.) Obtain the value to be returned from the initiating function.
   return_type get();
 
   /// Initiate the asynchronous operation that will produce the result, and

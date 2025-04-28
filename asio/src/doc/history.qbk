@@ -7,6 +7,43 @@
 
 [section:history Revision History]
 
+[heading Asio 1.34.2]
+
+* Fixed an ambiguous overload issue that occurred when passing a `std::span` to
+  the `asio::buffer` function.
+
+* Added overview documentation on the available runtime configuration options.
+
+* Updated the overview documentation to reflect the use of `deferred` as the
+  default completion token.
+
+* Updated the `async_result` documentation to reflect the current type
+  requirements placed on specialisations of the trait.
+
+[heading Asio 1.34.1]
+
+* Added `noexcept` qualifiers to various `local::basic_endpoint` member
+  functions, to make it consistent with `ip::basic_endpoint`.
+
+* Fixed the `asio::config` class's handling of integer values.
+
+* Fixed a use-after-move error in `experimental::ranged_parallel_group`.
+
+* Fixed an incorrect default template argument in the implementation of
+  `experimental::promise`.
+
+* Fixed the `io_uring` implementation so that it does not attempt to
+  re-register internal descriptors with the reactor after a fork, if they
+  were not previously registered.
+
+* Fixed an uninitialised member in the `thread_pool` default constructor.
+
+* Removed some spurious macro definitions that were left after the removal
+  of deprecated buffer functionality.
+
+* Added documentation to clarify the use of `file_base::flags` when opening
+  a file.
+
 [heading Asio 1.34.0]
 
 * Relaxed disposition requirements to require only nothrow move, rather than
@@ -2900,8 +2937,8 @@
 
 * Added reactor-related (i.e. descriptor readiness) events to handler tracking.
 
-* Added special [link asio.overview.core.concurrency_hint concurrency
-  hint] values that may be used to disable locking on a per `io_context` basis.
+* Added special concurrency hint values that may be used to disable locking on
+  a per `io_context` basis.
 
 * Enabled perfect forwarding for the first `ssl::stream<>` constructor argument.
 

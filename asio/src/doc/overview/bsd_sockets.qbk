@@ -137,16 +137,16 @@ The following table shows the mapping between the BSD socket API and Asio:
     [`inet_addr()`,
      `inet_aton()`,
      `inet_pton()`]
-    [          [link asio.reference.ip__address.from_string ip::address::from_string()],
-               [link asio.reference.ip__address.from_string ip::address_v4::from_string()],
-               [link asio.reference.ip__address.from_string ip_address_v6::from_string()] ]
+    [          [link asio.reference.ip__address.make_address ip::make_address()],
+               [link asio.reference.ip__address_v4.make_address_v4 ip::make_address_v4()],
+               [link asio.reference.ip__address_v6.make_address_v6 ip::make_address_v6()] ]
   ]
   [
     [`inet_ntoa()`,
      `inet_ntop()`]
     [          [link asio.reference.ip__address.to_string ip::address::to_string()],
-               [link asio.reference.ip__address.to_string ip::address_v4::to_string()],
-               [link asio.reference.ip__address.to_string ip_address_v6::to_string()] ]
+               [link asio.reference.ip__address_v4.to_string ip::address_v4::to_string()],
+               [link asio.reference.ip__address_v6.to_string ip::address_v6::to_string()] ]
   ]
   [
     [`ioctl()`]

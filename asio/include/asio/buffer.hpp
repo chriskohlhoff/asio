@@ -1640,6 +1640,132 @@ ASIO_NODISCARD inline const_buffer buffer(
       ? data.size() * sizeof(typename T::value_type) : max_size_in_bytes);
 }
 
+/// Create a new modifiable buffer from a span.
+/**
+ * @returns <tt>mutable_buffer(span)</tt>.
+ */
+template <template <typename, std::size_t> class Span,
+    typename T, std::size_t Extent>
+ASIO_NODISCARD inline mutable_buffer buffer(
+    const Span<T, Extent>& span,
+    constraint_t<
+      !is_const<T>::value,
+      defaulted_constraint
+    > = defaulted_constraint(),
+    constraint_t<
+      sizeof(T) == 1,
+      defaulted_constraint
+    > = defaulted_constraint(),
+    constraint_t<
+#if defined(ASIO_MSVC)
+      detail::has_subspan_memfn<Span<T, Extent>>::value,
+#else // defined(ASIO_MSVC)
+      is_same<
+        decltype(span.subspan(0, 0)),
+        Span<T, static_cast<std::size_t>(-1)>
+      >::value,
+#endif // defined(ASIO_MSVC)
+      defaulted_constraint
+    > = defaulted_constraint()) noexcept
+{
+  return mutable_buffer(span);
+}
+
+/// Create a new modifiable buffer from a span.
+/**
+ * @returns A mutable_buffer value equivalent to:
+ * @code mutable_buffer b(span);
+ * mutable_buffer(
+ *     b.data(),
+ *     min(b.size(), max_size_in_bytes)); @endcode
+ */
+template <template <typename, std::size_t> class Span,
+    typename T, std::size_t Extent>
+ASIO_NODISCARD inline mutable_buffer buffer(
+    const Span<T, Extent>& span,
+    std::size_t max_size_in_bytes,
+    constraint_t<
+      !is_const<T>::value,
+      defaulted_constraint
+    > = defaulted_constraint(),
+    constraint_t<
+      sizeof(T) == 1,
+      defaulted_constraint
+    > = defaulted_constraint(),
+    constraint_t<
+#if defined(ASIO_MSVC)
+      detail::has_subspan_memfn<Span<T, Extent>>::value,
+#else // defined(ASIO_MSVC)
+      is_same<
+        decltype(span.subspan(0, 0)),
+        Span<T, static_cast<std::size_t>(-1)>
+      >::value,
+#endif // defined(ASIO_MSVC)
+      defaulted_constraint
+    > = defaulted_constraint()) noexcept
+{
+  return buffer(mutable_buffer(span), max_size_in_bytes);
+}
+
+/// Create a new non-modifiable buffer from a span.
+/**
+ * @returns <tt>const_buffer(span)</tt>.
+ */
+template <template <typename, std::size_t> class Span,
+    typename T, std::size_t Extent>
+ASIO_NODISCARD inline const_buffer buffer(
+    const Span<const T, Extent>& span,
+    constraint_t<
+      sizeof(T) == 1,
+      defaulted_constraint
+    > = defaulted_constraint(),
+    constraint_t<
+#if defined(ASIO_MSVC)
+      detail::has_subspan_memfn<Span<const T, Extent>>::value,
+#else // defined(ASIO_MSVC)
+      is_same<
+        decltype(span.subspan(0, 0)),
+        Span<T, static_cast<std::size_t>(-1)>
+      >::value,
+#endif // defined(ASIO_MSVC)
+      defaulted_constraint
+    > = defaulted_constraint()) noexcept
+{
+  return const_buffer(span);
+}
+
+/// Create a new non-modifiable buffer from a span.
+/**
+ * @returns A const_buffer value equivalent to:
+ * @code const_buffer b1(b);
+ * const_buffer(
+ *     b1.data(),
+ *     min(b1.size(), max_size_in_bytes)); @endcode
+ */
+template <template <typename, std::size_t> class Span,
+    typename T, std::size_t Extent>
+ASIO_NODISCARD inline const_buffer buffer(
+    const Span<const T, Extent>& span,
+    std::size_t max_size_in_bytes,
+    constraint_t<
+      sizeof(T) == 1,
+      defaulted_constraint
+    > = defaulted_constraint(),
+    constraint_t<
+#if defined(ASIO_MSVC)
+      detail::has_subspan_memfn<Span<const T, Extent>>::value,
+#else // defined(ASIO_MSVC)
+      is_same<
+        decltype(span.subspan(0, 0)),
+        Span<T, static_cast<std::size_t>(-1)>
+      >::value,
+#endif // defined(ASIO_MSVC)
+      defaulted_constraint
+    > = defaulted_constraint()) noexcept
+{
+  return buffer(const_buffer(span), max_size_in_bytes);
+}
+
 /*@}*/
 
 /// Adapt a basic_string to the DynamicBuffer requirements.
