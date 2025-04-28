@@ -246,10 +246,6 @@ private:
     bool is_valid(socket_type fd) { return fd >= 0 && static_cast<size_t>(fd) < size(); }
   } fdmap_;
 
-  // Map of fds that have been deregistered and may need cleanup
-  std::vector<bool> deregistered_fds_;
-  socket_type last_deregistered_fd_;
-
   // The timer queues.
   timer_queue_set timer_queues_;
 

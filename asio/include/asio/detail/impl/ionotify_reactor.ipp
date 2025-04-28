@@ -179,19 +179,19 @@ void ionotify_reactor::cancel_ops_by_key(socket_type descriptor,
 
 void ionotify_reactor::deregister_descriptor_unlocked(socket_type descriptor)
 {
-  if (last_deregistered_fd_ == invalid_socket || last_deregistered_fd_ < descriptor)
+  // If run() has never seen this fd, we don't need to do anything
+  if ((size_t)descriptor >= fdmap_.size())
+  return;
+
+  // An fd has been deregistered. If it's armed, we need to invalidate its pulses.
+  fdmap_[descriptor].armed_ = 0;
+  fdmap_[descriptor].ops_ = 0;
+  fdmap_[descriptor].wanted_ = 0;
+  if (fdmap_[descriptor].ioev_.sigev_notify != 0)
   {
-    // Grow the vector if necessary
-    if ((size_t)descriptor >= deregistered_fds_.size())
-    {
-      // If run() has never seen this fd, we don't need to do anything
-      if ((size_t)descriptor >= fdmap_.size())
-        return;
-      deregistered_fds_.resize(descriptor+1, false);
-    }
-    last_deregistered_fd_ = descriptor;
+  if (MsgUnregisterEvent(&fdmap_[descriptor].ioev_) == 0)
+    fdmap_[descriptor].ioev_.sigev_notify = 0;
   }
-  deregistered_fds_[descriptor] = true;
 }
 
 void ionotify_reactor::deregister_descriptor(socket_type descriptor,
@@ -258,25 +258,6 @@ void ionotify_reactor::cleanup_descriptor_data(
 void ionotify_reactor::run(long usec, op_queue<operation>& ops)
 {
   asio::detail::mutex::scoped_lock lock(mutex_);
-
-  if (last_deregistered_fd_ != invalid_socket)
-  {
-    // Some fds have been deregistered.  If they are armed, we need to invalidate their pulses.
-    for (socket_type fd = 0; fd <= last_deregistered_fd_; ++fd)
-      if (deregistered_fds_[fd])
-      {
-        deregistered_fds_[fd] = false;
-        fdmap_[fd].armed_ = 0;
-        fdmap_[fd].ops_ = 0;
-        fdmap_[fd].wanted_ = 0;
-        if (fdmap_[fd].ioev_.sigev_notify != 0)
-        {
-          if (MsgUnregisterEvent(&fdmap_[fd].ioev_) == 0)
-            fdmap_[fd].ioev_.sigev_notify = 0;
-        }
-      }
-    last_deregistered_fd_ = invalid_socket;
-}
 
   // In each element of fdmap_:
   //  * ops_ is zero except when we're in this function
