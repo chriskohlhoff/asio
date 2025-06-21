@@ -315,6 +315,108 @@ void thread_pool_executor_execute_test()
   ASIO_CHECK(count == 10);
 }
 
+template <typename T>
+class custom_allocator
+{
+public:
+  using value_type = T;
+
+  custom_allocator(int* live_count, int* total_count)
+    : live_count_(live_count),
+      total_count_(total_count)
+  {
+  }
+
+  template <typename U>
+  custom_allocator(const custom_allocator<U>& other) noexcept
+    : live_count_(other.live_count_),
+      total_count_(other.total_count_)
+  {
+  }
+
+  bool operator==(const custom_allocator& other) const noexcept
+  {
+    return &live_count_ == &other.live_count_ &&
+      &total_count_ == &other.total_count_;;
+  }
+
+  bool operator!=(const custom_allocator& other) const noexcept
+  {
+    return &live_count_ != &other.live_count_ ||
+      &total_count_ != &other.total_count_;
+  }
+
+  T* allocate(std::size_t n) const
+  {
+    ++(*live_count_);
+    ++(*total_count_);
+    return static_cast<T*>(::operator new(sizeof(T) * n));
+  }
+
+  void deallocate(T* p, std::size_t /*n*/) const
+  {
+    --(*live_count_);
+    ::operator delete(p);
+  }
+
+private:
+  template <typename> friend class custom_allocator;
+
+  int* live_count_;
+  int* total_count_;
+};
+
+void thread_pool_allocator_test()
+{
+  int live_count;
+  int total_count;
+
+#if !defined(ASIO_NO_TS_EXECUTORS)
+  {
+    live_count = 0;
+    total_count = 0;
+    thread_pool pool1(std::allocator_arg,
+        custom_allocator<int>(&live_count, &total_count));
+    (void)pool1;
+
+    ASIO_CHECK(live_count > 0);
+    ASIO_CHECK(total_count > 0);
+  }
+
+  ASIO_CHECK(live_count == 0);
+  ASIO_CHECK(total_count > 0);
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
+
+  {
+    live_count = 0;
+    total_count = 0;
+    thread_pool pool2(std::allocator_arg,
+        custom_allocator<int>(&live_count, &total_count), 1);
+    (void)pool2;
+
+    ASIO_CHECK(live_count > 0);
+    ASIO_CHECK(total_count > 0);
+  }
+
+  ASIO_CHECK(live_count == 0);
+  ASIO_CHECK(total_count > 0);
+
+  {
+    live_count = 0;
+    total_count = 0;
+    thread_pool pool3(std::allocator_arg,
+        custom_allocator<int>(&live_count, &total_count), 1,
+        asio::config_from_string(""));
+    (void)pool3;
+
+    ASIO_CHECK(live_count > 0);
+    ASIO_CHECK(total_count > 0);
+  }
+
+  ASIO_CHECK(live_count == 0);
+  ASIO_CHECK(total_count > 0);
+}
+
 ASIO_TEST_SUITE
 (
   "thread_pool",
@@ -322,4 +424,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(thread_pool_service_test)
   ASIO_TEST_CASE(thread_pool_executor_query_test)
   ASIO_TEST_CASE(thread_pool_executor_execute_test)
+  ASIO_TEST_CASE(thread_pool_allocator_test)
 )

@@ -123,28 +123,27 @@ scheduler::scheduler(asio::execution_context& ctx,
     concurrency_hint_(config(ctx).get("scheduler", "concurrency_hint", 0)),
     task_usec_(config(ctx).get("scheduler", "task_usec", -1L)),
     wait_usec_(config(ctx).get("scheduler", "wait_usec", -1L)),
-    thread_(0)
+    thread_()
 {
   ASIO_HANDLER_TRACKING_INIT;
 
   if (own_thread)
   {
     ++outstanding_work_;
-    asio::detail::signal_blocker sb;
-    thread_ = new asio::detail::thread(thread_function(this));
+    signal_blocker sb;
+    thread_ = thread(thread_function(this));
   }
 }
 
 scheduler::~scheduler()
 {
-  if (thread_)
+  if (thread_.joinable())
   {
     mutex::scoped_lock lock(mutex_);
     shutdown_ = true;
     stop_all_threads(lock);
     lock.unlock();
-    thread_->join();
-    delete thread_;
+    thread_.join();
   }
 }
 
@@ -152,17 +151,12 @@ void scheduler::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
-  if (thread_)
+  if (thread_.joinable())
     stop_all_threads(lock);
   lock.unlock();
 
   // Join thread to ensure task operation is returned to queue.
-  if (thread_)
-  {
-    thread_->join();
-    delete thread_;
-    thread_ = 0;
-  }
+  thread_.join();
 
   // Destroy handler objects.
   while (!op_queue_.empty())

@@ -596,6 +596,106 @@ void io_context_executor_execute_test()
   ASIO_CHECK(count == 1);
 }
 
+template <typename T>
+class custom_allocator
+{
+public:
+  using value_type = T;
+
+  custom_allocator(int* live_count, int* total_count)
+    : live_count_(live_count),
+      total_count_(total_count)
+  {
+  }
+
+  template <typename U>
+  custom_allocator(const custom_allocator<U>& other) noexcept
+    : live_count_(other.live_count_),
+      total_count_(other.total_count_)
+  {
+  }
+
+  bool operator==(const custom_allocator& other) const noexcept
+  {
+    return &live_count_ == &other.live_count_ &&
+      &total_count_ == &other.total_count_;;
+  }
+
+  bool operator!=(const custom_allocator& other) const noexcept
+  {
+    return &live_count_ != &other.live_count_ ||
+      &total_count_ != &other.total_count_;
+  }
+
+  T* allocate(std::size_t n) const
+  {
+    ++(*live_count_);
+    ++(*total_count_);
+    return static_cast<T*>(::operator new(sizeof(T) * n));
+  }
+
+  void deallocate(T* p, std::size_t /*n*/) const
+  {
+    --(*live_count_);
+    ::operator delete(p);
+  }
+
+private:
+  template <typename> friend class custom_allocator;
+
+  int* live_count_;
+  int* total_count_;
+};
+
+void io_context_allocator_test()
+{
+  int live_count;
+  int total_count;
+
+  {
+    live_count = 0;
+    total_count = 0;
+    io_context ioc1(std::allocator_arg,
+        custom_allocator<int>(&live_count, &total_count));
+    (void)ioc1;
+
+    ASIO_CHECK(live_count > 0);
+    ASIO_CHECK(total_count > 0);
+  }
+
+  ASIO_CHECK(live_count == 0);
+  ASIO_CHECK(total_count > 0);
+
+  {
+    live_count = 0;
+    total_count = 0;
+    io_context ioc2(std::allocator_arg,
+        custom_allocator<int>(&live_count, &total_count), 1);
+    (void)ioc2;
+
+    ASIO_CHECK(live_count > 0);
+    ASIO_CHECK(total_count > 0);
+  }
+
+  ASIO_CHECK(live_count == 0);
+  ASIO_CHECK(total_count > 0);
+
+  {
+    live_count = 0;
+    total_count = 0;
+    io_context ioc3(std::allocator_arg,
+        custom_allocator<int>(&live_count, &total_count),
+        asio::config_from_string(""));
+    (void)ioc3;
+
+    ASIO_CHECK(live_count > 0);
+    ASIO_CHECK(total_count > 0);
+  }
+
+  ASIO_CHECK(live_count == 0);
+  ASIO_CHECK(total_count > 0);
+}
+
 ASIO_TEST_SUITE
 (
   "io_context",
@@ -603,4 +703,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(io_context_service_test)
   ASIO_TEST_CASE(io_context_executor_query_test)
   ASIO_TEST_CASE(io_context_executor_execute_test)
+  ASIO_TEST_CASE(io_context_allocator_test)
 )

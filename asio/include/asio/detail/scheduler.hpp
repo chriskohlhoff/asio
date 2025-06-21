@@ -225,7 +225,7 @@ private:
   const long wait_usec_;
 
   // The thread that is running the scheduler.
-  asio::detail::thread* thread_;
+  thread thread_;
 };
 
 } // namespace detail
