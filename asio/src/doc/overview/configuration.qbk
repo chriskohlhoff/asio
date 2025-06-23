@@ -97,7 +97,7 @@ below.
   [
     [`reactor`]
     [`preallocated_io_objects`]
-    [`int`]
+    [`unsigned int`]
     [`0`]
     [
       The number of internal reactor I/O object states to allocate at

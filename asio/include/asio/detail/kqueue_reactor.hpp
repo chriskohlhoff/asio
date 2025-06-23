@@ -68,9 +68,6 @@ public:
     descriptor_state(bool locking, int spin_count)
       : mutex_(locking, spin_count) {}
 
-    friend class kqueue_reactor;
-    friend class object_pool_access;
-
     descriptor_state* next_;
     descriptor_state* prev_;
 
@@ -260,7 +257,8 @@ private:
   mutex registered_descriptors_mutex_;
 
   // Keep track of all registered descriptors.
-  object_pool<descriptor_state> registered_descriptors_;
+  object_pool<descriptor_state, execution_context::allocator<void>>
+    registered_descriptors_;
 };
 
 } // namespace detail

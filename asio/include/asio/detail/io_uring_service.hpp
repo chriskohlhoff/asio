@@ -69,11 +69,8 @@ public:
   };
 
   // Per I/O object state.
-  class io_object
+  struct io_object
   {
-    friend class io_uring_service;
-    friend class object_pool_access;
-
     io_object* next_;
     io_object* prev_;
 
@@ -294,7 +291,8 @@ private:
   mutex registration_mutex_;
 
   // Keep track of all registered I/O objects.
-  object_pool<io_object> registered_io_objects_;
+  object_pool<io_object, execution_context::allocator<void>>
+    registered_io_objects_;
 
   // Helper class to do post-perform_io cleanup.
   struct perform_io_cleanup_on_block_exit;
