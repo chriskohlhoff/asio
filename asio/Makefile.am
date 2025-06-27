@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = foreign dist-bzip2 dist-zip
+AUTOMAKE_OPTIONS = foreign dist-bzip2 dist-zip parallel-tests
 
 noarch_pkgconfig_DATA = asio.pc
 
