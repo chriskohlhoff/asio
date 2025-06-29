@@ -162,6 +162,19 @@ below.
       object locks without blocking.
     ]
   ]
+  [
+    [`timer`]
+    [`heap_reserve`]
+    [`unsigned int`]
+    [`0`]
+    [
+      The number of entries to reserve in the internal timer queue's heap.
+
+      If an upper bound on the number of timers is known at construction
+      time, this configuration option can be set to ensure that no timer
+      allocations occur after construction is complete.
+    ]
+  ]
 ]
 
 These configuration options are associated with an execution context (such as

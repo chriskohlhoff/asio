@@ -174,38 +174,39 @@ public:
       const asio::error_code& ec, DWORD bytes_transferred = 0);
 
   // Add a new timer queue to the service.
-  template <typename Time_Traits>
-  void add_timer_queue(timer_queue<Time_Traits>& timer_queue);
+  template <typename TimeTraits, typename Allocator>
+  void add_timer_queue(timer_queue<TimeTraits, Allocator>& timer_queue);
 
   // Remove a timer queue from the service.
-  template <typename Time_Traits>
-  void remove_timer_queue(timer_queue<Time_Traits>& timer_queue);
+  template <typename TimeTraits, typename Allocator>
+  void remove_timer_queue(timer_queue<TimeTraits, Allocator>& timer_queue);
 
   // Schedule a new operation in the given timer queue to expire at the
   // specified absolute time.
-  template <typename Time_Traits>
-  void schedule_timer(timer_queue<Time_Traits>& queue,
-      const typename Time_Traits::time_type& time,
-      typename timer_queue<Time_Traits>::per_timer_data& timer, wait_op* op);
+  template <typename TimeTraits, typename Allocator>
+  void schedule_timer(timer_queue<TimeTraits, Allocator>& queue,
+      const typename TimeTraits::time_type& time,
+      typename timer_queue<TimeTraits, Allocator>::per_timer_data& timer,
+      wait_op* op);
 
   // Cancel the timer associated with the given token. Returns the number of
   // handlers that have been posted or dispatched.
-  template <typename Time_Traits>
-  std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& timer,
+  template <typename TimeTraits, typename Allocator>
+  std::size_t cancel_timer(timer_queue<TimeTraits, Allocator>& queue,
+      typename timer_queue<TimeTraits, Allocator>::per_timer_data& timer,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Cancel the timer operations associated with the given key.
-  template <typename Time_Traits>
-  void cancel_timer_by_key(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data* timer,
+  template <typename TimeTraits, typename Allocator>
+  void cancel_timer_by_key(timer_queue<TimeTraits, Allocator>& queue,
+      typename timer_queue<TimeTraits, Allocator>::per_timer_data* timer,
       void* cancellation_key);
 
   // Move the timer operations associated with the given timer.
-  template <typename Time_Traits>
-  void move_timer(timer_queue<Time_Traits>& queue,
-      typename timer_queue<Time_Traits>::per_timer_data& to,
-      typename timer_queue<Time_Traits>::per_timer_data& from);
+  template <typename TimeTraits, typename Allocator>
+  void move_timer(timer_queue<TimeTraits, Allocator>& queue,
+      typename timer_queue<TimeTraits, Allocator>::per_timer_data& to,
+      typename timer_queue<TimeTraits, Allocator>::per_timer_data& from);
 
 private:
 #if defined(WINVER) && (WINVER < 0x0500)
