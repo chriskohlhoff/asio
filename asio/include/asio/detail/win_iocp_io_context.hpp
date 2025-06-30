@@ -45,8 +45,8 @@ class win_iocp_io_context
 {
 public:
   // Constructor.
-  ASIO_DECL win_iocp_io_context(
-      asio::execution_context& ctx, bool own_thread = true);
+  ASIO_DECL explicit win_iocp_io_context(
+      asio::execution_context& ctx);
 
   // Destructor.
   ASIO_DECL ~win_iocp_io_context();
@@ -320,9 +320,6 @@ private:
 
   // The concurrency hint used to initialise the io_context.
   const int concurrency_hint_;
-
-  // The thread that is running the io_context.
-  thread thread_;
 };
 
 } // namespace detail

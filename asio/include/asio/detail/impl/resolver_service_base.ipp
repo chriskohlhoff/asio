@@ -44,7 +44,7 @@ private:
 
 resolver_service_base::resolver_service_base(execution_context& context)
   : scheduler_(asio::use_service<scheduler_impl>(context)),
-    work_scheduler_(new scheduler_impl(context, false)),
+    work_scheduler_(new scheduler_impl(context)),
     work_thread_(),
     scheduler_locking_(config(context).get("scheduler", "locking", true))
 {
