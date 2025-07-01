@@ -126,6 +126,22 @@ scheduler::scheduler(asio::execution_context& ctx,
   ASIO_HANDLER_TRACKING_INIT;
 }
 
+scheduler::scheduler(scheduler::internal, asio::execution_context& ctx)
+  : asio::detail::execution_context_service_base<scheduler>(ctx),
+    one_thread_(false),
+    mutex_(true, 0),
+    task_(0),
+    get_task_(&scheduler::get_default_task),
+    task_interrupted_(true),
+    stopped_(false),
+    shutdown_(false),
+    outstanding_work_(0),
+    task_usec_(-1L),
+    wait_usec_(-1L)
+{
+  ASIO_HANDLER_TRACKING_INIT;
+}
+
 scheduler::~scheduler()
 {
 }

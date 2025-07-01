@@ -25,9 +25,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -46,9 +47,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -73,9 +75,10 @@ Threads:
 that calls `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -94,9 +97,10 @@ Threads:
 calls `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -116,9 +120,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -137,9 +142,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -158,9 +164,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -180,9 +187,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -202,9 +210,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -224,9 +233,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -245,9 +255,10 @@ Threads:
 `io_context::run()`, `io_context::run_one()`, `io_context::poll()` or
 `io_context::poll_one()`.
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 
@@ -285,9 +296,10 @@ is created on construction of the first `basic_deadline_timer` or
     operation `ConnectEx` is unavailable. (On recent versions of Windows,
     `ConnectEx` is used and no additional thread is required.)
 
-* An additional thread per `io_context` is used to emulate asynchronous host
-resolution. This thread is created on the first call to either
-`ip::tcp::resolver::async_resolve()` or `ip::udp::resolver::async_resolve()`.
+* One or more additional threads per `io_context` to emulate asynchronous host
+resolution. By default, only one thread is created, but this behaviour may be
+altered via the "resolver" / "threads" [link asio.overview.configuration
+configuration option].
 
 Scatter-Gather:
 

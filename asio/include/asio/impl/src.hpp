@@ -54,6 +54,7 @@
 #include "asio/detail/impl/reactive_descriptor_service.ipp"
 #include "asio/detail/impl/reactive_socket_service_base.ipp"
 #include "asio/detail/impl/resolver_service_base.ipp"
+#include "asio/detail/impl/resolver_thread_pool.ipp"
 #include "asio/detail/impl/scheduler.ipp"
 #include "asio/detail/impl/select_reactor.ipp"
 #include "asio/detail/impl/service_registry.ipp"

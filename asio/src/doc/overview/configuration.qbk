@@ -175,6 +175,20 @@ below.
       allocations occur after construction is complete.
     ]
   ]
+  [
+    [`resolver`]
+    [`threads`]
+    [`unsigned int`]
+    [`0`]
+    [
+      The number of internal threads to be used for asynchronous name
+      resolution.
+
+      If non-zero, the specified number of threads are created when the first
+      resolver object is constructed. Otherwise, at most one thread is created
+      at the time of the first `async_resolve` call.
+    ]
+  ]
 ]
 
 These configuration options are associated with an execution context (such as

@@ -44,8 +44,15 @@ class win_iocp_io_context
     public thread_context
 {
 public:
+  // Tag type used for constructing as an internal scheduler.
+  struct internal {};
+
   // Constructor.
   ASIO_DECL explicit win_iocp_io_context(
+      asio::execution_context& ctx);
+
+  // Construct as an internal scheduler.
+  ASIO_DECL win_iocp_io_context(internal,
       asio::execution_context& ctx);
 
   // Destructor.
