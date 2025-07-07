@@ -27,14 +27,12 @@ public:
       const std::string& host, const std::string& service)
     : connection_(io_context.get_executor())
   {
-    // Resolve the host name into an IP address.
+    // Resolve the host name into a sequence of endpoints.
     asio::ip::tcp::resolver resolver(io_context);
-    asio::ip::tcp::resolver::query query(host, service);
-    asio::ip::tcp::resolver::iterator endpoint_iterator =
-      resolver.resolve(query);
+    auto endpoints = resolver.resolve(host, service);
 
     // Start an asynchronous connect operation.
-    asio::async_connect(connection_.socket(), endpoint_iterator,
+    asio::async_connect(connection_.socket(), endpoints,
         std::bind(&client::handle_connect, this,
           asio::placeholders::error));
   }
