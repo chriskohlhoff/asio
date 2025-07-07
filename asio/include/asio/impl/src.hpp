@@ -65,7 +65,6 @@
 #include "asio/detail/impl/strand_service.ipp"
 #include "asio/detail/impl/thread_context.ipp"
 #include "asio/detail/impl/throw_error.ipp"
-#include "asio/detail/impl/timer_queue_ptime.ipp"
 #include "asio/detail/impl/timer_queue_set.ipp"
 #include "asio/detail/impl/win_iocp_file_service.ipp"
 #include "asio/detail/impl/win_iocp_handle_service.ipp"

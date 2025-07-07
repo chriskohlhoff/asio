@@ -155,7 +155,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/strand_service.ipp \
 	asio/detail/impl/thread_context.ipp \
 	asio/detail/impl/throw_error.ipp \
-	asio/detail/impl/timer_queue_ptime.ipp \
 	asio/detail/impl/timer_queue_set.ipp \
 	asio/detail/impl/win_event.ipp \
 	asio/detail/impl/win_iocp_file_service.ipp \
@@ -296,7 +295,6 @@ nobase_include_HEADERS = \
 	asio/detail/timed_cancel_op.hpp \
 	asio/detail/timer_queue_base.hpp \
 	asio/detail/timer_queue.hpp \
-	asio/detail/timer_queue_ptime.hpp \
 	asio/detail/timer_queue_set.hpp \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
