@@ -62,10 +62,19 @@ public:
     {
       if (std::strcmp(key, "concurrency_hint") == 0)
       {
-        std::snprintf(value, value_len, "%d",
-            ASIO_CONCURRENCY_HINT_IS_SPECIAL(concurrency_hint_)
-              ? 1 : concurrency_hint_);
-        return value;
+        if (ASIO_CONCURRENCY_HINT_IS_SPECIAL(concurrency_hint_))
+        {
+          return
+            !ASIO_CONCURRENCY_HINT_IS_LOCKING(
+              SCHEDULER, concurrency_hint_) ||
+            !ASIO_CONCURRENCY_HINT_IS_LOCKING(
+                REACTOR_IO, concurrency_hint_) ? "1" : "-1";
+        }
+        else
+        {
+          std::snprintf(value, value_len, "%d", concurrency_hint_);
+          return value;
+        }
       }
       else if (std::strcmp(key, "locking") == 0)
       {

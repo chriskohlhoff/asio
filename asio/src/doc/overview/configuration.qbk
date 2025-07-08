@@ -276,7 +276,7 @@ below.
 
       [mdash] `"scheduler"` / `"locking"` to `true`.
 
-      [mdash] `"reactor"` / `"registration_locking"` to `false`.
+      [mdash] `"reactor"` / `"registration_locking"` to `true`.
 
       [mdash] `"reactor"` / `"io_locking"` to `false`.
     ]
@@ -284,7 +284,7 @@ below.
   [
     [`ASIO_CONCURRENCY_HINT_SAFE`]
     [
-      [mdash] `"scheduler"` / `"concurrency_hint"` to `1`.
+      [mdash] `"scheduler"` / `"concurrency_hint"` to `0`.
 
       [mdash] `"scheduler"` / `"locking"` to `true`.
 
