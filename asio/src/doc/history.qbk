@@ -7,6 +7,47 @@
 
 [section:history Revision History]
 
+[heading Asio 1.35.0]
+
+* Added allocator constructors to `execution_context`, `io_context` and
+  `thread_pool`. The supplied allocator is used for allocating objects
+  associated with the execution context, such as services, the internal state
+  for I/O objects like sockets or timers, and strands. The allocator may also be
+  accessed by user code via the `execution_context::allocator<>` class template.
+
+* Extended the allocation example to cover `execution_context` allocation.
+
+* Added a new configuration parameter "timer" / "heap_reserve" that may be
+  used to reserve space in the vector used for a timer queue's heap. This may
+  be used to preallocate sufficient space such that the creation of new timers
+  does not trigger further allocations.
+
+* Added a new configuration parameter "resolver" / "threads" that is used to
+  specify the number of internal threads used by `async_resolve` to emulate
+  asynchronous address resolution. If this is set to a non-zero value, that
+  number of threads will be created when the first resolver object is
+  constructed. Otherwise, it defaults to a single thread that is created on the
+  first call to async_resolve.
+
+* Removed `deadline_timer`, `basic_deadline_timer` and `time_traits` from the
+  convenience header [^asio.hpp].
+
+* Ensured that the Windows named pipes created by `connect_pipe` use unique
+  names that don't conflicting if Asio is used in multiple, independent plug-in
+  DLLs.
+
+* Changed `ASIO_CONCURRENCY_HINT_SAFE` to be consistent with the
+  `io_context` default constructor.
+
+* Fixed the documentation for `ASIO_CONCURRENCY_HINT_UNSAFE_IO` to reflect
+  that registration locking is still enabled.
+
+* Added separate [^b2] and [^cmake] build targets for optional dependencies.
+
+* Fixed a build error in the serialization example.
+
+* Fixed some shadow variable warnings.
+
 [heading Asio 1.34.2]
 
 * Fixed an ambiguous overload issue that occurred when passing a `std::span` to
