@@ -333,7 +333,7 @@ int close(socket_type s, state_type& state,
       // current OS where this behaviour is seen, Windows, says that the socket
       // remains open. Therefore we'll put the descriptor back into blocking
       // mode and have another attempt at closing it.
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
       ioctl_arg_type arg = 0;
       ::ioctlsocket(s, FIONBIO, &arg);
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -386,7 +386,7 @@ bool set_user_non_blocking(socket_type s,
     return false;
   }
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
   ioctl_arg_type arg = (value ? 1 : 0);
   int result = ::ioctlsocket(s, FIONBIO, &arg);
   get_last_error(ec, result < 0);
@@ -462,7 +462,7 @@ bool set_internal_non_blocking(socket_type s,
     return false;
   }
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
   ioctl_arg_type arg = (value ? 1 : 0);
   int result = ::ioctlsocket(s, FIONBIO, &arg);
   get_last_error(ec, result < 0);
@@ -678,7 +678,7 @@ bool non_blocking_connect(socket_type s, asio::error_code& ec)
 int socketpair(int af, int type, int protocol,
     socket_type sv[2], asio::error_code& ec)
 {
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
   (void)(af);
   (void)(type);
   (void)(protocol);
@@ -702,7 +702,7 @@ bool sockatmark(socket_type s, asio::error_code& ec)
 
 #if defined(SIOCATMARK)
   ioctl_arg_type value = 0;
-# if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+# if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
   int result = ::ioctlsocket(s, SIOCATMARK, &value);
 # else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   int result = ::ioctl(s, SIOCATMARK, &value);
@@ -729,7 +729,7 @@ size_t available(socket_type s, asio::error_code& ec)
   }
 
   ioctl_arg_type value = 0;
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
   int result = ::ioctlsocket(s, FIONREAD, &value);
 #else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   int result = ::ioctl(s, FIONREAD, &value);
@@ -2193,7 +2193,7 @@ int ioctl(socket_type s, state_type& state, int cmd,
     return socket_error_retval;
   }
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__DJGPP__)
   int result = ::ioctlsocket(s, cmd, arg);
 #elif defined(__MACH__) && defined(__APPLE__) \
   || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
