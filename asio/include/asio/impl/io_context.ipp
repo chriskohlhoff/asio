@@ -120,6 +120,11 @@ void io_context::service::notify_fork(io_context::fork_event)
 {
 }
 
+int io_context::get_concurrency_hint() const
+{
+  return impl_.concurrency_hint();
+}
+
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
