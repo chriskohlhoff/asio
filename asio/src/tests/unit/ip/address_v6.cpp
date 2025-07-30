@@ -358,6 +358,7 @@ void test()
   ASIO_CHECK(!mcast_org_local_address.is_multicast_site_local());
   ASIO_CHECK(mcast_site_local_address.is_multicast_site_local());
 
+  ASIO_CHECK(make_address_v6(asio::ip::v4_mapped, asio::ip::address_v4::loopback()).is_loopback());
   ASIO_CHECK(address_v6::loopback().is_loopback());
 }
 
