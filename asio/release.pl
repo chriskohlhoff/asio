@@ -223,72 +223,13 @@ sub build_boost_asio_doc
 }
 
 our $boost_asio_readme = <<"EOF";
-Copy the `boost', `doc' and `libs' directories into an existing boost 1.33.0,
-1.33.1, 1.34, 1.34.1, 1.35 or 1.36 distribution.
+Copy the `boost', `doc' and `libs' directories into an existing boost
+distribution.
 
 Before using Boost.Asio, the Boost.System library needs to be built. This can
-be done by running bjam in the libs/system/build directory. Consult the Boost
-Getting Started page (http://www.boost.org/more/getting_started.html) for more
+be done by running b2 in the libs/system directory. Consult the Boost Getting
+Started page (http://www.boost.org/more/getting_started.html) for more
 information on how to build the Boost libraries.
-EOF
-
-our $boost_system_jamfile = <<"EOF";
-# Boost System Library Build Jamfile
-
-# (C) Copyright Beman Dawes 2002, 2006
-
-# Distributed under the Boost Software License, Version 1.0.
-# (See accompanying file LICENSE_1_0.txt or www.boost.org/LICENSE_1_0.txt)
-
-# See library home page at http://www.boost.org/libs/system
-
-subproject libs/system/build ;
-
-SOURCES = error_code ;
-
-lib boost_system
-     : ../src/$(SOURCES).cpp
-     : # build requirements
-      <define>BOOST_SYSTEM_STATIC_LINK
-      <sysinclude>$(BOOST_AUX_ROOT) <sysinclude>$(BOOST_ROOT)
-      # common-variant-tag ensures that the library will
-      # be named according to the rules used by the install
-      # and auto-link features:
-      common-variant-tag 
-     : debug release  # build variants
-     ;
-
-dll boost_system
-     : ../src/$(SOURCES).cpp
-     : # build requirements
-       <define>BOOST_SYSTEM_DYN_LINK=1  # tell source we're building dll's
-       <runtime-link>dynamic  # build only for dynamic runtimes
-       <sysinclude>$(BOOST_AUX_ROOT) <sysinclude>$(BOOST_ROOT)
-      # common-variant-tag ensures that the library will
-      # be named according to the rules used by the install
-      # and auto-link features:
-      common-variant-tag 
-     : debug release  # build variants
-     ;
-
-install system lib
-     : <lib>boost_system <dll>boost_system
-     ;
-
-stage stage/lib : <lib>boost_system <dll>boost_system
-    :
-        # copy to a path rooted at BOOST_ROOT:
-        <locate>$(BOOST_ROOT)
-        # make sure the names of the libraries are correctly named:
-        common-variant-tag
-        # add this target to the "stage" and "all" psuedo-targets:
-        <target>stage
-        <target>all
-    :
-        debug release
-    ;
-
-# end
 EOF
 
 sub create_boost_asio_content
@@ -355,12 +296,6 @@ sub create_boost_asio_content
   $to = "$boost_asio_name/README.txt";
   open($output, ">$to") or die("Can't open $to for writing");
   print($output $boost_asio_readme);
-  close($output);
-
-  # Create Boost.System Jamfile.
-  $to = "$boost_asio_name/libs/system/build/Jamfile";
-  open($output, ">$to") or die("Can't open $to for writing");
-  print($output $boost_system_jamfile);
   close($output);
 
   # Remove SVN and git files.
