@@ -79,7 +79,7 @@ struct win_iocp_io_context::timer_thread_function
 };
 
 win_iocp_io_context::win_iocp_io_context(
-    asio::execution_context& ctx)
+    asio::execution_context& ctx, bool own_thread)
   : execution_context_service_base<win_iocp_io_context>(ctx),
     iocp_(),
     outstanding_work_(0),
@@ -101,6 +101,12 @@ win_iocp_io_context::win_iocp_io_context(
     asio::error_code ec(last_error,
         asio::error::get_system_category());
     asio::detail::throw_error(ec, "iocp");
+  }
+
+  if (own_thread)
+  {
+    ::InterlockedIncrement(&outstanding_work_);
+    thread_ = thread(thread_function(this));
   }
 }
 
@@ -132,6 +138,11 @@ win_iocp_io_context::win_iocp_io_context(
 
 win_iocp_io_context::~win_iocp_io_context()
 {
+  if (thread_.joinable())
+  {
+    stop();
+    thread_.join();
+  }
 }
 
 void win_iocp_io_context::shutdown()
@@ -143,6 +154,13 @@ void win_iocp_io_context::shutdown()
     LARGE_INTEGER timeout;
     timeout.QuadPart = 1;
     ::SetWaitableTimer(waitable_timer_.handle, &timeout, 1, 0, 0, FALSE);
+  }
+
+  if (thread_.joinable())
+  {
+    stop();
+    thread_.join();
+    ::InterlockedDecrement(&outstanding_work_);
   }
 
   while (::InterlockedExchangeAdd(&outstanding_work_, 0) > 0)

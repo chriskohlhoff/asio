@@ -32,7 +32,7 @@ namespace asio {
 template <typename Allocator>
 io_context::io_context(allocator_arg_t, const Allocator& a)
   : execution_context(std::allocator_arg, a, config_from_concurrency_hint()),
-    impl_(asio::make_service<impl_type>(*this))
+    impl_(asio::make_service<impl_type>(*this, false))
 {
 }
 
@@ -41,7 +41,7 @@ io_context::io_context(allocator_arg_t,
     const Allocator& a, int concurrency_hint)
   : execution_context(std::allocator_arg, a,
       config_from_concurrency_hint(concurrency_hint)),
-    impl_(asio::make_service<impl_type>(*this))
+    impl_(asio::make_service<impl_type>(*this, false))
 {
 }
 
@@ -49,7 +49,7 @@ template <typename Allocator>
 io_context::io_context(allocator_arg_t, const Allocator& a,
     const execution_context::service_maker& initial_services)
   : execution_context(std::allocator_arg, a, initial_services),
-    impl_(asio::make_service<impl_type>(*this))
+    impl_(asio::make_service<impl_type>(*this, false))
 {
 }
 

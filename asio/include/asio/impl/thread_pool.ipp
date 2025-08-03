@@ -56,7 +56,7 @@ long thread_pool::default_thread_pool_size()
 }
 
 thread_pool::thread_pool()
-  : scheduler_(asio::make_service<detail::scheduler>(*this)),
+  : scheduler_(asio::make_service<detail::scheduler>(*this, false)),
     threads_(allocator<void>(*this)),
     num_threads_(default_thread_pool_size()),
     joinable_(true)
@@ -78,7 +78,7 @@ long thread_pool::clamp_thread_pool_size(std::size_t n)
 
 thread_pool::thread_pool(std::size_t num_threads)
   : execution_context(config_from_concurrency_hint(num_threads == 1 ? 1 : 0)),
-    scheduler_(asio::make_service<detail::scheduler>(*this)),
+    scheduler_(asio::make_service<detail::scheduler>(*this, false)),
     threads_(allocator<void>(*this)),
     num_threads_(clamp_thread_pool_size(num_threads)),
     joinable_(true)
@@ -89,7 +89,7 @@ thread_pool::thread_pool(std::size_t num_threads)
 thread_pool::thread_pool(std::size_t num_threads,
     const execution_context::service_maker& initial_services)
   : execution_context(initial_services),
-    scheduler_(asio::make_service<detail::scheduler>(*this)),
+    scheduler_(asio::make_service<detail::scheduler>(*this, false)),
     threads_(allocator<void>(*this)),
     num_threads_(clamp_thread_pool_size(num_threads)),
     joinable_(true)

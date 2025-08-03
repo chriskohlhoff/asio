@@ -109,7 +109,7 @@ struct scheduler::work_cleanup
 };
 
 scheduler::scheduler(asio::execution_context& ctx,
-    get_task_func_type get_task)
+    bool own_thread, get_task_func_type get_task)
   : asio::detail::execution_context_service_base<scheduler>(ctx),
     one_thread_(config(ctx).get("scheduler", "concurrency_hint", 0) == 1),
     mutex_(config(ctx).get("scheduler", "locking", true),
@@ -121,9 +121,17 @@ scheduler::scheduler(asio::execution_context& ctx,
     shutdown_(false),
     outstanding_work_(0),
     task_usec_(config(ctx).get("scheduler", "task_usec", -1L)),
-    wait_usec_(config(ctx).get("scheduler", "wait_usec", -1L))
+    wait_usec_(config(ctx).get("scheduler", "wait_usec", -1L)),
+    thread_()
 {
   ASIO_HANDLER_TRACKING_INIT;
+
+  if (own_thread)
+  {
+    ++outstanding_work_;
+    signal_blocker sb;
+    thread_ = thread(thread_function(this));
+  }
 }
 
 scheduler::scheduler(scheduler::internal, asio::execution_context& ctx)
@@ -144,13 +152,26 @@ scheduler::scheduler(scheduler::internal, asio::execution_context& ctx)
 
 scheduler::~scheduler()
 {
+  if (thread_.joinable())
+  {
+    mutex::scoped_lock lock(mutex_);
+    shutdown_ = true;
+    stop_all_threads(lock);
+    lock.unlock();
+    thread_.join();
+  }
 }
 
 void scheduler::shutdown()
 {
   mutex::scoped_lock lock(mutex_);
   shutdown_ = true;
+  if (thread_.joinable())
+    stop_all_threads(lock);
   lock.unlock();
+
+  // Join thread to ensure task operation is returned to queue.
+  thread_.join();
 
   // Destroy handler objects.
   while (!op_queue_.empty())
