@@ -421,6 +421,7 @@ nobase_include_HEADERS = \
 	asio/impl/append.hpp \
 	asio/impl/as_tuple.hpp \
 	asio/impl/awaitable.hpp \
+	asio/impl/awaitable.ipp \
 	asio/impl/buffered_read_stream.hpp \
 	asio/impl/buffered_write_stream.hpp \
 	asio/impl/cancel_after.hpp \
