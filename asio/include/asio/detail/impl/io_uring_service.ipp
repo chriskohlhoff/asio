@@ -84,7 +84,7 @@ void io_uring_service::shutdown()
       {
         ops.push(io_obj->queues_[i].op_queue_);
         if (::io_uring_sqe* sqe = get_sqe())
-          ::io_uring_prep_cancel(sqe, &io_obj->queues_[i], 0);
+          ::io_uring_prep_cancel(sqe, reinterpret_cast<std::size_t>(&io_obj->queues_[i]), 0);
       }
     }
     io_obj->shutdown_ = true;
@@ -93,7 +93,7 @@ void io_uring_service::shutdown()
 
   // Cancel the timeout operation.
   if (::io_uring_sqe* sqe = get_sqe())
-    ::io_uring_prep_cancel(sqe, &timeout_, IOSQE_IO_DRAIN);
+    ::io_uring_prep_cancel(sqe, reinterpret_cast<std::size_t>(&timeout_), IOSQE_IO_DRAIN);
   submit_sqes();
 
   // Wait for all completions to come back.
@@ -130,7 +130,7 @@ void io_uring_service::notify_fork(
           {
             mutex::scoped_lock lock(mutex_);
             if (::io_uring_sqe* sqe = get_sqe())
-              ::io_uring_prep_cancel(sqe, &io_obj->queues_[i], 0);
+              ::io_uring_prep_cancel(sqe, reinterpret_cast<std::size_t>(&io_obj->queues_[i]), 0);
           }
         }
       }
@@ -139,7 +139,7 @@ void io_uring_service::notify_fork(
       {
         mutex::scoped_lock lock(mutex_);
         if (::io_uring_sqe* sqe = get_sqe())
-          ::io_uring_prep_cancel(sqe, &timeout_, IOSQE_IO_DRAIN);
+          ::io_uring_prep_cancel(sqe, reinterpret_cast<std::size_t>(&timeout_), IOSQE_IO_DRAIN);
         submit_sqes();
       }
 
@@ -351,7 +351,7 @@ void io_uring_service::cancel_ops_by_key(
           mutex::scoped_lock lock(mutex_);
           if (::io_uring_sqe* sqe = get_sqe())
           {
-            ::io_uring_prep_cancel(sqe, &io_obj->queues_[op_type], 0);
+            ::io_uring_prep_cancel(sqe, reinterpret_cast<std::size_t>(&io_obj->queues_[op_type]), 0);
             submit_sqes();
           }
         }
@@ -658,7 +658,7 @@ bool io_uring_service::do_cancel_ops(
       {
         io_obj->queues_[i].cancel_requested_ = true;
         if (::io_uring_sqe* sqe = get_sqe())
-          ::io_uring_prep_cancel(sqe, &io_obj->queues_[i], 0);
+          ::io_uring_prep_cancel(sqe, reinterpret_cast<std::size_t>(&io_obj->queues_[i]), 0);
       }
     }
     submit_sqes();
