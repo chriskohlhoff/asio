@@ -7,6 +7,31 @@
 
 [section:history Revision History]
 
+[heading Asio 1.36.0]
+
+* Fixed an issue, introduced in Asio 1.35.0, that prevented the creation of
+  internal threads required for running some asynchronous operations on a
+  `thread_pool`.
+
+* Fixed `co_spawn` to adhere to the asynchronous operation requirement for
+  non-reentrant invocation of the completion handler.
+
+* Added the `[[noreturn]]` attribute to `asio::detail::throw_exception`.
+
+* Fixed compilation errors in `channel<void(error_code)>` and
+  `concurrent_channel<void(error_code)>`.
+
+* Fixed a compilation issue with the Bullseye compiler.
+
+* Fixed an `awaitable` coroutine compile error with the clang shipped with MSVC.
+
+* Fixed support for platforms that don't define `SA_NOCLDWAIT`.
+
+* Worked around a warning that occurs when building with `_FORTIFY_SOURCE` on
+  recent [^g++].
+
+* Added a documentation note on `basic_signal_set` async signal safety.
+
 [heading Asio 1.35.0]
 
 * Added allocator constructors to `execution_context`, `io_context` and
@@ -33,7 +58,7 @@
   convenience header [^asio.hpp].
 
 * Ensured that the Windows named pipes created by `connect_pipe` use unique
-  names that don't conflicting if Asio is used in multiple, independent plug-in
+  names that don't conflict if Asio is used in multiple, independent plug-in
   DLLs.
 
 * Changed `ASIO_CONCURRENCY_HINT_SAFE` to be consistent with the
