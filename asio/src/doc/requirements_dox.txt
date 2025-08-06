@@ -6,5 +6,9 @@
 //
 
 /**
+\page async_op_requirements asynchronous operation requirements
+*/
+
+/**
 \page async_result_requirements @c async_result requirements
 */
