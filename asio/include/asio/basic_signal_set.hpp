@@ -92,6 +92,13 @@ namespace asio {
  * and @c pthread_sigmask(). For signals to be delivered, programs must ensure
  * that any signals registered using signal_set objects are unblocked in at
  * least one thread.
+ *
+ * @par POSIX async‑signal safety
+ *
+ * Signal handlers installed by this class are executed in the context of
+ * the thread executing asio service, not the thread handling the interrupt.
+ * Therefore signal handlers handled by this class are
+ * automatically async‑signal safe.
  */
 template <typename Executor = any_io_executor>
 class basic_signal_set : public signal_set_base
