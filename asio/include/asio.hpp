@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+// IWYU pragma: begin_exports
 #include "asio/any_completion_executor.hpp"
 #include "asio/any_completion_handler.hpp"
 #include "asio/any_io_executor.hpp"
@@ -198,5 +199,6 @@
 #include "asio/writable_pipe.hpp"
 #include "asio/write.hpp"
 #include "asio/write_at.hpp"
+// IWYU pragma: end_exports
 
 #endif // ASIO_HPP
