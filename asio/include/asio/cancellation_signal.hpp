@@ -85,8 +85,19 @@ class cancellation_signal
 {
 public:
   constexpr cancellation_signal()
-    : handler_(0)
+    : handler_(nullptr)
   {
+  }
+
+  cancellation_signal(cancellation_signal&& other) noexcept
+    : handler_{std::exchange(other.handler_, nullptr)}
+  {
+  }
+
+  cancellation_signal& operator=(cancellation_signal&& other) noexcept
+  {
+    std::swap(handler_, other.handler_);
+    return *this;
   }
 
   ASIO_DECL ~cancellation_signal();
