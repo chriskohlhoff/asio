@@ -191,20 +191,20 @@ class async_result<use_awaitable_t<Executor>, R(Args...)>
 {
 public:
   typedef typename detail::awaitable_handler<
-      Executor, decay_t<Args>...> handler_type;
-  typedef typename handler_type::awaitable_type return_type;
+      Executor, decay_t<Args>...> completion_handler_type;
+  typedef typename completion_handler_type::awaitable_type return_type;
 
   template <typename Initiation, typename... InitArgs>
 #if defined(__APPLE_CC__) && (__clang_major__ == 13)
   __attribute__((noinline))
 #endif // defined(__APPLE_CC__) && (__clang_major__ == 13)
-  static handler_type* do_init(
+  static completion_handler_type* do_init(
       detail::awaitable_frame_base<Executor>* frame, Initiation& initiation,
       use_awaitable_t<Executor> u, InitArgs&... args)
   {
     (void)u;
     ASIO_HANDLER_LOCATION((u.file_name_, u.line_, u.function_name_));
-    handler_type handler(frame->detach_thread());
+    completion_handler_type handler(frame->detach_thread());
     std::move(initiation)(std::move(handler), std::move(args)...);
     return nullptr;
   }
