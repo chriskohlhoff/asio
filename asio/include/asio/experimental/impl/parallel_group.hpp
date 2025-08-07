@@ -717,6 +717,10 @@ void ranged_parallel_group_launch(Condition cancellation_condition,
             state, std::move(ex), idx++));
   }
 
+  // Since all operations have already been completed, cancellation will not be performed.
+  if (state->outstanding_ == 0)
+    return;
+
   // Check if any of the operations has already requested cancellation, and if
   // so, emit a signal for each operation in the group.
   if ((state->cancellations_requested_ -= range_size) > 0)
