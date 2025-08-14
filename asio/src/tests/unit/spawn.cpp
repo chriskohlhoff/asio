@@ -575,6 +575,53 @@ void test_spawn_async_ops()
   ASIO_CHECK(called);
 }
 
+void sleeping_coroutine2(asio::yield_context yield)
+{
+  asio::steady_timer timer(yield.get_executor(),
+      asio::chrono::seconds(2));
+  timer.async_wait(yield);
+}
+
+void test_spawn_current1()
+{
+  asio::io_context ctx;
+
+  bool called = false;
+
+  asio::spawn(ctx, [&](asio::yield_context) {
+      sleeping_coroutine2(asio::yield_context::current(ctx));
+  }, [&](std::exception_ptr)
+  {
+      called = true;
+  });
+
+  ASIO_CHECK(!called);
+
+  ctx.run();
+
+  ASIO_CHECK(called);
+}
+
+void test_spawn_current2()
+{
+  asio::io_context ctx;
+
+  bool called = false;
+
+  asio::spawn(ctx, [&](asio::yield_context) {
+      sleeping_coroutine2(asio::yield_context::current(ctx.get_executor()));
+  }, [&](std::exception_ptr)
+  {
+      called = true;
+  });
+
+  ASIO_CHECK(!called);
+
+  ctx.run();
+
+  ASIO_CHECK(called);
+}
+
 ASIO_TEST_SUITE
 (
   "spawn",
@@ -584,6 +631,8 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_spawn_exception)
   ASIO_TEST_CASE(test_spawn_return_move_only)
   ASIO_TEST_CASE(test_spawn_async_ops)
+  ASIO_TEST_CASE(test_spawn_current1)
+  ASIO_TEST_CASE(test_spawn_current2)
 )
 
 #else // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)

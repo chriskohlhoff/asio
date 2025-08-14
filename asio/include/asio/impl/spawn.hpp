@@ -62,6 +62,7 @@ public:
     : caller_(static_cast<fiber_type&&>(caller)),
       on_suspend_fn_(0),
       on_suspend_arg_(0)
+      caller_thread_(current_)
   {
   }
 
@@ -95,6 +96,8 @@ public:
 
   void resume()
   {
+    caller_thread_ = current_;
+    current_ = this;
     callee_ = fiber_type(static_cast<fiber_type&&>(callee_)).resume();
     if (on_suspend_fn_)
     {
@@ -107,6 +110,8 @@ public:
 
   void suspend_with(void (*fn)(void*), void* arg)
   {
+    current_ = caller_thread_;
+    caller_thread_ = nullptr;
     if (throw_if_cancelled_)
       if (!!cancellation_state_.cancelled())
         throw_error(asio::error::operation_aborted, "yield");
@@ -118,6 +123,8 @@ public:
 
   void destroy()
   {
+    current_ = caller_thread_;
+    caller_thread_ = nullptr;
     fiber_type callee = static_cast<fiber_type&&>(callee_);
     if (terminal_)
       fiber_type(static_cast<fiber_type&&>(callee)).resume();

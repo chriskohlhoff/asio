@@ -121,6 +121,11 @@ public:
     throw_if_cancelled_ = value;
   }
 
+  static spawned_thread_base* current()
+  {
+      return current_;
+  }
+
 protected:
   spawned_thread_base** owner_; // Points to data member in active handler.
   asio::cancellation_slot parent_cancellation_slot_;
@@ -128,6 +133,8 @@ protected:
   bool has_context_switched_;
   bool throw_if_cancelled_;
   bool terminal_;
+  spawned_thread_base* caller_thread_ = nullptr;
+  static inline thread_local spawned_thread_base* current_ = nullptr;
 
 private:
   // Disallow copying and assignment.
@@ -283,6 +290,29 @@ public:
   void throw_if_cancelled(bool value) const noexcept
   {
     spawned_thread_->throw_if_cancelled(value);
+  }
+
+  /// Get a yield context for the currently running stackful coroutine.
+  static basic_yield_context current(const Executor& ex,
+      constraint_t<is_executor<Executor>::value
+          || execution::is_executor<Executor>::value> = 0)
+  {
+      auto spawned_thread = detail::spawned_thread_base::current();
+      if (!spawned_thread)
+        throw std::logic_error("Getting yield outside of coroutine context");
+      return basic_yield_context(spawned_thread, ex);
+  }
+
+  /// Get a yield context for the currently running stackful coroutine.
+  template <typename ExecutionContext>
+  static basic_yield_context current(ExecutionContext& ctx,
+      constraint_t<is_convertible<ExecutionContext&,
+          execution_context&>::value> = 0)
+  {
+      auto spawned_thread = detail::spawned_thread_base::current();
+      if (!spawned_thread)
+        throw std::logic_error("Getting yield outside of coroutine context");
+      return basic_yield_context(spawned_thread, ctx.get_executor());
   }
 
   /// Return a yield context that sets the specified error_code.
