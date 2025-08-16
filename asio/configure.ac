@@ -1,4 +1,4 @@
-AC_INIT([asio],[1.35.0])
+AC_INIT([asio],[1.36.0])
 AC_CONFIG_SRCDIR(include/asio.hpp)
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE([tar-pax])

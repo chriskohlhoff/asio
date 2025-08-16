@@ -6107,6 +6107,7 @@
 /include/asio/impl/append.hpp
 /include/asio/impl/as_tuple.hpp
 /include/asio/impl/awaitable.hpp
+/include/asio/impl/awaitable.ipp
 /include/asio/impl/buffered_read_stream.hpp
 /include/asio/impl/buffered_write_stream.hpp
 /include/asio/impl/cancel_after.hpp

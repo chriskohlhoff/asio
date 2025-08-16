@@ -433,6 +433,7 @@
 /boost/asio/impl/append.hpp
 /boost/asio/impl/as_tuple.hpp
 /boost/asio/impl/awaitable.hpp
+/boost/asio/impl/awaitable.ipp
 /boost/asio/impl/buffered_read_stream.hpp
 /boost/asio/impl/buffered_write_stream.hpp
 /boost/asio/impl/cancel_after.hpp
@@ -6709,6 +6710,7 @@
 /libs/asio/doc/requirements/ConnectToken.qbk
 /libs/asio/doc/requirements/ConstBufferSequence.qbk
 /libs/asio/doc/requirements/Disposition.qbk
+/libs/asio/doc/requirements_dox.txt
 /libs/asio/doc/requirements/DynamicBuffer.qbk
 /libs/asio/doc/requirements/DynamicBuffer_v1.qbk
 /libs/asio/doc/requirements/DynamicBuffer_v2.qbk
