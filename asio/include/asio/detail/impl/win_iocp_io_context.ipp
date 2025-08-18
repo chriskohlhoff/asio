@@ -436,6 +436,13 @@ size_t win_iocp_io_context::do_one(DWORD msec,
 {
   for (;;)
   {
+    // Check if the context has been stopped
+    if (::InterlockedExchangeAdd(&stopped_, 0) != 0) 
+    {
+      ec = asio::error_code();
+      return 0;
+    }
+
     // Try to acquire responsibility for dispatching timers and completed ops.
     if (::InterlockedCompareExchange(&dispatch_required_, 0, 1) == 1)
     {
