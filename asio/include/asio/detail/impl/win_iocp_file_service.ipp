@@ -67,6 +67,8 @@ asio::error_code win_iocp_file_service::open(
     access = GENERIC_WRITE;
   else if ((open_flags & file_base::read_write) != 0)
     access = GENERIC_READ | GENERIC_WRITE;
+  else if ((open_flags & file_base::append) != 0)
+    access = GENERIC_WRITE;
 
   DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE;
 
@@ -82,6 +84,8 @@ asio::error_code win_iocp_file_service::open(
   {
     if ((open_flags & file_base::truncate) != 0)
       disposition = TRUNCATE_EXISTING;
+    else if ((open_flags & file_base::append) != 0)
+      disposition = OPEN_ALWAYS;
     else
       disposition = OPEN_EXISTING;
   }
@@ -111,17 +115,12 @@ asio::error_code win_iocp_file_service::open(
           return ec;
         }
       }
-    }
-    if (disposition == OPEN_ALWAYS || disposition == OPEN_EXISTING)
-    {
-      if ((open_flags & file_base::append) != 0)
+      else if ((open_flags & file_base::append) != 0)
       {
         LARGE_INTEGER distance, new_offset;
         distance.QuadPart = 0;
         if (::SetFilePointerEx(handle, distance, &new_offset, FILE_END))
-        {
           impl.offset_ = static_cast<uint64_t>(new_offset.QuadPart);
-        }
         else
         {
           DWORD last_error = ::GetLastError();
