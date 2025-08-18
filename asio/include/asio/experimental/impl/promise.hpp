@@ -65,10 +65,10 @@ struct promise_impl<void(Ts...), Executor, Allocator>
   Executor executor;
 
   template<typename Func, std::size_t... Idx>
-  void apply_impl(Func f, asio::detail::index_sequence<Idx...>)
+  void apply_impl(Func&& f, asio::detail::index_sequence<Idx...>)
   {
     auto& result_type = *reinterpret_cast<promise_impl::result_type*>(&result);
-    f(std::get<Idx>(std::move(result_type))...);
+    std::forward<Func>(f)(std::get<Idx>(std::move(result_type))...);
   }
 
   using allocator_type = Allocator;
@@ -78,7 +78,7 @@ struct promise_impl<void(Ts...), Executor, Allocator>
   executor_type get_executor() {return executor;}
 
   template<typename Func>
-  void apply(Func f)
+  void apply(Func&& f)
   {
     apply_impl(std::forward<Func>(f),
         asio::detail::make_index_sequence<sizeof...(Ts)>{});
