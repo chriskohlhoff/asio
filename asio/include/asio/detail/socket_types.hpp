@@ -3,6 +3,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2025 Pavlo Kleymonov (pkleymonov at qnx dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -411,7 +412,13 @@ const int max_iov_len = IOV_MAX;
 // POSIX platforms are not required to define IOV_MAX.
 const int max_iov_len = 16;
 # endif
-# define ASIO_OS_DEF_SA_RESTART SA_RESTART
+// Note: QNX does not support SA_RESTART
+// Therefore they are specifically excluded here.
+# if defined(__QNX__)
+#  define ASIO_OS_DEF_SA_RESTART 0
+# else
+#  define ASIO_OS_DEF_SA_RESTART SA_RESTART
+# endif
 # define ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
 # if defined(SA_NOCLDWAIT)
 #  define ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
