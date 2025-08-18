@@ -892,6 +892,16 @@
 # endif // !defined(ASIO_HAS_DEV_POLL)
 #endif // defined(__sun)
 
+// QNX: ionotify.
+#if defined(__QNXNTO__)
+# if !defined(ASIO_HAS_IONOTIFY)
+#  if !defined(ASIO_DISABLE_IONOTIFY)
+#   define ASIO_HAS_IONOTIFY 1
+#   define ASIO_DISABLE_EPOLL
+#  endif // !defined(ASIO_DISABLE_IONOTIFY)
+# endif // !defined(ASIO_HAS_IONOTIFY)
+#endif // defined(__QNXNTO__)
+
 // Serial ports.
 #if !defined(ASIO_HAS_SERIAL_PORT)
 # if defined(ASIO_HAS_IOCP) \
