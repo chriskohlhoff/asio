@@ -506,6 +506,12 @@ public:
   wrap(Handler handler);
 #endif // !defined(ASIO_NO_DEPRECATED)
 
+  /// Get the concurrency_hint passed on construction.
+  /** This hint is a suggestion to the implementation on how many
+   * threads it should allow to run simultaneously.
+   */
+  ASIO_DECL int get_concurrency_hint() const;
+
 private:
   io_context(const io_context&) = delete;
   io_context& operator=(const io_context&) = delete;
