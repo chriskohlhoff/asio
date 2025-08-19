@@ -1000,6 +1000,7 @@ struct coro<Yield, Return, Executor, Allocator>::awaitable_t
         {
           st->second.state = cancellation_state(
               st->second.slot = st->first.slot());
+          coro_->cancel = &st->second;
         }
 
         E e;
@@ -1020,6 +1021,10 @@ struct coro<Yield, Return, Executor, Allocator>::awaitable_t
       {
         hp.cancel->state.slot().template emplace<cancel_handler>(
             coro_.get_executor(), coro_);
+      }
+      else
+      {
+        coro_.coro_->cancel = hp.cancel;
       }
 
       auto hh = detail::coroutine_handle<
