@@ -28,6 +28,8 @@ namespace detail {
 class channel_category : public asio::error_category
 {
 public:
+  using asio::error_category::message;
+
   const char* name() const noexcept
   {
     return "asio.channel";

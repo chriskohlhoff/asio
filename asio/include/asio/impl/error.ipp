@@ -31,6 +31,8 @@ namespace detail {
 class netdb_category : public asio::error_category
 {
 public:
+  using asio::error_category::message;
+
   const char* name() const noexcept
   {
     return "asio.netdb";
@@ -63,6 +65,8 @@ namespace detail {
 class addrinfo_category : public asio::error_category
 {
 public:
+  using asio::error_category::message;
+
   const char* name() const noexcept
   {
     return "asio.addrinfo";
@@ -93,6 +97,8 @@ namespace detail {
 class misc_category : public asio::error_category
 {
 public:
+  using asio::error_category::message;
+
   const char* name() const noexcept
   {
     return "asio.misc";
