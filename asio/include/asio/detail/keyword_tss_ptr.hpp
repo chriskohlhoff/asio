@@ -44,21 +44,24 @@ public:
   // Get the value.
   operator T*() const
   {
-    return value_;
+    return _impl();
   }
 
   // Set the value.
   void operator=(T* value)
   {
-    value_ = value;
+    _impl() = value;
   }
 
 private:
-  static ASIO_THREAD_KEYWORD T* value_;
+  // make the thread local storage here fiber safe in the event fibers migrate threads:
+  // https://stackoverflow.com/questions/75592038/how-to-disable-clang-expression-elimination-for-thread-local-variable
+  BOOST_NOINLINE
+  static T*& _impl() {
+    static BOOST_ASIO_THREAD_KEYWORD T* value = nullptr;
+    return value;
+  }
 };
-
-template <typename T>
-ASIO_THREAD_KEYWORD T* keyword_tss_ptr<T>::value_;
 
 } // namespace detail
 } // namespace asio
