@@ -188,8 +188,8 @@ public:
       while (wait_op* op = (num_cancelled != max_cancelled)
           ? timer.op_queue_.front() : 0)
       {
-        op->ec_ = asio::error::operation_aborted;
         timer.op_queue_.pop();
+        op->ec_ = asio::error::operation_aborted;
         ops.push(op);
         ++num_cancelled;
       }
