@@ -41,7 +41,7 @@ demultiplexer.]
 [mdash] Completion Handler
 
 [:Processes the result of an asynchronous operation. These are function
-objects, often created using `boost::bind`.]
+objects, often created using lambda expressions.]
 
 [mdash] Asynchronous Event Demultiplexer
 
