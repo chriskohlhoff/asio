@@ -224,9 +224,9 @@ size_t win_iocp_io_context::run(asio::error_code& ec)
   thread_call_stack::context ctx(this, this_thread);
 
   size_t n = 0;
+  size_t loop_count_limit = (std::numeric_limits<size_t>::max)();
   while (do_one(INFINITE, this_thread, ec))
-    if (n != (std::numeric_limits<size_t>::max)())
-      ++n;
+    n += (n != loop_count_limit);
   return n;
 }
 
@@ -273,9 +273,9 @@ size_t win_iocp_io_context::poll(asio::error_code& ec)
   thread_call_stack::context ctx(this, this_thread);
 
   size_t n = 0;
+  size_t loop_count_limit = (std::numeric_limits<size_t>::max)();
   while (do_one(0, this_thread, ec))
-    if (n != (std::numeric_limits<size_t>::max)())
-      ++n;
+    n += (n != loop_count_limit);
   return n;
 }
 
