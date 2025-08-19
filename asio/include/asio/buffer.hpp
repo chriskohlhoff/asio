@@ -890,6 +890,26 @@ ASIO_NODISCARD inline mutable_buffer buffer(
         ));
 }
 
+#if (!defined(ASIO_NO_DEPRECATED))&&(!defined(ASIO_BUFFER_ARG_BUFFERS_1_IS_BUFFERSEQUENCE))
+
+/// Create a new modifiable buffer from an existing buffer.
+/// Prevents picking the incorrect generic overloads for continuos sequences/iterators
+/**
+ * @returns A mutable_buffer value equivalent to:
+ * @code mutable_buffer(
+ *     b.data(),
+ *     min(b.size(), max_size_in_bytes)); @endcode
+ */
+template <int unused=0>//template forces merging  multiple definitions at link-time (ODR rule)
+ASIO_NODISCARD inline ASIO_MUTABLE_BUFFER buffer(
+    const mutable_buffers_1& b,
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
+{
+   return buffer(static_cast<const mutable_buffer&>(b),max_size_in_bytes);
+}
+#endif
+
+
 /// Create a new non-modifiable buffer from an existing buffer.
 /**
  * @returns <tt>const_buffer(b)</tt>.
@@ -919,6 +939,25 @@ ASIO_NODISCARD inline const_buffer buffer(
 #endif // ASIO_ENABLE_BUFFER_DEBUGGING
       );
 }
+
+#if (!defined(ASIO_NO_DEPRECATED))&&(!defined(ASIO_BUFFER_ARG_BUFFERS_1_IS_BUFFERSEQUENCE))
+
+/// Create a new non-modifiable buffer from an existing buffer.
+/// Prevents picking the incorrect generic overloads for continuos sequences/iterator
+/**
+ * @returns A const_buffer value equivalent to:
+ * @code const_buffer(
+ *     b.data(),
+ *     min(b.size(), max_size_in_bytes)); @endcode
+ */
+template <int unused=0>//template forces merging  multiple definitions at link-time (ODR rule)
+ASIO_NODISCARD inline ASIO_CONST_BUFFER buffer(
+    const const_buffers_1& b,
+    std::size_t max_size_in_bytes) ASIO_NOEXCEPT
+{
+   return buffer(static_cast<const const_buffer&>(b),max_size_in_bytes);
+}
+#endif
 
 /// Create a new modifiable buffer that represents the given memory range.
 /**
