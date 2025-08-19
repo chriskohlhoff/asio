@@ -1,67 +1,50 @@
 //
-// detail/select_reactor.hpp
+// detail/ionotify_reactor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2021 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_SELECT_REACTOR_HPP
-#define ASIO_DETAIL_SELECT_REACTOR_HPP
+#ifndef ASIO_DETAIL_IONOTIFY_REACTOR_HPP
+#define ASIO_DETAIL_IONOTIFY_REACTOR_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-#include "asio/detail/config.hpp"
+#include <asio/detail/config.hpp>
 
-#if defined(ASIO_HAS_IOCP) \
-  || (!defined(ASIO_HAS_DEV_POLL) \
-      && !defined(ASIO_HAS_IONOTIFY) \
-      && !defined(ASIO_HAS_EPOLL) \
-      && !defined(ASIO_HAS_KQUEUE) \
-      && !defined(ASIO_WINDOWS_RUNTIME))
+#if defined(ASIO_HAS_IONOTIFY)
 
 #include <cstddef>
-#include "asio/detail/fd_set_adapter.hpp"
-#include "asio/detail/limits.hpp"
-#include "asio/detail/mutex.hpp"
-#include "asio/detail/op_queue.hpp"
-#include "asio/detail/reactor_op.hpp"
-#include "asio/detail/reactor_op_queue.hpp"
+#include <asio/detail/fd_set_adapter.hpp>
+#include <asio/detail/limits.hpp>
+#include <asio/detail/mutex.hpp>
+#include <asio/detail/op_queue.hpp>
+#include <asio/detail/reactor_op.hpp>
+#include <asio/detail/reactor_op_queue.hpp>
 #include "asio/detail/scheduler_task.hpp"
-#include "asio/detail/select_interrupter.hpp"
-#include "asio/detail/socket_types.hpp"
-#include "asio/detail/timer_queue_base.hpp"
-#include "asio/detail/timer_queue_set.hpp"
-#include "asio/detail/wait_op.hpp"
-#include "asio/execution_context.hpp"
+#include <asio/detail/socket_types.hpp>
+#include <asio/detail/timer_queue_base.hpp>
+#include <asio/detail/timer_queue_set.hpp>
+#include <asio/detail/wait_op.hpp>
+#include <asio/execution_context.hpp>
 
-#if defined(ASIO_HAS_IOCP)
-# include "asio/detail/thread.hpp"
-#endif // defined(ASIO_HAS_IOCP)
-
-#include "asio/detail/push_options.hpp"
+#include <asio/detail/push_options.hpp>
 
 namespace asio {
 namespace detail {
 
-class select_reactor
-  : public execution_context_service_base<select_reactor>
-#if !defined(ASIO_HAS_IOCP)
-    , public scheduler_task
-#endif // !defined(ASIO_HAS_IOCP)
+class ionotify_reactor
+  : public execution_context_service_base<ionotify_reactor>,
+    public scheduler_task
 {
 public:
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-  enum op_types { read_op = 0, write_op = 1, except_op = 2,
-    max_select_ops = 3, connect_op = 3, max_ops = 4 };
-#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
   enum op_types { read_op = 0, write_op = 1, except_op = 2,
     max_select_ops = 3, connect_op = 1, max_ops = 3 };
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 
   // Per-descriptor data.
   struct per_descriptor_data
@@ -69,10 +52,10 @@ public:
   };
 
   // Constructor.
-  ASIO_DECL select_reactor(asio::execution_context& ctx);
+  ASIO_DECL ionotify_reactor(asio::execution_context& ctx);
 
   // Destructor.
-  ASIO_DECL ~select_reactor();
+  ASIO_DECL ~ionotify_reactor();
 
   // Destroy all user-defined handler objects owned by the service.
   ASIO_DECL void shutdown();
@@ -104,7 +87,8 @@ public:
   // Start a new operation. The reactor operation will be performed when the
   // given descriptor is flagged as ready, or an error has occurred.
   ASIO_DECL void start_op(int op_type, socket_type descriptor,
-      per_descriptor_data&, reactor_op* op, bool is_continuation, bool,
+      per_descriptor_data&, reactor_op* op,
+      bool is_continuation, bool allow_speculative,
       void (*on_immediate)(operation*, bool, const void*),
       const void* immediate_arg);
 
@@ -116,9 +100,10 @@ public:
   {
     start_op(op_type, descriptor, descriptor_data,
         op, is_continuation, allow_speculative,
-        &select_reactor::call_post_immediate_completion, this);
+        &ionotify_reactor::call_post_immediate_completion, this);
   }
 
+  
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the
   // operation_aborted error.
@@ -153,39 +138,38 @@ public:
       per_descriptor_data& source_descriptor_data);
 
   // Add a new timer queue to the reactor.
-  template <typename TimeTraits, typename Allocator>
-  void add_timer_queue(timer_queue<TimeTraits, Allocator>& queue);
+  template <typename Time_Traits>
+  void add_timer_queue(timer_queue<Time_Traits>& queue);
 
   // Remove a timer queue from the reactor.
-  template <typename TimeTraits, typename Allocator>
-  void remove_timer_queue(timer_queue<TimeTraits, Allocator>& queue);
+  template <typename Time_Traits>
+  void remove_timer_queue(timer_queue<Time_Traits>& queue);
 
   // Schedule a new operation in the given timer queue to expire at the
   // specified absolute time.
-  template <typename TimeTraits, typename Allocator>
-  void schedule_timer(timer_queue<TimeTraits, Allocator>& queue,
-      const typename TimeTraits::time_type& time,
-      typename timer_queue<TimeTraits, Allocator>::per_timer_data& timer,
-      wait_op* op);
+  template <typename Time_Traits>
+  void schedule_timer(timer_queue<Time_Traits>& queue,
+      const typename Time_Traits::time_type& time,
+      typename timer_queue<Time_Traits>::per_timer_data& timer, wait_op* op);
 
   // Cancel the timer operations associated with the given token. Returns the
   // number of operations that have been posted or dispatched.
-  template <typename TimeTraits, typename Allocator>
-  std::size_t cancel_timer(timer_queue<TimeTraits, Allocator>& queue,
-      typename timer_queue<TimeTraits, Allocator>::per_timer_data& timer,
+  template <typename Time_Traits>
+  std::size_t cancel_timer(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data& timer,
       std::size_t max_cancelled = (std::numeric_limits<std::size_t>::max)());
 
   // Cancel the timer operations associated with the given key.
-  template <typename TimeTraits, typename Allocator>
-  void cancel_timer_by_key(timer_queue<TimeTraits, Allocator>& queue,
-      typename timer_queue<TimeTraits, Allocator>::per_timer_data* timer,
+  template <typename Time_Traits>
+  void cancel_timer_by_key(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data* timer,
       void* cancellation_key);
 
   // Move the timer operations associated with the given timer.
-  template <typename TimeTraits, typename Allocator>
-  void move_timer(timer_queue<TimeTraits, Allocator>& queue,
-      typename timer_queue<TimeTraits, Allocator>::per_timer_data& target,
-      typename timer_queue<TimeTraits, Allocator>::per_timer_data& source);
+  template <typename Time_Traits>
+  void move_timer(timer_queue<Time_Traits>& queue,
+      typename timer_queue<Time_Traits>::per_timer_data& target,
+      typename timer_queue<Time_Traits>::per_timer_data& source);
 
   // Run select once until interrupted or events are ready to be dispatched.
   ASIO_DECL void run(long usec, op_queue<operation>& ops);
@@ -194,10 +178,8 @@ public:
   ASIO_DECL void interrupt();
 
 private:
-#if defined(ASIO_HAS_IOCP)
-  // Run the select loop in the thread.
-  ASIO_DECL void run_thread();
-#endif // defined(ASIO_HAS_IOCP)
+  // Helper function that acts like socket_ops::select() with our fd_sets, but internally uses pulses.
+  ASIO_DECL int select(socket_type max_fd, long timeout_usec);
 
   // Helper function to add a new timer queue.
   ASIO_DECL void do_add_timer_queue(timer_queue_base& queue);
@@ -206,69 +188,76 @@ private:
   ASIO_DECL void do_remove_timer_queue(timer_queue_base& queue);
 
   // Get the timeout value for the select call.
-  ASIO_DECL timeval* get_timeout(long usec, timeval& tv);
+  ASIO_DECL long get_timeout_usec(long usec);
 
   // Cancel all operations associated with the given descriptor. This function
-  // does not acquire the select_reactor's mutex.
+  // does not acquire the ionotify_reactor's mutex.
   ASIO_DECL void cancel_ops_unlocked(socket_type descriptor,
       const asio::error_code& ec);
 
+  // Deregister the given descriptor.  This function
+  // does not acquire the ionotify_reactor's mutex.
+  ASIO_DECL void deregister_descriptor_unlocked(socket_type descriptor);
+
+  // Internal version of interrupt(), called with the mutex already locked
+  ASIO_DECL void interrupt_unlocked();
+
+  // Create pulse channel for select()
+  ASIO_DECL void create_pulse_channel(void);
+
   // The scheduler implementation used to post completions.
-# if defined(ASIO_HAS_IOCP)
-  typedef class win_iocp_io_context scheduler_type;
-# else // defined(ASIO_HAS_IOCP)
   typedef class scheduler scheduler_type;
-# endif // defined(ASIO_HAS_IOCP)
   scheduler_type& scheduler_;
 
   // Mutex to protect access to internal data.
   asio::detail::mutex mutex_;
 
-  // The interrupter is used to break a blocking select call.
-  select_interrupter interrupter_;
-
   // The queues of read, write and except operations.
   reactor_op_queue<socket_type> op_queue_[max_ops];
 
-  // The file descriptor sets to be passed to the select system call.
-  fd_set_adapter fd_sets_[max_select_ops];
+  // Structure that holds the state of an fd and what we want from it.
+  // (We'll have a vector of these.)
+  struct fdstate
+  {
+    unsigned  ops_     : max_select_ops;
+    bool      wanted_  : 1;
+    unsigned  armed_   : max_select_ops;
+    sigevent  ioev_;
+
+    enum op_bits
+    {
+      NONE     = 0,
+      READ     = 1 << read_op,
+      WRITE    = 1 << write_op,
+      EXCEPT   = 1 << except_op,
+      ALL      = READ | WRITE | EXCEPT
+    };
+    fdstate() : ops_(NONE), wanted_(false), armed_(NONE) {ioev_.sigev_notify = 0;}
+  };
+  using op_bits = fdstate::op_bits;
+  static op_bits op_bit(op_types op) { return static_cast<op_bits>(1 << op); }
+
+  class fdmap: public std::vector<fdstate>
+  {
+  public:
+    // Similar to posix_fd_set_adapter::set but returns the max fd (or invalid_socket)
+    ASIO_DECL socket_type set(reactor_op_queue<socket_type>& operations, op_queue<operation>& ops, op_types op);
+    // Similar to posix_fd_set_adapter::perform but returns the max fd (or invalid_socket)
+    ASIO_DECL void perform(reactor_op_queue<socket_type>& operations, op_queue<operation>& ops, op_types op);
+    bool is_valid(socket_type fd) { return fd >= 0 && fd < size(); }
+  } fdmap_;
+
+  // Map of fds that have been deregistered and may need cleanup
+  std::vector<bool> deregistered_fds_;
+  socket_type last_deregistered_fd_;
 
   // The timer queues.
   timer_queue_set timer_queues_;
 
-#if defined(ASIO_HAS_IOCP)
-  // Helper class to run the reactor loop in a thread.
-  class thread_function;
-  friend class thread_function;
-
-  // Does the reactor loop thread need to stop.
-  bool stop_thread_;
-
-  // The thread that is running the reactor loop.
-  asio::detail::thread thread_;
-
-  // Helper class to join and restart the reactor thread.
-  class restart_reactor : public operation
-  {
-  public:
-    restart_reactor(select_reactor* r)
-      : operation(&restart_reactor::do_complete),
-        reactor_(r)
-    {
-    }
-
-    ASIO_DECL static void do_complete(void* owner, operation* base,
-        const asio::error_code& ec, std::size_t bytes_transferred);
-
-  private:
-    select_reactor* reactor_;
-  };
-
-  friend class restart_reactor;
-
-  // Operation used to join and restart the reactor thread.
-  restart_reactor restart_reactor_;
-#endif // defined(ASIO_HAS_IOCP)
+  // The channel and coid used for pulses
+  int chid_, coid_;
+  // Whether we have already sent an interrupt pulse
+  bool interrupted_;
 
   // Whether the service has been shut down.
   bool shutdown_;
@@ -277,18 +266,18 @@ private:
 } // namespace detail
 } // namespace asio
 
-#include "asio/detail/pop_options.hpp"
+#include <asio/detail/pop_options.hpp>
 
-#include "asio/detail/impl/select_reactor.hpp"
+#include <asio/detail/impl/ionotify_reactor.hpp>
 #if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/select_reactor.ipp"
+# include <asio/detail/impl/ionotify_reactor.ipp>
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(ASIO_HAS_IOCP)
-       //   || (!defined(ASIO_HAS_DEV_POLL)
-       //       && !defined(ASIO_HAS_IONOTIFY)
-       //       && !defined(ASIO_HAS_EPOLL)
-       //       && !defined(ASIO_HAS_KQUEUE)
-       //       && !defined(ASIO_WINDOWS_RUNTIME))
+#endif // defined(ASIO_HAS_IONOTIFY)
 
-#endif // ASIO_DETAIL_SELECT_REACTOR_HPP
+#endif // ASIO_DETAIL_IONOTIFY_REACTOR_HPP
+
+#if defined(__QNXNTO__) && defined(__USESRCVERSION)
+#include <sys/srcversion.h>
+__SRCVERSION("$URL: http://svn.ott.qnx.com/product/private/scratch/adas/autosar/projects/boost/boost/asio/detail/ionotify_reactor.hpp $ $Rev: 936906 $")
+#endif
