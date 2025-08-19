@@ -46,7 +46,7 @@ public:
   }
 
   /// Destructor.
-  virtual ~bad_address_cast() noexcept {}
+  ~bad_address_cast() = default;
 
   /// Get the message associated with the exception.
   virtual const char* what() const noexcept
