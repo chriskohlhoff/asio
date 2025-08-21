@@ -160,7 +160,7 @@ sub update_asio_version_hpp
 sub update_boost_asio_version_hpp
 {
   # Open the files.
-  my $from = "../boost/boost/asio/version.hpp";
+  my $from = "boost/boost/asio/version.hpp";
   my $to = $from . ".tmp";
   open(my $input, "<$from") or die("Can't open $from for reading");
   open(my $output, ">$to") or die("Can't open $to for writing");
@@ -189,9 +189,9 @@ sub update_boost_asio_version_hpp
 
 sub build_asio_doc
 {
-  $ENV{BOOST_ROOT} = abs_path("../boost");
+  $ENV{BOOST_ROOT} = abs_path("boost");
   system("rm -rf doc");
-  my $bjam = abs_path(glob("../boost/bjam"));
+  my $bjam = abs_path(glob("boost/b2"));
   chdir("src/doc");
   system("$bjam clean");
   system("rm -rf html");
@@ -213,8 +213,8 @@ sub make_asio_packages
 sub build_boost_asio_doc
 {
   my $cwd = getcwd();
-  my $bjam = abs_path(glob("../boost/bjam"));
-  chdir("../boost/doc");
+  my $bjam = abs_path(glob("boost/b2"));
+  chdir("boost/doc");
   system("rm -rf html/boost_asio");
   chdir("../libs/asio/doc");
   system("$bjam clean");
@@ -244,15 +244,15 @@ sub create_boost_asio_content
   mkdir("$boost_asio_name/libs");
 
   # Copy files.
-  system("cp -vLR ../boost/doc/html/boost_asio.html $boost_asio_name/doc/html");
-  system("cp -vLR ../boost/doc/html/boost_asio $boost_asio_name/doc/html");
-  system("cp -vLR ../boost/boost/asio.hpp $boost_asio_name/boost");
-  system("cp -vLR ../boost/boost/asio $boost_asio_name/boost");
-  system("cp -vLR ../boost/boost/cerrno.hpp $boost_asio_name/boost");
-  system("cp -vLR ../boost/boost/config/warning_disable.hpp $boost_asio_name/boost/config");
-  system("cp -vLR ../boost/boost/system $boost_asio_name/boost");
-  system("cp -vLR ../boost/libs/asio $boost_asio_name/libs");
-  system("cp -vLR ../boost/libs/system $boost_asio_name/libs");
+  system("cp -vLR boost/doc/html/boost_asio.html $boost_asio_name/doc/html");
+  system("cp -vLR boost/doc/html/boost_asio $boost_asio_name/doc/html");
+  system("cp -vLR boost/boost/asio.hpp $boost_asio_name/boost");
+  system("cp -vLR boost/boost/asio $boost_asio_name/boost");
+  system("cp -vLR boost/boost/cerrno.hpp $boost_asio_name/boost");
+  system("cp -vLR boost/boost/config/warning_disable.hpp $boost_asio_name/boost/config");
+  system("cp -vLR boost/boost/system $boost_asio_name/boost");
+  system("cp -vLR boost/libs/asio $boost_asio_name/libs");
+  system("cp -vLR boost/libs/system $boost_asio_name/libs");
 
   # Remove modular boost include directories.
   system("rm -rf $boost_asio_name/libs/asio/include");
