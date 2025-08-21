@@ -48,7 +48,7 @@ for:
     build_script:
       - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
       - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-      - cd asio\src
+      - cd src
       - nmake -f Makefile.msc
       - nmake -f Makefile.msc check
   -
@@ -61,7 +61,7 @@ for:
       _WIN32_WINNT: 0x0603
     build_script:
       - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
-      - cd asio\src
+      - cd src
       - nmake -f Makefile.msc
       - nmake -f Makefile.msc check
   -
@@ -74,7 +74,7 @@ for:
       _WIN32_WINNT: 0x0A00
     build_script:
       - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
-      - cd asio\src
+      - cd src
       - nmake -f Makefile.msc
       - nmake -f Makefile.msc check
   -
@@ -86,7 +86,7 @@ for:
       BOOSTDIR: C:/Libraries/boost_1_83_0
     build_script:
       - PATH=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\msys64\usr\bin;%PATH%
-      - cd asio\src
+      - cd src
       - mingw32-make -f Makefile.mgw
       - mingw32-make -f Makefile.mgw check
 

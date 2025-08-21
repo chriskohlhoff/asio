@@ -9,7 +9,6 @@ task:
   install_script:
     - pkg install -y autoconf automake pkgconf
   build_script:
-    - cd asio
     - ./autogen.sh
     - ./configure --with-boost=no
     - make
