@@ -229,7 +229,7 @@ private:
   detail::atomic_count num_threads_;
 
   // Whether a join call will have any effect.
-  bool joinable_;
+  std::atomic<bool> joinable_;
 };
 
 /// Executor implementation type used to submit functions to a thread pool.
