@@ -125,9 +125,9 @@ void thread_pool::attach()
 
 void thread_pool::join()
 {
-  if (joinable_)
+  bool expected = true;
+  if (joinable_.compare_exchange_strong(expected, false))
   {
-    joinable_ = false;
     scheduler_.work_finished();
     threads_.join();
   }
