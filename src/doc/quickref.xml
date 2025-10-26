@@ -82,6 +82,10 @@
             <member><link linkend="asio.reference.execution__blocking_adaptation_t__allowed_t">execution::blocking_adaptation_t::allowed_t</link></member>
             <member><link linkend="asio.reference.execution__context_t">execution::context_t</link></member>
             <member><link linkend="asio.reference.execution__context_as_t">execution::context_as_t</link></member>
+            <member><link linkend="asio.reference.execution__inline_exception_handling_t">execution::inline_exception_handling_t</link></member>
+            <member><link linkend="asio.reference.execution__inline_exception_handling_t__propagate_t">execution::inline_exception_handling_t::propagate_t</link></member>
+            <member><link linkend="asio.reference.execution__inline_exception_handling_t__capture_t">execution::inline_exception_handling_t::capture_t</link></member>
+            <member><link linkend="asio.reference.execution__inline_exception_handling_t__terminate_t">execution::inline_exception_handling_t::terminate_t</link></member>
             <member><link linkend="asio.reference.execution__mapping_t">execution::mapping_t</link></member>
             <member><link linkend="asio.reference.execution__mapping_t__thread_t">execution::mapping_t::thread_t</link></member>
             <member><link linkend="asio.reference.execution__mapping_t__new_thread_t">execution::mapping_t::new_thread_t</link></member>

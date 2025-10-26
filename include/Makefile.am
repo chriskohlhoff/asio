@@ -362,6 +362,7 @@ nobase_include_HEADERS = \
 	asio/execution/context_as.hpp \
 	asio/execution/executor.hpp \
 	asio/execution/impl/bad_executor.ipp \
+	asio/execution/inline_exception_handling.hpp \
 	asio/execution/invocable_archetype.hpp \
 	asio/execution/mapping.hpp \
 	asio/execution/occupancy.hpp \

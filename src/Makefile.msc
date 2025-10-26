@@ -178,6 +178,7 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\blocking_adaptation.exe \
 	tests\unit\execution\context_as.exe \
 	tests\unit\execution\executor.exe \
+	tests\unit\execution\inline_exception_handling.exe \
 	tests\unit\execution\invocable_archetype.exe \
 	tests\unit\execution\mapping.exe \
 	tests\unit\execution\outstanding_work.exe \

@@ -12,6 +12,7 @@ blocking
 blocking_adaptation
 context_as
 executor
+inline_exception_handling
 invocable_archetype
 mapping
 outstanding_work

@@ -77,6 +77,7 @@ check_PROGRAMS = \
 	unit/execution/blocking_adaptation \
 	unit/execution/context_as \
 	unit/execution/executor \
+	unit/execution/inline_exception_handling \
 	unit/execution/invocable_archetype \
 	unit/execution/mapping \
 	unit/execution/outstanding_work \
@@ -305,6 +306,7 @@ TESTS = \
 	unit/execution/blocking_adaptation \
 	unit/execution/context_as \
 	unit/execution/executor \
+	unit/execution/inline_exception_handling \
 	unit/execution/invocable_archetype \
 	unit/execution/mapping \
 	unit/execution/outstanding_work \
@@ -532,6 +534,7 @@ unit_execution_blocking_SOURCES = unit/execution/blocking.cpp
 unit_execution_blocking_adaptation_SOURCES = unit/execution/blocking_adaptation.cpp
 unit_execution_context_as_SOURCES = unit/execution/context_as.cpp
 unit_execution_executor_SOURCES = unit/execution/executor.cpp
+unit_execution_inline_exception_handling_SOURCES = unit/execution/inline_exception_handling.cpp
 unit_execution_invocable_archetype_SOURCES = unit/execution/invocable_archetype.cpp
 unit_execution_mapping_SOURCES = unit/execution/mapping.cpp
 unit_execution_outstanding_work_SOURCES = unit/execution/outstanding_work.cpp
