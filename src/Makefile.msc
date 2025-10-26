@@ -194,6 +194,7 @@ UNIT_TEST_EXES = \
 	tests\unit\generic\stream_protocol.exe \
 	tests\unit\high_resolution_timer.exe \
 	tests\unit\immediate.exe \
+	tests\unit\inline_executor.exe \
 	tests\unit\io_context.exe \
 	tests\unit\io_context_strand.exe \
 	tests\unit\ip\address.exe \

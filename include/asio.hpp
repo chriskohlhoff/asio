@@ -106,6 +106,7 @@
 #include "asio/handler_continuation_hook.hpp"
 #include "asio/high_resolution_timer.hpp"
 #include "asio/immediate.hpp"
+#include "asio/inline_executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/io_context_strand.hpp"
 #include "asio/ip/address.hpp"

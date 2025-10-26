@@ -18,6 +18,7 @@
 
 #include <functional>
 #include "asio/immediate.hpp"
+#include "asio/inline_executor.hpp"
 #include "asio/io_context.hpp"
 #include "unit_test.hpp"
 
@@ -53,7 +54,7 @@ void bind_immediate_executor_to_function_object_test()
       bind_immediate_executor(
         ioc2.get_executor(),
         bind_immediate_executor(
-          asio::system_executor(),
+          asio::inline_executor(),
           bindns::bind(&increment, &count))));
 
   ioc1.restart();

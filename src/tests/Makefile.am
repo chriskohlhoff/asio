@@ -94,6 +94,7 @@ check_PROGRAMS = \
 	unit/generic/stream_protocol \
 	unit/high_resolution_timer \
 	unit/immediate \
+	unit/inline_executor \
 	unit/io_context \
 	unit/io_context_strand \
 	unit/ip/address \
@@ -318,6 +319,7 @@ TESTS = \
 	unit/file_base \
 	unit/high_resolution_timer \
 	unit/immediate \
+	unit/inline_executor \
 	unit/io_context \
 	unit/io_context_strand \
 	unit/ip/address \
@@ -551,6 +553,7 @@ unit_generic_seq_packet_protocol_SOURCES = unit/generic/seq_packet_protocol.cpp
 unit_generic_stream_protocol_SOURCES = unit/generic/stream_protocol.cpp
 unit_high_resolution_timer_SOURCES = unit/high_resolution_timer.cpp
 unit_immediate_SOURCES = unit/immediate.cpp
+unit_inline_executor_SOURCES = unit/inline_executor.cpp
 unit_io_context_SOURCES = unit/io_context.cpp
 unit_io_context_strand_SOURCES = unit/io_context_strand.cpp
 unit_ip_address_SOURCES = unit/ip/address.cpp

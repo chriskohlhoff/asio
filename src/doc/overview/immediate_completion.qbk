@@ -21,11 +21,11 @@ executor.
 
 For example, to allow a recursive call to the completion handler of an
 `async_read_some` operation, we may specify that immediate completion is
-delivered via a `system_executor`:
+delivered via an `inline_executor`:
 
   my_socket.async_read_some(my_buffer,
       bind_immediate_executor(
-        system_executor(),
+        inline_executor(),
         [](error_code e, size_t n)
         {
           // ...

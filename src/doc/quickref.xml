@@ -169,6 +169,7 @@
             <member><link linkend="asio.reference.executor">executor</link></member>
             <member><link linkend="asio.reference.executor_arg_t">executor_arg_t</link></member>
             <member><link linkend="asio.reference.invalid_service_owner">invalid_service_owner</link></member>
+            <member><link linkend="asio.reference.inline_executor">inline_executor</link></member>
             <member><link linkend="asio.reference.io_context">io_context</link></member>
             <member><link linkend="asio.reference.io_context.executor_type">io_context::executor_type</link></member>
             <member><link linkend="asio.reference.io_context__service">io_context::service</link></member>
@@ -199,6 +200,7 @@
             <member><link linkend="asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="asio.reference.awaitable">awaitable</link></member>
+            <member><link linkend="asio.reference.basic_inline_executor">basic_inline_executor</link></member>
             <member><link linkend="asio.reference.basic_io_object">basic_io_object (deprecated)</link></member>
             <member><link linkend="asio.reference.basic_system_executor">basic_system_executor</link></member>
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>

@@ -464,6 +464,7 @@ nobase_include_HEADERS = \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
 	asio/impl/write.hpp \
+	asio/inline_executor.hpp \
 	asio/io_context.hpp \
 	asio/io_context_strand.hpp \
 	asio/ip/address.hpp \
