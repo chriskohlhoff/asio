@@ -251,12 +251,12 @@ jobs:
             cxx-std: c++11
             optim-level: -O2
           #
-          # macOS / c++2a -fcoroutines-ts / -O2 / standalone
+          # macOS / c++2a / -O2 / standalone
           #
           - build-type: full
             runs-on: macos-latest
             compiler: g++
-            cxx-std: c++2a -fcoroutines-ts
+            cxx-std: c++2a
             optim-level: -O2
           #
           # macOS / c++11 / -O2 / standalone
