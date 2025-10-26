@@ -70,7 +70,7 @@ for:
         - image: Visual Studio 2019
           MSVC: 1
     environment:
-      BOOSTDIR: C:\Libraries\boost_1_83_0
+      BOOSTDIR: C:\Libraries\boost_1_89_0
       _WIN32_WINNT: 0x0A00
     build_script:
       - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
@@ -83,7 +83,7 @@ for:
         - image: Visual Studio 2019
           MINGW: 1
     environment:
-      BOOSTDIR: C:/Libraries/boost_1_83_0
+      BOOSTDIR: C:/Libraries/boost_1_89_0
     build_script:
       - PATH=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\msys64\usr\bin;%PATH%
       - cd src
