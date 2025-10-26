@@ -222,7 +222,7 @@ Certain objects that participate in asynchronous operations have an
 An asynchronous operation has an associated executor satisfying the [link
 asio.reference.Executor1 `Executor`] requirements. If not otherwise specified by
 the asynchronous operation, this associated executor is an object of type
-`system_executor`.
+`inline_executor`.
 
 All asynchronous operations in this library have an associated I/O executor
 object that is determined as follows:
