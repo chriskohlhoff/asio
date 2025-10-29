@@ -227,6 +227,7 @@
             <member><link linkend="asio.reference.experimental__wait_for_one">experimental::wait_for_one</link></member>
             <member><link linkend="asio.reference.experimental__wait_for_one_error">experimental::wait_for_one_error</link></member>
             <member><link linkend="asio.reference.experimental__wait_for_one_success">experimental::wait_for_one_success</link></member>
+            <member><link linkend="asio.reference.inline_or_executor">inline_or_executor</link></member>
             <member><link linkend="asio.reference.io_context__basic_executor_type">io_context::basic_executor_type</link></member>
             <member><link linkend="asio.reference.partial_allocator_binder">partial_allocator_binder</link></member>
             <member><link linkend="asio.reference.partial_cancel_after">partial_cancel_after</link></member>
@@ -274,6 +275,7 @@
             <member><link linkend="asio.reference.get_associated_immediate_executor">get_associated_immediate_executor</link></member>
             <member><link linkend="asio.reference.execution_context.has_service">has_service</link></member>
             <member><link linkend="asio.reference.execution_context.make_service">make_service</link></member>
+            <member><link linkend="asio.reference.inline_or">inline_or</link></member>
             <member><link linkend="asio.reference.make_strand">make_strand</link></member>
             <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="asio.reference.post">post</link></member>

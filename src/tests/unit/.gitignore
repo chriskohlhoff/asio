@@ -75,6 +75,7 @@ file_base
 high_resolution_timer
 immediate
 inline_executor
+inline_or_executor
 io_context
 io_context_strand
 io_service
