@@ -1014,7 +1014,7 @@ ASIO_NODISCARD inline mutable_buffer buffer(
     boost::array<PodType, N>& data) noexcept
 {
   return mutable_buffer(
-      data.c_array(), data.size() * sizeof(PodType));
+      data.data(), data.size() * sizeof(PodType));
 }
 
 /// Create a new modifiable buffer that represents the given POD array.
@@ -1029,7 +1029,7 @@ ASIO_NODISCARD inline mutable_buffer buffer(
     boost::array<PodType, N>& data,
     std::size_t max_size_in_bytes) noexcept
 {
-  return mutable_buffer(data.c_array(),
+  return mutable_buffer(data.data(),
       data.size() * sizeof(PodType) < max_size_in_bytes
       ? data.size() * sizeof(PodType) : max_size_in_bytes);
 }
