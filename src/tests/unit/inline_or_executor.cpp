@@ -60,11 +60,11 @@ void inline_or_executor_query_test()
 
   ASIO_CHECK(
       asio::query(s1, asio::execution::blocking)
-        == asio::execution::blocking.possibly);
+        == asio::execution::blocking.always);
 
   ASIO_CHECK(
-      asio::query(s1, asio::execution::blocking.possibly)
-        == asio::execution::blocking.possibly);
+      asio::query(s1, asio::execution::blocking.always)
+        == asio::execution::blocking.always);
 
   ASIO_CHECK(
       asio::query(s1, asio::execution::outstanding_work)

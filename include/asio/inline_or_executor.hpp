@@ -39,7 +39,7 @@ namespace asio {
  * @c blocking.possibly) are executed inline.
  */
 template <typename Executor,
-    typename Blocking = execution::blocking_t::possibly_t,
+    typename Blocking = execution::blocking_t::always_t,
     typename InlineExceptionHandling
       = execution::inline_exception_handling_t::propagate_t>
 class inline_or_executor
