@@ -237,8 +237,10 @@
             <member><link linkend="asio.reference.partial_cancellation_slot_binder">partial_cancellation_slot_binder</link></member>
             <member><link linkend="asio.reference.partial_executor_binder">partial_executor_binder</link></member>
             <member><link linkend="asio.reference.partial_immediate_executor_binder">partial_immediate_executor_binder</link></member>
+            <member><link linkend="asio.reference.partial_redirect_disposition">partial_redirect_disposition</link></member>
             <member><link linkend="asio.reference.prepend_t">prepend_t</link></member>
             <member><link linkend="asio.reference.recycling_allocator">recycling_allocator</link></member>
+            <member><link linkend="asio.reference.redirect_disposition_t">redirect_disposition_t</link></member>
             <member><link linkend="asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>
             <member><link linkend="asio.reference.thread_pool__basic_executor_type">thread_pool::basic_executor_type</link></member>
@@ -280,6 +282,7 @@
             <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="asio.reference.post">post</link></member>
             <member><link linkend="asio.reference.prepend">prepend</link></member>
+            <member><link linkend="asio.reference.redirect_disposition">redirect_disposition</link></member>
             <member><link linkend="asio.reference.redirect_error">redirect_error</link></member>
             <member><link linkend="asio.reference.spawn">spawn</link></member>
             <member><link linkend="asio.reference.this_coro__reset_cancellation_state">this_coro::reset_cancellation_state</link></member>

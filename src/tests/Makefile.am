@@ -142,6 +142,7 @@ check_PROGRAMS = \
 	unit/read_until \
 	unit/readable_pipe \
 	unit/recycling_allocator \
+	unit/redirect_disposition \
 	unit/redirect_error \
 	unit/registered_buffer \
 	unit/serial_port \
@@ -368,6 +369,7 @@ TESTS = \
 	unit/read_until \
 	unit/readable_pipe \
 	unit/recycling_allocator \
+	unit/redirect_disposition \
 	unit/redirect_error \
 	unit/registered_buffer \
 	unit/serial_port \
@@ -603,6 +605,7 @@ unit_read_at_SOURCES = unit/read_at.cpp
 unit_read_until_SOURCES = unit/read_until.cpp
 unit_readable_pipe_SOURCES = unit/readable_pipe.cpp
 unit_recycling_allocator_SOURCES = unit/recycling_allocator.cpp
+unit_redirect_disposition_SOURCES = unit/redirect_disposition.cpp
 unit_redirect_error_SOURCES = unit/redirect_error.cpp
 unit_registered_buffer_SOURCES = unit/registered_buffer.cpp
 unit_serial_port_SOURCES = unit/serial_port.cpp

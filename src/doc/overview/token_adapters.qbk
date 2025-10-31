@@ -94,6 +94,42 @@ expression will no longer throw an exception on resumption.
     // ...
   }
 
+[heading redirect_disposition]
+
+The [link asio.reference.redirect_disposition `redirect_disposition`] function
+adapts a completion token to capture any [link asio.reference.Disposition
+disposition] produced by an operation into a specified variable. In doing so, it
+modifies the completion signature to remove the initial disposition parameter.
+
+This example shows the `redirect_disposition` adapter applied to a lambda, to
+specify that the disposition should be captured into `my_exception`. The
+`error_code` (which is a disposition type) is no longer passed to the completion
+handler, but the remaining arguments are passed through as-is.
+
+  std::exception_ptr my_exception; // N.B. must be valid until operation completes
+  // ...
+  my_socket.async_read_some(my_buffer,
+      asio::redirect_disposition(
+        [](std::size_t bytes_transferred)
+        {
+          // ...
+        }, my_exception));
+
+When applied to completion tokens that cause the initiating function to produce
+a result, such as [link asio.reference.use_awaitable `use_awaitable`], the
+result is returned unmodified. However, if the operation fails, the `co_await`
+expression will no longer throw an exception on resumption.
+
+  asio::awaitable<void> my_coroutine()
+  {
+    // ...
+    std::exception my_exception;
+    std::size_t bytes_transferred =
+      co_await my_socket.async_read_some(my_buffer,
+        asio::redirect_disposition(asio::use_awaitable, my_exception));
+    // ...
+  }
+
 [heading as_tuple]
 
 The [link asio.reference.as_tuple `as_tuple`] adapter can be used to specify

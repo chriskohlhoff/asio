@@ -91,6 +91,7 @@ read_at
 read_until
 readable_pipe
 recycling_allocator
+redirect_disposition
 redirect_error
 registered_buffer
 serial_port

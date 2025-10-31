@@ -88,8 +88,10 @@ passed back to the coroutine as a `system_error` exception.
 [heading Error Handling]
 
 To perform explicit error handling, rather than the default exception-throwing
-behaviour, use the [link asio.reference.as_tuple `as_tuple`] or
-[link asio.reference.redirect_error `redirect_error`] completion token adapters.
+behaviour, use the [link asio.reference.as_tuple `as_tuple`],
+[link asio.reference.redirect_disposition `redirect_disposition`] or
+[link asio.reference.redirect_error `redirect_error`] or completion token
+adapters.
 
 The `as_tuple` completion token adapter packages the completion
 handler arguments into a single tuple, which is then returned as the result of
@@ -296,6 +298,7 @@ protocol in terms of a coroutine:
 [link asio.reference.co_spawn co_spawn],
 [link asio.reference.detached detached],
 [link asio.reference.as_tuple as_tuple],
+[link asio.reference.redirect_disposition redirect_disposition],
 [link asio.reference.redirect_error redirect_error],
 [link asio.reference.awaitable awaitable],
 [link asio.reference.use_awaitable_t use_awaitable_t],

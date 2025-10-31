@@ -134,6 +134,7 @@ UNIT_TEST_EXES = \
 	tests/unit/read.exe \
 	tests/unit/read_at.exe \
 	tests/unit/read_until.exe \
+	tests/unit/redirect_disposition.exe \
 	tests/unit/redirect_error.exe \
 	tests/unit/serial_port.exe \
 	tests/unit/serial_port_base.exe \

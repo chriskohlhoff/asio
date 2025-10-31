@@ -162,6 +162,7 @@
 #include "asio/read_until.hpp"
 #include "asio/readable_pipe.hpp"
 #include "asio/recycling_allocator.hpp"
+#include "asio/redirect_disposition.hpp"
 #include "asio/redirect_error.hpp"
 #include "asio/registered_buffer.hpp"
 #include "asio/require.hpp"

@@ -450,6 +450,7 @@ nobase_include_HEADERS = \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
 	asio/impl/read_until.hpp \
+	asio/impl/redirect_disposition.hpp \
 	asio/impl/redirect_error.hpp \
 	asio/impl/serial_port_base.hpp \
 	asio/impl/serial_port_base.ipp \
@@ -538,6 +539,7 @@ nobase_include_HEADERS = \
 	asio/read_until.hpp \
 	asio/readable_pipe.hpp \
 	asio/recycling_allocator.hpp \
+	asio/redirect_disposition.hpp \
 	asio/redirect_error.hpp \
 	asio/registered_buffer.hpp \
 	asio/require.hpp \
