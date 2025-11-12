@@ -508,7 +508,7 @@ ASIO_SYNC_OP_VOID serial_port_base::character_size::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
 {
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
-  storage.ByteSize = value_;
+  storage.ByteSize = static_cast<BYTE>(value_);
 #else
   storage.c_cflag &= ~CSIZE;
   switch (value_)
