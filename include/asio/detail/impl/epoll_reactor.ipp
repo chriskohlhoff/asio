@@ -534,7 +534,7 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops)
   // Block on the epoll descriptor.
   epoll_event events[128];
   int num_events;
-  if (epoll_fd_set_cnt_ > 0 && timeout > 0)
+  if (epoll_fd_set_cnt_ > 0 || timeout)
     num_events = epoll_wait(epoll_fd_, events, 128, timeout);
   else
     num_events = 0;
