@@ -1393,11 +1393,15 @@
 // Compiler support for the the [[deprecated(msg)]] attribute.
 #if !defined(ASIO_DEPRECATED_MSG)
 # if !defined(ASIO_DISABLE_DEPRECATED_MSG)
-#  if defined(__has_cpp_attribute)
-#   if __has_cpp_attribute(deprecated)
-#    define ASIO_DEPRECATED_MSG(msg) [[deprecated(msg)]]
-#   endif // __has_cpp_attribute(deprecated)
-#  endif // defined(__has_cpp_attribute)
+#  if defined(ASIO_MSVC) && (ASIO_MSVC >= 1400)
+#   define ASIO_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
+#  elif (__cplusplus >= 201402)
+#   if defined(__has_cpp_attribute)
+#    if __has_cpp_attribute(deprecated)
+#     define ASIO_DEPRECATED_MSG(msg) [[deprecated(msg)]]
+#    endif // __has_cpp_attribute(deprecated)
+#   endif // defined(__has_cpp_attribute)
+#  endif // __cplusplus >= 201402
 # endif // !defined(ASIO_DISABLE_DEPRECATED_MSG)
 #endif // !defined(ASIO_DEPRECATED_MSG)
 #if !defined(ASIO_DEPRECATED_MSG)
