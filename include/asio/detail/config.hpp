@@ -398,10 +398,20 @@
 #  if (__cplusplus >= 201703)
 #   if defined(__clang__)
 #    if defined(ASIO_HAS_CLANG_LIBCXX)
-#     if (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC) \
-        && !defined(_LIBCPP_MSVCRT) && !defined(__MINGW32__)
-#      if defined(__ANDROID__) && (__ANDROID_API__ >= 28)
+#     if (_LIBCPP_STD_VER > 14)
+#      if defined(__FreeBSD__) || defined(__Fuchsia__) || defined(__wasi__) \
+         || defined(__NetBSD__) || defined(__OpenBSD__)
+#       define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#      elif defined(__linux__)
+#       if defined(_LIBCPP_HAS_MUSL_LIBC)
 #        define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#       else // !defined(_LIBCPP_HAS_MUSL_LIBC)
+#        if (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17)
+#         define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#        endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17)
+#       endif // !defined(_LIBCPP_HAS_MUSL_LIBC)
+#      elif defined(__ANDROID__) && (__ANDROID_API__ >= 28)
+#       define ASIO_HAS_STD_ALIGNED_ALLOC 1
 #      elif defined(__APPLE__)
 #       if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #        if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
@@ -420,11 +430,8 @@
 #         define ASIO_HAS_STD_ALIGNED_ALLOC 1
 #        endif // (__WATCH_OS_VERSION_MIN_REQUIRED >= 60000)
 #       endif // defined(__WATCH_OS_X_VERSION_MIN_REQUIRED)
-#      else // defined(__APPLE__)
-#       define ASIO_HAS_STD_ALIGNED_ALLOC 1
 #      endif // defined(__APPLE__)
-#     endif // (_LIBCPP_STD_VER > 14) && defined(_LIBCPP_HAS_ALIGNED_ALLOC)
-            //   && !defined(_LIBCPP_MSVCRT) && !defined(__MINGW32__)
+#     endif // (_LIBCPP_STD_VER > 14)
 #    elif defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
 #     define ASIO_HAS_STD_ALIGNED_ALLOC 1
 #    endif // defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
