@@ -30,10 +30,11 @@ namespace asio {
 
 /// Adapts an executor to add inline invocation of the submitted function.
 /**
- * The @inline_or_executor class template adapts an existing executor such that:
+ * The @c inline_or_executor class template adapts an existing executor such
+ * that:
  *
  * @li posted function objects (or when the @c blocking property is set to
- *     @c blocking.never) are submitted to the wrapped executor; and
+ * @c blocking.never) are submitted to the wrapped executor; and
  *
  * @li dispatched function objects (or when @c blocking is @c blocking.always or
  * @c blocking.possibly) are executed inline.
