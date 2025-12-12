@@ -31,10 +31,9 @@ struct strand_service::on_do_complete_exit
 
   ~on_do_complete_exit()
   {
-    impl_->mutex_.lock();
+    std::lock_guard lock(impl_.mutex_);
     impl_->ready_queue_.push(impl_->waiting_queue_);
     bool more_handlers = impl_->locked_ = !impl_->ready_queue_.empty();
-    impl_->mutex_.unlock();
 
     if (more_handlers)
       owner_->post_immediate_completion(impl_, true);
@@ -101,10 +100,9 @@ struct strand_service::on_dispatch_exit
 
   ~on_dispatch_exit()
   {
-    impl_->mutex_.lock();
+    std::lock_guard lock(impl_.mutex_);
     impl_->ready_queue_.push(impl_->waiting_queue_);
     bool more_handlers = impl_->locked_ = !impl_->ready_queue_.empty();
-    impl_->mutex_.unlock();
 
     if (more_handlers)
       io_context_impl_->post_immediate_completion(impl_, false);
@@ -116,12 +114,12 @@ void strand_service::do_dispatch(implementation_type& impl, operation* op)
   // If we are running inside the io_context, and no other handler already
   // holds the strand lock, then the handler can run immediately.
   bool can_dispatch = io_context_impl_.can_dispatch();
-  impl->mutex_.lock();
+  std::unique_lock lock(impl.mutex_);
   if (can_dispatch && !impl->locked_)
   {
     // Immediate invocation is allowed.
     impl->locked_ = true;
-    impl->mutex_.unlock();
+    lock.unlock();
 
     // Indicate that this strand is executing on the current thread.
     call_stack<strand_impl>::context ctx(impl);
@@ -138,14 +136,12 @@ void strand_service::do_dispatch(implementation_type& impl, operation* op)
   {
     // Some other handler already holds the strand lock. Enqueue for later.
     impl->waiting_queue_.push(op);
-    impl->mutex_.unlock();
   }
   else
   {
     // The handler is acquiring the strand lock and so is responsible for
     // scheduling the strand.
     impl->locked_ = true;
-    impl->mutex_.unlock();
     impl->ready_queue_.push(op);
     io_context_impl_.post_immediate_completion(impl, false);
   }
@@ -154,19 +150,17 @@ void strand_service::do_dispatch(implementation_type& impl, operation* op)
 void strand_service::do_post(implementation_type& impl,
     operation* op, bool is_continuation)
 {
-  impl->mutex_.lock();
+  std::lock_guard lock(impl.mutex_);
   if (impl->locked_)
   {
     // Some other handler already holds the strand lock. Enqueue for later.
     impl->waiting_queue_.push(op);
-    impl->mutex_.unlock();
   }
   else
   {
     // The handler is acquiring the strand lock and so is responsible for
     // scheduling the strand.
     impl->locked_ = true;
-    impl->mutex_.unlock();
     impl->ready_queue_.push(op);
     io_context_impl_.post_immediate_completion(impl, is_continuation);
   }
@@ -187,8 +181,8 @@ void strand_service::do_complete(void* owner, operation* base,
     on_exit.owner_ = static_cast<io_context_impl*>(owner);
     on_exit.impl_ = impl;
 
-    // Run all ready handlers. No lock is required since the ready queue is
-    // accessed only within the strand.
+    // Run all ready handlers.
+    std::lock_guard lock(impl.mutex_);
     while (operation* o = impl->ready_queue_.front())
     {
       impl->ready_queue_.pop();
