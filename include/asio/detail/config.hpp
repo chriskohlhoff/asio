@@ -1087,6 +1087,8 @@
 #   define ASIO_HAS_THREADS 1
 #  elif defined(_PTHREADS)
 #   define ASIO_HAS_THREADS 1
+#  elif defined(__MINGW64__)
+#   define ASIO_HAS_THREADS 1
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
 # endif // !defined(ASIO_DISABLE_THREADS)
 #endif // !defined(ASIO_HAS_THREADS)
