@@ -68,26 +68,27 @@
 # endif // !defined(ASIO_SEPARATE_COMPILATION)
 #endif // !defined(ASIO_HEADER_ONLY)
 
-#if defined(ASIO_HEADER_ONLY)
-# define ASIO_DECL inline
-#else // defined(ASIO_HEADER_ONLY)
-# if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
+#if !defined(ASIO_DECL)
+# if defined(ASIO_HEADER_ONLY)
+#  define ASIO_DECL inline
+# else // defined(ASIO_HEADER_ONLY)
+#  if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
 // We need to import/export our code only if the user has specifically asked
 // for it by defining ASIO_DYN_LINK.
-#  if defined(ASIO_DYN_LINK)
+#   if defined(ASIO_DYN_LINK)
 // Export if this is our own source, otherwise import.
-#   if defined(ASIO_SOURCE)
-#    define ASIO_DECL __declspec(dllexport)
-#   else // defined(ASIO_SOURCE)
-#    define ASIO_DECL __declspec(dllimport)
-#   endif // defined(ASIO_SOURCE)
-#  endif // defined(ASIO_DYN_LINK)
-# endif // defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
-#endif // defined(ASIO_HEADER_ONLY)
-
+#    if defined(ASIO_SOURCE)
+#     define ASIO_DECL __declspec(dllexport)
+#    else // defined(ASIO_SOURCE)
+#     define ASIO_DECL __declspec(dllimport)
+#    endif // defined(ASIO_SOURCE)
+#   endif // defined(ASIO_DYN_LINK)
+#  endif // defined(_MSC_VER) || defined(__BORLANDC__) || defined(__CODEGEARC__)
+# endif // defined(ASIO_HEADER_ONLY)
 // If ASIO_DECL isn't defined yet define it now.
-#if !defined(ASIO_DECL)
-# define ASIO_DECL
+# if !defined(ASIO_DECL)
+#  define ASIO_DECL
+# endif // !defined(ASIO_DECL)
 #endif // !defined(ASIO_DECL)
 
 // Helper macro for documentation.
