@@ -7,6 +7,36 @@
 
 [section:history Revision History]
 
+[heading Asio 1.38.0]
+
+* Changed the macro-based coroutine implementation to ensure that case labels
+  are deterministic when __COUNTER__ is used.
+
+* Fixed synchronous SSL stream `shutdown` to remap `error::eof` as
+  `async_shutdown` does.
+
+* Fixed a warning caused by the newly added `[[deprecated]]` attribute, when
+  compiling for C++11.
+
+* Changed `stream_file` and `random_access_file` on Windows to treat the
+  supplied file path as a UTF-8 encoded string.
+
+* Added checks to `experimental::parallel_group` and
+  `experimental::ranged_parallel_group` to detect when they are incorrectly
+  called with an empty set of asynchronous operations.
+
+* Removed the previously added workaround for `_FORTIFY_SOURCE`, and instead
+  added additional address length checking into `ip::basic_resolver_results`.
+
+* Fixed `experimental::coro` to add protection against `max` as a macro.
+
+* Updated the detection of std::aligned_alloc to work with newer versions of
+  [^libc++].
+
+* Suppressed "unused declaration" warning.
+
+* Various documentation fixes and improvements.
+
 [heading Asio 1.37.0]
 
 * Added the `execution::inline_exception_handling` property. This property is
