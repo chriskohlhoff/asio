@@ -404,6 +404,10 @@
 #      if defined(__FreeBSD__) || defined(__Fuchsia__) || defined(__wasi__) \
          || defined(__NetBSD__) || defined(__OpenBSD__)
 #       define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#      elif defined(__ANDROID__)
+#       if (__ANDROID_API__ >= 28)
+#         define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#       endif // (__ANDROID_API__ >= 28)
 #      elif defined(__linux__)
 #       if defined(_LIBCPP_HAS_MUSL_LIBC)
 #        define ASIO_HAS_STD_ALIGNED_ALLOC 1
@@ -412,8 +416,6 @@
 #         define ASIO_HAS_STD_ALIGNED_ALLOC 1
 #        endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17)
 #       endif // !defined(_LIBCPP_HAS_MUSL_LIBC)
-#      elif defined(__ANDROID__) && (__ANDROID_API__ >= 28)
-#       define ASIO_HAS_STD_ALIGNED_ALLOC 1
 #      elif defined(__APPLE__)
 #       if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #        if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
