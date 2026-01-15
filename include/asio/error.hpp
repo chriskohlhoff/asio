@@ -357,9 +357,10 @@ inline asio::error_code make_error_code(misc_errors e)
 
 // boostify: non-boost code starts here
 namespace detail {
-
+#if !defined(ASIO_ERROR_NUMBER_TO_CONDITION_DECLARED)
+#define ASIO_ERROR_NUMBER_TO_CONDITION_DECLARED
 ASIO_DECL std::error_condition error_number_to_condition(int ev);
-
+#endif
 } // namespace detail
 // boostify: non-boost code ends here
 } // namespace error
