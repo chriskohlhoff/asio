@@ -85,6 +85,10 @@ typedef asio::ip::detail::socket_option::multicast_request<
 /**
  * Implements the IPPROTO_IP/IP_MULTICAST_IF socket option.
  *
+ * For IPv4, the outbound interface may be specified using an IPv4 address.
+ * For IPv6, an interface index must be used, since an IPv6 address does not
+ * uniquely identify a network interface.
+ * 
  * @par Examples
  * Setting the option:
  * @code
