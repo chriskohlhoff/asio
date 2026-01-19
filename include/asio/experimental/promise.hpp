@@ -164,6 +164,9 @@ private:
     std::shared_ptr<detail::promise_impl<
       void(Ts...), Executor, Allocator>> self_;
 
+    using executor_type = Executor;
+    executor_type get_executor() const { return self_->get_executor(); }
+
     template <typename WaitHandler>
     void operator()(WaitHandler&& handler) const
     {
@@ -205,7 +208,6 @@ private:
               if (auto p = self.lock())
               {
                 p->cancel.emit(level);
-                p->cancel_();
               }
             }
           };

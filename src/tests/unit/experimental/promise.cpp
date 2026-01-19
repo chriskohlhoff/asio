@@ -19,6 +19,7 @@
 
 #include "asio/append.hpp"
 #include "asio/bind_cancellation_slot.hpp"
+#include "asio/cancel_after.hpp"
 #include "asio/compose.hpp"
 #include "asio/deferred.hpp"
 #include "asio/experimental/use_promise.hpp"
@@ -214,6 +215,27 @@ void test_cancel()
       ec.message());
 }
 
+void test_cancel_after()
+{
+  using namespace asio;
+  io_context ctx;
+  steady_timer tim{ctx, std::chrono::seconds(10)};
+
+  auto p = tim.async_wait(experimental::use_promise);
+
+  bool called = false;
+  error_code ec;
+  std::move(p)(cancel_after(std::chrono::milliseconds(1), [&](error_code ec_) {
+    called = true;
+    ec = ec_;
+  }));
+
+  ctx.run();
+
+  ASIO_CHECK(called);
+  ASIO_CHECK(ec == error::operation_aborted);
+}
+
 } // namespace promise
 
 ASIO_TEST_SUITE
@@ -223,4 +245,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(promise::promise_slot_tester)
   ASIO_TEST_CASE(promise::early_completion)
   ASIO_TEST_CASE(promise::test_cancel)
+  ASIO_TEST_CASE(promise::test_cancel_after)
 )
