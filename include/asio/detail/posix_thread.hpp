@@ -30,7 +30,7 @@ namespace detail {
 
 extern "C"
 {
-  ASIO_DECL void* asio_detail_posix_thread_function(void* arg);
+  ASIO_DECL void* asio_detail_posix_thread_function_for_external_allocator(void* arg);
 }
 
 class posix_thread
@@ -88,7 +88,7 @@ public:
   ASIO_DECL static std::size_t hardware_concurrency();
 
 private:
-  friend void* asio_detail_posix_thread_function(void* arg);
+  friend void* asio_detail_posix_thread_function_for_external_allocator(void* arg);
 
   class func_base
   {

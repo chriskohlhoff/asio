@@ -57,7 +57,7 @@ std::size_t posix_thread::hardware_concurrency()
 posix_thread::func_base* posix_thread::start_thread(func_base* arg)
 {
   int error = ::pthread_create(&arg->thread_, 0,
-        asio_detail_posix_thread_function, arg);
+        asio_detail_posix_thread_function_for_external_allocator, arg);
   if (error != 0)
   {
     arg->destroy();
@@ -68,7 +68,7 @@ posix_thread::func_base* posix_thread::start_thread(func_base* arg)
   return arg;
 }
 
-void* asio_detail_posix_thread_function(void* arg)
+void* asio_detail_posix_thread_function_for_external_allocator(void* arg)
 {
   static_cast<posix_thread::func_base*>(arg)->run();
   return 0;

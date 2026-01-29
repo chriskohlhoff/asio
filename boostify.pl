@@ -131,9 +131,9 @@ sub copy_source_file
       $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
       $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
     }
-    if ($line =~ /asio_detail_posix_thread_function/)
+    if ($line =~ /asio_detail_posix_thread_function_for_external_allocator/)
     {
-      $line =~ s/asio_detail_posix_thread_function/boost_asio_detail_posix_thread_function/g;
+      $line =~ s/asio_detail_posix_thread_function_for_external_allocator/boost_asio_detail_posix_thread_function_for_external_allocator/g;
     }
     if ($line =~ /asio_signal_handler/)
     {
