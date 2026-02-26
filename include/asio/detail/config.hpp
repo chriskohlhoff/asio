@@ -1498,7 +1498,7 @@
 
 // Kernel support for MSG_NOSIGNAL.
 #if !defined(ASIO_HAS_MSG_NOSIGNAL)
-# if defined(__linux__)
+# if defined(__linux__) || defined(__NetBSD__)
 #  define ASIO_HAS_MSG_NOSIGNAL 1
 # elif defined(_POSIX_VERSION)
 #  if (_POSIX_VERSION >= 200809L)
