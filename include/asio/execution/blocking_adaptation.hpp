@@ -35,6 +35,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 #if defined(GENERATING_DOCUMENTATION)
 
@@ -1112,6 +1113,7 @@ struct prefer_member<
 
 #endif // defined(GENERATING_DOCUMENTATION)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -19,6 +19,7 @@
 #include <functional>
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 using std::function;
@@ -28,6 +29,7 @@ using std::function;
 using std::ref;
 using std::reference_wrapper;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_FUNCTIONAL_HPP

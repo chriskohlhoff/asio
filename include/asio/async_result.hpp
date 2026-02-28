@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename T>
@@ -992,6 +993,7 @@ template <typename T, typename... Args>
 using completion_signature_of_t =
   typename completion_signature_of<T, Args...>::type;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

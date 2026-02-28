@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 inline system_context::executor_type
 system_context::get_executor() noexcept
@@ -27,6 +28,7 @@ system_context::get_executor() noexcept
   return system_executor();
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

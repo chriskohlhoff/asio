@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 namespace unicast {
 
@@ -63,6 +64,7 @@ typedef asio::ip::detail::socket_option::unicast_hops<
 
 } // namespace unicast
 } // namespace ip
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

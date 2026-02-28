@@ -26,6 +26,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 
 bool host_name_verification::operator()(
@@ -66,6 +67,7 @@ bool host_name_verification::operator()(
 }
 
 } // namespace ssl
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Used to generically specialise associators for a type.
 template <template <typename, typename> class Associator,
@@ -28,6 +29,7 @@ struct associator
 {
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

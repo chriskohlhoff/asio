@@ -24,12 +24,14 @@
 #include "asio/windows/basic_object_handle.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
 /// Typedef for the typical usage of an object handle.
 typedef basic_object_handle<> object_handle;
 
 } // namespace windows
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // defined(ASIO_HAS_WINDOWS_OBJECT_HANDLE)

@@ -33,6 +33,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Automatically resizable buffer class based on std::streambuf.
 /**
@@ -441,6 +442,7 @@ private:
   basic_streambuf<Allocator>& sb_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

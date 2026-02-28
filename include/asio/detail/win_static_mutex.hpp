@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct win_static_mutex
@@ -61,6 +62,7 @@ struct win_static_mutex
 #endif // defined(UNDER_CE)
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

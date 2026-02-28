@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 posix_serial_port_service::posix_serial_port_service(
@@ -158,6 +159,7 @@ asio::error_code posix_serial_port_service::do_get_option(
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

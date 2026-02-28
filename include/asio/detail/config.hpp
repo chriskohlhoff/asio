@@ -11,6 +11,8 @@
 #ifndef ASIO_DETAIL_CONFIG_HPP
 #define ASIO_DETAIL_CONFIG_HPP
 
+#include "asio/version.hpp"
+
 // boostify: non-boost code starts here
 #if !defined(ASIO_STANDALONE)
 # if !defined(ASIO_ENABLE_BOOST)
@@ -716,6 +718,11 @@
          // && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 # endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
 #endif // !defined(ASIO_WINDOWS_APP)
+#if defined(ASIO_WINDOWS_APP)
+# define ASIO_VERSION_TAG_a a
+#else // defined(ASIO_WINDOWS_APP)
+# define ASIO_VERSION_TAG_a
+#endif // defined(ASIO_WINDOWS_APP)
 
 // Legacy WinRT target. Windows App is preferred.
 #if !defined(ASIO_WINDOWS_RUNTIME)
@@ -743,6 +750,11 @@
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_WINDOWS)
 # endif // !defined(ASIO_WINDOWS_RUNTIME)
 #endif // !defined(ASIO_WINDOWS)
+#if defined(ASIO_WINDOWS)
+# define ASIO_VERSION_TAG_b b
+#else // defined(ASIO_WINDOWS)
+# define ASIO_VERSION_TAG_b
+#endif // defined(ASIO_WINDOWS)
 
 // Windows: target OS version.
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -815,6 +827,11 @@
 #  endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0400)
 # endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
 #endif // !defined(ASIO_HAS_IOCP)
+#if defined(ASIO_HAS_IOCP)
+# define ASIO_VERSION_TAG_c c
+#else // defined(ASIO_HAS_IOCP)
+# define ASIO_VERSION_TAG_c
+#endif // defined(ASIO_HAS_IOCP)
 
 // On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
 // get access to the various platform feature macros, e.g. to be able to test
@@ -871,6 +888,26 @@
 #  endif // LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0)
 # endif // defined(ASIO_HAS_IO_URING)
 #endif // defined(__linux__)
+#if defined(ASIO_HAS_EPOLL)
+# define ASIO_VERSION_TAG_d d
+#else // defined(ASIO_HAS_EPOLL)
+# define ASIO_VERSION_TAG_d
+#endif // defined(ASIO_HAS_EPOLL)
+#if defined(ASIO_HAS_EVENTFD)
+# define ASIO_VERSION_TAG_e e
+#else // defined(ASIO_HAS_EVENTFD)
+# define ASIO_VERSION_TAG_e
+#endif // defined(ASIO_HAS_EVENTFD)
+#if defined(ASIO_HAS_TIMERFD)
+# define ASIO_VERSION_TAG_f f
+#else // defined(ASIO_HAS_TIMERFD)
+# define ASIO_VERSION_TAG_f
+#endif // defined(ASIO_HAS_TIMERFD)
+#if defined(ASIO_HAS_IO_URING)
+# define ASIO_VERSION_TAG_g g
+#else // defined(ASIO_HAS_IO_URING)
+# define ASIO_VERSION_TAG_g
+#endif // defined(ASIO_HAS_IO_URING)
 
 // Linux: io_uring is used instead of epoll.
 #if !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
@@ -878,6 +915,11 @@
 #  define ASIO_HAS_IO_URING_AS_DEFAULT 1
 # endif // !defined(ASIO_HAS_EPOLL) && defined(ASIO_HAS_IO_URING)
 #endif // !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+#if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+# define ASIO_VERSION_TAG_h h
+#else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+# define ASIO_VERSION_TAG_h
+#endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
 #if (defined(__MACH__) && defined(__APPLE__)) \
@@ -893,6 +935,11 @@
        //   || defined(__FreeBSD__)
        //   || defined(__NetBSD__)
        //   || defined(__OpenBSD__)
+#if defined(ASIO_HAS_KQUEUE)
+# define ASIO_VERSION_TAG_i i
+#else // defined(ASIO_HAS_KQUEUE)
+# define ASIO_VERSION_TAG_i
+#endif // defined(ASIO_HAS_KQUEUE)
 
 // Solaris: /dev/poll.
 #if defined(__sun)
@@ -1066,6 +1113,11 @@
 #  define ASIO_NO_EXCEPTIONS 1
 # endif // !defined(BOOST_NO_EXCEPTIONS)
 #endif // !defined(ASIO_NO_EXCEPTIONS)
+#if defined(ASIO_NO_EXCEPTIONS)
+# define ASIO_VERSION_TAG_j j
+#else // defined(ASIO_NO_EXCEPTIONS)
+# define ASIO_VERSION_TAG_j
+#endif // defined(ASIO_NO_EXCEPTIONS)
 
 // Whether the typeid operator is supported.
 #if !defined(ASIO_NO_TYPEID)
@@ -1097,6 +1149,11 @@
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_THREADS)
 # endif // !defined(ASIO_DISABLE_THREADS)
 #endif // !defined(ASIO_HAS_THREADS)
+#if defined(ASIO_HAS_THREADS)
+# define ASIO_VERSION_TAG_k k
+#else // defined(ASIO_HAS_THREADS)
+# define ASIO_VERSION_TAG_k
+#endif // defined(ASIO_HAS_THREADS)
 
 // POSIX threads.
 #if !defined(ASIO_HAS_PTHREADS)
@@ -1110,6 +1167,11 @@
 #  endif // defined(ASIO_HAS_BOOST_CONFIG) && defined(BOOST_HAS_PTHREADS)
 # endif // defined(ASIO_HAS_THREADS)
 #endif // !defined(ASIO_HAS_PTHREADS)
+#if defined(ASIO_HAS_PTHREADS)
+# define ASIO_VERSION_TAG_l l
+#else // defined(ASIO_HAS_PTHREADS)
+# define ASIO_VERSION_TAG_l
+#endif // defined(ASIO_HAS_PTHREADS)
 
 // Helper to prevent macro expansion.
 #define ASIO_PREVENT_MACRO_SUBSTITUTION
@@ -1456,5 +1518,62 @@
 #  endif // defined(__APPLE__)
 # endif // !defined(ASIO_DISABLE_SNPRINTF)
 #endif // !defined(ASIO_HAS_SNPRINTF)
+
+// Token-pasting helper (two levels needed to allow macro arguments to expand).
+#define ASIO_DETAIL_CAT_(a, b) a ## b
+#define ASIO_DETAIL_CAT(a, b) ASIO_DETAIL_CAT_(a, b)
+
+// Version tags for user-enabled features with no auto-detection in this file.
+#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+# define ASIO_VERSION_TAG_m m
+#else // defined(ASIO_ENABLE_HANDLER_TRACKING)
+# define ASIO_VERSION_TAG_m
+#endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
+
+// Automatic version namespace v<ASIO_VERSION>_<tags>.
+#if defined(ASIO_ENABLE_VERSION_NAMESPACE)
+# if !defined(ASIO_VERSION_NAMESPACE)
+#  define ASIO_VERSION_NAMESPACE \
+  ASIO_DETAIL_CAT(v, \
+  ASIO_DETAIL_CAT(ASIO_VERSION, \
+  ASIO_DETAIL_CAT(_, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_a, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_b, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_c, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_d, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_e, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_f, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_g, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_h, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_i, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_j, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_k, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_l, \
+  ASIO_VERSION_TAG_m)))))))))))))))
+# endif // !defined(ASIO_VERSION_NAMESPACE)
+#endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
+
+// Optional inline namespace used for library versioning.
+#if defined(ASIO_VERSION_NAMESPACE)
+# define ASIO_INLINE_NAMESPACE_BEGIN \
+  inline namespace ASIO_VERSION_NAMESPACE {
+# define ASIO_INLINE_NAMESPACE_END }
+#endif // defined(ASIO_VERSION_NAMESPACE)
+#if !defined(ASIO_INLINE_NAMESPACE_BEGIN)
+# define ASIO_INLINE_NAMESPACE_BEGIN
+#endif // !defined(ASIO_INLINE_NAMESPACE_BEGIN)
+#if !defined(ASIO_INLINE_NAMESPACE_END)
+# define ASIO_INLINE_NAMESPACE_END
+#endif // !defined(ASIO_INLINE_NAMESPACE_END)
+
+// Helper macro used to tag global symbols (extern "C" functions and some helper
+// namespaces) with the version namespace name.
+#if defined(ASIO_VERSION_NAMESPACE)
+# define ASIO_VERSIONED_NAME(name) \
+    ASIO_DETAIL_CAT(ASIO_DETAIL_CAT(asio_, \
+      ASIO_VERSION_NAMESPACE), _ ## name)
+#else // defined(ASIO_VERSION_NAMESPACE)
+# define ASIO_VERSIONED_NAME(name) asio_ ## name
+#endif // defined(ASIO_VERSION_NAMESPACE)
 
 #endif // ASIO_DETAIL_CONFIG_HPP

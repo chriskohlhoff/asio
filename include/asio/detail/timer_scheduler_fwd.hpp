@@ -18,6 +18,7 @@
 #include "asio/detail/config.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_WINDOWS_RUNTIME)
@@ -37,6 +38,7 @@ typedef class select_reactor timer_scheduler;
 #endif
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_TIMER_SCHEDULER_FWD_HPP

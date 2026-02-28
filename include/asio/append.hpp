@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Completion token type used to specify that the completion handler
 /// arguments should be passed additional values after the results of the
@@ -56,6 +57,7 @@ append(CompletionToken&& completion_token, Values&&... values)
       static_cast<Values&&>(values)...);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Exception thrown when there are multiple pending exceptions to rethrow.
 class multiple_exceptions
@@ -41,6 +42,7 @@ private:
   std::exception_ptr first_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

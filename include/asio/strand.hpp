@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Provides serialised function invocation for any executor type.
 template <typename Executor>
@@ -542,6 +543,7 @@ struct prefer_member<strand<Executor>, Property,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

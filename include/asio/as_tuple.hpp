@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token adapter used to specify that the completion handler
 /// arguments should be combined into a single tuple argument.
@@ -143,6 +144,7 @@ struct partial_as_tuple
  */
 ASIO_INLINE_VARIABLE constexpr partial_as_tuple as_tuple;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -36,6 +36,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 eventfd_select_interrupter::eventfd_select_interrupter(bool use_eventfd)
@@ -165,6 +166,7 @@ bool eventfd_select_interrupter::reset()
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

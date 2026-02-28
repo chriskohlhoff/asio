@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -1011,6 +1012,7 @@ inline auto async_connect(basic_socket<Protocol, Executor>& s,
 
 /*@}*/
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

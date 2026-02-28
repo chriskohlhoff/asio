@@ -20,6 +20,7 @@
 #include "asio/detail/chrono.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for a timer based on the high resolution clock.
 /**
@@ -34,6 +35,7 @@ typedef basic_waitable_timer<
     chrono::high_resolution_clock>
   high_resolution_timer;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_HIGH_RESOLUTION_TIMER_HPP

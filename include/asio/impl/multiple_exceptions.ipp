@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 multiple_exceptions::multiple_exceptions(
     std::exception_ptr first) noexcept
@@ -38,6 +39,7 @@ std::exception_ptr multiple_exceptions::first_exception() const
   return first_;
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

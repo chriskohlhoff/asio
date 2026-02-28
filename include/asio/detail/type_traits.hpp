@@ -19,6 +19,7 @@
 #include <type_traits>
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 using std::add_const;
 
@@ -187,6 +188,7 @@ struct type_identity { typedef T type; };
 template <typename T>
 using type_identity_t = typename type_identity<T>::type;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_TYPE_TRAITS_HPP

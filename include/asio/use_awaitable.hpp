@@ -31,6 +31,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token that represents the currently executing coroutine.
 /**
@@ -150,6 +151,7 @@ ASIO_INLINE_VARIABLE constexpr use_awaitable_t<> use_awaitable;
 ASIO_INLINE_VARIABLE constexpr use_awaitable_t<> use_awaitable(0, 0, 0);
 #endif
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

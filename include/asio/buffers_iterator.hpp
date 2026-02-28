@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -494,6 +495,7 @@ inline buffers_iterator<BufferSequence> buffers_end(
   return buffers_iterator<BufferSequence>::end(buffers);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -19,6 +19,7 @@
 #include "asio/detail/type_traits.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename T, typename Property, typename = void>
@@ -56,6 +57,7 @@ constexpr const bool is_applicable_property_v
 
 #endif // defined(ASIO_HAS_VARIABLE_TEMPLATES)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_IS_APPLICABLE_PROPERTY_HPP

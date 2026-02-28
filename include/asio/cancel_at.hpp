@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token adapter that cancels an operation at a given time.
 /**
@@ -285,6 +286,7 @@ cancel_at(basic_waitable_timer<Clock, WaitTraits, Executor>& timer,
       timer, expiry, cancel_type);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

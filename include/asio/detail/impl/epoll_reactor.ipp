@@ -34,6 +34,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 epoll_reactor::epoll_reactor(asio::execution_context& ctx)
@@ -834,6 +835,7 @@ void epoll_reactor::descriptor_state::do_complete(
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

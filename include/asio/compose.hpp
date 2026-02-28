@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Launch an asynchronous operation with a stateful implementation.
 /**
@@ -121,6 +122,7 @@ inline auto async_compose(Implementation&& implementation,
       token);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

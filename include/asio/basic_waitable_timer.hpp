@@ -31,6 +31,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(ASIO_BASIC_WAITABLE_TIMER_FWD_DECL)
 #define ASIO_BASIC_WAITABLE_TIMER_FWD_DECL
@@ -638,6 +639,7 @@ private:
     executor_type > impl_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

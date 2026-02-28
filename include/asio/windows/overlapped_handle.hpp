@@ -24,12 +24,14 @@
 #include "asio/windows/basic_overlapped_handle.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace windows {
 
 /// Typedef for the typical usage of an overlapped handle.
 typedef basic_overlapped_handle<> overlapped_handle;
 
 } // namespace windows
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // defined(ASIO_HAS_WINDOWS_RANDOM_ACCESS_HANDLE)

@@ -23,6 +23,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 resolver_service_base::resolver_service_base(execution_context& context)
@@ -72,6 +73,7 @@ void resolver_service_base::cancel(
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

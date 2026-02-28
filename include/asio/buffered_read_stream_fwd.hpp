@@ -16,10 +16,12 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Stream>
 class buffered_read_stream;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_BUFFERED_READ_STREAM_FWD_HPP

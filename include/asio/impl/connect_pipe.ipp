@@ -40,6 +40,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 void create_pipe(native_pipe_handle p[2], asio::error_code& ec)
@@ -141,6 +142,7 @@ void close_pipe(native_pipe_handle p)
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

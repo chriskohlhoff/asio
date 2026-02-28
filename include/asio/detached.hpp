@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token type used to specify that an asynchronous operation
 /// is detached.
@@ -96,6 +97,7 @@ public:
  */
 ASIO_INLINE_VARIABLE constexpr detached_t detached;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

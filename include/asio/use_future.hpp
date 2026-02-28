@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Function, typename Allocator>
@@ -138,6 +139,7 @@ private:
  */
 ASIO_INLINE_VARIABLE constexpr use_future_t<> use_future;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

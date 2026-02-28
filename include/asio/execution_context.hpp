@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 class execution_context;
 class io_context;
@@ -575,6 +576,7 @@ template <typename Type>
 service_id<Type> execution_context_service_base<Type>::id;
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

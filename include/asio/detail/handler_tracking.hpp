@@ -18,9 +18,11 @@
 #include "asio/detail/config.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 class execution_context;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #if defined(ASIO_CUSTOM_HANDLER_TRACKING)
@@ -35,6 +37,7 @@ class execution_context;
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_CUSTOM_HANDLER_TRACKING)
@@ -253,6 +256,7 @@ private:
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

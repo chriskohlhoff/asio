@@ -23,6 +23,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 
 template <typename VerifyCallback>
@@ -60,6 +61,7 @@ ASIO_SYNC_OP_VOID context::set_password_callback(
 }
 
 } // namespace ssl
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

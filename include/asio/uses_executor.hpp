@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A special type, similar to std::nothrow_t, used to disambiguate
 /// constructors that accept executor arguments.
@@ -60,6 +61,7 @@ ASIO_INLINE_VARIABLE constexpr executor_arg_t executor_arg;
 template <typename T, typename Executor>
 struct uses_executor : false_type {};
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

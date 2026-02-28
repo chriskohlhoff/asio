@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class resolver_thread_pool::work_scheduler_runner
@@ -117,6 +118,7 @@ void resolver_thread_pool::start_work_threads()
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

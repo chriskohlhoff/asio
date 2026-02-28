@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Traits type to adapt arbitrary error types as dispositions.
 /**
@@ -275,6 +276,7 @@ inline std::exception_ptr to_exception_ptr(Disposition&& d,
       static_cast<Disposition&&>(d));
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_iocp_file_service::win_iocp_file_service(
@@ -301,6 +302,7 @@ uint64_t win_iocp_file_service::seek(
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

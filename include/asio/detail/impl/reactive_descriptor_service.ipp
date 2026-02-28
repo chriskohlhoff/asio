@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 reactive_descriptor_service::reactive_descriptor_service(
@@ -220,6 +221,7 @@ void reactive_descriptor_service::do_start_op(implementation_type& impl,
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -30,6 +30,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Exception thrown when trying to access an empty polymorphic executor.
 class bad_executor
@@ -347,6 +348,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 ASIO_USES_ALLOCATOR(asio::executor)

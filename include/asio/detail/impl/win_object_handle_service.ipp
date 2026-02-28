@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_object_handle_service::win_object_handle_service(execution_context& context)
@@ -443,6 +444,7 @@ void win_object_handle_service::wait_callback(PVOID param, BOOLEAN)
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

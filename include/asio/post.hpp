@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Submits a completion token or function object for execution.
 /**
@@ -561,6 +562,7 @@ inline auto post(Function&& function, ExecutionContext& ctx,
         token, static_cast<Function&&>(function));
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

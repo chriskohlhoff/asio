@@ -26,6 +26,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Impl, typename Work,
@@ -186,7 +187,7 @@ inline bool asio_handler_is_continuation(
     composed_op<Impl, Work, Handler, Signature>* this_handler)
 {
   return this_handler->invocations_ > 1 ? true
-    : asio_handler_cont_helpers::is_continuation(
+    : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
 }
 
@@ -406,6 +407,7 @@ inline auto composed(Implementation&& implementation,
             io_objects_or_executors))...));
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

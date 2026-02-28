@@ -29,6 +29,7 @@
 #endif // defined(ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_HAS_STD_SOURCE_LOCATION)
@@ -38,6 +39,7 @@ using std::experimental::source_location;
 #endif // defined(ASIO_HAS_STD_EXPERIMENTAL_SOURCE_LOCATION)
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // defined(ASIO_HAS_SOURCE_LOCATION)

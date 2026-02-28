@@ -48,6 +48,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace socket_ops {
 
@@ -4037,6 +4038,7 @@ u_short_type host_to_network_short(u_short_type value)
 
 } // namespace socket_ops
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

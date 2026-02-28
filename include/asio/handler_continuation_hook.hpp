@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Default continuation function for handlers.
 /**
@@ -47,6 +48,7 @@ inline bool asio_handler_is_continuation(...)
   return false;
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

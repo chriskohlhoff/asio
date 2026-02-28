@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Partial specialisation of @c async_result for @c std::packaged_task.
 template <typename Result, typename... Args, typename Signature>
@@ -56,6 +57,7 @@ private:
   return_type future_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

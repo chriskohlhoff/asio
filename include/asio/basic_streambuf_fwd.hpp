@@ -22,6 +22,7 @@
 #include <memory>
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Allocator = std::allocator<char>>
 class basic_streambuf;
@@ -29,6 +30,7 @@ class basic_streambuf;
 template <typename Allocator = std::allocator<char>>
 class basic_streambuf_ref;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // !defined(ASIO_NO_IOSTREAM)

@@ -36,6 +36,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 ASIO_SYNC_OP_VOID serial_port_base::baud_rate::store(
     ASIO_OPTION_STORAGE& storage, asio::error_code& ec) const
@@ -543,6 +544,7 @@ ASIO_SYNC_OP_VOID serial_port_base::character_size::load(
   ASIO_SYNC_OP_VOID_RETURN(ec);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

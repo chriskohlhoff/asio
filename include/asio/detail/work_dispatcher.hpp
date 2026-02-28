@@ -30,6 +30,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 struct empty_work_function
@@ -296,6 +297,7 @@ private:
 #endif // !defined(ASIO_NO_TS_EXECUTORS)
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

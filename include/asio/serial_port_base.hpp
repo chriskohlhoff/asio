@@ -39,6 +39,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// The serial_port_base class is used as a base for the basic_serial_port class
 /// template so that we have a common place to define the serial port options.
@@ -150,6 +151,7 @@ protected:
   }
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

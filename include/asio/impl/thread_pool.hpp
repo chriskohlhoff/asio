@@ -26,6 +26,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(ASIO_NO_TS_EXECUTORS)
 
@@ -312,6 +313,7 @@ void thread_pool::basic_executor_type<Allocator, Bits>::defer(
 }
 #endif // !defined(ASIO_NO_TS_EXECUTORS)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

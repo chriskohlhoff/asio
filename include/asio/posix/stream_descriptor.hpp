@@ -23,12 +23,14 @@
 #include "asio/posix/basic_stream_descriptor.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace posix {
 
 /// Typedef for the typical usage of a stream-oriented descriptor.
 typedef basic_stream_descriptor<> stream_descriptor;
 
 } // namespace posix
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // defined(ASIO_HAS_POSIX_STREAM_DESCRIPTOR)

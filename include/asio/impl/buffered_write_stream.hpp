@@ -23,6 +23,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Stream>
 std::size_t buffered_write_stream<Stream>::flush()
@@ -84,7 +85,7 @@ namespace detail
   inline bool asio_handler_is_continuation(
       buffered_flush_handler<WriteHandler>* this_handler)
   {
-    return asio_handler_cont_helpers::is_continuation(
+    return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -260,7 +261,7 @@ namespace detail
       buffered_write_some_handler<
         ConstBufferSequence, WriteHandler>* this_handler)
   {
-    return asio_handler_cont_helpers::is_continuation(
+    return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -377,6 +378,7 @@ std::size_t buffered_write_stream<Stream>::copy(
       storage_.data() + orig_size, buffers, length);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

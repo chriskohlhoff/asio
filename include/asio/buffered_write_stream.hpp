@@ -30,6 +30,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename> class initiate_async_buffered_flush;
@@ -256,6 +257,7 @@ private:
   detail::buffered_stream_storage storage_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

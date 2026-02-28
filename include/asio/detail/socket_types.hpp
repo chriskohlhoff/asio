@@ -95,6 +95,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_WINDOWS_RUNTIME)
@@ -424,6 +425,7 @@ const int enable_connection_aborted_option = 1;
 const int always_fail_option = 2;
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

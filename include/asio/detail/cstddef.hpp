@@ -19,9 +19,11 @@
 #include <cstddef>
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 using std::nullptr_t;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_CSTDDEF_HPP

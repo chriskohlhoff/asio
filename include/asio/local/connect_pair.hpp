@@ -29,6 +29,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace local {
 
 /// Create a pair of connected sockets.
@@ -91,6 +92,7 @@ inline ASIO_SYNC_OP_VOID connect_pair(
 }
 
 } // namespace local
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

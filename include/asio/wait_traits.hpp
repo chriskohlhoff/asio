@@ -15,9 +15,12 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/config.hpp"
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Wait traits suitable for use with the basic_waitable_timer class template.
 template <typename Clock>
@@ -49,6 +52,7 @@ struct wait_traits
   }
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

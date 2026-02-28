@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -162,6 +163,7 @@ STACK_OF(SSL_COMP)* openssl_init_base::get_null_compression_methods()
 
 } // namespace detail
 } // namespace ssl
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -30,6 +30,7 @@
        //   && defined(ASIO_HAS_BOOST_ALIGN)
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 using std::allocate_shared;
@@ -149,6 +150,7 @@ inline void aligned_delete(void* ptr)
 #endif // defined(ASIO_MSVC)
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_MEMORY_HPP

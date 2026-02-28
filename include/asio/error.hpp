@@ -61,6 +61,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 
 enum basic_errors
@@ -302,6 +303,7 @@ static const asio::error_category&
   = asio::error::get_misc_category();
 
 } // namespace error
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 namespace std {
@@ -329,6 +331,7 @@ template<> struct is_error_code_enum<asio::error::misc_errors>
 } // namespace std
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 
 inline asio::error_code make_error_code(basic_errors e)
@@ -379,6 +382,7 @@ namespace resolver_errc {
   const error::netdb_errors try_again = error::host_not_found_try_again;
   using error::service_not_found;
 } // namespace resolver_errc
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

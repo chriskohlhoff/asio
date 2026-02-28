@@ -34,6 +34,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace winrt_utils {
 
@@ -97,6 +98,7 @@ inline Windows::Storage::Streams::IBuffer^ buffer_dup(
 
 } // namespace winrt_utils
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

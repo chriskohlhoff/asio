@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Allocator>
 io_context::io_context(allocator_arg_t, const Allocator& a)
@@ -336,6 +337,7 @@ inline asio::io_context& io_context::service::get_io_context()
   return static_cast<asio::io_context&>(context());
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

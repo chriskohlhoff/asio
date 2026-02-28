@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 bad_executor::bad_executor() noexcept
 {
@@ -34,6 +35,7 @@ const char* bad_executor::what() const noexcept
   return "bad executor";
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

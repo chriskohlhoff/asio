@@ -52,6 +52,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_MSVC)
@@ -2642,6 +2643,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
 
 /*@}*/
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
@@ -2649,6 +2651,7 @@ inline std::size_t buffer_copy(const MutableBufferSequence& target,
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Trait to determine whether a type satisfies the MutableBufferSequence
 /// requirements.
@@ -2876,6 +2879,7 @@ inline const_buffer operator ""_buf()
 }
 
 } // namespace buffer_literals
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

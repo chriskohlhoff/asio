@@ -34,6 +34,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 namespace detail
 {
@@ -435,7 +436,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     return this_handler->start_ == 0 ? true
-      : asio_handler_cont_helpers::is_continuation(
+      : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -630,7 +631,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     return this_handler->start_ == 0 ? true
-      : asio_handler_cont_helpers::is_continuation(
+      : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -820,7 +821,7 @@ namespace detail
         CompletionCondition, ReadHandler>* this_handler)
   {
     return this_handler->start_ == 0 ? true
-      : asio_handler_cont_helpers::is_continuation(
+      : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -895,6 +896,7 @@ struct associator<Associator,
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

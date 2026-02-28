@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// A @ref completion_token adapter used to specify that the disposition
 /// produced by an asynchronous operation is captured to a variable.
@@ -106,6 +107,7 @@ redirect_disposition(CompletionToken&& completion_token, Disposition& d)
       static_cast<CompletionToken&&>(completion_token), d);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

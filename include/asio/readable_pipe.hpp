@@ -23,10 +23,12 @@
 #include "asio/basic_readable_pipe.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for the typical usage of a readable pipe.
 typedef basic_readable_pipe<> readable_pipe;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // defined(ASIO_HAS_PIPE)

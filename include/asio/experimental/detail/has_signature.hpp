@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 namespace detail {
 
@@ -47,6 +48,7 @@ struct has_signature<S, Head, Tail...> : has_signature<S, Tail...>
 
 } // namespace detail
 } // namespace experimental
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

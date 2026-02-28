@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename T, typename Allocator>
 struct associated_allocator;
@@ -207,6 +208,7 @@ struct associated_allocator<reference_wrapper<T>, Allocator>
   }
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

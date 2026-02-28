@@ -42,6 +42,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename, typename, typename> class awaitable_async_op_handler;
@@ -1069,6 +1070,7 @@ private:
 };
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #if !defined(GENERATING_DOCUMENTATION)

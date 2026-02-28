@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Trait for detecting objects that are usable as deferred operations.
 template <typename T>
@@ -710,6 +711,7 @@ inline auto operator|(Head head, Tail&& tail)
  */
 ASIO_INLINE_VARIABLE constexpr deferred_t deferred;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

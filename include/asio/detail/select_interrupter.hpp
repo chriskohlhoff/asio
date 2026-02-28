@@ -28,6 +28,7 @@
 #endif
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__) || defined(__SYMBIAN32__)
@@ -39,6 +40,7 @@ typedef pipe_select_interrupter select_interrupter;
 #endif
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // !defined(ASIO_WINDOWS_RUNTIME)

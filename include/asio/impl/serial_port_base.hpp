@@ -19,6 +19,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 inline serial_port_base::baud_rate::baud_rate(unsigned int rate)
   : value_(rate)
@@ -52,6 +53,7 @@ inline unsigned int serial_port_base::character_size::value() const
   return value_;
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

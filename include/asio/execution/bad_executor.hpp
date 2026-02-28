@@ -20,6 +20,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace execution {
 
 /// Exception thrown when trying to access an empty polymorphic executor.
@@ -35,6 +36,7 @@ public:
 };
 
 } // namespace execution
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -19,6 +19,7 @@
 #include <chrono>
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace chrono {
 
 using std::chrono::duration;
@@ -40,6 +41,7 @@ using std::chrono::system_clock;
 using std::chrono::high_resolution_clock;
 
 } // namespace chrono
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_CHRONO_HPP

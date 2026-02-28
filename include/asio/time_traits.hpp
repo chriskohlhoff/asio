@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// (Deprecated) Time traits suitable for use with the deadline timer.
 template <typename Time>
@@ -80,6 +81,7 @@ struct ASIO_DEPRECATED_MSG("Use basic_waitable_timer and wait_traits")
   }
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -11,7 +11,10 @@
 #ifndef ASIO_COROUTINE_HPP
 #define ASIO_COROUTINE_HPP
 
+#include "asio/detail/config.hpp"
+
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class coroutine_ref;
@@ -286,6 +289,7 @@ private:
 };
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #if !defined(ASIO_CORO_VALUE_INIT)

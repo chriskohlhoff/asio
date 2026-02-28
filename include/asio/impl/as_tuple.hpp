@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Class to adapt a as_tuple_t as a completion handler.
@@ -63,7 +64,7 @@ template <typename Handler>
 inline bool asio_handler_is_continuation(
     as_tuple_handler<Handler>* this_handler)
 {
-  return asio_handler_cont_helpers::is_continuation(
+  return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
         this_handler->handler_);
 }
 
@@ -269,6 +270,7 @@ struct async_result<partial_as_tuple, Signatures...>
 
 #endif // !defined(GENERATING_DOCUMENTATION)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

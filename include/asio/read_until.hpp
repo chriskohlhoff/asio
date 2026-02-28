@@ -32,6 +32,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 char (&has_result_type_helper(...))[2];
@@ -3193,6 +3194,7 @@ inline auto async_read_until(AsyncReadStream& s,
 
 /*@}*/
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

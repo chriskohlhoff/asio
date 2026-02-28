@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 
 /// Get the current host name.
@@ -31,6 +32,7 @@ ASIO_DECL std::string host_name();
 ASIO_DECL std::string host_name(asio::error_code& ec);
 
 } // namespace ip
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

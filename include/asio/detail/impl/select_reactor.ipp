@@ -37,6 +37,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP)
@@ -376,6 +377,7 @@ void select_reactor::cancel_ops_unlocked(socket_type descriptor,
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

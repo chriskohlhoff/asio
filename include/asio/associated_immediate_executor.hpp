@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename T, typename Executor>
 struct associated_immediate_executor;
@@ -274,6 +275,7 @@ struct associated_immediate_executor<reference_wrapper<T>, Executor>
   }
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

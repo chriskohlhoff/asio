@@ -30,6 +30,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 namespace descriptor_ops {
 
@@ -164,6 +165,7 @@ ASIO_DECL int poll_error(int d,
 
 } // namespace descriptor_ops
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

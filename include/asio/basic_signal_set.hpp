@@ -32,6 +32,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Provides signal functionality.
 /**
@@ -646,6 +647,7 @@ private:
   detail::io_object_impl<detail::signal_set_service, Executor> impl_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

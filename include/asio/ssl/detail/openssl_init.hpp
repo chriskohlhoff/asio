@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -90,6 +91,7 @@ openssl_init<Do_Init> openssl_init<Do_Init>::instance_;
 
 } // namespace detail
 } // namespace ssl
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

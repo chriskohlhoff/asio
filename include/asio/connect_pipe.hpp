@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP)
@@ -68,6 +69,7 @@ template <typename Executor1, typename Executor2>
 ASIO_SYNC_OP_VOID connect_pipe(basic_readable_pipe<Executor1>& read_end,
     basic_writable_pipe<Executor2>& write_end, asio::error_code& ec);
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

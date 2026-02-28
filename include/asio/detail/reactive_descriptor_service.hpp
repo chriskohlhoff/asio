@@ -43,6 +43,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class reactive_descriptor_service :
@@ -210,7 +211,7 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      asio_handler_cont_helpers::is_continuation(handler);
+      ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = asio::get_associated_cancellation_slot(handler);
@@ -302,7 +303,7 @@ public:
       const IoExecutor& io_ex)
   {
     bool is_continuation =
-      asio_handler_cont_helpers::is_continuation(handler);
+      ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = asio::get_associated_cancellation_slot(handler);
@@ -337,7 +338,7 @@ public:
       const null_buffers&, Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      asio_handler_cont_helpers::is_continuation(handler);
+      ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = asio::get_associated_cancellation_slot(handler);
@@ -411,7 +412,7 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      asio_handler_cont_helpers::is_continuation(handler);
+      ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = asio::get_associated_cancellation_slot(handler);
@@ -446,7 +447,7 @@ public:
       const null_buffers&, Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
-      asio_handler_cont_helpers::is_continuation(handler);
+      ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(handler);
 
     associated_cancellation_slot_t<Handler> slot
       = asio::get_associated_cancellation_slot(handler);
@@ -554,6 +555,7 @@ private:
 };
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

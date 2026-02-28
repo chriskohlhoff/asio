@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace this_coro {
 
 /// Awaitable type that returns the executor of the current coroutine.
@@ -260,6 +261,7 @@ throw_if_cancelled(bool value)
 #endif // defined(GENERATING_DOCUMENTATION)
 
 } // namespace this_coro
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

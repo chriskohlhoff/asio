@@ -35,6 +35,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 class buffer_registration_base
@@ -311,6 +312,7 @@ register_buffers(ExecutionContext& ctx,
       ctx, buffer_sequence, alloc);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

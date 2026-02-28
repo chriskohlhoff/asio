@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace placeholders {
 
 #if defined(GENERATING_DOCUMENTATION)
@@ -74,6 +75,7 @@ static ASIO_INLINE_VARIABLE constexpr auto& signal_number
 #endif
 
 } // namespace placeholders
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

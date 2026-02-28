@@ -29,6 +29,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // Base class for all spawn()-ed thread implementations.
@@ -681,6 +682,7 @@ auto spawn(const basic_yield_context<Executor>& ctx, allocator_arg_t,
 
 /*@}*/
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

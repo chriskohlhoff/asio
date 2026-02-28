@@ -30,6 +30,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace local {
 
 /// Describes an endpoint for a UNIX socket.
@@ -233,6 +234,7 @@ std::basic_ostream<Elem, Traits>& operator<<(
 }
 
 } // namespace local
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

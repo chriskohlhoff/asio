@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ip {
 namespace multicast {
 
@@ -184,6 +185,7 @@ typedef asio::ip::detail::socket_option::multicast_enable_loopback<
 
 } // namespace multicast
 } // namespace ip
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

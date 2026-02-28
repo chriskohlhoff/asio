@@ -32,6 +32,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 namespace detail {
 
@@ -132,6 +133,7 @@ const error_category& system_category()
   return instance;
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

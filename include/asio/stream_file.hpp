@@ -23,10 +23,12 @@
 #include "asio/basic_stream_file.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Typedef for the typical usage of a stream-oriented file.
 typedef basic_stream_file<> stream_file;
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // defined(ASIO_HAS_FILE)

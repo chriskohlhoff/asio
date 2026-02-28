@@ -33,6 +33,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 socket_select_interrupter::socket_select_interrupter(bool)
@@ -172,6 +173,7 @@ bool socket_select_interrupter::reset()
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

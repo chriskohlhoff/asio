@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 template <typename Stream>
 std::size_t buffered_read_stream<Stream>::fill()
@@ -99,7 +100,7 @@ namespace detail
   inline bool asio_handler_is_continuation(
       buffered_fill_handler<ReadHandler>* this_handler)
   {
-    return asio_handler_cont_helpers::is_continuation(
+    return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -274,7 +275,7 @@ namespace detail
       buffered_read_some_handler<
         MutableBufferSequence, ReadHandler>* this_handler)
   {
-    return asio_handler_cont_helpers::is_continuation(
+    return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
           this_handler->handler_);
   }
 
@@ -397,6 +398,7 @@ std::size_t buffered_read_stream<Stream>::peek(
   return this->peek_copy(buffers);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

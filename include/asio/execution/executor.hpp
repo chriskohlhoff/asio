@@ -30,6 +30,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace execution {
 namespace detail {
 
@@ -109,6 +110,7 @@ ASIO_CONCEPT executor = is_executor<T>::value;
 #endif // defined(ASIO_HAS_CONCEPTS)
 
 } // namespace execution
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

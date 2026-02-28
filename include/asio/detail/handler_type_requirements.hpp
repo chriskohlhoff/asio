@@ -54,6 +54,7 @@
 #endif // defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
@@ -526,6 +527,7 @@ struct handler_type_requirements
 #endif // !defined(ASIO_ENABLE_HANDLER_TYPE_REQUIREMENTS)
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_HANDLER_TYPE_REQUIREMENTS_HPP

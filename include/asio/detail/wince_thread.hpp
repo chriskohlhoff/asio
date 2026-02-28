@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 DWORD WINAPI wince_thread_function(LPVOID arg);
@@ -162,6 +163,7 @@ inline DWORD WINAPI wince_thread_function(LPVOID arg)
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

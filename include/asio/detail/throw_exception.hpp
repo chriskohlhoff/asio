@@ -22,6 +22,7 @@
 #endif // defined(ASIO_BOOST_THROW_EXCEPTION)
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
@@ -50,6 +51,7 @@ void throw_exception(
 #endif // defined(ASIO_HAS_BOOST_THROW_EXCEPTION)
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_THROW_EXCEPTION_HPP

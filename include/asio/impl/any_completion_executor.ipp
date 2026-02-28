@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 any_completion_executor::any_completion_executor() noexcept
   : base_type()
@@ -117,6 +118,7 @@ any_completion_executor any_completion_executor::prefer(
   return static_cast<const base_type&>(*this).prefer(p);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

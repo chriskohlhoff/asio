@@ -40,6 +40,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if !defined(ASIO_NO_EXCEPTIONS)
@@ -1108,6 +1109,7 @@ inline auto spawn(const basic_yield_context<Executor>& ctx, allocator_arg_t,
 
 #endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

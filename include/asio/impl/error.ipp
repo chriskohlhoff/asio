@@ -22,6 +22,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 // boostify: non-boost code starts here
 namespace detail {
@@ -203,6 +204,7 @@ const asio::error_category& get_misc_category()
 }
 
 } // namespace error
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

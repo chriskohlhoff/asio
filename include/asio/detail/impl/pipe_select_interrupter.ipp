@@ -35,6 +35,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 pipe_select_interrupter::pipe_select_interrupter(bool)
@@ -116,6 +117,7 @@ bool pipe_select_interrupter::reset()
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

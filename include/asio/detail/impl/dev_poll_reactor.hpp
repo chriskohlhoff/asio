@@ -24,6 +24,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 inline void dev_poll_reactor::post_immediate_completion(
@@ -108,6 +109,7 @@ void dev_poll_reactor::move_timer(timer_queue<TimeTraits, Allocator>& queue,
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

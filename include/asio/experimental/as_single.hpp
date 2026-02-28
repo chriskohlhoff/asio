@@ -21,6 +21,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace experimental {
 
 /// A @ref completion_token adapter used to specify that the completion handler
@@ -123,6 +124,7 @@ as_single(CompletionToken&& completion_token)
 }
 
 } // namespace experimental
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

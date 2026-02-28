@@ -25,6 +25,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 #if !defined(ASIO_EXECUTOR_WORK_GUARD_DECL)
 #define ASIO_EXECUTOR_WORK_GUARD_DECL
@@ -355,6 +356,7 @@ make_work_guard(const T& t, ExecutionContext& ctx,
         t, ctx.get_executor()));
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

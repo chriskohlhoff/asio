@@ -32,6 +32,7 @@
 #endif
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_HAS_IOCP) || defined(ASIO_WINDOWS_RUNTIME)
@@ -49,6 +50,7 @@ typedef select_reactor reactor;
 #endif
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_REACTOR_HPP

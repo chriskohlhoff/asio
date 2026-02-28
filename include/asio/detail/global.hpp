@@ -28,6 +28,7 @@
 #endif
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename T>
@@ -45,6 +46,7 @@ inline T& global()
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // ASIO_DETAIL_GLOBAL_HPP

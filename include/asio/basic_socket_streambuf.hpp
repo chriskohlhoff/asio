@@ -32,6 +32,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 // A separate base class is used to ensure that the io_context member is
@@ -536,6 +537,7 @@ private:
   time_point expiry_time_;
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

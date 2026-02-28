@@ -27,6 +27,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 config_service::config_service(execution_context& ctx)
   : detail::execution_context_service_base<config_service>(ctx)
@@ -338,6 +339,7 @@ void config_from_env::make(execution_context& ctx) const
   (void)make_service<detail::config_from_env_service>(ctx, prefix_);
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

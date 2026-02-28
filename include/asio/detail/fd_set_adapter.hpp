@@ -23,6 +23,7 @@
 #include "asio/detail/win_fd_set_adapter.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 #if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
@@ -32,6 +33,7 @@ typedef posix_fd_set_adapter fd_set_adapter;
 #endif
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #endif // !defined(ASIO_WINDOWS_RUNTIME)

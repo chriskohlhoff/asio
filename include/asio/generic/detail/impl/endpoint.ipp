@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace generic {
 namespace detail {
 
@@ -103,6 +104,7 @@ void endpoint::init(const void* sock_addr,
 
 } // namespace detail
 } // namespace generic
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

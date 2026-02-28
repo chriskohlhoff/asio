@@ -29,6 +29,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 template <typename Executor, typename = void>
@@ -448,6 +449,7 @@ co_spawn(ExecutionContext& ctx, F&& f, CompletionToken&& token,
       std::forward<CompletionToken>(token));
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

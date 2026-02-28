@@ -26,6 +26,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
 win_iocp_serial_port_service::win_iocp_serial_port_service(
@@ -191,6 +192,7 @@ asio::error_code win_iocp_serial_port_service::do_get_option(
 }
 
 } // namespace detail
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
