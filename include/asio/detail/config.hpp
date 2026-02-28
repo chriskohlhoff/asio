@@ -833,6 +833,25 @@
 # define ASIO_VERSION_TAG_c
 #endif // defined(ASIO_HAS_IOCP)
 
+// Windows: Slim Reader/Writer Locks.
+// Requires Windows 7 or later for TryAcquireSRWLockExclusive support.
+#if !defined(ASIO_HAS_WINDOWS_SRWLOCK)
+# if !defined(ASIO_DISABLE_WINDOWS_SRWLOCK)
+#  if defined(ASIO_WINDOWS)
+#   if !defined(UNDER_CE)
+#    if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0601)
+#     define ASIO_HAS_WINDOWS_SRWLOCK 1
+#    endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0601)
+#   endif // !defined(UNDER_CE)
+#  endif // defined(ASIO_WINDOWS)
+# endif // !defined(ASIO_DISABLE_WINDOWS_SRWLOCK)
+#endif // !defined(ASIO_HAS_WINDOWS_SRWLOCK)
+#if defined(ASIO_HAS_WINDOWS_SRWLOCK)
+# define ASIO_VERSION_TAG_d d
+#else // defined(ASIO_HAS_WINDOWS_SRWLOCK)
+# define ASIO_VERSION_TAG_d
+#endif // defined(ASIO_HAS_WINDOWS_SRWLOCK)
+
 // On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
 // get access to the various platform feature macros, e.g. to be able to test
 // for threads support.
@@ -889,24 +908,24 @@
 # endif // defined(ASIO_HAS_IO_URING)
 #endif // defined(__linux__)
 #if defined(ASIO_HAS_EPOLL)
-# define ASIO_VERSION_TAG_d d
+# define ASIO_VERSION_TAG_e e
 #else // defined(ASIO_HAS_EPOLL)
-# define ASIO_VERSION_TAG_d
+# define ASIO_VERSION_TAG_e
 #endif // defined(ASIO_HAS_EPOLL)
 #if defined(ASIO_HAS_EVENTFD)
-# define ASIO_VERSION_TAG_e e
+# define ASIO_VERSION_TAG_f f
 #else // defined(ASIO_HAS_EVENTFD)
-# define ASIO_VERSION_TAG_e
+# define ASIO_VERSION_TAG_f
 #endif // defined(ASIO_HAS_EVENTFD)
 #if defined(ASIO_HAS_TIMERFD)
-# define ASIO_VERSION_TAG_f f
+# define ASIO_VERSION_TAG_g g
 #else // defined(ASIO_HAS_TIMERFD)
-# define ASIO_VERSION_TAG_f
+# define ASIO_VERSION_TAG_g
 #endif // defined(ASIO_HAS_TIMERFD)
 #if defined(ASIO_HAS_IO_URING)
-# define ASIO_VERSION_TAG_g g
+# define ASIO_VERSION_TAG_h h
 #else // defined(ASIO_HAS_IO_URING)
-# define ASIO_VERSION_TAG_g
+# define ASIO_VERSION_TAG_h
 #endif // defined(ASIO_HAS_IO_URING)
 
 // Linux: io_uring is used instead of epoll.
@@ -916,9 +935,9 @@
 # endif // !defined(ASIO_HAS_EPOLL) && defined(ASIO_HAS_IO_URING)
 #endif // !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 #if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
-# define ASIO_VERSION_TAG_h h
+# define ASIO_VERSION_TAG_i i
 #else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
-# define ASIO_VERSION_TAG_h
+# define ASIO_VERSION_TAG_i
 #endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
@@ -936,9 +955,9 @@
        //   || defined(__NetBSD__)
        //   || defined(__OpenBSD__)
 #if defined(ASIO_HAS_KQUEUE)
-# define ASIO_VERSION_TAG_i i
+# define ASIO_VERSION_TAG_j j
 #else // defined(ASIO_HAS_KQUEUE)
-# define ASIO_VERSION_TAG_i
+# define ASIO_VERSION_TAG_j
 #endif // defined(ASIO_HAS_KQUEUE)
 
 // Solaris: /dev/poll.
@@ -1114,9 +1133,9 @@
 # endif // !defined(BOOST_NO_EXCEPTIONS)
 #endif // !defined(ASIO_NO_EXCEPTIONS)
 #if defined(ASIO_NO_EXCEPTIONS)
-# define ASIO_VERSION_TAG_j j
+# define ASIO_VERSION_TAG_k k
 #else // defined(ASIO_NO_EXCEPTIONS)
-# define ASIO_VERSION_TAG_j
+# define ASIO_VERSION_TAG_k
 #endif // defined(ASIO_NO_EXCEPTIONS)
 
 // Whether the typeid operator is supported.
@@ -1150,9 +1169,9 @@
 # endif // !defined(ASIO_DISABLE_THREADS)
 #endif // !defined(ASIO_HAS_THREADS)
 #if defined(ASIO_HAS_THREADS)
-# define ASIO_VERSION_TAG_k k
+# define ASIO_VERSION_TAG_l l
 #else // defined(ASIO_HAS_THREADS)
-# define ASIO_VERSION_TAG_k
+# define ASIO_VERSION_TAG_l
 #endif // defined(ASIO_HAS_THREADS)
 
 // POSIX threads.
@@ -1168,9 +1187,9 @@
 # endif // defined(ASIO_HAS_THREADS)
 #endif // !defined(ASIO_HAS_PTHREADS)
 #if defined(ASIO_HAS_PTHREADS)
-# define ASIO_VERSION_TAG_l l
+# define ASIO_VERSION_TAG_m m
 #else // defined(ASIO_HAS_PTHREADS)
-# define ASIO_VERSION_TAG_l
+# define ASIO_VERSION_TAG_m
 #endif // defined(ASIO_HAS_PTHREADS)
 
 // Helper to prevent macro expansion.
@@ -1525,9 +1544,9 @@
 
 // Version tags for user-enabled features with no auto-detection in this file.
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_m m
+# define ASIO_VERSION_TAG_n n
 #else // defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_m
+# define ASIO_VERSION_TAG_n
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 // Automatic version namespace v<ASIO_VERSION>_<tags>.
@@ -1549,7 +1568,8 @@
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_j, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_k, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_l, \
-  ASIO_VERSION_TAG_m)))))))))))))))
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_m, \
+  ASIO_VERSION_TAG_n))))))))))))))))
 # endif // !defined(ASIO_VERSION_NAMESPACE)
 #endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
 

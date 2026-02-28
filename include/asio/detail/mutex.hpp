@@ -19,8 +19,10 @@
 
 #if !defined(ASIO_HAS_THREADS)
 # include "asio/detail/null_mutex.hpp"
-#elif defined(ASIO_WINDOWS)
+#elif defined(ASIO_WINDOWS) && defined(ASIO_HAS_WINDOWS_SRWLOCK)
 # include "asio/detail/win_mutex.hpp"
+#elif defined(ASIO_WINDOWS)
+# include "asio/detail/win_critsec_mutex.hpp"
 #elif defined(ASIO_HAS_PTHREADS)
 # include "asio/detail/posix_mutex.hpp"
 #else
@@ -33,8 +35,10 @@ namespace detail {
 
 #if !defined(ASIO_HAS_THREADS)
 typedef null_mutex mutex;
-#elif defined(ASIO_WINDOWS)
+#elif defined(ASIO_WINDOWS) && defined(ASIO_HAS_WINDOWS_SRWLOCK)
 typedef win_mutex mutex;
+#elif defined(ASIO_WINDOWS)
+typedef win_critsec_mutex mutex;
 #elif defined(ASIO_HAS_PTHREADS)
 typedef posix_mutex mutex;
 #else

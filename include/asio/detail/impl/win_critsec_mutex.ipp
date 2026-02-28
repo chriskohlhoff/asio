@@ -1,6 +1,6 @@
 //
-// detail/impl/win_mutex.ipp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/impl/win_critsec_mutex.ipp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_IMPL_WIN_MUTEX_IPP
-#define ASIO_DETAIL_IMPL_WIN_MUTEX_IPP
+#ifndef ASIO_DETAIL_IMPL_WIN_CRITSEC_MUTEX_IPP
+#define ASIO_DETAIL_IMPL_WIN_CRITSEC_MUTEX_IPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -20,7 +20,7 @@
 #if defined(ASIO_WINDOWS)
 
 #include "asio/detail/throw_error.hpp"
-#include "asio/detail/win_mutex.hpp"
+#include "asio/detail/win_critsec_mutex.hpp"
 #include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -29,7 +29,7 @@ namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-win_mutex::win_mutex()
+win_critsec_mutex::win_critsec_mutex()
 {
   int error = do_init();
   asio::error_code ec(error,
@@ -37,7 +37,7 @@ win_mutex::win_mutex()
   asio::detail::throw_error(ec, "mutex");
 }
 
-int win_mutex::do_init()
+int win_critsec_mutex::do_init()
 {
 #if defined(__MINGW32__)
   // Not sure if MinGW supports structured exception handling, so for now
@@ -83,4 +83,4 @@ ASIO_INLINE_NAMESPACE_END
 
 #endif // defined(ASIO_WINDOWS)
 
-#endif // ASIO_DETAIL_IMPL_WIN_MUTEX_IPP
+#endif // ASIO_DETAIL_IMPL_WIN_CRITSEC_MUTEX_IPP

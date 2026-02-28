@@ -17,11 +17,12 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS)
+#if defined(ASIO_HAS_WINDOWS_SRWLOCK)
 
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scoped_lock.hpp"
 #include "asio/detail/socket_types.hpp"
+#include <synchapi.h>
 
 #include "asio/detail/push_options.hpp"
 
@@ -36,39 +37,36 @@ public:
   typedef asio::detail::scoped_lock<win_mutex> scoped_lock;
 
   // Constructor.
-  ASIO_DECL win_mutex();
+  win_mutex()
+  {
+    ::InitializeSRWLock(&srw_lock_);
+  }
 
-  // Destructor.
+  // Destructor. SRWLock does not require explicit cleanup.
   ~win_mutex()
   {
-    ::DeleteCriticalSection(&crit_section_);
   }
 
   // Try to lock the mutex.
   bool try_lock()
   {
-    return ::TryEnterCriticalSection(&crit_section_) != 0;
+    return ::TryAcquireSRWLockExclusive(&srw_lock_) != 0;
   }
 
   // Lock the mutex.
   void lock()
   {
-    ::EnterCriticalSection(&crit_section_);
+    ::AcquireSRWLockExclusive(&srw_lock_);
   }
 
   // Unlock the mutex.
   void unlock()
   {
-    ::LeaveCriticalSection(&crit_section_);
+    ::ReleaseSRWLockExclusive(&srw_lock_);
   }
 
 private:
-  // Initialisation must be performed in a separate function to the constructor
-  // since the compiler does not support the use of structured exceptions and
-  // C++ exceptions in the same function.
-  ASIO_DECL int do_init();
-
-  ::CRITICAL_SECTION crit_section_;
+  ::SRWLOCK srw_lock_;
 };
 
 } // namespace detail
@@ -77,10 +75,6 @@ ASIO_INLINE_NAMESPACE_END
 
 #include "asio/detail/pop_options.hpp"
 
-#if defined(ASIO_HEADER_ONLY)
-# include "asio/detail/impl/win_mutex.ipp"
-#endif // defined(ASIO_HEADER_ONLY)
-
-#endif // defined(ASIO_WINDOWS)
+#endif // defined(ASIO_HAS_WINDOWS_SRWLOCK)
 
 #endif // ASIO_DETAIL_WIN_MUTEX_HPP
