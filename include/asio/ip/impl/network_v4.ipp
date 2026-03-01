@@ -69,19 +69,19 @@ network_v4::network_v4(const address_v4& addr, const address_v4& mask)
         break;
       case 254: // prefix_length_ += 7
         prefix_length_ += 1;
-      case 252: // prefix_length_ += 6
+      case /* fall-through */ 252: // prefix_length_ += 6
         prefix_length_ += 1;
-      case 248: // prefix_length_ += 5
+      case /* fall-through */ 248: // prefix_length_ += 5
         prefix_length_ += 1;
-      case 240: // prefix_length_ += 4
+      case /* fall-through */ 240: // prefix_length_ += 4
         prefix_length_ += 1;
-      case 224: // prefix_length_ += 3
+      case /* fall-through */ 224: // prefix_length_ += 3
         prefix_length_ += 1;
-      case 192: // prefix_length_ += 2
+      case /* fall-through */ 192: // prefix_length_ += 2
         prefix_length_ += 1;
-      case 128: // prefix_length_ += 1
+      case /* fall-through */ 128: // prefix_length_ += 1
         prefix_length_ += 1;
-      case 0:   // nbits += 0
+      case /* fall-through */ 0:   // nbits += 0
         finished = true;
         break;
       default:
