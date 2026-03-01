@@ -52,6 +52,14 @@ public:
     {
       if (m.enabled_)
       {
+        for (int n = mutex_.spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
+        {
+          if (mutex_.mutex_.try_lock())
+          {
+            locked_ = true;
+            return;
+          }
+        }
         mutex_.mutex_.lock();
         locked_ = true;
       }
