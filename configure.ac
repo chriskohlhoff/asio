@@ -41,6 +41,13 @@ AC_ARG_ENABLE(boost-coroutine,
   HAVE_BOOST_COROUTINE=yes
 ])
 
+if test "$HAVE_BOOST_COROUTINE" = yes; then
+  AC_CHECK_LIB([boost_system], [main],
+  [
+    HAVE_BOOST_SYSTEM=yes
+  ])
+fi
+
 if test "$STANDALONE" != yes; then
   AC_CHECK_HEADER([boost/noncopyable.hpp],,
   [
@@ -231,6 +238,8 @@ AM_CONDITIONAL(STANDALONE,test x$STANDALONE = xyes)
 AM_CONDITIONAL(SEPARATE_COMPILATION,test x$SEPARATE_COMPILATION = xyes)
 
 AM_CONDITIONAL(HAVE_BOOST_COROUTINE,test x$HAVE_BOOST_COROUTINE = xyes)
+
+AM_CONDITIONAL(HAVE_BOOST_SYSTEM,test x$HAVE_BOOST_SYSTEM = xyes)
 
 AM_CONDITIONAL(WINDOWS_TARGET,test x$WINDOWS != xno)
 
