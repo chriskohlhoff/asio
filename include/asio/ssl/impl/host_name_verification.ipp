@@ -50,7 +50,7 @@ bool host_name_verification::operator()(
   const bool is_address = !ec;
   (void)address;
 
-  X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
+  auto cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
 
   if (is_address)
   {
