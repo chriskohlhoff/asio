@@ -69,6 +69,7 @@ nobase_include_HEADERS = \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
 	asio/detail/atomic_count.hpp \
+	asio/detail/atomic_slim_mutex.hpp \
 	asio/detail/base_from_cancellation_state.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
@@ -270,6 +271,7 @@ nobase_include_HEADERS = \
 	asio/detail/signal_init.hpp \
 	asio/detail/signal_op.hpp \
 	asio/detail/signal_set_service.hpp \
+	asio/detail/slim_mutex.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_option.hpp \

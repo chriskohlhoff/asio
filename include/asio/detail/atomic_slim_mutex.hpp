@@ -1,6 +1,6 @@
 //
-// detail/conditionally_enabled_mutex.hpp
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// detail/atomic_slim_mutex.hpp
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
@@ -8,14 +8,19 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_DETAIL_CONDITIONALLY_ENABLED_MUTEX_HPP
-#define ASIO_DETAIL_CONDITIONALLY_ENABLED_MUTEX_HPP
+#ifndef ASIO_DETAIL_ATOMIC_SLIM_MUTEX_HPP
+#define ASIO_DETAIL_ATOMIC_SLIM_MUTEX_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+
+#if defined(ASIO_HAS_STD_ATOMIC_WAIT)
+
+#include <atomic>
+#include "asio/detail/conditionally_enabled_mutex.hpp"
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scoped_lock.hpp"
 
@@ -25,9 +30,68 @@ namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-// Mutex adapter used to conditionally enable or disable locking.
-template <typename Mutex>
-class conditionally_enabled_mutex
+class atomic_slim_mutex
+  : private noncopyable
+{
+public:
+  typedef asio::detail::scoped_lock<atomic_slim_mutex> scoped_lock;
+
+  // Constructor.
+  atomic_slim_mutex()
+    : state_(0)
+  {
+  }
+
+  // Destructor.
+  ~atomic_slim_mutex()
+  {
+  }
+
+  // Try to lock the mutex.
+  bool try_lock()
+  {
+    int expected = 0;
+    return state_.compare_exchange_strong(expected, 1,
+        std::memory_order_acquire, std::memory_order_relaxed);
+  }
+
+  // Lock the mutex.
+  void lock()
+  {
+    int expected = 0;
+    if (state_.compare_exchange_strong(expected, 1,
+          std::memory_order_acquire, std::memory_order_relaxed))
+      return;
+    if (expected != 2)
+      expected = state_.exchange(2, std::memory_order_acquire);
+    while (expected != 0)
+    {
+      state_.wait(2, std::memory_order_relaxed);
+      expected = state_.exchange(2, std::memory_order_acquire);
+    }
+  }
+
+  // Unlock the mutex.
+  void unlock()
+  {
+    if (state_.fetch_sub(1, std::memory_order_release) != 1)
+    {
+      state_.store(0, std::memory_order_release);
+      state_.notify_one();
+    }
+  }
+
+private:
+  friend class conditionally_enabled_mutex<atomic_slim_mutex>;
+
+  // 0 = unlocked, 1 = locked with no waiters, 2 = locked with waiters.
+  // -1 is reserved for conditionally_enabled_mutex<atomic_slim_mutex> to
+  // represent the disabled state.
+  std::atomic<int> state_;
+};
+
+template <>
+class conditionally_enabled_mutex<atomic_slim_mutex>
   : private noncopyable
 {
 public:
@@ -42,29 +106,28 @@ public:
     // Constructor adopts a lock that is already held.
     scoped_lock(conditionally_enabled_mutex& m, adopt_lock_t)
       : mutex_(m),
-        locked_(m.enabled_)
+        locked_(m.enabled())
     {
     }
 
     // Constructor acquires the lock.
     explicit scoped_lock(conditionally_enabled_mutex& m)
-      : mutex_(m)
+      : mutex_(m),
+        locked_(false)
     {
-      if (m.enabled_)
+      if (m.enabled())
       {
         for (int n = mutex_.spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
         {
-          if (mutex_.mutex_.try_lock())
+          if (mutex_.try_lock())
           {
             locked_ = true;
             return;
           }
         }
-        mutex_.mutex_.lock();
+        mutex_.lock();
         locked_ = true;
       }
-      else
-        locked_ = false;
     }
 
     // Destructor releases the lock.
@@ -77,11 +140,11 @@ public:
     // Explicitly acquire the lock.
     void lock()
     {
-      if (mutex_.enabled_ && !locked_)
+      if (!locked_ && mutex_.enabled())
       {
         for (int n = mutex_.spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
         {
-          if (mutex_.mutex_.try_lock())
+          if (mutex_.try_lock())
           {
             locked_ = true;
             return;
@@ -97,7 +160,7 @@ public:
     {
       if (locked_)
       {
-        mutex_.unlock();
+        mutex_.mutex_.unlock();
         locked_ = false;
       }
     }
@@ -108,23 +171,18 @@ public:
       return locked_;
     }
 
-    // Get the underlying mutex.
-    Mutex& mutex()
-    {
-      return mutex_.mutex_;
-    }
-
   private:
-    friend class conditionally_enabled_event;
+    friend class conditionally_enabled_mutex;
     conditionally_enabled_mutex& mutex_;
     bool locked_;
   };
 
   // Constructor.
   explicit conditionally_enabled_mutex(bool enabled, int spin_count = 0)
-    : spin_count_(spin_count),
-      enabled_(enabled)
+    : spin_count_(spin_count)
   {
+    if (!enabled)
+      mutex_.state_.store(-1, std::memory_order_relaxed);
   }
 
   // Destructor.
@@ -135,7 +193,7 @@ public:
   // Determine whether locking is enabled.
   bool enabled() const
   {
-    return enabled_;
+    return mutex_.state_.load(std::memory_order_relaxed) != -1;
   }
 
   // Get the spin count.
@@ -147,7 +205,7 @@ public:
   // Lock the mutex.
   void lock()
   {
-    if (enabled_)
+    if (enabled())
     {
       for (int n = spin_count_; n != 0; n -= (n > 0) ? 1 : 0)
         if (mutex_.try_lock())
@@ -159,16 +217,22 @@ public:
   // Unlock the mutex.
   void unlock()
   {
-    if (enabled_)
+    if (enabled())
       mutex_.unlock();
+  }
+
+  // Try to lock the mutex.
+  bool try_lock()
+  {
+    if (!enabled())
+      return true;
+    return mutex_.try_lock();
   }
 
 private:
   friend class scoped_lock;
-  friend class conditionally_enabled_event;
-  Mutex mutex_;
+  atomic_slim_mutex mutex_;
   const int spin_count_;
-  const bool enabled_;
 };
 
 } // namespace detail
@@ -177,4 +241,6 @@ ASIO_INLINE_NAMESPACE_END
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_DETAIL_CONDITIONALLY_ENABLED_MUTEX_HPP
+#endif // defined(ASIO_HAS_STD_ATOMIC_WAIT)
+
+#endif // ASIO_DETAIL_ATOMIC_SLIM_MUTEX_HPP

@@ -31,6 +31,7 @@
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/scheduler_task.hpp"
 #include "asio/detail/select_interrupter.hpp"
+#include "asio/detail/slim_mutex.hpp"
 #include "asio/detail/socket_types.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
@@ -57,7 +58,7 @@ class kqueue_reactor
 {
 private:
   // The mutex type used by this reactor.
-  typedef conditionally_enabled_mutex mutex;
+  typedef conditionally_enabled_mutex<slim_mutex> mutex;
 
 public:
   enum op_types { read_op = 0, write_op = 1,

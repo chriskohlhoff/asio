@@ -29,6 +29,7 @@
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/reactor.hpp"
 #include "asio/detail/scheduler_task.hpp"
+#include "asio/detail/slim_mutex.hpp"
 #include "asio/detail/timer_queue_base.hpp"
 #include "asio/detail/timer_queue_set.hpp"
 #include "asio/detail/wait_op.hpp"
@@ -46,7 +47,7 @@ class io_uring_service
 {
 private:
   // The mutex type used by this reactor.
-  typedef conditionally_enabled_mutex mutex;
+  typedef conditionally_enabled_mutex<slim_mutex> mutex;
 
 public:
   enum op_types { read_op = 0, write_op = 1, except_op = 2, max_ops = 3 };

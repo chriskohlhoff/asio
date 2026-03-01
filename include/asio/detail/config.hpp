@@ -1538,15 +1538,55 @@
 # endif // !defined(ASIO_DISABLE_SNPRINTF)
 #endif // !defined(ASIO_HAS_SNPRINTF)
 
+// Standard library support for std::atomic<T>::wait and notify functions.
+// By default, this is only enabled on platforms where the standard library is
+// known to implement them using efficient wait primitives (e.g. Linux futex,
+// Windows WaitOnAddress, Apple ulock).
+#if !defined(ASIO_HAS_STD_ATOMIC_WAIT)
+# if !defined(ASIO_DISABLE_STD_ATOMIC_WAIT)
+#  if defined(ASIO_HAS_STD_ATOMIC)
+#   if defined(ASIO_MSVC)
+#    if (_MSVC_LANG >= 202002) && (__cpp_lib_atomic_wait >= 201907L)
+#     if defined(ASIO_WINDOWS)
+#      if !defined(UNDER_CE)
+#       if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602)
+#        define ASIO_HAS_STD_ATOMIC_WAIT 1
+#       endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0602)
+#      endif // !defined(UNDER_CE)
+#     endif // defined(ASIO_WINDOWS)
+#    endif // (_MSVC_LANG >= 202002) && (__cpp_lib_atomic_wait >= 201907L)
+#   elif (__cplusplus >= 202002L) && (__cpp_lib_atomic_wait >= 201907L)
+#    if defined(__linux__)
+#     define ASIO_HAS_STD_ATOMIC_WAIT 1
+#    elif defined(__APPLE__)
+#     if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) \
+        && (__MAC_OS_X_VERSION_MIN_REQUIRED >= 140400)
+#      define ASIO_HAS_STD_ATOMIC_WAIT 1
+#     elif defined(__IPHONE_OS_VERSION_MIN_REQUIRED) \
+        && (__IPHONE_OS_VERSION_MIN_REQUIRED >= 170400)
+#      define ASIO_HAS_STD_ATOMIC_WAIT 1
+#     endif // defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+            //   && (__IPHONE_OS_VERSION_MIN_REQUIRED >= 170400)
+#    endif // defined(__APPLE__)
+#   endif // (__cplusplus >= 202002L) && (__cpp_lib_atomic_wait >= 201907L)
+#  endif // defined(ASIO_HAS_STD_ATOMIC)
+# endif // !defined(ASIO_DISABLE_STD_ATOMIC_WAIT)
+#endif // !defined(ASIO_HAS_STD_ATOMIC_WAIT)
+#if defined(ASIO_HAS_STD_ATOMIC_WAIT)
+# define ASIO_VERSION_TAG_n n
+#else // defined(ASIO_HAS_STD_ATOMIC_WAIT)
+# define ASIO_VERSION_TAG_n
+#endif // defined(ASIO_HAS_STD_ATOMIC_WAIT)
+
 // Token-pasting helper (two levels needed to allow macro arguments to expand).
 #define ASIO_DETAIL_CAT_(a, b) a ## b
 #define ASIO_DETAIL_CAT(a, b) ASIO_DETAIL_CAT_(a, b)
 
 // Version tags for user-enabled features with no auto-detection in this file.
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_n n
+# define ASIO_VERSION_TAG_o o
 #else // defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_n
+# define ASIO_VERSION_TAG_o
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 
 // Automatic version namespace v<ASIO_VERSION>_<tags>.
@@ -1569,7 +1609,8 @@
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_k, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_l, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_m, \
-  ASIO_VERSION_TAG_n))))))))))))))))
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_n, \
+  ASIO_VERSION_TAG_o)))))))))))))))))
 # endif // !defined(ASIO_VERSION_NAMESPACE)
 #endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
 
