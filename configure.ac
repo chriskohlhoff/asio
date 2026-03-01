@@ -95,18 +95,18 @@ case $host in
   *-*-mingw32*)
     CXXFLAGS="$CXXFLAGS -mthreads"
     LDFLAGS="$LDFLAGS -mthreads"
-    LIBS="$LIBS -lws2_32 -lmswsock"
+    LIBS="$LIBS -lws2_32 -lmswsock -lbcrypt"
     WINDOWS=yes
     ;;
   *-*-mingw64*)
     CXXFLAGS="$CXXFLAGS -mthreads"
     LDFLAGS="$LDFLAGS -mthreads"
-    LIBS="$LIBS -lws2_32 -lmswsock"
+    LIBS="$LIBS -lws2_32 -lmswsock -lbcrypt"
     WINDOWS=yes
     ;;
   *-pc-cygwin*)
     CXXFLAGS="$CXXFLAGS -D__USE_W32_SOCKETS -D_WIN32_WINNT=0x0601"
-    LIBS="$LIBS -lws2_32 -lmswsock"
+    LIBS="$LIBS -lws2_32 -lmswsock -lbcrypt"
     WINDOWS=yes
     ;;
   *-apple-darwin*)

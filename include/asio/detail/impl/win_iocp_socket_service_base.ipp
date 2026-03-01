@@ -549,7 +549,7 @@ void win_iocp_socket_service_base::start_accept_op(
 void win_iocp_socket_service_base::restart_accept_op(
     socket_type s, socket_holder& new_socket, int family, int type,
     int protocol, void* output_buffer, DWORD address_length,
-    long* cancel_requested, operation* op)
+    LONG* cancel_requested, operation* op)
 {
   new_socket.reset();
   iocp_service_.work_started();

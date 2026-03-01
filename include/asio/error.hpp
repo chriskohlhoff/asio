@@ -27,6 +27,10 @@
 # include <netdb.h>
 #endif
 
+#if defined(__CYGWIN__)
+# include "asio/detail/socket_types.hpp"
+#endif // defined(__CYGWIN__)
+
 #if defined(GENERATING_DOCUMENTATION)
 /// INTERNAL ONLY.
 # define ASIO_NATIVE_ERROR(e) implementation_defined

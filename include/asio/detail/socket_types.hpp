@@ -207,10 +207,15 @@ typedef sockaddr_storage sockaddr_storage_type;
 typedef addrinfo addrinfo_type;
 # endif
 typedef ::linger linger_type;
-typedef unsigned long ioctl_arg_type;
+#if defined(__CYGWIN__)
+typedef unsigned __int32 u_long_type;
+typedef unsigned __int16 u_short_type;
+#else // defined(__CYGWIN__)
 typedef u_long u_long_type;
 typedef u_short u_short_type;
+#endif // defined(__CYGWIN__)
 typedef int signed_size_type;
+typedef u_long_type ioctl_arg_type;
 struct sockaddr_un_type { u_short sun_family; char sun_path[108]; };
 # define ASIO_OS_DEF(c) ASIO_OS_DEF_##c
 # define ASIO_OS_DEF_AF_UNSPEC AF_UNSPEC

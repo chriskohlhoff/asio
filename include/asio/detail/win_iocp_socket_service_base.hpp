@@ -549,7 +549,7 @@ public:
   ASIO_DECL void restart_accept_op(socket_type s,
       socket_holder& new_socket, int family, int type,
       int protocol, void* output_buffer, DWORD address_length,
-      long* cancel_requested, operation* op);
+      LONG* cancel_requested, operation* op);
 
 protected:
   // Open a new socket implementation.
@@ -705,7 +705,7 @@ protected:
       o->target_->complete(owner, result_ec, bytes_transferred);
     }
 
-    long* get_cancel_requested()
+    LONG* get_cancel_requested()
     {
       return &cancel_requested_;
     }
@@ -729,7 +729,7 @@ protected:
   private:
     SOCKET socket_;
     operation* target_;
-    long cancel_requested_;
+    LONG cancel_requested_;
   };
 
   // Helper class used to implement per operation cancellation.

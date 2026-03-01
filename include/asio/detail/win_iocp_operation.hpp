@@ -84,7 +84,7 @@ private:
   friend class win_iocp_io_context;
   win_iocp_operation* next_;
   func_type func_;
-  long ready_;
+  LONG ready_;
 };
 
 } // namespace detail
