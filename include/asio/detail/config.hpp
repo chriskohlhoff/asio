@@ -417,23 +417,25 @@
 #        endif // (__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17)
 #       endif // !defined(_LIBCPP_HAS_MUSL_LIBC)
 #      elif defined(__APPLE__)
-#       if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
-#        if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
-#         define ASIO_HAS_STD_ALIGNED_ALLOC 1
-#        endif // (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
-#       elif defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
-#        if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
-#         define ASIO_HAS_STD_ALIGNED_ALLOC 1
-#        endif // (__IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
-#       elif defined(__TV_OS_VERSION_MIN_REQUIRED)
-#        if (__TV_OS_VERSION_MIN_REQUIRED >= 130000)
-#         define ASIO_HAS_STD_ALIGNED_ALLOC 1
-#        endif // (__TV_OS_VERSION_MIN_REQUIRED >= 130000)
-#       elif defined(__WATCH_OS_VERSION_MIN_REQUIRED)
-#        if (__WATCH_OS_VERSION_MIN_REQUIRED >= 60000)
-#         define ASIO_HAS_STD_ALIGNED_ALLOC 1
-#        endif // (__WATCH_OS_VERSION_MIN_REQUIRED >= 60000)
-#       endif // defined(__WATCH_OS_X_VERSION_MIN_REQUIRED)
+#       if (_LIBCPP_VERSION > 10000)
+#        if defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+#         if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
+#          define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#         endif // (__MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
+#        elif defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+#         if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
+#          define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#         endif // (__IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
+#        elif defined(__TV_OS_VERSION_MIN_REQUIRED)
+#         if (__TV_OS_VERSION_MIN_REQUIRED >= 130000)
+#          define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#         endif // (__TV_OS_VERSION_MIN_REQUIRED >= 130000)
+#        elif defined(__WATCH_OS_VERSION_MIN_REQUIRED)
+#         if (__WATCH_OS_VERSION_MIN_REQUIRED >= 60000)
+#          define ASIO_HAS_STD_ALIGNED_ALLOC 1
+#         endif // (__WATCH_OS_VERSION_MIN_REQUIRED >= 60000)
+#        endif // defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+#       endif // (_LIBCPP_VERSION > 10000)
 #      endif // defined(__APPLE__)
 #     endif // (_LIBCPP_STD_VER > 14)
 #    elif defined(_GLIBCXX_HAVE_ALIGNED_ALLOC)
