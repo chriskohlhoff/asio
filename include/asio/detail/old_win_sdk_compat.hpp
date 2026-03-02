@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 // Guess whether we are building against on old Platform SDK.
 #if !defined(IN6ADDR_ANY_INIT)
@@ -211,6 +211,6 @@ ASIO_INLINE_NAMESPACE_END
 # define IPPROTO_ICMPV6 58
 #endif
 
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // ASIO_DETAIL_OLD_WIN_SDK_COMPAT_HPP

@@ -37,13 +37,15 @@
 # include "asio/detail/scheduler.hpp"
 #endif // defined(ASIO_HAS_IOCP)
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_CYGWIN_W32_SOCKETS)
 # if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 #  include "asio/detail/io_uring_service.hpp"
 # else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 #  include "asio/detail/reactor.hpp"
 # endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -253,7 +255,7 @@ private:
 
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(ASIO_CYGWIN_W32_SOCKETS)
   // The type used for processing pipe readiness notifications.
   class pipe_read_op;
 
@@ -272,7 +274,7 @@ private:
 # endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 #endif // !defined(ASIO_WINDOWS)
        //   && !defined(ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
   // A mapping from signal number to the registered signal sets.
   registration* registrations_[max_signal_number];

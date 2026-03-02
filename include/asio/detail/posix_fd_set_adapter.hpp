@@ -18,7 +18,7 @@
 #include "asio/detail/config.hpp"
 
 #if !defined(ASIO_WINDOWS) \
-  && !defined(__CYGWIN__) \
+  && !defined(ASIO_CYGWIN_W32_SOCKETS) \
   && !defined(ASIO_WINDOWS_RUNTIME)
 
 #include <cstring>
@@ -114,7 +114,7 @@ ASIO_INLINE_NAMESPACE_END
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(ASIO_WINDOWS)
-       // && !defined(__CYGWIN__)
+       // && !defined(ASIO_CYGWIN_W32_SOCKETS)
        // && !defined(ASIO_WINDOWS_RUNTIME)
 
 #endif // ASIO_DETAIL_POSIX_FD_SET_ADAPTER_HPP

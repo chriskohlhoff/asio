@@ -57,7 +57,7 @@ void create_pipe(native_pipe_handle p[2], asio::error_code& ec)
     : ::InterlockedExchangeAdd(&counter2, 0);
 
   wchar_t pipe_name[128];
-#if defined(__CYGWIN__)
+#if defined(ASIO_CYGWIN_W32_SOCKETS)
   swprintf(
 #elif defined(ASIO_HAS_SECURE_RTL)
    swprintf_s(

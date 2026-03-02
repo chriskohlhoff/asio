@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 #if !defined(ASIO_WINDOWS_APP)
 
 #include "asio/detail/noncopyable.hpp"
@@ -56,6 +56,6 @@ ASIO_INLINE_NAMESPACE_END
 #include "asio/detail/pop_options.hpp"
 
 #endif // !defined(ASIO_WINDOWS_APP)
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // ASIO_DETAIL_LOCAL_FREE_ON_BLOCK_EXIT_HPP

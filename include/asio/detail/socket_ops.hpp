@@ -129,11 +129,11 @@ ASIO_DECL size_t available(socket_type s, asio::error_code& ec);
 ASIO_DECL int listen(socket_type s,
     int backlog, asio::error_code& ec);
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 typedef WSABUF buf;
-#else // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#else // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 typedef iovec buf;
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 ASIO_DECL void init_buf(buf& b, void* data, size_t size);
 

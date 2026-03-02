@@ -76,6 +76,12 @@ fi
 
 AM_CONDITIONAL(HAVE_OPENSSL,test x$OPENSSL_FOUND != xno)
 
+AC_ARG_ENABLE(cygwin-w32-sockets,
+[  --enable-cygwin-w32-sockets enable native Windows sockets support when using Cygwin],
+[
+  HAVE_CYGWIN_W32_SOCKETS=yes
+])
+
 WINDOWS=no
 case $host in
   *-*-linux*)
@@ -105,9 +111,14 @@ case $host in
     WINDOWS=yes
     ;;
   *-pc-cygwin*)
-    CXXFLAGS="$CXXFLAGS -D__USE_W32_SOCKETS -D_WIN32_WINNT=0x0601"
-    LIBS="$LIBS -lws2_32 -lmswsock -lbcrypt"
-    WINDOWS=yes
+    if test "$HAVE_CYGWIN_W32_SOCKETS" = yes; then
+      CXXFLAGS="$CXXFLAGS -D__USE_W32_SOCKETS -D_WIN32_WINNT=0x0601"
+      LIBS="$LIBS -lws2_32 -lmswsock -lbcrypt"
+      WINDOWS=yes
+    else
+      CXXFLAGS="$CXXFLAGS"
+      LDFLAGS="$LDFLAGS"
+    fi
     ;;
   *-apple-darwin*)
     CXXFLAGS="$CXXFLAGS"

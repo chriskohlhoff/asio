@@ -63,7 +63,7 @@
 
 // GNU C++
 
-# if defined(__MINGW32__) || defined(__CYGWIN__)
+# if defined(__MINGW32__) || defined(ASIO_CYGWIN_W32_SOCKETS)
 #  pragma pack (pop)
 # endif
 

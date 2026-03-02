@@ -22,7 +22,7 @@
 
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__)
+  && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -991,6 +991,6 @@ ASIO_INLINE_NAMESPACE_END
 
 #endif // !defined(ASIO_WINDOWS)
        //   && !defined(ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // ASIO_DETAIL_IMPL_DESCRIPTOR_OPS_IPP

@@ -19,7 +19,7 @@
 
 #if !defined(ASIO_WINDOWS) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
-  && !defined(__CYGWIN__) \
+  && !defined(ASIO_CYGWIN_W32_SOCKETS) \
   && !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #include "asio/error.hpp"
@@ -228,7 +228,7 @@ ASIO_INLINE_NAMESPACE_END
 
 #endif // !defined(ASIO_WINDOWS)
        //   && !defined(ASIO_WINDOWS_RUNTIME)
-       //   && !defined(__CYGWIN__)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
        //   && !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 #endif // ASIO_DETAIL_IMPL_REACTIVE_DESCRIPTOR_SERVICE_IPP

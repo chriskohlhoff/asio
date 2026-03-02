@@ -20,7 +20,7 @@
 #if !defined(ASIO_HAS_THREADS) \
   || defined(ASIO_WINDOWS) \
   || defined(ASIO_WINDOWS_RUNTIME) \
-  || defined(__CYGWIN__) \
+  || defined(ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include "asio/detail/noncopyable.hpp"
@@ -65,7 +65,7 @@ ASIO_INLINE_NAMESPACE_END
 #endif // !defined(ASIO_HAS_THREADS)
        // || defined(ASIO_WINDOWS)
        // || defined(ASIO_WINDOWS_RUNTIME)
-       // || defined(__CYGWIN__)
+       // || defined(ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // ASIO_DETAIL_NULL_SIGNAL_BLOCKER_HPP

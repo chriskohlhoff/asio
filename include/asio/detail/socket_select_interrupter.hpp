@@ -20,7 +20,7 @@
 #if !defined(ASIO_WINDOWS_RUNTIME)
 
 #if defined(ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(ASIO_CYGWIN_W32_SOCKETS) \
   || defined(__SYMBIAN32__)
 
 #include "asio/detail/socket_types.hpp"
@@ -85,7 +85,7 @@ ASIO_INLINE_NAMESPACE_END
 #endif // defined(ASIO_HEADER_ONLY)
 
 #endif // defined(ASIO_WINDOWS)
-       // || defined(__CYGWIN__)
+       // || defined(ASIO_CYGWIN_W32_SOCKETS)
        // || defined(__SYMBIAN32__)
 
 #endif // !defined(ASIO_WINDOWS_RUNTIME)

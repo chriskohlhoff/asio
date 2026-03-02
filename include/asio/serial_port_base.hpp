@@ -21,16 +21,18 @@
 #if defined(ASIO_HAS_SERIAL_PORT) \
   || defined(GENERATING_DOCUMENTATION)
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_CYGWIN_W32_SOCKETS)
 # include <termios.h>
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #include "asio/detail/socket_types.hpp"
 #include "asio/error_code.hpp"
 
 #if defined(GENERATING_DOCUMENTATION)
 # define ASIO_OPTION_STORAGE implementation_defined
-#elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 # define ASIO_OPTION_STORAGE DCB
 #else
 # define ASIO_OPTION_STORAGE termios

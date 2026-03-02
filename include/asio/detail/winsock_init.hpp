@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #include "asio/detail/socket_types.hpp"
 
@@ -127,6 +127,6 @@ ASIO_INLINE_NAMESPACE_END
 # include "asio/detail/impl/winsock_init.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #endif // ASIO_DETAIL_WINSOCK_INIT_HPP

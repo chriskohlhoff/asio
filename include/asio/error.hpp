@@ -19,7 +19,7 @@
 #include "asio/error_code.hpp"
 #include "asio/system_error.hpp"
 #if defined(ASIO_WINDOWS) \
-  || defined(__CYGWIN__) \
+  || defined(ASIO_CYGWIN_W32_SOCKETS) \
   || defined(ASIO_WINDOWS_RUNTIME)
 # include <winerror.h>
 #else
@@ -27,9 +27,9 @@
 # include <netdb.h>
 #endif
 
-#if defined(__CYGWIN__)
+#if defined(ASIO_CYGWIN_W32_SOCKETS)
 # include "asio/detail/socket_types.hpp"
-#endif // defined(__CYGWIN__)
+#endif // defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #if defined(GENERATING_DOCUMENTATION)
 /// INTERNAL ONLY.
@@ -48,7 +48,7 @@
 # define ASIO_NETDB_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
 # define ASIO_GETADDRINFO_ERROR(e) __HRESULT_FROM_WIN32(WSA ## e)
 # define ASIO_WIN_OR_POSIX(e_win, e_posix) e_win
-#elif defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#elif defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 # define ASIO_NATIVE_ERROR(e) e
 # define ASIO_SOCKET_ERROR(e) WSA ## e
 # define ASIO_NETDB_ERROR(e) WSA ## e
@@ -268,7 +268,8 @@ inline const asio::error_category& get_system_category()
   return asio::system_category();
 }
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 extern ASIO_DECL
 const asio::error_category& get_netdb_category();
@@ -276,7 +277,8 @@ const asio::error_category& get_netdb_category();
 extern ASIO_DECL
 const asio::error_category& get_addrinfo_category();
 
-#else // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#else // !defined(ASIO_WINDOWS)
+      //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 inline const asio::error_category& get_netdb_category()
 {
@@ -288,7 +290,8 @@ inline const asio::error_category& get_addrinfo_category()
   return get_system_category();
 }
 
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 extern ASIO_DECL
 const asio::error_category& get_misc_category();

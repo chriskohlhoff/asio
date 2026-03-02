@@ -21,9 +21,9 @@
 #include "asio/detail/assert.hpp"
 #include "asio/detail/noncopyable.hpp"
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 # include "asio/detail/socket_types.hpp"
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 #include "asio/detail/push_options.hpp"
 
@@ -42,12 +42,12 @@ inline std::size_t calculate_hash_value(void* p)
     + (reinterpret_cast<std::size_t>(p) >> 3);
 }
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 inline std::size_t calculate_hash_value(SOCKET s)
 {
   return static_cast<std::size_t>(s);
 }
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
 // Note: assumes K and V are POD types.
 template <typename K, typename V>

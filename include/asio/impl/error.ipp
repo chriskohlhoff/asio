@@ -107,7 +107,8 @@ std::error_condition error_number_to_condition(int ev)
 } // namespace detail
 // boostify: non-boost code ends here
 
-#if !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#if !defined(ASIO_WINDOWS) \
+  && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 namespace detail {
 
@@ -169,7 +170,8 @@ const asio::error_category& get_addrinfo_category()
   return instance;
 }
 
-#endif // !defined(ASIO_WINDOWS) && !defined(__CYGWIN__)
+#endif // !defined(ASIO_WINDOWS)
+       //   && !defined(ASIO_CYGWIN_W32_SOCKETS)
 
 namespace detail {
 

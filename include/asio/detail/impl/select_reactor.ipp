@@ -238,7 +238,7 @@ void select_reactor::run(long usec, op_queue<operation>& ops)
       max_fd = fd_sets_[i].max_descriptor();
   }
 
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
   // Connection operations on Windows use both except and write fd_sets.
   have_work_to_do = have_work_to_do || !op_queue_[connect_op].empty();
   fd_sets_[write_op].set(op_queue_[connect_op], ops);
@@ -247,7 +247,7 @@ void select_reactor::run(long usec, op_queue<operation>& ops)
   fd_sets_[except_op].set(op_queue_[connect_op], ops);
   if (fd_sets_[except_op].max_descriptor() > max_fd)
     max_fd = fd_sets_[except_op].max_descriptor();
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
   // We can return immediately if there's no work to do and the reactor is
   // not supposed to block.
@@ -286,11 +286,11 @@ void select_reactor::run(long usec, op_queue<operation>& ops)
   // Dispatch all ready operations.
   if (retval > 0)
   {
-#if defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
     // Connection operations on Windows use both except and write fd_sets.
     fd_sets_[except_op].perform(op_queue_[connect_op], ops);
     fd_sets_[write_op].perform(op_queue_[connect_op], ops);
-#endif // defined(ASIO_WINDOWS) || defined(__CYGWIN__)
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 
     // Exception operations must be processed first to ensure that any
     // out-of-band data is read before normal data.
