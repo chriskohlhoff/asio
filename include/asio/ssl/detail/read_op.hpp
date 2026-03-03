@@ -45,11 +45,61 @@ public:
       asio::error_code& ec,
       std::size_t& bytes_transferred) const
   {
+    bytes_transferred = 0;
+
     asio::mutable_buffer buffer =
       asio::detail::buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence>::first(buffers_);
 
-    return eng.read(buffer, ec, bytes_transferred);
+    while (true)
+    {
+      asio::mutable_buffer current_buffer = buffer + bytes_transferred;
+
+      // If user buffer is full, we are done
+      if (current_buffer.size() == 0)
+      {
+        ec = asio::error_code();
+        return engine::want_nothing;
+      }
+
+      std::size_t bytes = 0;
+      engine::want w = eng.read(current_buffer, ec, bytes);
+
+      bytes_transferred += bytes;
+
+      // If an error occurred but we already got data in this call, return the
+      // data first. This avoids dropping trailing bytes when the peer closes.
+      // If the error persists, it will be reraised in the next call.
+      if (ec)
+      {
+        if ((ec == asio::error::eof) && (bytes_transferred > 0))
+        {
+          ec = asio::error_code();
+          return engine::want_nothing;
+        }
+        return w;
+      }
+
+      switch (w)
+      {
+      case engine::want_nothing:
+        // If we got bytes, LOOP AGAIN to see if more data is waiting in the BIO.
+        if (bytes > 0) continue;
+
+        // If 0 bytes (EOF/Shutdown), fall through to return result
+        [[fallthrough]];
+
+      default:
+        // If we have accumulated ANY data, treat this as success.
+        // This handles want_input, want_output, etc., by returning control
+        // to the caller to process the data before handling the SSL state.
+        if (bytes_transferred > 0)
+        {
+          return engine::want_nothing;
+        }
+        return w;
+      }
+    }
   }
 
   void complete_sync(asio::error_code&) const

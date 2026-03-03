@@ -30,9 +30,9 @@ namespace detail {
 
 struct stream_core
 {
-  // According to the OpenSSL documentation, this is the buffer size that is
-  // sufficient to hold the largest possible TLS record.
-  enum { max_tls_record_size = 17 * 1024 };
+  // A TLS record requires a buffer size of 17KB at maximum.
+  // We further increase the buffer size to avoid small operations in the io_context.
+  enum { max_tls_record_size = 128 * 1024 };
 
   template <typename Executor>
   stream_core(SSL_CTX* context, const Executor& ex)

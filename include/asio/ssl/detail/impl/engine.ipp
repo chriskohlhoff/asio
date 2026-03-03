@@ -52,7 +52,7 @@ engine::engine(SSL_CTX* context)
 #endif // defined(SSL_MODE_RELEASE_BUFFERS)
 
   ::BIO* int_bio = 0;
-  ::BIO_new_bio_pair(&int_bio, 0, &ext_bio_, 0);
+  ::BIO_new_bio_pair(&int_bio, 128*1024, &ext_bio_, 128*1024);
   ::SSL_set_bio(ssl_, int_bio, int_bio);
 }
 
@@ -70,7 +70,7 @@ engine::engine(SSL* ssl_impl)
 #endif // defined(SSL_MODE_RELEASE_BUFFERS)
 
   ::BIO* int_bio = 0;
-  ::BIO_new_bio_pair(&int_bio, 0, &ext_bio_, 0);
+  ::BIO_new_bio_pair(&int_bio, 128*1024, &ext_bio_, 128*1024);
   ::SSL_set_bio(ssl_, int_bio, int_bio);
 }
 
