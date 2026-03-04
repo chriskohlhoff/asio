@@ -87,13 +87,6 @@ needs.
     [`ASIO_DISABLE_BOOST_CONTEXT_FIBER`]
   ]
   [
-    [`ASIO_HAS_BOOST_COROUTINE`]
-    [
-      Boost support for the Coroutine library.
-    ]
-    [`ASIO_DISABLE_BOOST_COROUTINE`]
-  ]
-  [
     [`ASIO_HAS_BOOST_DATE_TIME`]
     [
       Boost support for the DateTime library.
@@ -253,6 +246,13 @@ needs.
       Handler hooking. Disabled for ancient Borland C++ and gcc compilers.
     ]
     [`ASIO_DISABLE_HANDLER_HOOKS`]
+  ]
+  [
+    [`ASIO_HAS_INLINE_VARIABLES`]
+    [
+      Support for inline variables.
+    ]
+    [`ASIO_DISABLE_INLINE_VARIABLES`]
   ]
   [
     [`ASIO_HAS_IOCP`]
@@ -458,6 +458,16 @@ needs.
     []
   ]
   [
+    [`ASIO_HAS_STD_ATOMIC_WAIT`]
+    [
+      Standard library support for std::atomic<T>::wait and notify functions.
+      By default, this is only enabled on platforms where the standard library is
+      known to implement them using efficient wait primitives (e.g. Linux futex,
+      Windows WaitOnAddress, Apple ulock).
+    ]
+    [`ASIO_DISABLE_STD_ATOMIC_WAIT`]
+  ]
+  [
     [`ASIO_HAS_STD_CALL_ONCE`]
     [
       Always enabled. Retained for backwards compatibility in user code.
@@ -577,6 +587,13 @@ needs.
     []
   ]
   [
+    [`ASIO_HAS_STD_SOURCE_LOCATION`]
+    [
+      Standard library support for std::source_location.
+    ]
+    [`ASIO_DISABLE_STD_SOURCE_LOCATION`]
+  ]
+  [
     [`ASIO_HAS_STD_STRING_VIEW`]
     [
       Standard library support for std::string_view.
@@ -651,7 +668,7 @@ needs.
     [
       Linux: epoll, eventfd, timerfd and io_uring.
     ]
-    []
+    [`ASIO_DISABLE_TIMERFD`]
   ]
   [
     [`ASIO_HAS_UNISTD_H`]
@@ -710,6 +727,14 @@ needs.
       Windows: random access handles.
     ]
     [`ASIO_DISABLE_WINDOWS_RANDOM_ACCESS_HANDLE`]
+  ]
+  [
+    [`ASIO_HAS_WINDOWS_SRWLOCK`]
+    [
+      Windows: Slim Reader/Writer Locks.
+      Requires Windows 7 or later for TryAcquireSRWLockExclusive support.
+    ]
+    [`ASIO_DISABLE_WINDOWS_SRWLOCK`]
   ]
   [
     [`ASIO_HAS_WINDOWS_STREAM_HANDLE`]
