@@ -7,6 +7,54 @@
 
 [section:history Revision History]
 
+[heading Asio 1.38.1]
+
+* Added optional binary versioning using an inline namespace. If the
+  preprocessor macro `ASIO_ENABLE_VERSION_NAMESPACE` is defined, Asio will
+  compile all symbols under an inline namespace that includes the version
+  number. Alternatively, users can specify a custom inline namespace name by
+  defining `ASIO_VERSION_NAMESPACE` directly. This allows different versions of
+  Asio to coexist in the same process without symbol conflicts. The inline
+  namespace is disabled by default to avoid breaking existing code that forward
+  declares Asio names.
+
+* Changed the default Windows mutex implementation from `CRITICAL_SECTION` to
+  `SRWLOCK`.
+
+* Added a "slim" mutex implementation based on `std::atomic`. When supported by
+  the compiler and OS, this reduces the size of the state required for strands,
+  sockets, and other descriptors.
+
+* Added support for compilation under Cygwin64.
+
+* Added support for using Cygwin without `__USE_W32_SOCKETS`, allowing the POSIX
+  socket API to be used in place of the Winsock API.
+
+* Added the ability for users to override `ASIO_DECL` before including Asio
+  headers. This may be used to override symbol visibility attributes, or to
+  disable the DLL import/export decoration.
+
+* Fixed `MSG_NOSIGNAL` handling on NetBSD, which supports the flag regardless of
+  `_POSIX_VERSION`.
+
+* Fixed the build with recent Boost versions, which no longer support linking
+  against `boost_system`.
+
+* Fixed compatibility with musl libc on older versions of Android.
+
+* Fixed detection of `std::aligned_alloc` on older Apple platforms.
+
+* Fixed a warning in `serial_port_base::character_size::store` when compiling
+  with MSVC.
+
+* Clarified the IPv4 vs IPv6 semantics of `ip::multicast::outbound_interface` in
+  the documentation.
+
+* Updated TLS v1.3 context initialisation to correctly detect LibreSSL support
+  (available from LibreSSL 3.2.0).
+
+* Fixed compatibility with the latest OpenSSL's `X509` constness changes.
+
 [heading Asio 1.38.0]
 
 * Changed the macro-based coroutine implementation to ensure that case labels
