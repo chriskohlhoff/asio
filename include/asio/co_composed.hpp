@@ -988,7 +988,11 @@ private:
   using allocator_type =
     associated_allocator_t<Handler, recycling_allocator<void>>;
 
+#if defined(ASIO_MSVC) && !defined(__clang__)
+  union alignas(16) block
+#else
   union block
+#endif
   {
     std::max_align_t max_align;
     alignas(allocator_type) char pad[alignof(allocator_type)];
