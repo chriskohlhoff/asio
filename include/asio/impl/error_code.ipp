@@ -36,7 +36,11 @@ ASIO_INLINE_NAMESPACE_BEGIN
 namespace error {
 namespace detail {
 
+    // Forward declaration required when error.hpp has not been included.
+#if !defined(ASIO_ERROR_NUMBER_TO_CONDITION_DECLARED)
+#define ASIO_ERROR_NUMBER_TO_CONDITION_DECLARED
 ASIO_DECL std::error_condition error_number_to_condition(int ev);
+#endif
 
 } // namespace detail
 } // namespace error
