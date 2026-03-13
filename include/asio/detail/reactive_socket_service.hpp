@@ -307,8 +307,14 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_send_to"));
 
+#if defined(MSG_DONTWAIT)
+    constexpr bool has_msg_dontwait = true;
+#else
+    constexpr bool has_msg_dontwait = false;
+#endif
+
     start_op(impl, reactor::write_op, p.p,
-        is_continuation, true, false, true, &io_ex, 0);
+        is_continuation, true, false, !has_msg_dontwait, &io_ex, 0);
     p.v = p.p = 0;
   }
 
@@ -430,10 +436,16 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive_from"));
 
+#if defined(MSG_DONTWAIT)
+    constexpr bool has_msg_dontwait = true;
+#else
+    constexpr bool has_msg_dontwait = false;
+#endif
+
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
-        p.p, is_continuation, true, false, true, &io_ex, 0);
+        p.p, is_continuation, true, false, !has_msg_dontwait, &io_ex, 0);
     p.v = p.p = 0;
   }
 
