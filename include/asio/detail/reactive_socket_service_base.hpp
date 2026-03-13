@@ -313,10 +313,16 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_send"));
 
+#if defined(MSG_DONTWAIT)
+    constexpr bool has_msg_dontwait = true;
+#else
+    constexpr bool has_msg_dontwait = false;
+#endif
+
     start_op(impl, reactor::write_op, p.p, is_continuation, true,
         ((impl.state_ & socket_ops::stream_oriented)
           && buffer_sequence_adapter<asio::const_buffer,
-            ConstBufferSequence>::all_empty(buffers)), true, &io_ex, 0);
+            ConstBufferSequence>::all_empty(buffers)), !has_msg_dontwait, &io_ex, 0);
     p.v = p.p = 0;
   }
 
@@ -419,6 +425,12 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive"));
 
+#if defined(MSG_DONTWAIT)
+    constexpr bool has_msg_dontwait = true;
+#else
+    constexpr bool has_msg_dontwait = false;
+#endif
+
     start_op(impl,
         (flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
@@ -426,7 +438,7 @@ public:
         (flags & socket_base::message_out_of_band) == 0,
         ((impl.state_ & socket_ops::stream_oriented)
           && buffer_sequence_adapter<asio::mutable_buffer,
-            MutableBufferSequence>::all_empty(buffers)), true, &io_ex, 0);
+            MutableBufferSequence>::all_empty(buffers)), !has_msg_dontwait, &io_ex, 0);
     p.v = p.p = 0;
   }
 
@@ -530,12 +542,18 @@ public:
     ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
           &impl, impl.socket_, "async_receive_with_flags"));
 
+#if defined(MSG_DONTWAIT)
+    constexpr bool has_msg_dontwait = true;
+#else
+    constexpr bool has_msg_dontwait = false;
+#endif
+
     start_op(impl,
         (in_flags & socket_base::message_out_of_band)
           ? reactor::except_op : reactor::read_op,
         p.p, is_continuation,
         (in_flags & socket_base::message_out_of_band) == 0,
-        false, true, &io_ex, 0);
+        false, !has_msg_dontwait, &io_ex, 0);
     p.v = p.p = 0;
   }
 
