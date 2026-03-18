@@ -2,7 +2,7 @@
 // ssl/detail/io.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 namespace ssl {
 namespace detail {
 
@@ -78,18 +79,21 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // Operation is complete. Return result to caller.
     core.engine_.map_error_code(ec);
+    op.complete_sync(ec);
     return bytes_transferred;
 
   default:
 
     // Operation is complete. Return result to caller.
     core.engine_.map_error_code(ec);
+    op.complete_sync(ec);
     return bytes_transferred;
 
   } while (!ec);
 
   // Operation failed. Return result to caller.
   core.engine_.map_error_code(ec);
+  op.complete_sync(ec);
   return 0;
 }
 
@@ -332,7 +336,8 @@ inline bool asio_handler_is_continuation(
     io_op<Stream, Operation, Handler>* this_handler)
 {
   return this_handler->start_ == 0 ? true
-    : asio_handler_cont_helpers::is_continuation(this_handler->handler_);
+    : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
+        this_handler->handler_);
 }
 
 template <typename Stream, typename Operation, typename Handler>
@@ -369,6 +374,7 @@ struct associator<Associator,
   }
 };
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

@@ -2,7 +2,7 @@
 // post.hpp
 // ~~~~~~~~
 //
-// Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,7 @@
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
+ASIO_INLINE_NAMESPACE_BEGIN
 
 /// Submits a completion token or function object for execution.
 /**
@@ -294,6 +295,23 @@ inline auto post(ExecutionContext& ctx,
  * exception to propagate to the caller that runs the @c io_context, whereas
  * asio::thread_pool will call @c std::terminate.
  *
+ * @par Example
+ * This @c post overload may be used to submit long running work to a thread
+ * pool and, once complete, continue execution on an associated completion
+ * executor, such as a coroutine's associated executor:
+ * @code asio::awaitable<void> my_coroutine()
+ * {
+ *    // ...
+ *
+ *    co_await asio::post(
+ *        []{
+ *          perform_expensive_computation();
+ *        },
+ *        my_thread_pool);
+ *
+ *    // handle result on the coroutine's associated executor
+ * } @endcode
+ *
  * @par Completion Signature
  * @code void() @endcode
  */
@@ -404,6 +422,23 @@ inline auto post(Function&& function, const Executor& ex,
  * on the executor. For example, asio::io_context will allow the
  * exception to propagate to the caller that runs the @c io_context, whereas
  * asio::thread_pool will call @c std::terminate.
+ *
+ * @par Example
+ * This @c post overload may be used to submit long running work to a thread
+ * pool and, once complete, continue execution on an associated completion
+ * executor, such as a coroutine's associated executor:
+ * @code asio::awaitable<void> my_coroutine()
+ * {
+ *    // ...
+ *
+ *    int result = co_await asio::post(
+ *        []{
+ *          return perform_expensive_computation();
+ *        },
+ *        my_thread_pool);
+ *
+ *    // handle result on the coroutine's associated executor
+ * } @endcode
  *
  * @par Completion Signature
  * @code void(decay_t<result_of_t<decay_t<Function>()>>) @endcode
@@ -527,6 +562,7 @@ inline auto post(Function&& function, ExecutionContext& ctx,
         token, static_cast<Function&&>(function));
 }
 
+ASIO_INLINE_NAMESPACE_END
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"

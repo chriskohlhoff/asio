@@ -69,6 +69,7 @@ nobase_include_HEADERS = \
 	asio/detail/array.hpp \
 	asio/detail/assert.hpp \
 	asio/detail/atomic_count.hpp \
+	asio/detail/atomic_slim_mutex.hpp \
 	asio/detail/base_from_cancellation_state.hpp \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
@@ -156,6 +157,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/thread_context.ipp \
 	asio/detail/impl/throw_error.ipp \
 	asio/detail/impl/timer_queue_set.ipp \
+	asio/detail/impl/win_critsec_mutex.ipp \
 	asio/detail/impl/win_event.ipp \
 	asio/detail/impl/win_iocp_file_service.ipp \
 	asio/detail/impl/win_iocp_handle_service.ipp \
@@ -163,7 +165,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/win_iocp_io_context.ipp \
 	asio/detail/impl/win_iocp_serial_port_service.ipp \
 	asio/detail/impl/win_iocp_socket_service_base.ipp \
-	asio/detail/impl/win_mutex.ipp \
 	asio/detail/impl/win_object_handle_service.ipp \
 	asio/detail/impl/winrt_ssocket_service_base.ipp \
 	asio/detail/impl/winrt_timer_scheduler.hpp \
@@ -270,6 +271,7 @@ nobase_include_HEADERS = \
 	asio/detail/signal_init.hpp \
 	asio/detail/signal_op.hpp \
 	asio/detail/signal_set_service.hpp \
+	asio/detail/slim_mutex.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
 	asio/detail/socket_option.hpp \
@@ -305,6 +307,7 @@ nobase_include_HEADERS = \
 	asio/detail/wait_op.hpp \
 	asio/detail/winapp_thread.hpp \
 	asio/detail/wince_thread.hpp \
+	asio/detail/win_critsec_mutex.hpp \
 	asio/detail/win_event.hpp \
 	asio/detail/win_fd_set_adapter.hpp \
 	asio/detail/win_global.hpp \

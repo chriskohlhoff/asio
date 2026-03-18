@@ -1,11 +1,134 @@
 [/
- / Copyright (c) 2003-2025 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
 [section:history Revision History]
+
+[heading Asio 1.38.0]
+
+* Changed the macro-based coroutine implementation to ensure that case labels
+  are deterministic when __COUNTER__ is used.
+
+* Fixed synchronous SSL stream `shutdown` to remap `error::eof` as
+  `async_shutdown` does.
+
+* Fixed a warning caused by the newly added `[[deprecated]]` attribute, when
+  compiling for C++11.
+
+* Changed `stream_file` and `random_access_file` on Windows to treat the
+  supplied file path as a UTF-8 encoded string.
+
+* Added checks to `experimental::parallel_group` and
+  `experimental::ranged_parallel_group` to detect when they are incorrectly
+  called with an empty set of asynchronous operations.
+
+* Removed the previously added workaround for `_FORTIFY_SOURCE`, and instead
+  added additional address length checking into `ip::basic_resolver_results`.
+
+* Fixed `experimental::coro` to add protection against `max` as a macro.
+
+* Updated the detection of std::aligned_alloc to work with newer versions of
+  [^libc++].
+
+* Suppressed "unused declaration" warning.
+
+* Various documentation fixes and improvements.
+
+[heading Asio 1.37.0]
+
+* Added the `execution::inline_exception_handling` property. This property is
+  used to describe what guarantees an executor makes about the treatment of
+  exceptions that are thrown by a submitted function, when that function is
+  executed inline within `execute`.
+
+* Added `inline_executor`, an executor that always executes the function object
+  inline. An `inline_executor` is suitable as a completion executor, but cannot
+  be used as an I/O executor.
+
+* Changed the default candidate executor for `associated_executor` from
+  `system_executor` to `inline_executor`.
+
+* Added `inline_or_executor<>` and the `inline_or()` helper function. The
+  `inline_or_executor<>` template is an executor adapter. It attempts to execute
+  submitted function objects inline when permitted, and otherwise posts the
+  function object to the wrapped executor.
+
+* Added overloads of `dispatch`, `post` and `defer` that take a function object
+  to be run on the target executor, and deliver the result to the completion
+  handler:[br]
+  ``
+    asio::post(
+      []{
+        // ... perform long running computation ...
+        return result;
+      },
+      my_thread_pool,
+      asio::bind_executor(my_io_context,
+        [](int result)
+        {
+          // ...
+        }));
+  ``[br]
+  Or, if called from a coroutine using the default `asio::deferred` completion
+  token:[br]
+  ``
+    int result = co_await asio::post(
+      []{
+        // perform long running computation
+        return result;
+      }, my_thread_pool);
+  ``
+
+* Added the `redirect_disposition` completion token adapter, as a generic
+  counterpart for `redirect_error`. The `redirect_disposition` adapter is used
+  to capture the disposition (such as an `error_code`) that is produced by an
+  asynchronous operation into a variable:[br]
+  ``
+  std::exception_ptr my_exception;
+  // ...
+  my_socket.async_read_some(my_buffer,
+      asio::redirect_disposition(
+        [](std::size_t bytes_transferred)
+        {
+          // ...
+        }, my_exception));
+  ``
+
+* Annotated deprecated items with the `[[deprecated]]` attribute.
+
+* Added a new configuration parameter "reactor" / "reset_edge_on_partial_read".
+  When true, a partial read on a stream-oriented socket is treated as consuming
+  the edge-triggered readiness notification, requiring a new readiness event
+  before further reads. (Partial writes always consume the edge.) This avoids
+  unnecessary speculative reads. Defaults to `false`.
+
+* Added a new configuration parameter "reactor" / "use_eventfd" that is used
+  to determine whether the [^epoll] reactor backend uses `eventfd`. Defaults
+  to `true`.
+
+* Added a new configuration parameter "reactor" / "use_timerfd" that is used
+  to determine whether the [^epoll] reactor backend uses `timerfd`. Defaults
+  to `true`.
+
+* Implemented a compile-time feature check for standard library support for
+  `std::source_location`, in addition to `std::experimental::source_location`.
+
+* Stopped using the deprecated function `boost::array::c_array()`.
+
+* Added a missing preprocessor check for `ASIO_DISABLE_TIMERFD`.
+
+* Fixed a resource leak in `asio::awaitable` move assignment.
+
+* Fixed a memory leak in `ssl` stream move assignment.
+
+* Fixed a thread sanitizer issue in the [^kqueue] reactor.
+
+* Fixed handler tracking arguments passed in the `io_uring` backend.
+
+* Fixed an unused parameter warning `asio::detail::null_thread`.
 
 [heading Asio 1.36.0]
 
