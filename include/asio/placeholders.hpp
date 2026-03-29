@@ -59,6 +59,25 @@ unspecified signal_number;
 
 #else
 
+#if _LIBCPP_STD_VER >= 17
+// C++17 recommends that we implement placeholders as `inline constexpr`, but allows
+// implementing them as `extern <implementation-defined>`. Libc++ implements them as
+// `extern const` in all standard modes to avoid an ABI break in C++03: making them
+// `inline constexpr` requires removing their definition in the shared library to
+// avoid ODR violations, which is an ABI break.
+static ASIO_INLINE_VARIABLE const auto& error
+  = std::placeholders::_1;
+static ASIO_INLINE_VARIABLE const auto& bytes_transferred
+  = std::placeholders::_2;
+static ASIO_INLINE_VARIABLE const auto& iterator
+  = std::placeholders::_2;
+static ASIO_INLINE_VARIABLE const auto& results
+  = std::placeholders::_2;
+static ASIO_INLINE_VARIABLE const auto& endpoint
+  = std::placeholders::_2;
+static ASIO_INLINE_VARIABLE const auto& signal_number
+  = std::placeholders::_2;
+#else
 static ASIO_INLINE_VARIABLE constexpr auto& error
   = std::placeholders::_1;
 static ASIO_INLINE_VARIABLE constexpr auto& bytes_transferred
@@ -71,6 +90,7 @@ static ASIO_INLINE_VARIABLE constexpr auto& endpoint
   = std::placeholders::_2;
 static ASIO_INLINE_VARIABLE constexpr auto& signal_number
   = std::placeholders::_2;
+#endif
 
 #endif
 
