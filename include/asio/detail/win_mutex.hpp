@@ -22,7 +22,9 @@
 #include "asio/detail/noncopyable.hpp"
 #include "asio/detail/scoped_lock.hpp"
 #include "asio/detail/socket_types.hpp"
+#ifndef _USING_V110_SDK71_
 #include <synchapi.h>
+#endif
 
 #include "asio/detail/push_options.hpp"
 
