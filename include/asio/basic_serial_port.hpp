@@ -491,6 +491,37 @@ public:
     return impl_.get_service().native_handle(impl_.get_implementation());
   }
 
+  /// Release ownership of the underlying native serial port.
+  /*
+   * This function causes all outstanding asynchronous read and write
+   * operations to finish immediately, and the handlers for cancelled
+   * operations will be passed the asio::error::operation_aborted error.
+   * Ownership of the native serial port is then transferred to the caller.
+   *
+   * @throws asio::system_error Thrown on failure.
+   */
+  native_handle_type release()
+  {
+    asio::error_code ec;
+    native_handle_type s = impl_.get_service().release(
+            impl_.get_implementation(), ec);
+    asio::detail::throw_error(ec, "release");
+    return s;
+  }
+
+  /// Release ownership of the underlying native serial port.
+  /*
+   * This function causes all outstanding asynchronous read and write
+   * operations to finish immediately, and the handlers for cancelled
+   * operations will be passed the asio::error::operation_aborted error.
+   * Ownership of the native serial port is then transferred to the caller.
+   *
+   * @param ec Set to indicate what error occurred, if any.
+   */
+  native_handle_type release(asio::error_code& ec)
+  {
+    return impl_.get_service().release(impl_.get_implementation(), ec);
+  }
   /// Cancel all asynchronous operations associated with the serial port.
   /**
    * This function causes all outstanding asynchronous read or write operations
