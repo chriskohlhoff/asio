@@ -50,10 +50,10 @@ const int verify_fail_if_no_peer_cert = implementation_defined;
 /// @ref verify_peer is set.
 const int verify_client_once = implementation_defined;
 #else
-const int verify_none = SSL_VERIFY_NONE;
-const int verify_peer = SSL_VERIFY_PEER;
-const int verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT;
-const int verify_client_once = SSL_VERIFY_CLIENT_ONCE;
+ASIO_INLINE_VARIABLE const int verify_none = SSL_VERIFY_NONE;
+ASIO_INLINE_VARIABLE const int verify_peer = SSL_VERIFY_PEER;
+ASIO_INLINE_VARIABLE const int verify_fail_if_no_peer_cert = SSL_VERIFY_FAIL_IF_NO_PEER_CERT;
+ASIO_INLINE_VARIABLE const int verify_client_once = SSL_VERIFY_CLIENT_ONCE;
 #endif
 
 } // namespace ssl
