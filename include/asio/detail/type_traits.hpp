@@ -139,7 +139,7 @@ using remove_reference_t = typename std::remove_reference<T>::type;
 template <typename> struct result_of;
 
 template <typename F, typename... Args>
-struct result_of<F(Args...)> : std::invoke_result<F, Args...> {};
+struct result_of<F(Args...)> : std::invoke_result<F(Args...), Args...> {};
 
 template <typename T>
 using result_of_t = typename result_of<T>::type;
