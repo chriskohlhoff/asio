@@ -5878,6 +5878,7 @@
 /include/asio/detail/array.hpp
 /include/asio/detail/assert.hpp
 /include/asio/detail/atomic_count.hpp
+/include/asio/detail/atomic_slim_mutex.hpp
 /include/asio/detail/base_from_cancellation_state.hpp
 /include/asio/detail/base_from_completion_cond.hpp
 /include/asio/detail/bind_handler.hpp
@@ -5966,6 +5967,7 @@
 /include/asio/detail/impl/thread_context.ipp
 /include/asio/detail/impl/throw_error.ipp
 /include/asio/detail/impl/timer_queue_set.ipp
+/include/asio/detail/impl/win_critsec_mutex.ipp
 /include/asio/detail/impl/win_event.ipp
 /include/asio/detail/impl/win_iocp_file_service.ipp
 /include/asio/detail/impl/win_iocp_handle_service.ipp
@@ -5973,7 +5975,6 @@
 /include/asio/detail/impl/win_iocp_io_context.ipp
 /include/asio/detail/impl/win_iocp_serial_port_service.ipp
 /include/asio/detail/impl/win_iocp_socket_service_base.ipp
-/include/asio/detail/impl/win_mutex.ipp
 /include/asio/detail/impl/win_object_handle_service.ipp
 /include/asio/detail/impl/winrt_ssocket_service_base.ipp
 /include/asio/detail/impl/winrt_timer_scheduler.hpp
@@ -6080,6 +6081,7 @@
 /include/asio/detail/signal_init.hpp
 /include/asio/detail/signal_op.hpp
 /include/asio/detail/signal_set_service.hpp
+/include/asio/detail/slim_mutex.hpp
 /include/asio/detail/socket_holder.hpp
 /include/asio/detail/socket_ops.hpp
 /include/asio/detail/socket_option.hpp
@@ -6115,6 +6117,7 @@
 /include/asio/detail/wait_op.hpp
 /include/asio/detail/winapp_thread.hpp
 /include/asio/detail/wince_thread.hpp
+/include/asio/detail/win_critsec_mutex.hpp
 /include/asio/detail/win_event.hpp
 /include/asio/detail/win_fd_set_adapter.hpp
 /include/asio/detail/win_global.hpp
