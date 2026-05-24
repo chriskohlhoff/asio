@@ -11,7 +11,7 @@
 #ifndef ASIO_DETAIL_IMPL_IO_URING_SERVICE_IPP
 #define ASIO_DETAIL_IMPL_IO_URING_SERVICE_IPP
 
-#if defined(__SANITIZE_THREAD__) || defined(__has_feature) && __has_feature(thread_sanitizer)
+#if defined(__SANITIZE_THREAD__) || (defined(__has_feature) && __has_feature(thread_sanitizer))
 # include <sanitizer/tsan_interface.h>
 # define TSAN_ACQUIRE(addr) __tsan_acquire(addr)
 # define TSAN_RELEASE(addr) __tsan_release(addr)
