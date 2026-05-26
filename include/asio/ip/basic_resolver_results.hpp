@@ -133,7 +133,7 @@ public:
       if (address_info->ai_family == ASIO_OS_DEF(AF_INET)
           || address_info->ai_family == ASIO_OS_DEF(AF_INET6))
       {
-        const std::size_t expected_size =
+        const socklen_t expected_size =
           address_info->ai_family == ASIO_OS_DEF(AF_INET)
             ? sizeof(asio::detail::sockaddr_in4_type)
             : sizeof(asio::detail::sockaddr_in6_type);
