@@ -252,7 +252,7 @@ public:
             break;
           }
         }
-
+		[[fallthrough]];
         default:
         if (bytes_transferred == ~std::size_t(0))
           bytes_transferred = 0; // Timer cancellation, no data transferred.
@@ -302,7 +302,7 @@ public:
           core_.pending_write_.expires_at(core_.neg_infin());
 
           // Fall through to call handler.
-
+          [[fallthrough]];
         default:
 
           // Pass the result to the handler.
