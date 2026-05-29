@@ -1658,6 +1658,18 @@
 # define ASIO_VERSIONED_NAME(name) asio_ ## name
 #endif // defined(ASIO_VERSION_NAMESPACE)
 
+// Namespace-scope `const` variables (non-inline) have internal linkage in
+// C++.  When included in a named module's global module fragment they become
+// TU-local entities; GCC 15+ rejects module functions that reference them.
+// ASIO_DETAIL_CONSTEXPR_VAR expands to `inline constexpr` under
+// ASIO_CPO_INLINE_CONSTEXPR, giving these variables external linkage and
+// making them safe to reference from named modules.
+#if defined(ASIO_CPO_INLINE_CONSTEXPR)
+# define ASIO_DETAIL_CONSTEXPR_VAR inline constexpr
+#else
+# define ASIO_DETAIL_CONSTEXPR_VAR const
+#endif // defined(ASIO_CPO_INLINE_CONSTEXPR)
+
 // Named C++20 modules require CPOs (customization point objects) to have
 // external linkage.  The anonymous-namespace singleton idiom used by asio's
 // prefer/require/query/require_concept CPOs creates TU-local entities that
