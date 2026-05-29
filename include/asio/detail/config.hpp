@@ -1658,4 +1658,24 @@
 # define ASIO_VERSIONED_NAME(name) asio_ ## name
 #endif // defined(ASIO_VERSION_NAMESPACE)
 
+// Named C++20 modules require CPOs (customization point objects) to have
+// external linkage.  The anonymous-namespace singleton idiom used by asio's
+// prefer/require/query/require_concept CPOs creates TU-local entities that
+// GCC 15+ (and future Clang in strict mode) reject when those headers are
+// #included inside a named module's global module fragment.
+//
+// Define ASIO_CPO_INLINE_CONSTEXPR to replace the anonymous-namespace
+// reference pattern with an inline constexpr variable.  This is safe for all
+// compilers: the impl types are stateless function objects with constexpr
+// constructors, so `inline constexpr impl cpo{}` has identical ODR semantics.
+// This flag is compiler-neutral; enable it for any C++20 named-module build.
+#if !defined(ASIO_CPO_INLINE_CONSTEXPR) \
+  && !defined(ASIO_DISABLE_CPO_INLINE_CONSTEXPR)
+// Automatically activate when the user opts in via a build-system flag.
+// In GCC named-module builds, pass -DASIO_GCC_NAMED_MODULES to trigger this.
+# if defined(ASIO_GCC_NAMED_MODULES)
+#  define ASIO_CPO_INLINE_CONSTEXPR 1
+# endif // defined(ASIO_GCC_NAMED_MODULES)
+#endif // !defined(ASIO_CPO_INLINE_CONSTEXPR)
+
 #endif // ASIO_DETAIL_CONFIG_HPP
