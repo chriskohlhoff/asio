@@ -269,6 +269,13 @@ needs.
     []
   ]
   [
+    [`ASIO_DISABLE_IO_URING_IOWAIT`]
+    [
+      Linux: suppress io_uring's `in_iowait` task marking.
+    ]
+    []
+  ]
+  [
     [`ASIO_HAS_KQUEUE`]
     [
       Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.

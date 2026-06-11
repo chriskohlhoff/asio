@@ -538,6 +538,14 @@ void io_uring_service::init_ring()
     asio::detail::throw_error(ec, "io_uring_queue_init");
   }
 
+#if defined(ASIO_DISABLE_IO_URING_IOWAIT)
+# if !defined(IORING_FEAT_NO_IOWAIT)
+#  error ASIO_DISABLE_IO_URING_IOWAIT requires liburing 2.12 or later
+# endif // !defined(IORING_FEAT_NO_IOWAIT)
+  // Opt out of io_uring's in_iowait task marking.
+  (void)::io_uring_set_iowait(&ring_, false);
+#endif // defined(ASIO_DISABLE_IO_URING_IOWAIT)
+
 #if !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   event_fd_ = ::eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
   if (event_fd_ < 0)

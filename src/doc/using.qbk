@@ -261,6 +261,13 @@ functionality, and behaviour of Asio.
     ]
   ]
   [
+    [`ASIO_DISABLE_IO_URING_IOWAIT`]
+    [
+      Suppresses io_uring's `in_iowait` task marking on Linux via
+      `io_uring_set_iowait()`.
+    ]
+  ]
+  [
     [`ASIO_DISABLE_KQUEUE`]
     [
       Explicitly disables `kqueue` support on macOS and BSD variants,
