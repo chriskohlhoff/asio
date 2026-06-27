@@ -33,6 +33,11 @@ template <typename Payload>
 class channel_send : public channel_operation
 {
 public:
+  const Payload& peek_payload() const
+  {
+    return payload_;
+  }
+
   Payload get_payload()
   {
     return static_cast<Payload&&>(payload_);

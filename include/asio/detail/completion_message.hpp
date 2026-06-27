@@ -42,6 +42,12 @@ public:
   {
     static_cast<Handler&&>(handler)();
   }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    static_cast<Handler&&>(handler)();
+  }
 };
 
 template <typename R, typename Arg0>
@@ -59,6 +65,12 @@ public:
   {
     static_cast<Handler&&>(handler)(
         static_cast<arg0_type&&>(arg0_));
+  }
+
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    static_cast<Handler&&>(handler)(arg0_);
   }
 
 private:
@@ -85,6 +97,12 @@ public:
         static_cast<arg1_type&&>(arg1_));
   }
 
+  template <typename Handler>
+  void peek(Handler& handler) const
+  {
+    static_cast<Handler&&>(handler)(arg0_, arg1_);
+  }
+
 private:
   typedef decay_t<Arg0> arg0_type;
   arg0_type arg0_;
@@ -108,12 +126,24 @@ public:
     this->do_receive(h, asio::detail::index_sequence_for<Args...>());
   }
 
+  template <typename Handler>
+  void peek(Handler& h) const
+  {
+    this->do_peek(h, asio::detail::index_sequence_for<Args...>());
+  }
+
 private:
   template <typename Handler, std::size_t... I>
   void do_receive(Handler& h, asio::detail::index_sequence<I...>)
   {
     static_cast<Handler&&>(h)(
         std::get<I>(static_cast<args_type&&>(args_))...);
+  }
+
+  template <typename Handler, std::size_t... I>
+  void do_peek(Handler& h, asio::detail::index_sequence<I...>) const
+  {
+    static_cast<Handler&&>(h)(std::get<I>(args_)...);
   }
 
   typedef std::tuple<decay_t<Args>...> args_type;

@@ -734,6 +734,127 @@ void try_send_n_via_dispatch()
   ASIO_CHECK(s3.empty());
 }
 
+struct counting_handler
+{
+  int& count_;
+  template <typename... Args>
+  void operator()(Args...) { ++count_; }
+};
+
+void try_peek_test()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 2);
+
+  bool b1 = ch1.try_peek([](asio::error_code, std::string){});
+
+  ASIO_CHECK(!b1);
+
+  bool b2 = ch1.try_send(asio::error::eof, "hello");
+
+  ASIO_CHECK(b2);
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1;
+  bool b3 = ch1.try_peek(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec1 = ec;
+        s1 = s;
+      });
+
+  ASIO_CHECK(b3);
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "hello");
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  bool b4 = ch1.try_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = s;
+      });
+
+  ASIO_CHECK(b4);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "hello");
+
+  bool b5 = ch1.try_peek([](asio::error_code, std::string){});
+
+  ASIO_CHECK(!b5);
+
+  asio::error_code ec3 = asio::error::would_block;
+  std::string s3 = "zyxwvutsrqponmlkjihgfedcba";
+  ch1.async_send(asio::error::eof, std::move(s3),
+      [&](asio::error_code ec)
+      {
+        ec3 = ec;
+      });
+
+  asio::error_code ec4 = asio::error::would_block;
+  std::string s4;
+  bool b6 = ch1.try_peek(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec4 = ec;
+        s4 = s;
+      });
+
+  ASIO_CHECK(b6);
+  ASIO_CHECK(ec4 == asio::error::eof);
+  ASIO_CHECK(s4 == "zyxwvutsrqponmlkjihgfedcba");
+
+  ASIO_CHECK(ec3 == asio::error::would_block);
+
+  asio::error_code ec5 = asio::error::would_block;
+  std::string s5;
+  bool b7 = ch1.try_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec5 = ec;
+        s5 = s;
+      });
+
+  ASIO_CHECK(b7);
+  ASIO_CHECK(ec5 == asio::error::eof);
+  ASIO_CHECK(s5 == "zyxwvutsrqponmlkjihgfedcba");
+
+  ctx.run();
+
+  ASIO_CHECK(!ec3);
+
+  channel<void()> ch2(ctx, 2);
+  int zero = 0;
+
+  bool b8 = ch2.try_peek(counting_handler{zero});
+
+  ASIO_CHECK(!b8);
+  ASIO_CHECK(zero == 0);
+
+  bool b9 = ch2.try_send();
+
+  ASIO_CHECK(b9);
+
+  int peek_count = 0;
+  bool b10 = ch2.try_peek(counting_handler{peek_count});
+
+  ASIO_CHECK(b10);
+  ASIO_CHECK(peek_count == 1);
+
+  int receive_count = 0;
+  bool b11 = ch2.try_receive(counting_handler{receive_count});
+
+  ASIO_CHECK(b11);
+  ASIO_CHECK(receive_count == 1);
+
+  bool b12 = ch2.try_peek(counting_handler{zero});
+
+  ASIO_CHECK(!b12);
+  ASIO_CHECK(zero == 0);
+}
+
 struct multi_signature_handler
 {
   std::string* s_;
@@ -896,6 +1017,7 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(buffered_executor_send)
   ASIO_TEST_CASE(try_send_via_dispatch)
   ASIO_TEST_CASE(try_send_n_via_dispatch)
+  ASIO_TEST_CASE(try_peek_test)
   ASIO_TEST_CASE(implicit_error_signature_channel_test)
   ASIO_TEST_CASE(channel_with_any_completion_handler_test)
   ASIO_COMPILE_TEST_CASE(channel_move_test)

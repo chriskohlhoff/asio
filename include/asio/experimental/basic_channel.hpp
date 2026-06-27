@@ -418,6 +418,19 @@ public:
         static_cast<CompletionToken&&>(token));
   }
 
+  /// Try to peek at the first message in the channel, without blocking.
+  /**
+   * Fails if the channel is empty. The peeked-at message is not removed from
+   * the channel.
+   *
+   * @returns @c true on success, @c false on failure.
+   */
+  template <typename Handler>
+  bool try_peek(Handler&& handler)
+  {
+    return service_->try_peek(impl_, static_cast<Handler&&>(handler));
+  }
+
 private:
   // Disallow copying and assignment.
   basic_channel(const basic_channel&) = delete;

@@ -220,6 +220,11 @@ public:
     p.v = p.p = 0;
   }
 
+  // Synchronously peek at a value in the channel without removing it.
+  template <typename Traits, typename... Signatures, typename Handler>
+  bool try_peek(implementation_type<Traits, Signatures...>& impl,
+      Handler&& handler);
+
 private:
   // Helper function object to handle a closed notification.
   template <typename Payload, typename Signature>
@@ -370,6 +375,12 @@ struct channel_service<Mutex>::implementation_type : base_implementation_type
     return static_cast<payload_type&&>(buffer_.front());
   }
 
+  // Peek at the element at the front of the buffer without removing it.
+  const payload_type& buffer_peek() const
+  {
+    return buffer_.front();
+  }
+
   // Pop a value from the front of the buffer.
   void buffer_pop()
   {
@@ -467,6 +478,12 @@ struct channel_service<Mutex>::implementation_type<Traits, R()>
 
   // Get the element at the front of the buffer.
   payload_type buffer_front()
+  {
+    return payload_type(asio::detail::completion_message<R()>(0));
+  }
+
+  // Peek at the element at the front of the buffer without removing it.
+  payload_type buffer_peek() const
   {
     return payload_type(asio::detail::completion_message<R()>(0));
   }
@@ -612,6 +629,12 @@ struct channel_service<Mutex>::implementation_type<
 
   // Get the element at the front of the buffer.
   payload_type buffer_front()
+  {
+    return payload_type({0, first_.value_});
+  }
+
+  // Peek at the element at the front of the buffer without removing it.
+  payload_type buffer_peek() const
   {
     return payload_type({0, first_.value_});
   }
