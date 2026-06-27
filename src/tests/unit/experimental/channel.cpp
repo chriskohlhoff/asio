@@ -35,7 +35,7 @@ void unbuffered_channel_test()
   channel<void(asio::error_code, std::string)> ch1(ctx);
 
   ASIO_CHECK(ch1.is_open());
-  ASIO_CHECK(!ch1.ready());
+  ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send(asio::error::eof, "hello");
 
@@ -104,7 +104,7 @@ void buffered_channel_test()
   channel<void(asio::error_code, std::string)> ch1(ctx, 1);
 
   ASIO_CHECK(ch1.is_open());
-  ASIO_CHECK(!ch1.ready());
+  ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send(asio::error::eof, "hello");
 
@@ -204,7 +204,7 @@ void buffered_error_channel_test()
   channel<void(asio::error_code)> ch1(ctx, 1);
 
   ASIO_CHECK(ch1.is_open());
-  ASIO_CHECK(!ch1.ready());
+  ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send(asio::error::eof);
 
@@ -878,7 +878,7 @@ void implicit_error_signature_channel_test()
   channel<void(std::string)> ch1(ctx);
 
   ASIO_CHECK(ch1.is_open());
-  ASIO_CHECK(!ch1.ready());
+  ASIO_CHECK(!ch1.can_receive());
 
   bool b1 = ch1.try_send("hello");
 
@@ -984,6 +984,87 @@ void channel_with_any_completion_handler_test()
   ASIO_CHECK(!ec2);
 }
 
+void can_send_can_receive_test()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  ASIO_CHECK(!ch1.can_send());
+  ASIO_CHECK(!ch1.can_receive());
+
+  asio::error_code ec1 = asio::error::would_block;
+  std::string s1 = "hello";
+  ch1.async_send(asio::error::eof, std::move(s1),
+      [&](asio::error_code ec) { ec1 = ec; });
+
+  ASIO_CHECK(!ch1.can_send());
+  ASIO_CHECK(ch1.can_receive());
+
+  bool b1 = ch1.try_receive([](asio::error_code, std::string){});
+
+  ASIO_CHECK(b1);
+  ASIO_CHECK(!ch1.can_send());
+  ASIO_CHECK(!ch1.can_receive());
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+
+  asio::error_code ec2 = asio::error::would_block;
+  std::string s2;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = std::move(s);
+      });
+
+  ASIO_CHECK(ch1.can_send());
+  ASIO_CHECK(!ch1.can_receive());
+
+  bool b2 = ch1.try_send(asio::error::eof, "world");
+
+  ASIO_CHECK(b2);
+  ASIO_CHECK(!ch1.can_send());
+  ASIO_CHECK(!ch1.can_receive());
+
+  ctx.restart();
+  ctx.run();
+
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "world");
+
+  channel<void(asio::error_code, std::string)> ch2(ctx, 2);
+
+  ASIO_CHECK(ch2.can_send());
+  ASIO_CHECK(!ch2.can_receive());
+
+  ASIO_CHECK(ch2.try_send(asio::error_code(), "first"));
+
+  ASIO_CHECK(ch2.can_send());
+  ASIO_CHECK(ch2.can_receive());
+
+  ASIO_CHECK(ch2.try_send(asio::error_code(), "second"));
+
+  ASIO_CHECK(!ch2.can_send());
+  ASIO_CHECK(ch2.can_receive());
+
+  asio::error_code ec3;
+  std::string s3;
+  ASIO_CHECK(ch2.try_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec3 = ec;
+        s3 = std::move(s);
+      }));
+
+  ASIO_CHECK(!ec3);
+  ASIO_CHECK(s3 == "first");
+  ASIO_CHECK(ch2.can_send());
+  ASIO_CHECK(ch2.can_receive());
+}
+
 void channel_move_test()
 {
   io_context ctx;
@@ -1018,6 +1099,7 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(try_send_via_dispatch)
   ASIO_TEST_CASE(try_send_n_via_dispatch)
   ASIO_TEST_CASE(try_peek_test)
+  ASIO_TEST_CASE(can_send_can_receive_test)
   ASIO_TEST_CASE(implicit_error_signature_channel_test)
   ASIO_TEST_CASE(channel_with_any_completion_handler_test)
   ASIO_COMPILE_TEST_CASE(channel_move_test)

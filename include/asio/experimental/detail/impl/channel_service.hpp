@@ -299,9 +299,17 @@ void channel_service<Mutex>::cancel_by_key(
 }
 
 template <typename Mutex>
-inline bool channel_service<Mutex>::ready(
-    const base_implementation_type& impl)
-  const noexcept
+inline bool channel_service<Mutex>::can_send(
+    const base_implementation_type& impl) const noexcept
+{
+  typename Mutex::scoped_lock lock(impl.mutex_);
+
+  return impl.send_state_ != block;
+}
+
+template <typename Mutex>
+inline bool channel_service<Mutex>::can_receive(
+    const base_implementation_type& impl) const noexcept
 {
   typename Mutex::scoped_lock lock(impl.mutex_);
 

@@ -324,10 +324,24 @@ public:
     service_->cancel(impl_);
   }
 
+  /// Determine whether a message can be sent without blocking.
+  bool can_send() const noexcept
+  {
+    return service_->can_send(impl_);
+  }
+
   /// Determine whether a message can be received without blocking.
+  bool can_receive() const noexcept
+  {
+    return service_->can_receive(impl_);
+  }
+
+  /// (Deprecated: Use can_receive().) Determine whether a message can be
+  /// received without blocking.
+  ASIO_DEPRECATED_MSG("Use can_receive()")
   bool ready() const noexcept
   {
-    return service_->ready(impl_);
+    return service_->can_receive(impl_);
   }
 
 #if defined(GENERATING_DOCUMENTATION)

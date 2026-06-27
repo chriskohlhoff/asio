@@ -133,8 +133,11 @@ public:
   void cancel_by_key(implementation_type<Traits, Signatures...>& impl,
       void* cancellation_key);
 
-  // Determine whether a value can be read from the channel without blocking.
-  bool ready(const base_implementation_type& impl) const noexcept;
+  // Determine whether a message can be sent without blocking.
+  bool can_send(const base_implementation_type& impl) const noexcept;
+
+  // Determine whether a message can be received without blocking.
+  bool can_receive(const base_implementation_type& impl) const noexcept;
 
   // Synchronously send a new value into the channel.
   template <typename Message, typename Traits,
