@@ -282,7 +282,7 @@ cancel_after(basic_waitable_timer<Clock, WaitTraits, Executor>& timer,
 template <typename Clock, typename WaitTraits, typename Executor,
     typename Rep, typename Period, typename CompletionToken>
 ASIO_NODISCARD inline
-cancel_after_timer<decay_t<CompletionToken>, chrono::steady_clock>
+cancel_after_timer<decay_t<CompletionToken>, Clock, WaitTraits, Executor>
 cancel_after(basic_waitable_timer<Clock, WaitTraits, Executor>& timer,
     const chrono::duration<Rep, Period>& timeout,
     cancellation_type_t cancel_type, CompletionToken&& completion_token)
