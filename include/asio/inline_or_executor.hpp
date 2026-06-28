@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include <exception>
 #include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/execution/blocking.hpp"
