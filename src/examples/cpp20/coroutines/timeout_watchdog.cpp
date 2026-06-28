@@ -1,6 +1,6 @@
 //
-// timeout.cpp
-// ~~~~~~~~~~~
+// timeout_watchdog.cpp
+// ~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //

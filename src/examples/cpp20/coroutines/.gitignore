@@ -13,4 +13,5 @@
 *_server_with_deferred_default
 *_server_with_as_single_default
 *_server_with_as_tuple_default
-timeout
+timeout_watchdog
+timeout_cancel_after
