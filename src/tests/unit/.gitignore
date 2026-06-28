@@ -19,6 +19,8 @@ associated_immediate_executor
 associator
 async_result
 awaitable
+basic_channel
+basic_concurrent_channel
 basic_datagram_socket
 basic_deadline_timer
 basic_file
@@ -50,11 +52,14 @@ cancel_at
 cancellation_signal
 cancellation_state
 cancellation_type
+channel
+channel_traits
 co_composed
 co_spawn
 completion_condition
 compose
 composed
+concurrent_channel
 config
 connect
 connect_pipe

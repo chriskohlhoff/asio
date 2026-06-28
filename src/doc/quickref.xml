@@ -200,6 +200,8 @@
             <member><link linkend="asio.reference.as_tuple_t">as_tuple_t</link></member>
             <member><link linkend="asio.reference.async_completion">async_completion</link></member>
             <member><link linkend="asio.reference.awaitable">awaitable</link></member>
+            <member><link linkend="asio.reference.basic_channel">basic_channel</link></member>
+            <member><link linkend="asio.reference.basic_concurrent_channel">basic_concurrent_channel</link></member>
             <member><link linkend="asio.reference.basic_inline_executor">basic_inline_executor</link></member>
             <member><link linkend="asio.reference.basic_io_object">basic_io_object (deprecated)</link></member>
             <member><link linkend="asio.reference.basic_system_executor">basic_system_executor</link></member>
@@ -208,15 +210,15 @@
             <member><link linkend="asio.reference.cancel_at_t">cancel_at_t</link></member>
             <member><link linkend="asio.reference.cancellation_filter">cancellation_filter</link></member>
             <member><link linkend="asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
+            <member><link linkend="asio.reference.channel">channel</link></member>
+            <member><link linkend="asio.reference.channel_traits">channel_traits</link></member>
+            <member><link linkend="asio.reference.concurrent_channel">concurrent_channel</link></member>
             <member><link linkend="asio.reference.consign_t">consign_t</link></member>
             <member><link linkend="asio.reference.deferred_t">deferred_t</link></member>
             <member><link linkend="asio.reference.disposition_traits">disposition_traits</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
-            <member><link linkend="asio.reference.experimental__basic_channel">experimental::basic_channel</link></member>
-            <member><link linkend="asio.reference.experimental__basic_concurrent_channel">experimental::basic_concurrent_channel</link></member>
-            <member><link linkend="asio.reference.experimental__channel_traits">experimental::channel_traits</link></member>
             <member><link linkend="asio.reference.experimental__coro">experimental::coro</link></member>
             <member><link linkend="asio.reference.experimental__parallel_group">experimental::parallel_group</link></member>
             <member><link linkend="asio.reference.experimental__promise">experimental::promise</link></member>

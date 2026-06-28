@@ -21,8 +21,8 @@
 #include "asio/io_context.hpp"
 #include "../unit_test.hpp"
 
-using namespace asio;
-using namespace asio::experimental;
+using asio::io_context;
+using asio::experimental::concurrent_channel;
 
 void unbuffered_concurrent_channel_test()
 {

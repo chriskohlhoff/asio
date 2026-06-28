@@ -7,17 +7,13 @@
 
 [section:channels Channels]
 
-[note This is an experimental feature.]
-
-The templates
-[link asio.reference.experimental__basic_channel experimental::basic_channel]
-and [link asio.reference.experimental__basic_concurrent_channel
-experimental::basic_concurrent_channel], with aliases `experimental::channel`
-and `experimental::concurrent_channel`, may be used to send messages between
-different parts of the same application. A ['message] is defined as a
-collection of arguments to be passed to a completion handler, and the set of
-messages supported by a channel is specified by its template parameters.
-Messages may be sent and received using asynchronous or non-blocking
+The templates [link asio.reference.basic_channel basic_channel] and [link
+asio.reference.basic_concurrent_channel basic_concurrent_channel], with aliases
+`channel` and `concurrent_channel`, are FIFO queues that be used to send
+messages between different parts of the same application. A ['message] is
+defined as a collection of arguments to be passed to a completion handler, and
+the set of messages supported by a channel is specified by its template
+parameters. Messages may be sent and received using asynchronous or non-blocking
 synchronous operations.
 
 For example:
@@ -49,8 +45,8 @@ For example:
 
 [heading See Also]
 
-[link asio.reference.experimental__basic_channel experimental::basic_channel],
-[link asio.reference.experimental__basic_concurrent_channel experimental::basic_concurrent_channel],
+[link asio.reference.basic_channel basic_channel],
+[link asio.reference.basic_concurrent_channel basic_concurrent_channel],
 [link asio.examples.cpp20_examples.channels Channels examples (C++20)].
 
 [endsect]

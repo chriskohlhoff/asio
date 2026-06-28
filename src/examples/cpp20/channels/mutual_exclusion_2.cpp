@@ -9,7 +9,7 @@
 //
 
 #include <asio.hpp>
-#include <asio/experimental/channel.hpp>
+#include <asio/channel.hpp>
 #include <iostream>
 #include <memory>
 
@@ -18,7 +18,7 @@ using asio::awaitable;
 using asio::dynamic_buffer;
 using asio::co_spawn;
 using asio::detached;
-using asio::experimental::channel;
+using asio::channel;
 using asio::io_context;
 using asio::ip::tcp;
 using asio::steady_timer;

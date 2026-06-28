@@ -12,6 +12,8 @@ nobase_include_HEADERS = \
 	asio/associator.hpp \
 	asio/async_result.hpp \
 	asio/awaitable.hpp \
+	asio/basic_channel.hpp \
+	asio/basic_concurrent_channel.hpp \
 	asio/basic_datagram_socket.hpp \
 	asio/basic_deadline_timer.hpp \
 	asio/basic_file.hpp \
@@ -50,11 +52,15 @@ nobase_include_HEADERS = \
 	asio/cancellation_signal.hpp \
 	asio/cancellation_state.hpp \
 	asio/cancellation_type.hpp \
+	asio/channel.hpp \
+	asio/channel_error.hpp \
+	asio/channel_traits.hpp \
 	asio/co_composed.hpp \
 	asio/co_spawn.hpp \
 	asio/completion_condition.hpp \
 	asio/compose.hpp \
 	asio/composed.hpp \
+	asio/concurrent_channel.hpp \
 	asio/config.hpp \
 	asio/connect.hpp \
 	asio/connect_pipe.hpp \
@@ -78,6 +84,11 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/channel_operation.hpp \
+	asio/detail/channel_receive_op.hpp \
+	asio/detail/channel_send_functions.hpp \
+	asio/detail/channel_send_op.hpp \
+	asio/detail/channel_service.hpp \
 	asio/detail/chrono.hpp \
 	asio/detail/chrono_time_traits.hpp \
 	asio/detail/completion_handler.hpp \
@@ -116,8 +127,10 @@ nobase_include_HEADERS = \
 	asio/detail/handler_tracking.hpp \
 	asio/detail/handler_type_requirements.hpp \
 	asio/detail/handler_work.hpp \
+	asio/detail/has_signature.hpp \
 	asio/detail/hash_map.hpp \
 	asio/detail/impl/buffer_sequence_adapter.ipp \
+	asio/detail/impl/channel_service.hpp \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/dev_poll_reactor.hpp \
 	asio/detail/impl/dev_poll_reactor.ipp \
@@ -387,15 +400,8 @@ nobase_include_HEADERS = \
 	asio/experimental/concurrent_channel.hpp \
 	asio/experimental/coro.hpp \
 	asio/experimental/coro_traits.hpp \
-	asio/experimental/detail/channel_operation.hpp \
-	asio/experimental/detail/channel_receive_op.hpp \
-	asio/experimental/detail/channel_send_functions.hpp \
-	asio/experimental/detail/channel_send_op.hpp \
-	asio/experimental/detail/channel_service.hpp \
 	asio/experimental/detail/coro_completion_handler.hpp \
 	asio/experimental/detail/coro_promise_allocator.hpp \
-	asio/experimental/detail/has_signature.hpp \
-	asio/experimental/detail/impl/channel_service.hpp \
 	asio/experimental/detail/partial_promise.hpp \
 	asio/experimental/impl/as_single.hpp \
 	asio/experimental/impl/channel_error.ipp \
@@ -432,6 +438,7 @@ nobase_include_HEADERS = \
 	asio/impl/cancel_after.hpp \
 	asio/impl/cancel_at.hpp \
 	asio/impl/cancellation_signal.ipp \
+	asio/impl/channel_error.ipp \
 	asio/impl/co_spawn.hpp \
 	asio/impl/config.hpp \
 	asio/impl/config.ipp \

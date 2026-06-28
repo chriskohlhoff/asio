@@ -25,8 +25,9 @@
 #include "asio/io_context.hpp"
 #include "../unit_test.hpp"
 
-using namespace asio;
-using namespace asio::experimental;
+using asio::inline_executor;
+using asio::io_context;
+using asio::experimental::channel;
 
 void unbuffered_channel_test()
 {
@@ -193,7 +194,7 @@ void buffered_channel_test()
   ctx.restart();
   ctx.run();
 
-  ASIO_CHECK(ec5 == asio::experimental::channel_errc::channel_closed);
+  ASIO_CHECK(ec5 == asio::channel_errc::channel_closed);
   ASIO_CHECK(s6.empty());
 }
 
@@ -945,7 +946,7 @@ void implicit_error_signature_channel_test()
   ctx.run();
 
   ASIO_CHECK(s6.empty());
-  ASIO_CHECK(ec5 == asio::experimental::channel_errc::channel_closed);
+  ASIO_CHECK(ec5 == asio::channel_errc::channel_closed);
 }
 
 void channel_with_any_completion_handler_test()
