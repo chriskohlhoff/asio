@@ -2417,6 +2417,9 @@
         <xsl:when test="$declname = 'Traits'">
           <xsl:value-of select="$declname"/>
         </xsl:when>
+        <xsl:when test="$declname = 'Trigger'">
+          <xsl:value-of select="$declname"/>
+        </xsl:when>
         <xsl:when test="$declname = 'U'">
           <xsl:value-of select="$declname"/>
         </xsl:when>

@@ -314,6 +314,7 @@ nobase_include_HEADERS = \
 	asio/detail/timer_queue_set.hpp \
 	asio/detail/timer_scheduler_fwd.hpp \
 	asio/detail/timer_scheduler.hpp \
+	asio/detail/triggered_cancel_op.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/type_traits.hpp \
 	asio/detail/utility.hpp \

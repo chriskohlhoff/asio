@@ -207,6 +207,7 @@
             <member><link linkend="asio.reference.basic_system_executor">basic_system_executor</link></member>
             <member><link linkend="asio.reference.basic_yield_context">basic_yield_context</link></member>
             <member><link linkend="asio.reference.cancel_after_t">cancel_after_t</link></member>
+            <member><link linkend="asio.reference.cancel_after_trigger">cancel_after_trigger</link></member>
             <member><link linkend="asio.reference.cancel_at_t">cancel_at_t</link></member>
             <member><link linkend="asio.reference.cancellation_filter">cancellation_filter</link></member>
             <member><link linkend="asio.reference.cancellation_slot_binder">cancellation_slot_binder</link></member>
@@ -234,6 +235,7 @@
             <member><link linkend="asio.reference.partial_allocator_binder">partial_allocator_binder</link></member>
             <member><link linkend="asio.reference.partial_cancel_after">partial_cancel_after</link></member>
             <member><link linkend="asio.reference.partial_cancel_after_timer">partial_cancel_after_timer</link></member>
+            <member><link linkend="asio.reference.partial_cancel_after_trigger">partial_cancel_after_trigger</link></member>
             <member><link linkend="asio.reference.partial_cancel_at">partial_cancel_at</link></member>
             <member><link linkend="asio.reference.partial_cancel_at_timer">partial_cancel_at_timer</link></member>
             <member><link linkend="asio.reference.partial_cancellation_slot_binder">partial_cancellation_slot_binder</link></member>
