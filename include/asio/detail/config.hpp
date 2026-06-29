@@ -1453,6 +1453,47 @@
 # define ASIO_ASSUME(expr) (void)0
 #endif // !defined(ASIO_ASSUME)
 
+// Helper macro to prevent a function from being inlined into its callers.
+#if !defined(ASIO_DISABLE_NEVER_INLINE)
+# if defined(ASIO_MSVC)
+#  define ASIO_NEVER_INLINE __declspec(noinline)
+# elif defined(__clang__) || defined(__GNUC__)
+#  define ASIO_NEVER_INLINE __attribute__((__noinline__))
+# endif // defined(__clang__) || defined(__GNUC__)
+#endif // !defined(ASIO_DISABLE_NEVER_INLINE)
+#if !defined(ASIO_NEVER_INLINE)
+# define ASIO_NEVER_INLINE
+#endif // !defined(ASIO_NEVER_INLINE)
+
+// Helper macro to force a small function to be inlined into its callers.
+#if !defined(ASIO_ALWAYS_INLINE)
+# if !defined(ASIO_DISABLE_ALWAYS_INLINE)
+#  if defined(__GNUC__) || defined(__clang__)
+#   define ASIO_ALWAYS_INLINE inline __attribute__((always_inline))
+#  elif defined(ASIO_MSVC)
+#   define ASIO_ALWAYS_INLINE __forceinline
+#  endif
+# endif // !defined(ASIO_DISABLE_ALWAYS_INLINE)
+#endif // !defined(ASIO_ALWAYS_INLINE)
+#if !defined(ASIO_ALWAYS_INLINE)
+# define ASIO_ALWAYS_INLINE inline
+#endif // !defined(ASIO_ALWAYS_INLINE)
+
+// Helper macro to force the inlining of a particular call, where the function
+// is worth inlining at that call site but not at the others.
+#if !defined(ASIO_INVOKE_INLINE)
+# if !defined(ASIO_DISABLE_INVOKE_INLINE)
+#  if defined(__has_cpp_attribute)
+#   if __has_cpp_attribute(clang::always_inline)
+#    define ASIO_INVOKE_INLINE [[clang::always_inline]]
+#   endif // __has_cpp_attribute(clang::always_inline)
+#  endif // defined(__has_cpp_attribute)
+# endif // !defined(ASIO_DISABLE_INVOKE_INLINE)
+#endif // !defined(ASIO_INVOKE_INLINE)
+#if !defined(ASIO_INVOKE_INLINE)
+# define ASIO_INVOKE_INLINE
+#endif // !defined(ASIO_INVOKE_INLINE)
+
 // Support the co_await keyword on compilers known to allow it.
 #if !defined(ASIO_HAS_CO_AWAIT)
 # if !defined(ASIO_DISABLE_CO_AWAIT)
