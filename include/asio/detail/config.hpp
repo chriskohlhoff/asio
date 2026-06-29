@@ -1453,6 +1453,22 @@
 # define ASIO_ASSUME(expr) (void)0
 #endif // !defined(ASIO_ASSUME)
 
+// Branch prediction hints.
+#if !defined(ASIO_LIKELY) && !defined(ASIO_UNLIKELY)
+# if !defined(ASIO_DISABLE_LIKELY)
+#  if defined(__GNUC__) || defined(__clang__)
+#   define ASIO_LIKELY(x) __builtin_expect(!!(x), 1)
+#   define ASIO_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#  endif // defined(__GNUC__) || defined(__clang__)
+# endif // !defined(ASIO_DISABLE_LIKELY)
+#endif // !defined(ASIO_LIKELY) && !defined(ASIO_UNLIKELY)
+#if !defined(ASIO_LIKELY)
+# define ASIO_LIKELY(x) (x)
+#endif // !defined(ASIO_LIKELY)
+#if !defined(ASIO_UNLIKELY)
+# define ASIO_UNLIKELY(x) (x)
+#endif // !defined(ASIO_UNLIKELY)
+
 // Helper macro to prevent a function from being inlined into its callers.
 #if !defined(ASIO_DISABLE_NEVER_INLINE)
 # if defined(ASIO_MSVC)
