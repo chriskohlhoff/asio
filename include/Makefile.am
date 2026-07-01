@@ -409,6 +409,7 @@ nobase_include_HEADERS = \
 	asio/experimental/use_coro.hpp \
 	asio/experimental/use_promise.hpp \
 	asio/file_base.hpp \
+	asio/fwd.hpp \
 	asio/generic/basic_endpoint.hpp \
 	asio/generic/datagram_protocol.hpp \
 	asio/generic/detail/endpoint.hpp \

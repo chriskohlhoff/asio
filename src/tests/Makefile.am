@@ -87,6 +87,8 @@ check_PROGRAMS = \
 	unit/executor \
 	unit/executor_work_guard \
 	unit/file_base \
+	unit/fwd_first \
+	unit/fwd_last \
 	unit/generic/basic_endpoint \
 	unit/generic/datagram_protocol \
 	unit/generic/raw_protocol \
@@ -319,6 +321,8 @@ TESTS = \
 	unit/executor \
 	unit/executor_work_guard \
 	unit/file_base \
+	unit/fwd_first \
+	unit/fwd_last \
 	unit/high_resolution_timer \
 	unit/immediate \
 	unit/inline_executor \
@@ -550,6 +554,8 @@ unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp
 unit_executor_work_guard_SOURCES = unit/executor_work_guard.cpp
 unit_file_base_SOURCES = unit/file_base.cpp
+unit_fwd_first_SOURCES = unit/fwd_first.cpp
+unit_fwd_last_SOURCES = unit/fwd_last.cpp
 unit_generic_basic_endpoint_SOURCES = unit/generic/basic_endpoint.cpp
 unit_generic_datagram_protocol_SOURCES = unit/generic/datagram_protocol.cpp
 unit_generic_raw_protocol_SOURCES = unit/generic/raw_protocol.cpp

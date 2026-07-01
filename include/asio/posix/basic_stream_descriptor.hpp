@@ -27,6 +27,15 @@ namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace posix {
 
+#if !defined(ASIO_POSIX_BASIC_STREAM_DESCRIPTOR_FWD_DECL)
+#define ASIO_POSIX_BASIC_STREAM_DESCRIPTOR_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename Executor = any_io_executor>
+class basic_stream_descriptor;
+
+#endif // !defined(ASIO_POSIX_BASIC_STREAM_DESCRIPTOR_FWD_DECL)
+
 /// Provides stream-oriented descriptor functionality.
 /**
  * The posix::basic_stream_descriptor class template provides asynchronous and
@@ -45,7 +54,7 @@ namespace posix {
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
  */
-template <typename Executor = any_io_executor>
+template <typename Executor>
 class basic_stream_descriptor
   : public basic_descriptor<Executor>
 {
