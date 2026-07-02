@@ -959,6 +959,22 @@
 # define ASIO_VERSION_TAG_j
 #endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
+// Linux: futex.
+#if !defined(ASIO_HAS_FUTEX)
+# if !defined(ASIO_DISABLE_FUTEX)
+#  if defined(__linux__)
+#   if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+#    define ASIO_HAS_FUTEX 1
+#   endif // LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
+#  endif // defined(__linux__)
+# endif // !defined(ASIO_DISABLE_FUTEX)
+#endif // !defined(ASIO_HAS_FUTEX)
+#if defined(ASIO_HAS_FUTEX)
+# define ASIO_VERSION_TAG_q q
+#else // defined(ASIO_HAS_FUTEX)
+# define ASIO_VERSION_TAG_q
+#endif // defined(ASIO_HAS_FUTEX)
+
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
 #if (defined(__MACH__) && defined(__APPLE__)) \
   || defined(__FreeBSD__) \
@@ -1631,7 +1647,8 @@
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_m, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_n, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_o, \
-  ASIO_VERSION_TAG_p))))))))))))))))))
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_p, \
+  ASIO_VERSION_TAG_q)))))))))))))))))))
 # endif // !defined(ASIO_VERSION_NAMESPACE)
 #endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
 
