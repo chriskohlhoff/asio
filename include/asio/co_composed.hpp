@@ -713,7 +713,7 @@ public:
     derived_type& promise = *static_cast<derived_type*>(this);
     promise.state().return_value_ = std::move(value);
     promise.state().work_.reset();
-    promise.state().on_suspend_->arg_ = this;
+    promise.state().on_suspend_->arg_ = &promise;
     promise.state().on_suspend_->fn_ =
       [](void* p)
       {
