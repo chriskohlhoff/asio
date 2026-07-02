@@ -123,6 +123,7 @@ UNIT_TEST_EXES = \
 	tests\unit\associated_allocator.exe \
 	tests\unit\associated_cancellation_slot.exe \
 	tests\unit\associated_executor.exe \
+	tests\unit\associated_immediate_executor.exe \
 	tests\unit\associator.exe \
 	tests\unit\async_result.exe \
 	tests\unit\awaitable.exe \
@@ -157,6 +158,7 @@ UNIT_TEST_EXES = \
 	tests\unit\cancellation_signal.exe \
 	tests\unit\cancellation_state.exe \
 	tests\unit\cancellation_type.exe \
+	tests\unit\co_composed.exe \
 	tests\unit\co_spawn.exe \
 	tests\unit\completion_condition.exe \
 	tests\unit\compose.exe \
@@ -164,6 +166,7 @@ UNIT_TEST_EXES = \
 	tests\unit\config.exe \
 	tests\unit\connect.exe \
 	tests\unit\connect_pipe.exe \
+	tests\unit\consign.exe \
 	tests\unit\coroutine.exe \
 	tests\unit\deadline_timer.exe \
 	tests\unit\defer.exe \
@@ -186,7 +189,14 @@ UNIT_TEST_EXES = \
 	tests\unit\execution\relationship.exe \
 	tests\unit\executor.exe \
 	tests\unit\executor_work_guard.exe \
+	tests\unit\experimental\basic_channel.exe \
+	tests\unit\experimental\basic_concurrent_channel.exe \
+	tests\unit\experimental\channel.exe \
+	tests\unit\experimental\channel_traits.exe \
+	tests\unit\experimental\concurrent_channel.exe \
 	tests\unit\file_base.exe \
+	tests\unit\fwd_first.exe \
+	tests\unit\fwd_last.exe \
 	tests\unit\generic\basic_endpoint.exe \
 	tests\unit\generic\datagram_protocol.exe \
 	tests\unit\generic\raw_protocol.exe \
@@ -223,6 +233,7 @@ UNIT_TEST_EXES = \
 	tests\unit\local\basic_endpoint.exe \
 	tests\unit\local\connect_pair.exe \
 	tests\unit\local\datagram_protocol.exe \
+	tests\unit\local\seq_packet_protocol.exe \
 	tests\unit\local\stream_protocol.exe \
 	tests\unit\is_read_buffered.exe \
 	tests\unit\is_write_buffered.exe \
@@ -331,13 +342,10 @@ CPP11_EXAMPLE_EXES = \
 	examples\cpp11\windows\transmit_file.exe
 
 SSL_UNIT_TEST_EXES = \
-	tests\unit\ssl\basic_context.exe \
 	tests\unit\ssl\context.exe \
 	tests\unit\ssl\context_base.exe \
-	tests\unit\ssl\context_service.exe \
 	tests\unit\ssl\stream.exe \
-	tests\unit\ssl\stream_base.exe \
-	tests\unit\ssl\stream_service.exe
+	tests\unit\ssl\stream_base.exe
 
 SSL_EXAMPLE_EXES = \
 	examples\cpp11\ssl\client.exe \
@@ -382,6 +390,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\execution}.cpp{tests\unit\execution}.exe:
+	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+{tests\unit\experimental}.cpp{tests\unit\experimental}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
 
 {tests\unit\generic}.cpp{tests\unit\generic}.exe:
