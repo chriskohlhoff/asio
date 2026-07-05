@@ -27,6 +27,10 @@
 #include "asio/detail/throw_error.hpp"
 #include "asio/error.hpp"
 
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+# include <sanitizer/tsan_interface.h>
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -156,6 +160,9 @@ void io_uring_service::notify_fork(
           break;
         if (void* ptr = ::io_uring_cqe_get_data(cqe))
         {
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+          __tsan_acquire(ptr);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
           if (ptr != this && ptr != &timer_queues_ && ptr != &timeout_)
           {
             io_queue* io_q = static_cast<io_queue*>(ptr);
@@ -234,6 +241,9 @@ void io_uring_service::register_internal_io_object(
   {
     op->prepare(sqe);
     ::io_uring_sqe_set_data(sqe, &io_obj->queues_[op_type]);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+    __tsan_release(&io_obj->queues_[op_type]);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
     post_submit_sqes_op(lock);
   }
   else
@@ -296,6 +306,9 @@ void io_uring_service::start_op(int op_type,
       {
         op->prepare(sqe);
         ::io_uring_sqe_set_data(sqe, &io_obj->queues_[op_type]);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+        __tsan_release(&io_obj->queues_[op_type]);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
         scheduler_.work_started();
         post_submit_sqes_op(lock);
       }
@@ -433,6 +446,9 @@ void io_uring_service::run(long usec, op_queue<operation>& ops)
       ++local_ops;
       ::io_uring_prep_timeout(sqe, &ts, 0, 0);
       ::io_uring_sqe_set_data(sqe, &ts);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+      __tsan_release(&ts);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
       submit_sqes();
     }
   }
@@ -452,6 +468,9 @@ void io_uring_service::run(long usec, op_queue<operation>& ops)
         ++local_ops;
         ::io_uring_prep_timeout_remove(sqe, reinterpret_cast<__u64>(&ts), 0);
         ::io_uring_sqe_set_data(sqe, &ts);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+        __tsan_release(&ts);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
         submit_sqes();
       }
     }
@@ -465,6 +484,9 @@ void io_uring_service::run(long usec, op_queue<operation>& ops)
     {
       if (void* ptr = ::io_uring_cqe_get_data(cqe))
       {
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+        __tsan_acquire(ptr);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
         if (ptr == this)
         {
           // The io_uring service was interrupted.
@@ -510,6 +532,9 @@ void io_uring_service::run(long usec, op_queue<operation>& ops)
       {
         ::io_uring_prep_timeout(sqe, &timeout_, 0, 0);
         ::io_uring_sqe_set_data(sqe, &timeout_);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+        __tsan_release(&timeout_);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
         push_submit_sqes_op(ops);
       }
     }
@@ -523,6 +548,9 @@ void io_uring_service::interrupt()
   {
     ::io_uring_prep_nop(sqe);
     ::io_uring_sqe_set_data(sqe, this);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+    __tsan_release(this);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
   }
   submit_sqes();
 }
@@ -686,6 +714,9 @@ void io_uring_service::update_timeout()
   {
     ::io_uring_prep_timeout_remove(sqe, reinterpret_cast<__u64>(&timeout_), 0);
     ::io_uring_sqe_set_data(sqe, &timer_queues_);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+    __tsan_release(&timer_queues_);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
   }
 }
 
@@ -860,6 +891,9 @@ operation* io_uring_service::io_queue::perform_io(int result)
     {
       op_queue_.front()->prepare(sqe);
       ::io_uring_sqe_set_data(sqe, this);
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+      __tsan_release(this);
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
       service->post_submit_sqes_op(lock);
     }
     else
