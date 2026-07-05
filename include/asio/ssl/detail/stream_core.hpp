@@ -36,24 +36,30 @@ struct stream_core
   enum { max_tls_record_size = 17 * 1024 };
 
   template <typename Executor>
-  stream_core(SSL_CTX* context, const Executor& ex)
-    : engine_(context),
+  stream_core(SSL_CTX* context, const Executor& ex,
+      std::size_t output_buffer_size, std::size_t input_buffer_size)
+    : engine_(context, output_buffer_size, input_buffer_size),
       pending_read_(ex),
       pending_write_(ex),
-      output_buffer_space_(new unsigned char[max_tls_record_size]()),
-      input_buffer_space_(new unsigned char[max_tls_record_size]())
+      output_buffer_size_(clamp_buffer_size(output_buffer_size)),
+      input_buffer_size_(clamp_buffer_size(input_buffer_size)),
+      output_buffer_space_(new unsigned char[output_buffer_size_]()),
+      input_buffer_space_(new unsigned char[input_buffer_size_]())
   {
     pending_read_.expires_at(neg_infin());
     pending_write_.expires_at(neg_infin());
   }
 
   template <typename Executor>
-  stream_core(SSL* ssl_impl, const Executor& ex)
-    : engine_(ssl_impl),
+  stream_core(SSL* ssl_impl, const Executor& ex,
+      std::size_t output_buffer_size, std::size_t input_buffer_size)
+    : engine_(ssl_impl, output_buffer_size, input_buffer_size),
       pending_read_(ex),
       pending_write_(ex),
-      output_buffer_space_(new unsigned char[max_tls_record_size]()),
-      input_buffer_space_(new unsigned char[max_tls_record_size]())
+      output_buffer_size_(clamp_buffer_size(output_buffer_size)),
+      input_buffer_size_(clamp_buffer_size(input_buffer_size)),
+      output_buffer_space_(new unsigned char[output_buffer_size_]()),
+      input_buffer_space_(new unsigned char[input_buffer_size_]())
   {
     pending_read_.expires_at(neg_infin());
     pending_write_.expires_at(neg_infin());
@@ -67,6 +73,8 @@ struct stream_core
       pending_write_(
          static_cast<asio::steady_timer&&>(
            other.pending_write_)),
+      output_buffer_size_(other.output_buffer_size_),
+      input_buffer_size_(other.input_buffer_size_),
       output_buffer_space_(
           static_cast<std::unique_ptr<unsigned char[]>&&>(
             other.output_buffer_space_)),
@@ -93,6 +101,8 @@ struct stream_core
       pending_write_ =
         static_cast<asio::steady_timer&&>(
           other.pending_write_);
+      output_buffer_size_ = other.output_buffer_size_;
+      input_buffer_size_ = other.input_buffer_size_;
       output_buffer_space_ =
         static_cast<std::unique_ptr<unsigned char[]>&&>(
           other.output_buffer_space_);
@@ -136,14 +146,28 @@ struct stream_core
   // A buffer that may be used to prepare output intended for the transport.
   asio::mutable_buffer output_buffer()
   {
-    return asio::buffer(output_buffer_space_.get(), max_tls_record_size);
+    return asio::buffer(output_buffer_space_.get(), output_buffer_size_);
   }
 
   // A buffer that may be used to read input intended for the engine.
   asio::mutable_buffer input_buffer()
   {
-    return asio::buffer(input_buffer_space_.get(), max_tls_record_size);
+    return asio::buffer(input_buffer_space_.get(), input_buffer_size_);
   }
+
+  // Ensure a requested buffer size is at least large enough to hold the
+  // largest possible TLS record. A size of zero requests the default.
+  static std::size_t clamp_buffer_size(std::size_t size)
+  {
+    return size < std::size_t(max_tls_record_size)
+      ? std::size_t(max_tls_record_size) : size;
+  }
+
+  // The size of the buffer used to prepare output intended for the transport.
+  std::size_t output_buffer_size_;
+
+  // The size of the buffer used to read input intended for the engine.
+  std::size_t input_buffer_size_;
 
   // Buffer space used to prepare output intended for the transport.
   std::unique_ptr<unsigned char[]> output_buffer_space_;
