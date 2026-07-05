@@ -144,6 +144,7 @@ typedef int signed_size_type;
 # define ASIO_OS_DEF_MSG_PEEK 0x2
 # define ASIO_OS_DEF_MSG_DONTROUTE 0x4
 # define ASIO_OS_DEF_MSG_EOR 0 // Not supported.
+# define ASIO_OS_DEF_MSG_DONTWAIT 0 // Not supported.
 # define ASIO_OS_DEF_SHUT_RD 0x0
 # define ASIO_OS_DEF_SHUT_WR 0x1
 # define ASIO_OS_DEF_SHUT_RDWR 0x2
@@ -238,6 +239,7 @@ struct sockaddr_un_type { u_short sun_family; char sun_path[108]; };
 # define ASIO_OS_DEF_MSG_PEEK MSG_PEEK
 # define ASIO_OS_DEF_MSG_DONTROUTE MSG_DONTROUTE
 # define ASIO_OS_DEF_MSG_EOR 0 // Not supported on Windows.
+# define ASIO_OS_DEF_MSG_DONTWAIT 0 // Not supported on Windows.
 # define ASIO_OS_DEF_SHUT_RD SD_RECEIVE
 # define ASIO_OS_DEF_SHUT_WR SD_SEND
 # define ASIO_OS_DEF_SHUT_RDWR SD_BOTH
@@ -358,6 +360,15 @@ typedef int signed_size_type;
 # define ASIO_OS_DEF_MSG_PEEK MSG_PEEK
 # define ASIO_OS_DEF_MSG_DONTROUTE MSG_DONTROUTE
 # define ASIO_OS_DEF_MSG_EOR MSG_EOR
+# if defined(__linux__) \
+  || defined(__FreeBSD__) \
+  || defined(__NetBSD__) \
+  || defined(__OpenBSD__) \
+  || defined(__DragonFly__)
+#  define ASIO_OS_DEF_MSG_DONTWAIT MSG_DONTWAIT
+# else
+#  define ASIO_OS_DEF_MSG_DONTWAIT 0 // Not reliably supported.
+# endif
 # define ASIO_OS_DEF_SHUT_RD SHUT_RD
 # define ASIO_OS_DEF_SHUT_WR SHUT_WR
 # define ASIO_OS_DEF_SHUT_RDWR SHUT_RDWR
