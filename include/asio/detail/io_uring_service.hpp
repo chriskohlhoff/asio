@@ -283,6 +283,9 @@ private:
   // How any times to spin waiting for the I/O mutex.
   const int io_locking_spin_count_;
 
+  // Whether to mark the waiting task as in_iowait while SQEs are pending.
+  const bool iowait_;
+
   // The timer queues.
   timer_queue_set timer_queues_;
 

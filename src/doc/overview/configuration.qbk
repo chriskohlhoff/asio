@@ -182,6 +182,26 @@ below.
   ]
   [
     [`reactor`]
+    [`io_uring_iowait`]
+    [`bool`]
+    [`true`]
+    [
+      Linux [^io_uring] backend only.
+
+      When `true` (the default), a thread blocked waiting for completions is
+      marked as being in [^iowait] for as long as there are pending submission
+      queue entries, including those used for socket and timer waits, rather
+      than genuine I/O. When `false`, this marking is suppressed via
+      [^io_uring_set_iowait()], which may avoid inflated CPU utilisation
+      metrics and allow the CPU to enter deeper idle states.
+
+      Requires liburing 2.12 or later to have any effect; ignored on earlier
+      versions. The underlying kernel support requires Linux kernel 6.15 or
+      later.
+    ]
+  ]
+  [
+    [`reactor`]
     [`reset_edge_on_partial_read`]
     [`bool`]
     [`false`]
