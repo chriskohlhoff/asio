@@ -215,6 +215,25 @@ below.
   ]
   [
     [`reactor`]
+    [`io_uring_ring_count`]
+    [`int`]
+    [`1`]
+    [
+      Linux [^io_uring] backend only.
+
+      The number of independent [^io_uring] instances ("rings") that a single
+      execution context (`io_context` or `thread_pool`) maintains internally.
+      Each thread that submits an operation is assigned one ring (round-robin,
+      stable for the thread's lifetime).
+
+      Increasing this value may improve scalability when the execution context
+      is being used with multiple threads.
+
+      Values that are less than one `1` are treated as `1`.
+    ]
+  ]
+  [
+    [`reactor`]
     [`reset_edge_on_partial_read`]
     [`bool`]
     [`false`]
