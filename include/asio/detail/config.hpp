@@ -1219,6 +1219,17 @@
 # define ASIO_VERSION_TAG_o
 #endif // defined(ASIO_HAS_THREADS)
 
+// Thread sanitizer.
+#if !defined(ASIO_HAS_THREAD_SANITIZER)
+# if defined(__SANITIZE_THREAD__)
+#  define ASIO_HAS_THREAD_SANITIZER 1
+# elif defined(__has_feature)
+#  if __has_feature(thread_sanitizer)
+#   define ASIO_HAS_THREAD_SANITIZER 1
+#  endif // __has_feature(thread_sanitizer)
+# endif // defined(__SANITIZE_THREAD__)
+#endif // !defined(ASIO_HAS_THREAD_SANITIZER)
+
 // POSIX threads.
 #if !defined(ASIO_HAS_PTHREADS)
 # if defined(ASIO_HAS_THREADS)
