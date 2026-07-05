@@ -16,6 +16,24 @@ below.
   [[Section][Key][Type][Default][Description]]
   [
     [`scheduler`]
+    [`assume_continuation`]
+    [`bool`]
+    [`true` if `"scheduler"` / `"concurrency_hint"` is `1`, `false` otherwise]
+    [
+      When `true`, the scheduler assumes that all posted handlers represent a
+      continuation of the currently executing handler, regardless of whether
+      they are explicitly marked as such. Posted handlers are then added to a
+      fast thread-local queue and held back until the currently executing
+      handler finishes, then flushed in bulk without waking any sleeping
+      threads.
+
+      This can improve performance for short-running handlers, but the
+      assumption is unsafe if a handler is a long-running and posts a handler
+      that another thread is expected to pick up eagerly.
+    ]
+  ]
+  [
+    [`scheduler`]
     [`concurrency_hint`]
     [`int`]
     [`0`]
