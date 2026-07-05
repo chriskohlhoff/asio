@@ -365,7 +365,6 @@ nobase_include_HEADERS = \
 	asio/execution/context.hpp \
 	asio/execution/context_as.hpp \
 	asio/execution/executor.hpp \
-	asio/execution/impl/bad_executor.ipp \
 	asio/execution/inline_exception_handling.hpp \
 	asio/execution/invocable_archetype.hpp \
 	asio/execution/mapping.hpp \
@@ -447,10 +446,8 @@ nobase_include_HEADERS = \
 	asio/impl/execution_context.hpp \
 	asio/impl/execution_context.ipp \
 	asio/impl/executor.hpp \
-	asio/impl/executor.ipp \
 	asio/impl/io_context.hpp \
 	asio/impl/io_context.ipp \
-	asio/impl/multiple_exceptions.ipp \
 	asio/impl/prepend.hpp \
 	asio/impl/read_at.hpp \
 	asio/impl/read.hpp \
