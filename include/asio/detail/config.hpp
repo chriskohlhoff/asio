@@ -375,12 +375,16 @@
 #  if (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
 #   define ASIO_HAS_INLINE_VARIABLES 1
 #   define ASIO_INLINE_VARIABLE inline
+#   define ASIO_INLINE_OR_STATIC_VARIABLE inline
 #  endif // (__cplusplus >= 201703) && (__cpp_inline_variables >= 201606)
 # endif // !defined(ASIO_DISABLE_INLINE_VARIABLES)
 #endif // !defined(ASIO_HAS_INLINE_VARIABLES)
 #if !defined(ASIO_INLINE_VARIABLE)
 # define ASIO_INLINE_VARIABLE
 #endif // !defined(ASIO_INLINE_VARIABLE)
+#if !defined(ASIO_INLINE_OR_STATIC_VARIABLE)
+# define ASIO_INLINE_OR_STATIC_VARIABLE static
+#endif // !defined(ASIO_INLINE_OR_STATIC_VARIABLE)
 #if defined(ASIO_HAS_INLINE_VARIABLES)
 # define ASIO_VERSION_TAG_a a
 #else // defined(ASIO_HAS_INLINE_VARIABLES)
