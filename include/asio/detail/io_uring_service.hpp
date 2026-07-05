@@ -190,9 +190,6 @@ private:
   // The hint to pass to io_uring_queue_init to size its data structures.
   enum { ring_size = 16384 };
 
-  // The number of operations to submit in a batch.
-  enum { submit_batch_size = 128 };
-
   // The number of operations to complete in a batch.
   enum { complete_batch_size = 128 };
 
@@ -285,6 +282,9 @@ private:
 
   // Whether to mark the waiting task as in_iowait while SQEs are pending.
   const bool iowait_;
+
+  // The number of operations to submit in a batch.
+  const int submit_batch_size_;
 
   // The timer queues.
   timer_queue_set timer_queues_;

@@ -202,6 +202,19 @@ below.
   ]
   [
     [`reactor`]
+    [`io_uring_submit_batch_size`]
+    [`int`]
+    [`128`]
+    [
+      Linux [^io_uring] backend only.
+
+      The number of pending submission queue entries at which they are
+      submitted immediately, rather than deferred and submitted together in
+      a batch.
+    ]
+  ]
+  [
+    [`reactor`]
     [`reset_edge_on_partial_read`]
     [`bool`]
     [`false`]
