@@ -624,7 +624,8 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
     o = op_queue_.front();
     if (o == &task_operation_)
     {
-      wakeup_event_.maybe_unlock_and_signal_one(lock);
+      if (!one_thread_)
+        wakeup_event_.maybe_unlock_and_signal_one(lock);
       return 0;
     }
   }
