@@ -305,10 +305,30 @@ jobs:
             optim-level: -O0
             with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
             boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
+          #
+          # Linux / g++-12 -std=c++11 / -O2 / standalone / io_uring
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04
+            compiler: g++-12
+            cxx-std: c++11
+            optim-level: -O2
+            io-uring: -DASIO_HAS_IO_URING
+            configure-libs: LIBS=-luring
+          #
+          # Linux / g++-12 -std=c++20 / -O2 / standalone / io_uring
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04
+            compiler: g++-12
+            cxx-std: c++20 -fcoroutines
+            optim-level: -O2
+            io-uring: -DASIO_HAS_IO_URING
+            configure-libs: LIBS=-luring
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
-      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }}
+      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }}
     steps:
     - uses: actions/checkout@v4
     - name: Install autotools
@@ -317,6 +337,9 @@ jobs:
     - name: Install compiler
       if: startsWith(matrix.runs-on, 'ubuntu')
       run: sudo apt-get install -y ${{ matrix.compiler }}
+    - name: Install liburing
+      if: matrix.io-uring != ''
+      run: sudo apt-get install -y liburing-dev
     - name: Install boost
       if: startsWith(matrix.with-boost, '--with-boost=$GITHUB_WORKSPACE')
       run: |
@@ -324,7 +347,7 @@ jobs:
     - name: Configure
       run: |
         ./autogen.sh
-        ./configure ${{ matrix.separate-compilation }} ${{ matrix.with-boost }}
+        ./configure ${{ matrix.separate-compilation }} ${{ matrix.with-boost }} ${{ matrix.configure-libs }}
     - name: Line length check
       run: perl ./boostify.pl --includes-only
     - name: Sanity check
