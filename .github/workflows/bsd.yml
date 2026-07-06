@@ -1,0 +1,54 @@
+name: asio CI for BSD
+
+on:
+  push:
+    branches: [ master, citest-* ]
+  workflow_dispatch:
+
+concurrency:
+  group: bsd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bsd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: freebsd, version: '14.3' }
+          - { os: openbsd, version: '7.9' }
+          - { os: netbsd,  version: '10.1' }
+    name: ${{ matrix.os }} ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start ${{ matrix.os }} ${{ matrix.version }} VM
+        uses: cross-platform-actions/action@v1.3.0
+        with:
+          operating_system: ${{ matrix.os }}
+          version: ${{ matrix.version }}
+      - name: Build and test
+        shell: cpa.sh {0}
+        run: |
+          set -e
+
+          case "$(uname)" in
+            FreeBSD)
+              sudo pkg install -y autoconf automake pkgconf
+              ;;
+            OpenBSD)
+              sudo pkg_add -I autoconf%2.71 automake%1.16 pkgconf
+              export AUTOCONF_VERSION=2.71
+              export AUTOMAKE_VERSION=1.16
+              ;;
+            NetBSD)
+              sudo pkgin -y install autoconf automake pkgconf
+              ;;
+          esac
+
+          export CXXFLAGS="-std=c++14 -Wall -Wextra -O2"
+          ./autogen.sh
+          ./configure --with-boost=no
+          make
+          make check
