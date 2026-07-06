@@ -234,6 +234,24 @@ below.
   ]
   [
     [`reactor`]
+    [`io_uring_ring_size`]
+    [`unsigned int`]
+    [`16384`]
+    [
+      Linux [^io_uring] backend only.
+
+      The number of entries used to size each [^io_uring] instance, passed to
+      [^io_uring_queue_init]. Larger values allow more operations to be in
+      flight before submission queue entries must be flushed, at the cost of
+      more locked memory per ring. Reducing this value lowers the per-ring
+      memory footprint, which can matter in environments with a low
+      `RLIMIT_MEMLOCK` limit.
+
+      A value of `0` selects the default.
+    ]
+  ]
+  [
+    [`reactor`]
     [`reset_edge_on_partial_read`]
     [`bool`]
     [`false`]

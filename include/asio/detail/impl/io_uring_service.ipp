@@ -83,6 +83,8 @@ io_uring_service::io_uring_service(asio::execution_context& ctx)
     iowait_(config(ctx).get("reactor", "io_uring_iowait", true)),
     submit_batch_size_(
         config(ctx).get("reactor", "io_uring_submit_batch_size", 128)),
+    ring_size_(config(ctx).get("reactor",
+          "io_uring_ring_size", static_cast<unsigned int>(default_ring_size))),
     unflushed_submits_(0),
     timeout_(),
     registration_mutex_(
@@ -797,6 +799,8 @@ void io_uring_service::interrupt()
 
 void io_uring_service::init_ring()
 {
+  const unsigned int entries = ring_size_ != 0
+    ? ring_size_ : static_cast<unsigned int>(default_ring_size);
   for (std::size_t i = 0; i < rings_.size(); ++i)
   {
     // All rings share the same kernel worker pool.
@@ -808,7 +812,7 @@ void io_uring_service::init_ring()
     }
 
     int result =
-      ::io_uring_queue_init_params(ring_size, &rings_[i].ring_, &params);
+      ::io_uring_queue_init_params(entries, &rings_[i].ring_, &params);
     if (result < 0)
     {
       rings_[i].ring_.ring_fd = -1;
