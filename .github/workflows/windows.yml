@@ -1,0 +1,59 @@
+name: asio CI for Windows
+
+on:
+  push:
+    branches: [ master, citest-* ]
+  workflow_dispatch:
+
+concurrency:
+  group: windows-gha-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: ${{ matrix.runner }}
+    name: ${{ matrix.runner }} ${{ matrix.arch }} ${{ matrix.toolset }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: windows-2022, arch: x64, toolset: msvc }
+          - { runner: windows-2022, arch: x86, toolset: msvc }
+          - { runner: windows-2025, arch: x64, toolset: msvc }
+          - { runner: windows-11-arm, arch: arm64, toolset: msvc }
+          - { runner: windows-2022, arch: x64, toolset: mingw }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSVC environment
+        if: matrix.toolset == 'msvc'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+
+      - name: Build and test (MSVC)
+        if: matrix.toolset == 'msvc'
+        shell: cmd
+        env:
+          DEBUG: 1
+          WARNINGS: 1
+          STANDALONE: 1
+          _WIN32_WINNT: '0x0A00'
+        run: |
+          cd src
+          nmake -f Makefile.msc || exit /b 1
+          nmake -f Makefile.msc check || exit /b 1
+
+      - name: Build and test (MinGW)
+        if: matrix.toolset == 'mingw'
+        shell: cmd
+        env:
+          DEBUG: 1
+          WARNINGS: 1
+          STANDALONE: 1
+        run: |
+          set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
+          cd src
+          mingw32-make -f Makefile.mgw || exit /b 1
+          mingw32-make -f Makefile.mgw check || exit /b 1
