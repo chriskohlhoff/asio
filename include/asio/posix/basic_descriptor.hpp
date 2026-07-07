@@ -422,9 +422,9 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa IoControlCommand @n
-   * asio::posix::descriptor_base::bytes_readable @n
-   * asio::posix::descriptor_base::non_blocking_io
+   * @sa
+   * @li asio::posix::descriptor_base::bytes_readable
+   * @li asio::posix::descriptor_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:
@@ -452,9 +452,9 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa IoControlCommand @n
-   * asio::posix::descriptor_base::bytes_readable @n
-   * asio::posix::descriptor_base::non_blocking_io
+   * @sa
+   * @li asio::posix::descriptor_base::bytes_readable
+   * @li asio::posix::descriptor_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:

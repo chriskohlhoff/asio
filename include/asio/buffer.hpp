@@ -112,6 +112,8 @@ class const_buffer;
  *
  * The @c data() member function permits violations of type safety, so uses of
  * it in application code should be carefully considered.
+ *
+ * @sa @ref overview_buffers "Buffers"
  */
 class mutable_buffer
 {
@@ -225,6 +227,8 @@ private:
  *
  * The @c data() member function permits violations of type safety, so uses of
  * it in application code should be carefully considered.
+ *
+ * @sa @ref overview_buffers "Buffers"
  */
 class const_buffer
 {

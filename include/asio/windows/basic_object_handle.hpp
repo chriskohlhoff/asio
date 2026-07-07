@@ -53,6 +53,8 @@ class basic_object_handle;
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @sa @ref overview_windows_object_handle "Object HANDLEs"
  */
 template <typename Executor>
 class basic_object_handle

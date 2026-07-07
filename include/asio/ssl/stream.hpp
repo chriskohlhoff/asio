@@ -61,6 +61,8 @@ namespace ssl {
  *
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
+ *
+ * @sa @ref overview_ssl "SSL"
  */
 template <typename Stream>
 class stream :

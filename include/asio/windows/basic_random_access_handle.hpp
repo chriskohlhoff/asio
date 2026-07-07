@@ -44,6 +44,8 @@ class basic_random_access_handle;
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @sa @ref overview_windows_random_access_handle "Random-access HANDLEs"
  */
 template <typename Executor>
 class basic_random_access_handle

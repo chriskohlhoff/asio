@@ -61,6 +61,8 @@ class basic_serial_port;
  * @par Thread Safety
  * @e Distinct @e objects: Safe.@n
  * @e Shared @e objects: Unsafe.
+ *
+ * @sa @ref overview_serial_ports "Serial ports"
  */
 template <typename Executor>
 class basic_serial_port
@@ -564,12 +566,12 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa SettableSerialPortOption @n
-   * asio::serial_port_base::baud_rate @n
-   * asio::serial_port_base::flow_control @n
-   * asio::serial_port_base::parity @n
-   * asio::serial_port_base::stop_bits @n
-   * asio::serial_port_base::character_size
+   * @sa
+   * @li asio::serial_port_base::baud_rate
+   * @li asio::serial_port_base::flow_control
+   * @li asio::serial_port_base::parity
+   * @li asio::serial_port_base::stop_bits
+   * @li asio::serial_port_base::character_size
    */
   template <typename SettableSerialPortOption>
   void set_option(const SettableSerialPortOption& option)
@@ -587,12 +589,12 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa SettableSerialPortOption @n
-   * asio::serial_port_base::baud_rate @n
-   * asio::serial_port_base::flow_control @n
-   * asio::serial_port_base::parity @n
-   * asio::serial_port_base::stop_bits @n
-   * asio::serial_port_base::character_size
+   * @sa
+   * @li asio::serial_port_base::baud_rate
+   * @li asio::serial_port_base::flow_control
+   * @li asio::serial_port_base::parity
+   * @li asio::serial_port_base::stop_bits
+   * @li asio::serial_port_base::character_size
    */
   template <typename SettableSerialPortOption>
   ASIO_SYNC_OP_VOID set_option(const SettableSerialPortOption& option,
@@ -611,12 +613,12 @@ public:
    *
    * @throws asio::system_error Thrown on failure.
    *
-   * @sa GettableSerialPortOption @n
-   * asio::serial_port_base::baud_rate @n
-   * asio::serial_port_base::flow_control @n
-   * asio::serial_port_base::parity @n
-   * asio::serial_port_base::stop_bits @n
-   * asio::serial_port_base::character_size
+   * @sa
+   * @li asio::serial_port_base::baud_rate
+   * @li asio::serial_port_base::flow_control
+   * @li asio::serial_port_base::parity
+   * @li asio::serial_port_base::stop_bits
+   * @li asio::serial_port_base::character_size
    */
   template <typename GettableSerialPortOption>
   void get_option(GettableSerialPortOption& option) const
@@ -635,12 +637,12 @@ public:
    *
    * @param ec Set to indicate what error occurred, if any.
    *
-   * @sa GettableSerialPortOption @n
-   * asio::serial_port_base::baud_rate @n
-   * asio::serial_port_base::flow_control @n
-   * asio::serial_port_base::parity @n
-   * asio::serial_port_base::stop_bits @n
-   * asio::serial_port_base::character_size
+   * @sa
+   * @li asio::serial_port_base::baud_rate
+   * @li asio::serial_port_base::flow_control
+   * @li asio::serial_port_base::parity
+   * @li asio::serial_port_base::stop_bits
+   * @li asio::serial_port_base::character_size
    */
   template <typename GettableSerialPortOption>
   ASIO_SYNC_OP_VOID get_option(GettableSerialPortOption& option,

@@ -1,0 +1,160 @@
+//
+// Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
+//
+// Proxy pages that allow reference entries to link back to the corresponding
+// section of the library overview. Each page id is mapped to an overview link
+// in reference.xsl.
+//
+
+// Core concepts and functionality.
+
+/**
+\page overview_strands Strands
+*/
+
+/**
+\page overview_buffers Buffers
+*/
+
+/**
+\page overview_streams Streams, Short Reads and Short Writes
+*/
+
+/**
+\page overview_line_based Line-Based Operations
+*/
+
+/**
+\page overview_allocation Custom Memory Allocation
+*/
+
+/**
+\page overview_cancellation Per-Operation Cancellation
+*/
+
+/**
+\page overview_configuration Runtime Configuration and Concurrency Hints
+*/
+
+// Asynchronous model.
+
+/**
+\page overview_associators Associated Characteristics and Associators
+*/
+
+// Composition and completion tokens.
+
+/**
+\page overview_coroutine Stackless Coroutines
+*/
+
+/**
+\page overview_spawn Stackful Coroutines
+*/
+
+/**
+\page overview_futures Futures
+*/
+
+/**
+\page overview_cpp20_coroutines C++20 Coroutines Support
+*/
+
+/**
+\page overview_coro Resumable C++20 Coroutines
+*/
+
+/**
+\page overview_deferred Deferred Operations
+*/
+
+/**
+\page overview_promises Promises
+*/
+
+/**
+\page overview_parallel_group Co-ordinating Parallel Operations
+*/
+
+/**
+\page overview_compose Compositions as Asynchronous Operations
+*/
+
+/**
+\page overview_token_adapters Completion Token Adapters
+*/
+
+/**
+\page overview_type_erasure Type Erasure, Separate Compilation and Virtual Functions
+*/
+
+/**
+\page overview_immediate_completion Customising Immediate Completion
+*/
+
+// Networking.
+
+/**
+\page overview_protocols TCP, UDP and ICMP
+*/
+
+/**
+\page overview_other_protocols Support for Other Protocols
+*/
+
+/**
+\page overview_iostreams Socket Iostreams
+*/
+
+/**
+\page overview_timers Timers
+*/
+
+/**
+\page overview_files Files
+*/
+
+/**
+\page overview_pipes Pipes
+*/
+
+/**
+\page overview_serial_ports Serial Ports
+*/
+
+/**
+\page overview_signals Signal Handling
+*/
+
+/**
+\page overview_channels Channels
+*/
+
+/**
+\page overview_posix_local UNIX Domain Sockets
+*/
+
+/**
+\page overview_posix_stream_descriptor Stream-Oriented File Descriptors
+*/
+
+/**
+\page overview_windows_stream_handle Stream-Oriented HANDLEs
+*/
+
+/**
+\page overview_windows_random_access_handle Random-Access HANDLEs
+*/
+
+/**
+\page overview_windows_object_handle Object HANDLEs
+*/
+
+/**
+\page overview_ssl SSL
+*/

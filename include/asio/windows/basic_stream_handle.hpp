@@ -47,6 +47,8 @@ class basic_stream_handle;
  *
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
+ *
+ * @sa @ref overview_windows_stream_handle "Stream-oriented HANDLEs"
  */
 template <typename Executor>
 class basic_stream_handle

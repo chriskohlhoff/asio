@@ -32,6 +32,8 @@ ASIO_INLINE_NAMESPACE_BEGIN
  * The cancel_after_t class is used to indicate that an asynchronous operation
  * should be cancelled if not complete before the specified duration has
  * elapsed.
+ *
+ * @sa @ref overview_token_adapters "Completion token adapters"
  */
 template <typename CompletionToken, typename Clock,
     typename WaitTraits = asio::wait_traits<Clock>>

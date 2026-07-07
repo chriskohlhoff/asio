@@ -102,6 +102,8 @@ class basic_signal_set;
  * and @c pthread_sigmask(). For signals to be delivered, programs must ensure
  * that any signals registered using signal_set objects are unblocked in at
  * least one thread.
+ *
+ * @sa @ref overview_signals "Signal handling"
  */
 template <typename Executor>
 class basic_signal_set : public signal_set_base

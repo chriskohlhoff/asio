@@ -53,6 +53,8 @@ class basic_stream_descriptor;
  *
  * @par Concepts:
  * AsyncReadStream, AsyncWriteStream, Stream, SyncReadStream, SyncWriteStream.
+ *
+ * @sa @ref overview_posix_stream_descriptor "Stream-oriented file descriptors"
  */
 template <typename Executor>
 class basic_stream_descriptor
