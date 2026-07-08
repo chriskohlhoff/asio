@@ -7,6 +7,90 @@
 
 [section:history Revision History]
 
+[heading Asio 1.38.2]
+
+* Added a `"scheduler"` / `"assume_continuation"` configuration parameter. When
+  `true`, the scheduler assumes that all posted handlers are a continuation of
+  the currently executing handler, allowing them to be added to a fast
+  thread-local queue. This can improve performance for applications that
+  exclusively use short-running handlers.
+
+* Added a `"reactor"` / `"io_uring_ring_count"` configuration parameter.
+  This sets the number of independent io_uring instances ("rings") that a single
+  execution context maintains internally. Increasing this parameter from its
+  default of 1 may improve scalability when the execution context is used with
+  multiple threads.
+
+* Added a `"reactor"` / `"io_uring_ring_size"` configuration parameter,
+  which is used to specify the number of entries in each io_uring instance.
+
+* Added a `"reactor"` / `"io_uring_submit_batch_size"` configuration parameter.
+  This sets the number of pending io_uring submission queue entries at which
+  they are submitted immediately, rather than deferred.
+
+* Added a `"reactor"` / `"io_uring_iowait"` configuration parameter, which may
+  be used to determine whether the thread is marked as being in iowait while
+  io_uring operations are pending.
+
+* Added the ability to configure `ssl::stream<>`'s internal buffer sizes.
+
+* Added `asio/fwd.hpp`, as a way to safely forward declare some Asio class
+  names, even when `ASIO_ENABLE_VERSION_NAMESPACE` or `ASIO_VERSION_NAMESPACE`
+  are defined.
+
+* Added an example for using `cancel_after` with coroutines.
+
+* Changed all exception classes to use inline implementations, to fix an
+  undefined symbol error on some platforms when using separate compilation.
+
+* Changed constants and CPOs to use external linkage for C++17 and later.
+
+* Changed "slim" mutexes to use futexes on Linux.
+
+* Changed the reactor send/receive path to use `MSG_DONTWAIT`, if supported,
+  rather than setting the socket to be non-blocking.
+
+* Added a missing optimisation for `concurrency_hint == 1` in the `io_context`
+  class's `poll_one()` function.
+
+* Added support for `co_composed` under `ASIO_NO_EXCEPTIONS`.
+
+* Fixed a `co_composed` crash on MSVC that occurs when using multiple completion
+  signatures.
+
+* Fixed a `co_composed` crash on MSVC by ensuring 16-byte block alignment in its
+  internal coroutine representation.
+
+* Fixed the return type on one `cancel_after` overload.
+
+* Fixed integer truncation in `basic_streambuf::commit`/`consume` for sizes
+  greater than or equal to `INT_MAX`.
+
+* Fixed a buffer invalidation error triggered when SSL streams are moved, and
+  clarified the buffer invalidation semantics in the documentation.
+
+* Fixed a compilation error, seen with some compilers such as [^nvc++], that
+  occurs when using `post`, `dispatch` or `defer` (or an asynchronous operation
+  built on them) with a completion handler.
+
+* Fixed `parallel_group` handling of non-terminal cancellation requests.
+
+* Fixed thread sanitizer warnings due to atomic thread fences, and added thread
+  sanitizer instrumentation to the io_uring backend.
+
+* Fixed a signed/unsigned warning in `basic_resolver_results`.
+
+* Fixed `experimental::channel` compilation with older versions of MSVC.
+
+* Fixed the `multicast::enable_loopback` socket option size on NetBSD and
+  OpenBSD.
+
+* Suppressed case fall-through warnings in the SSL implementation.
+
+* Fixed standard library coroutine detection when using [^clang-cl].
+
+* Improved cross-referencing within the documentation.
+
 [heading Asio 1.38.1]
 
 * Added optional binary versioning using an inline namespace. If the
