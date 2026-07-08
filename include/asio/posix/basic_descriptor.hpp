@@ -424,7 +424,6 @@ public:
    *
    * @sa
    * @li asio::posix::descriptor_base::bytes_readable
-   * @li asio::posix::descriptor_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:
@@ -454,7 +453,6 @@ public:
    *
    * @sa
    * @li asio::posix::descriptor_base::bytes_readable
-   * @li asio::posix::descriptor_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:

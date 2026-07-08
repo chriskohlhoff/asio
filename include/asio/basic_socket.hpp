@@ -1172,7 +1172,6 @@ public:
    *
    * @sa
    * @li asio::socket_base::bytes_readable
-   * @li asio::socket_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:
@@ -1202,7 +1201,6 @@ public:
    *
    * @sa
    * @li asio::socket_base::bytes_readable
-   * @li asio::socket_base::non_blocking_io
    *
    * @par Example
    * Getting the number of bytes ready to read:
