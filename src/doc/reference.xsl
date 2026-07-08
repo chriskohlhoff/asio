@@ -2450,7 +2450,55 @@
         </xsl:when>
         <xsl:otherwise><xsl:value-of select="defval"/></xsl:otherwise>
         </xsl:choose></xsl:if>
+      <xsl:if test="not(count(defval) > 0)">
+        <xsl:call-template name="class-template-default">
+          <xsl:with-param name="class">
+            <xsl:call-template name="strip-asio-ns">
+              <xsl:with-param name="name" select="../../compoundname"/>
+            </xsl:call-template>
+          </xsl:with-param>
+          <xsl:with-param name="name" select="$declname"/>
+        </xsl:call-template>
+      </xsl:if>
       <xsl:if test="not(position() = last())">,</xsl:if>
+</xsl:template>
+
+
+<xsl:template name="class-template-default">
+  <xsl:param name="class"/>
+  <xsl:param name="name"/>
+  <xsl:choose>
+    <xsl:when test="$name = 'Executor' and (
+        $class = 'basic_datagram_socket'
+          or $class = 'basic_raw_socket'
+          or $class = 'basic_seq_packet_socket'
+          or $class = 'basic_socket'
+          or $class = 'basic_socket_acceptor'
+          or $class = 'basic_stream_socket'
+          or $class = 'basic_file'
+          or $class = 'basic_random_access_file'
+          or $class = 'basic_stream_file'
+          or $class = 'basic_serial_port'
+          or $class = 'basic_signal_set'
+          or $class = 'basic_readable_pipe'
+          or $class = 'basic_writable_pipe'
+          or $class = 'basic_waitable_timer'
+          or $class = 'ip::basic_resolver'
+          or $class = 'posix::basic_descriptor'
+          or $class = 'posix::basic_stream_descriptor'
+          or $class = 'windows::basic_object_handle'
+          or $class = 'windows::basic_overlapped_handle'
+          or $class = 'windows::basic_random_access_handle'
+          or $class = 'windows::basic_stream_handle')">
+      <xsl:text> = any_io_executor</xsl:text>
+    </xsl:when>
+    <xsl:when test="$class = 'basic_waitable_timer' and $name = 'WaitTraits'">
+      <xsl:text> = wait_traits&lt; Clock &gt;</xsl:text>
+    </xsl:when>
+    <xsl:when test="$class = 'buffers_iterator' and $name = 'ByteType'">
+      <xsl:text> = char</xsl:text>
+    </xsl:when>
+  </xsl:choose>
 </xsl:template>
 
 
