@@ -350,6 +350,11 @@ public:
   /**
    * Fails if the buffer is full and there are no waiting receive operations.
    *
+   * For a channel with more than one signature, the message is constructed
+   * using the first signature, in order, whose parameters can be initialised
+   * from the supplied arguments. The arguments are not moved from unless the
+   * send succeeds.
+   *
    * @returns @c true on success, @c false on failure.
    */
   template <typename... Args>
@@ -363,6 +368,11 @@ public:
    * The receive operation's completion handler may be called from inside this
    * function.
    *
+   * For a channel with more than one signature, the message is constructed
+   * using the first signature, in order, whose parameters can be initialised
+   * from the supplied arguments. The arguments are not moved from unless the
+   * send succeeds.
+   *
    * @returns @c true on success, @c false on failure.
    */
   template <typename... Args>
@@ -370,6 +380,10 @@ public:
 
   /// Try to send a number of messages without blocking.
   /**
+   * For a channel with more than one signature, the messages are constructed
+   * using the first signature, in order, whose parameters can be initialised
+   * from the supplied arguments.
+   *
    * @returns The number of messages that were sent.
    */
   template <typename... Args>
@@ -380,6 +394,10 @@ public:
   /**
    * The receive operations' completion handlers may be called from inside this
    * function.
+   *
+   * For a channel with more than one signature, the messages are constructed
+   * using the first signature, in order, whose parameters can be initialised
+   * from the supplied arguments.
    *
    * @returns The number of messages that were sent.
    */

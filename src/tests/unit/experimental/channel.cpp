@@ -1328,6 +1328,357 @@ void channel_move_test()
   (void)ch4;
 }
 
+struct int_or_string_handler
+{
+  asio::error_code* ec_;
+  int* i_;
+  std::string* s_;
+
+  void operator()(asio::error_code ec, int i)
+  {
+    *ec_ = ec;
+    *i_ = i;
+  }
+
+  void operator()(asio::error_code ec, std::string s)
+  {
+    *ec_ = ec;
+    *s_ = std::move(s);
+  }
+};
+
+struct three_signature_handler
+{
+  asio::error_code* ec_;
+  int* i_;
+  std::string* s1_;
+  std::string* s2_;
+
+  void operator()(asio::error_code ec, int i)
+  {
+    *ec_ = ec;
+    *i_ = i;
+  }
+
+  void operator()(asio::error_code ec, std::string s)
+  {
+    *ec_ = ec;
+    *s1_ = std::move(s);
+  }
+
+  void operator()(asio::error_code ec, std::string s1, std::string s2)
+  {
+    *ec_ = ec;
+    *s1_ = std::move(s1);
+    *s2_ = std::move(s2);
+  }
+};
+
+void multi_signature_try_send()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, int),
+      void(asio::error_code, std::string)> ch1(ctx, 2);
+
+  bool b1 = ch1.try_send(asio::error_code(), 42);
+  bool b2 = ch1.try_send(asio::error::eof, std::string("second"));
+
+  ASIO_CHECK(b1);
+  ASIO_CHECK(b2);
+
+  asio::error_code ec1;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec1, &i1, &s1};
+
+  bool b3 = ch1.try_receive(h1);
+
+  ASIO_CHECK(b3);
+  ASIO_CHECK(!ec1);
+  ASIO_CHECK(i1 == 42);
+
+  bool b4 = ch1.try_receive(h1);
+
+  ASIO_CHECK(b4);
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "second");
+
+  bool b5 = ch1.try_send(asio::error_code(), 0);
+  bool b6 = ch1.try_send(asio::error_code(), 0);
+
+  ASIO_CHECK(b5);
+  ASIO_CHECK(b6);
+
+  bool b7 = ch1.try_send(asio::error::eof, std::string("full"));
+
+  ASIO_CHECK(!b7);
+
+#if defined(ASIO_HAS_STD_VARIANT)
+  channel<void(asio::error_code, int),
+      void(asio::error_code, std::string),
+      void(asio::error_code, std::string, std::string)> ch2(ctx, 3);
+
+  bool b8 = ch2.try_send(asio::error_code(), 42);
+  bool b9 = ch2.try_send(asio::error::eof, std::string("second"));
+  bool b10 = ch2.try_send(asio::error::eof,
+      std::string("left"), std::string("right"));
+
+  ASIO_CHECK(b8);
+  ASIO_CHECK(b9);
+  ASIO_CHECK(b10);
+
+  asio::error_code ec2;
+  int i2 = 0;
+  std::string s2;
+  std::string s3;
+  three_signature_handler h2 = {&ec2, &i2, &s2, &s3};
+
+  bool b11 = ch2.try_receive(h2);
+
+  ASIO_CHECK(b11);
+  ASIO_CHECK(!ec2);
+  ASIO_CHECK(i2 == 42);
+
+  bool b12 = ch2.try_receive(h2);
+
+  ASIO_CHECK(b12);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "second");
+
+  bool b13 = ch2.try_receive(h2);
+
+  ASIO_CHECK(b13);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "left");
+  ASIO_CHECK(s3 == "right");
+
+  bool b14 = ch2.try_send(asio::error::eof,
+      std::string("buffer"), std::string("full"));
+  bool b15 = ch2.try_send(asio::error::eof,
+      std::string("buffer"), std::string("full"));
+  bool b16 = ch2.try_send(asio::error::eof,
+      std::string("buffer"), std::string("full"));
+  bool b17 = ch2.try_send(asio::error::eof,
+      std::string("buffer"), std::string("full"));
+
+  ASIO_CHECK(b14);
+  ASIO_CHECK(b15);
+  ASIO_CHECK(b16);
+  ASIO_CHECK(!b17);
+#endif // defined(ASIO_HAS_STD_VARIANT)
+}
+
+struct long_or_int_handler
+{
+  int* which_;
+
+  void operator()(asio::error_code, long)
+  {
+    *which_ = 1;
+  }
+
+  void operator()(asio::error_code, int)
+  {
+    *which_ = 2;
+  }
+};
+
+void multi_signature_try_send_first_match_wins()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, long),
+      void(asio::error_code, int)> ch1(ctx, 1);
+
+  bool b1 = ch1.try_send(asio::error_code(), 42);
+
+  ASIO_CHECK(b1);
+
+  int which = 0;
+  long_or_int_handler h1 = {&which};
+  bool b2 = ch1.try_receive(h1);
+
+  ASIO_CHECK(b2);
+  ASIO_CHECK(which == 1);
+}
+
+struct movable_payload
+{
+  int* moves_;
+  int* copies_;
+  int value_;
+
+  movable_payload(int* moves, int* copies, int value)
+    : moves_(moves),
+      copies_(copies),
+      value_(value)
+  {
+  }
+
+  movable_payload(const movable_payload& other)
+    : moves_(other.moves_),
+      copies_(other.copies_),
+      value_(other.value_)
+  {
+    ++*copies_;
+  }
+
+  movable_payload(movable_payload&& other)
+    : moves_(other.moves_),
+      copies_(other.copies_),
+      value_(other.value_)
+  {
+    ++*moves_;
+  }
+};
+
+void multi_signature_try_send_failure_preserves_arguments()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, int),
+      void(asio::error_code, movable_payload)> ch1(ctx);
+
+  int moves = 0;
+  int copies = 0;
+  movable_payload p1(&moves, &copies, 42);
+
+  bool b1 = ch1.try_send(asio::error::eof, std::move(p1));
+
+  ASIO_CHECK(!b1);
+  ASIO_CHECK(moves == 0);
+  ASIO_CHECK(copies == 0);
+
+  channel<void(asio::error_code, int),
+      void(asio::error_code, movable_payload)> ch2(ctx, 1);
+
+  bool b2 = ch2.try_send(asio::error::eof, std::move(p1));
+
+  ASIO_CHECK(b2);
+  ASIO_CHECK(moves > 0);
+  ASIO_CHECK(copies == 0);
+}
+
+void multi_signature_try_send_n()
+{
+#if defined(ASIO_HAS_STD_VARIANT)
+  io_context ctx;
+
+  channel<void(asio::error_code, int),
+      void(asio::error_code, std::string)> ch1(ctx, 4);
+
+  std::size_t n1 = ch1.try_send_n(2, asio::error::eof, std::string("copied"));
+
+  ASIO_CHECK(n1 == 2);
+
+  asio::error_code ec1;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec1, &i1, &s1};
+
+  bool b1 = ch1.try_receive(h1);
+
+  ASIO_CHECK(b1);
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "copied");
+
+  s1.clear();
+  bool b2 = ch1.try_receive(h1);
+
+  ASIO_CHECK(b2);
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "copied");
+#endif // defined(ASIO_HAS_STD_VARIANT)
+}
+
+void multi_signature_try_send_via_dispatch()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, int),
+      void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec1, &i1, &s1};
+  ch1.async_receive(bind_executor(asio::inline_executor(), h1));
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ctx.poll();
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  std::string s2 = "0123456789";
+  bool b1 = ch1.try_send_via_dispatch(asio::error::eof, std::move(s2));
+
+  ASIO_CHECK(b1);
+  ASIO_CHECK(ec1 == asio::error::eof);
+  ASIO_CHECK(s1 == "0123456789");
+  ASIO_CHECK(s2.empty());
+
+#if defined(ASIO_HAS_STD_VARIANT)
+  asio::error_code ec2 = asio::error::would_block;
+  int i2 = 0;
+  std::string s3;
+  int_or_string_handler h2 = {&ec2, &i2, &s3};
+  ch1.async_receive(bind_executor(asio::inline_executor(), h2));
+
+  asio::error_code ec3 = asio::error::would_block;
+  int i3 = 0;
+  std::string s4;
+  int_or_string_handler h3 = {&ec3, &i3, &s4};
+  ch1.async_receive(bind_executor(asio::inline_executor(), h3));
+
+  ctx.poll();
+
+  ASIO_CHECK(ec2 == asio::error::would_block);
+  ASIO_CHECK(ec3 == asio::error::would_block);
+
+  std::string s5 = "9876543210";
+  std::size_t n1 = ch1.try_send_n_via_dispatch(
+      2, asio::error::eof, std::move(s5));
+
+  ASIO_CHECK(n1 == 2);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s3 == "9876543210");
+  ASIO_CHECK(ec3 == asio::error::eof);
+  ASIO_CHECK(s4 == "9876543210");
+  ASIO_CHECK(s5.empty());
+#endif // defined(ASIO_HAS_STD_VARIANT)
+}
+
+void multi_signature_async_send()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, int),
+      void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, std::string("hello"),
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  asio::error_code ec2;
+  int i1 = 0;
+  std::string s1;
+  int_or_string_handler h1 = {&ec2, &i1, &s1};
+  bool b1 = ch1.try_receive(h1);
+
+  ASIO_CHECK(b1);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s1 == "hello");
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+}
+
 ASIO_TEST_SUITE
 (
   "experimental/channel",
@@ -1359,4 +1710,10 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(buffered_drain_after_close)
   ASIO_TEST_CASE(send_after_close)
   ASIO_COMPILE_TEST_CASE(channel_move_test)
+  ASIO_TEST_CASE(multi_signature_try_send)
+  ASIO_TEST_CASE(multi_signature_try_send_first_match_wins)
+  ASIO_TEST_CASE(multi_signature_try_send_failure_preserves_arguments)
+  ASIO_TEST_CASE(multi_signature_try_send_n)
+  ASIO_TEST_CASE(multi_signature_try_send_via_dispatch)
+  ASIO_TEST_CASE(multi_signature_async_send)
 )

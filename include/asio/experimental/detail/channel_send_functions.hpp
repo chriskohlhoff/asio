@@ -114,9 +114,10 @@ template <typename Derived, typename Executor,
 class channel_send_functions<Derived, Executor, R(Args...), Signatures...> :
   public channel_send_functions<Derived, Executor, Signatures...>
 {
+  typedef channel_send_functions<Derived, Executor, Signatures...> base_type;
+
 public:
-  using channel_send_functions<Derived, Executor, Signatures...>::try_send;
-  using channel_send_functions<Derived, Executor, Signatures...>::async_send;
+  using base_type::async_send;
 
   template <typename... Args2>
   enable_if_t<
@@ -129,6 +130,17 @@ public:
     Derived* self = static_cast<Derived*>(this);
     return self->service_->template try_send<message_type>(
         self->impl_, false, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
+  auto try_send(Args2&&... args)
+    -> enable_if_t<
+        !is_constructible<
+          asio::detail::completion_message<R(Args...)>,
+          int, Args2...>::value,
+        decltype(declval<base_type&>().try_send(declval<Args2>()...))>
+  {
+    return this->base_type::try_send(static_cast<Args2&&>(args)...);
   }
 
   template <typename... Args2>
@@ -145,6 +157,19 @@ public:
   }
 
   template <typename... Args2>
+  auto try_send_via_dispatch(Args2&&... args)
+    -> enable_if_t<
+        !is_constructible<
+          asio::detail::completion_message<R(Args...)>,
+          int, Args2...>::value,
+        decltype(declval<base_type&>().try_send_via_dispatch(
+          declval<Args2>()...))>
+  {
+    return this->base_type::try_send_via_dispatch(
+        static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
   enable_if_t<
     is_constructible<asio::detail::completion_message<R(Args...)>,
       int, Args2...>::value,
@@ -158,6 +183,18 @@ public:
   }
 
   template <typename... Args2>
+  auto try_send_n(std::size_t count, Args2&&... args)
+    -> enable_if_t<
+        !is_constructible<
+          asio::detail::completion_message<R(Args...)>,
+          int, Args2...>::value,
+        decltype(declval<base_type&>().try_send_n(
+          count, declval<Args2>()...))>
+  {
+    return this->base_type::try_send_n(count, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
   enable_if_t<
     is_constructible<asio::detail::completion_message<R(Args...)>,
       int, Args2...>::value,
@@ -168,6 +205,19 @@ public:
     Derived* self = static_cast<Derived*>(this);
     return self->service_->template try_send_n<message_type>(
         self->impl_, count, true, static_cast<Args2&&>(args)...);
+  }
+
+  template <typename... Args2>
+  auto try_send_n_via_dispatch(std::size_t count, Args2&&... args)
+    -> enable_if_t<
+        !is_constructible<
+          asio::detail::completion_message<R(Args...)>,
+          int, Args2...>::value,
+        decltype(declval<base_type&>().try_send_n_via_dispatch(
+          count, declval<Args2>()...))>
+  {
+    return this->base_type::try_send_n_via_dispatch(
+        count, static_cast<Args2&&>(args)...);
   }
 
   template <
