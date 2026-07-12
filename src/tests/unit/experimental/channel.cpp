@@ -984,6 +984,256 @@ void channel_with_any_completion_handler_test()
   ASIO_CHECK(!ec2);
 }
 
+void unbuffered_cancel_after_close()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "hello",
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ch1.close();
+  ch1.cancel();
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::experimental::channel_errc::channel_cancelled);
+}
+
+void buffered_cancel_after_close()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  bool b1 = ch1.try_send(asio::error::eof, "first");
+
+  ASIO_CHECK(b1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "second",
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ch1.close();
+  ch1.cancel();
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::experimental::channel_errc::channel_cancelled);
+}
+
+void unbuffered_destroy_after_close()
+{
+  io_context ctx;
+
+  asio::error_code ec1 = asio::error::would_block;
+
+  {
+    channel<void(asio::error_code, std::string)> ch1(ctx);
+
+    ch1.async_send(asio::error::eof, "hello",
+        [&](asio::error_code ec)
+        {
+          ec1 = ec;
+        });
+
+    ASIO_CHECK(ec1 == asio::error::would_block);
+
+    ch1.close();
+  }
+
+  ctx.run();
+
+  ASIO_CHECK(ec1 == asio::experimental::channel_errc::channel_cancelled);
+}
+
+void unbuffered_drain_after_close()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "first",
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  asio::error_code ec2 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "second",
+      [&](asio::error_code ec)
+      {
+        ec2 = ec;
+      });
+
+  ch1.close();
+
+  ASIO_CHECK(!ch1.is_open());
+  ASIO_CHECK(ch1.ready());
+
+  asio::error_code ec3;
+  std::string s3;
+  bool b1 = ch1.try_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec3 = ec;
+        s3 = std::move(s);
+      });
+
+  ASIO_CHECK(b1);
+  ASIO_CHECK(ec3 == asio::error::eof);
+  ASIO_CHECK(s3 == "first");
+
+  asio::error_code ec4 = asio::error::would_block;
+  std::string s4;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec4 = ec;
+        s4 = std::move(s);
+      });
+
+  asio::error_code ec5 = asio::error::would_block;
+  std::string s5;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec5 = ec;
+        s5 = std::move(s);
+      });
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+  ASIO_CHECK(!ec2);
+  ASIO_CHECK(ec4 == asio::error::eof);
+  ASIO_CHECK(s4 == "second");
+  ASIO_CHECK(ec5 == asio::experimental::channel_errc::channel_closed);
+  ASIO_CHECK(s5.empty());
+}
+
+void buffered_drain_after_close()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx, 1);
+
+  bool b1 = ch1.try_send(asio::error::eof, "first");
+
+  ASIO_CHECK(b1);
+
+  asio::error_code ec1 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "second",
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ASIO_CHECK(ec1 == asio::error::would_block);
+
+  ch1.close();
+
+  ASIO_CHECK(!ch1.is_open());
+  ASIO_CHECK(ch1.ready());
+
+  asio::error_code ec2;
+  std::string s2;
+  bool b2 = ch1.try_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec2 = ec;
+        s2 = std::move(s);
+      });
+
+  ASIO_CHECK(b2);
+  ASIO_CHECK(ec2 == asio::error::eof);
+  ASIO_CHECK(s2 == "first");
+
+  asio::error_code ec3 = asio::error::would_block;
+  std::string s3;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec3 = ec;
+        s3 = std::move(s);
+      });
+
+  asio::error_code ec4 = asio::error::would_block;
+  std::string s4;
+  ch1.async_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec4 = ec;
+        s4 = std::move(s);
+      });
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+  ASIO_CHECK(ec3 == asio::error::eof);
+  ASIO_CHECK(s3 == "second");
+  ASIO_CHECK(ec4 == asio::experimental::channel_errc::channel_closed);
+  ASIO_CHECK(s4.empty());
+}
+
+void send_after_close()
+{
+  io_context ctx;
+
+  channel<void(asio::error_code, std::string)> ch1(ctx);
+
+  asio::error_code ec1 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "hello",
+      [&](asio::error_code ec)
+      {
+        ec1 = ec;
+      });
+
+  ch1.close();
+
+  bool b1 = ch1.try_send(asio::error::eof, "rejected");
+
+  ASIO_CHECK(!b1);
+
+  asio::error_code ec2 = asio::error::would_block;
+  ch1.async_send(asio::error::eof, "rejected",
+      [&](asio::error_code ec)
+      {
+        ec2 = ec;
+      });
+
+  asio::error_code ec3;
+  std::string s3;
+  bool b2 = ch1.try_receive(
+      [&](asio::error_code ec, std::string s)
+      {
+        ec3 = ec;
+        s3 = std::move(s);
+      });
+
+  ASIO_CHECK(b2);
+  ASIO_CHECK(ec3 == asio::error::eof);
+  ASIO_CHECK(s3 == "hello");
+
+  ctx.run();
+
+  ASIO_CHECK(!ec1);
+  ASIO_CHECK(ec2 == asio::experimental::channel_errc::channel_closed);
+}
+
 void can_send_can_receive_test()
 {
   io_context ctx;
@@ -1102,5 +1352,11 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(can_send_can_receive_test)
   ASIO_TEST_CASE(implicit_error_signature_channel_test)
   ASIO_TEST_CASE(channel_with_any_completion_handler_test)
+  ASIO_TEST_CASE(unbuffered_cancel_after_close)
+  ASIO_TEST_CASE(buffered_cancel_after_close)
+  ASIO_TEST_CASE(unbuffered_destroy_after_close)
+  ASIO_TEST_CASE(unbuffered_drain_after_close)
+  ASIO_TEST_CASE(buffered_drain_after_close)
+  ASIO_TEST_CASE(send_after_close)
   ASIO_COMPILE_TEST_CASE(channel_move_test)
 )

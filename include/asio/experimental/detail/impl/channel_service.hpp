@@ -210,7 +210,7 @@ void channel_service<Mutex>::close(
   }
 
   impl.send_state_ = closed;
-  if (impl.receive_state_ != buffer)
+  if (impl.receive_state_ == block)
     impl.receive_state_ = closed;
 }
 
@@ -228,7 +228,7 @@ void channel_service<Mutex>::cancel(
 
   while (channel_operation* op = impl.waiters_.front())
   {
-    if (impl.send_state_ == block)
+    if (impl.send_state_ != waiter)
     {
       impl.waiters_.pop();
       static_cast<channel_send<payload_type>*>(op)->cancel();
@@ -244,7 +244,7 @@ void channel_service<Mutex>::cancel(
   }
 
   if (impl.receive_state_ == waiter)
-    impl.receive_state_ = block;
+    impl.receive_state_ = (impl.send_state_ == closed) ? closed : block;
   if (impl.send_state_ == waiter)
     impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
 }
@@ -267,7 +267,7 @@ void channel_service<Mutex>::cancel_by_key(
   {
     if (op->cancellation_key_ == cancellation_key)
     {
-      if (impl.send_state_ == block)
+      if (impl.send_state_ != waiter)
       {
         impl.waiters_.pop();
         static_cast<channel_send<payload_type>*>(op)->cancel();
@@ -292,7 +292,7 @@ void channel_service<Mutex>::cancel_by_key(
   if (impl.waiters_.empty())
   {
     if (impl.receive_state_ == waiter)
-      impl.receive_state_ = block;
+      impl.receive_state_ = (impl.send_state_ == closed) ? closed : block;
     if (impl.send_state_ == waiter)
       impl.send_state_ = impl.max_buffer_size_ ? buffer : block;
   }
