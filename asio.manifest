@@ -472,6 +472,7 @@
 /doc/asio/reference/awaitable/valid.html
 /doc/asio/reference/awaitable/value_type.html
 /doc/asio/reference/bad_executor/
+/doc/asio/reference/bad_executor/_bad_executor.html
 /doc/asio/reference/bad_executor/bad_executor.html
 /doc/asio/reference/bad_executor.html
 /doc/asio/reference/bad_executor/what.html
@@ -2891,6 +2892,7 @@
 /doc/asio/reference/execution__any_executor/target/overload2.html
 /doc/asio/reference/execution__any_executor/target_type.html
 /doc/asio/reference/execution__bad_executor/
+/doc/asio/reference/execution__bad_executor/_bad_executor.html
 /doc/asio/reference/execution__bad_executor/bad_executor.html
 /doc/asio/reference/execution__bad_executor.html
 /doc/asio/reference/execution__bad_executor/what.html
@@ -4580,6 +4582,7 @@
 /doc/asio/reference/multiple_exceptions/
 /doc/asio/reference/multiple_exceptions/first_exception.html
 /doc/asio/reference/multiple_exceptions.html
+/doc/asio/reference/multiple_exceptions/_multiple_exceptions.html
 /doc/asio/reference/multiple_exceptions/multiple_exceptions.html
 /doc/asio/reference/multiple_exceptions/what.html
 /doc/asio/reference/mutable_buffer/
@@ -5917,6 +5920,7 @@
 /include/asio/detail/fd_set_adapter.hpp
 /include/asio/detail/fenced_block.hpp
 /include/asio/detail/functional.hpp
+/include/asio/detail/futex_slim_mutex.hpp
 /include/asio/detail/future.hpp
 /include/asio/detail/global.hpp
 /include/asio/detail/handler_alloc_helpers.hpp
@@ -6175,8 +6179,6 @@
 /include/asio/execution/context.hpp
 /include/asio/execution/executor.hpp
 /include/asio/execution.hpp
-/include/asio/execution/impl/
-/include/asio/execution/impl/bad_executor.ipp
 /include/asio/execution/inline_exception_handling.hpp
 /include/asio/execution/invocable_archetype.hpp
 /include/asio/execution/mapping.hpp
@@ -6225,6 +6227,7 @@
 /include/asio/experimental/use_coro.hpp
 /include/asio/experimental/use_promise.hpp
 /include/asio/file_base.hpp
+/include/asio/fwd.hpp
 /include/asio/generic/
 /include/asio/generic/basic_endpoint.hpp
 /include/asio/generic/datagram_protocol.hpp
@@ -6265,10 +6268,8 @@
 /include/asio/impl/execution_context.hpp
 /include/asio/impl/execution_context.ipp
 /include/asio/impl/executor.hpp
-/include/asio/impl/executor.ipp
 /include/asio/impl/io_context.hpp
 /include/asio/impl/io_context.ipp
-/include/asio/impl/multiple_exceptions.ipp
 /include/asio/impl/prepend.hpp
 /include/asio/impl/read_at.hpp
 /include/asio/impl/read.hpp
@@ -6772,7 +6773,8 @@
 /src/examples/cpp20/coroutines/echo_server_with_deferred.cpp
 /src/examples/cpp20/coroutines/echo_server_with_deferred_default.cpp
 /src/examples/cpp20/coroutines/refactored_echo_server.cpp
-/src/examples/cpp20/coroutines/timeout.cpp
+/src/examples/cpp20/coroutines/timeout_cancel_after.cpp
+/src/examples/cpp20/coroutines/timeout_watchdog.cpp
 /src/examples/cpp20/invocation/
 /src/examples/cpp20/invocation/completion_executor.cpp
 /src/examples/cpp20/Makefile.am
@@ -7093,6 +7095,8 @@
 /src/tests/unit/experimental/parallel_group.cpp
 /src/tests/unit/experimental/promise.cpp
 /src/tests/unit/file_base.cpp
+/src/tests/unit/fwd_first.cpp
+/src/tests/unit/fwd_last.cpp
 /src/tests/unit/generic/
 /src/tests/unit/generic/basic_endpoint.cpp
 /src/tests/unit/generic/datagram_protocol.cpp

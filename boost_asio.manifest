@@ -110,6 +110,7 @@
 /boost/asio/detail/fd_set_adapter.hpp
 /boost/asio/detail/fenced_block.hpp
 /boost/asio/detail/functional.hpp
+/boost/asio/detail/futex_slim_mutex.hpp
 /boost/asio/detail/future.hpp
 /boost/asio/detail/global.hpp
 /boost/asio/detail/handler_alloc_helpers.hpp
@@ -367,8 +368,6 @@
 /boost/asio/execution/context.hpp
 /boost/asio/execution/executor.hpp
 /boost/asio/execution.hpp
-/boost/asio/execution/impl/
-/boost/asio/execution/impl/bad_executor.ipp
 /boost/asio/execution/inline_exception_handling.hpp
 /boost/asio/execution/invocable_archetype.hpp
 /boost/asio/execution/mapping.hpp
@@ -417,6 +416,7 @@
 /boost/asio/experimental/use_coro.hpp
 /boost/asio/experimental/use_promise.hpp
 /boost/asio/file_base.hpp
+/boost/asio/fwd.hpp
 /boost/asio/generic/
 /boost/asio/generic/basic_endpoint.hpp
 /boost/asio/generic/datagram_protocol.hpp
@@ -456,10 +456,8 @@
 /boost/asio/impl/execution_context.hpp
 /boost/asio/impl/execution_context.ipp
 /boost/asio/impl/executor.hpp
-/boost/asio/impl/executor.ipp
 /boost/asio/impl/io_context.hpp
 /boost/asio/impl/io_context.ipp
-/boost/asio/impl/multiple_exceptions.ipp
 /boost/asio/impl/prepend.hpp
 /boost/asio/impl/read_at.hpp
 /boost/asio/impl/read.hpp
@@ -971,7 +969,8 @@
 /doc/html/boost_asio/example/cpp20/coroutines/echo_server_with_deferred.cpp
 /doc/html/boost_asio/example/cpp20/coroutines/echo_server_with_deferred_default.cpp
 /doc/html/boost_asio/example/cpp20/coroutines/refactored_echo_server.cpp
-/doc/html/boost_asio/example/cpp20/coroutines/timeout.cpp
+/doc/html/boost_asio/example/cpp20/coroutines/timeout_cancel_after.cpp
+/doc/html/boost_asio/example/cpp20/coroutines/timeout_watchdog.cpp
 /doc/html/boost_asio/example/cpp20/invocation/
 /doc/html/boost_asio/example/cpp20/invocation/completion_executor.cpp
 /doc/html/boost_asio/example/cpp20/operations/
@@ -1447,6 +1446,7 @@
 /doc/html/boost_asio/reference/awaitable/valid.html
 /doc/html/boost_asio/reference/awaitable/value_type.html
 /doc/html/boost_asio/reference/bad_executor/
+/doc/html/boost_asio/reference/bad_executor/_bad_executor.html
 /doc/html/boost_asio/reference/bad_executor/bad_executor.html
 /doc/html/boost_asio/reference/bad_executor.html
 /doc/html/boost_asio/reference/bad_executor/what.html
@@ -3849,6 +3849,7 @@
 /doc/html/boost_asio/reference/execution__any_executor/target/overload2.html
 /doc/html/boost_asio/reference/execution__any_executor/target_type.html
 /doc/html/boost_asio/reference/execution__bad_executor/
+/doc/html/boost_asio/reference/execution__bad_executor/_bad_executor.html
 /doc/html/boost_asio/reference/execution__bad_executor/bad_executor.html
 /doc/html/boost_asio/reference/execution__bad_executor.html
 /doc/html/boost_asio/reference/execution__bad_executor/what.html
@@ -5556,6 +5557,7 @@
 /doc/html/boost_asio/reference/multiple_exceptions/
 /doc/html/boost_asio/reference/multiple_exceptions/first_exception.html
 /doc/html/boost_asio/reference/multiple_exceptions.html
+/doc/html/boost_asio/reference/multiple_exceptions/_multiple_exceptions.html
 /doc/html/boost_asio/reference/multiple_exceptions/multiple_exceptions.html
 /doc/html/boost_asio/reference/multiple_exceptions/what.html
 /doc/html/boost_asio/reference/mutable_buffer/
@@ -6774,6 +6776,7 @@
 /libs/asio/doc/overview/cpp2011.qbk
 /libs/asio/doc/overview/cpp20_coroutines.qbk
 /libs/asio/doc/overview/deferred.qbk
+/libs/asio/doc/overview_dox.txt
 /libs/asio/doc/overview/files.qbk
 /libs/asio/doc/overview/futures.qbk
 /libs/asio/doc/overview/handler_tracking.qbk
@@ -7249,7 +7252,8 @@
 /libs/asio/example/cpp20/coroutines/echo_server_with_deferred_default.cpp
 /libs/asio/example/cpp20/coroutines/Jamfile.v2
 /libs/asio/example/cpp20/coroutines/refactored_echo_server.cpp
-/libs/asio/example/cpp20/coroutines/timeout.cpp
+/libs/asio/example/cpp20/coroutines/timeout_cancel_after.cpp
+/libs/asio/example/cpp20/coroutines/timeout_watchdog.cpp
 /libs/asio/example/cpp20/invocation/
 /libs/asio/example/cpp20/invocation/completion_executor.cpp
 /libs/asio/example/cpp20/invocation/Jamfile.v2
@@ -7387,6 +7391,8 @@
 /libs/asio/test/experimental/parallel_group.cpp
 /libs/asio/test/experimental/promise.cpp
 /libs/asio/test/file_base.cpp
+/libs/asio/test/fwd_first.cpp
+/libs/asio/test/fwd_last.cpp
 /libs/asio/test/generic/
 /libs/asio/test/generic/basic_endpoint.cpp
 /libs/asio/test/generic/datagram_protocol.cpp
@@ -7869,6 +7875,7 @@
 /libs/system/test/unwrap_and_construct2.cpp
 /libs/system/test/unwrap_and_construct.cpp
 /libs/system/test/unwrap_and_invoke2.cpp
+/libs/system/test/unwrap_and_invoke3.cpp
 /libs/system/test/unwrap_and_invoke.cpp
 /libs/system/test/warnings_test.cpp
 /libs/system/test/win32_generic_test.cpp
