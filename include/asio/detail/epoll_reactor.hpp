@@ -257,6 +257,9 @@ private:
   // The interrupter is used to break a blocking epoll_wait call.
   select_interrupter interrupter_;
 
+  // The epoll fd set size tracker
+  int epoll_fd_set_cnt_;
+
   // The epoll file descriptor.
   int epoll_fd_;
 
