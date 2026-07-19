@@ -165,7 +165,7 @@ Using asio's asynchronous functionality means supplying a [link asio.overview.mo
 
 
 
-  ``''''''``void print(const std::error_code& /*e*/)
+  ``''''''``void print([[maybe_unused]] const std::error_code& e)
   ``''''''``{
   ``''''''``  std::cout << "Hello, world!" << std::endl;
   ``''''''``}
@@ -221,7 +221,7 @@ Next: [link asio.tutorial.tuttimer3 Timer.3 - Binding arguments to a completion 
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
 
-  ``''''''``void print(const std::error_code& /*e*/)
+  ``''''''``void print([[maybe_unused]] const std::error_code& e)
   ``''''''``{
   ``''''''``  std::cout << "Hello, world!" << std::endl;
   ``''''''``}
@@ -266,7 +266,7 @@ at the end of the parameter list.
 
 
 
-  ``''''''``void print(const std::error_code& /*e*/,
+  ``''''''``void print([[maybe_unused]] const std::error_code& e,
   ``''''''``    asio::steady_timer* t, int* count)
   ``''''''``{
 
@@ -349,7 +349,7 @@ Next: [link asio.tutorial.tuttimer4 Timer.4 - Using a member function as a compl
   ``''''''``#include <iostream>
   ``''''''``#include <asio.hpp>
 
-  ``''''''``void print(const std::error_code& /*e*/,
+  ``''''''``void print([[maybe_unused]] const std::error_code& e,
   ``''''''``    asio::steady_timer* t, int* count)
   ``''''''``{
   ``''''''``  if (*count < 5)
@@ -1198,8 +1198,8 @@ Any further actions for this client connection are now the responsibility of `ha
   ``''''''``  {
   ``''''''``  }
 
-  ``''''''``  void handle_write(const std::error_code& /*error*/,
-  ``''''''``      size_t /*bytes_transferred*/)
+  ``''''''``  void handle_write([[maybe_unused]] const std::error_code& error,
+  ``''''''``      [[maybe_unused]] size_t bytes_transferred)
   ``''''''``  {
   ``''''''``  }
 
@@ -1299,8 +1299,8 @@ Next: [link asio.tutorial.tutdaytime4 Daytime.4 - A synchronous UDP daytime clie
   ``''''''``  {
   ``''''''``  }
 
-  ``''''''``  void handle_write(const std::error_code& /*error*/,
-  ``''''''``      size_t /*bytes_transferred*/)
+  ``''''''``  void handle_write([[maybe_unused]] const std::error_code& error,
+  ``''''''``      [[maybe_unused]] size_t bytes_transferred)
   ``''''''``  {
   ``''''''``  }
 
@@ -1699,7 +1699,7 @@ The function `handle_receive()` will service the client request.
 
 
   ``''''''``  void handle_receive(const std::error_code& error,
-  ``''''''``      std::size_t /*bytes_transferred*/)
+  ``''''''``      [[maybe_unused]] std::size_t bytes_transferred)
   ``''''''``  {
 
 The `error` parameter contains the result of the asynchronous operation. Since we only provide the 1-byte `recv_buffer_` to contain the client's request, the 
@@ -1742,9 +1742,9 @@ The function `handle_send()` is invoked after the service request has been compl
 
 
 
-  ``''''''``  void handle_send(std::shared_ptr<std::string> /*message*/,
-  ``''''''``      const std::error_code& /*error*/,
-  ``''''''``      std::size_t /*bytes_transferred*/)
+  ``''''''``  void handle_send([[maybe_unused]] std::shared_ptr<std::string> message,
+  ``''''''``      [[maybe_unused]]const std::error_code& error,
+  ``''''''``      [[maybe_unused]] std::size_t bytes_transferred)
   ``''''''``  {
   ``''''''``  }
 
@@ -1813,7 +1813,7 @@ Next: [link asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP asynchronou
   ``''''''``  }
 
   ``''''''``  void handle_receive(const std::error_code& error,
-  ``''''''``      std::size_t /*bytes_transferred*/)
+  ``''''''``      [[maybe_unused]] std::size_t bytes_transferred)
   ``''''''``  {
   ``''''''``    if (!error)
   ``''''''``    {
@@ -1829,9 +1829,9 @@ Next: [link asio.tutorial.tutdaytime7 Daytime.7 - A combined TCP/UDP asynchronou
   ``''''''``    }
   ``''''''``  }
 
-  ``''''''``  void handle_send(std::shared_ptr<std::string> /*message*/,
-  ``''''''``      const std::error_code& /*error*/,
-  ``''''''``      std::size_t /*bytes_transferred*/)
+  ``''''''``  void handle_send([[maybe_unused]] std::shared_ptr<std::string> message,
+  ``''''''``      [[maybe_unused]] const std::error_code& error,
+  ``''''''``      [[maybe_unused]] std::size_t bytes_transferred)
   ``''''''``  {
   ``''''''``  }
 
@@ -2019,7 +2019,7 @@ Similarly, this next class is taken from the [link asio.tutorial.tutdaytime6 pre
   ``''''''``    }
   ``''''''``  }
 
-  ``''''''``  void handle_send(std::shared_ptr<std::string> /*message*/)
+  ``''''''``  void handle_send([[maybe_unused]] std::shared_ptr<std::string> message)
   ``''''''``  {
   ``''''''``  }
 
@@ -2173,7 +2173,7 @@ Previous: [link asio.tutorial.tutdaytime6 Daytime.6 - An asynchronous UDP daytim
   ``''''''``    }
   ``''''''``  }
 
-  ``''''''``  void handle_send(std::shared_ptr<std::string> /*message*/)
+  ``''''''``  void handle_send([[maybe_unused]] std::shared_ptr<std::string> message)
   ``''''''``  {
   ``''''''``  }
 
