@@ -122,6 +122,13 @@ public:
     return descriptor_service_.native_handle(impl);
   }
 
+  // Release ownership of the native serial port representation.
+  native_handle_type release(implementation_type& impl,
+      asio::error_code& ec)
+  {
+    return descriptor_service_.release(impl, ec);
+  }
+
   // Cancel all operations associated with the serial port.
   asio::error_code cancel(implementation_type& impl,
       asio::error_code& ec)
