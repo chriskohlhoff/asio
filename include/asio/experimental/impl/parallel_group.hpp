@@ -375,6 +375,12 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
         asio::detail::thread_info_base::parallel_group_tag>(),
       std::move(cancellation_condition), std::move(handler));
 
+  // Register a handler with the user's completion handler's cancellation slot.
+  if (slot.is_connected())
+    slot.template emplace<
+      parallel_group_cancellation_handler<
+        Condition, Handler, Ops...>>(state);
+
   // Initiate each individual operation in the group.
   int fold[] = { 0,
     ( parallel_group_op_launcher<I, Ops>::launch(std::get<I>(ops), state),
@@ -387,12 +393,6 @@ void parallel_group_launch(Condition cancellation_condition, Handler handler,
   if ((state->cancellations_requested_ -= sizeof...(Ops)) > 0)
     for (auto& signal : state->cancellation_signals_)
       signal.emit(state->cancel_type_);
-
-  // Register a handler with the user's completion handler's cancellation slot.
-  if (slot.is_connected())
-    slot.template emplace<
-      parallel_group_cancellation_handler<
-        Condition, Handler, Ops...>>(state);
 }
 
 // Proxy completion handler for the ranged group of parallel operations.
@@ -708,6 +708,12 @@ void ranged_parallel_group_launch(Condition cancellation_condition,
       std::move(cancellation_condition),
       std::move(handler), range.size(), allocator);
 
+  // Register a handler with the user's completion handler's cancellation slot.
+  if (slot.is_connected())
+    slot.template emplace<
+      ranged_parallel_group_cancellation_handler<
+        Condition, Handler, op_type, Allocator>>(state);
+
   std::size_t idx = 0;
   std::size_t range_size = range.size();
   for (auto&& op : std::forward<Range>(range))
@@ -725,12 +731,6 @@ void ranged_parallel_group_launch(Condition cancellation_condition,
   if ((state->cancellations_requested_ -= range_size) > 0)
     for (auto& signal : state->cancellation_signals_)
       signal.emit(state->cancel_type_);
-
-  // Register a handler with the user's completion handler's cancellation slot.
-  if (slot.is_connected())
-    slot.template emplace<
-      ranged_parallel_group_cancellation_handler<
-        Condition, Handler, op_type, Allocator>>(state);
 }
 
 } // namespace detail
