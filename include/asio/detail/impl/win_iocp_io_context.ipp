@@ -30,6 +30,10 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+#include <winternl.h>
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+
 namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
@@ -60,6 +64,7 @@ struct win_iocp_io_context::work_finished_on_block_exit
   win_iocp_io_context* io_context_;
 };
 
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 struct win_iocp_io_context::timer_thread_function
 {
   void operator()()
@@ -78,6 +83,7 @@ struct win_iocp_io_context::timer_thread_function
 
   win_iocp_io_context* io_context_;
 };
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 
 win_iocp_io_context::win_iocp_io_context(
     asio::execution_context& ctx, bool own_thread)
@@ -103,6 +109,51 @@ win_iocp_io_context::win_iocp_io_context(
         asio::error::get_system_category());
     asio::detail::throw_error(ec, "iocp");
   }
+
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+  if (FARPROC nt_create_wait_completion_packet_ptr = ::GetProcAddress(
+          ::GetModuleHandleA("NTDLL"), "NtCreateWaitCompletionPacket"))
+  {
+    NtCreateWaitCompletionPacket_ =
+        reinterpret_cast<NtCreateWaitCompletionPacket_fn>(
+            reinterpret_cast<void*>(nt_create_wait_completion_packet_ptr));
+  }
+  else
+  {
+    DWORD last_error = ::GetLastError();
+    asio::error_code ec(last_error,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "timer");
+  }
+
+  if (FARPROC nt_associate_wait_completion_packet_ptr = ::GetProcAddress(
+          ::GetModuleHandleA("NTDLL"), "NtAssociateWaitCompletionPacket")) {
+    NtAssociateWaitCompletionPacket_ =
+        reinterpret_cast<NtAssociateWaitCompletionPacket_fn>(
+            reinterpret_cast<void*>(nt_associate_wait_completion_packet_ptr));
+  }
+  else
+  {
+    DWORD last_error = ::GetLastError();
+    asio::error_code ec(last_error,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "timer");
+  }
+
+  if (FARPROC rtl_nt_status_to_dos_error_ptr = ::GetProcAddress(
+          ::GetModuleHandleA("NTDLL"), "RtlNtStatusToDosError")) {
+    RtlNtStatusToDosError_ =
+        reinterpret_cast<RtlNtStatusToDosError_fn>(
+            reinterpret_cast<void*>(rtl_nt_status_to_dos_error_ptr));
+  }
+  else
+  {
+    DWORD last_error = ::GetLastError();
+    asio::error_code ec(last_error,
+        asio::error::get_system_category());
+    asio::detail::throw_error(ec, "timer");
+  }
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 
   if (own_thread)
   {
@@ -150,12 +201,14 @@ void win_iocp_io_context::shutdown()
 {
   ::InterlockedExchange(&shutdown_, 1);
 
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   if (timer_thread_.joinable())
   {
     LARGE_INTEGER timeout;
     timeout.QuadPart = 1;
     ::SetWaitableTimer(waitable_timer_.handle, &timeout, 1, 0, 0, FALSE);
   }
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 
   if (thread_.joinable())
   {
@@ -193,7 +246,9 @@ void win_iocp_io_context::shutdown()
     }
   }
 
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   timer_thread_.join();
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 }
 
 asio::error_code win_iocp_io_context::register_handle(
@@ -521,6 +576,10 @@ size_t win_iocp_io_context::do_one(DWORD msec,
     {
       // We have been woken up to try to acquire responsibility for dispatching
       // timers and completed operations.
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+      mutex::scoped_lock lock(dispatch_mutex_);
+      ::InterlockedExchange(&dispatch_required_, 1);
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
     }
     else
     {
@@ -576,9 +635,26 @@ void win_iocp_io_context::do_add_timer_queue(timer_queue_base& queue)
 
   timer_queues_.insert(&queue);
 
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+  if (!iocp_wait_handle_.handle)
+  {
+    NTSTATUS status = NtCreateWaitCompletionPacket_(&iocp_wait_handle_.handle, GENERIC_ALL, 0);
+    if (!NT_SUCCESS(status) || (iocp_wait_handle_.handle == 0)) {
+      DWORD win32_error = RtlNtStatusToDosError_(status);
+      asio::error_code ec(win32_error, asio::error::get_system_category());
+      asio::detail::throw_error(ec, "timer");
+    }
+  }
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+
   if (!waitable_timer_.handle)
   {
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+    waitable_timer_.handle = ::CreateWaitableTimerExW(
+          0, 0, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, SYNCHRONIZE | TIMER_MODIFY_STATE);
+#else
     waitable_timer_.handle = ::CreateWaitableTimer(0, FALSE, 0);
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
     if (waitable_timer_.handle == 0)
     {
       DWORD last_error = ::GetLastError();
@@ -592,13 +668,25 @@ void win_iocp_io_context::do_add_timer_queue(timer_queue_base& queue)
     timeout.QuadPart *= 10;
     ::SetWaitableTimer(waitable_timer_.handle,
         &timeout, max_timeout_msec, 0, 0, FALSE);
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+    NTSTATUS status = NtAssociateWaitCompletionPacket_(iocp_wait_handle_.handle, iocp_.handle,
+                                                       waitable_timer_.handle, (PVOID)wake_for_dispatch,
+                                                       0, 0, 0, 0);
+    if (!NT_SUCCESS(status)) {
+      DWORD win32_error = RtlNtStatusToDosError_(status);
+      asio::error_code ec(win32_error, asio::error::get_system_category());
+      asio::detail::throw_error(ec, "timer");
+    }
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   }
 
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   if (!timer_thread_.joinable())
   {
     timer_thread_function thread_function = { this };
     timer_thread_ = thread(thread_function, 65536);
   }
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 }
 
 void win_iocp_io_context::do_remove_timer_queue(timer_queue_base& queue)
@@ -610,8 +698,11 @@ void win_iocp_io_context::do_remove_timer_queue(timer_queue_base& queue)
 
 void win_iocp_io_context::update_timeout()
 {
+
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   if (timer_thread_.joinable())
   {
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
     // There's no point updating the waitable timer if the new timeout period
     // exceeds the maximum timeout. In that case, we might as well wait for the
     // existing period of the timer to expire.
@@ -623,8 +714,15 @@ void win_iocp_io_context::update_timeout()
       timeout.QuadPart *= 10;
       ::SetWaitableTimer(waitable_timer_.handle,
           &timeout, max_timeout_msec, 0, 0, FALSE);
+#if defined(ASIO_HAS_IOCP_HIRES_TIMERS)
+      NtAssociateWaitCompletionPacket_(iocp_wait_handle_.handle, iocp_.handle,
+                                       waitable_timer_.handle,
+                                       (PVOID)wake_for_dispatch, 0, 0, 0, 0);
+#endif // defined(ASIO_HAS_IOCP_HIRES_TIMERS)
     }
+#if !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
   }
+#endif // !defined(ASIO_HAS_IOCP_HIRES_TIMERS)
 }
 
 } // namespace detail
