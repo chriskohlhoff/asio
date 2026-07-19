@@ -11,12 +11,12 @@
 
 The following platform and compiler combinations are regularly tested:
 
-* Linux using g++ 4.6 or later
-* Linux using clang 3.4 or later
+* Linux using g++ 7 or later
+* Linux using clang 6 or later
 * FreeBSD using g++ 9 or later
 * macOS using Xcode 10 or later
-* Win32 using Visual C++ 11.0 (Visual Studio 2012) or later
-* Win64 using Visual C++ 11.0 (Visual Studio 2012) or later
+* Win32 using Visual C++ 14.1 (Visual Studio 2017) or later
+* Win64 using Visual C++ 14.1 (Visual Studio 2017) or later
 
 The following platforms may also work:
 
