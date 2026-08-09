@@ -1698,12 +1698,30 @@
 #define ASIO_DETAIL_CAT_(a, b) a ## b
 #define ASIO_DETAIL_CAT(a, b) ASIO_DETAIL_CAT_(a, b)
 
-// Version tags for user-enabled features with no auto-detection in this file.
+// Handler tracking backends.
+#if defined(ASIO_ENABLE_HANDLER_TRACKING) \
+  && !defined(ASIO_CUSTOM_HANDLER_TRACKING)
+# define ASIO_HANDLER_TRACKING_VALUE_perfetto 1
+# if ASIO_DETAIL_CAT( \
+    ASIO_HANDLER_TRACKING_VALUE_, \
+    ASIO_ENABLE_HANDLER_TRACKING)
+#  define ASIO_PERFETTO_HANDLER_TRACKING 1
+# endif // ASIO_DETAIL_CAT(
+        //   ASIO_HANDLER_TRACKING_VALUE_,
+        //   ASIO_ENABLE_HANDLER_TRACKING)
+# undef ASIO_HANDLER_TRACKING_VALUE_perfetto
+#endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
+       //   && !defined(ASIO_CUSTOM_HANDLER_TRACKING)
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
 # define ASIO_VERSION_TAG_r r
 #else // defined(ASIO_ENABLE_HANDLER_TRACKING)
 # define ASIO_VERSION_TAG_r
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
+#if defined(ASIO_PERFETTO_HANDLER_TRACKING)
+# define ASIO_VERSION_TAG_s s
+#else // defined(ASIO_PERFETTO_HANDLER_TRACKING)
+# define ASIO_VERSION_TAG_s
+#endif // defined(ASIO_PERFETTO_HANDLER_TRACKING)
 
 // Automatic version namespace v<ASIO_VERSION>_<tags>.
 #if defined(ASIO_ENABLE_VERSION_NAMESPACE)
@@ -1729,7 +1747,8 @@
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_o, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_p, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_q, \
-  ASIO_VERSION_TAG_r))))))))))))))))))))
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_r, \
+  ASIO_VERSION_TAG_s)))))))))))))))))))))
 # endif // !defined(ASIO_VERSION_NAMESPACE)
 #endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
 

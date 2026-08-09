@@ -9,8 +9,13 @@
 
 To aid in debugging asynchronous programs, Asio provides support for handler
 tracking. When enabled by defining `ASIO_ENABLE_HANDLER_TRACKING`, Asio
-writes debugging output to the standard error stream. The output records
-asynchronous operations and the relationships between their handlers.
+writes debugging output that records asynchronous operations and the
+relationships between their handlers. By default this output is a text format
+written to the standard error stream, as described below. Alternatively,
+defining `ASIO_ENABLE_HANDLER_TRACKING=perfetto` selects a backend that
+writes the Perfetto trace file format instead. See [link
+asio.overview.core.handler_tracking.perfetto_trace_format Perfetto Trace
+Format] below.
 
 [teletype]
 This feature is useful when debugging and you need to know how your
@@ -167,7 +172,146 @@ The handler tracking output may be post-processed using the included
 (requires the GraphViz tool [^dot]).
 [c++]
 
-[heading Custom Tracking]
+[heading Perfetto Trace Format]
+
+Defining `ASIO_ENABLE_HANDLER_TRACKING=perfetto` selects a backend that
+writes the Perfetto trace file format, viewable at
+[@https://ui.perfetto.dev ui.perfetto.dev]. This backend has no dependency on
+the Perfetto SDK, protobuf, or any other library or tool.
+
+Each completion handler invocation appears as a slice on the thread that runs
+it, titled after the operation that created it (for example,
+[^socket@0x....async_send completion]). These slices correspond to the handler
+nodes produced by the [^handlerviz.pl] tool. Everything the handler does while
+running, such as starting further operations, nests within its slice. The point
+at which an operation is created is recorded as an instant, and a flow arrow
+links that creation point to the resulting invocation slice. Any system calls
+performed for the operation (such as non-blocking reads and writes) appear as
+further instants on the same flow, between the creation and the invocation.
+
+Each call to an execution context's `run`, `run_one`, `poll` or `poll_one`
+function appears as an enclosing slice on the calling thread, so that the
+handler invocations it dispatches nest within it. Reactor readiness and
+registration events are also recorded as instants on the thread that observes
+them. Each `ASIO_HANDLER_LOCATION` is recorded as its own slice, named after the
+function and annotated with its source file and line. Because these nest within
+the running handler, the call sites leading to an operation form a call tree on
+the thread's timeline. Completion handler arguments (such as the error code and
+bytes transferred) are attached to the invocation slice as debug annotations.
+
+The backend selection has the following precedence: a user-supplied
+`ASIO_CUSTOM_HANDLER_TRACKING` header (see [link
+asio.overview.core.handler_tracking.custom_tracking Custom Tracking]) always
+takes priority. Otherwise `ASIO_ENABLE_HANDLER_TRACKING=perfetto`
+selects the Perfetto backend, and any other enabled value selects the
+default stderr text backend.
+
+[heading:perfetto_configuration Perfetto Configuration]
+
+The Perfetto backend may be configured either through environment variables or
+from code. The environment variables are:
+
+[table
+  [[Variable] [Description]]
+  [
+    [`ASIO_PERFETTO_OUTPUT_PATH`]
+    [The path of the trace file to write. Defaults to
+    [^asio_handler_tracking.<pid>.pftrace] in the current directory.]
+  ]
+  [
+    [`ASIO_PERFETTO_RECLAIM_IDLE_MS`]
+    [How long, in milliseconds, a thread's encode buffer may sit idle before the
+    writer reclaims it: its partial contents are flushed and the buffer returns
+    to a shared pool for other threads to lease. Defaults to 100. This bounds
+    memory to roughly the peak count of concurrently-active threads rather than
+    the total ever created, which matters for programs with many transient
+    threads. Set to 0 to disable reclamation (each active thread keeps its
+    buffer). Reclamation is race-free with respect to a resuming producer.]
+  ]
+  [
+    [`ASIO_PERFETTO_FLUSH_INTERVAL_MS`]
+    [How long, in milliseconds, records may sit in a thread's encode buffer
+    before it is handed to the writer, even when the buffer is not yet full.
+    Defaults to 250. This bounds the trace tail lost on an abnormal termination
+    (a crash or a hard exit that skips the atexit flush) to roughly one interval
+    of each active thread's most recent records. Set to 0 to disable periodic
+    flushing, in which case a buffer reaches the file only when it fills or at
+    normal exit.]
+  ]
+  [
+    [`ASIO_PERFETTO_WRITER_IDLE_MS`]
+    [The longest the background writer thread sleeps between polls once tracing
+    has gone quiet, in milliseconds. Defaults to 1. Larger values lower the idle
+    cost of the writer thread at the expense of latency in flushing the last
+    buffered events after a burst of activity. A value of 0 makes the writer
+    busy-poll, spinning on one core for the lowest drain latency. This is best
+    paired with `ASIO_PERFETTO_WRITER_CPU` to pin it to a dedicated
+    core.]
+  ]
+  [
+    [`ASIO_PERFETTO_WRITER_CPU`]
+    [If set to a core number, the background writer thread is pinned to that
+    core. Unset by default (the thread is left unpinned). Pinning is best effort
+    and has no effect on platforms that do not support it.]
+  ]
+  [
+    [`ASIO_PERFETTO_MAX_FILE_SIZE`]
+    [If set to a non-zero number of bytes, output is rotated across multiple
+    files: the writer starts a new segment once the current one reaches this
+    size (checked at record boundaries, so packets are never split). Unset by
+    default, in which case a single file is written. The first segment keeps the
+    output path. Later segments are named [^<path>.1], [^<path>.2], and so on.
+    Each segment is independently openable, though an operation that straddles a
+    rotation boundary is split between the adjacent segments.]
+  ]
+  [
+    [`ASIO_PERFETTO_MAX_FILES`]
+    [When rotation is enabled, the maximum number of segments to retain. The
+    writer unlinks the oldest as it rolls over. Defaults to 0, which keeps every
+    segment.]
+  ]
+]
+
+[heading Configuring From Code]
+
+The same settings may be supplied programmatically, for applications that prefer
+not to depend on the environment. Populate a `perfetto_writer::config` and pass
+it to `perfetto_writer::init` before the first execution context (such as an
+`io_context` or `thread_pool`) is constructed:
+
+  namespace pw = asio::detail::perfetto_writer;
+
+  pw::config cfg;
+  cfg.output_path = "trace.pftrace";
+  cfg.writer_cpu = 3;    // pin the writer thread
+  pw::init(cfg);
+
+The `config` fields mirror the environment variables above (`output_path`,
+`writer_idle_sleep_ns`, `writer_cpu`, `max_file_size`, `max_files`,
+`reclaim_idle_ns` and `flush_interval_ns`), except that `writer_idle_sleep_ns`,
+`reclaim_idle_ns` and `flush_interval_ns` are expressed in nanoseconds rather
+than milliseconds. A default-constructed `config` carries the same defaults as
+when no environment variable is set, and
+`perfetto_writer::config::from_env()` returns one populated from the environment
+variables. That is the configuration used when `init` is called without an
+explicit configuration. (`perfetto_handler_tracking::init` and
+`perfetto_handler_tracking::config` remain available as forwarders for code that
+prefers the handler-tracking name.)
+
+The tracking state is created when the first execution context is constructed, so
+`init` must be called before that point to take effect. Once the state exists, a
+later `init` call has no effect.
+
+[heading Merging Traces From Multiple Processes]
+
+Every trace uses per-process-unique identifier spaces, so traces written by
+different processes can be merged without collision. The files may be combined
+either by plain byte concatenation or by collecting them into a ZIP archive, and
+the result opened as a single trace. Each process appears as a separately
+labelled process with its own threads, and no flow links are drawn between
+processes.
+
+[heading:custom_tracking Custom Tracking]
 
 Handling tracking may be customised by defining the
 `ASIO_CUSTOM_HANDLER_TRACKING` macro to the name of a header file
@@ -270,6 +414,13 @@ preprocessor macros:
     parenthesised function argument list containing the tracked handler, the
     operation name, the error code produced by the operation, and (optionally)
     the number of bytes transferred.]
+  ]
+  [
+    [`ASIO_HANDLER_SCHEDULER_RUN(args)`]
+    [Optional. A variable declaration used to record an execution context run
+    call for its duration. `args` is a parenthesised argument list containing
+    the name of the run function. If it is not defined, it defaults to doing
+    nothing.]
   ]
 ]
 

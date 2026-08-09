@@ -147,6 +147,25 @@ jobs:
             optim-level: -O0
             handler-tracking: -DASIO_ENABLE_HANDLER_TRACKING
           #
+          # Linux / g++-12 / -O0 / standalone / perfetto handler tracking
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04
+            compiler: g++-12
+            cxx-std: c++17
+            optim-level: -O0
+            handler-tracking: -DASIO_ENABLE_HANDLER_TRACKING=perfetto
+          #
+          # Linux / g++-12 / -O0 / standalone / separate compilation / perfetto handler tracking
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04
+            compiler: g++-12
+            cxx-std: c++17
+            separate-compilation: --enable-separate-compilation
+            optim-level: -O0
+            handler-tracking: -DASIO_ENABLE_HANDLER_TRACKING=perfetto
+          #
           # Linux / g++-10 / -O0 / standalone / separate compilation / epoll disabled
           #
           - build-type: full
@@ -357,3 +376,36 @@ jobs:
     - name: Build
       if: startsWith(matrix.build-type, 'full')
       run: make && make check
+
+  handler-tracking:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install compiler
+      run: sudo apt-get install -y g++-12
+    - name: Build exerciser with the perfetto backend
+      run: |
+        g++-12 -std=c++17 -Iinclude -pthread \
+          -DASIO_STANDALONE -DASIO_ENABLE_HANDLER_TRACKING=perfetto \
+          src/tests/handler_tracking/exercise.cpp -o exercise
+    - name: Generate trace
+      run: ASIO_PERFETTO_OUTPUT_PATH=trace.pftrace ./exercise
+    - name: Install perfetto trace_processor
+      run: pip install --user perfetto
+    - name: Validate trace
+      run: python3 src/tests/handler_tracking/validate_perfetto.py trace.pftrace
+    - name: Two-process merge
+      run: |
+        ASIO_PERFETTO_OUTPUT_PATH=p1.pftrace ./exercise
+        ASIO_PERFETTO_OUTPUT_PATH=p2.pftrace ./exercise
+        cat p1.pftrace p2.pftrace > merged.pftrace
+        python3 src/tests/handler_tracking/validate_perfetto.py merged.pftrace
+    - name: Build exerciser with the stderr backend
+      run: |
+        g++-12 -std=c++17 -Iinclude -pthread \
+          -DASIO_STANDALONE -DASIO_ENABLE_HANDLER_TRACKING \
+          src/tests/handler_tracking/exercise.cpp -o exercise_stderr
+    - name: Validate stderr output
+      run: |
+        ./exercise_stderr 2> stderr.log
+        python3 src/tests/handler_tracking/validate_stderr.py stderr.log

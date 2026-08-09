@@ -22,5 +22,6 @@ test-driver
 *.gz
 *.bz2
 *.zip
+__pycache__/
 /*.cpp
 /*.hpp

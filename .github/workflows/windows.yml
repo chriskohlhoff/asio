@@ -32,6 +32,12 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
 
+      - name: Compile perfetto backend (MSVC, header-only)
+        if: matrix.toolset == 'msvc'
+        shell: cmd
+        run: |
+          cl /nologo /c /EHsc /std:c++17 /D_WIN32_WINNT=0x0A00 /DASIO_STANDALONE /DASIO_ENABLE_HANDLER_TRACKING=perfetto /Iinclude src\tests\handler_tracking\exercise.cpp || exit /b 1
+
       - name: Build and test (MSVC)
         if: matrix.toolset == 'msvc'
         shell: cmd

@@ -221,6 +221,8 @@ size_t win_iocp_io_context::run(asio::error_code& ec)
     return 0;
   }
 
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run"));
+
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
@@ -239,6 +241,8 @@ size_t win_iocp_io_context::run_one(asio::error_code& ec)
     ec = asio::error_code();
     return 0;
   }
+
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run_one"));
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
@@ -270,6 +274,8 @@ size_t win_iocp_io_context::poll(asio::error_code& ec)
     return 0;
   }
 
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll"));
+
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);
 
@@ -288,6 +294,8 @@ size_t win_iocp_io_context::poll_one(asio::error_code& ec)
     ec = asio::error_code();
     return 0;
   }
+
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll_one"));
 
   win_iocp_thread_info this_thread;
   thread_call_stack::context ctx(this, this_thread);

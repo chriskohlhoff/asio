@@ -210,6 +210,8 @@ std::size_t scheduler::run(asio::error_code& ec)
     return 0;
   }
 
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run"));
+
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
   thread_call_stack::context ctx(this, this_thread);
@@ -231,6 +233,8 @@ std::size_t scheduler::run_one(asio::error_code& ec)
     stop();
     return 0;
   }
+
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "run_one"));
 
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
@@ -268,6 +272,8 @@ std::size_t scheduler::poll(asio::error_code& ec)
     return 0;
   }
 
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll"));
+
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;
   thread_call_stack::context ctx(this, this_thread);
@@ -298,6 +304,8 @@ std::size_t scheduler::poll_one(asio::error_code& ec)
     stop();
     return 0;
   }
+
+  ASIO_HANDLER_SCHEDULER_RUN((&this->context(), "poll_one"));
 
   thread_info this_thread;
   this_thread.private_outstanding_work = 0;

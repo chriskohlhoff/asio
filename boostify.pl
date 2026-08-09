@@ -40,7 +40,7 @@ sub source_contains_asio_thread_usage
       close($input);
       return 1;
     }
-    elsif ($line =~ /^ *thread /)
+    elsif ($line =~ /^ *thread / && $line !~ /^ *thread =/)
     {
       close($input);
       return 1;
@@ -274,7 +274,7 @@ sub copy_source_file
       }
       print_line($output, $line, $from, $lineno);
     }
-    elsif ($line =~ /^( *)thread( .*)$/ && !$is_qbk)
+    elsif ($line =~ /^( *)thread( .*)$/ && !$is_qbk && $line !~ /^ *thread =/)
     {
       if ($is_test)
       {

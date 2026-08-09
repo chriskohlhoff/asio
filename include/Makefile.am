@@ -137,7 +137,6 @@ nobase_include_HEADERS = \
 	asio/detail/impl/epoll_reactor.hpp \
 	asio/detail/impl/epoll_reactor.ipp \
 	asio/detail/impl/eventfd_select_interrupter.ipp \
-	asio/detail/impl/handler_tracking.ipp \
 	asio/detail/impl/io_uring_descriptor_service.ipp \
 	asio/detail/impl/io_uring_file_service.ipp \
 	asio/detail/impl/io_uring_service.hpp \
@@ -146,6 +145,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/kqueue_reactor.hpp \
 	asio/detail/impl/kqueue_reactor.ipp \
 	asio/detail/impl/null_event.ipp \
+	asio/detail/impl/perfetto_handler_tracking.ipp \
+	asio/detail/impl/perfetto_writer.ipp \
 	asio/detail/impl/pipe_select_interrupter.ipp \
 	asio/detail/impl/posix_event.ipp \
 	asio/detail/impl/posix_mutex.ipp \
@@ -164,6 +165,7 @@ nobase_include_HEADERS = \
 	asio/detail/impl/signal_set_service.ipp \
 	asio/detail/impl/socket_ops.ipp \
 	asio/detail/impl/socket_select_interrupter.ipp \
+	asio/detail/impl/stderr_handler_tracking.ipp \
 	asio/detail/impl/strand_executor_service.hpp \
 	asio/detail/impl/strand_executor_service.ipp \
 	asio/detail/impl/strand_service.hpp \
@@ -237,6 +239,9 @@ nobase_include_HEADERS = \
 	asio/detail/operation.hpp \
 	asio/detail/op_queue.hpp \
 	asio/detail/pipe_select_interrupter.hpp \
+	asio/detail/perfetto_handler_tracking.hpp \
+	asio/detail/perfetto_protocol.hpp \
+	asio/detail/perfetto_writer.hpp \
 	asio/detail/pop_options.hpp \
 	asio/detail/posix_event.hpp \
 	asio/detail/posix_fd_set_adapter.hpp \
@@ -299,6 +304,7 @@ nobase_include_HEADERS = \
 	asio/detail/std_mutex.hpp \
 	asio/detail/std_static_mutex.hpp \
 	asio/detail/std_thread.hpp \
+	asio/detail/stderr_handler_tracking.hpp \
 	asio/detail/strand_executor_service.hpp \
 	asio/detail/strand_service.hpp \
 	asio/detail/string_view.hpp \
