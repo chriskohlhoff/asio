@@ -21,6 +21,17 @@
 
 #include "asio/detail/push_options.hpp"
 
+#if defined(__has_feature)
+# if __has_feature(thread_sanitizer)
+#  include "sanitizer/tsan_interface.h"
+#  define USE_TSAN_SEMANTICS 1
+# else
+#  define USE_TSAN_SEMANTICS 0
+# endif
+#else
+# define USE_TSAN_SEMANTICS 0
+#endif
+
 namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
@@ -40,14 +51,27 @@ public:
   // Constructor for a full fenced block.
   explicit std_fenced_block(full_t)
   {
+#if USE_TSAN_SEMANTICS
+    __tsan_acquire(&tsan);
+#else
     std::atomic_thread_fence(std::memory_order_acquire);
+#endif
   }
 
   // Destructor.
   ~std_fenced_block()
   {
+#if USE_TSAN_SEMANTICS
+    __tsan_release(&tsan);
+#else
     std::atomic_thread_fence(std::memory_order_release);
+#endif
   }
+
+#if USE_TSAN_SEMANTICS
+private:
+    int tsan;
+#endif
 };
 
 } // namespace detail
