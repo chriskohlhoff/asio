@@ -124,7 +124,7 @@ public:
     if (has_pending_trigger_)
     {
       trigger_cancellation_signal_.emit(cancellation_type::terminal);
-      release();
+      complete();
     }
     else
     {
@@ -143,7 +143,10 @@ public:
     else
     {
       cancellation_signal_.emit(cancellation_type_);
-      release();
+      if (has_payload_)
+        complete();
+      else
+        release();
     }
   }
 
