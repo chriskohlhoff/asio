@@ -63,11 +63,7 @@ struct is_work_dispatcher_required : true_type
 template <typename Handler, typename Executor>
 struct is_work_dispatcher_required<empty_work_function, Handler, Executor,
     enable_if_t<
-      is_same<
-        typename associated_executor<Handler,
-          Executor>::asio_associated_executor_is_unspecialised,
-        void
-      >::value
+      !has_associated_executor<Handler, Executor>::value
     >> : false_type
 {
 };

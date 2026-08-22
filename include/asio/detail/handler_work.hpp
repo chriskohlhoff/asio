@@ -443,11 +443,7 @@ template <typename Handler, typename IoExecutor>
 class handler_work<
     Handler, IoExecutor,
     enable_if_t<
-      is_same<
-        typename associated_executor<Handler,
-          IoExecutor>::asio_associated_executor_is_unspecialised,
-        void
-      >::value
+      !has_associated_executor<Handler, IoExecutor>::value
     >
   > : handler_work_base<IoExecutor>
 {

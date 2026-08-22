@@ -853,11 +853,7 @@ private:
 template <typename Handler, typename Executor>
 class spawn_cancellation_handler<Handler, Executor,
     enable_if_t<
-      is_same<
-        typename associated_executor<Handler,
-          Executor>::asio_associated_executor_is_unspecialised,
-        void
-      >::value
+      !has_associated_executor<Handler, Executor>::value
     >>
 {
 public:
