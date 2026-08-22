@@ -1,0 +1,260 @@
+[/
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:eager Eager Operations]
+
+The [link asio.reference.eager `eager`] completion token starts an asynchronous
+operation immediately, and returns a handle whose result is awaited later. This
+allows other work to proceed while the operation runs:
+
+  auto op = asio::async_read(
+      stream, asio::buffer(my_buffer),
+      asio::eager);
+
+  ... do other work while the read is going on ...
+
+  std::move(op)(
+      [](asio::error_code ec, std::size_t bytes_read)
+      {
+        ...
+      });
+
+The handle is move-only, and waiting consumes it, so the call operator must be
+invoked on an rvalue. Any completion token may be used to await the result:
+
+  std::future<std::size_t> f = std::move(op)(asio::use_future);
+
+or, within a C++20 coroutine:
+
+  auto [ec, n] = co_await std::move(op)(
+      asio::as_tuple(asio::use_awaitable));
+
+Within a C++20 coroutine the token may be omitted entirely, as for any other
+asynchronous operation:
+
+  std::size_t n = co_await std::move(op);
+
+An eager operation is useful when the operation must be in flight while other
+work proceeds:
+
+  auto op = asio::async_read(stream, asio::buffer(my_buffer), asio::eager);
+
+  co_await other.async_wait(asio::use_awaitable);
+
+  auto [ec, n] = co_await std::move(op)(asio::as_tuple(asio::use_awaitable));
+
+Written as a single expression, with nothing in between, `eager` behaves as
+[link asio.overview.composition.deferred `deferred`] does, but allocates shared
+state to do it. It is also useful where operations of different kinds must
+share a type, as described below.
+
+[heading Type Erasure]
+
+An eager operation's type records the executor and the completion signatures,
+and nothing else. The initiation and its arguments are held in the shared
+state rather than in the type. Operations of different kinds share a single
+type:
+
+  typedef asio::eager_async_operation<
+      void(asio::error_code, std::size_t)> read_operation;
+
+  std::vector<read_operation> operations;
+  operations.push_back(a.async_read_some(asio::buffer(buf1), asio::eager));
+  operations.push_back(
+      asio::async_read(b, asio::buffer(buf2, 4), asio::eager));
+
+A leaf read and a composed read are distinct operations, yet both are stored
+here as the same type. This makes it possible to keep in-flight operations in
+a container, to pass one across an interface that is not a template, or to
+return one from a virtual function.
+
+A [link asio.overview.composition.deferred `deferred`] operation cannot do
+this. Its type is
+`deferred_async_operation<Signature, Initiation, InitArgs...>`, which encodes
+the initiation and every initiation argument, so each operation is a distinct
+type.
+
+The executor is part of the type, so operations share a type when their I/O
+objects share an executor type. Adapting an object to supply a default
+completion token does not affect this. Such an executor differs from the one
+it adapts only in the token it carries, and is not recorded in the type. An
+object adapted with any token's `as_default_on_t` therefore yields the same
+type as an unadapted one:
+
+  asio::eager_t<>::as_default_on_t<tcp::socket> c(my_context);
+
+  operations.push_back(c.async_read_some(asio::buffer(buf3)));
+
+An executor that alters behaviour rather than carrying a default token, such
+as a [link asio.reference.strand `strand`], is recorded in the type, as it
+determines where the operation completes, as is a concrete executor type such
+as `io_context::executor_type`. Operations on such objects are named using
+[link asio.reference.basic_eager_async_operation `basic_eager_async_operation`].
+
+They may still be held alongside the others, as an eager operation converts to
+one whose executor type its own converts to. The shared state does not depend
+on the executor, so the conversion moves the operation rather than copying or
+reallocating it:
+
+  asio::basic_stream_socket<tcp, asio::io_context::executor_type>
+      d(my_context);
+
+  operations.push_back(d.async_read_some(asio::buffer(buf4), asio::eager));
+
+Here the operation's executor is `io_context::executor_type`, which converts
+to `any_io_executor`, so the operation converts to `read_operation`.
+
+[heading Piping]
+
+Eager operations support piping. Since the handle is a value, a stage may be
+applied at the point of awaiting rather than at the point of starting, which
+bounds the remaining wait rather than the operation as a whole. A deferred
+operation cannot express this, as it has not started yet:
+
+  auto op = asio::async_read(stream, asio::buffer(my_buffer), asio::eager);
+
+  co_await other.async_wait(asio::use_awaitable);
+
+  // Five seconds from here, not from where the read started.
+  auto [ec, n] = co_await (std::move(op)
+      | asio::cancel_after(std::chrono::seconds(5),
+          asio::as_tuple(asio::use_awaitable)));
+
+The parentheses around the piped expression are required, as the operand of
+`co_await` is a ['cast-expression] and `co_await x | y` would otherwise parse
+as `(co_await x) | y`. The `std::move` is also required, as the pipe operator
+takes its left operand by value and an eager operation is move-only.
+
+[heading Detaching and Cancellation]
+
+An eager operation whose result is no longer required may simply be discarded.
+Discarding the handle detaches from the operation. The operation is not
+cancelled, but continues to run, and its result is discarded when it completes.
+
+[note Because a detached operation continues to run, any buffers or other
+objects that it refers to must remain valid until it completes.]
+
+Awaiting the operation passes ownership to the completion token. When the token
+is a lazy one, such as [link asio.overview.composition.deferred `deferred`], the
+resulting operation owns the eager operation in turn, and discarding it detaches
+in the same way.
+
+To stop an operation rather than detach from it, request cancellation
+explicitly:
+
+  op.cancel();
+
+or, as for any other asynchronous operation, bind a cancellation slot to the
+completion handler used to await the result:
+
+  asio::cancellation_signal sig;
+
+  std::move(op)(
+      asio::bind_cancellation_slot(sig.slot(),
+        [](asio::error_code ec, std::size_t bytes_read)
+        {
+          ...
+        }));
+
+  ...
+
+  sig.emit(asio::cancellation_type::all);
+
+The cancellation slot remains effective once the operation has been converted to
+a lazy one, and so is the means of cancelling a chain that no longer has a
+handle of its own.
+
+To determine whether the result is already available, and can therefore be
+taken without waiting, use:
+
+  if (op.ready())
+    ...
+
+[heading Thread Safety]
+
+An eager operation adds no thread safety to the operation that it wraps. A
+cancellation request is emitted on the thread that calls `cancel`, or that emits
+the cancellation signal, and is delivered to the underlying operation there.
+
+It is the caller's responsibility to ensure that cancellation is requested from
+a context that is safe with respect to the operation's execution, exactly as it
+would be when cancelling that operation directly. If the operation
+was launched on a strand, for example, the cancellation must be emitted from
+that strand:
+
+  asio::dispatch(my_strand,
+      [&]
+      {
+        op.cancel();
+      });
+
+The operation's I/O object must also still exist when cancellation is requested.
+
+[heading Idempotency]
+
+The token is idempotent. Applying it to an operation that has already been
+eagerly initiated yields that same operation, without starting a second one or
+allocating further shared state:
+
+  auto op = timer.async_wait(asio::eager)(asio::eager);
+
+Consequently, an allocator specified on a subsequent application is unused, as
+the shared state has already been allocated.
+
+[heading Awaiting Several Operations]
+
+Because an eager operation is itself an asynchronous operation, several of them
+may be combined using [link asio.overview.composition.parallel_group parallel
+groups]. As the operations have already been started, the group waits for
+results that are already in flight. For example, to apply a timeout to a read:
+
+  auto [order, timer_ec, read_ec, n] =
+    co_await asio::experimental::make_parallel_group(
+        timer.async_wait(asio::eager),
+        asio::async_read(stream, asio::buffer(my_buffer), asio::eager)
+      ).async_wait(
+        asio::experimental::wait_for_one(),
+        asio::use_awaitable);
+
+  if (order[0] == 0)
+  {
+    // timed out
+  }
+  else
+  {
+    // completed in time
+  }
+
+[heading Eager as the Default Completion Token]
+
+An I/O object may be adapted so that `eager` is its default completion token,
+allowing the token to be omitted at each call site:
+
+  using eager_tcp_socket = asio::eager_t<>::as_default_on_t<tcp::socket>;
+  // ...
+  void do_read(eager_tcp_socket my_socket)
+  {
+    auto op = my_socket.async_read_some(asio::buffer(my_buffer));
+    // ...
+    std::move(op)(
+        [](asio::error_code ec, std::size_t bytes_read)
+        {
+          ...
+        });
+  }
+
+[heading See Also]
+
+[link asio.reference.eager eager],
+[link asio.reference.eager_t eager_t],
+[link asio.reference.basic_eager_async_operation basic_eager_async_operation],
+[link asio.overview.composition.deferred Deferred Operations],
+[link asio.overview.composition.type_erasure Type Erasure],
+[link asio.examples.cpp11_examples.eager Eager examples (C++11)],
+[link asio.examples.cpp20_examples.eager Eager examples (C++20)].
+
+[endsect]

@@ -71,6 +71,7 @@ check_PROGRAMS = \
 	unit/detached \
 	unit/dispatch \
 	unit/disposition \
+	unit/eager \
 	unit/error \
 	unit/execution/any_executor \
 	unit/execution/blocking \
@@ -130,6 +131,7 @@ check_PROGRAMS = \
 	unit/local/seq_packet_protocol \
 	unit/local/stream_protocol \
 	unit/packaged_task \
+	unit/piping \
 	unit/placeholders \
 	unit/posix/basic_descriptor \
 	unit/posix/basic_stream_descriptor \
@@ -310,6 +312,7 @@ TESTS = \
 	unit/detached \
 	unit/dispatch \
 	unit/disposition \
+	unit/eager \
 	unit/error \
 	unit/execution/any_executor \
 	unit/execution/blocking \
@@ -364,6 +367,7 @@ TESTS = \
 	unit/local/seq_packet_protocol \
 	unit/local/stream_protocol \
 	unit/packaged_task \
+	unit/piping \
 	unit/placeholders \
 	unit/posix/basic_descriptor\
 	unit/posix/basic_stream_descriptor\
@@ -548,6 +552,7 @@ unit_deferred_SOURCES = unit/deferred.cpp
 unit_detached_SOURCES = unit/detached.cpp
 unit_dispatch_SOURCES = unit/dispatch.cpp
 unit_disposition_SOURCES = unit/disposition.cpp
+unit_eager_SOURCES = unit/eager.cpp
 unit_error_SOURCES = unit/error.cpp
 unit_execution_any_executor_SOURCES = unit/execution/any_executor.cpp
 unit_execution_blocking_SOURCES = unit/execution/blocking.cpp
@@ -607,6 +612,7 @@ unit_local_datagram_protocol_SOURCES = unit/local/datagram_protocol.cpp
 unit_local_seq_packet_protocol_SOURCES = unit/local/seq_packet_protocol.cpp
 unit_local_stream_protocol_SOURCES = unit/local/stream_protocol.cpp
 unit_packaged_task_SOURCES = unit/packaged_task.cpp
+unit_piping_SOURCES = unit/piping.cpp
 unit_placeholders_SOURCES = unit/placeholders.cpp
 unit_posix_basic_descriptor_SOURCES = unit/posix/basic_descriptor.cpp
 unit_posix_basic_stream_descriptor_SOURCES = unit/posix/basic_stream_descriptor.cpp

@@ -16,6 +16,10 @@ noinst_PROGRAMS = \
 	chat/chat_server \
 	deferred/deferred_1 \
 	deferred/deferred_2 \
+	eager/eager_1 \
+	eager/eager_2 \
+	eager/eager_3 \
+	eager/eager_4 \
 	echo/async_tcp_echo_server \
 	echo/async_udp_echo_server \
 	echo/blocking_tcp_echo_client \
@@ -168,6 +172,10 @@ chat_chat_client_SOURCES = chat/chat_client.cpp
 chat_chat_server_SOURCES = chat/chat_server.cpp
 deferred_deferred_1_SOURCES = deferred/deferred_1.cpp
 deferred_deferred_2_SOURCES = deferred/deferred_2.cpp
+eager_eager_1_SOURCES = eager/eager_1.cpp
+eager_eager_2_SOURCES = eager/eager_2.cpp
+eager_eager_3_SOURCES = eager/eager_3.cpp
+eager_eager_4_SOURCES = eager/eager_4.cpp
 echo_async_tcp_echo_server_SOURCES = echo/async_tcp_echo_server.cpp
 echo_async_udp_echo_server_SOURCES = echo/async_udp_echo_server.cpp
 echo_blocking_tcp_echo_client_SOURCES = echo/blocking_tcp_echo_client.cpp

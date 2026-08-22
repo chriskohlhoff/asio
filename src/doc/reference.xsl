@@ -816,6 +816,11 @@
       <xsl:value-of select="."/>
       <xsl:text>]</xsl:text>
     </xsl:when>
+    <xsl:when test="@refid = 'overview_eager'">
+      <xsl:text>[link asio.overview.composition.eager </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
     <xsl:when test="@refid = 'overview_promises'">
       <xsl:text>[link asio.overview.composition.promises </xsl:text>
       <xsl:value-of select="."/>
@@ -1031,6 +1036,11 @@
     </xsl:when>
     <xsl:when test="@refid = 'overview_deferred'">
       <xsl:text>[link asio.overview.composition.deferred </xsl:text>
+      <xsl:value-of select="."/>
+      <xsl:text>]</xsl:text>
+    </xsl:when>
+    <xsl:when test="@refid = 'overview_eager'">
+      <xsl:text>[link asio.overview.composition.eager </xsl:text>
       <xsl:value-of select="."/>
       <xsl:text>]</xsl:text>
     </xsl:when>

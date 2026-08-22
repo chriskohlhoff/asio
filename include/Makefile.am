@@ -110,6 +110,8 @@ nobase_include_HEADERS = \
 	asio/detail/descriptor_read_op.hpp \
 	asio/detail/descriptor_write_op.hpp \
 	asio/detail/dev_poll_reactor.hpp \
+	asio/detail/eager_wait_handler.hpp \
+	asio/detail/eager_wait_op.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
@@ -373,6 +375,7 @@ nobase_include_HEADERS = \
 	asio/detail/wrapped_handler.hpp \
 	asio/dispatch.hpp \
 	asio/disposition.hpp \
+	asio/eager.hpp \
 	asio/error_code.hpp \
 	asio/error.hpp \
 	asio/execution.hpp \
@@ -455,6 +458,7 @@ nobase_include_HEADERS = \
 	asio/impl/consign.hpp \
 	asio/impl/deferred.hpp \
 	asio/impl/detached.hpp \
+	asio/impl/eager.hpp \
 	asio/impl/error_code.ipp \
 	asio/impl/error.ipp \
 	asio/impl/execution_context.hpp \
@@ -539,6 +543,7 @@ nobase_include_HEADERS = \
 	asio/local/stream_protocol.hpp \
 	asio/multiple_exceptions.hpp \
 	asio/packaged_task.hpp \
+	asio/piping.hpp \
 	asio/placeholders.hpp \
 	asio/posix/basic_descriptor.hpp \
 	asio/posix/basic_stream_descriptor.hpp \

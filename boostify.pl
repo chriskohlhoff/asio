@@ -566,6 +566,7 @@ sub copy_examples
       "src/examples/cpp11/buffers",
       "src/examples/cpp11/chat",
       "src/examples/cpp11/deferred",
+      "src/examples/cpp11/eager",
       "src/examples/cpp11/echo",
       "src/examples/cpp11/executors",
       "src/examples/cpp11/files",
@@ -618,6 +619,7 @@ sub copy_examples
       "src/examples/cpp17/coroutines_ts",
       "src/examples/cpp20/channels",
       "src/examples/cpp20/coroutines",
+      "src/examples/cpp20/eager",
       "src/examples/cpp20/invocation",
       "src/examples/cpp20/operations",
       "src/examples/cpp20/type_erasure");

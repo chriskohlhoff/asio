@@ -71,6 +71,7 @@ deferred
 detached
 dispatch
 disposition
+eager
 error
 error_handler
 execution_context
@@ -89,6 +90,7 @@ io_service
 is_read_buffered
 is_write_buffered
 packaged_task
+piping
 placeholders
 post
 prepend

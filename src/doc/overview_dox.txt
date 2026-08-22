@@ -74,6 +74,10 @@
 */
 
 /**
+\page overview_eager Eager Operations
+*/
+
+/**
 \page overview_promises Promises
 */
 

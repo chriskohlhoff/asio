@@ -202,6 +202,7 @@
             <member><link linkend="asio.reference.awaitable">awaitable</link></member>
             <member><link linkend="asio.reference.basic_channel">basic_channel</link></member>
             <member><link linkend="asio.reference.basic_concurrent_channel">basic_concurrent_channel</link></member>
+            <member><link linkend="asio.reference.basic_eager_async_operation">basic_eager_async_operation</link></member>
             <member><link linkend="asio.reference.basic_inline_executor">basic_inline_executor</link></member>
             <member><link linkend="asio.reference.basic_io_object">basic_io_object (deprecated)</link></member>
             <member><link linkend="asio.reference.basic_system_executor">basic_system_executor</link></member>
@@ -217,6 +218,8 @@
             <member><link linkend="asio.reference.consign_t">consign_t</link></member>
             <member><link linkend="asio.reference.deferred_t">deferred_t</link></member>
             <member><link linkend="asio.reference.disposition_traits">disposition_traits</link></member>
+            <member><link linkend="asio.reference.eager_async_operation">eager_async_operation</link></member>
+            <member><link linkend="asio.reference.eager_t">eager_t</link></member>
             <member><link linkend="asio.reference.executor_binder">executor_binder</link></member>
             <member><link linkend="asio.reference.executor_work_guard">executor_work_guard</link></member>
             <member><link linkend="asio.reference.experimental__as_single_t">experimental::as_single_t</link></member>
@@ -300,6 +303,7 @@
             <member><link linkend="asio.reference.as_tuple">as_tuple</link></member>
             <member><link linkend="asio.reference.deferred">deferred</link></member>
             <member><link linkend="asio.reference.detached">detached</link></member>
+            <member><link linkend="asio.reference.eager">eager</link></member>
             <member><link linkend="asio.reference.executor_arg">executor_arg</link></member>
             <member><link linkend="asio.reference.experimental__use_coro">experimental::use_coro</link></member>
             <member><link linkend="asio.reference.experimental__use_promise">experimental::use_promise</link></member>
@@ -339,6 +343,7 @@
             <member><link linkend="asio.reference.default_completion_token">default_completion_token</link></member>
             <member><link linkend="asio.reference.is_async_operation">is_async_operation</link></member>
             <member><link linkend="asio.reference.is_executor">is_executor</link></member>
+            <member><link linkend="asio.reference.supports_piping">supports_piping</link></member>
             <member><link linkend="asio.reference.uses_executor">uses_executor</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
