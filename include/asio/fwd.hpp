@@ -82,6 +82,19 @@ class any_completion_executor;
 
 #endif // defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
+#if defined(ASIO_HAS_CO_AWAIT)
+
+#if !defined(ASIO_AWAITABLE_FWD_DECL)
+#define ASIO_AWAITABLE_FWD_DECL
+
+// Forward declaration with defaulted arguments.
+template <typename T, typename Executor = any_io_executor>
+class awaitable;
+
+#endif // !defined(ASIO_AWAITABLE_FWD_DECL)
+
+#endif // defined(ASIO_HAS_CO_AWAIT)
+
 template <typename... Signatures>
 class any_completion_handler;
 
