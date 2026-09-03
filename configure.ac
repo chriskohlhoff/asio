@@ -244,11 +244,46 @@ if test "$GXX" = yes; then
   fi
 fi
 
+AC_MSG_CHECKING([whether Boost.Context is available])
+SAVED_LIBS="$LIBS"
+LIBS="$LIBS -lboost_context"
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[#include <boost/context/fiber.hpp>]],
+    [[boost::context::fiber f(]]
+    [[  [](boost::context::fiber&& c) { return std::move(c); });]]
+    [[f = std::move(f).resume();]])],
+  [AC_MSG_RESULT([yes])
+    HAVE_BOOST_CONTEXT=yes;],
+  [AC_MSG_RESULT([no])
+    HAVE_BOOST_CONTEXT=no;
+    CPPFLAGS="$CPPFLAGS -DASIO_DISABLE_BOOST_CONTEXT_FIBER"])
+LIBS="$SAVED_LIBS"
+
+AC_MSG_CHECKING([whether assembly language fibers are supported])
+SAVED_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS -I${srcdir}/include"
+AC_COMPILE_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[#include "asio/detail/config.hpp"]]
+    [[#if !defined(ASIO_HAS_ASM_FIBER)]]
+    [[# error assembly language fibers not supported]]
+    [[#endif]])],
+  [AC_MSG_RESULT([yes])
+    HAVE_ASM_FIBER=yes;],
+  [AC_MSG_RESULT([no])
+    HAVE_ASM_FIBER=no;])
+CPPFLAGS="$SAVED_CPPFLAGS"
+
 AM_CONDITIONAL(STANDALONE,test x$STANDALONE = xyes)
 
 AM_CONDITIONAL(SEPARATE_COMPILATION,test x$SEPARATE_COMPILATION = xyes)
 
 AM_CONDITIONAL(HAVE_BOOST_COROUTINE,test x$HAVE_BOOST_COROUTINE = xyes)
+
+AM_CONDITIONAL(HAVE_BOOST_CONTEXT,test x$HAVE_BOOST_CONTEXT = xyes)
+
+AM_CONDITIONAL(HAVE_FIBER,test x$HAVE_BOOST_CONTEXT = xyes -o x$HAVE_ASM_FIBER = xyes)
 
 AM_CONDITIONAL(HAVE_BOOST_SYSTEM,test x$HAVE_BOOST_SYSTEM = xyes)
 

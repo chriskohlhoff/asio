@@ -19,19 +19,30 @@
 
 #include "unit_test.hpp"
 
-#if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+#if defined(ASIO_HAS_BOOST_CONTEXT_FIBER) \
+  || defined(ASIO_HAS_ASM_FIBER)
 
 #include <memory>
 #include <stdexcept>
+#include <vector>
 #include "archetypes/async_ops.hpp"
 #include "asio/any_completion_handler.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/deferred.hpp"
-#include "asio/detached.hpp"
 #include "asio/dispatch.hpp"
+#include "asio/detached.hpp"
 #include "asio/io_context.hpp"
 #include "asio/post.hpp"
 #include "asio/steady_timer.hpp"
+
+#if defined(ASIO_HAS_ASM_FIBER)
+# include "asio/detail/default_stack_allocator.hpp"
+#endif // defined(ASIO_HAS_ASM_FIBER)
+
+#if defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# include <cerrno>
+# include <unistd.h>
+#endif // defined(ASIO_HAS_FIBER_GUARD_PAGE)
 
 void void_returning_coroutine(asio::yield_context)
 {
@@ -124,6 +135,7 @@ void sleeping_coroutine(asio::yield_context yield)
 
 void test_spawn_cancel()
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   asio::cancellation_signal sig;
   asio::io_context ctx;
 
@@ -162,15 +174,21 @@ void test_spawn_cancel()
   {
     ASIO_ERROR("expected system_error");
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 }
+
+#if !defined(ASIO_NO_EXCEPTIONS)
 
 void throwing_coroutine(asio::yield_context)
 {
   throw std::runtime_error("oops");
 }
 
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+
 void test_spawn_exception()
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   asio::io_context ctx;
 
   std::exception_ptr result = nullptr;
@@ -199,6 +217,7 @@ void test_spawn_exception()
   {
     ASIO_ERROR("expected runtime_error");
   }
+#endif // !defined(ASIO_NO_EXCEPTIONS)
 }
 
 std::unique_ptr<int> factory_coroutine(asio::yield_context)
@@ -226,6 +245,8 @@ void test_spawn_return_move_only()
   ASIO_CHECK(result);
   ASIO_CHECK(*result == 42);
 }
+
+#if !defined(ASIO_NO_EXCEPTIONS)
 
 int coroutine_using_async_ops_0(asio::yield_context yield)
 {
@@ -514,8 +535,11 @@ int coroutine_using_async_ops_3(asio::yield_context yield)
   return 456;
 }
 
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+
 void test_spawn_async_ops()
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   asio::io_context ctx;
 
   bool called = false;
@@ -576,6 +600,159 @@ void test_spawn_async_ops()
   ctx.run();
 
   ASIO_CHECK(called);
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+}
+
+int stack_object_count = 0;
+
+struct stack_object
+{
+  stack_object() { ++stack_object_count; }
+  stack_object(const stack_object&) { ++stack_object_count; }
+  ~stack_object() { --stack_object_count; }
+};
+
+void test_spawn_io_context_destroyed()
+{
+  std::exception_ptr result = nullptr;
+  bool called = false;
+
+  ASIO_CHECK(stack_object_count == 0);
+
+  {
+    asio::io_context ctx;
+
+    asio::spawn(ctx,
+        [](asio::yield_context yield)
+        {
+          stack_object a;
+          stack_object b;
+
+          asio::steady_timer timer(yield.get_executor());
+          timer.expires_at(asio::steady_timer::time_point::max());
+          timer.async_wait(yield);
+
+          ASIO_CHECK(false);
+        },
+        [&](std::exception_ptr e)
+        {
+          result = e;
+          called = true;
+        });
+
+    ctx.poll();
+    ASIO_CHECK(!ctx.stopped());
+
+    ASIO_CHECK(stack_object_count == 2);
+    ASIO_CHECK(!called);
+
+  }
+
+#if !defined(ASIO_NO_EXCEPTIONS)
+  ASIO_CHECK(stack_object_count == 0);
+#else // !defined(ASIO_NO_EXCEPTIONS)
+  ASIO_CHECK(stack_object_count == 2);
+  stack_object_count = 0;
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+
+  ASIO_CHECK(!called);
+  ASIO_CHECK(result == nullptr);
+}
+
+void test_spawn_io_context_destroyed_in_catch()
+{
+#if !defined(ASIO_NO_EXCEPTIONS)
+  ASIO_CHECK(stack_object_count == 0);
+
+  bool called = false;
+  bool reached_catch = false;
+
+  {
+    asio::io_context ctx;
+
+    asio::spawn(ctx,
+        [&](asio::yield_context yield)
+        {
+          try
+          {
+            throw std::runtime_error("test");
+          }
+          catch (const std::runtime_error&)
+          {
+            reached_catch = true;
+            stack_object a;
+
+            asio::steady_timer timer(yield.get_executor());
+            timer.expires_at(asio::steady_timer::time_point::max());
+            timer.async_wait(yield);
+
+            ASIO_CHECK(false);
+          }
+        },
+        [&](std::exception_ptr) { called = true; });
+
+    ctx.poll();
+    ASIO_CHECK(reached_catch);
+    ASIO_CHECK(stack_object_count == 1);
+    ASIO_CHECK(!called);
+  }
+
+  ASIO_CHECK(stack_object_count == 0);
+  ASIO_CHECK(!called);
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+}
+
+void test_spawn_nested()
+{
+  asio::io_context ctx;
+
+  int order = 0;
+  int outer_at = 0;
+  int inner_at = 0;
+
+  asio::spawn(ctx,
+      [&](asio::yield_context yield)
+      {
+        outer_at = ++order;
+
+        asio::spawn(yield,
+            [&](asio::yield_context)
+            {
+              inner_at = ++order;
+            }, yield);
+      }, asio::detached);
+
+  ctx.run();
+
+  ASIO_CHECK(outer_at == 1);
+  ASIO_CHECK(inner_at == 2);
+}
+
+void test_spawn_many()
+{
+  const int n = 16;
+  const int rounds = 4;
+
+  asio::io_context ctx;
+  std::vector<int> counts(n, 0);
+
+  for (int i = 0; i < n; ++i)
+  {
+    asio::spawn(ctx,
+        [&counts, i](asio::yield_context yield)
+        {
+          for (int j = 0; j < rounds; ++j)
+          {
+            ++counts[i];
+            asio::post(yield);
+          }
+        }, asio::detached);
+  }
+
+  ctx.run();
+
+  for (int i = 0; i < n; ++i)
+    ASIO_CHECK(counts[i] == rounds);
 }
 
 void test_spawn_completes_out_of_line()
@@ -643,6 +820,7 @@ void test_spawn_inline_completions()
 
 void test_spawn_inline_completions_abandoned()
 {
+#if !defined(ASIO_NO_EXCEPTIONS)
   int destroyed = 0;
 
   struct tracker
@@ -669,6 +847,119 @@ void test_spawn_inline_completions_abandoned()
   }
 
   ASIO_CHECK(destroyed == 1);
+#endif // !defined(ASIO_NO_EXCEPTIONS)
+}
+
+struct test_stack_allocator
+{
+  struct context
+  {
+    void* sp;
+    std::size_t size;
+    void* base;
+
+    context(void* sp_arg, std::size_t size_arg, void* base_arg)
+      : sp(sp_arg), size(size_arg), base(base_arg)
+    {
+    }
+
+    context(const context&) = default;
+    context() = delete;
+    context& operator=(const context&) = delete;
+  };
+
+  int* allocated;
+  int* deallocated;
+
+  context allocate() const
+  {
+    const std::size_t size = ASIO_DEFAULT_FIBER_STACK_SIZE;
+    char* base = new char[size];
+    ++*allocated;
+    return context(base + size, size, base);
+  }
+
+  void deallocate(context& c) const
+  {
+    ++*deallocated;
+    delete[] static_cast<char*>(c.base);
+  }
+};
+
+void test_spawn_stack_allocator()
+{
+  int allocated = 0;
+  int deallocated = 0;
+  int count = 0;
+
+  {
+    asio::io_context ctx;
+    test_stack_allocator allocator = { &allocated, &deallocated };
+
+    asio::spawn(ctx, asio::allocator_arg_t(), allocator,
+        [&](asio::yield_context yield)
+        {
+          for (int i = 0; i < 4; ++i)
+          {
+            asio::post(yield);
+            ++count;
+          }
+        }, asio::detached);
+
+    ASIO_CHECK(allocated == 1);
+    ASIO_CHECK(deallocated == 0);
+
+    ctx.run();
+  }
+
+  ASIO_CHECK(count == 4);
+  ASIO_CHECK(allocated == 1);
+  ASIO_CHECK(deallocated == 1);
+}
+
+void test_default_stack_allocator()
+{
+#if defined(ASIO_HAS_ASM_FIBER)
+  typedef asio::detail::default_stack_allocator allocator_type;
+  allocator_type allocator(ASIO_DEFAULT_FIBER_STACK_SIZE);
+
+  // Successive stacks start at different offsets, so try every one of them.
+  for (int i = 0; i < allocator_type::colour_count; ++i)
+  {
+    allocator_type::stack_context stack = allocator.allocate();
+    char* sp = static_cast<char*>(stack.sp);
+
+    ASIO_CHECK(sp - stack.size == static_cast<char*>(stack.base));
+    ASIO_CHECK(stack.size >= ASIO_DEFAULT_FIBER_STACK_SIZE);
+    sp[-1] = 0;
+
+    allocator.deallocate(stack);
+  }
+#endif // defined(ASIO_HAS_ASM_FIBER)
+}
+
+void test_stack_guard_page()
+{
+#if defined(ASIO_HAS_FIBER_GUARD_PAGE)
+  asio::detail::default_stack_allocator allocator(
+      ASIO_DEFAULT_FIBER_STACK_SIZE);
+  asio::detail::default_stack_allocator::stack_context stack =
+    allocator.allocate();
+
+  int fds[2];
+  ASIO_CHECK(::pipe(fds) == 0);
+
+  errno = 0;
+  ASIO_CHECK(::write(fds[1], stack.base, 1) == -1);
+  ASIO_CHECK(errno == EFAULT);
+
+  ASIO_CHECK(::write(fds[1],
+        static_cast<char*>(stack.base) + allocator.page_size(), 1) == 1);
+
+  ASIO_CHECK(::close(fds[0]) == 0);
+  ASIO_CHECK(::close(fds[1]) == 0);
+  allocator.deallocate(stack);
+#endif // defined(ASIO_HAS_FIBER_GUARD_PAGE)
 }
 
 ASIO_TEST_SUITE
@@ -681,8 +972,15 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_spawn_return_move_only)
   ASIO_TEST_CASE(test_spawn_async_ops)
   ASIO_TEST_CASE(test_spawn_completes_out_of_line)
+  ASIO_TEST_CASE(test_spawn_io_context_destroyed)
+  ASIO_TEST_CASE(test_spawn_io_context_destroyed_in_catch)
+  ASIO_TEST_CASE(test_spawn_nested)
+  ASIO_TEST_CASE(test_spawn_many)
   ASIO_TEST_CASE(test_spawn_inline_completions)
   ASIO_TEST_CASE(test_spawn_inline_completions_abandoned)
+  ASIO_TEST_CASE(test_spawn_stack_allocator)
+  ASIO_TEST_CASE(test_default_stack_allocator)
+  ASIO_TEST_CASE(test_stack_guard_page)
 )
 
 #else // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)

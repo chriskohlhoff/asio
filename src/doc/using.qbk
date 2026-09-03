@@ -405,6 +405,15 @@ functionality, and behaviour of Asio.
       types are not passed across shared library API boundaries.
     ]
   ]
+  [
+    [`ASIO_ENABLE_VALGRIND`]
+    [
+      Enables support for running programs under Valgrind. When `spawn()` is
+      implemented without Boost.Context, each coroutine's stack is registered
+      with Valgrind so that switching between stacks is not reported as an
+      error. Requires the [^valgrind/valgrind.h] header.
+    ]
+  ]
 ]
 
 [include platform_macros.qbk]

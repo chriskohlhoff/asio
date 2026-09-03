@@ -487,6 +487,97 @@
 # endif // !defined(ASIO_DISABLE_BOOST_DATE_TIME)
 #endif // !defined(ASIO_HAS_BOOST_DATE_TIME)
 
+// Thread sanitizer.
+#if !defined(ASIO_HAS_THREAD_SANITIZER)
+# if defined(__SANITIZE_THREAD__)
+#  define ASIO_HAS_THREAD_SANITIZER 1
+# elif defined(__has_feature)
+#  if __has_feature(thread_sanitizer)
+#   define ASIO_HAS_THREAD_SANITIZER 1
+#  endif // __has_feature(thread_sanitizer)
+# endif // defined(__SANITIZE_THREAD__)
+#endif // !defined(ASIO_HAS_THREAD_SANITIZER)
+
+// Address sanitizer.
+#if !defined(ASIO_HAS_ADDRESS_SANITIZER)
+# if defined(__SANITIZE_ADDRESS__)
+#  define ASIO_HAS_ADDRESS_SANITIZER 1
+# elif defined(__has_feature)
+#  if __has_feature(address_sanitizer)
+#   define ASIO_HAS_ADDRESS_SANITIZER 1
+#  endif // __has_feature(address_sanitizer)
+# endif // defined(__SANITIZE_ADDRESS__)
+#endif // !defined(ASIO_HAS_ADDRESS_SANITIZER)
+
+// Common header file support for sanitizers.
+#if defined(ASIO_HAS_THREAD_SANITIZER) \
+  || defined(ASIO_HAS_ADDRESS_SANITIZER)
+# if defined(__has_include)
+#  if __has_include(<sanitizer/common_interface_defs.h>)
+#   define ASIO_HAS_SANITIZER_COMMON_INTERFACE_DEFS 1
+#  endif // __has_include(<sanitizer/common_interface_defs.h>)
+# endif // defined(__has_include)
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
+       //   || defined(ASIO_HAS_ADDRESS_SANITIZER)
+
+// Valgrind support. Must be explicitly enabled.
+#if !defined(ASIO_HAS_VALGRIND)
+# if defined(ASIO_ENABLE_VALGRIND)
+#  define ASIO_HAS_VALGRIND 1
+# endif // defined(ASIO_ENABLE_VALGRIND)
+#endif // !defined(ASIO_HAS_VALGRIND)
+#if defined(ASIO_HAS_VALGRIND)
+# define ASIO_VERSION_TAG_b b
+#else // defined(ASIO_HAS_VALGRIND)
+# define ASIO_VERSION_TAG_b
+#endif // defined(ASIO_HAS_VALGRIND)
+
+// Support for fibers implemented in assembly.
+#if !defined(ASIO_HAS_ASM_FIBER)
+# if !defined(ASIO_DISABLE_ASM_FIBER)
+#  if defined(__clang__) || defined(__GNUC__)
+#   if defined(__APPLE__) || defined(__linux__)
+#    if defined(__x86_64__) || defined(__aarch64__)
+#     if defined(__LP64__)
+#      define ASIO_HAS_ASM_FIBER 1
+#     endif // defined(__LP64__)
+#    endif // defined(__x86_64__) || defined(__aarch64__)
+#   endif // defined(__APPLE__) || defined(__linux__)
+#  endif // defined(__clang__) || defined(__GNUC__)
+# endif // !defined(ASIO_DISABLE_ASM_FIBER)
+#endif // !defined(ASIO_HAS_ASM_FIBER)
+#if defined(ASIO_HAS_ASM_FIBER)
+# define ASIO_VERSION_TAG_c c
+#else // defined(ASIO_HAS_ASM_FIBER)
+# define ASIO_VERSION_TAG_c
+#endif // defined(ASIO_HAS_ASM_FIBER)
+
+// Whether to use a page to detect stack overflow in fibers.
+#if !defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# if defined(ASIO_ENABLE_FIBER_GUARD_PAGE)
+#  if defined(ASIO_HAS_ASM_FIBER)
+#   define ASIO_HAS_FIBER_GUARD_PAGE 1
+#  endif // defined(ASIO_HAS_ASM_FIBER)
+# endif // defined(ASIO_ENABLE_FIBER_GUARD_PAGE)
+#endif // !defined(ASIO_HAS_FIBER_GUARD_PAGE)
+#if defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# define ASIO_VERSION_TAG_d d
+#else // defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# define ASIO_VERSION_TAG_d
+#endif // defined(ASIO_HAS_FIBER_GUARD_PAGE)
+
+// The fiber stack size to use when not otherwise specified by the user.
+#if !defined(ASIO_DEFAULT_FIBER_STACK_SIZE)
+# if defined(ASIO_HAS_ADDRESS_SANITIZER) \
+  || defined(ASIO_HAS_THREAD_SANITIZER)
+#  define ASIO_DEFAULT_FIBER_STACK_SIZE (1024 * 1024)
+# else // defined(ASIO_HAS_ADDRESS_SANITIZER)
+       //   || defined(ASIO_HAS_THREAD_SANITIZER)
+#  define ASIO_DEFAULT_FIBER_STACK_SIZE (256 * 1024)
+# endif // defined(ASIO_HAS_ADDRESS_SANITIZER)
+        //   || defined(ASIO_HAS_THREAD_SANITIZER)
+#endif // !defined(ASIO_DEFAULT_FIBER_STACK_SIZE)
+
 // Boost support for the Context library's fibers.
 #if !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 # if !defined(ASIO_DISABLE_BOOST_CONTEXT_FIBER)
@@ -508,6 +599,12 @@
 #  endif // defined(ASIO_MSVC)
 # endif // !defined(ASIO_DISABLE_BOOST_CONTEXT_FIBER)
 #endif // !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+#if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+# define ASIO_VERSION_TAG_e e
+#else // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+# define ASIO_VERSION_TAG_e
+#endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+
 
 // Standard library support for std::string_view.
 #if !defined(ASIO_HAS_STD_STRING_VIEW)
@@ -733,9 +830,9 @@
 # endif // defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0603)
 #endif // !defined(ASIO_WINDOWS_APP)
 #if defined(ASIO_WINDOWS_APP)
-# define ASIO_VERSION_TAG_b b
+# define ASIO_VERSION_TAG_f f
 #else // defined(ASIO_WINDOWS_APP)
-# define ASIO_VERSION_TAG_b
+# define ASIO_VERSION_TAG_f
 #endif // defined(ASIO_WINDOWS_APP)
 
 // Legacy WinRT target. Windows App is preferred.
@@ -765,9 +862,9 @@
 # endif // !defined(ASIO_WINDOWS_RUNTIME)
 #endif // !defined(ASIO_WINDOWS)
 #if defined(ASIO_WINDOWS)
-# define ASIO_VERSION_TAG_c c
+# define ASIO_VERSION_TAG_g g
 #else // defined(ASIO_WINDOWS)
-# define ASIO_VERSION_TAG_c
+# define ASIO_VERSION_TAG_g
 #endif // defined(ASIO_WINDOWS)
 
 // Cygwin target using Win32 sockets.
@@ -779,9 +876,9 @@
 # endif // defined(__CYGWIN__)
 #endif // !defined(ASIO_CYGWIN_W32_SOCKETS)
 #if defined(ASIO_CYGWIN_W32_SOCKETS)
-# define ASIO_VERSION_TAG_d d
+# define ASIO_VERSION_TAG_h h
 #else // defined(ASIO_CYGWIN_W32_SOCKETS)
-# define ASIO_VERSION_TAG_d
+# define ASIO_VERSION_TAG_h
 #endif // defined(ASIO_CYGWIN_W32_SOCKETS)
 
 // Windows: target OS version.
@@ -856,9 +953,9 @@
 # endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
 #endif // !defined(ASIO_HAS_IOCP)
 #if defined(ASIO_HAS_IOCP)
-# define ASIO_VERSION_TAG_e e
+# define ASIO_VERSION_TAG_i i
 #else // defined(ASIO_HAS_IOCP)
-# define ASIO_VERSION_TAG_e
+# define ASIO_VERSION_TAG_i
 #endif // defined(ASIO_HAS_IOCP)
 
 // Windows: Slim Reader/Writer Locks.
@@ -875,9 +972,9 @@
 # endif // !defined(ASIO_DISABLE_WINDOWS_SRWLOCK)
 #endif // !defined(ASIO_HAS_WINDOWS_SRWLOCK)
 #if defined(ASIO_HAS_WINDOWS_SRWLOCK)
-# define ASIO_VERSION_TAG_f f
+# define ASIO_VERSION_TAG_j j
 #else // defined(ASIO_HAS_WINDOWS_SRWLOCK)
-# define ASIO_VERSION_TAG_f
+# define ASIO_VERSION_TAG_j
 #endif // defined(ASIO_HAS_WINDOWS_SRWLOCK)
 
 // On POSIX (and POSIX-like) platforms we need to include unistd.h in order to
@@ -936,24 +1033,24 @@
 # endif // defined(ASIO_HAS_IO_URING)
 #endif // defined(__linux__)
 #if defined(ASIO_HAS_EPOLL)
-# define ASIO_VERSION_TAG_g g
+# define ASIO_VERSION_TAG_k k
 #else // defined(ASIO_HAS_EPOLL)
-# define ASIO_VERSION_TAG_g
+# define ASIO_VERSION_TAG_k
 #endif // defined(ASIO_HAS_EPOLL)
 #if defined(ASIO_HAS_EVENTFD)
-# define ASIO_VERSION_TAG_h h
+# define ASIO_VERSION_TAG_l l
 #else // defined(ASIO_HAS_EVENTFD)
-# define ASIO_VERSION_TAG_h
+# define ASIO_VERSION_TAG_l
 #endif // defined(ASIO_HAS_EVENTFD)
 #if defined(ASIO_HAS_TIMERFD)
-# define ASIO_VERSION_TAG_i i
+# define ASIO_VERSION_TAG_m m
 #else // defined(ASIO_HAS_TIMERFD)
-# define ASIO_VERSION_TAG_i
+# define ASIO_VERSION_TAG_m
 #endif // defined(ASIO_HAS_TIMERFD)
 #if defined(ASIO_HAS_IO_URING)
-# define ASIO_VERSION_TAG_j j
+# define ASIO_VERSION_TAG_n n
 #else // defined(ASIO_HAS_IO_URING)
-# define ASIO_VERSION_TAG_j
+# define ASIO_VERSION_TAG_n
 #endif // defined(ASIO_HAS_IO_URING)
 
 // Linux: io_uring is used instead of epoll.
@@ -963,9 +1060,9 @@
 # endif // !defined(ASIO_HAS_EPOLL) && defined(ASIO_HAS_IO_URING)
 #endif // !defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 #if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
-# define ASIO_VERSION_TAG_k k
+# define ASIO_VERSION_TAG_o o
 #else // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
-# define ASIO_VERSION_TAG_k
+# define ASIO_VERSION_TAG_o
 #endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
 // Linux: futex.
@@ -979,9 +1076,9 @@
 # endif // !defined(ASIO_DISABLE_FUTEX)
 #endif // !defined(ASIO_HAS_FUTEX)
 #if defined(ASIO_HAS_FUTEX)
-# define ASIO_VERSION_TAG_l l
+# define ASIO_VERSION_TAG_p p
 #else // defined(ASIO_HAS_FUTEX)
-# define ASIO_VERSION_TAG_l
+# define ASIO_VERSION_TAG_p
 #endif // defined(ASIO_HAS_FUTEX)
 
 // Mac OS X, FreeBSD, NetBSD, OpenBSD: kqueue.
@@ -999,9 +1096,9 @@
        //   || defined(__NetBSD__)
        //   || defined(__OpenBSD__)
 #if defined(ASIO_HAS_KQUEUE)
-# define ASIO_VERSION_TAG_m m
+# define ASIO_VERSION_TAG_q q
 #else // defined(ASIO_HAS_KQUEUE)
-# define ASIO_VERSION_TAG_m
+# define ASIO_VERSION_TAG_q
 #endif // defined(ASIO_HAS_KQUEUE)
 
 // Solaris: /dev/poll.
@@ -1177,10 +1274,11 @@
 #  define ASIO_NO_EXCEPTIONS 1
 # endif // !defined(BOOST_NO_EXCEPTIONS)
 #endif // !defined(ASIO_NO_EXCEPTIONS)
+
 #if defined(ASIO_NO_EXCEPTIONS)
-# define ASIO_VERSION_TAG_n n
+# define ASIO_VERSION_TAG_r r
 #else // defined(ASIO_NO_EXCEPTIONS)
-# define ASIO_VERSION_TAG_n
+# define ASIO_VERSION_TAG_r
 #endif // defined(ASIO_NO_EXCEPTIONS)
 
 // Whether the typeid operator is supported.
@@ -1214,21 +1312,10 @@
 # endif // !defined(ASIO_DISABLE_THREADS)
 #endif // !defined(ASIO_HAS_THREADS)
 #if defined(ASIO_HAS_THREADS)
-# define ASIO_VERSION_TAG_o o
+# define ASIO_VERSION_TAG_s s
 #else // defined(ASIO_HAS_THREADS)
-# define ASIO_VERSION_TAG_o
+# define ASIO_VERSION_TAG_s
 #endif // defined(ASIO_HAS_THREADS)
-
-// Thread sanitizer.
-#if !defined(ASIO_HAS_THREAD_SANITIZER)
-# if defined(__SANITIZE_THREAD__)
-#  define ASIO_HAS_THREAD_SANITIZER 1
-# elif defined(__has_feature)
-#  if __has_feature(thread_sanitizer)
-#   define ASIO_HAS_THREAD_SANITIZER 1
-#  endif // __has_feature(thread_sanitizer)
-# endif // defined(__SANITIZE_THREAD__)
-#endif // !defined(ASIO_HAS_THREAD_SANITIZER)
 
 // POSIX threads.
 #if !defined(ASIO_HAS_PTHREADS)
@@ -1243,9 +1330,9 @@
 # endif // defined(ASIO_HAS_THREADS)
 #endif // !defined(ASIO_HAS_PTHREADS)
 #if defined(ASIO_HAS_PTHREADS)
-# define ASIO_VERSION_TAG_p p
+# define ASIO_VERSION_TAG_t t
 #else // defined(ASIO_HAS_PTHREADS)
-# define ASIO_VERSION_TAG_p
+# define ASIO_VERSION_TAG_t
 #endif // defined(ASIO_HAS_PTHREADS)
 
 // Helper to prevent macro expansion.
@@ -1689,14 +1776,18 @@
 # endif // !defined(ASIO_DISABLE_STD_ATOMIC_WAIT)
 #endif // !defined(ASIO_HAS_STD_ATOMIC_WAIT)
 #if defined(ASIO_HAS_STD_ATOMIC_WAIT)
-# define ASIO_VERSION_TAG_q q
+# define ASIO_VERSION_TAG_u u
 #else // defined(ASIO_HAS_STD_ATOMIC_WAIT)
-# define ASIO_VERSION_TAG_q
+# define ASIO_VERSION_TAG_u
 #endif // defined(ASIO_HAS_STD_ATOMIC_WAIT)
 
 // Token-pasting helper (two levels needed to allow macro arguments to expand).
 #define ASIO_DETAIL_CAT_(a, b) a ## b
 #define ASIO_DETAIL_CAT(a, b) ASIO_DETAIL_CAT_(a, b)
+
+// Stringifying helper (two levels needed to allow macro arguments to expand).
+#define ASIO_DETAIL_STRINGIFY_(x) #x
+#define ASIO_DETAIL_STRINGIFY(x) ASIO_DETAIL_STRINGIFY_(x)
 
 // Handler tracking backends.
 #if defined(ASIO_ENABLE_HANDLER_TRACKING) \
@@ -1713,14 +1804,14 @@
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
        //   && !defined(ASIO_CUSTOM_HANDLER_TRACKING)
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_r r
+# define ASIO_VERSION_TAG_v v
 #else // defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_r
+# define ASIO_VERSION_TAG_v
 #endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
 #if defined(ASIO_PERFETTO_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_s s
+# define ASIO_VERSION_TAG_w w
 #else // defined(ASIO_PERFETTO_HANDLER_TRACKING)
-# define ASIO_VERSION_TAG_s
+# define ASIO_VERSION_TAG_w
 #endif // defined(ASIO_PERFETTO_HANDLER_TRACKING)
 
 // Automatic version namespace v<ASIO_VERSION>_<tags>.
@@ -1748,7 +1839,11 @@
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_p, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_q, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_r, \
-  ASIO_VERSION_TAG_s)))))))))))))))))))))
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_s, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_t, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_u, \
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_v, \
+  ASIO_VERSION_TAG_w)))))))))))))))))))))))))
 # endif // !defined(ASIO_VERSION_NAMESPACE)
 #endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
 

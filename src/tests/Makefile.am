@@ -238,7 +238,7 @@ check_PROGRAMS += \
 endif
 endif
 
-if HAVE_BOOST_COROUTINE
+if HAVE_FIBER
 check_PROGRAMS += \
 	unit/spawn
 endif
@@ -442,7 +442,7 @@ TESTS += \
 	unit/experimental/parallel_group
 endif
 
-if HAVE_BOOST_COROUTINE
+if HAVE_FIBER
 TESTS += \
 	unit/spawn
 endif
@@ -686,9 +686,13 @@ unit_experimental_concurrent_channel_SOURCES = unit/experimental/concurrent_chan
 unit_experimental_parallel_group_SOURCES = unit/experimental/parallel_group.cpp
 endif
 
-if HAVE_BOOST_COROUTINE
+if HAVE_FIBER
 unit_spawn_SOURCES = unit/spawn.cpp
-unit_spawn_LDADD = -lboost_context
+if HAVE_BOOST_CONTEXT
+unit_spawn_LDADD = $(LDADD) -lboost_context
+else
+unit_spawn_LDADD = $(LDADD)
+endif
 endif
 
 if HAVE_CXX20

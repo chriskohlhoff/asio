@@ -8,9 +8,9 @@
 [section:spawn Stackful Coroutines]
 
 The [link asio.reference.spawn `spawn()`] function is a high-level wrapper for
-running stackful coroutines. It is based on the Boost.Coroutine library. The
-`spawn()` function enables programs to implement asynchronous logic in a
-synchronous manner, as shown in the following example:
+running stackful coroutines. The `spawn()` function enables programs to
+implement asynchronous logic in a synchronous manner, as shown in the following
+example:
 
   asio::spawn(my_strand, do_echo, asio::detached);
 
@@ -36,6 +36,18 @@ synchronous manner, as shown in the following example:
       // ...
     }
   }
+
+[/boostify: non-boost docs start here]
+
+The context switching used by these coroutines is implemented in assembly,
+using clang or gcc on an LP64 data model, for:
+
+  Linux - x86-64, AArch64
+  macOS - x86-64, AArch64
+
+Other targets require the Boost.Context library.
+
+[/boostify: non-boost docs end here]
 
 The first argument to `spawn()` may be an executor or execution context.
 This argument determines the context in which the coroutine is permitted to

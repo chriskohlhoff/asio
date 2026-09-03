@@ -73,6 +73,7 @@ nobase_include_HEADERS = \
 	asio/detached.hpp \
 	asio/detail/array_fwd.hpp \
 	asio/detail/array.hpp \
+	asio/detail/asm_fiber.hpp \
 	asio/detail/assert.hpp \
 	asio/detail/atomic_count.hpp \
 	asio/detail/atomic_slim_mutex.hpp \
@@ -80,6 +81,7 @@ nobase_include_HEADERS = \
 	asio/detail/base_from_completion_cond.hpp \
 	asio/detail/bind_handler.hpp \
 	asio/detail/blocking_executor_op.hpp \
+	asio/detail/boost_fiber.hpp \
 	asio/detail/buffered_stream_storage.hpp \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
@@ -105,6 +107,7 @@ nobase_include_HEADERS = \
 	asio/detail/cstdint.hpp \
 	asio/detail/date_time_fwd.hpp \
 	asio/detail/deadline_timer_service.hpp \
+	asio/detail/default_stack_allocator.hpp \
 	asio/detail/dependent_type.hpp \
 	asio/detail/descriptor_ops.hpp \
 	asio/detail/descriptor_read_op.hpp \
@@ -120,6 +123,7 @@ nobase_include_HEADERS = \
 	asio/detail/executor_op.hpp \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
+	asio/detail/fiber.hpp \
 	asio/detail/functional.hpp \
 	asio/detail/futex_slim_mutex.hpp \
 	asio/detail/future.hpp \
@@ -131,8 +135,10 @@ nobase_include_HEADERS = \
 	asio/detail/handler_work.hpp \
 	asio/detail/has_signature.hpp \
 	asio/detail/hash_map.hpp \
+	asio/detail/impl/asm_fiber.ipp \
 	asio/detail/impl/buffer_sequence_adapter.ipp \
 	asio/detail/impl/channel_service.hpp \
+	asio/detail/impl/default_stack_allocator.ipp \
 	asio/detail/impl/descriptor_ops.ipp \
 	asio/detail/impl/dev_poll_reactor.hpp \
 	asio/detail/impl/dev_poll_reactor.ipp \
