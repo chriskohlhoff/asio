@@ -27,7 +27,10 @@
 #include "asio/any_completion_handler.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/deferred.hpp"
+#include "asio/detached.hpp"
+#include "asio/dispatch.hpp"
 #include "asio/io_context.hpp"
+#include "asio/post.hpp"
 #include "asio/steady_timer.hpp"
 
 void void_returning_coroutine(asio::yield_context)
@@ -575,6 +578,99 @@ void test_spawn_async_ops()
   ASIO_CHECK(called);
 }
 
+void test_spawn_completes_out_of_line()
+{
+  asio::io_context ctx;
+
+  int depth = 0;
+  int max_depth = 0;
+  bool called = false;
+
+  asio::post(ctx,
+      [&]
+      {
+        ++depth;
+        max_depth = depth > max_depth ? depth : max_depth;
+
+        asio::spawn(ctx,
+            [](asio::yield_context)
+            {
+            },
+            [&](std::exception_ptr)
+            {
+              ++depth;
+              max_depth = depth > max_depth ? depth : max_depth;
+              called = true;
+              --depth;
+            });
+
+        --depth;
+      });
+
+  ctx.run();
+
+  ASIO_CHECK(called);
+  ASIO_CHECK(max_depth == 1);
+}
+
+void test_spawn_inline_completions()
+{
+  asio::io_context ctx;
+
+  int completed = 0;
+  int destroyed = 0;
+
+  struct tracker
+  {
+    int& destroyed_;
+    ~tracker() { ++destroyed_; }
+  };
+
+  asio::spawn(ctx,
+      [&](asio::yield_context yield)
+      {
+        tracker t{destroyed};
+        for (int i = 0; i < 16; ++i)
+          asio::dispatch(yield);
+        completed = 1;
+      }, asio::detached);
+
+  ctx.run();
+
+  ASIO_CHECK(completed == 1);
+  ASIO_CHECK(destroyed == 1);
+}
+
+void test_spawn_inline_completions_abandoned()
+{
+  int destroyed = 0;
+
+  struct tracker
+  {
+    int& destroyed_;
+    ~tracker() { ++destroyed_; }
+  };
+
+  {
+    asio::io_context ctx;
+    asio::steady_timer timer(ctx);
+
+    asio::spawn(ctx,
+        [&](asio::yield_context yield)
+        {
+          tracker t{destroyed};
+          for (int i = 0; i < 8; ++i)
+            asio::dispatch(yield);
+          timer.expires_after(asio::chrono::hours(1));
+          timer.async_wait(yield);
+        }, asio::detached);
+
+    ctx.run_one();
+  }
+
+  ASIO_CHECK(destroyed == 1);
+}
+
 ASIO_TEST_SUITE
 (
   "spawn",
@@ -584,6 +680,9 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(test_spawn_exception)
   ASIO_TEST_CASE(test_spawn_return_move_only)
   ASIO_TEST_CASE(test_spawn_async_ops)
+  ASIO_TEST_CASE(test_spawn_completes_out_of_line)
+  ASIO_TEST_CASE(test_spawn_inline_completions)
+  ASIO_TEST_CASE(test_spawn_inline_completions_abandoned)
 )
 
 #else // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)

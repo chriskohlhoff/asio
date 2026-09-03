@@ -106,6 +106,13 @@ public:
     }
   }
 
+  void initial_suspend()
+  {
+    on_suspend_fn_ = 0;
+    on_suspend_arg_ = 0;
+    caller_ = fiber_type(static_cast<fiber_type&&>(caller_)).resume();
+  }
+
   void suspend_with(void (*fn)(void*), void* arg)
   {
     if (throw_if_cancelled_)
@@ -144,7 +151,7 @@ private:
           static_cast<fiber_type&&>(caller));
       *spawned_thread_out_ = &spawned_thread;
       spawned_thread_out_ = 0;
-      spawned_thread.suspend();
+      spawned_thread.initial_suspend();
 #if !defined(ASIO_NO_EXCEPTIONS)
       try
 #endif // !defined(ASIO_NO_EXCEPTIONS)
