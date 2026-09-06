@@ -23,6 +23,7 @@
 #include "asio/detail/signal_set_service.hpp"
 #include "asio/detail/static_mutex.hpp"
 #include "asio/detail/throw_exception.hpp"
+#include "asio/error.hpp"
 
 #if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 # include "asio/detail/io_uring_service.hpp"
@@ -424,7 +425,7 @@ asio::error_code signal_set_service::add(
     ++state->registration_count_[signal_number];
   }
 
-  ec = asio::error_code();
+  asio::error::clear(ec);
   return ec;
 }
 
@@ -497,7 +498,7 @@ asio::error_code signal_set_service::remove(
     delete reg;
   }
 
-  ec = asio::error_code();
+  asio::error::clear(ec);
   return ec;
 }
 
@@ -552,7 +553,7 @@ asio::error_code signal_set_service::clear(
     delete reg;
   }
 
-  ec = asio::error_code();
+  asio::error::clear(ec);
   return ec;
 }
 
@@ -578,7 +579,7 @@ asio::error_code signal_set_service::cancel(
 
   scheduler_.post_deferred_completions(ops);
 
-  ec = asio::error_code();
+  asio::error::clear(ec);
   return ec;
 }
 

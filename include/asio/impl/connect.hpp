@@ -177,7 +177,7 @@ Iterator connect(basic_socket<Protocol, Executor>& s, Iterator begin,
       is_connect_condition<ConnectCondition, Iterator>::value
     >)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
 
   for (Iterator iter = begin; iter != end; ++iter)
   {

@@ -20,6 +20,7 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/type_traits.hpp"
+#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -208,7 +209,7 @@ template <typename MutableBufferSequence>
 std::size_t buffered_read_stream<Stream>::read_some(
     const MutableBufferSequence& buffers, asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
 
   using asio::buffer_size;
   if (buffer_size(buffers) == 0)
@@ -392,7 +393,7 @@ template <typename MutableBufferSequence>
 std::size_t buffered_read_stream<Stream>::peek(
     const MutableBufferSequence& buffers, asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
   if (storage_.empty() && !this->fill(ec))
     return 0;
   return this->peek_copy(buffers);

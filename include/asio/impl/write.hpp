@@ -28,6 +28,7 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/throw_error.hpp"
+#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -42,7 +43,7 @@ namespace detail
       const ConstBufferSequence& buffers, const ConstBufferIterator&,
       CompletionCondition completion_condition, asio::error_code& ec)
   {
-    ec = asio::error_code();
+    asio::error::clear(ec);
     asio::detail::consuming_buffers<const_buffer,
         ConstBufferSequence, ConstBufferIterator> tmp(buffers);
     while (!tmp.empty())

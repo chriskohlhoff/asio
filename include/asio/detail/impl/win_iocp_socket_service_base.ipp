@@ -20,6 +20,7 @@
 #if defined(ASIO_HAS_IOCP)
 
 #include "asio/detail/win_iocp_socket_service_base.hpp"
+#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -187,7 +188,7 @@ asio::error_code win_iocp_socket_service_base::close(
   }
   else
   {
-    ec = asio::error_code();
+    asio::error::clear(ec);
   }
 
   impl.socket_ = invalid_socket;
@@ -263,7 +264,7 @@ asio::error_code win_iocp_socket_service_base::cancel(
         // ERROR_NOT_FOUND means that there were no operations to be
         // cancelled. We swallow this error to match the behaviour on other
         // platforms.
-        ec = asio::error_code();
+        asio::error::clear(ec);
       }
       else
       {
@@ -273,14 +274,14 @@ asio::error_code win_iocp_socket_service_base::cancel(
     }
     else
     {
-      ec = asio::error_code();
+      asio::error::clear(ec);
     }
   }
 #if defined(ASIO_ENABLE_CANCELIO)
   else if (impl.safe_cancellation_thread_id_ == 0)
   {
     // No operations have been started, so there's nothing to cancel.
-    ec = asio::error_code();
+    asio::error::clear(ec);
   }
   else if (impl.safe_cancellation_thread_id_ == ::GetCurrentThreadId())
   {
@@ -296,7 +297,7 @@ asio::error_code win_iocp_socket_service_base::cancel(
     }
     else
     {
-      ec = asio::error_code();
+      asio::error::clear(ec);
     }
   }
   else
@@ -352,7 +353,7 @@ asio::error_code win_iocp_socket_service_base::do_open(
   default: impl.state_ = 0; break;
   }
   impl.cancel_token_.reset(static_cast<void*>(0), socket_ops::noop_deleter());
-  ec = asio::error_code();
+  asio::error::clear(ec);
   return ec;
 }
 
@@ -378,7 +379,7 @@ asio::error_code win_iocp_socket_service_base::do_assign(
   default: impl.state_ = 0; break;
   }
   impl.cancel_token_.reset(static_cast<void*>(0), socket_ops::noop_deleter());
-  ec = asio::error_code();
+  asio::error::clear(ec);
   return ec;
 }
 
@@ -666,7 +667,7 @@ int win_iocp_socket_service_base::start_connect_op(
       if (op->ec_ == asio::error::in_progress
           || op->ec_ == asio::error::would_block)
       {
-        op->ec_ = asio::error_code();
+        asio::error::clear(op->ec_);
         r.start_op(select_reactor::connect_op, impl.socket_,
             impl.reactor_data_, op, false, false);
         return select_reactor::connect_op;

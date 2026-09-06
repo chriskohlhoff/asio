@@ -23,6 +23,7 @@
 #include "asio/detail/scheduler.hpp"
 #include "asio/detail/scheduler_thread_info.hpp"
 #include "asio/detail/signal_blocker.hpp"
+#include "asio/error.hpp"
 
 #if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 # include "asio/detail/io_uring_service.hpp"
@@ -203,7 +204,7 @@ void scheduler::init_task()
 
 std::size_t scheduler::run(asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -227,7 +228,7 @@ std::size_t scheduler::run(asio::error_code& ec)
 
 std::size_t scheduler::run_one(asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -247,7 +248,7 @@ std::size_t scheduler::run_one(asio::error_code& ec)
 
 std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -265,7 +266,7 @@ std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
 
 std::size_t scheduler::poll(asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -298,7 +299,7 @@ std::size_t scheduler::poll(asio::error_code& ec)
 
 std::size_t scheduler::poll_one(asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();

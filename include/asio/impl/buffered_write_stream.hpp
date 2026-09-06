@@ -19,6 +19,7 @@
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
+#include "asio/error.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -188,7 +189,7 @@ template <typename ConstBufferSequence>
 std::size_t buffered_write_stream<Stream>::write_some(
     const ConstBufferSequence& buffers, asio::error_code& ec)
 {
-  ec = asio::error_code();
+  asio::error::clear(ec);
 
   using asio::buffer_size;
   if (buffer_size(buffers) == 0)
