@@ -153,8 +153,7 @@ public:
 # endif // defined(ASIO_HAS_IO_URING_AS_DEFAULT)
 
   static void do_complete(void* /*owner*/, operation* base,
-      const asio::error_code& /*ec*/,
-      std::size_t /*bytes_transferred*/)
+      int /*error_value*/, std::size_t /*bytes_transferred*/)
   {
     pipe_read_op* o(static_cast<pipe_read_op*>(base));
     delete o;

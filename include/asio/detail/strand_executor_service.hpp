@@ -190,9 +190,6 @@ private:
 
   // The head of a linked list of all implementations.
   strand_impl* impl_list_;
-
-  // Cached success value to avoid accessing category singleton.
-  const asio::error_code success_ec_;
 };
 
 } // namespace detail

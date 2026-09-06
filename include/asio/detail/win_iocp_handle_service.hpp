@@ -377,11 +377,10 @@ private:
     }
 
     static void do_complete(void* owner, operation* base,
-        const asio::error_code& result_ec,
-        std::size_t bytes_transferred)
+        int error_value, std::size_t bytes_transferred)
     {
       iocp_op_cancellation* o = static_cast<iocp_op_cancellation*>(base);
-      o->target_->complete(owner, result_ec, bytes_transferred);
+      o->target_->complete(owner, error_value, bytes_transferred);
     }
 
     void operator()(cancellation_type_t type)

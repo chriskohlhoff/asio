@@ -825,7 +825,7 @@ operation* epoll_reactor::descriptor_state::perform_io(uint32_t events)
 
 void epoll_reactor::descriptor_state::do_complete(
     void* owner, operation* base,
-    const asio::error_code& ec, std::size_t bytes_transferred)
+    int /*error_value*/, std::size_t bytes_transferred)
 {
   if (owner)
   {
@@ -833,7 +833,7 @@ void epoll_reactor::descriptor_state::do_complete(
     uint32_t events = static_cast<uint32_t>(bytes_transferred);
     if (operation* op = descriptor_data->perform_io(events))
     {
-      op->complete(owner, ec, 0);
+      op->complete(owner, 0, 0);
     }
   }
 }

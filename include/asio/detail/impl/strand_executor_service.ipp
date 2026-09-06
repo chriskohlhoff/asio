@@ -155,7 +155,7 @@ void strand_executor_service::run_ready_handlers(implementation_type& impl)
   while (scheduler_operation* o = impl->ready_queue_.front())
   {
     impl->ready_queue_.pop();
-    o->complete(impl.get(), success_ec_, 0);
+    o->complete(impl.get(), 0, 0);
   }
 }
 
