@@ -84,6 +84,22 @@ struct scheduler::work_cleanup
 {
   ~work_cleanup()
   {
+    // Exactly one unit of outstanding work needs no adjustment.
+    if (this_thread_->private_outstanding_work != 1)
+      adjust_outstanding_work();
+    this_thread_->private_outstanding_work = 0;
+
+#if defined(ASIO_HAS_THREADS)
+    if (!this_thread_->private_op_queue.empty())
+    {
+      lock_->lock();
+      scheduler_->op_queue_.push(this_thread_->private_op_queue);
+    }
+#endif // defined(ASIO_HAS_THREADS)
+  }
+
+  void adjust_outstanding_work()
+  {
     if (this_thread_->private_outstanding_work > 1)
     {
       asio::detail::increment(
@@ -94,15 +110,6 @@ struct scheduler::work_cleanup
     {
       scheduler_->work_finished();
     }
-    this_thread_->private_outstanding_work = 0;
-
-#if defined(ASIO_HAS_THREADS)
-    if (!this_thread_->private_op_queue.empty())
-    {
-      lock_->lock();
-      scheduler_->op_queue_.push(this_thread_->private_op_queue);
-    }
-#endif // defined(ASIO_HAS_THREADS)
   }
 
   scheduler* scheduler_;
@@ -379,10 +386,18 @@ void scheduler::post_immediate_completion(
   (void)is_continuation;
 #endif // defined(ASIO_HAS_THREADS)
 
+  do_post_immediate_completion(op);
+}
+
+void scheduler::do_post_immediate_completion(scheduler::operation* op)
+{
   work_started();
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
-  wake_one_thread_and_unlock(lock);
+  if (can_skip_wake(lock))
+    lock.unlock();
+  else
+    wake_one_thread_and_unlock(lock);
 }
 
 void scheduler::post_immediate_completions(std::size_t n,
@@ -403,6 +418,12 @@ void scheduler::post_immediate_completions(std::size_t n,
   (void)is_continuation;
 #endif // defined(ASIO_HAS_THREADS)
 
+  do_post_immediate_completions(n, ops);
+}
+
+void scheduler::do_post_immediate_completions(
+    std::size_t n, op_queue<scheduler::operation>& ops)
+{
   increment(outstanding_work_, static_cast<long>(n));
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(ops);
@@ -422,6 +443,11 @@ void scheduler::post_deferred_completion(scheduler::operation* op)
   }
 #endif // defined(ASIO_HAS_THREADS)
 
+  do_post_deferred_completion(op);
+}
+
+void scheduler::do_post_deferred_completion(scheduler::operation* op)
+{
   mutex::scoped_lock lock(mutex_);
   op_queue_.push(op);
   wake_one_thread_and_unlock(lock);
@@ -443,10 +469,16 @@ void scheduler::post_deferred_completions(
     }
 #endif // defined(ASIO_HAS_THREADS)
 
-    mutex::scoped_lock lock(mutex_);
-    op_queue_.push(ops);
-    wake_one_thread_and_unlock(lock);
+    do_post_deferred_completions(ops);
   }
+}
+
+void scheduler::do_post_deferred_completions(
+    op_queue<scheduler::operation>& ops)
+{
+  mutex::scoped_lock lock(mutex_);
+  op_queue_.push(ops);
+  wake_one_thread_and_unlock(lock);
 }
 
 void scheduler::do_dispatch(
@@ -470,70 +502,73 @@ std::size_t scheduler::do_run_one(mutex::scoped_lock& lock,
 {
   while (!stopped_)
   {
-    if (!op_queue_.empty())
+    if (op_queue_.empty())
     {
-      // Prepare to execute first handler from queue.
-      operation* o = op_queue_.front();
-      op_queue_.pop();
-      bool more_handlers = (!op_queue_.empty());
+      do_sleep(lock);
+      continue;
+    }
 
-      if (o == &task_operation_)
+    // Prepare to execute first handler from queue.
+    operation* o = op_queue_.front();
+    op_queue_.pop();
+    bool more_handlers = (!op_queue_.empty());
+
+    if (o == &task_operation_)
+    {
+      task_interrupted_ = more_handlers || task_usec_ == 0;
+
+      if (more_handlers && !one_thread_ && wait_usec_ != 0)
+        wakeup_event_.unlock_and_signal_one(lock);
+      else
+        lock.unlock();
+
       {
-        task_interrupted_ = more_handlers || task_usec_ == 0;
-
-        if (more_handlers && !one_thread_ && wait_usec_ != 0)
-          wakeup_event_.unlock_and_signal_one(lock);
-        else
-          lock.unlock();
-
         task_cleanup on_exit = { this, &lock, &this_thread };
         (void)on_exit;
 
-        // Run the task. May throw an exception. Only block if the operation
-        // queue is empty and we're not polling, otherwise we want to return
-        // as soon as possible.
         task_->run(more_handlers ? 0 : task_usec_,
             this_thread.private_op_queue);
       }
-      else
-      {
-        std::size_t task_result = o->task_result_;
 
-        if (more_handlers && !one_thread_)
-          wake_one_thread_and_unlock(lock);
-        else
-          lock.unlock();
-
-        // Ensure the count of outstanding work is decremented on block exit.
-        work_cleanup on_exit = { this, &lock, &this_thread };
-        (void)on_exit;
-
-        // Complete the operation. May throw an exception. Deletes the object.
-        o->complete(this, 0, task_result);
-        this_thread.rethrow_pending_exception();
-
-        return 1;
-      }
+      continue;
     }
+
+    std::size_t task_result = o->task_result_;
+
+    if (more_handlers && !one_thread_ && !can_skip_wake(lock))
+      wake_one_thread_and_unlock(lock);
     else
-    {
-      if (wait_usec_ == 0)
-      {
-        lock.unlock();
-        lock.lock();
-      }
-      else
-      {
-        wakeup_event_.clear(lock);
-        if (wait_usec_ > 0)
-          wakeup_event_.wait_for_usec(lock, wait_usec_);
-        else
-          wakeup_event_.wait(lock);
-      }
-    }
+      lock.unlock();
+
+    // Ensure the count of outstanding work is decremented on block exit.
+    work_cleanup on_exit = { this, &lock, &this_thread };
+    (void)on_exit;
+
+    // Complete the operation. May throw an exception. Deletes the object.
+    o->complete(this, 0, task_result);
+    this_thread.rethrow_pending_exception();
+
+    return 1;
   }
 
   return 0;
+}
+
+void scheduler::do_sleep(mutex::scoped_lock& lock)
+{
+  if (wait_usec_ == 0)
+  {
+    lock.unlock();
+    lock.lock();
+  }
+  else
+  {
+    wakeup_event_.clear(lock);
+    if (wait_usec_ > 0)
+      wakeup_event_.wait_for_usec(lock, wait_usec_);
+    else
+      wakeup_event_.wait(lock);
+  }
 }
 
 std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
