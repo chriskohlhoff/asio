@@ -171,8 +171,8 @@ private:
 
   // Run at most one operation. May block. Always inlined into the run
   // functions, as leaving it out of line costs them a stack frame.
-  ASIO_ALWAYS_INLINE std::size_t do_run_one(
-      mutex::scoped_lock& lock, thread_info& this_thread);
+  ASIO_ALWAYS_INLINE std::size_t do_run_one(mutex::scoped_lock& lock,
+      thread_info& this_thread, bool may_wake);
 
   // Sleep until woken to run an operation. May block.
   ASIO_DECL ASIO_NEVER_INLINE void do_sleep(
@@ -184,10 +184,16 @@ private:
 
   // Poll for at most one operation.
   ASIO_DECL std::size_t do_poll_one(
-      mutex::scoped_lock& lock, thread_info& this_thread);
+      mutex::scoped_lock& lock, thread_info& this_thread, bool may_wake);
 
   // Stop the task and all idle threads.
   ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);
+
+  // True if the configuration means that other threads may need to be woken.
+  bool wake_possible() const
+  {
+    return !one_thread_ && (wait_usec_ != 0 || task_usec_ != 0);
+  }
 
   // True if there is no reason to wake any other thread.
   bool can_skip_wake(mutex::scoped_lock& lock)
@@ -197,9 +203,26 @@ private:
       && ASIO_LIKELY(task_interrupted_ || !task_);
   }
 
+  // True if another thread must be woken.
+  bool must_wake(mutex::scoped_lock& lock)
+  {
+    return !(ASIO_LIKELY(!wakeup_event_.has_waiters(lock))
+        && ASIO_LIKELY(task_interrupted_ || !task_));
+  }
+
   // Wake a single idle thread, or the task, and always unlock the mutex.
   ASIO_DECL ASIO_NEVER_INLINE void wake_one_thread_and_unlock(
       mutex::scoped_lock& lock);
+
+  // Wake a single idle thread, or the task, if waking is required. Always
+  // unlock the mutex.
+  void wake_if_needed_and_unlock(mutex::scoped_lock& lock)
+  {
+    if (can_skip_wake(lock))
+      lock.unlock();
+    else
+      wake_one_thread_and_unlock(lock);
+  }
 
   // Get the default task.
   ASIO_DECL static scheduler_task* get_default_task(
