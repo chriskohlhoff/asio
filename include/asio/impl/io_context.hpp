@@ -195,8 +195,34 @@ inline bool io_context::basic_executor_type<Allocator,
   return context_ptr()->impl_.can_dispatch();
 }
 
+template <typename Function>
+void io_context::execute_immediately(io_context* ctx, Function&& f)
+{
+  typedef decay_t<Function> function_type;
+
+  // Make a local, non-const copy of the function.
+  detail::non_const_lvalue<Function> f2(f);
+
+#if defined(ASIO_NO_EXCEPTIONS)
+  (void)ctx;
+  detail::fenced_block b(detail::fenced_block::full);
+  static_cast<function_type&&>(f2.value)();
+#else // defined(ASIO_NO_EXCEPTIONS)
+  try
+  {
+    detail::fenced_block b(detail::fenced_block::full);
+    static_cast<function_type&&>(f2.value)();
+  }
+  catch (...)
+  {
+    ctx->impl_.capture_current_exception();
+  }
+#endif // defined(ASIO_NO_EXCEPTIONS)
+}
+
 template <typename Allocator, uintptr_t Bits>
 template <typename Function>
+ASIO_ALWAYS_INLINE
 void io_context::basic_executor_type<Allocator, Bits>::execute(
     Function&& f) const
 {
@@ -206,24 +232,8 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
   // already inside the thread pool.
   if ((bits() & blocking_never) == 0 && context_ptr()->impl_.can_dispatch())
   {
-    // Make a local, non-const copy of the function.
-    function_type tmp(static_cast<Function&&>(f));
-
-#if !defined(ASIO_NO_EXCEPTIONS)
-    try
-    {
-#endif // !defined(ASIO_NO_EXCEPTIONS)
-      detail::fenced_block b(detail::fenced_block::full);
-      static_cast<function_type&&>(tmp)();
-      return;
-#if !defined(ASIO_NO_EXCEPTIONS)
-    }
-    catch (...)
-    {
-      context_ptr()->impl_.capture_current_exception();
-      return;
-    }
-#endif // !defined(ASIO_NO_EXCEPTIONS)
+    io_context::execute_immediately(context_ptr(), static_cast<Function&&>(f));
+    return;
   }
 
   // Allocate and construct an operation to wrap the function.
@@ -237,8 +247,10 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
   ASIO_HANDLER_CREATION((*context_ptr(), *p.p,
         "io_context", context_ptr(), 0, "execute"));
 
-  context_ptr()->impl_.post_immediate_completion(p.p,
-      (bits() & relationship_continuation) != 0);
+  if ((bits() & relationship_continuation) != 0)
+    context_ptr()->impl_.post_immediate_completion(p.p, true);
+  else
+    context_ptr()->impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
 }
 

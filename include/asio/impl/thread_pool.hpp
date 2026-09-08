@@ -129,8 +129,33 @@ inline bool thread_pool::basic_executor_type<Allocator,
   return context_ptr()->scheduler_.can_dispatch();
 }
 
+template <typename Function>
+void thread_pool::execute_immediately(Function&& f)
+{
+  typedef decay_t<Function> function_type;
+
+  // Make a local, non-const copy of the function.
+  function_type tmp(static_cast<Function&&>(f));
+
+#if defined(ASIO_NO_EXCEPTIONS)
+  detail::fenced_block b(detail::fenced_block::full);
+  static_cast<function_type&&>(tmp)();
+#else // defined(ASIO_NO_EXCEPTIONS)
+  try
+  {
+    detail::fenced_block b(detail::fenced_block::full);
+    static_cast<function_type&&>(tmp)();
+  }
+  catch (...)
+  {
+    std::terminate();
+  }
+#endif // defined(ASIO_NO_EXCEPTIONS)
+}
+
 template <typename Allocator, unsigned int Bits>
 template <typename Function>
+ASIO_ALWAYS_INLINE
 void thread_pool::basic_executor_type<Allocator,
     Bits>::do_execute(Function&& f, false_type) const
 {
@@ -141,24 +166,8 @@ void thread_pool::basic_executor_type<Allocator,
   if ((bits() & blocking_never) == 0
       && context_ptr()->scheduler_.can_dispatch())
   {
-    // Make a local, non-const copy of the function.
-    function_type tmp(static_cast<Function&&>(f));
-
-#if !defined(ASIO_NO_EXCEPTIONS)
-    try
-    {
-#endif // !defined(ASIO_NO_EXCEPTIONS)
-      detail::fenced_block b(detail::fenced_block::full);
-      static_cast<function_type&&>(tmp)();
-      return;
-#if !defined(ASIO_NO_EXCEPTIONS)
-    }
-    catch (...)
-    {
-      std::terminate();
-      return;
-    }
-#endif // !defined(ASIO_NO_EXCEPTIONS)
+    thread_pool::execute_immediately(static_cast<Function&&>(f));
+    return;
   }
 
   // Allocate and construct an operation to wrap the function.
@@ -181,7 +190,6 @@ void thread_pool::basic_executor_type<Allocator,
           "thread_pool", context_ptr(), 0, "execute(blk=never,rel=fork)"));
     context_ptr()->scheduler_.post_immediate_completion(p.p, false);
   }
-
   p.v = p.p = 0;
 }
 
