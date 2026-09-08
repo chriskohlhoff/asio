@@ -139,11 +139,36 @@ public:
   static void* allocate(Purpose, thread_info_base* this_thread,
       std::size_t size, std::size_t align = ASIO_DEFAULT_ALIGN)
   {
+    if (this_thread)
+    {
+      void* const pointer =
+        this_thread->reusable_memory_[Purpose::begin_mem_index];
+      if (pointer)
+      {
+        unsigned char* const mem = static_cast<unsigned char*>(pointer);
+        if (static_cast<std::size_t>(mem[0])
+              >= (size + chunk_size - 1) / chunk_size
+            && reinterpret_cast<std::size_t>(pointer) % align == 0)
+        {
+          this_thread->reusable_memory_[Purpose::begin_mem_index] = 0;
+          mem[size] = mem[0];
+          return pointer;
+        }
+      }
+    }
+
+    return allocate_cold(Purpose(), this_thread, size, align);
+  }
+
+  template <typename Purpose>
+  ASIO_NEVER_INLINE static void* allocate_cold(Purpose,
+      thread_info_base* this_thread, std::size_t size, std::size_t align)
+  {
     std::size_t chunks = (size + chunk_size - 1) / chunk_size;
 
     if (this_thread)
     {
-      for (int mem_index = Purpose::begin_mem_index;
+      for (int mem_index = Purpose::begin_mem_index + 1;
           mem_index < Purpose::end_mem_index; ++mem_index)
       {
         if (this_thread->reusable_memory_[mem_index])
@@ -183,11 +208,27 @@ public:
   static void deallocate(Purpose, thread_info_base* this_thread,
       void* pointer, std::size_t size)
   {
+    if (size <= chunk_size * UCHAR_MAX && this_thread
+        && this_thread->reusable_memory_[Purpose::begin_mem_index] == 0)
+    {
+      unsigned char* const mem = static_cast<unsigned char*>(pointer);
+      mem[0] = mem[size];
+      this_thread->reusable_memory_[Purpose::begin_mem_index] = pointer;
+      return;
+    }
+
+    deallocate_cold(Purpose(), this_thread, pointer, size);
+  }
+
+  template <typename Purpose>
+  ASIO_NEVER_INLINE static void deallocate_cold(Purpose,
+      thread_info_base* this_thread, void* pointer, std::size_t size)
+  {
     if (size <= chunk_size * UCHAR_MAX)
     {
       if (this_thread)
       {
-        for (int mem_index = Purpose::begin_mem_index;
+        for (int mem_index = Purpose::begin_mem_index + 1;
             mem_index < Purpose::end_mem_index; ++mem_index)
         {
           if (this_thread->reusable_memory_[mem_index] == 0)
