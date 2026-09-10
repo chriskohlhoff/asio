@@ -38,6 +38,12 @@
 #endif // defined(__has_include)
 
 // boostify: non-boost code ends here
+// On Apple platforms we need to include Availability.h in order to get access
+// to the platform feature macros.
+#if defined(__APPLE__)
+# include <Availability.h>
+#endif // defined(__APPLE__)
+
 #if defined(ASIO_STANDALONE)
 # define ASIO_DISABLE_BOOST_ALIGN 1
 # define ASIO_DISABLE_BOOST_ARRAY 1
