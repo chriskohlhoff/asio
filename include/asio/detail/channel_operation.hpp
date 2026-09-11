@@ -107,7 +107,7 @@ public:
   template <typename IoExecutor, typename Function, typename Handler>
   void post(const IoExecutor& io_exec, Function& function, Handler&)
   {
-    (initiate_post_with_executor<IoExecutor>(io_exec))(
+    (initiate_post_with_executor<const IoExecutor&>(io_exec))(
         static_cast<Function&&>(function),
         empty_work_function());
   }
@@ -270,7 +270,7 @@ public:
         handler, base1_type::get_executor());
 
     (initiate_dispatch_with_executor<
-          immediate_ex_type>(immediate_ex))(
+          const immediate_ex_type&>(immediate_ex))(
         static_cast<Function&&>(function),
         empty_work_function());
   }
@@ -284,7 +284,7 @@ public:
       >*)
   {
     (initiate_post_with_executor<
-        typename base1_type::executor_type>(
+        const typename base1_type::executor_type&>(
           base1_type::get_executor()))(
         static_cast<Function&&>(function),
         empty_work_function());
@@ -329,7 +329,7 @@ public:
         handler, base1_type::get_executor());
 
     (initiate_dispatch_with_executor<
-          immediate_ex_type>(immediate_ex))(
+          const immediate_ex_type&>(immediate_ex))(
         static_cast<Function&&>(function),
         empty_work_function());
   }

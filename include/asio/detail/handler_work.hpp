@@ -492,7 +492,7 @@ public:
     immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
         handler, *static_cast<const IoExecutor*>(io_ex));
 
-    (initiate_dispatch_with_executor<immediate_ex_type>(immediate_ex))(
+    (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
         static_cast<Function&&>(function), empty_work_function());
   }
 
