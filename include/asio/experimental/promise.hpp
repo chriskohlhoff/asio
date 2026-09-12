@@ -208,6 +208,24 @@ private:
               if (auto p = self.lock())
               {
                 p->cancel.emit(level);
+
+                // An operation that does not act on the cancellation signal
+                // would otherwise leave the promise pending forever, so the
+                // completion is still forced here. A cancellation signal may
+                // be emitted from any thread, and from within an initiating
+                // function, so post it rather than invoking it inline.
+                if (p->completion)
+                {
+                  asio::post(p->get_executor(),
+                      [p]
+                      {
+                        // The operation may have completed in the meantime,
+                        // in which case the completion has already been
+                        // consumed and there is nothing left to cancel.
+                        if (p->completion)
+                          p->cancel_();
+                      });
+                }
               }
             }
           };
