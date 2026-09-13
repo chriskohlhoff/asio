@@ -15,6 +15,7 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
+#include "asio/detail/executor_function.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/executor_work_guard.hpp"
@@ -218,6 +219,31 @@ void strand_executor_service::do_execute(const implementation_type& impl,
   // Add the function to the strand and schedule the strand if required.
   bool first = enqueue(impl, p.p);
   p.v = p.p = 0;
+  if (first)
+  {
+    ex.execute(invoker<Executor>(impl, ex));
+  }
+}
+
+template <typename Executor, typename Allocator>
+void strand_executor_service::do_execute(const implementation_type& impl,
+    Executor& ex, executor_function&& function, const Allocator&)
+{
+  // If the executor is not never-blocking, and we are already in the strand,
+  // then the function can run immediately.
+  if (asio::query(ex, execution::blocking) != execution::blocking.never
+      && running_in_this_thread(impl))
+  {
+    fenced_block b(fenced_block::full);
+    function();
+    return;
+  }
+
+  ASIO_HANDLER_CREATION((impl->service_->context(), *function.get(),
+        "strand_executor", impl.get(), 0, "execute"));
+
+  // Add the operation to the strand and schedule the strand if required.
+  bool first = enqueue(impl, function.release());
   if (first)
   {
     ex.execute(invoker<Executor>(impl, ex));

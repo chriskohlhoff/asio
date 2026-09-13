@@ -38,7 +38,7 @@ strand_executor_service::strand_executor_service(execution_context& ctx)
 
 void strand_executor_service::shutdown()
 {
-  op_queue<scheduler_operation> ops;
+  op_queue<operation> ops;
 
   asio::detail::mutex::scoped_lock lock(mutex_);
 
@@ -103,7 +103,7 @@ strand_executor_service::strand_impl::~strand_impl()
 }
 
 bool strand_executor_service::enqueue(const implementation_type& impl,
-    scheduler_operation* op)
+    operation* op)
 {
   impl->lock_mutex();
   if (impl->shutdown_)
@@ -152,7 +152,7 @@ void strand_executor_service::run_ready_handlers(implementation_type& impl)
 
   // Run all ready handlers. No lock is required since the ready queue is
   // accessed only within the strand.
-  while (scheduler_operation* o = impl->ready_queue_.front())
+  while (operation* o = impl->ready_queue_.front())
   {
     impl->ready_queue_.pop();
     o->complete(impl.get(), 0, 0);

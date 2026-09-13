@@ -689,6 +689,27 @@ public:
     }
   }
 
+  void execute(asio::detail::executor_function&& f) const
+  {
+    if (target_)
+    {
+      if (target_fns_->blocking_execute != 0)
+      {
+        target_fns_->blocking_execute(*this, function_view(f));
+      }
+      else
+      {
+        target_fns_->execute(*this,
+            static_cast<asio::detail::executor_function&&>(f));
+      }
+    }
+    else
+    {
+      bad_executor ex;
+      asio::detail::throw_exception(ex);
+    }
+  }
+
   template <typename Executor>
   Executor* target()
   {

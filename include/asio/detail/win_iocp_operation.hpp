@@ -30,6 +30,7 @@ namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
+class scheduler;
 class win_iocp_io_context;
 
 // Base class for all operations. A function pointer is used instead of virtual
@@ -72,7 +73,8 @@ protected:
 
   win_iocp_operation(func_type func)
     : next_(0),
-      func_(func)
+      func_(func),
+      task_result_(0)
   {
     reset();
   }
@@ -85,9 +87,11 @@ protected:
 private:
   friend class op_queue_access;
   friend class win_iocp_io_context;
+  friend class scheduler;
   win_iocp_operation* next_;
   func_type func_;
   LONG ready_;
+  unsigned int task_result_; // Used by scheduler to pass as bytes_transferred.
 };
 
 } // namespace detail

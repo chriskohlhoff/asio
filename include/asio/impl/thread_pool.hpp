@@ -17,6 +17,7 @@
 
 #include "asio/config.hpp"
 #include "asio/detail/blocking_executor_op.hpp"
+#include "asio/detail/executor_function.hpp"
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
@@ -191,6 +192,34 @@ void thread_pool::basic_executor_type<Allocator,
     context_ptr()->scheduler_.post_immediate_completion(p.p, false);
   }
   p.v = p.p = 0;
+}
+
+template <typename Allocator, unsigned int Bits>
+void thread_pool::basic_executor_type<Allocator, Bits>::do_execute(
+    detail::executor_function&& f, false_type) const
+{
+  // Invoke immediately if the blocking.possibly property is enabled and we are
+  // already inside the thread pool.
+  if ((bits() & blocking_never) == 0
+      && context_ptr()->scheduler_.can_dispatch())
+  {
+    thread_pool::execute_immediately(
+        static_cast<detail::executor_function&&>(f));
+    return;
+  }
+
+  if ((bits() & relationship_continuation) != 0)
+  {
+    ASIO_HANDLER_CREATION((*context_ptr(), *f.get(),
+          "thread_pool", context_ptr(), 0, "execute(blk=never,rel=cont)"));
+    context_ptr()->scheduler_.post_immediate_completion(f.release(), true);
+  }
+  else
+  {
+    ASIO_HANDLER_CREATION((*context_ptr(), *f.get(),
+          "thread_pool", context_ptr(), 0, "execute(blk=never,rel=fork)"));
+    context_ptr()->scheduler_.post_immediate_completion(f.release(), false);
+  }
 }
 
 template <typename Allocator, unsigned int Bits>

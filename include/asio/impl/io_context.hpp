@@ -17,6 +17,7 @@
 
 #include "asio/config.hpp"
 #include "asio/detail/completion_handler.hpp"
+#include "asio/detail/executor_function.hpp"
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_type_requirements.hpp"
@@ -223,7 +224,7 @@ void io_context::execute_immediately(io_context* ctx, Function&& f)
 template <typename Allocator, uintptr_t Bits>
 template <typename Function>
 ASIO_ALWAYS_INLINE
-void io_context::basic_executor_type<Allocator, Bits>::execute(
+void io_context::basic_executor_type<Allocator, Bits>::do_execute(
     Function&& f) const
 {
   typedef decay_t<Function> function_type;
@@ -237,7 +238,7 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
   }
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type, Allocator, detail::operation> op;
+  typedef detail::executor_op<function_type, Allocator> op;
   typename op::ptr p = {
       detail::addressof(static_cast<const Allocator&>(*this)),
       op::ptr::allocate(static_cast<const Allocator&>(*this)), 0 };
@@ -252,6 +253,28 @@ void io_context::basic_executor_type<Allocator, Bits>::execute(
   else
     context_ptr()->impl_.post_immediate_completion(p.p, false);
   p.v = p.p = 0;
+}
+
+template <typename Allocator, uintptr_t Bits>
+void io_context::basic_executor_type<Allocator, Bits>::do_execute(
+    detail::executor_function&& f) const
+{
+  // Invoke immediately if the blocking.possibly property is enabled and we are
+  // already inside the thread pool.
+  if ((bits() & blocking_never) == 0 && context_ptr()->impl_.can_dispatch())
+  {
+    io_context::execute_immediately(context_ptr(),
+        static_cast<detail::executor_function&&>(f));
+    return;
+  }
+
+  ASIO_HANDLER_CREATION((*context_ptr(), *f.get(),
+        "io_context", context_ptr(), 0, "execute"));
+
+  if ((bits() & relationship_continuation) != 0)
+    context_ptr()->impl_.post_immediate_completion(f.release(), true);
+  else
+    context_ptr()->impl_.post_immediate_completion(f.release(), false);
 }
 
 #if !defined(ASIO_NO_TS_EXECUTORS)
@@ -295,8 +318,7 @@ void io_context::basic_executor_type<Allocator, Bits>::dispatch(
   }
 
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<function_type,
-      OtherAllocator, detail::operation> op;
+  typedef detail::executor_op<function_type, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
@@ -313,8 +335,7 @@ void io_context::basic_executor_type<Allocator, Bits>::post(
     Function&& f, const OtherAllocator& a) const
 {
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<decay_t<Function>,
-      OtherAllocator, detail::operation> op;
+  typedef detail::executor_op<decay_t<Function>, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 
@@ -331,8 +352,7 @@ void io_context::basic_executor_type<Allocator, Bits>::defer(
     Function&& f, const OtherAllocator& a) const
 {
   // Allocate and construct an operation to wrap the function.
-  typedef detail::executor_op<decay_t<Function>,
-      OtherAllocator, detail::operation> op;
+  typedef detail::executor_op<decay_t<Function>, OtherAllocator> op;
   typename op::ptr p = { detail::addressof(a), op::ptr::allocate(a), 0 };
   p.p = new (p.v) op(static_cast<Function&&>(f), a);
 

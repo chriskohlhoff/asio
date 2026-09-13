@@ -23,6 +23,7 @@
 #include "asio/detail/conditionally_enabled_event.hpp"
 #include "asio/detail/conditionally_enabled_mutex.hpp"
 #include "asio/detail/op_queue.hpp"
+#include "asio/detail/operation.hpp"
 #include "asio/detail/scheduler_operation.hpp"
 #include "asio/detail/scheduler_task.hpp"
 #include "asio/detail/thread.hpp"
@@ -41,7 +42,7 @@ class scheduler
     public thread_context
 {
 public:
-  typedef scheduler_operation operation;
+  typedef asio::detail::operation operation;
 
   // Tag type used for constructing as an internal scheduler.
   struct internal {};
