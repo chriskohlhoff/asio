@@ -276,7 +276,7 @@ public:
 
   work_dispatcher(work_dispatcher&& other)
     : work_dispatcher_function<Function>(
-        static_cast<work_dispatcher_function<Function>&&>(*this)),
+        static_cast<work_dispatcher_function<Function>&&>(other)),
       work_(static_cast<executor_work_guard<Executor>&&>(other.work_)),
       handler_(static_cast<Handler&&>(other.handler_))
   {
