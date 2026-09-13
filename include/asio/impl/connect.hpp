@@ -371,8 +371,9 @@ namespace detail
       range_connect_op<Protocol, Executor, EndpointSequence,
         ConnectCondition, RangeConnectHandler>* this_handler)
   {
-    return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
-        this_handler->handler_);
+    return this_handler->start_ == 0 ? true
+      : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
+          this_handler->handler_);
   }
 
   template <typename Protocol, typename Executor>
@@ -530,8 +531,9 @@ namespace detail
       iterator_connect_op<Protocol, Executor, Iterator,
         ConnectCondition, IteratorConnectHandler>* this_handler)
   {
-    return ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
-        this_handler->handler_);
+    return this_handler->start_ == 0 ? true
+      : ASIO_VERSIONED_NAME(handler_cont_helpers)::is_continuation(
+          this_handler->handler_);
   }
 
   template <typename Protocol, typename Executor>
