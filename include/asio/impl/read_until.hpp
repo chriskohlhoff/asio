@@ -836,28 +836,11 @@ namespace detail
     {
     }
 
-    read_until_delim_op_v1(const read_until_delim_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_op_v1(const read_until_delim_op_v1& other) = default;
+    read_until_delim_op_v1(read_until_delim_op_v1&& other) = default;
 
-    read_until_delim_op_v1(read_until_delim_op_v1&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v1&&>(other.buffers_)),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_op_v1& operator=(const read_until_delim_op_v1&) = delete;
+    read_until_delim_op_v1& operator=(read_until_delim_op_v1&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1053,28 +1036,15 @@ namespace detail
     {
     }
 
-    read_until_delim_string_op_v1(const read_until_delim_string_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_string_op_v1(
+        const read_until_delim_string_op_v1& other) = default;
+    read_until_delim_string_op_v1(
+        read_until_delim_string_op_v1&& other) = default;
 
-    read_until_delim_string_op_v1(read_until_delim_string_op_v1&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v1&&>(other.buffers_)),
-        delim_(static_cast<std::string&&>(other.delim_)),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_string_op_v1& operator=(
+        const read_until_delim_string_op_v1&) = delete;
+    read_until_delim_string_op_v1& operator=(
+        read_until_delim_string_op_v1&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1283,16 +1253,7 @@ namespace detail
     {
     }
 
-    read_until_expr_op_v1(const read_until_expr_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        expr_(other.expr_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_expr_op_v1(const read_until_expr_op_v1& other) = default;
 
     read_until_expr_op_v1(read_until_expr_op_v1&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -1305,6 +1266,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_expr_op_v1& operator=(const read_until_expr_op_v1&) = delete;
+    read_until_expr_op_v1& operator=(read_until_expr_op_v1&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1515,16 +1479,7 @@ namespace detail
     {
     }
 
-    read_until_match_op_v1(const read_until_match_op_v1& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        match_condition_(other.match_condition_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_match_op_v1(const read_until_match_op_v1& other) = default;
 
     read_until_match_op_v1(read_until_match_op_v1&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -1537,6 +1492,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_match_op_v1& operator=(const read_until_match_op_v1&) = delete;
+    read_until_match_op_v1& operator=(read_until_match_op_v1&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1747,30 +1705,11 @@ namespace detail
     {
     }
 
-    read_until_delim_op_v2(const read_until_delim_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_op_v2(const read_until_delim_op_v2& other) = default;
+    read_until_delim_op_v2(read_until_delim_op_v2&& other) = default;
 
-    read_until_delim_op_v2(read_until_delim_op_v2&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v2&&>(other.buffers_)),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_op_v2& operator=(const read_until_delim_op_v2&) = delete;
+    read_until_delim_op_v2& operator=(read_until_delim_op_v2&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -1971,30 +1910,15 @@ namespace detail
     {
     }
 
-    read_until_delim_string_op_v2(const read_until_delim_string_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        delim_(other.delim_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_delim_string_op_v2(
+        const read_until_delim_string_op_v2& other) = default;
+    read_until_delim_string_op_v2(
+        read_until_delim_string_op_v2&& other) = default;
 
-    read_until_delim_string_op_v2(read_until_delim_string_op_v2&& other)
-      : base_from_cancellation_state<ReadHandler>(
-          static_cast<base_from_cancellation_state<ReadHandler>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v2&&>(other.buffers_)),
-        delim_(static_cast<std::string&&>(other.delim_)),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(static_cast<ReadHandler&&>(other.handler_))
-    {
-    }
+    read_until_delim_string_op_v2& operator=(
+        const read_until_delim_string_op_v2&) = delete;
+    read_until_delim_string_op_v2& operator=(
+        read_until_delim_string_op_v2&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -2209,17 +2133,7 @@ namespace detail
     {
     }
 
-    read_until_expr_op_v2(const read_until_expr_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        expr_(other.expr_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_expr_op_v2(const read_until_expr_op_v2& other) = default;
 
     read_until_expr_op_v2(read_until_expr_op_v2&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -2233,6 +2147,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_expr_op_v2& operator=(const read_until_expr_op_v2&) = delete;
+    read_until_expr_op_v2& operator=(read_until_expr_op_v2&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -2450,17 +2367,7 @@ namespace detail
     {
     }
 
-    read_until_match_op_v2(const read_until_match_op_v2& other)
-      : base_from_cancellation_state<ReadHandler>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        match_condition_(other.match_condition_),
-        start_(other.start_),
-        search_position_(other.search_position_),
-        bytes_to_read_(other.bytes_to_read_),
-        handler_(other.handler_)
-    {
-    }
+    read_until_match_op_v2(const read_until_match_op_v2& other) = default;
 
     read_until_match_op_v2(read_until_match_op_v2&& other)
       : base_from_cancellation_state<ReadHandler>(
@@ -2474,6 +2381,9 @@ namespace detail
         handler_(static_cast<ReadHandler&&>(other.handler_))
     {
     }
+
+    read_until_match_op_v2& operator=(const read_until_match_op_v2&) = delete;
+    read_until_match_op_v2& operator=(read_until_match_op_v2&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)

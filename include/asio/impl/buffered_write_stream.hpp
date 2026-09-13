@@ -58,17 +58,11 @@ namespace detail
     {
     }
 
-    buffered_flush_handler(const buffered_flush_handler& other)
-      : storage_(other.storage_),
-        handler_(other.handler_)
-    {
-    }
+    buffered_flush_handler(const buffered_flush_handler& other) = default;
+    buffered_flush_handler(buffered_flush_handler&& other) = default;
 
-    buffered_flush_handler(buffered_flush_handler&& other)
-      : storage_(other.storage_),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    buffered_flush_handler& operator=(const buffered_flush_handler&) = delete;
+    buffered_flush_handler& operator=(buffered_flush_handler&&) = delete;
 
     void operator()(const asio::error_code& ec,
         const std::size_t bytes_written)
@@ -215,12 +209,8 @@ namespace detail
     {
     }
 
-    buffered_write_some_handler(const buffered_write_some_handler& other)
-      : storage_(other.storage_),
-        buffers_(other.buffers_),
-        handler_(other.handler_)
-    {
-    }
+    buffered_write_some_handler(
+        const buffered_write_some_handler& other) = default;
 
     buffered_write_some_handler(buffered_write_some_handler&& other)
       : storage_(other.storage_),
@@ -228,6 +218,11 @@ namespace detail
         handler_(static_cast<WriteHandler&&>(other.handler_))
     {
     }
+
+    buffered_write_some_handler& operator=(
+        const buffered_write_some_handler&) = delete;
+    buffered_write_some_handler& operator=(
+        buffered_write_some_handler&&) = delete;
 
     void operator()(const asio::error_code& ec, std::size_t)
     {

@@ -82,15 +82,8 @@ public:
   {
   }
 
-  work_dispatcher_function(const work_dispatcher_function& other)
-    : function_(other.function_)
-  {
-  }
-
-  work_dispatcher_function(work_dispatcher_function&& other)
-    : function_(static_cast<Function&&>(other.function_))
-  {
-  }
+  work_dispatcher_function(const work_dispatcher_function& other) = default;
+  work_dispatcher_function(work_dispatcher_function&& other) = default;
 
   template <typename Handler>
   auto bind_result(Handler&& handler)
@@ -115,15 +108,8 @@ public:
   {
   }
 
-  work_dispatcher_function(const work_dispatcher_function& other)
-    : Function(static_cast<const Function&>(other))
-  {
-  }
-
-  work_dispatcher_function(work_dispatcher_function&& other)
-    : Function(static_cast<Function&&>(other))
-  {
-  }
+  work_dispatcher_function(const work_dispatcher_function& other) = default;
+  work_dispatcher_function(work_dispatcher_function&& other) = default;
 
   template <typename Handler>
   auto bind_result(Handler&& handler)
@@ -150,15 +136,8 @@ public:
   {
   }
 
-  work_dispatcher_function(const work_dispatcher_function& other)
-    : function_(other.function_)
-  {
-  }
-
-  work_dispatcher_function(work_dispatcher_function&& other)
-    : function_(static_cast<Function&&>(other.function_))
-  {
-  }
+  work_dispatcher_function(const work_dispatcher_function& other) = default;
+  work_dispatcher_function(work_dispatcher_function&& other) = default;
 
   template <typename Handler>
   auto bind_result(Handler&& handler)
@@ -181,15 +160,8 @@ public:
   {
   }
 
-  work_dispatcher_function(const work_dispatcher_function& other)
-    : Function(static_cast<const Function&>(other))
-  {
-  }
-
-  work_dispatcher_function(work_dispatcher_function&& other)
-    : Function(static_cast<Function&&>(other))
-  {
-  }
+  work_dispatcher_function(const work_dispatcher_function& other) = default;
+  work_dispatcher_function(work_dispatcher_function&& other) = default;
 
   template <typename Handler>
   auto bind_result(Handler&& handler)
@@ -217,20 +189,8 @@ public:
   {
   }
 
-  work_dispatcher(const work_dispatcher& other)
-    : work_dispatcher_function<Function>(other),
-      handler_(other.handler_),
-      executor_(other.executor_)
-  {
-  }
-
-  work_dispatcher(work_dispatcher&& other)
-    : work_dispatcher_function<Function>(
-        static_cast<work_dispatcher_function<Function>&&>(other)),
-      handler_(static_cast<Handler&&>(other.handler_)),
-      executor_(static_cast<work_executor_type&&>(other.executor_))
-  {
-  }
+  work_dispatcher(const work_dispatcher& other) = default;
+  work_dispatcher(work_dispatcher&& other) = default;
 
   void operator()()
   {
@@ -267,12 +227,7 @@ public:
   {
   }
 
-  work_dispatcher(const work_dispatcher& other)
-    : work_dispatcher_function<Function>(other),
-      work_(other.work_),
-      handler_(other.handler_)
-  {
-  }
+  work_dispatcher(const work_dispatcher& other) = default;
 
   work_dispatcher(work_dispatcher&& other)
     : work_dispatcher_function<Function>(

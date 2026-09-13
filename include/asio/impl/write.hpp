@@ -327,27 +327,11 @@ namespace detail
     {
     }
 
-    write_op(const write_op& other)
-      : base_from_cancellation_state<WriteHandler>(other),
-        base_from_completion_cond<CompletionCondition>(other),
-        stream_(other.stream_),
-        buffers_(other.buffers_),
-        start_(other.start_),
-        handler_(other.handler_)
-    {
-    }
+    write_op(const write_op& other) = default;
+    write_op(write_op&& other) = default;
 
-    write_op(write_op&& other)
-      : base_from_cancellation_state<WriteHandler>(
-          static_cast<base_from_cancellation_state<WriteHandler>&&>(other)),
-        base_from_completion_cond<CompletionCondition>(
-          static_cast<base_from_completion_cond<CompletionCondition>&&>(other)),
-        stream_(other.stream_),
-        buffers_(static_cast<buffers_type&&>(other.buffers_)),
-        start_(other.start_),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    write_op& operator=(const write_op&) = delete;
+    write_op& operator=(write_op&&) = delete;
 
     void operator()(asio::error_code ec,
         std::size_t bytes_transferred, int start = 0)
@@ -509,23 +493,11 @@ namespace detail
     {
     }
 
-    write_dynbuf_v1_op(const write_dynbuf_v1_op& other)
-      : stream_(other.stream_),
-        buffers_(other.buffers_),
-        completion_condition_(other.completion_condition_),
-        handler_(other.handler_)
-    {
-    }
+    write_dynbuf_v1_op(const write_dynbuf_v1_op& other) = default;
+    write_dynbuf_v1_op(write_dynbuf_v1_op&& other) = default;
 
-    write_dynbuf_v1_op(write_dynbuf_v1_op&& other)
-      : stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v1&&>(other.buffers_)),
-        completion_condition_(
-          static_cast<CompletionCondition&&>(
-            other.completion_condition_)),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    write_dynbuf_v1_op& operator=(const write_dynbuf_v1_op&) = delete;
+    write_dynbuf_v1_op& operator=(write_dynbuf_v1_op&&) = delete;
 
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)
@@ -653,23 +625,11 @@ namespace detail
     {
     }
 
-    write_dynbuf_v2_op(const write_dynbuf_v2_op& other)
-      : stream_(other.stream_),
-        buffers_(other.buffers_),
-        completion_condition_(other.completion_condition_),
-        handler_(other.handler_)
-    {
-    }
+    write_dynbuf_v2_op(const write_dynbuf_v2_op& other) = default;
+    write_dynbuf_v2_op(write_dynbuf_v2_op&& other) = default;
 
-    write_dynbuf_v2_op(write_dynbuf_v2_op&& other)
-      : stream_(other.stream_),
-        buffers_(static_cast<DynamicBuffer_v2&&>(other.buffers_)),
-        completion_condition_(
-          static_cast<CompletionCondition&&>(
-            other.completion_condition_)),
-        handler_(static_cast<WriteHandler&&>(other.handler_))
-    {
-    }
+    write_dynbuf_v2_op& operator=(const write_dynbuf_v2_op&) = delete;
+    write_dynbuf_v2_op& operator=(write_dynbuf_v2_op&&) = delete;
 
     void operator()(const asio::error_code& ec,
         std::size_t bytes_transferred, int start = 0)

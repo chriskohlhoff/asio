@@ -40,17 +40,8 @@ public:
   {
   }
 
-  allocator_binder(const allocator_binder& other)
-    : f_(other.f_),
-      allocator_(other.allocator_)
-  {
-  }
-
-  allocator_binder(allocator_binder&& other)
-    : f_(static_cast<F&&>(other.f_)),
-      allocator_(static_cast<allocator_type&&>(other.allocator_))
-  {
-  }
+  allocator_binder(const allocator_binder& other) = default;
+  allocator_binder(allocator_binder&& other) = default;
 
   allocator_type get_allocator() const noexcept
   {
@@ -80,17 +71,8 @@ public:
   {
   }
 
-  invoker(const invoker& other)
-    : impl_(other.impl_),
-      executor_(other.executor_)
-  {
-  }
-
-  invoker(invoker&& other)
-    : impl_(static_cast<implementation_type&&>(other.impl_)),
-      executor_(static_cast<executor_type&&>(other.executor_))
-  {
-  }
+  invoker(const invoker& other) = default;
+  invoker(invoker&& other) = default;
 
   struct on_invoker_exit
   {
@@ -148,17 +130,8 @@ public:
   {
   }
 
-  invoker(const invoker& other)
-    : impl_(other.impl_),
-      work_(other.work_)
-  {
-  }
-
-  invoker(invoker&& other)
-    : impl_(static_cast<implementation_type&&>(other.impl_)),
-      work_(static_cast<executor_work_guard<Executor>&&>(other.work_))
-  {
-  }
+  invoker(const invoker& other) = default;
+  invoker(invoker&& other) = default;
 
   struct on_invoker_exit
   {
