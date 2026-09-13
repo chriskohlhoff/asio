@@ -126,6 +126,12 @@ inline binder1<decay_t<Handler>, Arg1> bind_handler(
       static_cast<Handler&&>(handler), arg1);
 }
 
+template <typename Handler, typename Arg1>
+inline binder1<Handler, Arg1>&& bind_handler(binder1<Handler, Arg1>&& handler)
+{
+  return static_cast<binder1<Handler, Arg1>&&>(handler);
+}
+
 template <typename Handler, typename Arg1, typename Arg2>
 class binder2
 {
@@ -181,6 +187,13 @@ inline binder2<decay_t<Handler>, Arg1, Arg2> bind_handler(
 {
   return binder2<decay_t<Handler>, Arg1, Arg2>(0,
       static_cast<Handler&&>(handler), arg1, arg2);
+}
+
+template <typename Handler, typename Arg1, typename Arg2>
+inline binder2<Handler, Arg1, Arg2>&& bind_handler(
+    binder2<Handler, Arg1, Arg2>&& handler)
+{
+  return static_cast<binder2<Handler, Arg1, Arg2>&&>(handler);
 }
 
 template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
@@ -244,6 +257,13 @@ inline binder3<decay_t<Handler>, Arg1, Arg2, Arg3> bind_handler(
 {
   return binder3<decay_t<Handler>, Arg1, Arg2, Arg3>(0,
       static_cast<Handler&&>(handler), arg1, arg2, arg3);
+}
+
+template <typename Handler, typename Arg1, typename Arg2, typename Arg3>
+inline binder3<Handler, Arg1, Arg2, Arg3>&& bind_handler(
+    binder3<Handler, Arg1, Arg2, Arg3>&& handler)
+{
+  return static_cast<binder3<Handler, Arg1, Arg2, Arg3>&&>(handler);
 }
 
 template <typename Handler, typename Arg1,
@@ -314,6 +334,14 @@ bind_handler(Handler&& handler, const Arg1& arg1,
 {
   return binder4<decay_t<Handler>, Arg1, Arg2, Arg3, Arg4>(0,
       static_cast<Handler&&>(handler), arg1, arg2, arg3, arg4);
+}
+
+template <typename Handler, typename Arg1,
+    typename Arg2, typename Arg3, typename Arg4>
+inline binder4<Handler, Arg1, Arg2, Arg3, Arg4>&& bind_handler(
+    binder4<Handler, Arg1, Arg2, Arg3, Arg4>&& handler)
+{
+  return static_cast<binder4<Handler, Arg1, Arg2, Arg3, Arg4>&&>(handler);
 }
 
 template <typename Handler, typename Arg1, typename Arg2,
@@ -388,6 +416,15 @@ bind_handler(Handler&& handler, const Arg1& arg1,
 {
   return binder5<decay_t<Handler>, Arg1, Arg2, Arg3, Arg4, Arg5>(0,
       static_cast<Handler&&>(handler), arg1, arg2, arg3, arg4, arg5);
+}
+
+template <typename Handler, typename Arg1, typename Arg2,
+    typename Arg3, typename Arg4, typename Arg5>
+inline binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>&& bind_handler(
+    binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>&& handler)
+{
+  return static_cast<
+      binder5<Handler, Arg1, Arg2, Arg3, Arg4, Arg5>&&>(handler);
 }
 
 template <typename Handler, typename Arg1>
