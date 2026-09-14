@@ -23,6 +23,7 @@
 #include "asio/detail/cstddef.hpp"
 #include "asio/detail/executor_function.hpp"
 #include "asio/detail/memory.hpp"
+#include "asio/detail/native_executors.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/scoped_ptr.hpp"
 #include "asio/detail/type_traits.hpp"
@@ -818,6 +819,17 @@ public:
   }
 #endif // !defined(ASIO_NO_TYPEID)
 
+  friend bool target_has_native_execute( const any_executor_base& ex) noexcept
+  {
+    return ex.target_ && ex.target_fns_->has_native_execute;
+  }
+
+  friend bool target_has_native_outstanding_work(
+      const any_executor_base& ex) noexcept
+  {
+    return ex.target_ && ex.target_fns_->has_native_outstanding_work;
+  }
+
   struct unspecified_bool_type_t {};
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
   static void unspecified_bool_true(unspecified_bool_type_t) {}
@@ -968,6 +980,8 @@ protected:
         const any_executor_base&, function&);
 
     bool has_execute_staged;
+    bool has_native_execute;
+    bool has_native_outstanding_work;
   };
 
 #if !defined(ASIO_NO_TYPEID)
@@ -1083,7 +1097,15 @@ protected:
       &any_executor_base::execute_staged_never_ex<Ex>,
       &any_executor_base::execute_staged_never_fork_ex<Ex>,
       &any_executor_base::execute_staged_never_continuation_ex<Ex>,
-      can_require<const Ex&, const execution::blocking_t::never_t&>::value
+      can_require<const Ex&, const execution::blocking_t::never_t&>::value,
+      is_same<
+        asio::detail::native_execute_kind_t<Ex>,
+        asio::detail::native_execute_kinds::native
+      >::value,
+      is_same<
+        asio::detail::native_outstanding_work_kind_t<Ex>,
+        asio::detail::native_outstanding_work_kinds::native
+      >::value
     };
 
     static const target_fns fns_with_blocking_execute =
@@ -1095,7 +1117,15 @@ protected:
       0,
       0,
       0,
-      false
+      false,
+      is_same<
+        asio::detail::native_execute_kind_t<Ex>,
+        asio::detail::native_execute_kinds::native
+      >::value,
+      is_same<
+        asio::detail::native_outstanding_work_kind_t<Ex>,
+        asio::detail::native_outstanding_work_kinds::native
+      >::value
     };
 
     return is_always_blocking ? &fns_with_blocking_execute : &fns_with_execute;

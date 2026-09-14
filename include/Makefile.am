@@ -230,6 +230,7 @@ nobase_include_HEADERS = \
 	asio/detail/local_free_on_block_exit.hpp \
 	asio/detail/memory.hpp \
 	asio/detail/mutex.hpp \
+	asio/detail/native_executors.hpp \
 	asio/detail/non_const_lvalue.hpp \
 	asio/detail/noncopyable.hpp \
 	asio/detail/null_event.hpp \
