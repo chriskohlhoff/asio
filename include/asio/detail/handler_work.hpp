@@ -477,6 +477,11 @@ public:
         typename base2_type::work_ownership());
   }
 
+  bool associated_executor_owns_work() const noexcept
+  {
+    return base2_type::owns_work();
+  }
+
 private:
   template <typename Function, typename Base1Ownership>
   void complete(Function& function, Handler& handler,
@@ -571,12 +576,14 @@ public:
   }
 };
 
-template <typename Handler, typename IoExecutor>
+template <typename Handler, typename IoExecutor,
+    typename = void, typename = void, typename = void, typename = void>
 class immediate_handler_work
 {
 public:
   typedef handler_work<Handler, IoExecutor> handler_work_type;
 
+  ASIO_ALWAYS_INLINE
   explicit immediate_handler_work(handler_work_type&& w)
     : handler_work_(static_cast<handler_work_type&&>(w))
   {
@@ -593,6 +600,124 @@ public:
 
     (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
         static_cast<Function&&>(function), empty_work_function());
+  }
+
+private:
+  handler_work_type handler_work_;
+};
+
+template <typename Handler, typename IoExecutor>
+class immediate_handler_work<Handler, IoExecutor,
+    enable_if_t<
+      execution::is_executor<IoExecutor>::value
+    >,
+    enable_if_t<
+      is_same<IoExecutor, associated_executor_t<Handler, IoExecutor>>::value
+    >,
+    enable_if_t<
+      !has_associated_immediate_executor<Handler, IoExecutor>::value
+    >,
+    enable_if_t<
+      has_associated_executor<Handler, IoExecutor>::value
+    >
+  >
+{
+public:
+  typedef handler_work<Handler, IoExecutor> handler_work_type;
+
+  ASIO_ALWAYS_INLINE
+  explicit immediate_handler_work(handler_work_type&& w)
+    : handler_work_(static_cast<handler_work_type&&>(w))
+  {
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler, const void* io_ex)
+  {
+    typedef associated_immediate_executor_t<Handler, IoExecutor>
+      immediate_ex_type;
+
+    immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
+        handler, *static_cast<const IoExecutor*>(io_ex));
+
+    if (this->io_executor_is_completion_executor(handler,
+          *static_cast<const IoExecutor*>(io_ex)))
+    {
+      associated_allocator_t<Function> alloc(
+          (get_associated_allocator)(function));
+
+      asio::prefer(immediate_ex, execution::allocator(alloc)).execute(
+          asio::detail::bind_handler(static_cast<Function&&>(function)));
+    }
+    else
+    {
+      (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
+          static_cast<Function&&>(function), empty_work_function());
+    }
+  }
+
+private:
+  bool io_executor_is_completion_executor(
+      Handler& handler, const IoExecutor& io_ex)
+  {
+    return io_executor_is_completion_executor(handler, io_ex,
+        typename handler_work_type::base2_type::work_ownership());
+  }
+
+  bool io_executor_is_completion_executor(Handler&,
+      const IoExecutor&, handler_work_ownership::maybe)
+  {
+    return !handler_work_.associated_executor_owns_work();
+  }
+
+  bool io_executor_is_completion_executor(Handler& handler,
+      const IoExecutor& io_ex, handler_work_ownership::always)
+  {
+    return asio::get_associated_executor(handler, io_ex) == io_ex;
+  }
+
+  handler_work_type handler_work_;
+};
+
+template <typename Handler, typename IoExecutor>
+class immediate_handler_work<Handler, IoExecutor,
+    enable_if_t<
+      execution::is_executor<IoExecutor>::value
+    >,
+    enable_if_t<
+      is_same<IoExecutor, associated_executor_t<Handler, IoExecutor>>::value
+    >,
+    enable_if_t<
+      !has_associated_immediate_executor<Handler, IoExecutor>::value
+    >,
+    enable_if_t<
+      !has_associated_executor<Handler, IoExecutor>::value
+    >
+  >
+{
+public:
+  typedef handler_work<Handler, IoExecutor> handler_work_type;
+
+  ASIO_ALWAYS_INLINE
+  explicit immediate_handler_work(handler_work_type&& w)
+    : handler_work_(static_cast<handler_work_type&&>(w))
+  {
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler, const void* io_ex)
+  {
+    typedef associated_immediate_executor_t<Handler, IoExecutor>
+      immediate_ex_type;
+
+    immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
+        handler, *static_cast<const IoExecutor*>(io_ex));
+
+    associated_allocator_t<Function> alloc(
+        (get_associated_allocator)(function));
+
+    asio::prefer(immediate_ex, execution::allocator(alloc)).execute(
+        asio::detail::bind_handler(static_cast<Function&&>(function)));
   }
 
 private:
