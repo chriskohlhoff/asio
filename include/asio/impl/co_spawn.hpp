@@ -47,7 +47,7 @@ public:
   {
   }
 
-  executor_type get_executor() const noexcept
+  const executor_type& get_executor() const noexcept
   {
     return executor_;
   }
@@ -302,7 +302,7 @@ public:
   {
   }
 
-  executor_type get_executor() const noexcept
+  const executor_type& get_executor() const noexcept
   {
     return ex_;
   }

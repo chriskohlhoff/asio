@@ -700,7 +700,7 @@ public:
     return bottom_of_stack_;
   }
 
-  executor_type get_executor() const noexcept
+  const executor_type& get_executor() const noexcept
   {
     return bottom_of_stack_->u_.executor_;
   }
