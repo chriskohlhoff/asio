@@ -427,6 +427,14 @@ public:
     executor_.execute(static_cast<Function&&>(function));
   }
 
+  friend handler_work_base& handler_work_release_untracked(
+      handler_work_base& w) noexcept
+  {
+    if (target_has_native_outstanding_work(w.executor_))
+      w.executor_ = nullptr;
+    return w;
+  }
+
 private:
   ASIO_NEVER_INLINE static executor_type tracked(
       const executor_type& ex) noexcept
@@ -511,6 +519,14 @@ public:
     executor_.execute(static_cast<Function&&>(function));
   }
 
+  friend handler_work_base& handler_work_release_untracked(
+      handler_work_base& w) noexcept
+  {
+    if (target_has_native_outstanding_work(w.executor_))
+      w.executor_ = nullptr;
+    return w;
+  }
+
 private:
   ASIO_NEVER_INLINE static executor_type tracked(
       const executor_type& ex) noexcept
@@ -522,6 +538,12 @@ private:
 };
 
 #endif // !defined(ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
+
+template <typename Base>
+inline Base& handler_work_release_untracked(Base& b) noexcept
+{
+  return b;
+}
 
 template <typename Handler, typename IoExecutor, typename = void>
 class handler_work :
@@ -537,6 +559,12 @@ public:
     : base1_type(0, 0, io_ex),
       base2_type(asio::get_associated_executor(handler, io_ex), io_ex)
   {
+  }
+
+  handler_work& release_untracked_io_executor() noexcept
+  {
+    handler_work_release_untracked(static_cast<base1_type&>(*this));
+    return *this;
   }
 
   template <typename Function>
@@ -629,6 +657,12 @@ public:
   {
   }
 
+  handler_work& release_untracked_io_executor() noexcept
+  {
+    handler_work_release_untracked(static_cast<base1_type&>(*this));
+    return *this;
+  }
+
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
@@ -655,7 +689,8 @@ public:
 
   ASIO_ALWAYS_INLINE
   explicit immediate_handler_work(handler_work_type&& w)
-    : handler_work_(static_cast<handler_work_type&&>(w))
+    : handler_work_(static_cast<handler_work_type&&>(
+          w.release_untracked_io_executor()))
   {
   }
 
@@ -726,7 +761,8 @@ public:
 
   ASIO_ALWAYS_INLINE
   explicit immediate_handler_work(handler_work_type&& w)
-    : handler_work_(static_cast<handler_work_type&&>(w))
+    : handler_work_(static_cast<handler_work_type&&>(
+          w.release_untracked_io_executor()))
   {
   }
 
@@ -838,7 +874,8 @@ public:
 
   ASIO_ALWAYS_INLINE
   explicit immediate_handler_work(handler_work_type&& w)
-    : handler_work_(static_cast<handler_work_type&&>(w))
+    : handler_work_(static_cast<handler_work_type&&>(
+          w.release_untracked_io_executor()))
   {
   }
 
