@@ -84,6 +84,7 @@ check_PROGRAMS = \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
 	unit/execution/relationship \
+	unit/execution/staging_executor \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
@@ -325,6 +326,7 @@ TESTS = \
 	unit/execution/outstanding_work \
 	unit/execution/prefer_only \
 	unit/execution/relationship \
+	unit/execution/staging_executor \
 	unit/execution_context \
 	unit/executor \
 	unit/executor_work_guard \
@@ -565,6 +567,7 @@ unit_execution_mapping_SOURCES = unit/execution/mapping.cpp
 unit_execution_outstanding_work_SOURCES = unit/execution/outstanding_work.cpp
 unit_execution_prefer_only_SOURCES = unit/execution/prefer_only.cpp
 unit_execution_relationship_SOURCES = unit/execution/relationship.cpp
+unit_execution_staging_executor_SOURCES = unit/execution/staging_executor.cpp
 unit_execution_context_SOURCES = unit/execution_context.cpp
 unit_executor_SOURCES = unit/executor.cpp
 unit_executor_work_guard_SOURCES = unit/executor_work_guard.cpp

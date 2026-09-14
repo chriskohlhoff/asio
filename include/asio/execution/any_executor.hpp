@@ -31,6 +31,7 @@
 #include "asio/execution/bad_executor.hpp"
 #include "asio/execution/blocking.hpp"
 #include "asio/execution/executor.hpp"
+#include "asio/execution/relationship.hpp"
 #include "asio/prefer.hpp"
 #include "asio/query.hpp"
 #include "asio/require.hpp"
@@ -397,6 +398,15 @@ struct supportable_properties<I, void(Head, Tail...)>
       > {};
 };
 
+template <std::size_t I>
+struct supportable_properties<I, void()>
+{
+  template <typename T>
+  struct is_valid_target : true_type
+  {
+  };
+};
+
 template <typename T, typename Props>
 struct is_valid_target_executor :
   conditional_t<
@@ -524,6 +534,14 @@ private:
   };
 
   impl_base* impl_;
+};
+
+enum class staged_execution_kind
+{
+  none,
+  never,
+  never_fork,
+  never_continuation
 };
 
 class any_executor_base
@@ -753,6 +771,25 @@ public:
     }
   }
 
+  // Determines whether execute_staged() may be used. It may not when there is
+  // no target, or when the target is always blocking, in which case execute()
+  // would not construct a function object.
+  bool can_execute_staged() const noexcept
+  {
+    return target_ != 0 && target_fns_->has_execute_staged;
+  }
+
+  bool execute_staged(asio::detail::executor_function& f,
+      staged_execution_kind kind) const
+  {
+    (kind == staged_execution_kind::never_fork
+      ? target_fns_->execute_staged_never_fork
+      : kind == staged_execution_kind::never_continuation
+        ? target_fns_->execute_staged_never_continuation
+        : target_fns_->execute_staged_never)(*this, f);
+    return true;
+  }
+
   template <typename Executor>
   Executor* target()
   {
@@ -929,6 +966,12 @@ protected:
     bool (*equal)(const any_executor_base&, const any_executor_base&);
     void (*execute)(const any_executor_base&, function&&);
     void (*blocking_execute)(const any_executor_base&, function_view);
+    void (*execute_staged_never)(const any_executor_base&, function&);
+    void (*execute_staged_never_fork)(const any_executor_base&, function&);
+    void (*execute_staged_never_continuation)(
+        const any_executor_base&, function&);
+
+    bool has_execute_staged;
   };
 
 #if !defined(ASIO_NO_TYPEID)
@@ -972,6 +1015,63 @@ protected:
     p->execute(f);
   }
 
+  // Staged execution applies blocking.never to the target, and then, for the
+  // fork and continuation variants, prefers that relationship. Each variant is
+  // a separate table entry so that the call site, which knows its variant at
+  // compile time, needs no run-time choice within the target function.
+  template <typename Ex>
+  static void execute_staged_never_ex(const any_executor_base& ex, function& f)
+  {
+    any_executor_base::execute_staged_impl<Ex>(ex, f,
+        execution::relationship_t(), can_require<const Ex&,
+          const execution::blocking_t::never_t&>());
+  }
+
+  template <typename Ex>
+  static void execute_staged_never_fork_ex(
+      const any_executor_base& ex, function& f)
+  {
+    any_executor_base::execute_staged_impl<Ex>(ex, f,
+        execution::relationship.fork, can_require<const Ex&,
+          const execution::blocking_t::never_t&>());
+  }
+
+  template <typename Ex>
+  static void execute_staged_never_continuation_ex(
+      const any_executor_base& ex, function& f)
+  {
+    any_executor_base::execute_staged_impl<Ex>(ex, f,
+        execution::relationship.continuation, can_require<const Ex&,
+          const execution::blocking_t::never_t&>());
+  }
+
+  template <typename Ex>
+  static void execute_staged_impl(const any_executor_base& ex, function& f,
+      execution::relationship_t, true_type)
+  {
+    const Ex* p = static_cast<const Ex*>(ex.target_);
+    ASIO_ASSUME(p != 0);
+    asio::require(*p, execution::blocking.never).execute(
+        static_cast<function&&>(f));
+  }
+
+  template <typename Ex, typename Relationship>
+  static void execute_staged_impl(const any_executor_base& ex, function& f,
+      const Relationship& r, true_type)
+  {
+    const Ex* p = static_cast<const Ex*>(ex.target_);
+    ASIO_ASSUME(p != 0);
+    asio::prefer(
+        asio::require(*p, execution::blocking.never),
+        r).execute(static_cast<function&&>(f));
+  }
+
+  template <typename Ex, typename Relationship>
+  static void execute_staged_impl(const any_executor_base&, function&,
+      const Relationship&, false_type)
+  {
+  }
+
   template <typename Ex>
   static const target_fns* target_fns_table(bool is_always_blocking,
       enable_if_t<
@@ -983,7 +1083,11 @@ protected:
       &any_executor_base::target_type_ex<Ex>,
       &any_executor_base::equal_ex<Ex>,
       &any_executor_base::execute_ex<Ex>,
-      0
+      0,
+      &any_executor_base::execute_staged_never_ex<Ex>,
+      &any_executor_base::execute_staged_never_fork_ex<Ex>,
+      &any_executor_base::execute_staged_never_continuation_ex<Ex>,
+      can_require<const Ex&, const execution::blocking_t::never_t&>::value
     };
 
     static const target_fns fns_with_blocking_execute =
@@ -991,7 +1095,11 @@ protected:
       &any_executor_base::target_type_ex<Ex>,
       &any_executor_base::equal_ex<Ex>,
       0,
-      &any_executor_base::blocking_execute_ex<Ex>
+      &any_executor_base::blocking_execute_ex<Ex>,
+      0,
+      0,
+      0,
+      false
     };
 
     return is_always_blocking ? &fns_with_blocking_execute : &fns_with_execute;
@@ -1331,7 +1439,7 @@ public:
         conditional_t<
           !is_same<Executor, any_executor>::value
             && !is_base_of<detail::any_executor_base, Executor>::value,
-          is_executor<Executor>,
+          detail::is_valid_target_executor<Executor, void()>,
           false_type
         >::value
       >* = 0)
@@ -1346,7 +1454,7 @@ public:
         conditional_t<
           !is_same<Executor, any_executor>::value
             && !is_base_of<detail::any_executor_base, Executor>::value,
-          is_executor<Executor>,
+          detail::is_valid_target_executor<Executor, void()>,
           false_type
         >::value
       >* = 0) noexcept

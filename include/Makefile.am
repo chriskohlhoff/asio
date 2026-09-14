@@ -401,6 +401,7 @@ nobase_include_HEADERS = \
 	asio/execution/outstanding_work.hpp \
 	asio/execution/prefer_only.hpp \
 	asio/execution/relationship.hpp \
+	asio/execution/staging_executor.hpp \
 	asio/executor.hpp \
 	asio/executor_work_guard.hpp \
 	asio/experimental/as_single.hpp \

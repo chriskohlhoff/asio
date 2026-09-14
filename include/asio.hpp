@@ -100,6 +100,7 @@
 #include "asio/execution/outstanding_work.hpp"
 #include "asio/execution/prefer_only.hpp"
 #include "asio/execution/relationship.hpp"
+#include "asio/execution/staging_executor.hpp"
 #include "asio/executor.hpp"
 #include "asio/executor_work_guard.hpp"
 #include "asio/file_base.hpp"

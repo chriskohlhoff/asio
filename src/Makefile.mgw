@@ -110,6 +110,7 @@ UNIT_TEST_EXES = \
 	tests/unit/execution/outstanding_work.exe \
 	tests/unit/execution/prefer_only.exe \
 	tests/unit/execution/relationship.exe \
+	tests/unit/execution/staging_executor.exe \
 	tests/unit/executor.exe \
 	tests/unit/executor_work_guard.exe \
 	tests/unit/experimental/basic_channel.exe \

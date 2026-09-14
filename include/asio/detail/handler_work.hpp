@@ -26,6 +26,7 @@
 #include "asio/execution/blocking.hpp"
 #include "asio/execution/executor.hpp"
 #include "asio/execution/outstanding_work.hpp"
+#include "asio/execution/staging_executor.hpp"
 #include "asio/executor_work_guard.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/prefer.hpp"
@@ -592,17 +593,46 @@ public:
   template <typename Function>
   void complete(Function& function, Handler& handler, const void* io_ex)
   {
+    this->complete_impl(function, handler,
+        *static_cast<const IoExecutor*>(io_ex),
+        integral_constant<bool,
+          !has_associated_immediate_executor<Handler, IoExecutor>::value
+            && execution::is_executor<IoExecutor>::value>());
+  }
+
+private:
+  template <typename Function>
+  void complete_impl(Function& function, Handler& handler,
+      const IoExecutor& io_ex, false_type)
+  {
     typedef associated_immediate_executor_t<Handler, IoExecutor>
       immediate_ex_type;
 
     immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
-        handler, *static_cast<const IoExecutor*>(io_ex));
+        handler, io_ex);
 
     (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
         static_cast<Function&&>(function), empty_work_function());
   }
 
-private:
+  template <typename Function>
+  void complete_impl(Function& function, Handler&,
+      const IoExecutor& io_ex, true_type)
+  {
+    typedef decay_t<
+        require_result_t<
+          execution::staging_executor<const IoExecutor&>,
+          const execution::blocking_t::never_t&
+        >
+      > immediate_ex_type;
+
+    immediate_ex_type immediate_ex = asio::require(
+        execution::stage(io_ex), execution::blocking.never);
+
+    (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
+        static_cast<Function&&>(function), empty_work_function());
+  }
+
   handler_work_type handler_work_;
 };
 
@@ -634,14 +664,25 @@ public:
   template <typename Function>
   void complete(Function& function, Handler& handler, const void* io_ex)
   {
+    this->complete_impl(function, handler,
+        *static_cast<const IoExecutor*>(io_ex),
+        integral_constant<bool,
+          !has_associated_immediate_executor<Handler, IoExecutor>::value
+            && execution::is_executor<IoExecutor>::value>());
+  }
+
+private:
+  template <typename Function>
+  void complete_impl(Function& function, Handler& handler,
+      const IoExecutor& io_ex, false_type)
+  {
     typedef associated_immediate_executor_t<Handler, IoExecutor>
       immediate_ex_type;
 
     immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
-        handler, *static_cast<const IoExecutor*>(io_ex));
+        handler, io_ex);
 
-    if (this->io_executor_is_completion_executor(handler,
-          *static_cast<const IoExecutor*>(io_ex)))
+    if (this->io_executor_is_completion_executor(handler, io_ex))
     {
       associated_allocator_t<Function> alloc(
           (get_associated_allocator)(function));
@@ -656,7 +697,35 @@ public:
     }
   }
 
-private:
+  template <typename Function>
+  void complete_impl(Function& function, Handler& handler,
+      const IoExecutor& io_ex, true_type)
+  {
+    typedef decay_t<
+        require_result_t<
+          execution::staging_executor<const IoExecutor&>,
+          const execution::blocking_t::never_t&
+        >
+      > immediate_ex_type;
+
+    immediate_ex_type immediate_ex = asio::require(
+        execution::stage(io_ex), execution::blocking.never);
+
+    if (this->io_executor_is_completion_executor(handler, io_ex))
+    {
+      associated_allocator_t<Function> alloc(
+          (get_associated_allocator)(function));
+
+      asio::prefer(immediate_ex, execution::allocator(alloc)).execute(
+          asio::detail::bind_handler(static_cast<Function&&>(function)));
+    }
+    else
+    {
+      (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
+          static_cast<Function&&>(function), empty_work_function());
+    }
+  }
+
   bool io_executor_is_completion_executor(
       Handler& handler, const IoExecutor& io_ex)
   {
@@ -707,11 +776,23 @@ public:
   template <typename Function>
   void complete(Function& function, Handler& handler, const void* io_ex)
   {
+    this->complete_impl(function, handler,
+        *static_cast<const IoExecutor*>(io_ex),
+        integral_constant<bool,
+          !has_associated_immediate_executor<Handler, IoExecutor>::value
+            && execution::is_executor<IoExecutor>::value>());
+  }
+
+private:
+  template <typename Function>
+  void complete_impl(Function& function, Handler& handler,
+      const IoExecutor& io_ex, false_type)
+  {
     typedef associated_immediate_executor_t<Handler, IoExecutor>
       immediate_ex_type;
 
     immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
-        handler, *static_cast<const IoExecutor*>(io_ex));
+        handler, io_ex);
 
     associated_allocator_t<Function> alloc(
         (get_associated_allocator)(function));
@@ -720,7 +801,27 @@ public:
         asio::detail::bind_handler(static_cast<Function&&>(function)));
   }
 
-private:
+  template <typename Function>
+  void complete_impl(Function& function, Handler&,
+      const IoExecutor& io_ex, true_type)
+  {
+    typedef decay_t<
+        require_result_t<
+          execution::staging_executor<const IoExecutor&>,
+          const execution::blocking_t::never_t&
+        >
+      > immediate_ex_type;
+
+    immediate_ex_type immediate_ex = asio::require(
+        execution::stage(io_ex), execution::blocking.never);
+
+    associated_allocator_t<Function> alloc(
+        (get_associated_allocator)(function));
+
+    asio::prefer(immediate_ex, execution::allocator(alloc)).execute(
+        asio::detail::bind_handler(static_cast<Function&&>(function)));
+  }
+
   handler_work_type handler_work_;
 };
 

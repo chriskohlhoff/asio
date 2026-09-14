@@ -54,11 +54,16 @@
           <bridgehead renderas="sect3">Class Templates</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution__any_executor">execution::any_executor</link></member>
+            <member><link linkend="asio.reference.execution__staging_executor">execution::staging_executor</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Classes</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.execution__bad_executor">execution::bad_executor</link></member>
             <member><link linkend="asio.reference.execution__invocable_archetype">execution::invocable_archetype</link></member>
+          </simplelist>
+          <bridgehead renderas="sect3">Functions</bridgehead>
+          <simplelist type="vert" columns="1">
+            <member><link linkend="asio.reference.execution__stage">execution::stage</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Traits</bridgehead>
           <simplelist type="vert" columns="1">
