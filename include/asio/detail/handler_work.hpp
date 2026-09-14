@@ -383,9 +383,9 @@ public:
           ? executor_type()
           : (has_native_outstanding_work)(ex)
             ? ex
-            : asio::prefer(ex, execution::outstanding_work.tracked))
+            : handler_work_base::tracked(ex))
 #else // !defined(ASIO_NO_TYPEID)
-    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
 #endif // !defined(ASIO_NO_TYPEID)
   {
   }
@@ -395,14 +395,14 @@ public:
     : executor_(
         ex == candidate
           ? executor_type()
-          : asio::prefer(ex, execution::outstanding_work.tracked))
+          : handler_work_base::tracked(ex))
   {
   }
 
   template <typename OtherExecutor>
   handler_work_base(const executor_type& ex,
       const OtherExecutor& /*candidate*/) noexcept
-    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
   {
   }
 
@@ -428,6 +428,12 @@ public:
   }
 
 private:
+  ASIO_NEVER_INLINE static executor_type tracked(
+      const executor_type& ex) noexcept
+  {
+    return asio::prefer(ex, execution::outstanding_work.tracked);
+  }
+
   executor_type executor_;
 };
 
@@ -461,9 +467,9 @@ public:
           ? executor_type()
           : (has_native_outstanding_work)(ex)
             ? ex
-            : asio::prefer(ex, execution::outstanding_work.tracked))
+            : handler_work_base::tracked(ex))
 #else // !defined(ASIO_NO_TYPEID)
-    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
 #endif // !defined(ASIO_NO_TYPEID)
   {
   }
@@ -473,14 +479,14 @@ public:
     : executor_(
         ex == candidate
           ? executor_type()
-          : asio::prefer(ex, execution::outstanding_work.tracked))
+          : handler_work_base::tracked(ex))
   {
   }
 
   template <typename OtherExecutor>
   handler_work_base(const executor_type& ex,
       const OtherExecutor& /*candidate*/) noexcept
-    : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
+    : executor_(handler_work_base::tracked(ex))
   {
   }
 
@@ -506,6 +512,12 @@ public:
   }
 
 private:
+  ASIO_NEVER_INLINE static executor_type tracked(
+      const executor_type& ex) noexcept
+  {
+    return asio::prefer(ex, execution::outstanding_work.tracked);
+  }
+
   executor_type executor_;
 };
 
