@@ -782,16 +782,20 @@ protected:
     while (bottom_of_stack_ && bottom_of_stack_->top_of_stack_);
 
     if (bottom_of_stack_)
-    {
-      awaitable<awaitable_thread_entry_point, Executor> a(
-          std::exchange(bottom_of_stack_, nullptr));
-      a.frame_->rethrow_exception();
-    }
+      this->complete();
   }
 
   static void do_pump(void* self)
   {
     static_cast<awaitable_thread*>(self)->pump();
+  }
+
+  // The thread of execution completed normally.
+  ASIO_NEVER_INLINE void complete()
+  {
+    awaitable<awaitable_thread_entry_point, Executor> a(
+        std::exchange(bottom_of_stack_, nullptr));
+    a.frame_->rethrow_exception();
   }
 
   awaitable_frame<awaitable_thread_entry_point, Executor>* bottom_of_stack_;
