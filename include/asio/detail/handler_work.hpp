@@ -27,6 +27,7 @@
 #include "asio/execution/executor.hpp"
 #include "asio/execution/outstanding_work.hpp"
 #include "asio/executor_work_guard.hpp"
+#include "asio/is_executor.hpp"
 #include "asio/prefer.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -51,19 +52,28 @@ template <typename...> class any_executor;
 } // namespace execution
 namespace detail {
 
+struct handler_work_ownership
+{
+  struct never {};
+  struct maybe {};
+  struct always {};
+};
+
 template <typename Executor, typename CandidateExecutor = void,
     typename IoContext = io_context,
     typename PolymorphicExecutor = executor, typename = void>
 class handler_work_base
 {
 public:
+  typedef handler_work_ownership::always work_ownership;
+
   explicit handler_work_base(int, int, const Executor& ex) noexcept
     : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
   {
   }
 
   template <typename OtherExecutor>
-  handler_work_base(bool /*base1_owns_work*/, const Executor& ex,
+  handler_work_base(const Executor& ex,
       const OtherExecutor& /*candidate*/) noexcept
     : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
   {
@@ -107,11 +117,18 @@ class handler_work_base<Executor, CandidateExecutor,
     enable_if_t<
       !execution::is_executor<Executor>::value
         && (!is_same<Executor, PolymorphicExecutor>::value
-          || !is_same<CandidateExecutor, void>::value)
+          || (!is_same<CandidateExecutor, void>::value
+            && !is_executor<CandidateExecutor>::value))
     >
   >
 {
 public:
+  typedef conditional_t<
+      is_same<Executor, CandidateExecutor>::value,
+      handler_work_ownership::maybe,
+      handler_work_ownership::always
+    > work_ownership;
+
   explicit handler_work_base(int, int, const Executor& ex) noexcept
     : executor_(ex),
       owns_work_(true)
@@ -119,7 +136,7 @@ public:
     executor_.on_work_started();
   }
 
-  handler_work_base(bool /*base1_owns_work*/, const Executor& ex,
+  handler_work_base(const Executor& ex,
       const Executor& candidate) noexcept
     : executor_(ex),
       owns_work_(ex != candidate)
@@ -129,7 +146,7 @@ public:
   }
 
   template <typename OtherExecutor>
-  handler_work_base(bool /*base1_owns_work*/, const Executor& ex,
+  handler_work_base(const Executor& ex,
       const OtherExecutor& /*candidate*/) noexcept
     : executor_(ex),
       owns_work_(true)
@@ -186,6 +203,8 @@ class handler_work_base<Executor, void, IoContext, PolymorphicExecutor,
   >
 {
 public:
+  typedef handler_work_ownership::never work_ownership;
+
   explicit handler_work_base(int, int, const Executor&)
   {
   }
@@ -205,10 +224,17 @@ public:
   }
 };
 
-template <typename Executor, typename IoContext>
-class handler_work_base<Executor, void, IoContext, Executor>
+template <typename Executor, typename CandidateExecutor, typename IoContext>
+class handler_work_base<Executor, CandidateExecutor, IoContext, Executor,
+    enable_if_t<
+      is_same<CandidateExecutor, void>::value
+        || is_executor<CandidateExecutor>::value
+    >
+  >
 {
 public:
+  typedef handler_work_ownership::maybe work_ownership;
+
   explicit handler_work_base(int, int, const Executor& ex) noexcept
 #if !defined(ASIO_NO_TYPEID)
     : executor_(
@@ -222,7 +248,7 @@ public:
       executor_.on_work_started();
   }
 
-  handler_work_base(bool /*base1_owns_work*/, const Executor& ex,
+  handler_work_base(const Executor& ex,
       const Executor& candidate) noexcept
     : executor_(ex != candidate ? ex : Executor())
   {
@@ -232,10 +258,11 @@ public:
 
   template <typename OtherExecutor>
   handler_work_base(const Executor& ex,
-      const OtherExecutor&) noexcept
-    : executor_(ex)
+      const OtherExecutor& candidate) noexcept
+    : executor_(init(ex, candidate))
   {
-    executor_.on_work_started();
+    if (executor_)
+      executor_.on_work_started();
   }
 
   handler_work_base(const handler_work_base& other) noexcept
@@ -269,6 +296,13 @@ public:
   }
 
 private:
+  template <typename OtherExecutor>
+  static Executor init(const Executor& ex, const OtherExecutor& candidate)
+  {
+    const OtherExecutor* target = ex.template target<OtherExecutor>();
+    return (target && *target == candidate) ? Executor() : ex;
+  }
+
   Executor executor_;
 };
 
@@ -279,6 +313,13 @@ class handler_work_base<execution::any_executor<SupportableProperties...>,
 {
 public:
   typedef execution::any_executor<SupportableProperties...> executor_type;
+
+  typedef conditional_t<
+      is_same<CandidateExecutor, void>::value
+        || is_same<executor_type, CandidateExecutor>::value,
+      handler_work_ownership::maybe,
+      handler_work_ownership::always
+    > work_ownership;
 
   explicit handler_work_base(int, int, const executor_type& ex) noexcept
 #if !defined(ASIO_NO_TYPEID)
@@ -292,17 +333,17 @@ public:
   {
   }
 
-  handler_work_base(bool base1_owns_work, const executor_type& ex,
+  handler_work_base(const executor_type& ex,
       const executor_type& candidate) noexcept
     : executor_(
-        !base1_owns_work && ex == candidate
+        ex == candidate
           ? executor_type()
           : asio::prefer(ex, execution::outstanding_work.tracked))
   {
   }
 
   template <typename OtherExecutor>
-  handler_work_base(bool /*base1_owns_work*/, const executor_type& ex,
+  handler_work_base(const executor_type& ex,
       const OtherExecutor& /*candidate*/) noexcept
     : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
   {
@@ -349,6 +390,13 @@ class handler_work_base<
 public:
   typedef Executor executor_type;
 
+  typedef conditional_t<
+      is_same<CandidateExecutor, void>::value
+        || is_same<executor_type, CandidateExecutor>::value,
+      handler_work_ownership::maybe,
+      handler_work_ownership::always
+    > work_ownership;
+
   explicit handler_work_base(int, int,
       const executor_type& ex) noexcept
 #if !defined(ASIO_NO_TYPEID)
@@ -362,17 +410,17 @@ public:
   {
   }
 
-  handler_work_base(bool base1_owns_work, const executor_type& ex,
+  handler_work_base(const executor_type& ex,
       const executor_type& candidate) noexcept
     : executor_(
-        !base1_owns_work && ex == candidate
+        ex == candidate
           ? executor_type()
           : asio::prefer(ex, execution::outstanding_work.tracked))
   {
   }
 
   template <typename OtherExecutor>
-  handler_work_base(bool /*base1_owns_work*/, const executor_type& ex,
+  handler_work_base(const executor_type& ex,
       const OtherExecutor& /*candidate*/) noexcept
     : executor_(asio::prefer(ex, execution::outstanding_work.tracked))
   {
@@ -417,24 +465,75 @@ public:
 
   handler_work(Handler& handler, const IoExecutor& io_ex) noexcept
     : base1_type(0, 0, io_ex),
-      base2_type(base1_type::owns_work(),
-          asio::get_associated_executor(handler, io_ex), io_ex)
+      base2_type(asio::get_associated_executor(handler, io_ex), io_ex)
   {
   }
 
   template <typename Function>
   void complete(Function& function, Handler& handler)
   {
-    if (!base1_type::owns_work() && !base2_type::owns_work())
+    complete(function, handler,
+        typename base1_type::work_ownership(),
+        typename base2_type::work_ownership());
+  }
+
+private:
+  template <typename Function, typename Base1Ownership>
+  void complete(Function& function, Handler& handler,
+      Base1Ownership, handler_work_ownership::always)
+  {
+    base2_type::dispatch(function, handler);
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler,
+      handler_work_ownership::never, handler_work_ownership::maybe)
+  {
+    if (base2_type::owns_work())
+    {
+      base2_type::dispatch(function, handler);
+    }
+    else
     {
       // When using a native implementation, I/O completion handlers are
       // already dispatched according to the execution context's executor's
       // rules. We can call the function directly.
       static_cast<Function&&>(function)();
     }
-    else
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler,
+      handler_work_ownership::always, handler_work_ownership::maybe)
+  {
+    if (base2_type::owns_work())
     {
       base2_type::dispatch(function, handler);
+    }
+    else
+    {
+      base1_type::dispatch(function, handler);
+    }
+  }
+
+  template <typename Function>
+  void complete(Function& function, Handler& handler,
+      handler_work_ownership::maybe, handler_work_ownership::maybe)
+  {
+    if (base2_type::owns_work())
+    {
+      base2_type::dispatch(function, handler);
+    }
+    else if (base1_type::owns_work())
+    {
+      base1_type::dispatch(function, handler);
+    }
+    else
+    {
+      // When using a native implementation, I/O completion handlers are
+      // already dispatched according to the execution context's executor's
+      // rules. We can call the function directly.
+      static_cast<Function&&>(function)();
     }
   }
 };
