@@ -133,7 +133,7 @@ bool strand_executor_service::enqueue(const implementation_type& impl,
 bool strand_executor_service::running_in_this_thread(
     const implementation_type& impl)
 {
-  return !!call_stack<strand_impl>::contains(impl.get());
+  return !!call_stack<call_stack_key_only<strand_impl> >::contains(impl.get());
 }
 
 bool strand_executor_service::push_waiting_to_ready(implementation_type& impl)
@@ -148,7 +148,9 @@ bool strand_executor_service::push_waiting_to_ready(implementation_type& impl)
 void strand_executor_service::run_ready_handlers(implementation_type& impl)
 {
   // Indicate that this strand is executing on the current thread.
-  call_stack<strand_impl>::context ctx(impl.get());
+  call_stack_key_only<strand_impl> call_stack_key;
+  call_stack<call_stack_key_only<strand_impl> >::context
+    ctx(impl.get(), call_stack_key);
 
   // Run all ready handlers. No lock is required since the ready queue is
   // accessed only within the strand.

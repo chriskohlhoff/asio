@@ -17,6 +17,7 @@
 
 #include "asio/detail/config.hpp"
 #include "asio/detail/atomic_count.hpp"
+#include "asio/detail/call_stack.hpp"
 #include "asio/detail/executor_op.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/mutex.hpp"
