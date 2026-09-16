@@ -23,6 +23,7 @@
 #include "asio/associated_executor.hpp"
 #include "asio/associated_immediate_executor.hpp"
 #include "asio/cancellation_state.hpp"
+#include "asio/detail/candidate_executors.hpp"
 #include "asio/detail/recycling_allocator.hpp"
 #include "asio/detail/thread_info_base.hpp"
 #include "asio/recycling_allocator.hpp"
@@ -415,6 +416,9 @@ class any_completion_handler_fn_table
 public:
   template <typename... CallFns>
   constexpr any_completion_handler_fn_table(
+      bool has_associated_executor,
+      bool has_associated_immediate_executor,
+      bool has_associated_allocator,
       any_completion_handler_destroy_fn::type destroy_fn,
       any_completion_handler_executor_fn::type executor_fn,
       any_completion_handler_immediate_executor_fn::type immediate_executor_fn,
@@ -426,7 +430,10 @@ public:
       any_completion_handler_immediate_executor_fn(immediate_executor_fn),
       any_completion_handler_allocate_fn(allocate_fn),
       any_completion_handler_deallocate_fn(deallocate_fn),
-      any_completion_handler_call_fns<Signatures...>(call_fns...)
+      any_completion_handler_call_fns<Signatures...>(call_fns...),
+      has_associated_executor(has_associated_executor),
+      has_associated_immediate_executor(has_associated_immediate_executor),
+      has_associated_allocator(has_associated_allocator)
   {
   }
 
@@ -436,6 +443,34 @@ public:
   using any_completion_handler_allocate_fn::allocate;
   using any_completion_handler_deallocate_fn::deallocate;
   using any_completion_handler_call_fns<Signatures...>::call;
+
+  // Whether the target handler specialises associated_executor, rather than
+  // leaving its executor to be determined by the candidate the operation
+  // supplies. This is a property of the handler type, so the table records
+  // it once. Where the handler does not specialise the association, which
+  // is the case for the overwhelming majority, it is answered as the
+  // candidate itself, with no indirect call and without reaching the erased
+  // implementation at all.
+  bool has_associated_executor;
+
+  // Whether the target handler specialises associated_immediate_executor,
+  // rather than leaving its immediate executor to be determined by the I/O
+  // executor. This is a property of the handler type, so the table records
+  // it once, and where the handler does not specialise the association it
+  // is answered without an indirect call, and without the erased
+  // implementation materialising an executor, for the handlers that are the
+  // overwhelming majority.
+  bool has_associated_immediate_executor;
+
+  // Whether the target handler specialises associated_allocator, rather than
+  // leaving the memory an operation allocates through it to the allocator
+  // the erased implementation would default to. This is a property of the
+  // handler type, so the table records it once, and where the handler does
+  // not specialise the association an operation's own allocations reach that
+  // allocator directly, without an indirect call through the table and
+  // without the alignment recovery the general path needs only because it
+  // rebinds to a byte allocator.
+  bool has_associated_allocator;
 };
 
 template <typename Handler, typename... Signatures>
@@ -443,6 +478,13 @@ struct any_completion_handler_fn_table_instance
 {
   static constexpr any_completion_handler_fn_table<Signatures...>
     value = any_completion_handler_fn_table<Signatures...>(
+        detail::has_associated_executor<Handler,
+          any_completion_executor>::value,
+        detail::has_associated_immediate_executor<Handler,
+          any_io_executor>::value,
+        detail::has_associated_allocator<Handler,
+          detail::recycling_allocator<void,
+            detail::thread_info_base::erased_handler_op_tag>>::value,
         &any_completion_handler_destroy_fn::impl<Handler>,
         &any_completion_handler_executor_fn::impl<Handler>,
         &any_completion_handler_immediate_executor_fn::impl<Handler>,
@@ -523,6 +565,13 @@ public:
   {
     if (fn_table_)
     {
+      if (use_recycling_allocator())
+      {
+        detail::recycling_allocator<T,
+          detail::thread_info_base::erased_handler_op_tag> alloc;
+        return alloc.allocate(n);
+      }
+
       return static_cast<T*>(
           fn_table_->allocate(
             impl_, sizeof(T) * n, alignof(T)));
@@ -535,7 +584,33 @@ public:
   /// Deallocate space for @c n objects of the allocator's value type.
   void deallocate(T* p, std::size_t n) const
   {
+    if (use_recycling_allocator())
+    {
+      detail::recycling_allocator<T,
+        detail::thread_info_base::erased_handler_op_tag> alloc;
+      alloc.deallocate(p, n);
+      return;
+    }
+
     fn_table_->deallocate(impl_, p, sizeof(T) * n, alignof(T));
+  }
+
+private:
+  // Whether this allocation may go straight to the allocator the erased
+  // implementation would itself default to, rather than through the function
+  // table to reach it. Two constants decide: whether the target handler
+  // leaves associated_allocator unspecialised, which the function table
+  // records once per erased handler type, and whether the value type is no
+  // more aligned than the blocks that allocator already returns, which is
+  // fixed per allocator instantiation. Neither can change between an
+  // allocation and its matching deallocation. The allocator that frees a
+  // block is obtained from the same handler, and names the same value type,
+  // as the one that allocated it, so the two always agree on the path taken.
+  // The paths are therefore free to lay memory out differently.
+  bool use_recycling_allocator() const noexcept
+  {
+    return alignof(T) <= ASIO_DEFAULT_ALIGN
+      && !fn_table_->has_associated_allocator;
   }
 };
 
@@ -631,6 +706,12 @@ private:
 
   template <typename, typename>
   friend struct associated_immediate_executor;
+
+  template <typename, typename>
+  friend struct detail::executor_is_candidate_query;
+
+  template <typename, typename>
+  friend struct detail::immediate_executor_is_candidate_query;
 
   const detail::any_completion_handler_fn_table<Signatures...>* fn_table_;
   detail::any_completion_handler_impl_base* impl_;
@@ -802,9 +883,11 @@ struct associated_executor<any_completion_handler<Signatures...>, Candidate>
       const Candidate& candidate = Candidate()) noexcept
   {
     any_completion_executor any_candidate(std::nothrow, candidate);
-    return handler.fn_table_
-      ? handler.fn_table_->executor(handler.impl_, any_candidate)
-      : any_candidate;
+    if (!handler.fn_table_)
+      return any_candidate;
+    if (!handler.fn_table_->has_associated_executor)
+      return any_candidate;
+    return handler.fn_table_->executor(handler.impl_, any_candidate);
   }
 };
 
@@ -818,11 +901,62 @@ struct associated_immediate_executor<
       const Candidate& candidate = Candidate()) noexcept
   {
     any_io_executor any_candidate(std::nothrow, candidate);
-    return handler.fn_table_
-      ? handler.fn_table_->immediate_executor(handler.impl_, any_candidate)
-      : any_candidate;
+    if (!handler.fn_table_)
+      return any_candidate;
+    if (!handler.fn_table_->has_associated_immediate_executor)
+      return type(std::nothrow,
+          detail::default_immediate_executor<any_io_executor>::get(
+            any_candidate));
+    return handler.fn_table_->immediate_executor(handler.impl_, any_candidate);
   }
 };
+
+namespace detail {
+
+// The erased handler's function table already records, as a constant per
+// erased handler type, whether the target handler leaves its executor to be
+// determined by the candidate. Answer from it, so that handler_work need
+// neither derive the association nor construct the executor it would then
+// compare against and discard.
+template <typename Candidate, typename... Signatures>
+struct executor_is_candidate_query<
+    any_completion_handler<Signatures...>, Candidate>
+{
+  typedef bool type;
+
+  static const bool is_known = true;
+
+  static type get(const any_completion_handler<Signatures...>& handler,
+      const Candidate&) noexcept
+  {
+    return handler.fn_table_ != nullptr
+      && !handler.fn_table_->has_associated_executor;
+  }
+};
+
+// The erased handler's function table already records, as a constant per
+// erased handler type, whether the target handler leaves its immediate
+// executor to be determined by the candidate. Answer from it, rather than
+// deriving the association and comparing it against a second, throwaway
+// default immediate executor built for that purpose alone.
+template <typename Candidate, typename... Signatures>
+struct immediate_executor_is_candidate_query<
+    any_completion_handler<Signatures...>, Candidate>
+{
+  typedef bool type;
+
+  static type get(const any_completion_handler<Signatures...>& handler,
+      const Candidate&) noexcept
+  {
+    // True only where deriving and comparing could also have been true:
+    // forming the default immediate executor requires blocking.never.
+    return can_require<Candidate, execution::blocking_t::never_t>::value
+      && handler.fn_table_ != nullptr
+      && !handler.fn_table_->has_associated_immediate_executor;
+  }
+};
+
+} // namespace detail
 
 ASIO_INLINE_NAMESPACE_END
 } // namespace asio

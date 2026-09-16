@@ -86,6 +86,7 @@ nobase_include_HEADERS = \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
 	asio/detail/call_stack.hpp \
+	asio/detail/candidate_executors.hpp \
 	asio/detail/channel_operation.hpp \
 	asio/detail/channel_receive_op.hpp \
 	asio/detail/channel_send_functions.hpp \

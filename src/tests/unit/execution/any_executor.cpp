@@ -23,6 +23,7 @@
 #include <utility>
 #include "asio/thread_pool.hpp"
 #include "asio/io_context.hpp"
+#include "asio/any_completion_executor.hpp"
 #include "asio/any_io_executor.hpp"
 #include "asio/detail/executor_function.hpp"
 #include "asio/strand.hpp"
@@ -1349,9 +1350,68 @@ void any_executor_execute_ready_made_test()
   ASIO_CHECK(!handed_wrapped);
 }
 
+void executor_targets_equal_test()
+{
+  asio::io_context ioc1;
+  asio::io_context ioc2;
+  asio::any_io_executor poly(ioc1.get_executor());
+
+  // A polymorphic executor against the concrete executor it erases,
+  // either way round.
+  ASIO_CHECK(asio::execution::detail::executor_targets_equal(
+        poly, ioc1.get_executor()));
+  ASIO_CHECK(asio::execution::detail::executor_targets_equal(
+        ioc1.get_executor(), poly));
+
+  // The same concrete type, a different executor: must NOT be equal, or a
+  // completion would be run on the wrong context's behalf.
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        poly, ioc2.get_executor()));
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        ioc2.get_executor(), poly));
+
+  // Two polymorphic executors of differing any_executor<...> instantiations:
+  // compared on the any_executor_base layer they share, since a direct ==
+  // between them would be ambiguous. The same target, either way round.
+  asio::any_completion_executor completion_poly(ioc1.get_executor());
+  ASIO_CHECK(asio::execution::detail::executor_targets_equal(
+        poly, completion_poly));
+  ASIO_CHECK(asio::execution::detail::executor_targets_equal(
+        completion_poly, poly));
+
+  // The same pair over differing contexts: must NOT be equal.
+  asio::any_completion_executor completion_poly2(ioc2.get_executor());
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        poly, completion_poly2));
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        completion_poly2, poly));
+
+  // A different concrete type altogether.
+  asio::thread_pool pool(1);
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        poly, pool.get_executor()));
+
+  // An executor with no target matches nothing.
+  asio::any_io_executor empty;
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        empty, ioc1.get_executor()));
+
+  // A target that carries tracked outstanding work is a distinct target,
+  // and so does not match the plain executor it was preferred from.
+  asio::any_io_executor tracked(
+      asio::prefer(poly, asio::execution::outstanding_work.tracked));
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        tracked, ioc1.get_executor()));
+
+  // Two differing concrete types are never equal.
+  ASIO_CHECK(!asio::execution::detail::executor_targets_equal(
+        ioc1.get_executor(), pool.get_executor()));
+}
+
 ASIO_TEST_SUITE
 (
   "any_executor",
+  ASIO_TEST_CASE(executor_targets_equal_test)
   ASIO_TEST_CASE(any_executor_construction_test)
   ASIO_TEST_CASE(any_executor_nothrow_construction_test)
   ASIO_TEST_CASE(any_executor_assignment_test)

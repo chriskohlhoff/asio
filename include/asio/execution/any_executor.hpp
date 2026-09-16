@@ -830,6 +830,19 @@ public:
     return ex.target_ && ex.target_fns_->has_native_outstanding_work;
   }
 
+  // Whether two polymorphic executors designate the same target object of
+  // the same target type. Unlike any_executor<...>'s own operator==, this
+  // compares across differing SupportableProperties lists (e.g.
+  // any_completion_executor against any_io_executor). It operates purely
+  // on the common any_executor_base layer, so it never hits the
+  // hidden-friend operator== ambiguity that a direct == between two
+  // different any_executor<...> instantiations has today.
+  friend bool equals_polymorphic_target(const any_executor_base& a,
+      const any_executor_base& b) noexcept
+  {
+    return a.equality_helper(b);
+  }
+
   struct unspecified_bool_type_t {};
   typedef void (*unspecified_bool_type)(unspecified_bool_type_t);
   static void unspecified_bool_true(unspecified_bool_type_t) {}
@@ -1424,6 +1437,88 @@ private:
   void* target_;
   const target_fns* target_fns_;
 };
+
+// A drop-in replacement for a == b usable at a call site that may see
+// EITHER the same executor type on both sides (any executor type, not
+// just a polymorphic one, and plain == is unambiguous and already correct
+// there, so it is used as-is) OR two differing any_executor<...>
+// instantiations (where an erasure-safe comparison by target identity
+// is required instead, per below). Only the exact-same-type case reaches
+// operator==, so a concrete executor whose == is not itself callable with
+// two different types is unaffected. A differing pair of non-polymorphic
+// types (which a fast-path call site should not be comparing in the first
+// place) conservatively compares unequal.
+template <typename Executor1, typename Executor2>
+enable_if_t<is_same<Executor1, Executor2>::value, bool>
+executor_targets_equal(const Executor1& a, const Executor2& b) noexcept
+{
+  return a == b;
+}
+
+// Both sides polymorphic, of differing any_executor<...> instantiations
+// (e.g. an any_completion_executor and an any_io_executor): they designate
+// the same executor exactly when they hold the same target object of the
+// same target type, which the any_executor_base subobjects answer between
+// themselves. A plain == cannot be used here even though both sides have
+// one, since each any_executor<...> instantiation injects its own
+// hidden-friend ==, and where the two sides' types differ both of those
+// become viable candidates and the call is ambiguous.
+template <typename Executor1, typename Executor2>
+enable_if_t<
+  !is_same<Executor1, Executor2>::value
+    && is_base_of<any_executor_base, Executor1>::value
+    && is_base_of<any_executor_base, Executor2>::value,
+  bool
+> executor_targets_equal(const Executor1& a, const Executor2& b) noexcept
+{
+  return equals_polymorphic_target(
+      static_cast<const any_executor_base&>(a),
+      static_cast<const any_executor_base&>(b));
+}
+
+// One side polymorphic and the other concrete: the polymorphic executor
+// designates the same executor exactly when its target is of that concrete
+// type and compares equal to it. target<Executor>() answers the first
+// question, yielding null for any other target type, and for an executor
+// with no target at all. The concrete type's own operator== answers
+// the second, so an executor that merely shares a type, such as another
+// io_context's, is correctly unequal. A target that carries a property, such
+// as tracked outstanding work, is a distinct target type and so does not
+// match a plain one either.
+template <typename Executor1, typename Executor2>
+enable_if_t<
+  !is_same<Executor1, Executor2>::value
+    && is_base_of<any_executor_base, Executor1>::value
+    && !is_base_of<any_executor_base, Executor2>::value,
+  bool
+> executor_targets_equal(const Executor1& a, const Executor2& b) noexcept
+{
+  const Executor2* target = a.template target<Executor2>();
+  return target != 0 && *target == b;
+}
+
+template <typename Executor1, typename Executor2>
+enable_if_t<
+  !is_same<Executor1, Executor2>::value
+    && !is_base_of<any_executor_base, Executor1>::value
+    && is_base_of<any_executor_base, Executor2>::value,
+  bool
+> executor_targets_equal(const Executor1& a, const Executor2& b) noexcept
+{
+  return executor_targets_equal(b, a);
+}
+
+// Two differing concrete types designate different executors.
+template <typename Executor1, typename Executor2>
+enable_if_t<
+  !is_same<Executor1, Executor2>::value
+    && !is_base_of<any_executor_base, Executor1>::value
+    && !is_base_of<any_executor_base, Executor2>::value,
+  bool
+> executor_targets_equal(const Executor1&, const Executor2&) noexcept
+{
+  return false;
+}
 
 template <typename Derived, typename Property, typename = void>
 struct any_executor_context
