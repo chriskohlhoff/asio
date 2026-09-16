@@ -23,6 +23,8 @@
 #include "asio/associated_executor.hpp"
 #include "asio/associated_immediate_executor.hpp"
 #include "asio/cancellation_state.hpp"
+#include "asio/detail/recycling_allocator.hpp"
+#include "asio/detail/thread_info_base.hpp"
 #include "asio/recycling_allocator.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -133,10 +135,12 @@ public:
   {
     typename std::allocator_traits<
       associated_allocator_t<Handler,
-        asio::recycling_allocator<void>>>::template
+        detail::recycling_allocator<void,
+          detail::thread_info_base::erased_handler_op_tag>>>::template
           rebind_alloc<unsigned char> alloc(
             (get_associated_allocator)(handler_,
-              asio::recycling_allocator<void>()));
+              detail::recycling_allocator<void,
+          detail::thread_info_base::erased_handler_op_tag>()));
 
     std::size_t space = size + align_size - 1;
     unsigned char* base =
@@ -162,10 +166,12 @@ public:
     {
       typename std::allocator_traits<
         associated_allocator_t<Handler,
-          asio::recycling_allocator<void>>>::template
+          detail::recycling_allocator<void,
+          detail::thread_info_base::erased_handler_op_tag>>>::template
             rebind_alloc<unsigned char> alloc(
               (get_associated_allocator)(handler_,
-                asio::recycling_allocator<void>()));
+                detail::recycling_allocator<void,
+          detail::thread_info_base::erased_handler_op_tag>()));
 
       std::ptrdiff_t off;
       std::memcpy(&off, static_cast<unsigned char*>(p) + size, sizeof(off));
