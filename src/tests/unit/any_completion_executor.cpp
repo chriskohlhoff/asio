@@ -18,6 +18,9 @@
 
 #include <cstring>
 #include <functional>
+#include <typeinfo>
+#include "asio/any_io_executor.hpp"
+#include "asio/io_context.hpp"
 #include "asio/system_executor.hpp"
 #include "asio/thread_pool.hpp"
 #include "unit_test.hpp"
@@ -451,6 +454,157 @@ void any_completion_executor_execute_test()
   ASIO_CHECK(count == 5);
 }
 
+void any_completion_executor_conversion_test()
+{
+  io_context ioc1;
+  io_context ioc2;
+  asio::nullptr_t null_ptr = asio::nullptr_t();
+  asio::any_io_executor io1(ioc1.get_executor());
+  asio::any_io_executor io2(ioc2.get_executor());
+  asio::any_io_executor io3;
+  asio::any_completion_executor ex1(io1);
+
+  ASIO_CHECK(ex1.target<void>() != 0);
+  ASIO_CHECK(ex1.target<io_context::executor_type>() != 0);
+  ASIO_CHECK(*ex1.target<io_context::executor_type>() == ioc1.get_executor());
+#if !defined(ASIO_NO_TYPEID)
+  ASIO_CHECK(ex1.target_type() == typeid(io_context::executor_type));
+#endif // !defined(ASIO_NO_TYPEID)
+  ASIO_CHECK(ex1 == asio::any_completion_executor(io1));
+  ASIO_CHECK(ex1 == asio::any_completion_executor(ioc1.get_executor()));
+  ASIO_CHECK(ex1 != asio::any_completion_executor(io2));
+
+  asio::any_completion_executor ex2(std::nothrow, io2);
+
+  ASIO_CHECK(ex2.target<io_context::executor_type>() != 0);
+  ASIO_CHECK(ex2 != ex1);
+  ASIO_CHECK(ex2 == asio::any_completion_executor(ioc2.get_executor()));
+
+  asio::any_completion_executor ex3(io3);
+
+  ASIO_CHECK(ex3.target<void>() == 0);
+  ASIO_CHECK(ex3 == null_ptr);
+
+  asio::any_completion_executor ex4 = asio::prefer(ex1,
+      asio::execution::outstanding_work.tracked);
+
+  ASIO_CHECK(ex4.target<void>() != 0);
+  ASIO_CHECK(ex4.target<io_context::executor_type>() == 0);
+  ASIO_CHECK(
+      asio::query(ex4, asio::execution::outstanding_work)
+        == asio::execution::outstanding_work.tracked);
+  ASIO_CHECK(
+      asio::query(ex1, asio::execution::outstanding_work)
+        == asio::execution::outstanding_work.untracked);
+
+  asio::any_completion_executor ex5 = asio::prefer(ex4,
+      asio::execution::outstanding_work.untracked);
+
+  ASIO_CHECK(ex5.target<io_context::executor_type>() != 0);
+  ASIO_CHECK(
+      asio::query(ex5, asio::execution::outstanding_work)
+        == asio::execution::outstanding_work.untracked);
+  ASIO_CHECK(ex5 == ex1);
+
+  asio::any_completion_executor ex6 = asio::prefer(ex1,
+      asio::execution::relationship.continuation);
+
+  ASIO_CHECK(
+      asio::query(ex6, asio::execution::relationship)
+        == asio::execution::relationship.continuation);
+  ASIO_CHECK(
+      asio::query(ex1, asio::execution::relationship)
+        == asio::execution::relationship.fork);
+
+  typedef execution::any_executor<
+      execution::context_as_t<execution_context&>,
+      execution::blocking_t::never_t
+    > leading_executor;
+
+  leading_executor ex7(io1);
+
+  ASIO_CHECK(ex7.target<io_context::executor_type>() != 0);
+  ASIO_CHECK(
+      &asio::query(ex7, execution::context_as_t<execution_context&>())
+        == &ioc1);
+  ASIO_CHECK(
+      asio::query(ex7, execution::blocking.never)
+        == execution::blocking.possibly);
+
+  leading_executor ex8 = asio::require(ex7, execution::blocking.never);
+
+  ASIO_CHECK(ex8.target<void>() != 0);
+  ASIO_CHECK(ex8 != ex7);
+  ASIO_CHECK(
+      &asio::query(ex8, execution::context_as_t<execution_context&>())
+        == &ioc1);
+  ASIO_CHECK(
+      asio::query(ex8, execution::blocking.never)
+        == execution::blocking.never);
+
+  typedef execution::any_executor<
+      execution::prefer_only<execution::outstanding_work_t::tracked_t>,
+      execution::prefer_only<execution::outstanding_work_t::untracked_t>
+    > work_executor;
+
+  work_executor ex9(io1);
+  work_executor ex10(ex1);
+
+  ASIO_CHECK(ex9 == ex10);
+  ASIO_CHECK(ex10.target<io_context::executor_type>() != 0);
+
+  work_executor ex11 = asio::prefer(ex10,
+      asio::execution::outstanding_work.tracked);
+
+  ASIO_CHECK(
+      asio::query(ex11, asio::execution::outstanding_work)
+        == asio::execution::outstanding_work.tracked);
+
+  work_executor ex12 = asio::prefer(ex11,
+      asio::execution::outstanding_work.untracked);
+
+  ASIO_CHECK(ex12 == ex9);
+
+  typedef execution::any_executor<
+      execution::blocking_t::never_t,
+      execution::prefer_only<execution::relationship_t::continuation_t>
+    > other_executor;
+
+  other_executor ex13(io1);
+
+  ASIO_CHECK(ex13.target<io_context::executor_type>() != 0);
+#if !defined(ASIO_NO_TYPEID)
+  ASIO_CHECK(ex13.target_type() == typeid(io_context::executor_type));
+#endif // !defined(ASIO_NO_TYPEID)
+  ASIO_CHECK(ex13 == other_executor(io1));
+  ASIO_CHECK(ex13 != other_executor(io2));
+  ASIO_CHECK(
+      asio::query(ex13, execution::relationship)
+        == execution::relationship.fork);
+
+  other_executor ex14 = asio::prefer(ex13,
+      execution::relationship.continuation);
+
+  ASIO_CHECK(
+      asio::query(ex14, execution::relationship)
+        == execution::relationship.continuation);
+
+  other_executor ex15 = asio::require(ex13, execution::blocking.never);
+
+  ASIO_CHECK(
+      asio::query(ex15, execution::blocking.never)
+        == execution::blocking.never);
+
+  int count = 0;
+  ex1.execute(bindns::bind(increment, &count));
+  ex8.execute(bindns::bind(increment, &count));
+  ex11.execute(bindns::bind(increment, &count));
+  ex15.execute(bindns::bind(increment, &count));
+  ioc1.poll();
+
+  ASIO_CHECK(count == 4);
+}
+
 ASIO_TEST_SUITE
 (
   "any_completion_executor",
@@ -460,4 +614,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(any_completion_executor_swap_test)
   ASIO_TEST_CASE(any_completion_executor_query_test)
   ASIO_TEST_CASE(any_completion_executor_execute_test)
+  ASIO_TEST_CASE(any_completion_executor_conversion_test)
 )
