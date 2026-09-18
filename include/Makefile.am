@@ -162,7 +162,10 @@ nobase_include_HEADERS = \
 	asio/detail/impl/posix_serial_port_service.ipp \
 	asio/detail/impl/posix_thread.ipp \
 	asio/detail/impl/posix_tss_ptr.ipp \
+	asio/detail/impl/reactive_descriptor_service.hpp \
 	asio/detail/impl/reactive_descriptor_service.ipp \
+	asio/detail/impl/reactive_socket_service.hpp \
+	asio/detail/impl/reactive_socket_service_base.hpp \
 	asio/detail/impl/reactive_socket_service_base.ipp \
 	asio/detail/impl/resolver_service_base.ipp \
 	asio/detail/impl/resolver_thread_pool.ipp \
