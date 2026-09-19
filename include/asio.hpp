@@ -191,6 +191,7 @@
 #include "asio/this_coro.hpp"
 #include "asio/thread.hpp"
 #include "asio/thread_pool.hpp"
+#include "asio/trampoline.hpp"
 #include "asio/use_awaitable.hpp"
 #include "asio/use_future.hpp"
 #include "asio/uses_executor.hpp"

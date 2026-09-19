@@ -33,6 +33,7 @@
 #include "asio/impl/serial_port_base.ipp"
 #include "asio/impl/system_context.ipp"
 #include "asio/impl/thread_pool.ipp"
+#include "asio/impl/trampoline.ipp"
 #include "asio/detail/impl/asm_fiber.ipp"
 #include "asio/detail/impl/buffer_sequence_adapter.ipp"
 #include "asio/detail/impl/default_stack_allocator.ipp"

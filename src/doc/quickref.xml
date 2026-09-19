@@ -256,6 +256,7 @@
             <member><link linkend="asio.reference.redirect_error_t">redirect_error_t</link></member>
             <member><link linkend="asio.reference.strand">strand</link></member>
             <member><link linkend="asio.reference.thread_pool__basic_executor_type">thread_pool::basic_executor_type</link></member>
+            <member><link linkend="asio.reference.trampoline">trampoline</link></member>
             <member><link linkend="asio.reference.use_awaitable_t">use_awaitable_t</link></member>
             <member><link linkend="asio.reference.use_future_t">use_future_t</link></member>
           </simplelist>
@@ -291,6 +292,7 @@
             <member><link linkend="asio.reference.execution_context.make_service">make_service</link></member>
             <member><link linkend="asio.reference.inline_or">inline_or</link></member>
             <member><link linkend="asio.reference.make_strand">make_strand</link></member>
+            <member><link linkend="asio.reference.make_trampoline">make_trampoline</link></member>
             <member><link linkend="asio.reference.make_work_guard">make_work_guard</link></member>
             <member><link linkend="asio.reference.post">post</link></member>
             <member><link linkend="asio.reference.prepend">prepend</link></member>

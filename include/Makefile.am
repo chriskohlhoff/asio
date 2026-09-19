@@ -493,6 +493,8 @@ nobase_include_HEADERS = \
 	asio/impl/system_executor.hpp \
 	asio/impl/thread_pool.hpp \
 	asio/impl/thread_pool.ipp \
+	asio/impl/trampoline.hpp \
+	asio/impl/trampoline.ipp \
 	asio/impl/use_awaitable.hpp \
 	asio/impl/use_future.hpp \
 	asio/impl/write_at.hpp \
@@ -638,6 +640,7 @@ nobase_include_HEADERS = \
 	asio/traits/static_query.hpp \
 	asio/traits/static_require.hpp \
 	asio/traits/static_require_concept.hpp \
+	asio/trampoline.hpp \
 	asio/ts/buffer.hpp \
 	asio/ts/executor.hpp \
 	asio/ts/internet.hpp \

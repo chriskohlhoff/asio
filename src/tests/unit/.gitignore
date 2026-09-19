@@ -121,6 +121,7 @@ this_coro
 thread
 thread_pool
 time_traits
+trampoline
 use_awaitable
 use_future
 uses_executor

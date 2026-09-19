@@ -126,6 +126,7 @@
             not(contains(compoundname, '_helper')) and
             not(contains(compoundname, 'std_allocator_void')) and
             not(contains(compoundname, 'thread_function')) and
+            not(contains(compoundname, '::carry_id')) and
             not(contains(compoundname, 'context_impl')) and
             not(contains(compoundname, 'initiate_')) and
             not(contains(compoundname, '_adapter')) and
