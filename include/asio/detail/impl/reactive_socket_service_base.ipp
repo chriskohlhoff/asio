@@ -252,52 +252,15 @@ asio::error_code reactive_socket_service_base::do_assign(
   return ec;
 }
 
-void reactive_socket_service_base::do_start_op(
-    reactive_socket_service_base::base_implementation_type& impl,
-    int op_type, reactor_op* op, bool is_continuation,
-    bool allow_speculative, bool noop, bool needs_non_blocking,
-    void (*on_immediate)(operation* op, bool, const void*),
-    const void* immediate_arg)
+bool reactive_socket_service_base::start_already_open_op(reactor_op* op)
 {
-  if (!noop)
-  {
-    if ((impl.state_ & socket_ops::non_blocking)
-        || !needs_non_blocking
-        || socket_ops::set_internal_non_blocking(
-          impl.socket_, impl.state_, true, op->ec_))
-    {
-      reactor_.start_op(op_type, impl.socket_, impl.reactor_data_, op,
-          is_continuation, allow_speculative, on_immediate, immediate_arg);
-      return;
-    }
-  }
-
-  on_immediate(op, is_continuation, immediate_arg);
+  op->ec_ = asio::error::already_open;
+  return true;
 }
 
-void reactive_socket_service_base::do_start_accept_op(
+bool reactive_socket_service_base::do_connect(
     reactive_socket_service_base::base_implementation_type& impl,
-    reactor_op* op, bool is_continuation, bool peer_is_open,
-    void (*on_immediate)(operation* op, bool, const void*),
-    const void* immediate_arg)
-{
-  if (!peer_is_open)
-  {
-    do_start_op(impl, reactor::read_op, op, is_continuation,
-        true, false, true, on_immediate, immediate_arg);
-  }
-  else
-  {
-    op->ec_ = asio::error::already_open;
-    on_immediate(op, is_continuation, immediate_arg);
-  }
-}
-
-void reactive_socket_service_base::do_start_connect_op(
-    reactive_socket_service_base::base_implementation_type& impl,
-    reactor_op* op, bool is_continuation, const void* addr, size_t addrlen,
-    void (*on_immediate)(operation* op, bool, const void*),
-    const void* immediate_arg)
+    reactor_op* op, const void* addr, size_t addrlen)
 {
   if ((impl.state_ & socket_ops::non_blocking)
       || socket_ops::set_internal_non_blocking(
@@ -309,14 +272,12 @@ void reactive_socket_service_base::do_start_connect_op(
           || op->ec_ == asio::error::would_block)
       {
         asio::error::clear(op->ec_);
-        reactor_.start_op(reactor::connect_op, impl.socket_, impl.reactor_data_,
-            op, is_continuation, false, on_immediate, immediate_arg);
-        return;
+        return false;
       }
     }
   }
 
-  on_immediate(op, is_continuation, immediate_arg);
+  return true;
 }
 
 } // namespace detail

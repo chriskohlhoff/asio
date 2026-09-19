@@ -198,28 +198,6 @@ asio::error_code reactive_descriptor_service::cancel(
   return ec;
 }
 
-void reactive_descriptor_service::do_start_op(implementation_type& impl,
-    int op_type, reactor_op* op, bool is_continuation,
-    bool allow_speculative, bool noop, bool needs_non_blocking,
-    void (*on_immediate)(operation* op, bool, const void*),
-    const void* immediate_arg)
-{
-  if (!noop)
-  {
-    if ((impl.state_ & descriptor_ops::non_blocking)
-        || !needs_non_blocking
-        || descriptor_ops::set_internal_non_blocking(
-          impl.descriptor_, impl.state_, true, op->ec_))
-    {
-      reactor_.start_op(op_type, impl.descriptor_, impl.reactor_data_, op,
-          is_continuation, allow_speculative, on_immediate, immediate_arg);
-      return;
-    }
-  }
-
-  on_immediate(op, is_continuation, immediate_arg);
-}
-
 } // namespace detail
 ASIO_INLINE_NAMESPACE_END
 } // namespace asio

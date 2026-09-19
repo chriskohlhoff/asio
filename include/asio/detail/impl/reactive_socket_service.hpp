@@ -55,9 +55,8 @@ void reactive_socket_service<Protocol>::async_send_to(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_send_to"));
 
-  start_op(impl, reactor::write_op, p.p,
-      is_continuation, true, false,
-      ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  start_op<&op::do_perform, reactor::write_op>(impl, p.p, is_continuation,
+      false, ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
   p.v = p.p = 0;
 }
 
@@ -91,8 +90,8 @@ void reactive_socket_service<Protocol>::async_send_to(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_send_to(null_buffers)"));
 
-  start_op(impl, reactor::write_op, p.p,
-      is_continuation, false, false, false, &io_ex, 0);
+  start_op<nullptr, reactor::write_op>(impl, p.p,
+      is_continuation, false, false, &io_ex, 0);
   p.v = p.p = 0;
 }
 
@@ -130,11 +129,16 @@ void reactive_socket_service<Protocol>::async_receive_from(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_receive_from"));
 
-  start_op(impl,
-      (flags & socket_base::message_out_of_band)
-        ? reactor::except_op : reactor::read_op,
-      p.p, is_continuation, true, false,
-      ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  if (flags & socket_base::message_out_of_band)
+  {
+    start_op<&op::do_perform, reactor::except_op>(impl, p.p, is_continuation,
+        false, ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  }
+  else
+  {
+    start_op<&op::do_perform, reactor::read_op>(impl, p.p, is_continuation,
+        false, ASIO_OS_DEF(MSG_DONTWAIT) == 0, &io_ex, 0);
+  }
   p.v = p.p = 0;
 }
 
@@ -171,10 +175,16 @@ void reactive_socket_service<Protocol>::async_receive_from(
   // Reset endpoint since it can be given no sensible value at this time.
   sender_endpoint = endpoint_type();
 
-  start_op(impl,
-      (flags & socket_base::message_out_of_band)
-        ? reactor::except_op : reactor::read_op,
-      p.p, is_continuation, false, false, false, &io_ex, 0);
+  if (flags & socket_base::message_out_of_band)
+  {
+    start_op<nullptr, reactor::except_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+  }
+  else
+  {
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+  }
   p.v = p.p = 0;
 }
 
@@ -209,7 +219,8 @@ void reactive_socket_service<Protocol>::async_accept(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_accept"));
 
-  start_accept_op(impl, p.p, is_continuation, peer.is_open(), &io_ex, 0);
+  start_accept_op<&op::do_perform>(impl, p.p,
+      is_continuation, peer.is_open(), &io_ex, 0);
   p.v = p.p = 0;
 }
 
@@ -245,7 +256,8 @@ void reactive_socket_service<Protocol>::async_move_accept(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "socket",
         &impl, impl.socket_, "async_accept"));
 
-  start_accept_op(impl, p.p, is_continuation, false, &io_ex, 0);
+  start_accept_op<&op::do_perform>(impl, p.p,
+      is_continuation, false, &io_ex, 0);
   p.v = p.p = 0;
 }
 

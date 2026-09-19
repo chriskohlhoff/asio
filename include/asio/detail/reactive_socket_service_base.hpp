@@ -40,6 +40,7 @@
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
 
@@ -350,29 +351,42 @@ protected:
       base_implementation_type& impl, int type,
       const native_handle_type& native_socket, asio::error_code& ec);
 
-  // Start the asynchronous read or write operation.
-  ASIO_DECL void do_start_op(base_implementation_type& impl,
-      int op_type, reactor_op* op, bool is_continuation,
-      bool allow_speculative, bool noop, bool needs_non_blocking,
-      void (*on_immediate)(operation* op, bool, const void*),
-      const void* immediate_arg);
+  // Start the asynchronous read or write operation. Returns true if the
+  // operation is ready for its immediate completion.
+  template <reactor_op::perform_func_type Perform, int OpType>
+  inline bool do_start_op(base_implementation_type& impl,
+      reactor_op* op, bool noop, bool needs_non_blocking)
+  {
+    if (!noop)
+    {
+      if ((impl.state_ & socket_ops::non_blocking)
+          || !needs_non_blocking
+          || socket_ops::set_internal_non_blocking(
+            impl.socket_, impl.state_, true, op->ec_))
+      {
+        ASIO_INVOKE_INLINE return reactor_.start_op<OpType, Perform>(
+            impl.socket_, impl.reactor_data_, op);
+      }
+    }
+
+    return true;
+  }
 
   // Start the asynchronous operation for handlers that are specialised for
   // immediate completion.
-  template <typename Op>
-  void start_op(base_implementation_type& impl, int op_type, Op* op,
-      bool is_continuation, bool allow_speculative, bool noop,
-      bool needs_non_blocking, const void* io_ex, ...)
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(base_implementation_type& impl, Op* op, bool is_continuation,
+      bool noop, bool needs_non_blocking, const void* io_ex, ...)
   {
-    return do_start_op(impl, op_type, op, is_continuation, allow_speculative,
-        noop, needs_non_blocking, &Op::do_immediate, io_ex);
+    ASIO_INVOKE_INLINE if (do_start_op<Perform, OpType>(impl, op,
+          noop, needs_non_blocking))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
   // Start the asynchronous operation for handlers that are not specialised for
   // immediate completion.
-  template <typename Op>
-  void start_op(base_implementation_type& impl, int op_type,
-      Op* op, bool is_continuation, bool allow_speculative,
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(base_implementation_type& impl, Op* op, bool is_continuation,
       bool noop, bool needs_non_blocking, const void* io_ex,
       enable_if_t<
         !has_associated_immediate_executor<
@@ -381,67 +395,77 @@ protected:
         >::value
       >*)
   {
-    return start_op(impl, op_type, op, is_continuation,
-        allow_speculative, noop, needs_non_blocking, io_ex,
+    ASIO_INVOKE_INLINE return start_op<Perform, OpType>(impl, op,
+        is_continuation, noop, needs_non_blocking, io_ex,
         native_execute_kind_t<typename Op::io_executor_type>());
   }
 
-  template <typename Op>
-  void start_op(base_implementation_type& impl, int op_type,
-      Op* op, bool is_continuation, bool allow_speculative, bool noop,
-      bool needs_non_blocking, const void*, native_execute_kinds::native)
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(base_implementation_type& impl, Op* op,
+      bool is_continuation, bool noop, bool needs_non_blocking,
+      const void*, native_execute_kinds::native)
   {
-    return do_start_op(impl, op_type, op, is_continuation,
-        allow_speculative, noop, needs_non_blocking,
-        &reactor::call_post_immediate_completion, &reactor_);
+    ASIO_INVOKE_INLINE if (do_start_op<Perform, OpType>(impl, op,
+          noop, needs_non_blocking))
+      reactor::call_post_immediate_completion(op, is_continuation, &reactor_);
   }
 
-  template <typename Op>
-  void start_op(base_implementation_type& impl, int op_type,
-      Op* op, bool is_continuation, bool allow_speculative,
-      bool noop, bool needs_non_blocking, const void* io_ex,
-      native_execute_kinds::polymorphic)
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(base_implementation_type& impl, Op* op,
+      bool is_continuation, bool noop, bool needs_non_blocking,
+      const void* io_ex, native_execute_kinds::polymorphic)
   {
-    if ((has_native_execute)(
-          *static_cast<const typename Op::io_executor_type*>(io_ex)))
+    ASIO_INVOKE_INLINE if (do_start_op<Perform, OpType>(
+          impl, op, noop, needs_non_blocking))
     {
-      return do_start_op(impl, op_type, op, is_continuation,
-          allow_speculative, noop, needs_non_blocking,
-          &reactor::call_post_immediate_completion, &reactor_);
+      if ((has_native_execute)(
+            *static_cast<const typename Op::io_executor_type*>(io_ex)))
+      {
+        reactor::call_post_immediate_completion(op, is_continuation,
+            &reactor_);
+      }
+      else
+        Op::do_immediate(op, is_continuation, io_ex);
     }
-    return do_start_op(impl, op_type, op, is_continuation, allow_speculative,
-        noop, needs_non_blocking, &Op::do_immediate, io_ex);
   }
 
-  template <typename Op>
-  void start_op(base_implementation_type& impl, int op_type,
-      Op* op, bool is_continuation, bool allow_speculative,
-      bool noop, bool needs_non_blocking, const void* io_ex,
-      native_execute_kinds::none)
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(base_implementation_type& impl, Op* op,
+      bool is_continuation, bool noop, bool needs_non_blocking,
+      const void* io_ex, native_execute_kinds::none)
   {
-    return do_start_op(impl, op_type, op, is_continuation, allow_speculative,
-        noop, needs_non_blocking, &Op::do_immediate, io_ex);
+    ASIO_INVOKE_INLINE if (do_start_op<Perform, OpType>(impl, op,
+          noop, needs_non_blocking))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
-  // Start the asynchronous accept operation.
-  ASIO_DECL void do_start_accept_op(base_implementation_type& impl,
-      reactor_op* op, bool is_continuation, bool peer_is_open,
-      void (*on_immediate)(operation* op, bool, const void*),
-      const void* immediate_arg);
+  // Set the result of an accept operation that was started on an open peer.
+  ASIO_DECL ASIO_NEVER_INLINE static bool start_already_open_op(
+      reactor_op* op);
+
+  template <reactor_op::perform_func_type Perform>
+  bool do_start_accept_op(base_implementation_type& impl,
+      reactor_op* op, bool peer_is_open)
+  {
+    if (!peer_is_open)
+      return do_start_op<Perform, reactor::read_op>(impl, op, false, true);
+
+    return start_already_open_op(op);
+  }
 
   // Start the asynchronous accept operation for handlers that are specialised
   // for immediate completion.
-  template <typename Op>
+  template <reactor_op::perform_func_type Perform, typename Op>
   void start_accept_op(base_implementation_type& impl, Op* op,
       bool is_continuation, bool peer_is_open, const void* io_ex, ...)
   {
-    return do_start_accept_op(impl, op, is_continuation,
-        peer_is_open, &Op::do_immediate, io_ex);
+    if (do_start_accept_op<Perform>(impl, op, peer_is_open))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
   // Start the asynchronous operation for handlers that are not specialised for
   // immediate completion.
-  template <typename Op>
+  template <reactor_op::perform_func_type Perform, typename Op>
   void start_accept_op(base_implementation_type& impl, Op* op,
       bool is_continuation, bool peer_is_open, const void* io_ex,
       enable_if_t<
@@ -451,48 +475,63 @@ protected:
         >::value
       >*)
   {
-    return start_accept_op(impl, op, is_continuation, peer_is_open,
+    return start_accept_op<Perform>(impl, op, is_continuation, peer_is_open,
         io_ex, native_execute_kind_t<typename Op::io_executor_type>());
   }
 
-  template <typename Op>
+  template <reactor_op::perform_func_type Perform, typename Op>
   void start_accept_op(base_implementation_type& impl, Op* op,
       bool is_continuation, bool peer_is_open, const void*,
       native_execute_kinds::native)
   {
-    return do_start_accept_op(impl, op, is_continuation, peer_is_open,
-        &reactor::call_post_immediate_completion, &reactor_);
+    if (do_start_accept_op<Perform>(impl, op, peer_is_open))
+      reactor::call_post_immediate_completion(op, is_continuation, &reactor_);
   }
 
-  template <typename Op>
+  template <reactor_op::perform_func_type Perform, typename Op>
   void start_accept_op(base_implementation_type& impl, Op* op,
       bool is_continuation, bool peer_is_open, const void* io_ex,
       native_execute_kinds::polymorphic)
   {
-    if ((has_native_execute)(
-          *static_cast<const typename Op::io_executor_type*>(io_ex)))
+    if (do_start_accept_op<Perform>(impl, op, peer_is_open))
     {
-      return do_start_accept_op(impl, op, is_continuation, peer_is_open,
-          &reactor::call_post_immediate_completion, &reactor_);
+      if ((has_native_execute)(
+            *static_cast<const typename Op::io_executor_type*>(io_ex)))
+      {
+        reactor::call_post_immediate_completion(op, is_continuation,
+            &reactor_);
+      }
+      else
+        Op::do_immediate(op, is_continuation, io_ex);
     }
-    return do_start_accept_op(impl, op, is_continuation,
-        peer_is_open, &Op::do_immediate, io_ex);
   }
 
-  template <typename Op>
+  template <reactor_op::perform_func_type Perform, typename Op>
   void start_accept_op(base_implementation_type& impl, Op* op,
       bool is_continuation, bool peer_is_open, const void* io_ex,
       native_execute_kinds::none)
   {
-    return do_start_accept_op(impl, op, is_continuation,
-        peer_is_open, &Op::do_immediate, io_ex);
+    if (do_start_accept_op<Perform>(impl, op, peer_is_open))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
-  // Start the asynchronous connect operation.
-  ASIO_DECL void do_start_connect_op(base_implementation_type& impl,
-      reactor_op* op, bool is_continuation, const void* addr, size_t addrlen,
-      void (*on_immediate)(operation* op, bool, const void*),
-      const void* immediate_arg);
+  // Attempt the non-blocking connect. Returns true if the operation is ready
+  // for immediate completion.
+  ASIO_DECL bool do_connect(base_implementation_type& impl,
+      reactor_op* op, const void* addr, size_t addrlen);
+
+  // Start the asynchronous connect operation. A connect is never attempted
+  // speculatively. Returns true if the operation is ready for its immediate
+  // completion, which the caller makes.
+  bool do_start_connect_op(base_implementation_type& impl,
+      reactor_op* op, const void* addr, size_t addrlen)
+  {
+    if (do_connect(impl, op, addr, addrlen))
+      return true;
+
+    return reactor_.start_op<reactor::connect_op, nullptr>(impl.socket_,
+        impl.reactor_data_, op);
+  }
 
   // Start the asynchronous operation for handlers that are specialised for
   // immediate completion.
@@ -501,8 +540,8 @@ protected:
       Op* op, bool is_continuation, const void* addr,
       size_t addrlen, const void* io_ex, ...)
   {
-    return do_start_connect_op(impl, op, is_continuation,
-        addr, addrlen, &Op::do_immediate, io_ex);
+    if (do_start_connect_op(impl, op, addr, addrlen))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
   // Start the asynchronous operation for handlers that are not specialised for
@@ -527,8 +566,8 @@ protected:
       bool is_continuation, const void* addr, size_t addrlen, const void*,
       native_execute_kinds::native)
   {
-    return do_start_connect_op(impl, op, is_continuation, addr,
-        addrlen, &reactor::call_post_immediate_completion, &reactor_);
+    if (do_start_connect_op(impl, op, addr, addrlen))
+      reactor::call_post_immediate_completion(op, is_continuation, &reactor_);
   }
 
   template <typename Op>
@@ -536,14 +575,17 @@ protected:
       bool is_continuation, const void* addr, size_t addrlen,
       const void* io_ex, native_execute_kinds::polymorphic)
   {
-    if ((has_native_execute)(
-          *static_cast<const typename Op::io_executor_type*>(io_ex)))
+    if (do_start_connect_op(impl, op, addr, addrlen))
     {
-      return do_start_connect_op(impl, op, is_continuation, addr,
-          addrlen, &reactor::call_post_immediate_completion, &reactor_);
+      if ((has_native_execute)(
+            *static_cast<const typename Op::io_executor_type*>(io_ex)))
+      {
+        reactor::call_post_immediate_completion(op, is_continuation,
+            &reactor_);
+      }
+      else
+        Op::do_immediate(op, is_continuation, io_ex);
     }
-    return do_start_connect_op(impl, op, is_continuation,
-        addr, addrlen, &Op::do_immediate, io_ex);
   }
 
   template <typename Op>
@@ -551,8 +593,8 @@ protected:
       bool is_continuation, const void* addr, size_t addrlen,
       const void* io_ex, native_execute_kinds::none)
   {
-    return do_start_connect_op(impl, op, is_continuation,
-        addr, addrlen, &Op::do_immediate, io_ex);
+    if (do_start_connect_op(impl, op, addr, addrlen))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
   // Helper class used to implement per-operation cancellation

@@ -48,7 +48,7 @@ public:
   {
   }
 
-  static status do_perform(reactor_op* base)
+  static ASIO_ALWAYS_INLINE status do_perform(reactor_op* base)
   {
     ASIO_ASSUME(base != 0);
     descriptor_write_op_base* o(static_cast<descriptor_write_op_base*>(base));

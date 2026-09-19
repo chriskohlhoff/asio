@@ -50,7 +50,7 @@ public:
   {
   }
 
-  static status do_perform(reactor_op* base)
+  static ASIO_ALWAYS_INLINE status do_perform(reactor_op* base)
   {
     ASIO_ASSUME(base != 0);
     reactive_socket_accept_op_base* o(

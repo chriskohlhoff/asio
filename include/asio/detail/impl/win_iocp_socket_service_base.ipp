@@ -481,10 +481,16 @@ int win_iocp_socket_service_base::start_null_buffers_receive_op(
   }
   else
   {
-    int op_type = (flags & socket_base::message_out_of_band)
-      ? select_reactor::except_op : select_reactor::read_op;
-    start_reactor_op(impl, op_type, op);
-    return op_type;
+    if (flags & socket_base::message_out_of_band)
+    {
+      start_reactor_op<select_reactor::except_op>(impl, op);
+      return select_reactor::except_op;
+    }
+    else
+    {
+      start_reactor_op<select_reactor::read_op>(impl, op);
+      return select_reactor::read_op;
+    }
   }
 }
 
@@ -589,22 +595,19 @@ void win_iocp_socket_service_base::restart_accept_op(
   }
 }
 
-void win_iocp_socket_service_base::start_reactor_op(
+select_reactor* win_iocp_socket_service_base::prepare_reactor_op(
     win_iocp_socket_service_base::base_implementation_type& impl,
-    int op_type, reactor_op* op)
+    reactor_op* op)
 {
   select_reactor& r = get_reactor();
   update_cancellation_thread_id(impl);
 
   if (is_open(impl))
-  {
-    r.start_op(op_type, impl.socket_, impl.reactor_data_, op, false, false);
-    return;
-  }
-  else
-    op->ec_ = asio::error::bad_descriptor;
+    return &r;
 
+  op->ec_ = asio::error::bad_descriptor;
   iocp_service_.post_immediate_completion(op, false);
+  return nullptr;
 }
 
 int win_iocp_socket_service_base::start_connect_op(
@@ -668,8 +671,9 @@ int win_iocp_socket_service_base::start_connect_op(
           || op->ec_ == asio::error::would_block)
       {
         asio::error::clear(op->ec_);
-        r.start_op(select_reactor::connect_op, impl.socket_,
-            impl.reactor_data_, op, false, false);
+        if (r.start_op<select_reactor::connect_op, nullptr>(impl.socket_,
+              impl.reactor_data_, op))
+          r.post_immediate_completion(op, false);
         return select_reactor::connect_op;
       }
     }

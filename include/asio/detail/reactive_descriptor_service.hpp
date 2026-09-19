@@ -310,29 +310,41 @@ public:
       const null_buffers&, Handler& handler, const IoExecutor& io_ex);
 
 private:
-  // Start the asynchronous operation.
-  ASIO_DECL void do_start_op(implementation_type& impl,
-      int op_type, reactor_op* op, bool is_continuation,
-      bool allow_speculative, bool noop, bool needs_non_blocking,
-      void (*on_immediate)(operation* op, bool, const void*),
-      const void* immediate_arg);
+  // Start the asynchronous operation. Returns true if the operation is ready
+  // for its immediate completion.
+  template <reactor_op::perform_func_type Perform, int OpType>
+  bool do_start_op(implementation_type& impl,
+      reactor_op* op, bool noop, bool needs_non_blocking)
+  {
+    if (!noop)
+    {
+      if ((impl.state_ & descriptor_ops::non_blocking)
+          || !needs_non_blocking
+          || descriptor_ops::set_internal_non_blocking(
+            impl.descriptor_, impl.state_, true, op->ec_))
+      {
+        return reactor_.start_op<OpType, Perform>(
+            impl.descriptor_, impl.reactor_data_, op);
+      }
+    }
+
+    return true;
+  }
 
   // Start the asynchronous operation for handlers that are specialised for
   // immediate completion.
-  template <typename Op>
-  void start_op(implementation_type& impl, int op_type, Op* op,
-      bool is_continuation, bool allow_speculative, bool noop,
-      bool needs_non_blocking, const void* io_ex, ...)
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(implementation_type& impl, Op* op, bool is_continuation,
+      bool noop, bool needs_non_blocking, const void* io_ex, ...)
   {
-    return do_start_op(impl, op_type, op, is_continuation, allow_speculative,
-        noop, needs_non_blocking, &Op::do_immediate, io_ex);
+    if (do_start_op<Perform, OpType>(impl, op, noop, needs_non_blocking))
+      Op::do_immediate(op, is_continuation, io_ex);
   }
 
   // Start the asynchronous operation for handlers that are not specialised for
   // immediate completion.
-  template <typename Op>
-  void start_op(implementation_type& impl, int op_type,
-      Op* op, bool is_continuation, bool allow_speculative,
+  template <reactor_op::perform_func_type Perform, int OpType, typename Op>
+  void start_op(implementation_type& impl, Op* op, bool is_continuation,
       bool noop, bool needs_non_blocking, const void*,
       enable_if_t<
         !has_associated_immediate_executor<
@@ -341,9 +353,8 @@ private:
         >::value
       >*)
   {
-    return do_start_op(impl, op_type, op, is_continuation,
-        allow_speculative, noop, needs_non_blocking,
-        &reactor::call_post_immediate_completion, &reactor_);
+    if (do_start_op<Perform, OpType>(impl, op, noop, needs_non_blocking))
+      reactor::call_post_immediate_completion(op, is_continuation, &reactor_);
   }
 
   // Helper class used to implement per-operation cancellation

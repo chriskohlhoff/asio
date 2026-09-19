@@ -391,7 +391,7 @@ public:
     ASIO_HANDLER_CREATION((context_, *p.p, "socket",
           &impl, impl.socket_, "async_send_to(null_buffers)"));
 
-    start_reactor_op(impl, select_reactor::write_op, o);
+    start_reactor_op<select_reactor::write_op>(impl, o);
     p.v = p.p = 0;
   }
 

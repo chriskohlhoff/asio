@@ -101,23 +101,20 @@ public:
   ASIO_DECL static void call_post_immediate_completion(
       operation* op, bool is_continuation, const void* self);
 
-  // Start a new operation. The reactor operation will be performed when the
-  // given descriptor is flagged as ready, or an error has occurred.
-  ASIO_DECL void start_op(int op_type, socket_type descriptor,
-      per_descriptor_data&, reactor_op* op, bool is_continuation, bool,
-      void (*on_immediate)(operation*, bool, const void*),
-      const void* immediate_arg);
+  // Start a new operation with the operation type and perform function
+  // specified at compile time. Returns true if the operation is ready for
+  // immediate completion. Otherwise, the reactor operation will be performed
+  // when the given descriptor is flagged as ready, or an error has occurred.
+  template <int OpType, reactor_op::perform_func_type Perform>
+  inline bool start_op(socket_type descriptor,
+      per_descriptor_data& descriptor_data, reactor_op* op);
 
-  // Start a new operation. The reactor operation will be performed when the
-  // given descriptor is flagged as ready, or an error has occurred.
-  void start_op(int op_type, socket_type descriptor,
-      per_descriptor_data& descriptor_data, reactor_op* op,
-      bool is_continuation, bool allow_speculative)
-  {
-    start_op(op_type, descriptor, descriptor_data,
-        op, is_continuation, allow_speculative,
-        &select_reactor::call_post_immediate_completion, this);
-  }
+  // Start a new operation that was not completed speculatively. The reactor
+  // operation will be performed when the given descriptor is flagged as ready,
+  // or an error has occurred.
+  ASIO_DECL ASIO_NEVER_INLINE bool start_unready_op(int op_type,
+      socket_type descriptor, asio::detail::mutex::scoped_lock& lock,
+      reactor_op* op);
 
   // Cancel all operations associated with the given descriptor. The
   // handlers associated with the descriptor will be invoked with the

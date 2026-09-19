@@ -246,11 +246,11 @@ public:
         break;
       case socket_base::wait_write:
         op_type = select_reactor::write_op;
-        start_reactor_op(impl, select_reactor::write_op, p.p);
+        start_reactor_op<select_reactor::write_op>(impl, p.p);
         break;
       case socket_base::wait_error:
         op_type = select_reactor::read_op;
-        start_reactor_op(impl, select_reactor::except_op, p.p);
+        start_reactor_op<select_reactor::except_op>(impl, p.p);
         break;
       default:
         p.p->ec_ = asio::error::invalid_argument;
@@ -339,7 +339,7 @@ public:
     ASIO_HANDLER_CREATION((context_, *p.p, "socket",
           &impl, impl.socket_, "async_send(null_buffers)"));
 
-    start_reactor_op(impl, select_reactor::write_op, p.p);
+    start_reactor_op<select_reactor::write_op>(impl, p.p);
     p.v = p.p = 0;
   }
 
@@ -592,9 +592,25 @@ protected:
       bool peer_is_open, socket_holder& new_socket, int family, int type,
       int protocol, void* output_buffer, DWORD address_length, operation* op);
 
-  // Start an asynchronous read or write operation using the reactor.
-  ASIO_DECL void start_reactor_op(base_implementation_type& impl,
-      int op_type, reactor_op* op);
+  // Prepare to start an operation on the reactor. Returns the reactor, or
+  // null if the socket is not open, in which case the operation has already
+  // been completed.
+  ASIO_DECL select_reactor* prepare_reactor_op(
+      base_implementation_type& impl, reactor_op* op);
+
+  // Start an asynchronous read or write operation using the reactor, naming
+  // the operation type as a template argument. The operation is never
+  // attempted speculatively.
+  template <int OpType>
+  void start_reactor_op(base_implementation_type& impl, reactor_op* op)
+  {
+    if (select_reactor* r = prepare_reactor_op(impl, op))
+    {
+      if (r->start_op<OpType, nullptr>(impl.socket_,
+            impl.reactor_data_, op))
+        r->post_immediate_completion(op, false);
+    }
+  }
 
   // Start the asynchronous connect operation using the reactor.
   ASIO_DECL int start_connect_op(base_implementation_type& impl,

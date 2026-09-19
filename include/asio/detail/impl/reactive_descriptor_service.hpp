@@ -55,8 +55,8 @@ void reactive_descriptor_service::async_wait(
     break;
   default:
     p.p->ec_ = asio::error::invalid_argument;
-    start_op(impl, reactor::read_op, p.p,
-        is_continuation, false, true, false, &io_ex, 0);
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, true, false, &io_ex, 0);
     p.v = p.p = 0;
     return;
   }
@@ -69,8 +69,21 @@ void reactive_descriptor_service::async_wait(
           &reactor_, &impl.reactor_data_, impl.descriptor_, op_type);
   }
 
-  start_op(impl, op_type, p.p, is_continuation,
-      false, false, false, &io_ex, 0);
+  switch (op_type)
+  {
+  case reactor::read_op:
+    start_op<nullptr, reactor::read_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+    break;
+  case reactor::write_op:
+    start_op<nullptr, reactor::write_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+    break;
+  default:
+    start_op<nullptr, reactor::except_op>(impl, p.p,
+        is_continuation, false, false, &io_ex, 0);
+    break;
+  }
   p.v = p.p = 0;
 }
 
@@ -103,7 +116,7 @@ void reactive_descriptor_service::async_write_some(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
         &impl, impl.descriptor_, "async_write_some"));
 
-  start_op(impl, reactor::write_op, p.p, is_continuation, true,
+  start_op<&op::do_perform, reactor::write_op>(impl, p.p, is_continuation,
       buffer_sequence_adapter<asio::const_buffer,
         ConstBufferSequence>::all_empty(buffers), true, &io_ex, 0);
   p.v = p.p = 0;
@@ -138,8 +151,8 @@ void reactive_descriptor_service::async_write_some(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
         &impl, impl.descriptor_, "async_write_some(null_buffers)"));
 
-  start_op(impl, reactor::write_op, p.p,
-      is_continuation, false, false, false, &io_ex, 0);
+  start_op<nullptr, reactor::write_op>(impl, p.p,
+      is_continuation, false, false, &io_ex, 0);
   p.v = p.p = 0;
 }
 
@@ -173,7 +186,7 @@ void reactive_descriptor_service::async_read_some(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
         &impl, impl.descriptor_, "async_read_some"));
 
-  start_op(impl, reactor::read_op, p.p, is_continuation, true,
+  start_op<&op::do_perform, reactor::read_op>(impl, p.p, is_continuation,
       buffer_sequence_adapter<asio::mutable_buffer,
         MutableBufferSequence>::all_empty(buffers), true, &io_ex, 0);
   p.v = p.p = 0;
@@ -208,8 +221,8 @@ void reactive_descriptor_service::async_read_some(
   ASIO_HANDLER_CREATION((reactor_.context(), *p.p, "descriptor",
         &impl, impl.descriptor_, "async_read_some(null_buffers)"));
 
-  start_op(impl, reactor::read_op, p.p,
-      is_continuation, false, false, false, &io_ex, 0);
+  start_op<nullptr, reactor::read_op>(impl, p.p,
+      is_continuation, false, false, &io_ex, 0);
   p.v = p.p = 0;
 }
 
