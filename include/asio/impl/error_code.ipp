@@ -131,7 +131,7 @@ private:
 
 const error_category& system_category()
 {
-  static detail::system_category instance;
+  ASIO_NO_DESTROY static detail::system_category instance;
   return instance;
 }
 

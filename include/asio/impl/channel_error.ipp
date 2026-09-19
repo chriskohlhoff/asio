@@ -48,7 +48,7 @@ public:
 
 const asio::error_category& get_channel_category()
 {
-  static detail::channel_category instance;
+  ASIO_NO_DESTROY static detail::channel_category instance;
   return instance;
 }
 
