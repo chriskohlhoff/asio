@@ -32,6 +32,7 @@
 #include "asio/detail/handler_cont_helpers.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/noncopyable.hpp"
+#include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 #include "asio/detail/utility.hpp"
 #include "asio/disposition.hpp"

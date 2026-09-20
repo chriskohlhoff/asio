@@ -47,8 +47,7 @@ public:
 
   void operator()()
   {
-    asio::error_code ec;
-    this_->run(ec);
+    this_->run();
   }
 
 private:
@@ -209,9 +208,8 @@ void scheduler::init_task()
   }
 }
 
-std::size_t scheduler::run(asio::error_code& ec)
+std::size_t scheduler::run()
 {
-  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -234,9 +232,8 @@ std::size_t scheduler::run(asio::error_code& ec)
   return n;
 }
 
-std::size_t scheduler::run_one(asio::error_code& ec)
+std::size_t scheduler::run_one()
 {
-  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -254,9 +251,8 @@ std::size_t scheduler::run_one(asio::error_code& ec)
   return do_run_one(lock, this_thread, wake_possible());
 }
 
-std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
+std::size_t scheduler::wait_one(long usec)
 {
-  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -272,9 +268,8 @@ std::size_t scheduler::wait_one(long usec, asio::error_code& ec)
   return do_wait_one(lock, this_thread, usec);
 }
 
-std::size_t scheduler::poll(asio::error_code& ec)
+std::size_t scheduler::poll()
 {
-  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();
@@ -306,9 +301,8 @@ std::size_t scheduler::poll(asio::error_code& ec)
   return n;
 }
 
-std::size_t scheduler::poll_one(asio::error_code& ec)
+std::size_t scheduler::poll_one()
 {
-  asio::error::clear(ec);
   if (outstanding_work_ == 0)
   {
     stop();

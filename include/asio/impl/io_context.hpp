@@ -23,7 +23,6 @@
 #include "asio/detail/handler_type_requirements.hpp"
 #include "asio/detail/non_const_lvalue.hpp"
 #include "asio/detail/service_registry.hpp"
-#include "asio/detail/throw_error.hpp"
 #include "asio/detail/type_traits.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -118,11 +117,9 @@ std::size_t io_context::run_one_until(
     if (rel_time > chrono::seconds(1))
       rel_time = chrono::seconds(1);
 
-    asio::error_code ec;
     std::size_t s = impl_.wait_one(
         static_cast<long>(chrono::duration_cast<
-          chrono::microseconds>(rel_time).count()), ec);
-    asio::detail::throw_error(ec);
+          chrono::microseconds>(rel_time).count()));
 
     if (s || impl_.stopped())
       return s;
