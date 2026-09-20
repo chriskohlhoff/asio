@@ -396,7 +396,7 @@ namespace detail
           }
         }
 
-        static_cast<ReadHandler&&>(handler_)(
+        ASIO_INVOKE_INLINE static_cast<ReadHandler&&>(handler_)(
             static_cast<const asio::error_code&>(ec),
             static_cast<const std::size_t&>(buffers_.total_consumed()));
       }

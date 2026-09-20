@@ -66,7 +66,7 @@ public:
     {
       fenced_block b(fenced_block::half);
       ASIO_HANDLER_INVOCATION_BEGIN(());
-      static_cast<Handler&&>(handler)();
+      ASIO_INVOKE_INLINE static_cast<Handler&&>(handler)();
       ASIO_HANDLER_INVOCATION_END;
     }
   }

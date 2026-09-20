@@ -362,7 +362,7 @@ namespace detail
           }
         }
 
-        static_cast<WriteHandler&&>(handler_)(
+        ASIO_INVOKE_INLINE static_cast<WriteHandler&&>(handler_)(
             static_cast<const asio::error_code&>(ec),
             static_cast<const std::size_t&>(buffers_.total_consumed()));
       }

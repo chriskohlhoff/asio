@@ -46,12 +46,12 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)();
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)();
   }
 
   void operator()() const
   {
-    handler_();
+    ASIO_INVOKE_INLINE handler_();
   }
 
 //private:
@@ -96,13 +96,13 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_));
   }
 
   void operator()() const
   {
-    handler_(arg1_);
+    ASIO_INVOKE_INLINE handler_(arg1_);
   }
 
 //private:
@@ -157,14 +157,14 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_));
   }
 
   void operator()() const
   {
-    handler_(arg1_, arg2_);
+    ASIO_INVOKE_INLINE handler_(arg1_, arg2_);
   }
 
 //private:
@@ -224,7 +224,7 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_),
         static_cast<const Arg3&>(arg3_));
@@ -232,7 +232,7 @@ public:
 
   void operator()() const
   {
-    handler_(arg1_, arg2_, arg3_);
+    ASIO_INVOKE_INLINE handler_(arg1_, arg2_, arg3_);
   }
 
 //private:
@@ -297,7 +297,7 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_),
         static_cast<const Arg3&>(arg3_),
@@ -306,7 +306,7 @@ public:
 
   void operator()() const
   {
-    handler_(arg1_, arg2_, arg3_, arg4_);
+    ASIO_INVOKE_INLINE handler_(arg1_, arg2_, arg3_, arg4_);
   }
 
 //private:
@@ -377,7 +377,7 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<const Arg2&>(arg2_),
         static_cast<const Arg3&>(arg3_),
@@ -387,7 +387,7 @@ public:
 
   void operator()() const
   {
-    handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
+    ASIO_INVOKE_INLINE handler_(arg1_, arg2_, arg3_, arg4_, arg5_);
   }
 
 //private:
@@ -442,7 +442,7 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<Arg1&&>(arg1_));
   }
 
@@ -483,7 +483,7 @@ public:
 
   void operator()()
   {
-    static_cast<Handler&&>(handler_)(
+    ASIO_INVOKE_INLINE static_cast<Handler&&>(handler_)(
         static_cast<const Arg1&>(arg1_),
         static_cast<Arg2&&>(arg2_));
   }
