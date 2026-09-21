@@ -102,7 +102,8 @@ public:
     typedef typename Derived::payload_type payload_type;
     typedef completion_message<R(Args...)> message_type;
     Derived* self = static_cast<Derived*>(this);
-    return async_initiate<CompletionToken, void (asio::error_code)>(
+    ASIO_INVOKE_INLINE return async_initiate<CompletionToken,
+      void (asio::error_code)>(
         typename Derived::initiate_async_send(self), token,
         payload_type(message_type(0, static_cast<Args&&>(args)...)));
   }
@@ -235,7 +236,8 @@ public:
     typedef typename Derived::payload_type payload_type;
     typedef completion_message<R(Args...)> message_type;
     Derived* self = static_cast<Derived*>(this);
-    return async_initiate<CompletionToken, void (asio::error_code)>(
+    ASIO_INVOKE_INLINE return async_initiate<CompletionToken,
+      void (asio::error_code)>(
         typename Derived::initiate_async_send(self), token,
         payload_type(message_type(0, static_cast<Args&&>(args)...)));
   }

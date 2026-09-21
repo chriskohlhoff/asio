@@ -1048,19 +1048,7 @@ public:
 
   void await_suspend(coroutine_handle<void>)
   {
-    frame_->after_suspend(
-        [](void* arg)
-        {
-          awaitable_async_op* self = static_cast<awaitable_async_op*>(arg);
-#if defined(ASIO_ENABLE_HANDLER_TRACKING)
-# if defined(ASIO_HAS_SOURCE_LOCATION)
-          ASIO_HANDLER_LOCATION((self->location_.file_name(),
-              self->location_.line(), self->location_.function_name()));
-# endif // defined(ASIO_HAS_SOURCE_LOCATION)
-#endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
-          std::forward<Op&&>(self->op_)(
-              handler_type(self->frame_->detach_thread(), self->result_));
-        }, this);
+    frame_->after_suspend(&on_suspend, this);
   }
 
   auto await_resume()
@@ -1069,6 +1057,23 @@ public:
   }
 
 private:
+  // The thunk that runs the operation's initiation once the coroutine has
+  // suspended. It is reached only through the function pointer stashed in
+  // after_suspend(), so it can never be inlined into its caller. The call to
+  // op_ below is forced inline at its call site instead.
+  static void on_suspend(void* arg)
+  {
+    awaitable_async_op* self = static_cast<awaitable_async_op*>(arg);
+#if defined(ASIO_ENABLE_HANDLER_TRACKING)
+# if defined(ASIO_HAS_SOURCE_LOCATION)
+    ASIO_HANDLER_LOCATION((self->location_.file_name(),
+        self->location_.line(), self->location_.function_name()));
+# endif // defined(ASIO_HAS_SOURCE_LOCATION)
+#endif // defined(ASIO_ENABLE_HANDLER_TRACKING)
+    ASIO_INVOKE_INLINE std::forward<Op&&>(self->op_)(
+        handler_type(self->frame_->detach_thread(), self->result_));
+  }
+
   Op&& op_;
   awaitable_frame_base<Executor>* frame_;
   typename handler_type::result_type result_;
