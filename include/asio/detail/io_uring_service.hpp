@@ -70,7 +70,7 @@ private:
 public:
   enum op_types { read_op = 0, write_op = 1, except_op = 2, max_ops = 3 };
 
-  class io_object;
+  struct io_object;
 
   // An I/O queue stores operations that must run serially.
   class io_queue : operation
