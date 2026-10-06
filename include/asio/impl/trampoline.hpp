@@ -862,6 +862,8 @@ trampoline<decay_t<prefer_result_t<const Executor&, Property>>,
 trampoline<Executor, Blocking, InlineExceptionHandling>::prefer(
     const Property& p,
     constraint_t<can_prefer<const Executor&, Property>::value>,
+    constraint_t<
+      !is_identity_prefer<const Executor&, Property>::value>,
     constraint_t<!is_convertible<Property, execution::blocking_t>::value>,
     constraint_t<
       !is_convertible<Property, execution::relationship_t>::value>,
