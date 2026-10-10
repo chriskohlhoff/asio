@@ -144,6 +144,13 @@ public:
   // descriptor data.
   ASIO_DECL void cleanup_descriptor_data(per_descriptor_data&);
 
+  // Give a descriptor a name, used to lookup per-descriptor configuration.
+  void set_descriptor_name(per_descriptor_data&,
+      const char* /*name*/, asio::error_code& ec)
+  {
+    asio::error::clear(ec);
+  }
+
   // Move descriptor registration from one descriptor_data object to another.
   ASIO_DECL void move_descriptor(socket_type descriptor,
       per_descriptor_data& target_descriptor_data,

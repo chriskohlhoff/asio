@@ -592,6 +592,7 @@
           <bridgehead renderas="sect3">I/O Control Commands</bridgehead>
           <simplelist type="vert" columns="1">
             <member><link linkend="asio.reference.socket_base.bytes_readable">socket_base::bytes_readable</link></member>
+            <member><link linkend="asio.reference.socket_base.descriptor_name">socket_base::descriptor_name</link></member>
           </simplelist>
           <bridgehead renderas="sect3">Type Requirements</bridgehead>
           <simplelist type="vert" columns="1">

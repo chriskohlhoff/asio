@@ -40,6 +40,13 @@ public:
   {
   };
 
+  // Give a descriptor a name, used to lookup per-descriptor configuration.
+  void set_descriptor_name(per_descriptor_data&,
+      const char* /*name*/, asio::error_code& ec)
+  {
+    asio::error::clear(ec);
+  }
+
   // Constructor.
   null_reactor(asio::execution_context& ctx)
     : execution_context_service_base<null_reactor>(ctx)

@@ -16,6 +16,7 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
 #include "asio/detail/config.hpp"
+#include "asio/detail/io_control.hpp"
 
 #if !defined(ASIO_HAS_IOCP) \
   && !defined(ASIO_WINDOWS_RUNTIME) \
@@ -139,6 +140,14 @@ public:
   asio::error_code io_control(base_implementation_type& impl,
       IO_Control_Command& command, asio::error_code& ec)
   {
+    const char* descriptor_name = 0;
+    if (get_descriptor_name(command, descriptor_name, ec))
+    {
+      if (!ec)
+        reactor_.set_descriptor_name(impl.reactor_data_, descriptor_name, ec);
+      return ec;
+    }
+
     socket_ops::ioctl(impl.socket_, impl.state_, command.name(),
         static_cast<ioctl_arg_type*>(command.data()), ec);
     return ec;
