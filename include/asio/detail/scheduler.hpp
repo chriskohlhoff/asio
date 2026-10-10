@@ -183,8 +183,8 @@ private:
       thread_info& this_thread, long usec);
 
   // Poll for at most one operation.
-  ASIO_DECL std::size_t do_poll_one(
-      mutex::scoped_lock& lock, thread_info& this_thread, bool may_wake);
+  ASIO_DECL std::size_t do_poll_one(mutex::scoped_lock& lock,
+      thread_info& this_thread, bool may_wake, bool& task_has_run);
 
   // Stop the task and all idle threads.
   ASIO_DECL void stop_all_threads(mutex::scoped_lock& lock);

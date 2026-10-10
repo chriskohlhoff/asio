@@ -294,8 +294,9 @@ std::size_t scheduler::poll()
 #endif // defined(ASIO_HAS_THREADS)
 
   const bool may_wake = wake_possible();
+  bool task_has_run = false;
   std::size_t n = 0;
-  for (; do_poll_one(lock, this_thread, may_wake); lock.lock())
+  for (; do_poll_one(lock, this_thread, may_wake, task_has_run); lock.lock())
     if (n != (std::numeric_limits<std::size_t>::max)())
       ++n;
   return n;
@@ -326,7 +327,8 @@ std::size_t scheduler::poll_one()
       op_queue_.push(outer_info->private_op_queue);
 #endif // defined(ASIO_HAS_THREADS)
 
-  return do_poll_one(lock, this_thread, wake_possible());
+  bool task_has_run = false;
+  return do_poll_one(lock, this_thread, wake_possible(), task_has_run);
 }
 
 void scheduler::stop()
@@ -637,7 +639,7 @@ std::size_t scheduler::do_wait_one(mutex::scoped_lock& lock,
 }
 
 std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
-    scheduler::thread_info& this_thread, bool may_wake)
+    scheduler::thread_info& this_thread, bool may_wake, bool& task_has_run)
 {
   if (stopped_)
     return 0;
@@ -645,6 +647,14 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
   operation* o = op_queue_.front();
   if (o == &task_operation_)
   {
+    if (task_has_run)
+    {
+      if (!one_thread_)
+        wakeup_event_.maybe_unlock_and_signal_one(lock);
+      return 0;
+    }
+
+    task_has_run = true;
     op_queue_.pop();
     lock.unlock();
 
@@ -652,9 +662,8 @@ std::size_t scheduler::do_poll_one(mutex::scoped_lock& lock,
       task_cleanup c = { this, &lock, &this_thread };
       (void)c;
 
-      // Run the task. May throw an exception. Only block if the operation
-      // queue is empty and we're not polling, otherwise we want to return
-      // as soon as possible.
+      // Run the task. May throw an exception. Never blocks, because the caller
+      // is polling.
       task_->run(0, this_thread.private_op_queue);
     }
 
