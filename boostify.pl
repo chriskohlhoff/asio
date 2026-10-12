@@ -131,13 +131,15 @@ sub copy_source_file
       $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
       $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
     }
-    if ($line =~ /asio_detail_posix_thread_function/)
+    # The global names tagged by ASIO_VERSIONED_NAME are built by token
+    # pasting, so the prefix is only ever written in the macro itself.
+    if ($line =~ /asio_ ## name/)
     {
-      $line =~ s/asio_detail_posix_thread_function/boost_asio_detail_posix_thread_function/g;
+      $line =~ s/asio_ ## name/boost_asio_ ## name/g;
     }
-    if ($line =~ /asio_signal_handler/)
+    if ($line =~ /CAT\(asio_,/)
     {
-      $line =~ s/asio_signal_handler/boost_asio_signal_handler/g;
+      $line =~ s/CAT\(asio_,/CAT(boost_asio_,/g;
     }
     if ($line =~ /ASIO_/ && !($line =~ /BOOST_ASIO_/))
     {
@@ -324,31 +326,6 @@ sub copy_source_file
     elsif ($line =~ /using namespace asio/)
     {
       $line =~ s/using namespace asio/using namespace boost::asio/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /asio_handler_alloc_helpers/)
-    {
-      $line =~ s/asio_handler_alloc_helpers/boost_asio_handler_alloc_helpers/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /asio_handler_cont_helpers/)
-    {
-      $line =~ s/asio_handler_cont_helpers/boost_asio_handler_cont_helpers/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /asio_handler_invoke_helpers/)
-    {
-      $line =~ s/asio_handler_invoke_helpers/boost_asio_handler_invoke_helpers/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /asio_(prefer|query|require|require_concept)_fn/)
-    {
-      $line =~ s/asio_(prefer|query|require|require_concept)_fn/boost_asio_$1_fn/g;
-      print_line($output, $line, $from, $lineno);
-    }
-    elsif ($line =~ /asio_execution_/ && !($line =~ /_is_unspecialised/))
-    {
-      $line =~ s/asio_execution_/boost_asio_execution_/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /[\\@]ref boost_bind/)
