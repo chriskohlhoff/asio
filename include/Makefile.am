@@ -177,6 +177,8 @@ nobase_include_HEADERS = \
 	asio/detail/impl/signal_set_service.ipp \
 	asio/detail/impl/socket_ops.ipp \
 	asio/detail/impl/socket_select_interrupter.ipp \
+	asio/detail/impl/spin_reactor.hpp \
+	asio/detail/impl/spin_reactor.ipp \
 	asio/detail/impl/stderr_handler_tracking.ipp \
 	asio/detail/impl/strand_executor_service.hpp \
 	asio/detail/impl/strand_executor_service.ipp \
@@ -310,6 +312,7 @@ nobase_include_HEADERS = \
 	asio/detail/socket_select_interrupter.hpp \
 	asio/detail/socket_types.hpp \
 	asio/detail/source_location.hpp \
+	asio/detail/spin_reactor.hpp \
 	asio/detail/static_mutex.hpp \
 	asio/detail/std_event.hpp \
 	asio/detail/std_fenced_block.hpp \

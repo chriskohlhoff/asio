@@ -344,10 +344,28 @@ jobs:
             optim-level: -O2
             io-uring: -DASIO_HAS_IO_URING
             configure-libs: LIBS=-luring
+          #
+          # Linux / g++-12 -std=c++20 / -O2 / standalone / spin reactor
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04
+            compiler: g++-12
+            cxx-std: c++20 -fcoroutines
+            optim-level: -O2
+            spin-reactor: -DASIO_ENABLE_SPIN_REACTOR
+          #
+          # macOS / c++2a / -O2 / standalone / spin reactor
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++2a
+            optim-level: -O2
+            spin-reactor: -DASIO_ENABLE_SPIN_REACTOR
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
-      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }}
+      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.spin-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }}
     steps:
     - uses: actions/checkout@v4
     - name: Install autotools

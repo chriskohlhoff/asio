@@ -506,9 +506,10 @@ public:
 
   /// I/O control command to name the socket for the reactor.
   /**
-   * Implements a custom I/O control command that gives the socket a name. The
-   * name may be used by the implementation to look up per-socket configuration.
-   * The name is not required to be unique.
+   * Implements a custom I/O control command that gives the socket a name.
+   * Whether the name is used is backend-dependent. It is currently used by the
+   * spin reactor, to look up per-socket configuration. The name is not
+   * required to be unique.
    *
    * @note The string is stored by pointer in the I/O control command object, so
    * the caller must ensure that it is valid across the call to @c io_control.

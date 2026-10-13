@@ -65,6 +65,7 @@
 #include "asio/detail/impl/signal_set_service.ipp"
 #include "asio/detail/impl/socket_ops.ipp"
 #include "asio/detail/impl/socket_select_interrupter.ipp"
+#include "asio/detail/impl/spin_reactor.ipp"
 #include "asio/detail/impl/stderr_handler_tracking.ipp"
 #include "asio/detail/impl/strand_executor_service.ipp"
 #include "asio/detail/impl/strand_service.ipp"

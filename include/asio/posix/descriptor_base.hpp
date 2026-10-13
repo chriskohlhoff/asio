@@ -76,8 +76,9 @@ public:
   /// I/O control command to name a descriptor.
   /**
    * Implements a custom I/O control command that gives the descriptor a name.
-   * The name may be used by the implementation to look up per-descriptor
-   * configuration. The name is not required to be unique.
+   * Whether the name is used is backend-dependent. It is currently used by the
+   * spin reactor, to look up per-descriptor configuration. The name is not
+   * required to be unique.
    *
    * @note The string is stored by pointer in the I/O control command object, so
    * the caller must ensure that it is valid across the call to @c io_control.

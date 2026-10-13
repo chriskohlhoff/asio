@@ -240,6 +240,26 @@ functionality, and behaviour of Asio.
     ]
   ]
   [
+    [`ASIO_ENABLE_SPIN_REACTOR`]
+    [
+      Selects the spin reactor, in place of the platform's default reactor.
+
+      The spin reactor treats all descriptors as perpetually ready, and in
+      doing so avoids calls to demultiplexing system calls such as
+      [^epoll_wait] and [^select]. Each operation is instead attempted when
+      the reactor next offers its queue to the scheduler, and it is the
+      outcome of that attempt which establishes readiness.
+
+      The order in which descriptors are offered, and how often, may be
+      configured per descriptor. See [link
+      asio.overview.core.configuration Runtime Configuration and Concurrency
+      Hints] for the available configuration keys.
+
+      Has no effect when I/O completion ports, the Windows Runtime, or
+      [^io_uring] as the default backend are in use.
+    ]
+  ]
+  [
     [`ASIO_DISABLE_DEV_POLL`]
     [
       Explicitly disables [^/dev/poll] support on Solaris, forcing the use of

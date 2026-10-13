@@ -291,6 +291,113 @@ below.
     ]
   ]
   [
+    [`reactor`]
+    [`spin_order`]
+    [`string`]
+    [`"oldest"`]
+    [
+      Spin reactor backend only.
+
+      Determines the order in which the reactor considers descriptors that
+      share the same priority. When `"oldest"`, the descriptor registered
+      first is considered first. When `"newest"`, the most recently
+      registered descriptor is considered first.
+
+      Any other value causes an exception of type `std::invalid_argument` to
+      be thrown on construction of the [^io_context].
+    ]
+  ]
+  [
+    [`reactor`]
+    [`descriptors.<name>.priority`]
+    [`int`]
+    [`0`]
+    [
+      Spin reactor backend only.
+
+      The priority of the named descriptor's operations, where a higher value
+      is considered before a lower one. A descriptor is given a name using the
+      `descriptor_name` I/O control command.
+
+      At equal priority, descriptors are ordered as per the `"spin_order"`
+      setting, and the timers are considered after all descriptors.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`descriptors.<name>.interval`]
+    [`int`]
+    [`1`]
+    [
+      Spin reactor backend only.
+
+      The named descriptor's operations are considered on every ['interval]th
+      pass of the reactor. A value of `1`, the default, considers them on
+      every pass.
+
+      A value below `1` causes the `io_control` call that names the descriptor
+      to fail with `asio::error::invalid_argument`.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`descriptors.<name>.offset`]
+    [`int`]
+    [`0`]
+    [
+      Spin reactor backend only.
+
+      Which pass within the interval the named descriptor's operations are
+      considered on. Descriptors sharing an interval may be given different
+      offsets to spread them across passes.
+
+      A negative value causes the `io_control` call that names the descriptor
+      to fail with `asio::error::invalid_argument`.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`timer_scheduling_priority`]
+    [`int`]
+    [`0`]
+    [
+      Spin reactor backend only.
+
+      The priority of the reactor's timers, which take their place in the
+      order like any descriptor. At equal priority the timers are considered
+      after all descriptors.
+    ]
+  ]
+  [
+    [`reactor`]
+    [`timer_scheduling_interval`]
+    [`int`]
+    [`1`]
+    [
+      Spin reactor backend only.
+
+      The reactor's timers are checked on every ['interval]th pass. A value of
+      `1`, the default, checks them on every pass.
+
+      A value below `1` causes an exception of type `std::invalid_argument` to
+      be thrown on construction of the [^io_context].
+    ]
+  ]
+  [
+    [`reactor`]
+    [`timer_scheduling_offset`]
+    [`int`]
+    [`0`]
+    [
+      Spin reactor backend only.
+
+      Which pass within the interval the reactor's timers are checked on.
+
+      A negative value causes an exception of type `std::invalid_argument` to
+      be thrown on construction of the [^io_context].
+    ]
+  ]
+  [
     [`timer`]
     [`heap_reserve`]
     [`unsigned int`]

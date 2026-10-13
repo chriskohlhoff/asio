@@ -1830,6 +1830,13 @@
 # define ASIO_VERSION_TAG_w
 #endif // defined(ASIO_PERFETTO_HANDLER_TRACKING)
 
+// Version tags for user-enabled features with no auto-detection in this file.
+#if defined(ASIO_ENABLE_SPIN_REACTOR)
+# define ASIO_VERSION_TAG_x x
+#else // defined(ASIO_ENABLE_SPIN_REACTOR)
+# define ASIO_VERSION_TAG_x
+#endif // defined(ASIO_ENABLE_SPIN_REACTOR)
+
 // Automatic version namespace v<ASIO_VERSION>_<tags>.
 #if defined(ASIO_ENABLE_VERSION_NAMESPACE)
 # if !defined(ASIO_VERSION_NAMESPACE)
@@ -1859,7 +1866,8 @@
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_t, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_u, \
   ASIO_DETAIL_CAT(ASIO_VERSION_TAG_v, \
-  ASIO_VERSION_TAG_w)))))))))))))))))))))))))
+  ASIO_DETAIL_CAT(ASIO_VERSION_TAG_w, \
+  ASIO_VERSION_TAG_x))))))))))))))))))))))))))
 # endif // !defined(ASIO_VERSION_NAMESPACE)
 #endif // defined(ASIO_ENABLE_VERSION_NAMESPACE)
 
