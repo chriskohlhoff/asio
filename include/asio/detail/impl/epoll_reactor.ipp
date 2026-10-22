@@ -44,6 +44,7 @@ epoll_reactor::epoll_reactor(asio::execution_context& ctx)
     mutex_(config(ctx).get("reactor", "registration_locking", true),
         config(ctx).get("reactor", "registration_locking_spin_count", 0)),
     interrupter_(config(ctx).get("reactor", "use_eventfd", true)),
+    epoll_fd_set_cnt(0),
     epoll_fd_(do_epoll_create()),
     timer_fd_(config(ctx).get("reactor", "use_timerfd", true)
         ? do_timerfd_create() : -1),
@@ -69,6 +70,7 @@ epoll_reactor::epoll_reactor(asio::execution_context& ctx)
     ev.events = EPOLLIN | EPOLLERR;
     ev.data.ptr = &timer_fd_;
     epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, timer_fd_, &ev);
+    epoll_fd_set_cnt++;
   }
 }
 
@@ -110,6 +112,7 @@ void epoll_reactor::notify_fork(
       ::close(epoll_fd_);
     epoll_fd_ = -1;
     epoll_fd_ = do_epoll_create();
+    epoll_fd_set_cnt_ = 0;
 
     if (timer_fd_ != -1)
     {
@@ -133,6 +136,7 @@ void epoll_reactor::notify_fork(
       ev.events = EPOLLIN | EPOLLERR;
       ev.data.ptr = &timer_fd_;
       epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, timer_fd_, &ev);
+      epoll_fd_set_cnt_++;
     }
 
     update_timeout();
@@ -148,6 +152,7 @@ void epoll_reactor::notify_fork(
         ev.data.ptr = state;
         int result = epoll_ctl(epoll_fd_,
             EPOLL_CTL_ADD, state->descriptor_, &ev);
+        epoll_fd_set_cnt++;
         if (result != 0)
         {
           asio::error_code ec(errno,
@@ -188,6 +193,7 @@ int epoll_reactor::register_descriptor(socket_type descriptor,
   descriptor_data->registered_events_ = ev.events;
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+  epoll_fd_set_cnt_++;
   if (result != 0)
   {
     if (errno == EPERM)
@@ -231,6 +237,7 @@ int epoll_reactor::register_internal_descriptor(
   descriptor_data->registered_events_ = ev.events;
   ev.data.ptr = descriptor_data;
   int result = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, descriptor, &ev);
+  epoll_fd_set_cnt_++;
   if (result != 0)
   {
     // Don't try to re-register internal descriptor after fork().
@@ -413,6 +420,7 @@ void epoll_reactor::deregister_descriptor(socket_type descriptor,
       epoll_event ev = { 0, { 0 } };
       epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
     }
+    epoll_fd_set_cnt_--;
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)
@@ -459,6 +467,7 @@ void epoll_reactor::deregister_internal_descriptor(socket_type descriptor,
   {
     epoll_event ev = { 0, { 0 } };
     epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, descriptor, &ev);
+    epoll_fd_set_cnt_--;
 
     op_queue<operation> ops;
     for (int i = 0; i < max_ops; ++i)
@@ -518,7 +527,11 @@ void epoll_reactor::run(long usec, op_queue<operation>& ops)
 
   // Block on the epoll descriptor.
   epoll_event events[128];
-  int num_events = epoll_wait(epoll_fd_, events, 128, timeout);
+  int num_events;
+  if (epoll_fd_set_cnt_ > 0 || timeout)
+    num_events = epoll_wait(epoll_fd_, events, 128, timeout);
+  else
+    num_events = 0;
 
 #if defined(ASIO_ENABLE_HANDLER_TRACKING)
   // Trace the waiting events.
