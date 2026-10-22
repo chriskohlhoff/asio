@@ -162,6 +162,9 @@ enum basic_errors
   /// Socket operation on non-socket.
   not_socket = ASIO_SOCKET_ERROR(ENOTSOCK),
 
+  // Not supported.
+  not_supported = ASIO_NATIVE_ERROR(ENOTSUP),
+
   /// Operation cancelled.
   operation_aborted = ASIO_WIN_OR_POSIX(
       ASIO_NATIVE_ERROR(ERROR_OPERATION_ABORTED),
