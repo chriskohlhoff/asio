@@ -17,11 +17,10 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_HAS_BOOST_CONTEXT_FIBER) \
-  && (!defined(ASIO_STANDALONE) || !defined(ASIO_HAS_ASM_FIBER))
-# include "asio/detail/boost_fiber.hpp"
-#elif defined(ASIO_HAS_ASM_FIBER)
+#if defined(ASIO_HAS_ASM_FIBER)
 # include "asio/detail/asm_fiber.hpp"
+#elif defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+# include "asio/detail/boost_fiber.hpp"
 #else
 # error No spawn() implementation available
 #endif
@@ -30,13 +29,12 @@ namespace asio {
 ASIO_INLINE_NAMESPACE_BEGIN
 namespace detail {
 
-#if defined(ASIO_HAS_BOOST_CONTEXT_FIBER) \
-  && (!defined(ASIO_STANDALONE) || !defined(ASIO_HAS_ASM_FIBER))
-using fiber = boost_fiber;
-using forced_unwind = boost_forced_unwind;
-#elif defined(ASIO_HAS_ASM_FIBER)
+#if defined(ASIO_HAS_ASM_FIBER)
 using fiber = asm_fiber;
 using forced_unwind = asm_fiber_forced_unwind;
+#elif defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+using fiber = boost_fiber;
+using forced_unwind = boost_forced_unwind;
 #endif
 
 } // namespace detail

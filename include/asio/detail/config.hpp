@@ -538,52 +538,6 @@
 # define ASIO_VERSION_TAG_b
 #endif // defined(ASIO_HAS_VALGRIND)
 
-// Support for fibers implemented in assembly.
-#if !defined(ASIO_HAS_ASM_FIBER)
-# if !defined(ASIO_DISABLE_ASM_FIBER)
-#  if defined(__clang__) || defined(__GNUC__)
-#   if defined(__APPLE__) || defined(__linux__)
-#    if defined(__x86_64__) || defined(__aarch64__)
-#     if defined(__LP64__)
-#      define ASIO_HAS_ASM_FIBER 1
-#     endif // defined(__LP64__)
-#    endif // defined(__x86_64__) || defined(__aarch64__)
-#   endif // defined(__APPLE__) || defined(__linux__)
-#  endif // defined(__clang__) || defined(__GNUC__)
-# endif // !defined(ASIO_DISABLE_ASM_FIBER)
-#endif // !defined(ASIO_HAS_ASM_FIBER)
-#if defined(ASIO_HAS_ASM_FIBER)
-# define ASIO_VERSION_TAG_c c
-#else // defined(ASIO_HAS_ASM_FIBER)
-# define ASIO_VERSION_TAG_c
-#endif // defined(ASIO_HAS_ASM_FIBER)
-
-// Whether to use a page to detect stack overflow in fibers.
-#if !defined(ASIO_HAS_FIBER_GUARD_PAGE)
-# if defined(ASIO_ENABLE_FIBER_GUARD_PAGE)
-#  if defined(ASIO_HAS_ASM_FIBER)
-#   define ASIO_HAS_FIBER_GUARD_PAGE 1
-#  endif // defined(ASIO_HAS_ASM_FIBER)
-# endif // defined(ASIO_ENABLE_FIBER_GUARD_PAGE)
-#endif // !defined(ASIO_HAS_FIBER_GUARD_PAGE)
-#if defined(ASIO_HAS_FIBER_GUARD_PAGE)
-# define ASIO_VERSION_TAG_d d
-#else // defined(ASIO_HAS_FIBER_GUARD_PAGE)
-# define ASIO_VERSION_TAG_d
-#endif // defined(ASIO_HAS_FIBER_GUARD_PAGE)
-
-// The fiber stack size to use when not otherwise specified by the user.
-#if !defined(ASIO_DEFAULT_FIBER_STACK_SIZE)
-# if defined(ASIO_HAS_ADDRESS_SANITIZER) \
-  || defined(ASIO_HAS_THREAD_SANITIZER)
-#  define ASIO_DEFAULT_FIBER_STACK_SIZE (1024 * 1024)
-# else // defined(ASIO_HAS_ADDRESS_SANITIZER)
-       //   || defined(ASIO_HAS_THREAD_SANITIZER)
-#  define ASIO_DEFAULT_FIBER_STACK_SIZE (256 * 1024)
-# endif // defined(ASIO_HAS_ADDRESS_SANITIZER)
-        //   || defined(ASIO_HAS_THREAD_SANITIZER)
-#endif // !defined(ASIO_DEFAULT_FIBER_STACK_SIZE)
-
 // Boost support for the Context library's fibers.
 #if !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 # if !defined(ASIO_DISABLE_BOOST_CONTEXT_FIBER)
@@ -606,11 +560,60 @@
 # endif // !defined(ASIO_DISABLE_BOOST_CONTEXT_FIBER)
 #endif // !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 #if defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
-# define ASIO_VERSION_TAG_e e
+# define ASIO_VERSION_TAG_c c
 #else // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
-# define ASIO_VERSION_TAG_e
+# define ASIO_VERSION_TAG_c
 #endif // defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
 
+// Support for fibers implemented in assembly.
+#if !defined(ASIO_HAS_ASM_FIBER)
+# if !defined(ASIO_DISABLE_ASM_FIBER)
+#  if defined(ASIO_STANDALONE) \
+    || !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+#   if defined(__clang__) || defined(__GNUC__)
+#    if defined(__APPLE__) || defined(__linux__)
+#     if defined(__x86_64__) || defined(__aarch64__)
+#      if defined(__LP64__)
+#       define ASIO_HAS_ASM_FIBER 1
+#      endif // defined(__LP64__)
+#     endif // defined(__x86_64__) || defined(__aarch64__)
+#    endif // defined(__APPLE__) || defined(__linux__)
+#   endif // defined(__clang__) || defined(__GNUC__)
+#  endif // defined(ASIO_STANDALONE)
+        //   || !defined(ASIO_HAS_BOOST_CONTEXT_FIBER)
+# endif // !defined(ASIO_DISABLE_ASM_FIBER)
+#endif // !defined(ASIO_HAS_ASM_FIBER)
+#if defined(ASIO_HAS_ASM_FIBER)
+# define ASIO_VERSION_TAG_d d
+#else // defined(ASIO_HAS_ASM_FIBER)
+# define ASIO_VERSION_TAG_d
+#endif // defined(ASIO_HAS_ASM_FIBER)
+
+// Whether to use a page to detect stack overflow in fibers.
+#if !defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# if defined(ASIO_ENABLE_FIBER_GUARD_PAGE)
+#  if defined(ASIO_HAS_ASM_FIBER)
+#   define ASIO_HAS_FIBER_GUARD_PAGE 1
+#  endif // defined(ASIO_HAS_ASM_FIBER)
+# endif // defined(ASIO_ENABLE_FIBER_GUARD_PAGE)
+#endif // !defined(ASIO_HAS_FIBER_GUARD_PAGE)
+#if defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# define ASIO_VERSION_TAG_e e
+#else // defined(ASIO_HAS_FIBER_GUARD_PAGE)
+# define ASIO_VERSION_TAG_e
+#endif // defined(ASIO_HAS_FIBER_GUARD_PAGE)
+
+// The fiber stack size to use when not otherwise specified by the user.
+#if !defined(ASIO_DEFAULT_FIBER_STACK_SIZE)
+# if defined(ASIO_HAS_ADDRESS_SANITIZER) \
+  || defined(ASIO_HAS_THREAD_SANITIZER)
+#  define ASIO_DEFAULT_FIBER_STACK_SIZE (1024 * 1024)
+# else // defined(ASIO_HAS_ADDRESS_SANITIZER)
+       //   || defined(ASIO_HAS_THREAD_SANITIZER)
+#  define ASIO_DEFAULT_FIBER_STACK_SIZE (256 * 1024)
+# endif // defined(ASIO_HAS_ADDRESS_SANITIZER)
+        //   || defined(ASIO_HAS_THREAD_SANITIZER)
+#endif // !defined(ASIO_DEFAULT_FIBER_STACK_SIZE)
 
 // Standard library support for std::string_view.
 #if !defined(ASIO_HAS_STD_STRING_VIEW)
