@@ -144,6 +144,7 @@
 #include "asio/is_contiguous_iterator.hpp"
 #include "asio/is_executor.hpp"
 #include "asio/is_read_buffered.hpp"
+#include "asio/is_shallow_mutable_sequence.hpp"
 #include "asio/is_write_buffered.hpp"
 #include "asio/local/basic_endpoint.hpp"
 #include "asio/local/connect_pair.hpp"

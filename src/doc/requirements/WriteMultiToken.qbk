@@ -1,0 +1,114 @@
+[/
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:WriteMultiToken Multiple-datagram write token requirements]
+
+A multiple-datagram write token is a
+[link asio.overview.model.completion_tokens completion token] for completion
+signature `void(error_code, size_t)`, where the second argument is the number
+of datagrams sent.
+
+[heading Examples]
+
+A free function as a multiple-datagram write token:
+
+  void send_handler(
+      const asio::error_code& ec,
+      std::size_t messages_transferred)
+  {
+    ...
+  }
+
+A multiple-datagram write token function object:
+
+  struct send_handler
+  {
+    ...
+    void operator()(
+        const asio::error_code& ec,
+        std::size_t messages_transferred)
+    {
+      ...
+    }
+    ...
+  };
+
+A lambda as a multiple-datagram write token:
+
+  socket.async_send_multiple(...,
+      [](const asio::error_code& ec,
+        std::size_t messages_transferred)
+      {
+        ...
+      });
+
+A non-static class member function adapted to a multiple-datagram write token
+using `std::bind()`:
+
+  void my_class::send_handler(
+      const asio::error_code& ec,
+      std::size_t messages_transferred)
+  {
+    ...
+  }
+  ...
+  socket.async_send_multiple(...,
+      std::bind(&my_class::send_handler,
+        this, std::placeholders::_1,
+        std::placeholders::_2));
+
+A non-static class member function adapted to a multiple-datagram write token
+using `boost::bind()`:
+
+  void my_class::send_handler(
+      const asio::error_code& ec,
+      std::size_t messages_transferred)
+  {
+    ...
+  }
+  ...
+  socket.async_send_multiple(...,
+      boost::bind(&my_class::send_handler,
+        this, asio::placeholders::error,
+        asio::placeholders::messages_transferred));
+
+Using [link asio.reference.use_future use_future] as a multiple-datagram write
+token:
+
+  std::future<std::size_t> f =
+    socket.async_send_multiple(..., asio::use_future);
+  ...
+  try
+  {
+    std::size_t n = f.get();
+    ...
+  }
+  catch (const system_error& e)
+  {
+    ...
+  }
+
+Using [link asio.reference.use_awaitable use_awaitable] as a multiple-datagram
+write token:
+
+  asio::awaitable<void> my_coroutine()
+  {
+    try
+    {
+      ...
+      std::size_t n =
+        co_await socket.async_send_multiple(
+            ..., asio::use_awaitable);
+      ...
+    }
+    catch (const system_error& e)
+    {
+      ...
+    }
+  }
+
+[endsect]

@@ -88,6 +88,7 @@ io_context
 io_context_strand
 io_service
 is_read_buffered
+is_shallow_mutable_sequence
 is_write_buffered
 packaged_task
 piping

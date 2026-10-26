@@ -1,0 +1,44 @@
+[/
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:MutableSizeSequence Mutable size sequence requirements]
+
+A ['mutable size sequence] is a range into which an operation, such as the
+`receive_multiple` operation of a datagram socket, writes the number of bytes
+received in each datagram.
+
+A type `X` meets the `MutableSizeSequence` requirements if it satisfies the
+requirements of `Destructible` (C++Std [destructible]) and `CopyConstructible`
+(C++Std [copyconstructible]), and
+[link asio.reference.is_shallow_mutable_sequence
+`is_shallow_mutable_sequence<X>::value`] is `true`, as well as the additional
+requirements listed below.
+
+In the table below, `x` denotes a value of type `X`, or of type `R` if `X` is
+`std::reference_wrapper<R>`, `i` denotes an iterator in the range
+[half_open_range `x.begin()`,`x.end()`], `e` denotes `*i`, or `(*i).get()` if
+`*i` is a `std::reference_wrapper`, and `v` denotes a value of type
+`std::size_t`.
+
+[table MutableSizeSequence requirements
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
+  [
+    [`x.begin()`[br]
+     `x.end()`]
+    [A type meeting the requirements for forward iterators
+     (C++Std \[forward.iterators\]).]
+    [[half_open_range `x.begin()`,`x.end()`] is a valid range. The range
+     may be traversed more than once.]
+  ]
+  [
+    [`e = v`]
+    []
+    [Stores the number of bytes received for the corresponding datagram.]
+  ]
+]
+
+[endsect]

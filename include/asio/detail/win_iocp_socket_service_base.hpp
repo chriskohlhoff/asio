@@ -26,6 +26,8 @@
 #include "asio/socket_base.hpp"
 #include "asio/detail/bind_handler.hpp"
 #include "asio/detail/buffer_sequence_adapter.hpp"
+#include "asio/detail/buffer_sequences_adapter.hpp"
+#include "asio/detail/empty_range.hpp"
 #include "asio/detail/fenced_block.hpp"
 #include "asio/detail/handler_alloc_helpers.hpp"
 #include "asio/detail/memory.hpp"
@@ -33,9 +35,11 @@
 #include "asio/detail/operation.hpp"
 #include "asio/detail/reactor_op.hpp"
 #include "asio/detail/select_reactor.hpp"
+#include "asio/detail/single_datagram_handler.hpp"
 #include "asio/detail/socket_holder.hpp"
 #include "asio/detail/socket_ops.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/detail/unwrap_ref.hpp"
 #include "asio/detail/win_iocp_io_context.hpp"
 #include "asio/detail/win_iocp_null_buffers_op.hpp"
 #include "asio/detail/win_iocp_socket_connect_op.hpp"
@@ -553,6 +557,82 @@ public:
     }
   }
 
+  // Send multiple datagrams to the peer. Returns the number of datagrams sent.
+  // At most one datagram is sent per call.
+  template <typename BufferSequences>
+  size_t send_multiple(base_implementation_type& impl,
+      BufferSequences&& buffer_sequences,
+      socket_base::message_flags flags, asio::error_code& ec)
+  {
+    empty_range endpoints;
+    return detail::send_multiple(impl.socket_, impl.state_,
+        buffer_sequences, endpoints, flags, ec);
+  }
+
+  // Receive multiple datagrams from the peer. Returns the number of datagrams
+  // received. At most one datagram is received per call.
+  template <typename BufferSequences,
+      typename SizeSequence, typename FlagsSequence>
+  size_t receive_multiple(base_implementation_type& impl,
+      BufferSequences&& buffer_sequences, SizeSequence&& sizes,
+      FlagsSequence&& out_flags, socket_base::message_flags flags,
+      asio::error_code& ec)
+  {
+    empty_range endpoints;
+    return detail::receive_multiple(impl.socket_, impl.state_,
+        buffer_sequences, endpoints, sizes, out_flags, flags, ec);
+  }
+
+  // Start an asynchronous send of multiple datagrams. At most one datagram is
+  // sent per operation.
+  template <typename BufferSequences, typename Handler, typename IoExecutor>
+  void async_send_multiple(base_implementation_type& impl,
+      BufferSequences&& buffer_sequences, socket_base::message_flags flags,
+      Handler& handler, const IoExecutor& io_ex)
+  {
+    typedef single_datagram_handler<Handler,
+        empty_range, empty_range> handler_type;
+
+    auto&& range = unwrap_ref(buffer_sequences);
+    auto iter = range.begin();
+    bool empty = !(iter != range.end());
+    handler_type handler2(static_cast<Handler&&>(handler),
+        empty_range(), empty_range(), empty);
+
+    if (empty)
+      start_empty_multiple_op(impl, handler2, io_ex);
+    else
+      async_send(impl, *iter, flags, handler2, io_ex);
+  }
+
+  // Start an asynchronous receive of multiple datagrams. At most one datagram
+  // is received per operation.
+  template <typename BufferSequences, typename SizeSequence,
+      typename FlagsSequence, typename Handler, typename IoExecutor>
+  void async_receive_multiple(base_implementation_type& impl,
+      BufferSequences&& buffer_sequences, SizeSequence&& sizes,
+      FlagsSequence&& out_flags, socket_base::message_flags flags,
+      Handler& handler, const IoExecutor& io_ex)
+  {
+    typedef single_datagram_handler<Handler, decay_t<SizeSequence>,
+        decay_t<FlagsSequence>> handler_type;
+
+    empty_range endpoints;
+    transmit_multiple_limit<empty_range, remove_reference_t<SizeSequence>,
+        remove_reference_t<FlagsSequence>> limit(endpoints, sizes, out_flags);
+    auto&& range = unwrap_ref(buffer_sequences);
+    auto iter = range.begin();
+    bool empty = !(iter != range.end()) || limit.at_end();
+    handler_type handler2(static_cast<Handler&&>(handler),
+        static_cast<SizeSequence&&>(sizes),
+        static_cast<FlagsSequence&&>(out_flags), empty);
+
+    if (empty)
+      start_empty_multiple_op(impl, handler2, io_ex);
+    else
+      async_receive(impl, *iter, flags, handler2, io_ex);
+  }
+
   // Helper function to restart an asynchronous accept operation.
   ASIO_DECL void restart_accept_op(socket_type s,
       socket_holder& new_socket, int family, int type,
@@ -560,6 +640,25 @@ public:
       LONG* cancel_requested, operation* op);
 
 protected:
+  // Complete a multiple-datagram operation that has no datagrams to transfer.
+  template <typename Handler, typename IoExecutor>
+  void start_empty_multiple_op(base_implementation_type& impl,
+      Handler& handler, const IoExecutor& io_ex)
+  {
+    typedef win_iocp_socket_send_op<
+        asio::const_buffer, Handler, IoExecutor> op;
+    typename op::ptr p = { asio::detail::addressof(handler),
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(impl.cancel_token_,
+        asio::const_buffer(), handler, io_ex);
+
+    ASIO_HANDLER_CREATION((context_, *p.p, "socket",
+          &impl, impl.socket_, "async_multiple"));
+
+    start_send_op(impl, 0, 0, 0, true, p.p);
+    p.v = p.p = 0;
+  }
+
   // Open a new socket implementation.
   ASIO_DECL asio::error_code do_open(
       base_implementation_type& impl, int family, int type,

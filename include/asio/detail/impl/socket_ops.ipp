@@ -45,6 +45,12 @@
 # include <malloc.h>
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1800)
 
+#if defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+# if (defined(__MACH__) && defined(__APPLE__))
+#  include <sys/syscall.h>
+# endif // (defined(__MACH__) && defined(__APPLE__))
+#endif // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+
 #include "asio/detail/push_options.hpp"
 
 namespace asio {
@@ -1666,6 +1672,14 @@ bool non_blocking_recvfrom1(socket_type s, void* data,
 
 #endif // defined(ASIO_HAS_IOCP)
 
+int recv_out_flags(int msg_flags, int in_flags)
+{
+  // Some platforms (e.g. FreeBSD) return the flags passed to the receive call
+  // as part of the received message's flags. Remove them, except for MSG_OOB
+  // which is also a valid output flag.
+  return msg_flags & ~(in_flags & ~ASIO_OS_DEF(MSG_OOB));
+}
+
 inline signed_size_type recvmsg(socket_type s, buf* bufs, size_t count,
     int in_flags, int& out_flags, int& err)
 {
@@ -1679,7 +1693,7 @@ inline signed_size_type recvmsg(socket_type s, buf* bufs, size_t count,
   signed_size_type result = ::recvmsg(s, &msg, in_flags);
   err = socket_ops::get_last_sys_error(result < 0);
   if (result >= 0)
-    out_flags = msg.msg_flags;
+    out_flags = socket_ops::recv_out_flags(msg.msg_flags, in_flags);
   else
     out_flags = 0;
   return result;
@@ -1800,6 +1814,242 @@ bool non_blocking_recvmsg(socket_type s,
 }
 
 #endif // defined(ASIO_HAS_IOCP)
+
+#if defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+
+inline signed_size_type recvmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, int& err)
+{
+#if (defined(__MACH__) && defined(__APPLE__))
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  signed_size_type result = ::syscall(SYS_recvmsg_x, s, bufs, count, flags);
+#pragma clang diagnostic pop
+#else // (defined(__MACH__) && defined(__APPLE__))
+  flags |= MSG_WAITFORONE;
+  signed_size_type result = ::recvmmsg(s, bufs, count, flags, nullptr);
+#endif // (defined(__MACH__) && defined(__APPLE__))
+  err = socket_ops::get_last_sys_error(result < 0);
+  for (signed_size_type i = 0; i < result; ++i)
+  {
+    auto& hdr = ASIO_MMSGHDR_HDR_PTR(bufs[i]);
+    hdr.msg_flags = socket_ops::recv_out_flags(hdr.msg_flags, flags);
+  }
+  return result;
+}
+
+signed_size_type recvmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, asio::error_code& ec)
+{
+  int err = 0;
+  signed_size_type result = socket_ops::recvmmsg(s, bufs, count, flags, err);
+  socket_ops::assign_sys_error(ec, err);
+  return result;
+}
+
+#endif // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+
+#if !defined(ASIO_WINDOWS_RUNTIME)
+
+inline signed_size_type recv_single_msg(socket_type s,
+    mmsghdr& msg, int flags, bool want_flags, int& err)
+{
+  auto& hdr = ASIO_MMSGHDR_HDR_PTR(msg);
+  signed_size_type bytes;
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  (void)want_flags;
+  if (hdr.msg_name != nullptr)
+  {
+    std::size_t addrlen = hdr.msg_namelen;
+    bytes = socket_ops::recvfrom(s, hdr.msg_iov, hdr.msg_iovlen,
+        flags, hdr.msg_name, &addrlen, err);
+    if (bytes >= 0)
+      hdr.msg_namelen = static_cast<socklen_t>(addrlen);
+  }
+  else
+  {
+    bytes = socket_ops::recv(s, hdr.msg_iov, hdr.msg_iovlen, flags, err);
+  }
+  hdr.msg_flags = 0;
+#else // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  if (want_flags)
+  {
+    msghdr single = msghdr();
+    single.msg_name = hdr.msg_name;
+    single.msg_namelen = hdr.msg_namelen;
+    single.msg_iov = hdr.msg_iov;
+    single.msg_iovlen = hdr.msg_iovlen;
+    bytes = ::recvmsg(s, &single, flags);
+    err = socket_ops::get_last_sys_error(bytes < 0);
+    if (bytes >= 0)
+    {
+      hdr.msg_namelen = single.msg_namelen;
+      hdr.msg_flags = socket_ops::recv_out_flags(single.msg_flags, flags);
+    }
+  }
+  else if (hdr.msg_name != nullptr)
+  {
+    std::size_t addrlen = hdr.msg_namelen;
+    if (hdr.msg_iovlen == 1)
+    {
+      bytes = socket_ops::recvfrom1(s, hdr.msg_iov[0].iov_base,
+          hdr.msg_iov[0].iov_len, flags, hdr.msg_name, &addrlen, err);
+    }
+    else
+    {
+      bytes = socket_ops::recvfrom(s, hdr.msg_iov, hdr.msg_iovlen,
+          flags, hdr.msg_name, &addrlen, err);
+    }
+    if (bytes >= 0)
+      hdr.msg_namelen = static_cast<socklen_t>(addrlen);
+    hdr.msg_flags = 0;
+  }
+  else
+  {
+    if (hdr.msg_iovlen == 1)
+    {
+      bytes = socket_ops::recv1(s, hdr.msg_iov[0].iov_base,
+          hdr.msg_iov[0].iov_len, flags, err);
+    }
+    else
+    {
+      bytes = socket_ops::recv(s, hdr.msg_iov, hdr.msg_iovlen, flags, err);
+    }
+    hdr.msg_flags = 0;
+  }
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  if (bytes >= 0)
+    ASIO_MMSGHDR_LEN(msg) = static_cast<unsigned>(bytes);
+  return bytes;
+}
+
+inline signed_size_type recv_msgs(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, bool want_flags, int& err)
+{
+#if defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+  if (count > 1)
+    return socket_ops::recvmmsg(s, bufs, count, flags, err);
+#else // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+  (void)count;
+#endif // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+  return recv_single_msg(s, bufs[0], flags, want_flags, err) < 0 ? -1 : 1;
+}
+
+ASIO_NEVER_INLINE inline size_t sync_recvmmsg_retry(socket_type s,
+    state_type state, mmsghdr* bufs, size_t count, int flags,
+    bool want_flags, int err, asio::error_code& ec)
+{
+  for (;;)
+  {
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (err != asio::error::would_block
+          && err != asio::error::try_again))
+      break;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_read(s, 0, -1, err) < 0)
+      break;
+
+    // Try to complete the operation without blocking.
+    signed_size_type messages = socket_ops::recv_msgs(
+        s, bufs, count, flags, want_flags, err);
+
+    // Check if operation succeeded.
+    if (messages >= 0)
+    {
+      asio::error::clear(ec);
+      return messages;
+    }
+  }
+
+  socket_ops::assign_sys_error(ec, err);
+  return 0;
+}
+
+size_t sync_recvmmsg(socket_type s, state_type state,
+    mmsghdr* bufs, size_t count, int flags, bool want_flags,
+    asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to receive no messages is a no-op.
+  if (count == 0)
+  {
+    asio::error::clear(ec);
+    return 0;
+  }
+
+  // Try to complete the operation without blocking.
+  int err = 0;
+  signed_size_type messages = socket_ops::recv_msgs(
+      s, bufs, count, flags, want_flags, err);
+
+  // Check if operation succeeded.
+  if (messages >= 0)
+  {
+    asio::error::clear(ec);
+    return messages;
+  }
+
+  return sync_recvmmsg_retry(s, state, bufs, count,
+      flags, want_flags, err, ec);
+}
+
+#if !defined(ASIO_HAS_IOCP)
+
+bool non_blocking_recvmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, bool want_flags, asio::error_code& ec,
+    size_t& messages_transferred)
+{
+  // A request to receive no messages is a no-op.
+  if (count == 0)
+  {
+    asio::error::clear(ec);
+    messages_transferred = 0;
+    return true;
+  }
+
+  flags |= ASIO_OS_DEF(MSG_DONTWAIT);
+  for (;;)
+  {
+    // Read some data.
+    int err = 0;
+    signed_size_type messages = socket_ops::recv_msgs(
+        s, bufs, count, flags, want_flags, err);
+
+    // Check if operation succeeded.
+    if (messages >= 0)
+    {
+      asio::error::clear(ec);
+      messages_transferred = messages;
+      return true;
+    }
+
+    // Retry operation if interrupted by signal.
+    if (err == asio::error::interrupted)
+      continue;
+
+    socket_ops::assign_sys_error(ec, err);
+
+    // Check if we need to run the operation again.
+    if (err == asio::error::would_block
+        || err == asio::error::try_again)
+      return false;
+
+    // Operation failed.
+    messages_transferred = 0;
+    return true;
+  }
+}
+
+#endif // !defined(ASIO_HAS_IOCP)
+
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 inline signed_size_type send(socket_type s, const buf* bufs, size_t count,
     int flags, int& err)
@@ -2328,6 +2578,212 @@ bool non_blocking_sendto1(socket_type s,
 }
 
 #endif // !defined(ASIO_HAS_IOCP)
+
+#if defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+
+inline signed_size_type sendmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, int& err)
+{
+#if defined(ASIO_HAS_MSG_NOSIGNAL)
+  flags |= MSG_NOSIGNAL;
+#endif // defined(ASIO_HAS_MSG_NOSIGNAL)
+#if (defined(__MACH__) && defined(__APPLE__))
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  signed_size_type result = ::syscall(SYS_sendmsg_x, s, bufs, count, flags);
+#pragma clang diagnostic pop
+#else // (defined(__MACH__) && defined(__APPLE__))
+  signed_size_type result = ::sendmmsg(s, bufs, count, flags);
+#endif // (defined(__MACH__) && defined(__APPLE__))
+  err = socket_ops::get_last_sys_error(result < 0);
+  return result;
+}
+
+signed_size_type sendmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, asio::error_code& ec)
+{
+  int err = 0;
+  signed_size_type result = socket_ops::sendmmsg(s, bufs, count, flags, err);
+  socket_ops::assign_sys_error(ec, err);
+  return result;
+}
+
+#endif // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+
+#if !defined(ASIO_WINDOWS_RUNTIME)
+
+inline signed_size_type send_single_msg(socket_type s,
+    mmsghdr& msg, int flags, int& err)
+{
+  auto& hdr = ASIO_MMSGHDR_HDR_PTR(msg);
+  signed_size_type bytes;
+#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  if (hdr.msg_name != nullptr)
+  {
+    bytes = socket_ops::sendto(s, hdr.msg_iov, hdr.msg_iovlen,
+        flags, hdr.msg_name, hdr.msg_namelen, err);
+  }
+  else
+  {
+    bytes = socket_ops::send(s, hdr.msg_iov, hdr.msg_iovlen, flags, err);
+  }
+#else // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  if (hdr.msg_name != nullptr)
+  {
+    if (hdr.msg_iovlen == 1)
+    {
+      bytes = socket_ops::sendto1(s, hdr.msg_iov[0].iov_base,
+          hdr.msg_iov[0].iov_len, flags, hdr.msg_name, hdr.msg_namelen, err);
+    }
+    else
+    {
+      bytes = socket_ops::sendto(s, hdr.msg_iov, hdr.msg_iovlen,
+          flags, hdr.msg_name, hdr.msg_namelen, err);
+    }
+  }
+  else
+  {
+    if (hdr.msg_iovlen == 1)
+    {
+      bytes = socket_ops::send1(s, hdr.msg_iov[0].iov_base,
+          hdr.msg_iov[0].iov_len, flags, err);
+    }
+    else
+    {
+      bytes = socket_ops::send(s, hdr.msg_iov, hdr.msg_iovlen, flags, err);
+    }
+  }
+#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  if (bytes >= 0)
+    ASIO_MMSGHDR_LEN(msg) = static_cast<unsigned>(bytes);
+  return bytes;
+}
+
+inline signed_size_type send_msgs(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, int& err)
+{
+#if defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+  if (count > 1)
+    return socket_ops::sendmmsg(s, bufs, count, flags, err);
+#else // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+  (void)count;
+#endif // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+  return send_single_msg(s, bufs[0], flags, err) < 0 ? -1 : 1;
+}
+
+ASIO_NEVER_INLINE inline size_t sync_sendmmsg_retry(socket_type s,
+    state_type state, mmsghdr* bufs, size_t count, int flags, int err,
+    asio::error_code& ec)
+{
+  for (;;)
+  {
+    // Operation failed.
+    if ((state & user_set_non_blocking)
+        || (err != asio::error::would_block
+          && err != asio::error::try_again))
+      break;
+
+    // Wait for socket to become ready.
+    if (socket_ops::poll_write(s, 0, -1, err) < 0)
+      break;
+
+    // Try to complete the operation without blocking.
+    signed_size_type messages = socket_ops::send_msgs(
+        s, bufs, count, flags, err);
+
+    // Check if operation succeeded.
+    if (messages >= 0)
+    {
+      asio::error::clear(ec);
+      return messages;
+    }
+  }
+
+  socket_ops::assign_sys_error(ec, err);
+  return 0;
+}
+
+size_t sync_sendmmsg(socket_type s, state_type state,
+    mmsghdr* bufs, size_t count, int flags, asio::error_code& ec)
+{
+  if (s == invalid_socket)
+  {
+    ec = asio::error::bad_descriptor;
+    return 0;
+  }
+
+  // A request to send no messages is a no-op.
+  if (count == 0)
+  {
+    asio::error::clear(ec);
+    return 0;
+  }
+
+  // Try to complete the operation without blocking.
+  int err = 0;
+  signed_size_type messages = socket_ops::send_msgs(
+      s, bufs, count, flags, err);
+
+  // Check if operation succeeded.
+  if (messages >= 0)
+  {
+    asio::error::clear(ec);
+    return messages;
+  }
+
+  return sync_sendmmsg_retry(s, state, bufs, count, flags, err, ec);
+}
+
+#if !defined(ASIO_HAS_IOCP)
+
+bool non_blocking_sendmmsg(socket_type s, mmsghdr* bufs,
+    size_t count, int flags, asio::error_code& ec,
+    size_t& messages_transferred)
+{
+  // A request to send no messages is a no-op.
+  if (count == 0)
+  {
+    asio::error::clear(ec);
+    messages_transferred = 0;
+    return true;
+  }
+
+  flags |= ASIO_OS_DEF(MSG_DONTWAIT);
+  for (;;)
+  {
+    // Write some data.
+    int err = 0;
+    signed_size_type messages = socket_ops::send_msgs(
+        s, bufs, count, flags, err);
+
+    // Check if operation succeeded.
+    if (messages >= 0)
+    {
+      asio::error::clear(ec);
+      messages_transferred = messages;
+      return true;
+    }
+
+    // Retry operation if interrupted by signal.
+    if (err == asio::error::interrupted)
+      continue;
+
+    socket_ops::assign_sys_error(ec, err);
+
+    // Check if we need to run the operation again.
+    if (err == asio::error::would_block
+        || err == asio::error::try_again)
+      return false;
+
+    // Operation failed.
+    messages_transferred = 0;
+    return true;
+  }
+}
+
+#endif // !defined(ASIO_HAS_IOCP)
+
+#endif // !defined(ASIO_WINDOWS_RUNTIME)
 
 socket_type socket(int af, int type, int protocol,
     asio::error_code& ec)

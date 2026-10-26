@@ -16,8 +16,15 @@
 // Test that header file is self-contained.
 #include "asio/ip/udp.hpp"
 
+#include <array>
+#include <chrono>
 #include <cstring>
 #include <functional>
+#include <thread>
+#if defined(ASIO_HAS_STD_RANGES)
+# include <ranges>
+#endif // defined(ASIO_HAS_STD_RANGES)
+#include "asio/deferred.hpp"
 #include "asio/io_context.hpp"
 #include "../unit_test.hpp"
 #include "../archetypes/async_result.hpp"
@@ -469,6 +476,170 @@ void test()
     int i29 = socket1.async_receive_from(null_buffers(),
         endpoint, in_flags, lazy);
     (void)i29;
+
+    std::array<asio::const_buffer, 1> send_bufs = {
+        { buffer(const_char_buffer) } };
+    std::array<asio::mutable_buffer, 1> recv_bufs = {
+        { buffer(mutable_char_buffer) } };
+    std::array<ip::udp::endpoint, 1> multi_endpoints = {
+        { ip::udp::endpoint(ip::udp::v4(), 0) } };
+    std::array<std::size_t, 1> multi_sizes = { { 0 } };
+    std::array<socket_base::message_flags, 1> multi_flags = { { 0 } };
+    const std::array<ip::udp::endpoint, 2> const_larger_endpoints = {
+        { ip::udp::endpoint(ip::udp::v4(), 0),
+          ip::udp::endpoint(ip::udp::v4(), 0) } };
+    std::array<ip::udp::endpoint, 2> larger_endpoints = {
+        { ip::udp::endpoint(ip::udp::v4(), 0),
+          ip::udp::endpoint(ip::udp::v4(), 0) } };
+    std::array<std::size_t, 2> larger_sizes = { { 0, 0 } };
+    std::size_t ref_size = 0;
+    ip::udp::endpoint ref_endpoint(ip::udp::v4(), 0);
+    std::array<std::reference_wrapper<std::size_t>, 1> ref_sizes = {
+        { std::ref(ref_size) } };
+    std::array<std::reference_wrapper<ip::udp::endpoint>, 1> ref_endpoints = {
+        { std::ref(ref_endpoint) } };
+
+    socket1.send_multiple(send_bufs);
+    socket1.send_multiple(send_bufs, in_flags);
+    socket1.send_multiple(send_bufs, in_flags, ec);
+
+    socket1.async_send_multiple(send_bufs, send_handler());
+    socket1.async_send_multiple(send_bufs, in_flags, send_handler());
+    socket1.async_send_multiple(send_bufs, immediate);
+    socket1.async_send_multiple(send_bufs, in_flags, immediate);
+    int i30 = socket1.async_send_multiple(send_bufs, lazy);
+    (void)i30;
+    int i31 = socket1.async_send_multiple(send_bufs, in_flags, lazy);
+    (void)i31;
+
+    socket1.send_to_multiple(send_bufs, multi_endpoints);
+    socket1.send_to_multiple(send_bufs, multi_endpoints, in_flags);
+    socket1.send_to_multiple(send_bufs, multi_endpoints, in_flags, ec);
+
+    socket1.async_send_to_multiple(send_bufs, multi_endpoints, send_handler());
+    socket1.async_send_to_multiple(send_bufs, multi_endpoints, in_flags,
+        send_handler());
+    socket1.async_send_to_multiple(send_bufs, multi_endpoints, immediate);
+    socket1.async_send_to_multiple(send_bufs, multi_endpoints, in_flags,
+        immediate);
+    int i32 = socket1.async_send_to_multiple(send_bufs, multi_endpoints, lazy);
+    (void)i32;
+    int i33 = socket1.async_send_to_multiple(send_bufs, multi_endpoints,
+        in_flags, lazy);
+    (void)i33;
+
+    socket1.send_to_multiple(send_bufs, const_larger_endpoints);
+    socket1.send_to_multiple(send_bufs, const_larger_endpoints, in_flags, ec);
+    socket1.async_send_to_multiple(send_bufs, const_larger_endpoints,
+        send_handler());
+    socket1.async_send_to_multiple(send_bufs, const_larger_endpoints,
+        in_flags, immediate);
+
+    socket1.receive_multiple(recv_bufs, std::ref(multi_sizes));
+    socket1.receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags);
+    socket1.receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags, ec);
+    socket1.receive_multiple(recv_bufs, std::ref(multi_sizes),
+        std::ref(multi_flags));
+    socket1.receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags,
+        std::ref(multi_flags));
+    socket1.receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags,
+        std::ref(multi_flags), ec);
+
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes),
+        receive_handler());
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags,
+        receive_handler());
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes),
+        std::ref(multi_flags), receive_handler());
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags,
+        std::ref(multi_flags), receive_handler());
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes),
+        immediate);
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags,
+        immediate);
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes),
+        std::ref(multi_flags), immediate);
+    socket1.async_receive_multiple(recv_bufs, std::ref(multi_sizes), in_flags,
+        std::ref(multi_flags), immediate);
+    int i34 = socket1.async_receive_multiple(recv_bufs,
+        std::ref(multi_sizes), lazy);
+    (void)i34;
+    int i35 = socket1.async_receive_multiple(recv_bufs,
+        std::ref(multi_sizes), in_flags, lazy);
+    (void)i35;
+    int i36 = socket1.async_receive_multiple(recv_bufs,
+        std::ref(multi_sizes), std::ref(multi_flags), lazy);
+    (void)i36;
+    int i37 = socket1.async_receive_multiple(recv_bufs,
+        std::ref(multi_sizes), in_flags, std::ref(multi_flags), lazy);
+    (void)i37;
+
+    socket1.receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes));
+    socket1.receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags);
+    socket1.receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, ec);
+    socket1.receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), std::ref(multi_flags));
+    socket1.receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, std::ref(multi_flags));
+    socket1.receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, std::ref(multi_flags), ec);
+
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), receive_handler());
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, receive_handler());
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), std::ref(multi_flags), receive_handler());
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, std::ref(multi_flags),
+        receive_handler());
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), immediate);
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, immediate);
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), std::ref(multi_flags), immediate);
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(multi_endpoints),
+        std::ref(multi_sizes), in_flags, std::ref(multi_flags), immediate);
+    int i38 = socket1.async_receive_from_multiple(recv_bufs,
+        std::ref(multi_endpoints), std::ref(multi_sizes), lazy);
+    (void)i38;
+    int i39 = socket1.async_receive_from_multiple(recv_bufs,
+        std::ref(multi_endpoints), std::ref(multi_sizes), in_flags, lazy);
+    (void)i39;
+    int i40 = socket1.async_receive_from_multiple(recv_bufs,
+        std::ref(multi_endpoints), std::ref(multi_sizes),
+        std::ref(multi_flags), lazy);
+    (void)i40;
+    int i41 = socket1.async_receive_from_multiple(recv_bufs,
+        std::ref(multi_endpoints), std::ref(multi_sizes), in_flags,
+        std::ref(multi_flags), lazy);
+    (void)i41;
+
+    socket1.receive_multiple(recv_bufs, std::ref(larger_sizes));
+    socket1.async_receive_multiple(recv_bufs, std::ref(larger_sizes),
+        receive_handler());
+    socket1.receive_from_multiple(recv_bufs, std::ref(larger_endpoints),
+        std::ref(larger_sizes));
+    socket1.async_receive_from_multiple(recv_bufs, std::ref(larger_endpoints),
+        std::ref(larger_sizes), receive_handler());
+
+    socket1.send_to_multiple(std::cref(send_bufs), std::cref(multi_endpoints));
+    socket1.async_send_to_multiple(std::cref(send_bufs),
+        std::cref(multi_endpoints), send_handler());
+    socket1.receive_from_multiple(std::ref(recv_bufs),
+        std::ref(multi_endpoints), std::ref(multi_sizes));
+    socket1.async_receive_from_multiple(std::ref(recv_bufs),
+        std::ref(multi_endpoints), std::ref(multi_sizes), receive_handler());
+
+    socket1.send_to_multiple(send_bufs, ref_endpoints);
+    socket1.async_send_to_multiple(send_bufs, ref_endpoints, send_handler());
+    socket1.receive_from_multiple(recv_bufs, ref_endpoints, ref_sizes);
+    socket1.async_receive_from_multiple(recv_bufs, ref_endpoints, ref_sizes,
+        receive_handler());
   }
   catch (std::exception&)
   {
@@ -543,6 +714,600 @@ void test()
 }
 
 } // namespace ip_udp_socket_runtime
+
+//------------------------------------------------------------------------------
+
+// ip_udp_socket_multiple_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of the multiple-datagram
+// send and receive functions of the ip::udp::socket class.
+
+namespace ip_udp_socket_multiple_runtime {
+
+// A range that refers to elements held elsewhere, similar to a span.
+template <typename T>
+class test_span
+{
+public:
+  test_span(T* data, std::size_t size)
+    : data_(data),
+      size_(size)
+  {
+  }
+
+  T* begin() const
+  {
+    return data_;
+  }
+
+  T* end() const
+  {
+    return data_ + size_;
+  }
+
+private:
+  T* data_;
+  std::size_t size_;
+};
+
+template <typename T>
+test_span<T> make_span(T* data, std::size_t size)
+{
+  return test_span<T>(data, size);
+}
+
+// A range that yields copies of a single endpoint.
+class test_value_range
+{
+public:
+  class iterator
+  {
+  public:
+    iterator(const asio::ip::udp::endpoint* endpoint, std::size_t index)
+      : endpoint_(endpoint),
+        index_(index)
+    {
+    }
+
+    asio::ip::udp::endpoint operator*() const
+    {
+      return *endpoint_;
+    }
+
+    iterator& operator++()
+    {
+      ++index_;
+      return *this;
+    }
+
+    bool operator!=(const iterator& other) const
+    {
+      return index_ != other.index_;
+    }
+
+  private:
+    const asio::ip::udp::endpoint* endpoint_;
+    std::size_t index_;
+  };
+
+  test_value_range(const asio::ip::udp::endpoint& endpoint, std::size_t size)
+    : endpoint_(endpoint),
+      size_(size)
+  {
+  }
+
+  iterator begin() const
+  {
+    return iterator(&endpoint_, 0);
+  }
+
+  iterator end() const
+  {
+    return iterator(&endpoint_, size_);
+  }
+
+private:
+  asio::ip::udp::endpoint endpoint_;
+  std::size_t size_;
+};
+
+} // namespace ip_udp_socket_multiple_runtime
+
+namespace asio {
+
+template <typename T>
+struct is_shallow_mutable_sequence<
+    ip_udp_socket_multiple_runtime::test_span<T>>
+  : true_type
+{
+};
+
+} // namespace asio
+
+namespace ip_udp_socket_multiple_runtime {
+
+// Retry a synchronous operation on a non-blocking socket, with a bounded wait.
+template <typename Function>
+std::size_t retry(Function f, asio::error_code& ec)
+{
+  for (int i = 0; i < 5000; ++i)
+  {
+    std::size_t n = f(ec);
+    if (ec != asio::error::would_block)
+      return n;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  }
+  return 0;
+}
+
+struct async_result
+{
+  async_result()
+    : called(false),
+      n(0)
+  {
+  }
+
+  bool called;
+  asio::error_code ec;
+  std::size_t n;
+};
+
+struct async_handler
+{
+  explicit async_handler(async_result* r)
+    : r_(r)
+  {
+  }
+
+  void operator()(const asio::error_code& ec, std::size_t n)
+  {
+    r_->called = true;
+    r_->ec = ec;
+    r_->n = n;
+  }
+
+  async_result* r_;
+};
+
+// The number of datagrams a single call may transfer.
+#if defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+const std::size_t expected_batch = 3;
+#else // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+const std::size_t expected_batch = 1;
+#endif // defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+
+void test()
+{
+  using namespace std; // For memcmp.
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  io_context ioc;
+  asio::error_code ec;
+
+  ip::udp::endpoint loopback(ip::address_v4::loopback(), 0);
+
+  ip::udp::socket r(ioc, loopback);
+  r.non_blocking(true);
+  ip::udp::endpoint r_ep = r.local_endpoint();
+
+  ip::udp::socket a(ioc, loopback);
+  ip::udp::socket b(ioc, loopback);
+
+  ip::udp::socket c1(ioc, loopback);
+  ip::udp::socket c2(ioc, loopback);
+  c1.connect(c2.local_endpoint());
+  c2.connect(c1.local_endpoint());
+  c1.non_blocking(true);
+
+  char data[100];
+  for (std::size_t i = 0; i < sizeof(data); ++i)
+    data[i] = static_cast<char>(i);
+
+  char recv_data[8][100];
+  std::array<mutable_buffer, 8> recv_bufs;
+  for (std::size_t i = 0; i < recv_bufs.size(); ++i)
+    recv_bufs[i] = buffer(recv_data[i]);
+
+  std::array<std::size_t, 8> sizes;
+  std::array<ip::udp::endpoint, 8> endpoints;
+  std::array<socket_base::message_flags, 8> out_flags;
+
+  // Send and receive on a connected socket.
+
+  std::array<const_buffer, 3> send_bufs = { {
+      buffer(data, 10), buffer(data, 20), buffer(data, 30) } };
+  std::size_t sent = 0;
+  std::size_t first = 0;
+  while (sent < send_bufs.size())
+  {
+    std::size_t n = c2.send_multiple(
+        make_span(send_bufs.data() + sent, send_bufs.size() - sent), 0, ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(n > 0);
+    if (sent == 0)
+      first = n;
+    sent += n;
+  }
+  ASIO_CHECK(first == expected_batch);
+
+  sizes.fill(0);
+  std::size_t received = 0;
+  while (received < 3)
+  {
+    std::size_t n = retry(
+        [&](asio::error_code& e)
+        {
+          return c1.receive_multiple(
+              make_span(recv_bufs.data() + received, 8 - received),
+              make_span(sizes.data() + received, 8 - received), 0, e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    if (ec)
+      break;
+    received += n;
+  }
+  ASIO_CHECK(received == 3);
+  ASIO_CHECK(sizes[0] == 10);
+  ASIO_CHECK(sizes[1] == 20);
+  ASIO_CHECK(sizes[2] == 30);
+  ASIO_CHECK(memcmp(recv_data[2], data, 30) == 0);
+
+  // Receive from two senders.
+
+  a.send_to(buffer(data, 5), r_ep);
+  b.send_to(buffer(data, 6), r_ep);
+  a.send_to(buffer(data, 7), r_ep);
+
+  sizes.fill(0);
+  received = 0;
+  while (received < 3)
+  {
+    std::size_t n = retry(
+        [&](asio::error_code& e)
+        {
+          return r.receive_from_multiple(
+              make_span(recv_bufs.data() + received, 8 - received),
+              make_span(endpoints.data() + received, 8 - received),
+              make_span(sizes.data() + received, 8 - received), 0, e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    if (ec)
+      break;
+    received += n;
+  }
+  ASIO_CHECK(received == 3);
+  ASIO_CHECK(sizes[0] == 5);
+  ASIO_CHECK(sizes[1] == 6);
+  ASIO_CHECK(sizes[2] == 7);
+  ASIO_CHECK(endpoints[0].port() == a.local_endpoint().port());
+  ASIO_CHECK(endpoints[1].port() == b.local_endpoint().port());
+  ASIO_CHECK(endpoints[2].port() == a.local_endpoint().port());
+  ASIO_CHECK(endpoints[0].address() == ip::address_v4::loopback());
+
+  // Truncated datagrams.
+
+  std::array<mutable_buffer, 2> small_bufs = { {
+      buffer(recv_data[0], 10), buffer(recv_data[1], 10) } };
+
+  a.send_to(buffer(data, 100), r_ep);
+  a.send_to(buffer(data, 4), r_ep);
+
+  sizes.fill(0);
+  out_flags.fill(0);
+  received = 0;
+  while (received < 2)
+  {
+    std::size_t n = retry(
+        [&](asio::error_code& e)
+        {
+          return r.receive_from_multiple(
+              make_span(small_bufs.data() + received, 2 - received),
+              make_span(endpoints.data() + received, 2 - received),
+              make_span(sizes.data() + received, 2 - received), 0,
+              make_span(out_flags.data() + received, 2 - received), e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    if (ec)
+      break;
+    received += n;
+  }
+  ASIO_CHECK(received == 2);
+  ASIO_CHECK(sizes[0] == 10);
+  ASIO_CHECK(sizes[1] == 4);
+
+  c2.send(buffer(data, 100));
+  sizes.fill(0);
+  out_flags.fill(0);
+  std::size_t n = retry(
+      [&](asio::error_code& e)
+      {
+        return c1.receive_multiple(make_span(small_bufs.data(), 1),
+            make_span(sizes.data(), 1), 0,
+            make_span(out_flags.data(), 1), e);
+      }, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n == 1);
+  ASIO_CHECK(sizes[0] == 10);
+
+  // A single datagram, without flags.
+
+  std::array<const_buffer, 1> one_buf = { { buffer(data, 42) } };
+  n = c2.send_multiple(one_buf, 0, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n == 1);
+  sizes.fill(0);
+  n = retry(
+      [&](asio::error_code& e)
+      {
+        return c1.receive_multiple(make_span(recv_bufs.data(), 1),
+            make_span(sizes.data(), 1), 0, e);
+      }, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n == 1);
+  ASIO_CHECK(sizes[0] == 42);
+  ASIO_CHECK(memcmp(recv_data[0], data, 42) == 0);
+
+  // Ranges of different lengths.
+
+  for (std::size_t i = 0; i < 3; ++i)
+    a.send_to(buffer(data, 11 + i), r_ep);
+
+  sizes.fill(0);
+  n = retry(
+      [&](asio::error_code& e)
+      {
+        return r.receive_from_multiple(std::ref(recv_bufs),
+            std::ref(endpoints), make_span(sizes.data(), 2), 0, e);
+      }, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n >= 1 && n <= 2);
+  ASIO_CHECK(sizes[2] == 0);
+  received = n;
+  while (received < 3)
+  {
+    n = retry(
+        [&](asio::error_code& e)
+        {
+          return r.receive_from_multiple(std::ref(recv_bufs),
+              std::ref(endpoints), make_span(sizes.data(), 1), 0, e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(n == 1);
+    if (ec)
+      break;
+    received += n;
+  }
+  ASIO_CHECK(received == 3);
+  ASIO_CHECK(sizes[0] == 13);
+
+  // Empty ranges.
+
+  std::array<const_buffer, 0> no_send_bufs = { {} };
+  std::array<mutable_buffer, 0> no_recv_bufs = { {} };
+  std::array<std::size_t, 0> no_sizes = { {} };
+  n = c2.send_multiple(no_send_bufs, 0, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n == 0);
+  n = c1.receive_multiple(no_recv_bufs, std::ref(no_sizes), 0, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n == 0);
+
+  async_result empty_send, empty_recv;
+  c2.async_send_multiple(no_send_bufs, async_handler(&empty_send));
+  c1.async_receive_multiple(no_recv_bufs, std::ref(no_sizes),
+      async_handler(&empty_recv));
+  ioc.restart();
+  ioc.run_for(std::chrono::seconds(10));
+  ASIO_CHECK(empty_send.called);
+  ASIO_CHECK(!empty_send.ec);
+  ASIO_CHECK(empty_send.n == 0);
+  ASIO_CHECK(empty_recv.called);
+  ASIO_CHECK(!empty_recv.ec);
+  ASIO_CHECK(empty_recv.n == 0);
+
+  // Repeated destination.
+
+  std::array<std::reference_wrapper<const ip::udp::endpoint>, 3>
+    repeated = { { std::cref(r_ep), std::cref(r_ep), std::cref(r_ep) } };
+  sent = 0;
+  while (sent < send_bufs.size())
+  {
+    n = a.send_to_multiple(
+        make_span(send_bufs.data() + sent, send_bufs.size() - sent),
+        make_span(repeated.data() + sent, repeated.size() - sent), 0, ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(n > 0);
+    if (ec)
+      break;
+    sent += n;
+  }
+
+  std::size_t ref_sizes[3] = { 0, 0, 0 };
+  std::array<std::reference_wrapper<std::size_t>, 3> size_refs = { {
+      std::ref(ref_sizes[0]), std::ref(ref_sizes[1]),
+      std::ref(ref_sizes[2]) } };
+  received = 0;
+  while (received < 3)
+  {
+    n = retry(
+        [&](asio::error_code& e)
+        {
+          return r.receive_from_multiple(
+              make_span(recv_bufs.data() + received, 3 - received),
+              make_span(endpoints.data() + received, 3 - received),
+              make_span(size_refs.data() + received, 3 - received), 0, e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    if (ec)
+      break;
+    received += n;
+  }
+  ASIO_CHECK(received == 3);
+  ASIO_CHECK(ref_sizes[0] == 10);
+  ASIO_CHECK(ref_sizes[1] == 20);
+  ASIO_CHECK(ref_sizes[2] == 30);
+  ASIO_CHECK(endpoints[1].port() == a.local_endpoint().port());
+
+  // Destinations yielded by value.
+
+  sent = 0;
+  while (sent < send_bufs.size())
+  {
+    n = a.send_to_multiple(
+        make_span(send_bufs.data() + sent, send_bufs.size() - sent),
+        test_value_range(r_ep, send_bufs.size() - sent), 0, ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(n > 0);
+    if (ec)
+      break;
+    sent += n;
+  }
+
+  async_result value_send;
+  a.async_send_to_multiple(make_span(send_bufs.data(), 1),
+      test_value_range(r_ep, 1), async_handler(&value_send));
+  ioc.restart();
+  while (!value_send.called && ioc.run_one_for(std::chrono::seconds(10)))
+  {
+  }
+  ASIO_CHECK(value_send.called);
+  ASIO_CHECK(!value_send.ec);
+  ASIO_CHECK(value_send.n == 1);
+
+  ip::udp::resolver resolver(ioc);
+  ip::udp::resolver::results_type results = resolver.resolve(
+      r_ep.address().to_string(), std::to_string(r_ep.port()),
+      ip::udp::resolver::numeric_host | ip::udp::resolver::numeric_service);
+  ASIO_CHECK(results.size() == 1);
+  n = a.send_to_multiple(make_span(send_bufs.data(), 1), results, 0, ec);
+  ASIO_CHECK(!ec);
+  ASIO_CHECK(n == 1);
+
+  received = 0;
+  while (received < 5)
+  {
+    sizes.fill(0);
+    n = retry(
+        [&](asio::error_code& e)
+        {
+          return r.receive_from_multiple(
+              make_span(recv_bufs.data(), 5 - received),
+              make_span(endpoints.data(), 5 - received),
+              make_span(sizes.data(), 5 - received), 0, e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    if (ec)
+      break;
+    for (std::size_t i = 0; i < n; ++i)
+    {
+      ASIO_CHECK(sizes[i] == (received + i < 3 ? 10 * (received + i + 1) : 10));
+      ASIO_CHECK(endpoints[i].port() == a.local_endpoint().port());
+    }
+    received += n;
+  }
+  ASIO_CHECK(received == 5);
+
+#if defined(__cpp_lib_ranges_repeat)
+  // Unbounded destinations.
+
+  auto unbounded = std::views::repeat(r_ep);
+  sent = 0;
+  while (sent < send_bufs.size())
+  {
+    n = a.send_to_multiple(
+        make_span(send_bufs.data() + sent, send_bufs.size() - sent),
+        unbounded, 0, ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(n > 0);
+    if (ec)
+      break;
+    sent += n;
+  }
+
+  received = 0;
+  while (received < 3)
+  {
+    n = retry(
+        [&](asio::error_code& e)
+        {
+          return r.receive_from_multiple(
+              make_span(recv_bufs.data() + received, 3 - received),
+              make_span(endpoints.data() + received, 3 - received),
+              make_span(sizes.data() + received, 3 - received), 0, e);
+        }, ec);
+    ASIO_CHECK(!ec);
+    if (ec)
+      break;
+    received += n;
+  }
+  ASIO_CHECK(received == 3);
+  ASIO_CHECK(sizes[0] == 10);
+  ASIO_CHECK(sizes[1] == 20);
+  ASIO_CHECK(sizes[2] == 30);
+#endif // defined(__cpp_lib_ranges_repeat)
+
+  // Asynchronous receive before data arrives.
+
+  socket_base::message_flags flag_values[3] = { -1, -1, -1 };
+  std::array<std::reference_wrapper<socket_base::message_flags>, 3>
+    flag_refs = { { std::ref(flag_values[0]),
+      std::ref(flag_values[1]), std::ref(flag_values[2]) } };
+
+  sizes.fill(0);
+  async_result recv1;
+  r.async_receive_from_multiple(std::ref(recv_bufs), std::ref(endpoints),
+      make_span(sizes.data(), 8), make_span(flag_refs.data(), 3),
+      async_handler(&recv1));
+
+  async_result send1;
+  c2.async_send_multiple(send_bufs, async_handler(&send1));
+  a.send_to(buffer(data, 9), r_ep);
+
+  ioc.restart();
+  while (!(recv1.called && send1.called)
+      && ioc.run_one_for(std::chrono::seconds(10)))
+  {
+  }
+  ASIO_CHECK(send1.called);
+  ASIO_CHECK(!send1.ec);
+  ASIO_CHECK(send1.n >= 1 && send1.n <= 3);
+  ASIO_CHECK(recv1.called);
+  ASIO_CHECK(!recv1.ec);
+  ASIO_CHECK(recv1.n == 1);
+  ASIO_CHECK(sizes[0] == 9);
+  ASIO_CHECK(endpoints[0].port() == a.local_endpoint().port());
+  ASIO_CHECK(flag_values[0] == 0);
+  ASIO_CHECK(flag_values[1] == -1);
+
+  // Deferred receive after data arrives.
+
+  received = 0;
+  std::size_t c1_expected = send1.n;
+  while (received < c1_expected)
+  {
+    sizes.fill(0);
+    async_result recv2;
+    auto op = c1.async_receive_multiple(
+        make_span(recv_bufs.data(), 8), make_span(sizes.data(), 8),
+        asio::deferred);
+    std::move(op)(async_handler(&recv2));
+    ioc.restart();
+    while (!recv2.called && ioc.run_one_for(std::chrono::seconds(10)))
+    {
+    }
+    ASIO_CHECK(recv2.called);
+    ASIO_CHECK(!recv2.ec);
+    if (!recv2.called || recv2.ec)
+      break;
+    ASIO_CHECK(sizes[0] == 10 + 10 * received);
+    received += recv2.n;
+  }
+  ASIO_CHECK(received == c1_expected);
+}
+
+} // namespace ip_udp_socket_multiple_runtime
 
 //------------------------------------------------------------------------------
 
@@ -671,5 +1436,6 @@ ASIO_TEST_SUITE
   "ip/udp",
   ASIO_COMPILE_TEST_CASE(ip_udp_socket_compile::test)
   ASIO_TEST_CASE(ip_udp_socket_runtime::test)
+  ASIO_TEST_CASE(ip_udp_socket_multiple_runtime::test)
   ASIO_COMPILE_TEST_CASE(ip_udp_resolver_compile::test)
 )

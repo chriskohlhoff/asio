@@ -125,6 +125,7 @@ check_PROGRAMS = \
 	unit/ip/unicast \
 	unit/ip/v6_only \
 	unit/is_read_buffered \
+	unit/is_shallow_mutable_sequence \
 	unit/is_write_buffered \
 	unit/local/basic_endpoint \
 	unit/local/connect_pair \
@@ -363,6 +364,7 @@ TESTS = \
 	unit/ip/unicast \
 	unit/ip/v6_only \
 	unit/is_read_buffered \
+	unit/is_shallow_mutable_sequence \
 	unit/is_write_buffered \
 	unit/local/basic_endpoint \
 	unit/local/connect_pair \
@@ -610,6 +612,7 @@ unit_ip_udp_SOURCES = unit/ip/udp.cpp
 unit_ip_unicast_SOURCES = unit/ip/unicast.cpp
 unit_ip_v6_only_SOURCES = unit/ip/v6_only.cpp
 unit_is_read_buffered_SOURCES = unit/is_read_buffered.cpp
+unit_is_shallow_mutable_sequence_SOURCES = unit/is_shallow_mutable_sequence.cpp
 unit_is_write_buffered_SOURCES = unit/is_write_buffered.cpp
 unit_local_basic_endpoint_SOURCES = unit/local/basic_endpoint.cpp
 unit_local_connect_pair_SOURCES = unit/local/connect_pair.cpp

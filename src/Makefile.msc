@@ -238,6 +238,7 @@ UNIT_TEST_EXES = \
 	tests\unit\local\seq_packet_protocol.exe \
 	tests\unit\local\stream_protocol.exe \
 	tests\unit\is_read_buffered.exe \
+	tests\unit\is_shallow_mutable_sequence.exe \
 	tests\unit\is_write_buffered.exe \
 	tests\unit\packaged_task.exe \
 	tests\unit\piping.exe \

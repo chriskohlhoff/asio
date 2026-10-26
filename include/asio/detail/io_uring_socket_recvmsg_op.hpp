@@ -92,7 +92,8 @@ public:
     else if (after_completion)
     {
       if (!o->ec_)
-        o->out_flags_ = o->msghdr_.msg_flags;
+        o->out_flags_ = socket_ops::recv_out_flags(
+            o->msghdr_.msg_flags, o->in_flags_);
       else
         o->out_flags_ = 0;
     }

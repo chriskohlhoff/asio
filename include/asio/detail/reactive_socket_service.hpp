@@ -31,6 +31,8 @@
 #include "asio/detail/reactive_socket_accept_op.hpp"
 #include "asio/detail/reactive_socket_connect_op.hpp"
 #include "asio/detail/reactive_socket_recvfrom_op.hpp"
+#include "asio/detail/reactive_socket_recvmmsg_op.hpp"
+#include "asio/detail/reactive_socket_sendmmsg_op.hpp"
 #include "asio/detail/reactive_socket_sendto_op.hpp"
 #include "asio/detail/reactive_socket_service_base.hpp"
 #include "asio/detail/reactor.hpp"
@@ -351,6 +353,68 @@ public:
   void async_receive_from(implementation_type& impl, const null_buffers&,
       endpoint_type& sender_endpoint, socket_base::message_flags flags,
       Handler& handler, const IoExecutor& io_ex);
+
+  // Send multiple datagrams to the specified endpoints. Returns the number of
+  // datagrams sent.
+  template <typename BufferSequences, typename EndpointSequence>
+  size_t send_to_multiple(implementation_type& impl,
+      BufferSequences&& buffer_sequences, EndpointSequence&& endpoints,
+      socket_base::message_flags flags, asio::error_code& ec)
+  {
+    size_t n = detail::send_multiple<endpoint_type>(impl.socket_,
+        impl.state_, buffer_sequences, endpoints, flags, ec);
+    ASIO_ERROR_LOCATION(ec);
+    return n;
+  }
+
+  // Receive multiple datagrams with the endpoints of the senders. Returns the
+  // number of datagrams received.
+  template <typename BufferSequences, typename EndpointSequence,
+      typename SizeSequence, typename FlagsSequence>
+  size_t receive_from_multiple(implementation_type& impl,
+      BufferSequences&& buffer_sequences, EndpointSequence&& endpoints,
+      SizeSequence&& sizes, FlagsSequence&& out_flags,
+      socket_base::message_flags flags, asio::error_code& ec)
+  {
+    size_t n = detail::receive_multiple(impl.socket_, impl.state_,
+        buffer_sequences, endpoints, sizes, out_flags, flags, ec);
+    ASIO_ERROR_LOCATION(ec);
+    return n;
+  }
+
+  // Start an asynchronous send of multiple datagrams to the specified
+  // endpoints.
+  template <typename BufferSequences, typename EndpointSequence,
+      typename Handler, typename IoExecutor>
+  void async_send_to_multiple(implementation_type& impl,
+      BufferSequences&& buffer_sequences, EndpointSequence&& endpoints,
+      socket_base::message_flags flags, Handler& handler,
+      const IoExecutor& io_ex)
+  {
+    this->template start_send_multiple_op<endpoint_type>(impl,
+        static_cast<BufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints), flags, handler, io_ex,
+        "async_send_to_multiple");
+  }
+
+  // Start an asynchronous receive of multiple datagrams with the endpoints of
+  // the senders.
+  template <typename BufferSequences, typename EndpointSequence,
+      typename SizeSequence, typename FlagsSequence,
+      typename Handler, typename IoExecutor>
+  void async_receive_from_multiple(implementation_type& impl,
+      BufferSequences&& buffer_sequences, EndpointSequence&& endpoints,
+      SizeSequence&& sizes, FlagsSequence&& out_flags,
+      socket_base::message_flags flags, Handler& handler,
+      const IoExecutor& io_ex)
+  {
+    this->start_receive_multiple_op(impl,
+        static_cast<BufferSequences&&>(buffer_sequences),
+        static_cast<EndpointSequence&&>(endpoints),
+        static_cast<SizeSequence&&>(sizes),
+        static_cast<FlagsSequence&&>(out_flags), flags, handler, io_ex,
+        "async_receive_from_multiple");
+  }
 
   // Accept a new connection.
   template <typename Socket>

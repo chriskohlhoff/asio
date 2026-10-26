@@ -85,6 +85,7 @@ nobase_include_HEADERS = \
 	asio/detail/buffered_stream_storage.hpp \
 	asio/detail/buffer_resize_guard.hpp \
 	asio/detail/buffer_sequence_adapter.hpp \
+	asio/detail/buffer_sequences_adapter.hpp \
 	asio/detail/call_stack.hpp \
 	asio/detail/candidate_executors.hpp \
 	asio/detail/channel_operation.hpp \
@@ -116,6 +117,8 @@ nobase_include_HEADERS = \
 	asio/detail/dev_poll_reactor.hpp \
 	asio/detail/eager_wait_handler.hpp \
 	asio/detail/eager_wait_op.hpp \
+	asio/detail/empty_range.hpp \
+	asio/detail/endpoint_sequence_adapter.hpp \
 	asio/detail/epoll_reactor.hpp \
 	asio/detail/eventfd_select_interrupter.hpp \
 	asio/detail/event.hpp \
@@ -125,6 +128,7 @@ nobase_include_HEADERS = \
 	asio/detail/fd_set_adapter.hpp \
 	asio/detail/fenced_block.hpp \
 	asio/detail/fiber.hpp \
+	asio/detail/flags_sequence_adapter.hpp \
 	asio/detail/functional.hpp \
 	asio/detail/futex_slim_mutex.hpp \
 	asio/detail/future.hpp \
@@ -221,9 +225,11 @@ nobase_include_HEADERS = \
 	asio/detail/io_uring_socket_accept_op.hpp \
 	asio/detail/io_uring_socket_connect_op.hpp \
 	asio/detail/io_uring_socket_recvfrom_op.hpp \
+	asio/detail/io_uring_socket_recvmmsg_op.hpp \
 	asio/detail/io_uring_socket_recvmsg_op.hpp \
 	asio/detail/io_uring_socket_recv_op.hpp \
 	asio/detail/io_uring_socket_send_op.hpp \
+	asio/detail/io_uring_socket_sendmmsg_op.hpp \
 	asio/detail/io_uring_socket_sendto_op.hpp \
 	asio/detail/io_uring_socket_service_base.hpp \
 	asio/detail/io_uring_socket_service.hpp \
@@ -273,9 +279,11 @@ nobase_include_HEADERS = \
 	asio/detail/reactive_socket_accept_op.hpp \
 	asio/detail/reactive_socket_connect_op.hpp \
 	asio/detail/reactive_socket_recvfrom_op.hpp \
+	asio/detail/reactive_socket_recvmmsg_op.hpp \
 	asio/detail/reactive_socket_recvmsg_op.hpp \
 	asio/detail/reactive_socket_recv_op.hpp \
 	asio/detail/reactive_socket_send_op.hpp \
+	asio/detail/reactive_socket_sendmmsg_op.hpp \
 	asio/detail/reactive_socket_sendto_op.hpp \
 	asio/detail/reactive_socket_service_base.hpp \
 	asio/detail/reactive_socket_service.hpp \
@@ -305,6 +313,8 @@ nobase_include_HEADERS = \
 	asio/detail/signal_init.hpp \
 	asio/detail/signal_op.hpp \
 	asio/detail/signal_set_service.hpp \
+	asio/detail/single_datagram_handler.hpp \
+	asio/detail/size_sequence_adapter.hpp \
 	asio/detail/slim_mutex.hpp \
 	asio/detail/socket_holder.hpp \
 	asio/detail/socket_ops.hpp \
@@ -339,6 +349,7 @@ nobase_include_HEADERS = \
 	asio/detail/triggered_cancel_op.hpp \
 	asio/detail/tss_ptr.hpp \
 	asio/detail/type_traits.hpp \
+	asio/detail/unwrap_ref.hpp \
 	asio/detail/utility.hpp \
 	asio/detail/wait_handler.hpp \
 	asio/detail/wait_op.hpp \
@@ -550,6 +561,7 @@ nobase_include_HEADERS = \
 	asio/is_contiguous_iterator.hpp \
 	asio/is_executor.hpp \
 	asio/is_read_buffered.hpp \
+	asio/is_shallow_mutable_sequence.hpp \
 	asio/is_write_buffered.hpp \
 	asio/local/basic_endpoint.hpp \
 	asio/local/connect_pair.hpp \

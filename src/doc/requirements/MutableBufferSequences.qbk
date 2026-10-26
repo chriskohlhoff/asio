@@ -1,0 +1,37 @@
+[/
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:MutableBufferSequences Mutable buffer sequences requirements]
+
+A ['mutable buffer sequences] range represents a set of memory regions into
+which datagrams may be received by an operation, such as the `receive_multiple`
+operation of a datagram socket. Each element describes the memory regions for
+one datagram.
+
+A type `X` meets the `MutableBufferSequences` requirements if it satisfies the
+requirements of `Destructible` (C++Std [destructible]) and `CopyConstructible`
+(C++Std [copyconstructible]), as well as the additional requirements listed
+below.
+
+In the table below, `x` denotes a (possibly const) value of type `X`, or of type
+`R` if `X` is `std::reference_wrapper<R>`.
+
+[table MutableBufferSequences requirements
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
+  [
+    [`x.begin()`[br]
+     `x.end()`]
+    [A type meeting the requirements for forward iterators
+     (C++Std \[forward.iterators\]) whose value type meets the
+     [link asio.reference.MutableBufferSequence `MutableBufferSequence`]
+     requirements.]
+    [[half_open_range `x.begin()`,`x.end()`] is a valid range. The range
+     may be traversed more than once.]
+  ]
+]
+
+[endsect]

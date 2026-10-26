@@ -1,0 +1,36 @@
+[/
+ / Copyright (c) 2003-2026 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section:ConstBufferSequences Constant buffer sequences requirements]
+
+A ['constant buffer sequences] range represents a set of datagrams that may be
+used as input to an operation, such as the `send_multiple` operation of a
+datagram socket. Each element describes the memory regions of one datagram.
+
+A type `X` meets the `ConstBufferSequences` requirements if it satisfies the
+requirements of `Destructible` (C++Std [destructible]) and `CopyConstructible`
+(C++Std [copyconstructible]), as well as the additional requirements listed
+below.
+
+In the table below, `x` denotes a (possibly const) value of type `X`, or of type
+`R` if `X` is `std::reference_wrapper<R>`.
+
+[table ConstBufferSequences requirements
+  [[expression] [return type] [assertion/note[br]pre/post-condition]]
+  [
+    [`x.begin()`[br]
+     `x.end()`]
+    [A type meeting the requirements for forward iterators
+     (C++Std \[forward.iterators\]) whose value type meets the
+     [link asio.reference.ConstBufferSequence `ConstBufferSequence`]
+     requirements.]
+    [[half_open_range `x.begin()`,`x.end()`] is a valid range. The range
+     may be traversed more than once.]
+  ]
+]
+
+[endsect]

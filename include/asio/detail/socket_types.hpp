@@ -442,6 +442,45 @@ ASIO_INLINE_VARIABLE const int enable_connection_aborted_option = 1;
 ASIO_INLINE_VARIABLE const int always_fail_option = 2;
 ASIO_INLINE_VARIABLE const int custom_io_control_name = 0x5A110001;
 
+#if (defined(__MACH__) && defined(__APPLE__))
+struct mmsghdr
+{
+  void* msg_name;
+  socklen_t msg_namelen;
+  struct iovec* msg_iov;
+  int msg_iovlen;
+  void* msg_control;
+  socklen_t msg_controllen;
+  int msg_flags;
+  size_t msg_datalen;
+};
+# define ASIO_MMSGHDR_HDR_PTR(x) x
+# define ASIO_MMSGHDR_LEN(x) x.msg_datalen
+#elif defined(ASIO_HAS_RECVMMSG_SENDMMSG)
+typedef ::mmsghdr mmsghdr;
+# define ASIO_MMSGHDR_HDR_PTR(x) x.msg_hdr
+# define ASIO_MMSGHDR_LEN(x) x.msg_len
+#elif !defined(ASIO_WINDOWS_RUNTIME)
+struct mmsghdr
+{
+  void* msg_name;
+  socklen_t msg_namelen;
+# if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+  WSABUF* msg_iov;
+  DWORD msg_iovlen;
+# else
+  struct iovec* msg_iov;
+  int msg_iovlen;
+# endif
+  void* msg_control;
+  socklen_t msg_controllen;
+  int msg_flags;
+  size_t msg_datalen;
+};
+# define ASIO_MMSGHDR_HDR_PTR(x) x
+# define ASIO_MMSGHDR_LEN(x) x.msg_datalen
+#endif // (defined(__MACH__) && defined(__APPLE__))
+
 } // namespace detail
 ASIO_INLINE_NAMESPACE_END
 } // namespace asio
