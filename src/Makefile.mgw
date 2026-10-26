@@ -192,6 +192,7 @@ UNIT_TEST_EXES = \
 	tests/unit/thread.exe \
 	tests/unit/thread_pool.exe \
 	tests/unit/time_traits.exe \
+	tests/unit/trampoline.exe \
 	tests/unit/ts/buffer.exe \
 	tests/unit/ts/executor.exe \
 	tests/unit/ts/internet.exe \

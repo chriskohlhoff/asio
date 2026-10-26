@@ -21,6 +21,7 @@
 #include "asio/detail/assert.hpp"
 #include "asio/detail/atomic_count.hpp"
 #include "asio/detail/cstddef.hpp"
+#include "asio/detail/cstdint.hpp"
 #include "asio/detail/executor_function.hpp"
 #include "asio/detail/memory.hpp"
 #include "asio/detail/native_executors.hpp"
@@ -1427,10 +1428,19 @@ private:
     target_fns_ = fns;
   }
 
-  typedef aligned_storage<
-      sizeof(asio::detail::shared_ptr<void>) + sizeof(void*),
-      alignment_of<asio::detail::shared_ptr<void>>::value
-    >::type object_type;
+  static constexpr std::size_t object_size =
+    sizeof(asio::detail::shared_ptr<void>) + sizeof(void*)
+      > 2 * sizeof(void*) + sizeof(std::uint64_t)
+    ? sizeof(asio::detail::shared_ptr<void>) + sizeof(void*)
+    : 2 * sizeof(void*) + sizeof(std::uint64_t);
+
+  static constexpr std::size_t object_align =
+    alignment_of<asio::detail::shared_ptr<void>>::value
+      > alignment_of<std::uint64_t>::value
+    ? alignment_of<asio::detail::shared_ptr<void>>::value
+    : alignment_of<std::uint64_t>::value;
+
+  typedef aligned_storage<object_size, object_align>::type object_type;
 
   object_type object_;
   const object_fns* object_fns_;

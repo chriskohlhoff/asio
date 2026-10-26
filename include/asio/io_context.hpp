@@ -202,7 +202,7 @@ private:
 
 public:
   template <typename Allocator, uintptr_t Bits>
-  class basic_executor_type;
+  class ASIO_EMPTY_BASES basic_executor_type;
 
   template <typename Allocator, uintptr_t Bits>
   friend class basic_executor_type;
@@ -537,7 +537,7 @@ private:
 
 /// Executor implementation type used to submit functions to an io_context.
 template <typename Allocator, uintptr_t Bits>
-class io_context::basic_executor_type :
+class ASIO_EMPTY_BASES io_context::basic_executor_type :
   detail::io_context_bits, Allocator
 {
 public:

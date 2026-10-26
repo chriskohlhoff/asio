@@ -358,7 +358,8 @@ PREDEFINED             = GENERATING_DOCUMENTATION \
                          "ASIO_AUTO_RETURN_TYPE_PREFIX3(t0,t1,t2)=auto" \
                          ASIO_AUTO_RETURN_TYPE_SUFFIX(t)= \
                          ASIO_INLINE_NAMESPACE_BEGIN= \
-                         ASIO_INLINE_NAMESPACE_END=
+                         ASIO_INLINE_NAMESPACE_END= \
+                         ASIO_EMPTY_BASES=
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

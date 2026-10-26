@@ -91,7 +91,7 @@ class thread_pool
 {
 public:
   template <typename Allocator, unsigned int Bits>
-  class basic_executor_type;
+  class ASIO_EMPTY_BASES basic_executor_type;
 
   template <typename Allocator, unsigned int Bits>
   friend class basic_executor_type;
@@ -242,7 +242,7 @@ private:
 
 /// Executor implementation type used to submit functions to a thread pool.
 template <typename Allocator, unsigned int Bits>
-class thread_pool::basic_executor_type :
+class ASIO_EMPTY_BASES thread_pool::basic_executor_type :
   detail::thread_pool_bits, Allocator
 {
 public:

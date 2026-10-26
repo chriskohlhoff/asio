@@ -677,6 +677,7 @@ void execute_via_trampoline(std::uint64_t id, const Executor& ex,
 
   const bool is_blocking_never =
     is_same<Blocking, execution::blocking_t::never_t>::value;
+  (void)max_inline_depth;
 
   trampoline_frame* current = trampoline_frame::current();
 

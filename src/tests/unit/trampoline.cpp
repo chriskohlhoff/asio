@@ -1492,7 +1492,7 @@ struct throwing_ex
 {
   static constexpr execution::blocking_t query(execution::blocking_t) noexcept
   {
-    return execution::blocking.always;
+    return execution::blocking_t::always_t();
   }
 
   template <typename P>
@@ -1550,7 +1550,7 @@ struct query_static_constexpr_member<throwing_ex, P,
 
   static constexpr result_type value() noexcept
   {
-    return execution::blocking.always;
+    return execution::blocking_t::always_t();
   }
 };
 

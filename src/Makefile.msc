@@ -270,6 +270,7 @@ UNIT_TEST_EXES = \
 	tests\unit\thread.exe \
 	tests\unit\thread_pool.exe \
 	tests\unit\time_traits.exe \
+	tests\unit\trampoline.exe \
 	tests\unit\ts\buffer.exe \
 	tests\unit\ts\executor.exe \
 	tests\unit\ts\internet.exe \
@@ -391,6 +392,9 @@ tests\unit\unit_test.obj: tests\unit\unit_test.cpp
 
 {tests\unit}.cpp{tests\unit}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
+
+tests\unit\trampoline.exe: tests\unit\trampoline.cpp
+	cl -Fe$@ -Fotests\unit\trampoline.obj $(CXXFLAGS) -bigobj $(DEFINES) tests\unit\trampoline.cpp $(LIBS) -link -opt:ref
 
 {tests\unit\execution}.cpp{tests\unit\execution}.exe:
 	cl -Fe$@ -Fo$(<:.cpp=.obj) $(CXXFLAGS) $(DEFINES) $< $(LIBS) -link -opt:ref
