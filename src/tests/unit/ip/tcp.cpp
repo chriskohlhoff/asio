@@ -21,6 +21,8 @@
 
 #include <cstring>
 #include <functional>
+#include "asio/bind_cancellation_slot.hpp"
+#include "asio/cancellation_signal.hpp"
 #include "asio/io_context.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
@@ -1349,6 +1351,161 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_cancellation_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the runtime operation of per-operation
+// cancellation on the ip::tcp::socket and ip::tcp::acceptor classes, and the
+// destruction of outstanding operations by the io_context.
+
+namespace ip_tcp_cancellation_runtime {
+
+void handle_accept(const asio::error_code& err, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(!err);
+  ASIO_CHECK(err.category().name() != 0);
+}
+
+void handle_connect(const asio::error_code& err, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(!err);
+}
+
+void handle_read(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(!err);
+  ASIO_CHECK(bytes_transferred == 1);
+  ASIO_CHECK(err.category().name() != 0);
+}
+
+void handle_read_cancel(const asio::error_code& err,
+    size_t /*bytes_transferred*/, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(err == asio::error::operation_aborted);
+}
+
+void handle_wait(const asio::error_code& err, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(!err);
+  ASIO_CHECK(err.category().name() != 0);
+}
+
+void handle_wait_cancel(const asio::error_code& err, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(err == asio::error::operation_aborted);
+}
+
+void handle_not_called(const asio::error_code& /*err*/)
+{
+  ASIO_ERROR("handler should not have been called");
+}
+
+void test()
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  namespace bindns = std;
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
+
+  io_context ioc;
+
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(ip::address_v4::loopback());
+
+  ip::tcp::socket client_side_socket(ioc);
+  ip::tcp::socket server_side_socket(ioc);
+
+  cancellation_signal signal;
+
+  bool accept_completed = false;
+  bool connect_completed = false;
+  acceptor.async_accept(server_side_socket,
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_accept, _1, &accept_completed)));
+  client_side_socket.async_connect(server_endpoint,
+      bindns::bind(handle_connect, _1, &connect_completed));
+
+  ioc.run();
+  ASIO_CHECK(accept_completed);
+  ASIO_CHECK(connect_completed);
+
+  char data[1];
+  bool read_completed = false;
+  client_side_socket.async_read_some(buffer(data),
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_read, _1, _2, &read_completed)));
+  server_side_socket.send(buffer("x", 1));
+
+  ioc.restart();
+  ioc.run();
+  ASIO_CHECK(read_completed);
+
+#if !defined(ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+  bool read_cancelled = false;
+  client_side_socket.async_read_some(buffer(data),
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_read_cancel, _1, _2, &read_cancelled)));
+  signal.emit(cancellation_type::terminal);
+
+  ioc.restart();
+  ioc.run();
+  ASIO_CHECK(read_cancelled);
+#endif // !defined(ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+
+  bool wait_completed = false;
+  server_side_socket.async_wait(ip::tcp::socket::wait_write,
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_wait, _1, &wait_completed)));
+
+  ioc.restart();
+  ioc.run();
+  ASIO_CHECK(wait_completed);
+
+#if !defined(ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+  bool wait_cancelled = false;
+  server_side_socket.async_wait(ip::tcp::socket::wait_read,
+      bind_cancellation_slot(signal.slot(),
+        bindns::bind(handle_wait_cancel, _1, &wait_cancelled)));
+  signal.emit(cancellation_type::terminal);
+
+  ioc.restart();
+  ioc.run();
+  ASIO_CHECK(wait_cancelled);
+#endif // !defined(ASIO_HAS_IOCP) || (_WIN32_WINNT >= 0x0600)
+
+  {
+    io_context ioc2;
+    ip::tcp::acceptor acceptor2(ioc2,
+        ip::tcp::endpoint(ip::address_v4::loopback(), 0));
+    ip::tcp::socket socket2(ioc2);
+    acceptor2.async_accept(socket2, &handle_not_called);
+    acceptor2.close();
+  }
+
+  {
+    io_context ioc2;
+    ip::tcp::acceptor acceptor2(ioc2,
+        ip::tcp::endpoint(ip::address_v4::loopback(), 0));
+    ip::tcp::socket socket2(ioc2);
+    acceptor2.async_accept(socket2,
+        bind_cancellation_slot(signal.slot(), &handle_not_called));
+    acceptor2.close();
+  }
+}
+
+} // namespace ip_tcp_cancellation_runtime
+
+//------------------------------------------------------------------------------
+
 ASIO_TEST_SUITE
 (
   "ip/tcp",
@@ -1357,6 +1514,7 @@ ASIO_TEST_SUITE
   ASIO_COMPILE_TEST_CASE(ip_tcp_socket_compile::test)
   ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
   ASIO_TEST_CASE(ip_tcp_socket_async_wait_runtime::test)
+  ASIO_TEST_CASE(ip_tcp_cancellation_runtime::test)
   ASIO_COMPILE_TEST_CASE(ip_tcp_acceptor_compile::test)
   ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
   ASIO_COMPILE_TEST_CASE(ip_tcp_resolver_compile::test)

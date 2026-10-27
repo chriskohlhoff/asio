@@ -22,6 +22,7 @@
 #include "asio/detail/handler_tracking.hpp"
 #include "asio/detail/op_queue.hpp"
 #include "asio/detail/socket_types.hpp"
+#include "asio/error.hpp"
 #include "asio/error_code.hpp"
 
 #include "asio/detail/push_options.hpp"
@@ -49,6 +50,8 @@ public:
 
   void destroy()
   {
+    Internal = reinterpret_cast<ULONG_PTR>(
+        &asio::error::get_system_category());
     func_(0, this, 0, 0);
   }
 

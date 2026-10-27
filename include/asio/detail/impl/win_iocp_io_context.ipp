@@ -353,6 +353,10 @@ void win_iocp_io_context::post_deferred_completion(win_iocp_operation* op)
   if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
   {
     // Out of resources. Put on completed queue instead.
+    op->Internal = reinterpret_cast<ulong_ptr_t>(
+        &asio::error::get_system_category());
+    op->Offset = 0;
+    op->OffsetHigh = 0;
     mutex::scoped_lock lock(dispatch_mutex_);
     completed_ops_.push(op);
     ::InterlockedExchange(&dispatch_required_, 1);
@@ -373,9 +377,12 @@ void win_iocp_io_context::post_deferred_completions(
     if (!::PostQueuedCompletionStatus(iocp_.handle, 0, 0, op))
     {
       // Out of resources. Put on completed queue instead.
+      op->Internal = reinterpret_cast<ulong_ptr_t>(
+          &asio::error::get_system_category());
+      op->Offset = 0;
+      op->OffsetHigh = 0;
       mutex::scoped_lock lock(dispatch_mutex_);
       completed_ops_.push(op);
-      completed_ops_.push(ops);
       ::InterlockedExchange(&dispatch_required_, 1);
     }
   }
@@ -463,9 +470,23 @@ size_t win_iocp_io_context::do_one(DWORD msec,
     {
       mutex::scoped_lock lock(dispatch_mutex_);
 
-      // Dispatch pending timers and operations.
+      // Dispatch completed operations.
       op_queue<win_iocp_operation> ops;
       ops.push(completed_ops_);
+      while (win_iocp_operation* op = ops.front())
+      {
+        ops.pop();
+        if (!::PostQueuedCompletionStatus(iocp_.handle,
+              0, overlapped_contains_result, op))
+        {
+          // Out of resources. Put back on completed queue.
+          completed_ops_.push(op);
+          completed_ops_.push(ops);
+          ::InterlockedExchange(&dispatch_required_, 1);
+        }
+      }
+
+      // Dispatch pending timers.
       timer_queues_.get_ready_timers(ops);
       post_deferred_completions(ops);
       update_timeout();

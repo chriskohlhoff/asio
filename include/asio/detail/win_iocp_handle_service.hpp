@@ -380,6 +380,7 @@ private:
         int error_value, std::size_t bytes_transferred)
     {
       iocp_op_cancellation* o = static_cast<iocp_op_cancellation*>(base);
+      o->target_->Internal = o->Internal;
       o->target_->complete(owner, error_value, bytes_transferred);
     }
 
