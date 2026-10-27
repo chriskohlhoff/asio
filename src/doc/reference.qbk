@@ -29,6 +29,7 @@
 [include requirements/ConnectHandler.qbk]
 [include requirements/ConnectToken.qbk]
 [include requirements/ConstBufferSequence.qbk]
+[include requirements/ConstBufferSequences.qbk]
 [include requirements/Disposition.qbk]
 [include requirements/DynamicBuffer.qbk]
 [include requirements/DynamicBuffer_v1.qbk]
@@ -50,12 +51,18 @@
 [include requirements/MoveAcceptHandler.qbk]
 [include requirements/MoveAcceptToken.qbk]
 [include requirements/MutableBufferSequence.qbk]
+[include requirements/MutableBufferSequences.qbk]
+[include requirements/MutableEndpointSequence.qbk]
+[include requirements/MutableFlagsSequence.qbk]
+[include requirements/MutableSizeSequence.qbk]
 [include requirements/NullaryToken.qbk]
 [include requirements/ProtoAllocator.qbk]
 [include requirements/Protocol.qbk]
 [include requirements/RangeConnectHandler.qbk]
 [include requirements/RangeConnectToken.qbk]
 [include requirements/ReadHandler.qbk]
+[include requirements/ReadMultiHandler.qbk]
+[include requirements/ReadMultiToken.qbk]
 [include requirements/ReadToken.qbk]
 [include requirements/ResolveHandler.qbk]
 [include requirements/ResolveToken.qbk]
@@ -75,6 +82,8 @@
 [include requirements/WaitToken.qbk]
 [include requirements/WaitTraits.qbk]
 [include requirements/WriteHandler.qbk]
+[include requirements/WriteMultiHandler.qbk]
+[include requirements/WriteMultiToken.qbk]
 [include requirements/WriteToken.qbk]
 
 
@@ -15749,13 +15758,37 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_receive_from_multiple [*async_receive_from_multiple]]]
+    [Start an asynchronous receive of multiple datagrams with their senders. 
+     [hr]
+     Start an asynchronous receive of datagrams with their senders and flags. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive_multiple [*async_receive_multiple]]]
+    [Start an asynchronous receive of multiple datagrams on a connected socket. 
+     [hr]
+     Start an asynchronous receive of multiple datagrams and their flags. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send [*async_send]]]
     [Start an asynchronous send on a connected socket. ]
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_send_multiple [*async_send_multiple]]]
+    [Start an asynchronous send of multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send_to [*async_send_to]]]
     [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send_to_multiple [*async_send_to_multiple]]]
+    [Start an asynchronous send of multiple datagrams to the endpoints. ]
   ]
   
   [
@@ -15882,6 +15915,20 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.receive_from_multiple [*receive_from_multiple]]]
+    [Receive multiple datagrams with the endpoints of the senders. 
+     [hr]
+     Receive multiple datagrams and their flags with the sender endpoints. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive_multiple [*receive_multiple]]]
+    [Receive multiple datagrams on a connected socket. 
+     [hr]
+     Receive multiple datagrams and their flags on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.release [*release]]]
     [Release ownership of the underlying native socket. ]
   ]
@@ -15897,8 +15944,18 @@ Provides datagram-oriented socket functionality.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.send_multiple [*send_multiple]]]
+    [Send multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.send_to [*send_to]]]
     [Send a datagram to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send_to_multiple [*send_to_multiple]]]
+    [Send multiple datagrams to the specified endpoints. ]
   ]
   
   [
@@ -16480,6 +16537,770 @@ On POSIX or Windows operating systems, this asynchronous operation supports canc
 
 [endsect]
 
+[section:async_receive_from_multiple basic_datagram_socket::async_receive_from_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.async_receive_from_multiple..async_receive_from_multiple..basic_datagram_socket] 
+Start an asynchronous receive of multiple datagrams with their senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload1 async_receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload2 async_receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload2 more...]]``
+
+
+Start an asynchronous receive of datagrams with their senders and flags. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload3 async_receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload3 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload4 async_receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_from_multiple.overload4 more...]]``
+
+
+[section:overload1 basic_datagram_socket::async_receive_from_multiple (1 of 4 overloads)]
+
+
+Start an asynchronous receive of multiple datagrams with their senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams, recording the endpoint of the remote sender of each. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram. Although the range object may be copied as necessary, ownership of the underlying endpoint objects is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::async_receive_from_multiple (2 of 4 overloads)]
+
+
+Start an asynchronous receive of multiple datagrams with their senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams, recording the endpoint of the remote sender of each. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram. Although the range object may be copied as necessary, ownership of the underlying endpoint objects is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_datagram_socket::async_receive_from_multiple (3 of 4 overloads)]
+
+
+Start an asynchronous receive of datagrams with their senders and flags. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams, recording the endpoint of the remote sender of each. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram. Although the range object may be copied as necessary, ownership of the underlying endpoint objects is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_datagram_socket::async_receive_from_multiple (4 of 4 overloads)]
+
+
+Start an asynchronous receive of datagrams with their senders and flags. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams, recording the endpoint of the remote sender of each. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram. Although the range object may be copied as necessary, ownership of the underlying endpoint objects is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:async_receive_multiple basic_datagram_socket::async_receive_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.async_receive_multiple..async_receive_multiple..basic_datagram_socket] 
+Start an asynchronous receive of multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_multiple.overload1 async_receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_multiple.overload2 async_receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_multiple.overload2 more...]]``
+
+
+Start an asynchronous receive of multiple datagrams and their flags. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_multiple.overload3 async_receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_multiple.overload3 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_receive_multiple.overload4 async_receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_receive_multiple.overload4 more...]]``
+
+
+[section:overload1 basic_datagram_socket::async_receive_multiple (1 of 4 overloads)]
+
+
+Start an asynchronous receive of multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams on a connected datagram socket. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
+The async\_receive\_multiple operation can only be used with a connected socket. Use the async\_receive\_from\_multiple function to receive data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::async_receive_multiple (2 of 4 overloads)]
+
+
+Start an asynchronous receive of multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< !is_shallow_mutable_sequence< decay_t< ReadMultiToken > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams on a connected datagram socket. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
+The async\_receive\_multiple operation can only be used with a connected socket. Use the async\_receive\_from\_multiple function to receive data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_datagram_socket::async_receive_multiple (3 of 4 overloads)]
+
+
+Start an asynchronous receive of multiple datagrams and their flags. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams on a connected datagram socket. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
+The async\_receive\_multiple operation can only be used with a connected socket. Use the async\_receive\_from\_multiple function to receive data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_datagram_socket::async_receive_multiple (4 of 4 overloads)]
+
+
+Start an asynchronous receive of multiple datagrams and their flags. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``,
+      typename ``[link asio.reference.ReadMultiToken ReadMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      ReadMultiToken && token = default_completion_token_t< executor_type >(),
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to asynchronously receive multiple datagrams on a connected datagram socket. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written. Although the range object may be copied as necessary, ownership of the underlying elements is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the receive completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams received.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
+The async\_receive\_multiple operation can only be used with a connected socket. Use the async\_receive\_from\_multiple function to receive data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:async_send basic_datagram_socket::async_send]
 
 [indexterm2 asio.indexterm.basic_datagram_socket.async_send..async_send..basic_datagram_socket] 
@@ -16660,6 +17481,176 @@ On POSIX or Windows operating systems, this asynchronous operation supports canc
 
 [endsect]
 
+[section:async_send_multiple basic_datagram_socket::async_send_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.async_send_multiple..async_send_multiple..basic_datagram_socket] 
+Start an asynchronous send of multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_send_multiple.overload1 async_send_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_send_multiple.overload2 async_send_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      socket_base::message_flags flags,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send_multiple.overload2 more...]]``
+
+
+[section:overload1 basic_datagram_socket::async_send_multiple (1 of 2 overloads)]
+
+
+Start an asynchronous send of multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_send_multiple(
+      ConstBufferSequences && buffer_sequences,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+
+
+This function is used to asynchronously send multiple datagrams on a connected datagram socket. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams sent may be less than the length of the range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the send completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams sent.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
+The async\_send\_multiple operation can only be used with a connected socket. Use the async\_send\_to\_multiple function to send data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::async_send_multiple (2 of 2 overloads)]
+
+
+Start an asynchronous send of multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_send_multiple(
+      ConstBufferSequences && buffer_sequences,
+      socket_base::message_flags flags,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+
+
+This function is used to asynchronously send multiple datagrams on a connected datagram socket. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams sent may be less than the length of the range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[flags][Flags specifying how the send call is to be made.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the send completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams sent.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Remarks]
+      
+The async\_send\_multiple operation can only be used with a connected socket. Use the async\_send\_to\_multiple function to send data on an unconnected datagram socket.
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:async_send_to basic_datagram_socket::async_send_to]
 
 [indexterm2 asio.indexterm.basic_datagram_socket.async_send_to..async_send_to..basic_datagram_socket] 
@@ -16803,6 +17794,178 @@ This function is used to asynchronously send a datagram to the specified remote 
   void handler(
     const asio::error_code& error, // Result of operation.
     std::size_t bytes_transferred // Number of bytes sent.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:async_send_to_multiple basic_datagram_socket::async_send_to_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.async_send_to_multiple..async_send_to_multiple..basic_datagram_socket] 
+Start an asynchronous send of multiple datagrams to the endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_send_to_multiple.overload1 async_send_to_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send_to_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` ``[link asio.reference.basic_datagram_socket.async_send_to_multiple.overload2 async_send_to_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      socket_base::message_flags flags,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.async_send_to_multiple.overload2 more...]]``
+
+
+[section:overload1 basic_datagram_socket::async_send_to_multiple (1 of 2 overloads)]
+
+
+Start an asynchronous send of multiple datagrams to the endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_send_to_multiple(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+
+
+This function is used to asynchronously send multiple datagrams to the specified remote endpoints. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[endpoints][A forward range of destination endpoints, one per datagram. Although the range object may be copied as necessary, ownership of any endpoints to which the range yields references is retained by the caller, which must guarantee that they remain valid until the completion handler is called. Copies will be made of endpoints yielded by value as required.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the send completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams sent.
+  ); 
+``
+Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
+
+]
+
+
+[heading Completion Signature]
+  
+
+
+  void(asio::error_code, std::size_t) 
+
+
+
+
+
+[heading Per-Operation Cancellation]
+  
+On POSIX or Windows operating systems, this asynchronous operation supports cancellation for the following [link asio.reference.cancellation_type `cancellation_type`] values:
+
+
+* `cancellation_type::terminal` 
+
+
+* `cancellation_type::partial` 
+
+
+* `cancellation_type::total` 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::async_send_to_multiple (2 of 2 overloads)]
+
+
+Start an asynchronous send of multiple datagrams to the endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``,
+      typename ``[link asio.reference.WriteMultiToken WriteMultiToken]`` = default_completion_token_t<executor_type>>
+  ``[link asio.reference.asynchronous_operations.automatic_deduction_of_initiating_function_return_type ['DEDUCED]]`` async_send_to_multiple(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      socket_base::message_flags flags,
+      WriteMultiToken && token = default_completion_token_t< executor_type >());
+
+
+This function is used to asynchronously send multiple datagrams to the specified remote endpoints. It is an initiating function for an [link asio.overview.model.async_ops asynchronous operation], and always returns immediately. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send. Although the range object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.]]
+
+[[endpoints][A forward range of destination endpoints, one per datagram. Although the range object may be copied as necessary, ownership of any endpoints to which the range yields references is retained by the caller, which must guarantee that they remain valid until the completion handler is called. Copies will be made of endpoints yielded by value as required.]]
+
+[[flags][Flags specifying how the send call is to be made.]]
+
+[[token][The [link asio.overview.model.completion_tokens completion token] that will be used to produce a completion handler, which will be called when the send completes. Potential completion tokens include [link asio.reference.use_future `use_future`], [link asio.reference.use_awaitable `use_awaitable`], [link asio.reference.yield_context `yield_context`], or a function object with the correct completion signature. The function signature of the completion handler must be: 
+``
+  void handler(
+    const asio::error_code& error, // Result of operation.
+    std::size_t messages_transferred // Number of datagrams sent.
   ); 
 ``
 Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using [link asio.reference.async_immediate `async_immediate`].]]
@@ -21577,6 +22740,430 @@ The number of bytes received.
 
 [endsect]
 
+[section:receive_from_multiple basic_datagram_socket::receive_from_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.receive_from_multiple..receive_from_multiple..basic_datagram_socket] 
+Receive multiple datagrams with the endpoints of the senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_from_multiple.overload1 receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_from_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_from_multiple.overload2 receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_from_multiple.overload2 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_from_multiple.overload3 receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_from_multiple.overload3 more...]]``
+
+
+Receive multiple datagrams and their flags with the sender endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_from_multiple.overload4 receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_from_multiple.overload4 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_from_multiple.overload5 receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_from_multiple.overload5 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_from_multiple.overload6 receive_from_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      asio::error_code & ec,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_from_multiple.overload6 more...]]``
+
+
+[section:overload1 basic_datagram_socket::receive_from_multiple (1 of 6 overloads)]
+
+
+Receive multiple datagrams with the endpoints of the senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes);
+
+
+This function is used to receive multiple datagrams, recording the endpoint of the remote sender of each. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::receive_from_multiple (2 of 6 overloads)]
+
+
+Receive multiple datagrams with the endpoints of the senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags);
+
+
+This function is used to receive multiple datagrams, recording the endpoint of the remote sender of each. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_datagram_socket::receive_from_multiple (3 of 6 overloads)]
+
+
+Receive multiple datagrams with the endpoints of the senders. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+
+
+This function is used to receive multiple datagrams, recording the endpoint of the remote sender of each. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_datagram_socket::receive_from_multiple (4 of 6 overloads)]
+
+
+Receive multiple datagrams and their flags with the sender endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to receive multiple datagrams, recording the endpoint of the remote sender of each. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 basic_datagram_socket::receive_from_multiple (5 of 6 overloads)]
+
+
+Receive multiple datagrams and their flags with the sender endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to receive multiple datagrams, recording the endpoint of the remote sender of each. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 basic_datagram_socket::receive_from_multiple (6 of 6 overloads)]
+
+
+Receive multiple datagrams and their flags with the sender endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableEndpointSequence MutableEndpointSequence]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t receive_from_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableEndpointSequence && endpoints,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      asio::error_code & ec,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to receive multiple datagrams, recording the endpoint of the remote sender of each. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[endpoints][A forward range of endpoint objects, one per datagram, that receive the endpoint of the remote sender of each datagram.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 
 [section:receive_low_watermark basic_datagram_socket::receive_low_watermark]
 
@@ -21680,6 +23267,424 @@ Getting the current option value:
 
 [endsect]
 
+
+[section:receive_multiple basic_datagram_socket::receive_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.receive_multiple..receive_multiple..basic_datagram_socket] 
+Receive multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_multiple.overload1 receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_multiple.overload2 receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_multiple.overload2 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_multiple.overload3 receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_multiple.overload3 more...]]``
+
+
+Receive multiple datagrams and their flags on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_multiple.overload4 receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_multiple.overload4 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_multiple.overload5 receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_multiple.overload5 more...]]``
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.receive_multiple.overload6 receive_multiple]``(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      asio::error_code & ec,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.receive_multiple.overload6 more...]]``
+
+
+[section:overload1 basic_datagram_socket::receive_multiple (1 of 6 overloads)]
+
+
+Receive multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes);
+
+
+This function is used to receive multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+The receive\_multiple operation can only be used with a connected socket. Use the receive\_from\_multiple function to receive data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::receive_multiple (2 of 6 overloads)]
+
+
+Receive multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags);
+
+
+This function is used to receive multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+The receive\_multiple operation can only be used with a connected socket. Use the receive\_from\_multiple function to receive data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_datagram_socket::receive_multiple (3 of 6 overloads)]
+
+
+Receive multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``>
+  std::size_t receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+
+
+This function is used to receive multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Remarks]
+      
+The receive\_multiple operation can only be used with a connected socket. Use the receive\_from\_multiple function to receive data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload4 basic_datagram_socket::receive_multiple (4 of 6 overloads)]
+
+
+Receive multiple datagrams and their flags on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to receive multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+The receive\_multiple operation can only be used with a connected socket. Use the receive\_from\_multiple function to receive data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload5 basic_datagram_socket::receive_multiple (5 of 6 overloads)]
+
+
+Receive multiple datagrams and their flags on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to receive multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+The receive\_multiple operation can only be used with a connected socket. Use the receive\_from\_multiple function to receive data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload6 basic_datagram_socket::receive_multiple (6 of 6 overloads)]
+
+
+Receive multiple datagrams and their flags on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.MutableBufferSequences MutableBufferSequences]``,
+      typename ``[link asio.reference.MutableSizeSequence MutableSizeSequence]``,
+      typename ``[link asio.reference.MutableFlagsSequence MutableFlagsSequence]``>
+  std::size_t receive_multiple(
+      MutableBufferSequences && buffer_sequences,
+      MutableSizeSequence && sizes,
+      socket_base::message_flags flags,
+      MutableFlagsSequence && out_flags,
+      asio::error_code & ec,
+      constraint_t< is_shallow_mutable_sequence< decay_t< MutableFlagsSequence > >::value >  = 0);
+
+
+This function is used to receive multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been received successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of mutable buffer sequences, one per datagram, into which the data will be received.]]
+
+[[sizes][A forward range of `std::size_t`, one per datagram, into which the number of bytes received in each datagram is written.]]
+
+[[flags][Flags specifying how the receive call is to be made.]]
+
+[[out_flags][A forward range of `socket_base::message_flags`, one per datagram, into which the flags associated with each received datagram are written.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams received.
+
+
+[heading Remarks]
+      
+The receive\_multiple operation can only be used with a connected socket. Use the receive\_from\_multiple function to receive data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+[endsect]
 
 [section:release basic_datagram_socket::release]
 
@@ -22389,6 +24394,187 @@ Getting the current option value:
 [endsect]
 
 
+[section:send_multiple basic_datagram_socket::send_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.send_multiple..send_multiple..basic_datagram_socket] 
+Send multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.send_multiple.overload1 send_multiple]``(
+      ConstBufferSequences && buffer_sequences);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.send_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.send_multiple.overload2 send_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      socket_base::message_flags flags);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.send_multiple.overload2 more...]]``
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.send_multiple.overload3 send_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.send_multiple.overload3 more...]]``
+
+
+[section:overload1 basic_datagram_socket::send_multiple (1 of 3 overloads)]
+
+
+Send multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``>
+  std::size_t send_multiple(
+      ConstBufferSequences && buffer_sequences);
+
+
+This function is used to send multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been sent successfully or an error occurs. The number of datagrams sent may be less than the length of the range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams sent.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+The send\_multiple operation can only be used with a connected socket. Use the send\_to\_multiple function to send data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::send_multiple (2 of 3 overloads)]
+
+
+Send multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``>
+  std::size_t send_multiple(
+      ConstBufferSequences && buffer_sequences,
+      socket_base::message_flags flags);
+
+
+This function is used to send multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been sent successfully or an error occurs. The number of datagrams sent may be less than the length of the range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send.]]
+
+[[flags][Flags specifying how the send call is to be made.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams sent.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure.]]
+
+]
+
+
+[heading Remarks]
+      
+The send\_multiple operation can only be used with a connected socket. Use the send\_to\_multiple function to send data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_datagram_socket::send_multiple (3 of 3 overloads)]
+
+
+Send multiple datagrams on a connected socket. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``>
+  std::size_t send_multiple(
+      ConstBufferSequences && buffer_sequences,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+
+
+This function is used to send multiple datagrams on the datagram socket. The function call will block until one or more datagrams have been sent successfully or an error occurs. The number of datagrams sent may be less than the length of the range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send.]]
+
+[[flags][Flags specifying how the send call is to be made.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams sent.
+
+
+[heading Remarks]
+      
+The send\_multiple operation can only be used with a connected socket. Use the send\_to\_multiple function to send data on an unconnected datagram socket. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
 [section:send_to basic_datagram_socket::send_to]
 
 [indexterm2 asio.indexterm.basic_datagram_socket.send_to..send_to..basic_datagram_socket] 
@@ -22570,6 +24756,190 @@ This function is used to send a datagram to the specified remote endpoint. The f
 [heading Return Value]
       
 The number of bytes sent. 
+
+
+
+
+[endsect]
+
+
+[endsect]
+
+[section:send_to_multiple basic_datagram_socket::send_to_multiple]
+
+[indexterm2 asio.indexterm.basic_datagram_socket.send_to_multiple..send_to_multiple..basic_datagram_socket] 
+Send multiple datagrams to the specified endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.send_to_multiple.overload1 send_to_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.send_to_multiple.overload1 more...]]``
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.send_to_multiple.overload2 send_to_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      socket_base::message_flags flags);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.send_to_multiple.overload2 more...]]``
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``>
+  std::size_t ``[link asio.reference.basic_datagram_socket.send_to_multiple.overload3 send_to_multiple]``(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+  ``  [''''&raquo;''' [link asio.reference.basic_datagram_socket.send_to_multiple.overload3 more...]]``
+
+
+[section:overload1 basic_datagram_socket::send_to_multiple (1 of 3 overloads)]
+
+
+Send multiple datagrams to the specified endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``>
+  std::size_t send_to_multiple(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints);
+
+
+This function is used to send multiple datagrams to the specified remote endpoints. The function call will block until one or more datagrams have been sent successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send.]]
+
+[[endpoints][A forward range of destination endpoints, one per datagram.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams sent.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload2 basic_datagram_socket::send_to_multiple (2 of 3 overloads)]
+
+
+Send multiple datagrams to the specified endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``>
+  std::size_t send_to_multiple(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      socket_base::message_flags flags);
+
+
+This function is used to send multiple datagrams to the specified remote endpoints. The function call will block until one or more datagrams have been sent successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send.]]
+
+[[endpoints][A forward range of destination endpoints, one per datagram.]]
+
+[[flags][Flags specifying how the send call is to be made.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams sent.
+
+
+[heading Exceptions]
+    
+
+[variablelist
+  
+[[asio::system_error][Thrown on failure. ]]
+
+]
+
+
+
+
+[endsect]
+
+
+
+[section:overload3 basic_datagram_socket::send_to_multiple (3 of 3 overloads)]
+
+
+Send multiple datagrams to the specified endpoints. 
+
+
+  template<
+      typename ``[link asio.reference.ConstBufferSequences ConstBufferSequences]``,
+      typename ``[link asio.reference.EndpointSequence EndpointSequence]``>
+  std::size_t send_to_multiple(
+      ConstBufferSequences && buffer_sequences,
+      EndpointSequence && endpoints,
+      socket_base::message_flags flags,
+      asio::error_code & ec);
+
+
+This function is used to send multiple datagrams to the specified remote endpoints. The function call will block until one or more datagrams have been sent successfully or an error occurs. The number of datagrams transferred may be less than the length of the shortest range.
+
+
+[heading Parameters]
+    
+
+[variablelist
+  
+[[buffer_sequences][A forward range of buffer sequences, one per datagram to send.]]
+
+[[endpoints][A forward range of destination endpoints, one per datagram.]]
+
+[[flags][Flags specifying how the send call is to be made.]]
+
+[[ec][Set to indicate what error occurred, if any.]]
+
+]
+
+
+[heading Return Value]
+      
+The number of datagrams sent. 
 
 
 
@@ -23351,13 +25721,37 @@ The socket type when rebound to the specified executor.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_receive_from_multiple [*async_receive_from_multiple]]]
+    [Start an asynchronous receive of multiple datagrams with their senders. 
+     [hr]
+     Start an asynchronous receive of datagrams with their senders and flags. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive_multiple [*async_receive_multiple]]]
+    [Start an asynchronous receive of multiple datagrams on a connected socket. 
+     [hr]
+     Start an asynchronous receive of multiple datagrams and their flags. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send [*async_send]]]
     [Start an asynchronous send on a connected socket. ]
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_send_multiple [*async_send_multiple]]]
+    [Start an asynchronous send of multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send_to [*async_send_to]]]
     [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send_to_multiple [*async_send_to_multiple]]]
+    [Start an asynchronous send of multiple datagrams to the endpoints. ]
   ]
   
   [
@@ -23484,6 +25878,20 @@ The socket type when rebound to the specified executor.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.receive_from_multiple [*receive_from_multiple]]]
+    [Receive multiple datagrams with the endpoints of the senders. 
+     [hr]
+     Receive multiple datagrams and their flags with the sender endpoints. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive_multiple [*receive_multiple]]]
+    [Receive multiple datagrams on a connected socket. 
+     [hr]
+     Receive multiple datagrams and their flags on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.release [*release]]]
     [Release ownership of the underlying native socket. ]
   ]
@@ -23499,8 +25907,18 @@ The socket type when rebound to the specified executor.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.send_multiple [*send_multiple]]]
+    [Send multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.send_to [*send_to]]]
     [Send a datagram to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send_to_multiple [*send_to_multiple]]]
+    [Send multiple datagrams to the specified endpoints. ]
   ]
   
   [
@@ -124349,13 +126767,37 @@ The generic socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_receive_from_multiple [*async_receive_from_multiple]]]
+    [Start an asynchronous receive of multiple datagrams with their senders. 
+     [hr]
+     Start an asynchronous receive of datagrams with their senders and flags. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive_multiple [*async_receive_multiple]]]
+    [Start an asynchronous receive of multiple datagrams on a connected socket. 
+     [hr]
+     Start an asynchronous receive of multiple datagrams and their flags. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send [*async_send]]]
     [Start an asynchronous send on a connected socket. ]
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_send_multiple [*async_send_multiple]]]
+    [Start an asynchronous send of multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send_to [*async_send_to]]]
     [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send_to_multiple [*async_send_to_multiple]]]
+    [Start an asynchronous send of multiple datagrams to the endpoints. ]
   ]
   
   [
@@ -124482,6 +126924,20 @@ The generic socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.receive_from_multiple [*receive_from_multiple]]]
+    [Receive multiple datagrams with the endpoints of the senders. 
+     [hr]
+     Receive multiple datagrams and their flags with the sender endpoints. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive_multiple [*receive_multiple]]]
+    [Receive multiple datagrams on a connected socket. 
+     [hr]
+     Receive multiple datagrams and their flags on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.release [*release]]]
     [Release ownership of the underlying native socket. ]
   ]
@@ -124497,8 +126953,18 @@ The generic socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.send_multiple [*send_multiple]]]
+    [Send multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.send_to [*send_to]]]
     [Send a datagram to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send_to_multiple [*send_to_multiple]]]
+    [Send multiple datagrams to the specified endpoints. ]
   ]
   
   [
@@ -150923,13 +153389,37 @@ The UDP socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_receive_from_multiple [*async_receive_from_multiple]]]
+    [Start an asynchronous receive of multiple datagrams with their senders. 
+     [hr]
+     Start an asynchronous receive of datagrams with their senders and flags. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive_multiple [*async_receive_multiple]]]
+    [Start an asynchronous receive of multiple datagrams on a connected socket. 
+     [hr]
+     Start an asynchronous receive of multiple datagrams and their flags. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send [*async_send]]]
     [Start an asynchronous send on a connected socket. ]
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_send_multiple [*async_send_multiple]]]
+    [Start an asynchronous send of multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send_to [*async_send_to]]]
     [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send_to_multiple [*async_send_to_multiple]]]
+    [Start an asynchronous send of multiple datagrams to the endpoints. ]
   ]
   
   [
@@ -151056,6 +153546,20 @@ The UDP socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.receive_from_multiple [*receive_from_multiple]]]
+    [Receive multiple datagrams with the endpoints of the senders. 
+     [hr]
+     Receive multiple datagrams and their flags with the sender endpoints. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive_multiple [*receive_multiple]]]
+    [Receive multiple datagrams on a connected socket. 
+     [hr]
+     Receive multiple datagrams and their flags on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.release [*release]]]
     [Release ownership of the underlying native socket. ]
   ]
@@ -151071,8 +153575,18 @@ The UDP socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.send_multiple [*send_multiple]]]
+    [Send multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.send_to [*send_to]]]
     [Send a datagram to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send_to_multiple [*send_to_multiple]]]
+    [Send multiple datagrams to the specified endpoints. ]
   ]
   
   [
@@ -152033,6 +154547,33 @@ The value member is true only if the Stream type supports buffering of read data
 
 [endsect]
 
+
+
+[endsect]
+
+[section:is_shallow_mutable_sequence is_shallow_mutable_sequence]
+
+[indexterm1 asio.indexterm.is_shallow_mutable_sequence..is_shallow_mutable_sequence]
+
+
+The [link asio.reference.is_shallow_mutable_sequence `is_shallow_mutable_sequence`] class is a traits class that may be used to determine whether a type is a range whose copies refer to the same writable elements. 
+
+
+  template<
+      typename T>
+  struct is_shallow_mutable_sequence :
+    public integral_constant< bool, automatically_determined >
+
+
+By default, the trait is true for a `std::reference_wrapper` to a range, a range of `std::reference_wrapper` elements, and a borrowed range such as `std::span`, provided that the elements are writable. Owning containers such as `std::vector` are not shallow mutable sequences.
+
+A program may specialise this traits type if the `T` template parameter in the specialisation is a user-defined type. 
+
+[heading Requirements]
+
+['Header: ][^asio/is_shallow_mutable_sequence.hpp]
+
+['Convenience header: ][^asio.hpp]
 
 
 [endsect]
@@ -153415,13 +155956,37 @@ The UNIX domain socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_receive_from_multiple [*async_receive_from_multiple]]]
+    [Start an asynchronous receive of multiple datagrams with their senders. 
+     [hr]
+     Start an asynchronous receive of datagrams with their senders and flags. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_receive_multiple [*async_receive_multiple]]]
+    [Start an asynchronous receive of multiple datagrams on a connected socket. 
+     [hr]
+     Start an asynchronous receive of multiple datagrams and their flags. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send [*async_send]]]
     [Start an asynchronous send on a connected socket. ]
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.async_send_multiple [*async_send_multiple]]]
+    [Start an asynchronous send of multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.async_send_to [*async_send_to]]]
     [Start an asynchronous send. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.async_send_to_multiple [*async_send_to_multiple]]]
+    [Start an asynchronous send of multiple datagrams to the endpoints. ]
   ]
   
   [
@@ -153548,6 +156113,20 @@ The UNIX domain socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.receive_from_multiple [*receive_from_multiple]]]
+    [Receive multiple datagrams with the endpoints of the senders. 
+     [hr]
+     Receive multiple datagrams and their flags with the sender endpoints. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.receive_multiple [*receive_multiple]]]
+    [Receive multiple datagrams on a connected socket. 
+     [hr]
+     Receive multiple datagrams and their flags on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.release [*release]]]
     [Release ownership of the underlying native socket. ]
   ]
@@ -153563,8 +156142,18 @@ The UNIX domain socket type.
   ]
   
   [
+    [[link asio.reference.basic_datagram_socket.send_multiple [*send_multiple]]]
+    [Send multiple datagrams on a connected socket. ]
+  ]
+  
+  [
     [[link asio.reference.basic_datagram_socket.send_to [*send_to]]]
     [Send a datagram to the specified endpoint. ]
+  ]
+  
+  [
+    [[link asio.reference.basic_datagram_socket.send_to_multiple [*send_to_multiple]]]
+    [Send multiple datagrams to the specified endpoints. ]
   ]
   
   [
@@ -158903,6 +161492,27 @@ An argument placeholder, for use with std::bind() or boost::bind(), that corresp
 
 
   unspecified iterator;
+
+
+[heading Requirements]
+
+['Header: ][^asio/placeholders.hpp]
+
+['Convenience header: ][^asio.hpp]
+
+
+[endsect]
+
+
+
+[section:placeholders__messages_transferred placeholders::messages_transferred]
+
+[indexterm1 asio.indexterm.placeholders__messages_transferred..placeholders::messages_transferred]
+
+An argument placeholder, for use with std::bind() or boost::bind(), that corresponds to the messages\_transferred argument of a handler for asynchronous functions such as [link asio.reference.basic_datagram_socket.async_send_multiple `basic_datagram_socket::async_send_multiple`]. 
+
+
+  unspecified messages_transferred;
 
 
 [heading Requirements]
