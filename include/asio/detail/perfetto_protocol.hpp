@@ -126,7 +126,8 @@ enum class sequence_flags : uint32_t
 enum class builtin_clock : uint32_t
 {
   realtime = 1,
-  monotonic = 3
+  monotonic = 3,
+  boottime = 6
 };
 
 struct limits
@@ -455,6 +456,11 @@ inline void encode(encoder& enc, const clock_snapshot_packet& packet)
   enc.varint_field(clock_field::clock_id, builtin_clock::realtime);
   enc.varint_field(clock_field::timestamp, packet.realtime_ns);
   enc.end_submessage(real_len);
+
+  uint32_t boot_len = enc.begin_submessage(clock_snapshot_field::clocks);
+  enc.varint_field(clock_field::clock_id, builtin_clock::boottime);
+  enc.varint_field(clock_field::timestamp, packet.monotonic_ns);
+  enc.end_submessage(boot_len);
 
   enc.varint_field(clock_snapshot_field::primary_trace_clock,
       builtin_clock::monotonic);
