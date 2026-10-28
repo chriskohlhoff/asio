@@ -794,14 +794,14 @@ private:
   void complete_default(Function& function, Handler& handler,
       const IoExecutor& io_ex, false_type)
   {
-    associated_immediate_executor_t<Handler, IoExecutor> immediate_ex =
-      (get_associated_immediate_executor)(handler, io_ex);
+    typedef associated_immediate_executor_t<Handler, IoExecutor>
+      immediate_ex_type;
 
-    associated_allocator_t<Function> alloc(
-        (get_associated_allocator)(function));
+    immediate_ex_type immediate_ex = (get_associated_immediate_executor)(
+        handler, io_ex);
 
-    asio::prefer(immediate_ex, execution::allocator(alloc)).execute(
-        asio::detail::bind_handler(static_cast<Function&&>(function)));
+    (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
+        static_cast<Function&&>(function), empty_work_function());
   }
 
   template <typename Function>

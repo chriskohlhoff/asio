@@ -21,8 +21,10 @@
 
 #include <cstring>
 #include <functional>
+#include "asio/any_io_executor.hpp"
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/cancellation_signal.hpp"
+#include "asio/executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/read.hpp"
 #include "asio/write.hpp"
@@ -1351,6 +1353,67 @@ void test()
 
 //------------------------------------------------------------------------------
 
+// ip_tcp_socket_immediate_runtime test
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The following test checks the immediate completion of an ip::tcp::socket
+// asynchronous operation, using a variety of I/O executor types.
+
+namespace ip_tcp_socket_immediate_runtime {
+
+void handle_read_noop(const asio::error_code& err,
+    size_t bytes_transferred, bool* called)
+{
+  *called = true;
+  ASIO_CHECK(!err);
+  ASIO_CHECK(bytes_transferred == 0);
+}
+
+template <typename Executor>
+void test_immediate(asio::io_context& ioc, const Executor& ex)
+{
+  using namespace asio;
+  namespace ip = asio::ip;
+
+  namespace bindns = std;
+  using bindns::placeholders::_1;
+  using bindns::placeholders::_2;
+
+  ip::tcp::acceptor acceptor(ioc, ip::tcp::endpoint(ip::tcp::v4(), 0));
+  ip::tcp::endpoint server_endpoint = acceptor.local_endpoint();
+  server_endpoint.address(ip::address_v4::loopback());
+
+  basic_stream_socket<ip::tcp, Executor> client_side_socket(ex);
+  ip::tcp::socket server_side_socket(ioc);
+
+  client_side_socket.connect(server_endpoint);
+  acceptor.accept(server_side_socket);
+
+  bool read_noop_completed = false;
+  client_side_socket.async_read_some(mutable_buffer(0, 0),
+      bindns::bind(handle_read_noop, _1, _2, &read_noop_completed));
+
+  ASIO_CHECK(!read_noop_completed);
+
+  ioc.restart();
+  ioc.run();
+  ASIO_CHECK(read_noop_completed);
+}
+
+void test()
+{
+  asio::io_context ioc;
+
+  test_immediate(ioc, ioc.get_executor());
+  test_immediate(ioc, asio::any_io_executor(ioc.get_executor()));
+#if !defined(ASIO_NO_TS_EXECUTORS)
+  test_immediate(ioc, asio::executor(ioc.get_executor()));
+#endif // !defined(ASIO_NO_TS_EXECUTORS)
+}
+
+} // namespace ip_tcp_socket_immediate_runtime
+
+//------------------------------------------------------------------------------
+
 // ip_tcp_cancellation_runtime test
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // The following test checks the runtime operation of per-operation
@@ -1514,6 +1577,7 @@ ASIO_TEST_SUITE
   ASIO_COMPILE_TEST_CASE(ip_tcp_socket_compile::test)
   ASIO_TEST_CASE(ip_tcp_socket_runtime::test)
   ASIO_TEST_CASE(ip_tcp_socket_async_wait_runtime::test)
+  ASIO_TEST_CASE(ip_tcp_socket_immediate_runtime::test)
   ASIO_TEST_CASE(ip_tcp_cancellation_runtime::test)
   ASIO_COMPILE_TEST_CASE(ip_tcp_acceptor_compile::test)
   ASIO_TEST_CASE(ip_tcp_acceptor_runtime::test)
