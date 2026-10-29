@@ -750,7 +750,8 @@ private:
   void complete_impl(Function& function, Handler& handler,
       const IoExecutor& io_ex, false_type)
   {
-    if (immediate_executor_is_candidate(handler, io_ex))
+    if (immediate_executor_is_candidate(handler, io_ex)
+        && this->io_executor_is_completion_executor(handler, io_ex))
     {
       this->complete_default(function, handler, io_ex,
           integral_constant<bool,
@@ -820,6 +821,39 @@ private:
 
     (initiate_dispatch_with_executor<const immediate_ex_type&>(immediate_ex))(
         static_cast<Function&&>(function), empty_work_function());
+  }
+
+  bool io_executor_is_completion_executor(
+      Handler& handler, const IoExecutor& io_ex)
+  {
+    return io_executor_is_completion_executor(handler, io_ex,
+        has_associated_executor<Handler, IoExecutor>());
+  }
+
+  bool io_executor_is_completion_executor(Handler&,
+      const IoExecutor&, false_type)
+  {
+    return true;
+  }
+
+  bool io_executor_is_completion_executor(Handler& handler,
+      const IoExecutor& io_ex, true_type)
+  {
+    return io_executor_is_completion_executor(handler, io_ex,
+        typename handler_work_type::base2_type::work_ownership());
+  }
+
+  bool io_executor_is_completion_executor(Handler&,
+      const IoExecutor&, handler_work_ownership::maybe)
+  {
+    return !handler_work_.associated_executor_owns_work();
+  }
+
+  bool io_executor_is_completion_executor(Handler& handler,
+      const IoExecutor& io_ex, handler_work_ownership::always)
+  {
+    return execution::detail::executor_targets_equal(
+        (asio::get_associated_executor)(handler, io_ex), io_ex);
   }
 
   handler_work_type handler_work_;

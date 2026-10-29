@@ -23,12 +23,15 @@
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/bind_immediate_executor.hpp"
+#include "asio/compose.hpp"
+#include "asio/dispatch.hpp"
 #include "asio/error.hpp"
 #include "asio/inline_executor.hpp"
 #include "asio/io_context.hpp"
 #include "asio/ip/tcp.hpp"
 #include "asio/read.hpp"
 #include "asio/steady_timer.hpp"
+#include "asio/strand.hpp"
 #include "asio/thread_pool.hpp"
 
 namespace bindns = std;
@@ -770,6 +773,257 @@ void any_completion_handler_composed_bound_executor_test()
   ASIO_CHECK(handlers_run == 1);
 }
 
+void any_completion_handler_immediate_bound_executor_test()
+{
+  asio::io_context ioc;
+  asio::any_io_executor io_ex(ioc.get_executor());
+  auto pair = make_connected_pair(ioc, io_ex);
+  asio::ip::tcp::socket& server = pair.second;
+
+  asio::io_context ioc2;
+  asio::any_completion_executor io_ex2(ioc2.get_executor());
+
+  int fire_count = 0;
+
+  server.async_read_some(asio::mutable_buffer(),
+      asio::any_completion_handler<void(asio::error_code, std::size_t)>(
+        asio::bind_executor(io_ex2,
+          [&](asio::error_code, std::size_t)
+          {
+            ++fire_count;
+          })));
+
+  ioc.run();
+
+  ASIO_CHECK(fire_count == 0);
+
+  std::size_t handlers_run = ioc2.run();
+
+  ASIO_CHECK(fire_count == 1);
+  ASIO_CHECK(handlers_run == 1);
+}
+
+void any_completion_handler_immediate_binder_over_erased_executor_test()
+{
+  asio::io_context ioc;
+  asio::any_io_executor io_ex(ioc.get_executor());
+  auto pair = make_connected_pair(ioc, io_ex);
+  asio::ip::tcp::socket& server = pair.second;
+
+  asio::io_context ioc2;
+  asio::any_io_executor io_ex2(ioc2.get_executor());
+
+  int fire_count = 0;
+
+  server.async_read_some(asio::mutable_buffer(),
+      asio::bind_executor(io_ex2,
+        asio::any_completion_handler<void(asio::error_code, std::size_t)>(
+          [&](asio::error_code, std::size_t)
+          {
+            ++fire_count;
+          })));
+
+  ioc.run();
+
+  ASIO_CHECK(fire_count == 0);
+
+  std::size_t handlers_run = ioc2.run();
+
+  ASIO_CHECK(fire_count == 1);
+  ASIO_CHECK(handlers_run == 1);
+}
+
+void any_completion_handler_immediate_strand_executor_test()
+{
+  asio::io_context ioc;
+  asio::any_io_executor io_ex(ioc.get_executor());
+  auto pair = make_connected_pair(ioc, io_ex);
+  asio::ip::tcp::socket& server = pair.second;
+
+  asio::strand<asio::io_context::executor_type> strand
+    = asio::make_strand(ioc.get_executor());
+
+  int fire_count = 0;
+  bool in_strand = false;
+
+  server.async_read_some(asio::mutable_buffer(),
+      asio::any_completion_handler<void(asio::error_code, std::size_t)>(
+        asio::bind_executor(strand,
+          [&](asio::error_code, std::size_t)
+          {
+            ++fire_count;
+            in_strand = strand.running_in_this_thread();
+          })));
+
+  ioc.run();
+
+  ASIO_CHECK(fire_count == 1);
+  ASIO_CHECK(in_strand);
+}
+
+void any_completion_handler_immediate_concrete_io_executor_test()
+{
+  typedef asio::basic_stream_socket<asio::ip::tcp,
+      asio::io_context::executor_type> socket_type;
+
+  asio::io_context ioc;
+  asio::ip::tcp::acceptor acceptor(ioc,
+      asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 0));
+  socket_type client(ioc.get_executor());
+  client.connect(asio::ip::tcp::endpoint(
+        asio::ip::address_v4::loopback(), acceptor.local_endpoint().port()));
+  asio::ip::tcp::socket server = acceptor.accept();
+
+  asio::io_context ioc2;
+  asio::any_completion_executor io_ex2(ioc2.get_executor());
+
+  int fire_count = 0;
+
+  client.async_read_some(asio::mutable_buffer(),
+      asio::any_completion_handler<void(asio::error_code, std::size_t)>(
+        asio::bind_executor(io_ex2,
+          [&](asio::error_code, std::size_t)
+          {
+            ++fire_count;
+          })));
+
+  ioc.run();
+
+  ASIO_CHECK(fire_count == 0);
+
+  std::size_t handlers_run = ioc2.run();
+
+  ASIO_CHECK(fire_count == 1);
+  ASIO_CHECK(handlers_run == 1);
+}
+
+struct immediate_strand_op
+{
+  asio::ip::tcp::socket& socket;
+  asio::strand<asio::io_context::executor_type> strand;
+  bool* read_in_strand;
+  bool* completed_in_strand;
+  int state;
+
+  template <typename Self>
+  void operator()(Self& self, asio::error_code = asio::error_code(),
+      std::size_t = 0)
+  {
+    if (state == 0)
+    {
+      *read_in_strand = strand.running_in_this_thread();
+      state = 1;
+      socket.async_read_some(asio::mutable_buffer(), std::move(self));
+    }
+    else
+    {
+      *completed_in_strand = strand.running_in_this_thread();
+      self.complete(asio::error_code());
+    }
+  }
+};
+
+void any_completion_handler_immediate_composed_strand_test()
+{
+  asio::io_context ioc;
+  asio::any_io_executor io_ex(ioc.get_executor());
+  auto pair = make_connected_pair(ioc, io_ex);
+  asio::ip::tcp::socket& server = pair.second;
+
+  asio::strand<asio::io_context::executor_type> strand
+    = asio::make_strand(ioc.get_executor());
+
+  int fire_count = 0;
+  bool read_in_strand = false;
+  bool completed_in_strand = false;
+
+  asio::dispatch(strand,
+      [&]()
+      {
+        asio::any_completion_handler<void(asio::error_code)> handler(
+            asio::bind_executor(strand,
+              [&](asio::error_code)
+              {
+                ++fire_count;
+              }));
+
+        asio::async_compose<
+          asio::any_completion_handler<void(asio::error_code)>,
+          void(asio::error_code)>(
+            immediate_strand_op{server, strand,
+              &read_in_strand, &completed_in_strand, 0},
+            handler, server);
+      });
+
+  ioc.run();
+
+  ASIO_CHECK(fire_count == 1);
+  ASIO_CHECK(read_in_strand);
+  ASIO_CHECK(completed_in_strand);
+}
+
+void non_erased_immediate_bound_executor_test()
+{
+  asio::io_context ioc;
+  asio::any_io_executor io_ex(ioc.get_executor());
+  auto pair = make_connected_pair(ioc, io_ex);
+  asio::ip::tcp::socket& server = pair.second;
+
+  asio::strand<asio::io_context::executor_type> strand
+    = asio::make_strand(ioc.get_executor());
+
+  int fire_count = 0;
+  bool in_strand = false;
+
+  server.async_read_some(asio::mutable_buffer(),
+      asio::bind_immediate_executor(
+        asio::any_io_executor(
+          asio::require(io_ex, asio::execution::blocking.never)),
+        asio::bind_executor(strand,
+          [&](asio::error_code, std::size_t)
+          {
+            ++fire_count;
+            in_strand = strand.running_in_this_thread();
+          })));
+
+  ioc.run();
+
+  ASIO_CHECK(fire_count == 1);
+  ASIO_CHECK(in_strand);
+}
+
+void any_completion_handler_immediate_default_executor_test()
+{
+  asio::io_context ioc;
+  asio::any_io_executor io_ex(ioc.get_executor());
+  auto pair = make_connected_pair(ioc, io_ex);
+  asio::ip::tcp::socket& server = pair.second;
+
+  int fire_count = 0;
+
+  server.async_read_some(asio::mutable_buffer(),
+      asio::any_completion_handler<void(asio::error_code, std::size_t)>(
+        [&](asio::error_code, std::size_t)
+        {
+          ++fire_count;
+        }));
+
+  server.async_read_some(asio::mutable_buffer(),
+      asio::any_completion_handler<void(asio::error_code, std::size_t)>(
+        asio::bind_executor(io_ex,
+          [&](asio::error_code, std::size_t)
+          {
+            ++fire_count;
+          })));
+
+  ASIO_CHECK(fire_count == 0);
+
+  std::size_t handlers_run = ioc.run();
+
+  ASIO_CHECK(fire_count == 2);
+  ASIO_CHECK(handlers_run == 2);
+}
+
 // The binder OUTSIDE the erasure, wrapping a handler that does have the
 // default association. This is what the associator-forwarding guard exists
 // for: the binder forwards every association except the executor, which it
@@ -825,6 +1079,13 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(any_completion_handler_concrete_io_executor_test)
   ASIO_TEST_CASE(any_completion_handler_composed_operation_test)
   ASIO_TEST_CASE(any_completion_handler_composed_bound_executor_test)
+  ASIO_TEST_CASE(any_completion_handler_immediate_bound_executor_test)
+  ASIO_TEST_CASE(any_completion_handler_immediate_binder_over_erased_executor_test)
+  ASIO_TEST_CASE(any_completion_handler_immediate_strand_executor_test)
+  ASIO_TEST_CASE(any_completion_handler_immediate_concrete_io_executor_test)
+  ASIO_TEST_CASE(any_completion_handler_immediate_composed_strand_test)
+  ASIO_TEST_CASE(any_completion_handler_immediate_default_executor_test)
+  ASIO_TEST_CASE(non_erased_immediate_bound_executor_test)
   ASIO_TEST_CASE(any_completion_handler_binder_over_erased_executor_test)
   ASIO_TEST_CASE(any_completion_handler_default_allocator_test)
   ASIO_TEST_CASE(any_completion_handler_custom_allocator_test)
