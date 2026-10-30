@@ -842,7 +842,7 @@ public:
    * @code
    * asio::ip::tcp::socket socket(my_context);
    * asio::ip::tcp::endpoint endpoint(
-   *     asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     asio::ip::make_address("1.2.3.4"), 12345);
    * socket.connect(endpoint);
    * @endcode
    */
@@ -878,7 +878,7 @@ public:
    * @code
    * asio::ip::tcp::socket socket(my_context);
    * asio::ip::tcp::endpoint endpoint(
-   *     asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     asio::ip::make_address("1.2.3.4"), 12345);
    * asio::error_code ec;
    * socket.connect(endpoint, ec);
    * if (ec)
@@ -947,7 +947,7 @@ public:
    *
    * asio::ip::tcp::socket socket(my_context);
    * asio::ip::tcp::endpoint endpoint(
-   *     asio::ip::address::from_string("1.2.3.4"), 12345);
+   *     asio::ip::make_address("1.2.3.4"), 12345);
    * socket.async_connect(endpoint, connect_handler);
    * @endcode
    *
