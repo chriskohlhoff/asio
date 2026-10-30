@@ -188,6 +188,35 @@ void test_dynamic_string_read_until_char()
   ASIO_CHECK(length == 25);
 }
 
+void test_read_until_last_byte()
+{
+  // The delimiter is the last byte read, as a character and as a
+  // one-character string.
+  static const size_t read_lengths[] = { 1, 10, 100 };
+
+  asio::io_context ioc;
+  test_stream s(ioc);
+  asio::error_code ec;
+
+  for (size_t i = 0; i < sizeof(read_lengths) / sizeof(read_lengths[0]); ++i)
+  {
+    std::string data;
+    s.reset(read_data, sizeof(read_data) - 1);
+    s.next_read_length(read_lengths[i]);
+    std::size_t length = asio::read_until(s,
+        asio::dynamic_buffer(data), 'z', ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(length == sizeof(read_data) - 1);
+
+    asio::streambuf sb;
+    s.reset(read_data, sizeof(read_data) - 1);
+    s.next_read_length(read_lengths[i]);
+    length = asio::read_until(s, sb, "z", ec);
+    ASIO_CHECK(!ec);
+    ASIO_CHECK(length == sizeof(read_data) - 1);
+  }
+}
+
 void test_streambuf_read_until_char()
 {
 #if !defined(ASIO_NO_DYNAMIC_BUFFER_V1)
@@ -1705,6 +1734,7 @@ ASIO_TEST_SUITE
 (
   "read_until",
   ASIO_TEST_CASE(test_dynamic_string_read_until_char)
+  ASIO_TEST_CASE(test_read_until_last_byte)
   ASIO_TEST_CASE(test_streambuf_read_until_char)
   ASIO_TEST_CASE(test_dynamic_string_read_until_string)
   ASIO_TEST_CASE(test_streambuf_read_until_string)
