@@ -1,0 +1,44 @@
+name: asio CI for Sun
+
+on:
+  push:
+    branches: [ master, citest-* ]
+  workflow_dispatch:
+
+concurrency:
+  group: sun-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: omnios, version: 'r151058' }
+    name: ${{ matrix.os }} ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start ${{ matrix.os }} ${{ matrix.version }} VM
+        uses: cross-platform-actions/action@v1.3.0
+        with:
+          operating_system: ${{ matrix.os }}
+          version: ${{ matrix.version }}
+      - name: Build and test
+        shell: cpa.sh {0}
+        run: |
+          set -e
+
+          # pkg exits with 4 when there is nothing to install.
+          sudo pkg install -v build-essential || [ $? -eq 4 ]
+
+          uname -a
+          g++ --version
+
+          export CXXFLAGS="-std=c++14 -Wall -Wextra -O2"
+          ./autogen.sh
+          ./configure --with-boost=no
+          gmake
+          gmake check
