@@ -198,7 +198,7 @@ void io_context::execute_immediately(io_context* ctx, Function&& f)
 {
   typedef decay_t<Function> function_type;
 
-  // Make a local, non-const copy of the function.
+  // Obtain a non-const instance of the function.
   detail::non_const_lvalue<Function> f2(f);
 
 #if defined(ASIO_NO_EXCEPTIONS)
