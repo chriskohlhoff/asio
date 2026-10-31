@@ -61,7 +61,7 @@ protected:
 
 private:
   friend class op_queue_access;
-  scheduler_operation* next_;
+  scheduler_operation* next_ ASIO_UNUSED_VARIABLE;
   func_type func_;
 protected:
   friend class scheduler;

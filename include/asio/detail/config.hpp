@@ -1615,6 +1615,9 @@
 #  define ASIO_UNUSED_VARIABLE __attribute__((__unused__))
 # endif // (__GNUC__ >= 4)
 #endif // defined(__GNUC__)
+#if defined(__clang__) && !defined(ASIO_UNUSED_VARIABLE)
+# define ASIO_UNUSED_VARIABLE __attribute__((__unused__))
+#endif // defined(__clang__) && !defined(ASIO_UNUSED_VARIABLE)
 #if !defined(ASIO_UNUSED_VARIABLE)
 # define ASIO_UNUSED_VARIABLE
 #endif // !defined(ASIO_UNUSED_VARIABLE)
