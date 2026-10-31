@@ -292,7 +292,7 @@ void dev_poll_reactor::run(long usec, op_queue<operation>& ops)
 
   // Block on the /dev/poll descriptor.
   ::pollfd events[128] = { { 0, 0, 0 } };
-  ::dvpoll dp = { 0, 0, 0 };
+  ::dvpoll dp = {};
   dp.dp_fds = events;
   dp.dp_nfds = 128;
   dp.dp_timeout = timeout;
