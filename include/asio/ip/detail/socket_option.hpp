@@ -37,10 +37,10 @@ template <int IPv4_Level, int IPv4_Name, int IPv6_Level, int IPv6_Name>
 class multicast_enable_loopback
 {
 public:
-#if defined(__sun) || defined(__osf__)
+#if defined(__osf__)
   typedef unsigned char ipv4_value_type;
   typedef unsigned char ipv6_value_type;
-#elif defined(_AIX) || defined(__hpux) || defined(__QNXNTO__)
+#elif defined(__sun) || defined(_AIX) || defined(__hpux) || defined(__QNXNTO__)
   typedef unsigned char ipv4_value_type;
   typedef unsigned int ipv6_value_type;
 #elif defined(__NetBSD__) || defined(__OpenBSD__)
