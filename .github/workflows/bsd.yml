@@ -51,4 +51,4 @@ jobs:
           ./autogen.sh
           ./configure --with-boost=no
           make
-          make check
+          make check || { find src/tests -name test-suite.log -exec cat {} +; exit 1; }

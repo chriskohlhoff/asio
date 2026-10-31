@@ -293,10 +293,14 @@ jobs:
     - name: Sanity check
       if: startsWith(matrix.build-type, 'sanity')
       working-directory: src/tests
-      run: make unit/io_context.log unit/ip/tcp.log unit/ts/net.log
+      run: |
+        make test-suite.log TEST_LOGS="unit/io_context.log unit/ip/tcp.log unit/ts/net.log" \
+          || { cat test-suite.log; exit 1; }
     - name: Build
       if: startsWith(matrix.build-type, 'full')
-      run: make && make check
+      run: |
+        make
+        make check || { find src/tests -name test-suite.log -exec cat {} +; exit 1; }
 
   handler-tracking:
     runs-on: ubuntu-24.04
