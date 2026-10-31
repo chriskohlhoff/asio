@@ -731,7 +731,7 @@ void test_spawn_nested()
 void test_spawn_many()
 {
   const int n = 16;
-  const int rounds = 4;
+  static const int rounds = 4;
 
   asio::io_context ctx;
   std::vector<int> counts(n, 0);
