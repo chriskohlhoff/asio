@@ -22,7 +22,7 @@ jobs:
           - { os: netbsd,  version: '10.1' }
     name: ${{ matrix.os }} ${{ matrix.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Start ${{ matrix.os }} ${{ matrix.version }} VM
         uses: cross-platform-actions/action@v1.3.0
         with:

@@ -274,7 +274,7 @@ jobs:
       CXX: ${{ matrix.compiler }}
       CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.spin-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install compiler
       run: sudo apt-get install -y ${{ matrix.compiler }}
     - name: Install liburing
@@ -305,7 +305,7 @@ jobs:
   handler-tracking:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install compiler
       run: sudo apt-get install -y g++-12
     - name: Build exerciser with the perfetto backend

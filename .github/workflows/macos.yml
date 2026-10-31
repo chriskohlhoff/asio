@@ -114,7 +114,7 @@ jobs:
       CXX: ${{ matrix.compiler }}
       CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.spin-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }} ${{ matrix.werror }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install autotools
       run: brew install automake
     - name: Install boost
