@@ -1,0 +1,136 @@
+name: asio CI for macOS
+
+on:
+  push:
+    branches: [ master, citest-* ]
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: ['sanity']
+        runs-on: [macos-latest]
+        compiler: [g++]
+        cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
+        separate-compilation: ['', '--enable-separate-compilation']
+        optim-level: ['-O0']
+        no-deprecated: ['']
+        select-reactor: ['', '-DASIO_DISABLE_KQUEUE']
+        handler-tracking: ['']
+        boost: ['']
+        boost-url: ['']
+        exclude:
+          # Older compilers don't support newer std variants
+          - runs-on: macos-latest
+            cxx-std: c++20
+          # Trim builds that use separate compilation
+          - runs-on: macos-latest
+            cxx-std: c++14
+            separate-compilation: --enable-separate-compilation
+          - runs-on: macos-latest
+            cxx-std: c++17
+            separate-compilation: --enable-separate-compilation
+        include:
+          #
+          # macOS / g++-15 -std=c++17 / -O0 / standalone / warnings as errors
+          #
+          - build-type: sanity
+            runs-on: macos-latest
+            compiler: g++-15
+            cxx-std: c++17
+            optim-level: -O0
+            werror: -Werror
+          #
+          # macOS / c++2a / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++2a
+            optim-level: -O2
+          #
+          # macOS / c++11 / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++11
+            optim-level: -O2
+          #
+          # macOS / c++11 / -O0 / standalone / kqueue disabled
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++11
+            optim-level: -O0
+            select-reactor: -DASIO_DISABLE_KQUEUE
+          #
+          # macOS / c++11 / -O0 / standalone / separate compilation
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++11
+            separate-compilation: --enable-separate-compilation
+            optim-level: -O0
+          #
+          # macOS / c++11 / -O2 / boost 1.83
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++11
+            optim-level: -O2
+            with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
+          #
+          # macOS / c++11 / -O2 / boost 1.83 / separate compilation
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++11
+            separate-compilation: --enable-separate-compilation
+            optim-level: -O0
+            with-boost: --with-boost=$GITHUB_WORKSPACE/boost_1_83_0
+            boost-url: https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2
+          #
+          # macOS / c++2a / -O2 / standalone / spin reactor
+          #
+          - build-type: full
+            runs-on: macos-latest
+            compiler: g++
+            cxx-std: c++2a
+            optim-level: -O2
+            spin-reactor: -DASIO_ENABLE_SPIN_REACTOR
+    runs-on: ${{ matrix.runs-on }}
+    env:
+      CXX: ${{ matrix.compiler }}
+      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.spin-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }} ${{ matrix.werror }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install autotools
+      run: brew install automake
+    - name: Install boost
+      if: startsWith(matrix.with-boost, '--with-boost=$GITHUB_WORKSPACE')
+      run: |
+        wget --quiet -O - ${{ matrix.boost-url }} | tar -xj
+    - name: Configure
+      run: |
+        ./autogen.sh
+        ./configure ${{ matrix.separate-compilation }} ${{ matrix.with-boost }} ${{ matrix.configure-libs }}
+    - name: Line length check
+      run: perl ./boostify.pl --includes-only
+    - name: Sanity check
+      if: startsWith(matrix.build-type, 'sanity')
+      working-directory: src/tests
+      run: make unit/io_context.log unit/ip/tcp.log unit/ts/net.log
+    - name: Build
+      if: startsWith(matrix.build-type, 'full')
+      run: make && make check
