@@ -41,16 +41,11 @@ namespace bindns = std;
 
 namespace {
 
-typedef asio::execution::detail::any_executor_base::object_type
-  any_executor_object_type;
-
 typedef trampoline<io_context::executor_type> small_trampoline_type;
 
 static_assert(
-    sizeof(small_trampoline_type)
-      <= sizeof(any_executor_object_type)
-      && alignment_of<small_trampoline_type>::value
-        <= alignment_of<any_executor_object_type>::value,
+    asio::execution::detail::any_executor_base::object_fits<
+      small_trampoline_type>::value,
     "trampoline<io_context::executor_type> no longer fits "
     "any_executor's small-object storage");
 

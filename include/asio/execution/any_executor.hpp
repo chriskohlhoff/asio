@@ -564,10 +564,7 @@ public:
           == execution::blocking.always))
   {
     any_executor_base::construct_object(ex,
-        integral_constant<bool,
-          sizeof(Executor) <= sizeof(object_type)
-            && alignment_of<Executor>::value <= alignment_of<object_type>::value
-        >());
+        integral_constant<bool, object_fits<Executor>::value>());
   }
 
   template <ASIO_EXECUTION_EXECUTOR Executor>
@@ -578,10 +575,7 @@ public:
           == execution::blocking.always))
   {
     any_executor_base::construct_object(std::nothrow, ex,
-        integral_constant<bool,
-          sizeof(Executor) <= sizeof(object_type)
-            && alignment_of<Executor>::value <= alignment_of<object_type>::value
-        >());
+        integral_constant<bool, object_fits<Executor>::value>());
     if (target_ == 0)
     {
       object_fns_ = 0;
@@ -869,15 +863,26 @@ protected:
   }
 
   template <typename Ex>
+  void* object_address() const noexcept
+  {
+    return alignment_of<Ex>::value <= object_align
+      ? const_cast<object_type*>(&object_)
+      : reinterpret_cast<void*>(
+          (reinterpret_cast<std::uintptr_t>(&object_)
+            + alignment_of<Ex>::value - 1)
+          & ~static_cast<std::uintptr_t>(alignment_of<Ex>::value - 1));
+  }
+
+  template <typename Ex>
   Ex& object()
   {
-    return *static_cast<Ex*>(static_cast<void*>(&object_));
+    return *static_cast<Ex*>(object_address<Ex>());
   }
 
   template <typename Ex>
   const Ex& object() const
   {
-    return *static_cast<const Ex*>(static_cast<const void*>(&object_));
+    return *static_cast<const Ex*>(object_address<Ex>());
   }
 
   struct object_fns
@@ -940,14 +945,15 @@ protected:
   template <typename Obj>
   static void copy_object(any_executor_base& ex1, const any_executor_base& ex2)
   {
-    new (&ex1.object_) Obj(ex2.object<Obj>());
+    new (ex1.object_address<Obj>()) Obj(ex2.object<Obj>());
     ex1.target_ = &ex1.object<Obj>();
   }
 
   template <typename Obj>
   static void move_object(any_executor_base& ex1, any_executor_base& ex2)
   {
-    new (&ex1.object_) Obj(static_cast<Obj&&>(ex2.object<Obj>()));
+    new (ex1.object_address<Obj>())
+      Obj(static_cast<Obj&&>(ex2.object<Obj>()));
     ex1.target_ = &ex1.object<Obj>();
     ex2.object<Obj>().~Obj();
   }
@@ -1378,7 +1384,8 @@ private:
   void construct_object(Executor& ex, true_type)
   {
     object_fns_ = object_fns_table<Executor>();
-    target_ = new (&object_) Executor(static_cast<Executor&&>(ex));
+    target_ = new (object_address<Executor>())
+      Executor(static_cast<Executor&&>(ex));
   }
 
   template <typename Executor>
@@ -1396,7 +1403,8 @@ private:
       Executor& ex, true_type) noexcept
   {
     object_fns_ = object_fns_table<Executor>();
-    target_ = new (&object_) Executor(static_cast<Executor&&>(ex));
+    target_ = new (object_address<Executor>())
+      Executor(static_cast<Executor&&>(ex));
   }
 
   template <typename Executor>
@@ -1421,26 +1429,42 @@ private:
           can_query<const Executor&, const execution::blocking_t&>())
         == execution::blocking.always);
     any_executor_base::construct_object(ex,
-        integral_constant<bool,
-          sizeof(Executor) <= sizeof(object_type)
-            && alignment_of<Executor>::value <= alignment_of<object_type>::value
-        >());
+        integral_constant<bool, object_fits<Executor>::value>());
     target_fns_ = fns;
   }
 
-  static constexpr std::size_t object_size =
-    sizeof(asio::detail::shared_ptr<void>) + sizeof(void*)
-      > 2 * sizeof(void*) + sizeof(std::uint64_t)
-    ? sizeof(asio::detail::shared_ptr<void>) + sizeof(void*)
-    : 2 * sizeof(void*) + sizeof(std::uint64_t);
-
+#if defined(ASIO_MSVC) && (_MSC_VER < 1920) && !defined(_WIN64)
+  // Older 32-bit MSVC cannot pass an over-aligned object by value, so
+  // over-aligned targets are placed at an aligned address within the storage.
+  static constexpr std::size_t object_align =
+    alignment_of<asio::detail::shared_ptr<void>>::value;
+#else // defined(ASIO_MSVC) && (_MSC_VER < 1920) && !defined(_WIN64)
   static constexpr std::size_t object_align =
     alignment_of<asio::detail::shared_ptr<void>>::value
       > alignment_of<std::uint64_t>::value
     ? alignment_of<asio::detail::shared_ptr<void>>::value
     : alignment_of<std::uint64_t>::value;
+#endif // defined(ASIO_MSVC) && (_MSC_VER < 1920) && !defined(_WIN64)
+
+  static constexpr std::size_t uint64_padding =
+    alignment_of<std::uint64_t>::value > object_align
+    ? alignment_of<std::uint64_t>::value - object_align : 0;
+
+  static constexpr std::size_t object_size =
+    sizeof(asio::detail::shared_ptr<void>) + sizeof(void*)
+      > 2 * sizeof(void*) + sizeof(std::uint64_t) + uint64_padding
+    ? sizeof(asio::detail::shared_ptr<void>) + sizeof(void*)
+    : 2 * sizeof(void*) + sizeof(std::uint64_t) + uint64_padding;
 
   typedef aligned_storage<object_size, object_align>::type object_type;
+
+  template <typename Ex>
+  struct object_fits : integral_constant<bool,
+      sizeof(Ex) + (alignment_of<Ex>::value > object_align
+        ? alignment_of<Ex>::value - object_align : 0)
+          <= sizeof(object_type)>
+  {
+  };
 
   object_type object_;
   const object_fns* object_fns_;
