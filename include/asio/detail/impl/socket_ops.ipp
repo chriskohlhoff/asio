@@ -3294,7 +3294,7 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
     ec = asio::error::invalid_argument;
   if (result != 0 && af == ASIO_OS_DEF(AF_INET6) && scope_id != 0)
   {
-    using namespace std; // For strcat and sprintf.
+    using namespace std; // For strlen, strncat and sprintf.
     char if_name[(IF_NAMESIZE > 21 ? IF_NAMESIZE : 21) + 1] = "%";
     const in6_addr_type* ipv6_address = static_cast<const in6_addr_type*>(src);
     bool is_link_local = ((ipv6_address->s6_addr[0] == 0xfe)
@@ -3310,7 +3310,9 @@ const char* inet_ntop(int af, const void* src, char* dest, size_t length,
 #else // defined(ASIO_HAS_SECURE_RTL)
       sprintf(if_name + 1, "%lu", scope_id);
 #endif // defined(ASIO_HAS_SECURE_RTL)
-    strcat(dest, if_name);
+    std::size_t dest_length = strlen(dest);
+    if (dest_length < length)
+      strncat(dest, if_name, length - dest_length - 1);
   }
   return result;
 #endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
