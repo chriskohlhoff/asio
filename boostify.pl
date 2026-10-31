@@ -496,6 +496,280 @@ sub copy_unit_tests
   }
 }
 
+sub unit_test_is_runnable
+{
+  my ($from) = @_;
+
+  # Open the input file.
+  open(my $input, "<$from") or die("Can't open $from for reading");
+
+  # Tests with only null or compile test cases are linked, not run.
+  while (my $line = <$input>)
+  {
+    while ($line =~ /ASIO_TEST_CASE[0-9]?\s*\(([^)]*)\)/g)
+    {
+      foreach my $test (split(/,/, $1))
+      {
+        $test =~ s/^\s+|\s+$//g;
+        if ($test ne "null_test")
+        {
+          close($input);
+          return 1;
+        }
+      }
+    }
+  }
+
+  close($input);
+  return 0;
+}
+
+sub print_jamfile_rule
+{
+  my ($output, $rule, @fields) = @_;
+
+  # Omit trailing empty fields, and separate the rest with colons.
+  while (@fields and $fields[-1] eq "")
+  {
+    pop(@fields);
+  }
+  my $line = "  [ $rule " . shift(@fields);
+  foreach my $field (@fields)
+  {
+    $line .= " :";
+    $line .= " $field" if $field ne "";
+  }
+  print($output "$line ]\n");
+}
+
+sub copyright_years
+{
+  my $copyright_years = "2003";
+  open(my $asio_hpp, "<include/asio.hpp")
+    or die("Can't open include/asio.hpp for reading");
+  while (my $line = <$asio_hpp>)
+  {
+    if ($line =~ /Copyright \(c\) ([0-9-]+) Christopher M\. Kohlhoff/)
+    {
+      $copyright_years = $1;
+      last;
+    }
+  }
+  close($asio_hpp);
+  return $copyright_years;
+}
+
+sub create_unit_test_jamfile
+{
+  # Tests in the execution directory have their own Jamfile. Those in the
+  # experimental and ssl directories have their own Jamfiles in the Boost
+  # repository.
+  my @dirs = (
+      "src/tests/unit",
+      "src/tests/unit/generic",
+      "src/tests/unit/ip",
+      "src/tests/unit/local",
+      "src/tests/unit/posix",
+      "src/tests/unit/ts",
+      "src/tests/unit/windows");
+
+  # Tests that are not also built using the select-based reactor.
+  my %no_select_variant = (
+      "fwd_first" => 1,
+      "fwd_last" => 1);
+
+  # Additional requirements for individual tests.
+  my %requirements = (
+      "trampoline" => "<toolset>msvc:<cxxflags>/bigobj");
+
+  # Use the same copyright years as the headers.
+  my $copyright_years = copyright_years();
+
+  # Find the unit tests.
+  my @files;
+  foreach my $dir (@dirs)
+  {
+    foreach my $file (glob("$dir/*.cpp"))
+    {
+      if ($file ne "src/tests/unit/thread.cpp"
+          and $file ne "src/tests/unit/error_handler.cpp"
+          and $file ne "src/tests/unit/unit_test.cpp")
+      {
+        push(@files, $file);
+      }
+    }
+  }
+
+  # Open the output file.
+  our $boost_dir;
+  my $to = "$boost_dir/libs/asio/test/Jamfile.v2";
+  open(my $output, ">$to") or die("Can't open $to for writing");
+
+  # Write the header.
+  print($output <<"EOF");
+#
+# Copyright (c) $copyright_years Christopher M. Kohlhoff (chris at kohlhoff dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import feature ;
+
+lib socket ; # SOLARIS, QNXNTO
+lib nsl ; # SOLARIS
+lib ws2_32 ; # NT
+lib mswsock ; # NT
+lib ipv6 ; # HPUX
+lib network ; # HAIKU
+
+local USE_SELECT =
+  <define>BOOST_ASIO_DISABLE_DEV_POLL
+  <define>BOOST_ASIO_DISABLE_EPOLL
+  <define>BOOST_ASIO_DISABLE_KQUEUE
+  <define>BOOST_ASIO_DISABLE_IOCP
+  ;
+
+project
+  : requirements
+    <library>/boost/asio//boost_asio
+    <library>/boost/chrono//boost_chrono
+    <library>/boost/context//boost_context
+    <library>/boost/regex//boost_regex
+    <define>BOOST_ALL_NO_LIB=1
+    <define>BOOST_ASIO_DISABLE_DEPRECATED_MSG=1
+    <threading>multi
+    <target-os>linux:<define>_XOPEN_SOURCE=600
+    <target-os>linux:<define>_GNU_SOURCE=1
+    <target-os>solaris:<define>_XOPEN_SOURCE=500
+    <target-os>solaris:<define>__EXTENSIONS__
+    <target-os>solaris:<library>socket
+    <target-os>solaris:<library>nsl
+    <target-os>windows:<define>_WIN32_WINNT=0x0601
+    <target-os>windows,<toolset>cw:<library>ws2_32
+    <target-os>windows,<toolset>cw:<library>mswsock
+    <target-os>windows,<toolset>gcc:<library>ws2_32
+    <target-os>windows,<toolset>gcc:<library>mswsock
+    <target-os>windows,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <target-os>hpux,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
+    <target-os>hpux:<library>ipv6
+    <target-os>qnxnto:<library>socket
+    <target-os>haiku:<library>network
+  ;
+
+test-suite "asio" :
+EOF
+
+  # Write the rules for each test.
+  foreach my $file (sort(@files))
+  {
+    my $source = $file;
+    $source =~ s/^src\/tests\/unit\///;
+    my $name = $source;
+    $name =~ s/\.cpp$//;
+    my $in_subdir = ($name =~ /\//);
+    $name =~ s/\//_/g;
+    my $req = "";
+    if (exists($requirements{$name}))
+    {
+      $req = $requirements{$name};
+    }
+    my $select_req = $req eq "" ? "\$(USE_SELECT)" : "\$(USE_SELECT) $req";
+
+    # A run rule has argument and input file fields before the requirements.
+    my $rule = "link";
+    my @skip = ();
+    if (unit_test_is_runnable($file))
+    {
+      $rule = "run";
+      @skip = ("", "");
+    }
+
+    # Targets in subdirectories need an explicit name to keep them unique.
+    print_jamfile_rule($output, $rule, $source, @skip,
+        $req, $in_subdir ? $name : "");
+    if (!$no_select_variant{$name})
+    {
+      print_jamfile_rule($output, $rule, $source, @skip,
+          $select_req, "${name}_select");
+    }
+  }
+
+  # Write the trailer.
+  print($output "  ;\n\nbuild-project execution ;\n");
+  close($output);
+}
+
+sub create_execution_test_jamfile
+{
+  # Use the same copyright years as the headers.
+  my $copyright_years = copyright_years();
+
+  # Open the output file.
+  our $boost_dir;
+  my $to = "$boost_dir/libs/asio/test/execution/Jamfile.v2";
+  open(my $output, ">$to") or die("Can't open $to for writing");
+
+  # Write the header.
+  print($output <<"EOF");
+#
+# Copyright (c) $copyright_years Christopher M. Kohlhoff (chris at kohlhoff dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import feature ;
+
+lib socket ; # SOLARIS, QNXNTO
+lib nsl ; # SOLARIS
+lib ws2_32 ; # NT
+lib mswsock ; # NT
+lib ipv6 ; # HPUX
+lib network ; # HAIKU
+
+project
+  : requirements
+    <library>/boost/date_time//boost_date_time
+    <library>/boost/system//boost_system
+    <library>/boost/chrono//boost_chrono
+    <library>/boost/regex//boost_regex
+    <define>BOOST_ALL_NO_LIB=1
+    <threading>multi
+    <target-os>linux:<define>_XOPEN_SOURCE=600
+    <target-os>linux:<define>_GNU_SOURCE=1
+    <target-os>solaris:<define>_XOPEN_SOURCE=500
+    <target-os>solaris:<define>__EXTENSIONS__
+    <target-os>solaris:<library>socket
+    <target-os>solaris:<library>nsl
+    <target-os>windows:<define>_WIN32_WINNT=0x0501
+    <target-os>windows,<toolset>cw:<library>ws2_32
+    <target-os>windows,<toolset>cw:<library>mswsock
+    <target-os>windows,<toolset>gcc:<library>ws2_32
+    <target-os>windows,<toolset>gcc:<library>mswsock
+    <target-os>windows,<toolset>gcc-cygwin:<define>__USE_W32_SOCKETS
+    <target-os>hpux,<toolset>gcc:<define>_XOPEN_SOURCE_EXTENDED
+    <target-os>hpux:<library>ipv6
+    <target-os>qnxnto:<library>socket
+    <target-os>haiku:<library>network
+  ;
+
+test-suite "asio" :
+EOF
+
+  # Write the rules for each test.
+  foreach my $file (sort(glob("src/tests/unit/execution/*.cpp")))
+  {
+    my $source = $file;
+    $source =~ s/^src\/tests\/unit\/execution\///;
+    print($output "  [ run $source ]\n");
+  }
+
+  # Write the trailer.
+  print($output "  ;\n");
+  close($output);
+}
+
 sub copy_latency_tests
 {
   my @dirs = (
@@ -670,6 +944,8 @@ if (not $includes_only)
 {
   create_lib_directory();
   copy_unit_tests();
+  create_unit_test_jamfile();
+  create_execution_test_jamfile();
   copy_latency_tests();
   copy_properties_tests();
   copy_examples();
