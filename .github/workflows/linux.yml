@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         build-type: ['sanity']
-        runs-on: [ubuntu-22.04, ubuntu-24.04]
-        compiler: [g++-9, g++-10, g++-12, g++-14, clang++-14, clang++-18]
-        cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20']
+        runs-on: [ubuntu-22.04, ubuntu-24.04, ubuntu-26.04]
+        compiler: [g++-9, g++-10, g++-12, g++-14, clang++-14, clang++-18, g++-15, clang++-22]
+        cxx-std: ['c++11', 'c++14', 'c++17', 'c++2a', 'c++20', 'c++23', 'c++2c']
         separate-compilation: ['', '--enable-separate-compilation']
         optim-level: ['-O0']
         no-deprecated: ['']
@@ -30,6 +30,15 @@ jobs:
             compiler: g++-14
           - runs-on: ubuntu-22.04
             compiler: clang++-18
+          - runs-on: ubuntu-22.04
+            compiler: g++-15
+          - runs-on: ubuntu-22.04
+            compiler: clang++-22
+          # Newest compilers only run on ubuntu 26.04
+          - runs-on: ubuntu-24.04
+            compiler: g++-15
+          - runs-on: ubuntu-24.04
+            compiler: clang++-22
           # Older compilers don't run on ubuntu 24.04
           - runs-on: ubuntu-24.04
             compiler: g++-9
@@ -37,6 +46,19 @@ jobs:
             compiler: g++-10
           - runs-on: ubuntu-24.04
             compiler: clang++-14
+          # Older compilers don't run on ubuntu 26.04
+          - runs-on: ubuntu-26.04
+            compiler: g++-9
+          - runs-on: ubuntu-26.04
+            compiler: g++-10
+          - runs-on: ubuntu-26.04
+            compiler: g++-12
+          - runs-on: ubuntu-26.04
+            compiler: g++-14
+          - runs-on: ubuntu-26.04
+            compiler: clang++-14
+          - runs-on: ubuntu-26.04
+            compiler: clang++-18
           # Older compilers don't support newer std variants
           - compiler: g++-9
             cxx-std: c++20
@@ -47,6 +69,22 @@ jobs:
           - compiler: clang++-14
             cxx-std: c++20
           - compiler: clang++-14
+            cxx-std: c++2a
+          # Newer std variants are only tested with the newest compilers
+          - runs-on: ubuntu-22.04
+            cxx-std: c++23
+          - runs-on: ubuntu-22.04
+            cxx-std: c++2c
+          - runs-on: ubuntu-24.04
+            cxx-std: c++23
+          - runs-on: ubuntu-24.04
+            cxx-std: c++2c
+          # Trim std variants for the newest compilers
+          - runs-on: ubuntu-26.04
+            cxx-std: c++14
+          - runs-on: ubuntu-26.04
+            cxx-std: c++17
+          - runs-on: ubuntu-26.04
             cxx-std: c++2a
           # Trim builds that use separate compilation
           - compiler: g++-9
@@ -61,6 +99,8 @@ jobs:
           - compiler: g++-10
             select-reactor: -DASIO_DISABLE_EPOLL
           - compiler: g++-12
+            select-reactor: -DASIO_DISABLE_EPOLL
+          - runs-on: ubuntu-26.04
             select-reactor: -DASIO_DISABLE_EPOLL
         include:
           #
@@ -269,14 +309,69 @@ jobs:
             cxx-std: c++20 -fcoroutines
             optim-level: -O2
             spin-reactor: -DASIO_ENABLE_SPIN_REACTOR
+          #
+          # Linux / g++-15 -std=c++23 / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: ubuntu-26.04
+            compiler: g++-15
+            cxx-std: c++23
+            optim-level: -O2
+          #
+          # Linux / clang++-22 -std=c++2c / -O2 / standalone / separate compilation
+          #
+          - build-type: full
+            runs-on: ubuntu-26.04
+            compiler: clang++-22
+            cxx-std: c++2c
+            separate-compilation: --enable-separate-compilation
+            optim-level: -O2
+          #
+          # Linux arm64 / g++-14 -std=c++17 / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: ubuntu-24.04-arm
+            compiler: g++-14
+            cxx-std: c++17
+            optim-level: -O2
+          #
+          # Linux arm64 / clang++-22 -std=c++20 / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: ubuntu-26.04-arm
+            compiler: clang++-22
+            cxx-std: c++20
+            optim-level: -O2
+          #
+          # Linux / clang++-22 -std=c++20 / libc++ / -O2 / standalone
+          #
+          - build-type: full
+            runs-on: ubuntu-26.04
+            compiler: clang++-22
+            cxx-std: c++20
+            cxx-stdlib: -stdlib=libc++
+            optim-level: -O2
+            packages: libc++-22-dev libc++abi-22-dev
+          #
+          # Linux / clang++-22 -std=c++20 / -O1 / standalone / address and undefined behaviour sanitizers
+          #
+          - build-type: full
+            runs-on: ubuntu-26.04
+            compiler: clang++-22
+            cxx-std: c++20
+            optim-level: -O1
+            sanitizer: -fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer
     runs-on: ${{ matrix.runs-on }}
     env:
       CXX: ${{ matrix.compiler }}
-      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.spin-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }}
+      CXXFLAGS: -std=${{ matrix.cxx-std }} ${{ matrix.cxx-stdlib }} ${{ matrix.optim-level }} -Wall -Wextra ${{ matrix.no-deprecated }} ${{ matrix.select-reactor }} ${{ matrix.spin-reactor }} ${{ matrix.handler-tracking }} ${{ matrix.io-uring }} ${{ matrix.sanitizer }}
     steps:
     - uses: actions/checkout@v7
     - name: Install compiler
       run: sudo apt-get install -y ${{ matrix.compiler }}
+    - name: Install additional packages
+      if: matrix.packages != ''
+      run: sudo apt-get update && sudo apt-get install -y ${{ matrix.packages }}
     - name: Install liburing
       if: matrix.io-uring != ''
       run: sudo apt-get install -y liburing-dev
