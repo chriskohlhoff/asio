@@ -347,7 +347,9 @@ preprocessor macros:
     [An expression that is called on creation of an asynchronous operation.
     `args` is a parenthesised function argument list containing the owning
     execution context, the tracked handler, the name of the object type, a
-    pointer to the object, the object's native handle, and the operation name.]
+    pointer to the object, the object's native handle, and the operation name.
+    For an operation that has no owning execution context, the execution
+    context argument is omitted.]
   ]
   [
     [`ASIO_HANDLER_COMPLETION(args)`]
