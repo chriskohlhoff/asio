@@ -1821,10 +1821,14 @@ inline signed_size_type recvmmsg(socket_type s, mmsghdr* bufs,
     size_t count, int flags, int& err)
 {
 #if (defined(__MACH__) && defined(__APPLE__))
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# endif // defined(__clang__)
   signed_size_type result = ::syscall(SYS_recvmsg_x, s, bufs, count, flags);
-#pragma clang diagnostic pop
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif // defined(__clang__)
 #else // (defined(__MACH__) && defined(__APPLE__))
   flags |= MSG_WAITFORONE;
   signed_size_type result = ::recvmmsg(s, bufs, count, flags, nullptr);
@@ -2588,10 +2592,14 @@ inline signed_size_type sendmmsg(socket_type s, mmsghdr* bufs,
   flags |= MSG_NOSIGNAL;
 #endif // defined(ASIO_HAS_MSG_NOSIGNAL)
 #if (defined(__MACH__) && defined(__APPLE__))
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+# endif // defined(__clang__)
   signed_size_type result = ::syscall(SYS_sendmsg_x, s, bufs, count, flags);
-#pragma clang diagnostic pop
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif // defined(__clang__)
 #else // (defined(__MACH__) && defined(__APPLE__))
   signed_size_type result = ::sendmmsg(s, bufs, count, flags);
 #endif // (defined(__MACH__) && defined(__APPLE__))
