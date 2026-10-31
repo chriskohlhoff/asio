@@ -1,0 +1,71 @@
+name: asio CI for Boost
+
+on:
+  push:
+    branches: [ master, citest-* ]
+  workflow_dispatch:
+
+concurrency:
+  group: boost-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BOOST_VERSION: 1.92.0
+
+jobs:
+  boost:
+    runs-on: ${{ matrix.runner }}
+    name: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, macos-latest, windows-2025]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      # boostify.pl expects LF line endings.
+      - name: Disable line ending conversion
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v7
+        with:
+          path: asio
+
+      - name: Download Boost
+        run: |
+          BOOST_DIR=boost_${BOOST_VERSION//./_}
+          curl -sSfL -o boost.tar.gz \
+            https://archives.boost.io/release/$BOOST_VERSION/source/$BOOST_DIR.tar.gz
+          tar -xzf boost.tar.gz
+          mv $BOOST_DIR boost
+
+      - name: Replace Asio in the Boost tree
+        run: |
+          # boostify.pl exits with 1 when it has warned about long lines.
+          (cd asio && perl boostify.pl) || [ $? -eq 1 ]
+          # The release package keeps the headers in the top-level boost directory.
+          rm -rf boost/boost/asio boost/boost/asio.hpp
+          cp -R asio/boostified/libs/asio/include/boost/. boost/boost/
+          cd boost/libs/asio
+          # Keep Boost's Jamfiles. boostify.pl replaces test/Jamfile.v2 and
+          # test/execution/Jamfile.v2.
+          find doc test example -type f ! -name 'Jamfile*' ! -name '*.jam' -delete
+          cp -R ../../../asio/boostified/libs/asio/{doc,test,example,tools} .
+
+      - name: Bootstrap
+        if: runner.os != 'Windows'
+        working-directory: boost
+        run: ./bootstrap.sh
+
+      - name: Bootstrap (Windows)
+        if: runner.os == 'Windows'
+        working-directory: boost
+        shell: cmd
+        run: bootstrap.bat
+
+      - name: Build and test
+        working-directory: boost/libs/asio/test
+        run: |
+          ../../../b2 -j${NUMBER_OF_PROCESSORS:-$(getconf _NPROCESSORS_ONLN)}
