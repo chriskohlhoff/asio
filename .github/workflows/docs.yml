@@ -1,0 +1,72 @@
+name: asio CI for docs
+
+on:
+  push:
+    branches: [ master, citest-* ]
+  workflow_dispatch:
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BOOST_VERSION: 1.92.0
+
+jobs:
+  docs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install xsltproc
+        run: sudo apt-get install -y xsltproc
+
+      - name: Download Boost
+        run: |
+          BOOST_DIR=boost_${BOOST_VERSION//./_}
+          curl -sSfL -o boost.tar.gz \
+            https://archives.boost.io/release/$BOOST_VERSION/source/$BOOST_DIR.tar.gz
+          tar -xzf boost.tar.gz
+          mv $BOOST_DIR boost
+
+      - name: Set up quickbook and boostbook
+        working-directory: boost
+        run: |
+          ./bootstrap.sh
+          ./b2 -j$(nproc) tools/quickbook
+          echo "using quickbook : \"$PWD/dist/bin/quickbook\" ;" > ~/user-config.jam
+          cd tools/boostbook
+          # The DocBook DTD is no longer available from setup_boostbook.py's
+          # docbook.org URL. The script verifies the checksum of this copy.
+          curl -sSfL -o docbook-xml-4.5.zip \
+            https://docs.oasis-open.org/docbook/xml/4.5/docbook-xml-4.5.zip
+          python3 setup_boostbook.py
+
+      - name: Build documentation
+        working-directory: src/doc
+        run: |
+          BOOST_ROOT=$GITHUB_WORKSPACE/boost ../../boost/b2 2>&1 | tee build.log
+          # b2 only warns if it cannot generate the HTML.
+          test -f html/index.html
+          # Fail on any quickbook diagnostics other than the known warnings.
+          if grep -E '\.qbk:[0-9]+: ' build.log | sed -E 's/:[0-9]+: /: /' \
+              | grep -v -E \
+                -e '^overview/cancellation\.qbk: warning: line breaks generate invalid boostbook' \
+                -e "^requirements/Disposition\.qbk: warning: '.n' is deprecated" \
+                -e '^reference\.qbk: warning: in column:[0-9]+, unexpected character'
+          then
+            echo "New quickbook warnings found."
+            exit 1
+          fi
+
+      - name: Check links
+        run: |
+          # Lay out the documentation as release.pl does.
+          mkdir doc
+          cp -R src/doc/html/* doc
+          python3 src/doc/check_links.py doc
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: asio-docs
+          path: doc
