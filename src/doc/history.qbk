@@ -3269,7 +3269,7 @@
 [heading Asio 1.11.0]
 
 * Implemented changes to substantially reflect the Networking Library Proposal
-  ([@www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4370.html N4370]).
+  ([@http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4370.html N4370]).
 
   * New `Executor` type requirements and classes to support an executor
     framework, including the `execution_context` base class, the

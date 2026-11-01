@@ -317,16 +317,13 @@ decode structures for transmission over a socket.
 [heading Services]
 
 This example demonstrates how to integrate custom functionality (in this case,
-for logging) into asio's [link asio.reference.io_context io_context], and
-how to use a custom service with [link
-asio.reference.basic_stream_socket basic_stream_socket<>].
+for logging) into asio's [link asio.reference.io_context io_context].
 
 * [@../src/examples/cpp11/services/basic_logger.hpp]
 * [@../src/examples/cpp11/services/daytime_client.cpp]
 * [@../src/examples/cpp11/services/logger.hpp]
 * [@../src/examples/cpp11/services/logger_service.cpp]
 * [@../src/examples/cpp11/services/logger_service.hpp]
-* [@../src/examples/cpp11/services/stream_socket_service.hpp]
 
 
 [heading SOCKS 4]
