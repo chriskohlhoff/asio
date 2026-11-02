@@ -317,6 +317,10 @@ private:
   // Non-zero if timers or completed operations need to be dispatched.
   LONG dispatch_required_;
 
+  // Non-zero if a wake_for_dispatch packet has been posted but not yet
+  // dequeued.
+  LONG wake_pending_;
+
   // Mutex for protecting access to the timer queues and completed operations.
   mutex dispatch_mutex_;
 
