@@ -115,7 +115,14 @@ public:
         (get_associated_allocator)(handler_,
           asio::recycling_allocator<void>())};
 
-    d(this);
+    // A sub-object of the handler may be the true owner of the memory
+    // associated with the handler. Consequently, a local copy of the handler
+    // is required to ensure that any owning sub-object remains valid until
+    // after we have deallocated the memory here.
+    std::unique_ptr<any_completion_handler_impl, deleter> ptr(this, d);
+    Handler handler(static_cast<Handler&&>(handler_));
+    (void)handler;
+    ptr.reset();
   }
 
   any_completion_executor executor(

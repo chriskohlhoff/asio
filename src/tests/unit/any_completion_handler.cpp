@@ -23,6 +23,7 @@
 #include "asio/bind_cancellation_slot.hpp"
 #include "asio/bind_executor.hpp"
 #include "asio/bind_immediate_executor.hpp"
+#include "asio/cancellation_signal.hpp"
 #include "asio/compose.hpp"
 #include "asio/dispatch.hpp"
 #include "asio/error.hpp"
@@ -258,25 +259,13 @@ void any_completion_handler_invocation_test()
   ASIO_CHECK(count == 2);
 }
 
-// Regression tests for handler_work's cross-erased-type fast path
-// (detail/handler_work.hpp): an any_completion_handler's associated
-// executor is reported as any_completion_executor, a different C++ type
-// from an I/O object's any_io_executor even when both erase the identical
-// underlying target, so the equality fast path that skips a redundant
-// tracked-work executor must still be reachable in that (very common)
-// case, and must NOT be taken when the two executors differ.
+// An any_completion_handler's associated executor is an
+// any_completion_executor, a different type from an I/O object's
+// any_io_executor. handler_work must still recognise when both refer to the
+// same target, and must not treat different targets as the same.
 
-// Same target on both sides (the common case: no executor explicitly
-// bound to the completion handler, so it defaults to the timer's own
-// I/O executor). If the fast path's equality check under-tracked, by
-// treating this timer's own outstanding work as already covered when it
-// was not, the io_context could stop as soon as the first timer's
-// wait operation issues, before either handler has actually run: the
-// second timer is not even created, let alone outstanding, until the
-// first handler runs. Checking that both handlers ran (not stopped
-// early) and that run() returned (not stopped late/hung, since a unit
-// test that never returns fails as a timeout) together demonstrate the
-// work count stayed correct.
+// Same target on both sides: no executor is bound to the handler. Both
+// handlers must run, and run() must return.
 void any_completion_handler_outstanding_work_test()
 {
   asio::io_context ioc;
@@ -306,14 +295,9 @@ void any_completion_handler_outstanding_work_test()
   ASIO_CHECK(fire_count == 2);
 }
 
-// Different targets: the handler's associated executor is explicitly
-// bound to a second, distinct io_context's executor, so the fast path
-// must NOT apply. The completion must still be dispatched THROUGH that
-// second executor rather than run inline by the first. That
-// is checked directly and structurally, not just by a work count: since
-// ioc2 is never run until after ioc has finished, an inline (wrongly
-// untracked/undispatched) completion would show up as the handler having
-// already fired before ioc2.run() is ever called.
+// Different targets: the handler is bound to a second io_context. The
+// completion must be dispatched to ioc2, so it must not have run before
+// ioc2.run() is called.
 void any_completion_handler_different_bound_executor_test()
 {
   asio::io_context ioc;
@@ -335,10 +319,7 @@ void any_completion_handler_different_bound_executor_test()
 
   ioc.run();
 
-  // The wait completed, but since the handler's executor (ioc2's) differs
-  // from the timer's own I/O executor (ioc's), handler_work must have
-  // dispatched it there rather than run it inline, so it must not have
-  // fired yet.
+  // The completion was dispatched to ioc2, so it must not have run yet.
   ASIO_CHECK(fire_count == 0);
 
   std::size_t handlers_run = ioc2.run();
@@ -419,8 +400,7 @@ void any_completion_handler_immediate_executor_association_test()
 }
 
 // The I/O object's executor is concrete while the handler's association is
-// erased. The two now compare equal when they designate the same executor,
-// and must still compare unequal when they do not.
+// erased. They must compare equal only when they refer to the same executor.
 void any_completion_handler_concrete_io_executor_test()
 {
   typedef asio::basic_waitable_timer<asio::chrono::steady_clock,
@@ -443,9 +423,8 @@ void any_completion_handler_concrete_io_executor_test()
             ++fire_count;
           })));
 
-  // A different executor, of the same concrete type as the I/O object's. If
-  // the comparison wrongly succeeded, this completion would be run on ioc
-  // rather than dispatched to ioc2, and the check below fails.
+  // A different executor of the same concrete type as the I/O object's. The
+  // completion must be dispatched to ioc2.
   timer_type timer2(ioc.get_executor());
   timer2.expires_after(asio::chrono::milliseconds(1));
   timer2.async_wait(
@@ -469,11 +448,8 @@ void any_completion_handler_concrete_io_executor_test()
 int counting_allocations = 0;
 int counting_deallocations = 0;
 
-// An allocator that records its use, so that a handler carrying one can be
-// seen to keep it. Deliberately no more than ordinarily aligned: an
-// over-aligned value type is the general path's business, not the
-// allocator's, since that path rebinds to bytes and recovers the alignment
-// by hand on top of whatever this returns.
+// An allocator that records its use. It provides no more than ordinary
+// alignment.
 template <typename T>
 class counting_allocator
 {
@@ -566,11 +542,9 @@ void any_completion_handler_default_allocator_test()
   alloc.deallocate(p, 3);
 }
 
-// A handler with its own associated allocator, applied BEFORE erasure. The
-// function table records that the association is not the default one, so
-// every allocation must still reach that allocator, by the general path --
-// both when made directly through the erased handler's allocator and when
-// made by a real operation completing through it.
+// A handler with its own associated allocator, bound before erasure. All
+// allocations, whether made through the erased handler's allocator or by an
+// operation completing through it, must use that allocator.
 void any_completion_handler_custom_allocator_test()
 {
   int count = 0;
@@ -620,9 +594,8 @@ void any_completion_handler_custom_allocator_test()
 
   ioc.run();
 
-  // Everything the operation allocated through the handler came back: the
-  // handler still held by h above is deliberately not counted, being older
-  // than this operation and still alive.
+  // Everything allocated by the operation has been deallocated. The handler h
+  // is not counted, since it was allocated before the operation.
   ASIO_CHECK(fire_count == 1);
   ASIO_CHECK(counting_allocations > op_allocations_before);
   ASIO_CHECK(counting_allocations - op_allocations_before
@@ -630,10 +603,8 @@ void any_completion_handler_custom_allocator_test()
 }
 
 // An operation type more aligned than the blocks the recycling allocator
-// hands out. The fast path cannot satisfy it, so the general path, which
-// recovers the alignment by hand, must still be taken, and must still
-// produce a correctly aligned block, for a handler with the default
-// allocator association as much as for one without.
+// provides. Allocation must still return a correctly aligned block, with or
+// without the default allocator association.
 void any_completion_handler_over_aligned_allocation_test()
 {
   int count = 0;
@@ -698,12 +669,9 @@ inline void write_four_bytes(asio::ip::tcp::socket& client)
   client.write_some(asio::buffer(send_data));
 }
 
-// The default association, reached through a composed operation: async_read's
-// own continuation wraps the erased handler, so whether the associated
-// executor is the I/O executor is answered for that wrapper, which forwards
-// the question to the handler it wraps. The answer lets base2 be left empty
-// without the association ever being derived. This path has to preserve
-// completion exactly once, with the right byte count.
+// The default association, reached through a composed operation that wraps
+// the erased handler. The completion must occur exactly once with the right
+// byte count.
 void any_completion_handler_composed_operation_test()
 {
   asio::io_context ioc;
@@ -733,12 +701,9 @@ void any_completion_handler_composed_operation_test()
   ASIO_CHECK(transferred == 4);
 }
 
-// A different executor, bound BEFORE erasure, so that the binder is behind
-// the erasure and only the erased handler's function table can report it.
-// The table records that the association is not the default one,
-// so the association must still be derived and the completion dispatched
-// through it. Structurally decisive: ioc2 is not run until after ioc's run()
-// returns, so a wrongly skipped association shows up as having already fired.
+// A different executor, bound before erasure. The completion must be
+// dispatched through it, so it must not have run before ioc2.run() is
+// called.
 void any_completion_handler_composed_bound_executor_test()
 {
   asio::io_context ioc;
@@ -1024,14 +989,9 @@ void any_completion_handler_immediate_default_executor_test()
   ASIO_CHECK(handlers_run == 2);
 }
 
-// The binder OUTSIDE the erasure, wrapping a handler that does have the
-// default association. This is what the associator-forwarding guard exists
-// for: the binder forwards every association except the executor, which it
-// overrides, so its own associated_executor does not derive from its
-// associator and the question must stop there. Were it forwarded past the
-// binder to the erased handler, that handler would answer "default", base2
-// would be left empty, and the completion would run inline on ioc instead of
-// being dispatched to ioc2.
+// A binder outside the erasure overrides the executor of a handler that has
+// the default association. The completion must be dispatched to ioc2, not
+// run inline on ioc.
 void any_completion_handler_binder_over_erased_executor_test()
 {
   asio::io_context ioc;
@@ -1066,6 +1026,109 @@ void any_completion_handler_binder_over_erased_executor_test()
   ASIO_CHECK(handlers_run == 1);
 }
 
+// An allocator that records its use through a pointer to shared counts.
+struct allocation_counts
+{
+  int allocations;
+  int deallocations;
+};
+
+template <typename T>
+class stateful_counting_allocator
+{
+public:
+  typedef T value_type;
+
+  explicit stateful_counting_allocator(allocation_counts* counts) noexcept
+    : counts_(counts)
+  {
+  }
+
+  template <typename U>
+  stateful_counting_allocator(
+      const stateful_counting_allocator<U>& other) noexcept
+    : counts_(other.counts_)
+  {
+  }
+
+  T* allocate(std::size_t n)
+  {
+    ++counts_->allocations;
+    return static_cast<T*>(::operator new(sizeof(T) * n));
+  }
+
+  void deallocate(T* p, std::size_t) noexcept
+  {
+    ++counts_->deallocations;
+    ::operator delete(p);
+  }
+
+  template <typename U>
+  bool operator==(const stateful_counting_allocator<U>& other) const noexcept
+  {
+    return counts_ == other.counts_;
+  }
+
+  template <typename U>
+  bool operator!=(const stateful_counting_allocator<U>& other) const noexcept
+  {
+    return counts_ != other.counts_;
+  }
+
+private:
+  template <typename> friend class stateful_counting_allocator;
+  allocation_counts* counts_;
+};
+
+// An erased handler nested, via a binder, inside another erased handler and
+// destroyed without being invoked.
+void any_completion_handler_nested_destroy_test()
+{
+  allocation_counts counts = { 0, 0 };
+  int count = 0;
+
+  {
+    asio::cancellation_signal sig;
+
+    asio::any_completion_handler<void()> inner(
+        asio::bind_allocator(
+          stateful_counting_allocator<void>(&counts),
+          bindns::bind(&increment, &count)));
+
+    asio::any_completion_handler<void()> outer(
+        asio::bind_cancellation_slot(sig.slot(), std::move(inner)));
+
+    ASIO_CHECK(!inner);
+    ASIO_CHECK(!!outer);
+  }
+
+  ASIO_CHECK(count == 0);
+  ASIO_CHECK(counts.allocations > 0);
+  ASIO_CHECK(counts.allocations == counts.deallocations);
+
+  // The same, invoked rather than destroyed.
+  counts.allocations = 0;
+  counts.deallocations = 0;
+
+  {
+    asio::cancellation_signal sig;
+
+    asio::any_completion_handler<void()> inner(
+        asio::bind_allocator(
+          stateful_counting_allocator<void>(&counts),
+          bindns::bind(&increment, &count)));
+
+    asio::any_completion_handler<void()> outer(
+        asio::bind_cancellation_slot(sig.slot(), std::move(inner)));
+
+    std::move(outer)();
+  }
+
+  ASIO_CHECK(count == 1);
+  ASIO_CHECK(counts.allocations > 0);
+  ASIO_CHECK(counts.allocations == counts.deallocations);
+}
+
 ASIO_TEST_SUITE
 (
   "any_completion_handler",
@@ -1090,4 +1153,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(any_completion_handler_default_allocator_test)
   ASIO_TEST_CASE(any_completion_handler_custom_allocator_test)
   ASIO_TEST_CASE(any_completion_handler_over_aligned_allocation_test)
+  ASIO_TEST_CASE(any_completion_handler_nested_destroy_test)
 )
