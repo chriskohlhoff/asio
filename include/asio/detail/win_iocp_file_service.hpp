@@ -171,7 +171,11 @@ public:
       const ConstBufferSequence& buffers, asio::error_code& ec)
   {
     uint64_t offset = impl.offset_;
-    impl.offset_ += asio::buffer_size(buffers);
+    // The handle service submits the first non-empty buffer of the sequence and
+    // no more, so the position advances by that buffer alone. The composed
+    // operations resume from the new position with the buffers left over.
+    impl.offset_ += buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence>::first(buffers).size();
     return handle_service_.write_some_at(impl, offset, buffers, ec);
   }
 
@@ -183,7 +187,8 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     uint64_t offset = impl.offset_;
-    impl.offset_ += asio::buffer_size(buffers);
+    impl.offset_ += buffer_sequence_adapter<asio::const_buffer,
+        ConstBufferSequence>::first(buffers).size();
     handle_service_.async_write_some_at(impl, offset, buffers, handler, io_ex);
   }
 
@@ -212,7 +217,8 @@ public:
       const MutableBufferSequence& buffers, asio::error_code& ec)
   {
     uint64_t offset = impl.offset_;
-    impl.offset_ += asio::buffer_size(buffers);
+    impl.offset_ += buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence>::first(buffers).size();
     return handle_service_.read_some_at(impl, offset, buffers, ec);
   }
 
@@ -225,7 +231,8 @@ public:
       Handler& handler, const IoExecutor& io_ex)
   {
     uint64_t offset = impl.offset_;
-    impl.offset_ += asio::buffer_size(buffers);
+    impl.offset_ += buffer_sequence_adapter<asio::mutable_buffer,
+        MutableBufferSequence>::first(buffers).size();
     handle_service_.async_read_some_at(impl, offset, buffers, handler, io_ex);
   }
 
