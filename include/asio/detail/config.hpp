@@ -543,6 +543,42 @@
 #endif // defined(ASIO_HAS_THREAD_SANITIZER)
        //   || defined(ASIO_HAS_ADDRESS_SANITIZER)
 
+// Thread sanitizer interface header. Older toolchains (before clang 5 and
+// gcc 8) provide the thread sanitizer runtime without this header.
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+# if !defined(ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#  if defined(__has_include)
+#   if __has_include(<sanitizer/tsan_interface.h>)
+#    define ASIO_HAS_SANITIZER_TSAN_INTERFACE 1
+#   endif // __has_include(<sanitizer/tsan_interface.h>)
+#  endif // defined(__has_include)
+# endif // !defined(ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
+
+// Thread sanitizer support for fibers. The runtime provides this from clang 9
+// and gcc 10.
+#if defined(ASIO_HAS_THREAD_SANITIZER)
+# if !defined(ASIO_HAS_THREAD_SANITIZER_FIBERS)
+#  if !defined(ASIO_DISABLE_THREAD_SANITIZER_FIBERS)
+#   if defined(ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#    if defined(__clang__)
+#     if defined(__apple_build_version__)
+#      if (__clang_major__ >= 12)
+#       define ASIO_HAS_THREAD_SANITIZER_FIBERS 1
+#      endif // (__clang_major__ >= 12)
+#     elif (__clang_major__ >= 9)
+#      define ASIO_HAS_THREAD_SANITIZER_FIBERS 1
+#     endif // (__clang_major__ >= 9)
+#    elif defined(__GNUC__)
+#     if (__GNUC__ >= 10)
+#      define ASIO_HAS_THREAD_SANITIZER_FIBERS 1
+#     endif // (__GNUC__ >= 10)
+#    endif // defined(__GNUC__)
+#   endif // defined(ASIO_HAS_SANITIZER_TSAN_INTERFACE)
+#  endif // !defined(ASIO_DISABLE_THREAD_SANITIZER_FIBERS)
+# endif // !defined(ASIO_HAS_THREAD_SANITIZER_FIBERS)
+#endif // defined(ASIO_HAS_THREAD_SANITIZER)
+
 // Valgrind support. Must be explicitly enabled.
 #if !defined(ASIO_HAS_VALGRIND)
 # if defined(ASIO_ENABLE_VALGRIND)
