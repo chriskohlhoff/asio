@@ -4658,7 +4658,8 @@ asio::error_code getnameinfo(const void* addr,
 #else
   clear_last_error();
   int error = ::getnameinfo(static_cast<const socket_addr_type*>(addr),
-      addrlen, host, hostlen, serv, servlen, flags);
+      static_cast<socklen_t>(addrlen), host, static_cast<socklen_t>(hostlen),
+      serv, static_cast<socklen_t>(servlen), flags);
   return ec = translate_addrinfo_error(error);
 #endif
 }
