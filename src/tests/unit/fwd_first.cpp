@@ -16,6 +16,10 @@
 // Test that header file is self-contained.
 #include "asio/fwd.hpp"
 
+#if defined(ASIO_HAS_CO_AWAIT)
+asio::awaitable<void> fwd_awaitable();
+#endif // defined(ASIO_HAS_CO_AWAIT)
+
 // Test that forward declarations don't conflict with full declarations.
 #include "asio.hpp"
 
