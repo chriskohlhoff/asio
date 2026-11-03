@@ -15,8 +15,9 @@
 #include <array>
 #include <cstring>
 #include <iomanip>
+#include <istream>
+#include <ostream>
 #include <string>
-#include <strstream>
 
 // This request is sent by the client to the server over a TCP connection.
 // The client uses it to perform three functions:
@@ -53,7 +54,10 @@ public:
   // Get the old port. Returns 0 for start requests.
   unsigned short old_port() const
   {
-    std::istrstream is(data_, encoded_port_size);
+    asio::streambuf buf;
+    buf.commit(asio::buffer_copy(buf.prepare(encoded_port_size),
+          asio::buffer(data_, encoded_port_size)));
+    std::istream is(&buf);
     unsigned short port = 0;
     is >> std::setw(encoded_port_size) >> std::hex >> port;
     return port;
@@ -62,7 +66,10 @@ public:
   // Get the new port. Returns 0 for stop requests.
   unsigned short new_port() const
   {
-    std::istrstream is(data_ + encoded_port_size, encoded_port_size);
+    asio::streambuf buf;
+    buf.commit(asio::buffer_copy(buf.prepare(encoded_port_size),
+          asio::buffer(data_ + encoded_port_size, encoded_port_size)));
+    std::istream is(&buf);
     unsigned short port = 0;
     is >> std::setw(encoded_port_size) >> std::hex >> port;
     return port;
@@ -81,9 +88,11 @@ private:
   control_request(unsigned short old_port_number,
       unsigned short new_port_number)
   {
-    std::ostrstream os(data_, control_request_size);
+    asio::streambuf buf;
+    std::ostream os(&buf);
     os << std::setw(encoded_port_size) << std::hex << old_port_number;
     os << std::setw(encoded_port_size) << std::hex << new_port_number;
+    asio::buffer_copy(asio::buffer(data_), buf.data());
   }
 
   // The length in bytes of a control_request and its components.
@@ -112,16 +121,21 @@ public:
   // Construct a frame with specified frame number and payload.
   frame(unsigned long frame_number, const std::string& payload_data)
   {
-    std::ostrstream os(data_, frame_size);
+    asio::streambuf buf;
+    std::ostream os(&buf);
     os << std::setw(encoded_number_size) << std::hex << frame_number;
     os << std::setw(payload_size)
       << std::setfill(' ') << payload_data.substr(0, payload_size);
+    asio::buffer_copy(asio::buffer(data_), buf.data());
   }
 
   // Get the frame number.
   unsigned long number() const
   {
-    std::istrstream is(data_, encoded_number_size);
+    asio::streambuf buf;
+    buf.commit(asio::buffer_copy(buf.prepare(encoded_number_size),
+          asio::buffer(data_, encoded_number_size)));
+    std::istream is(&buf);
     unsigned long frame_number = 0;
     is >> std::setw(encoded_number_size) >> std::hex >> frame_number;
     return frame_number;
