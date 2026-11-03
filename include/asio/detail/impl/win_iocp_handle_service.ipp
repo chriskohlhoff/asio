@@ -371,7 +371,7 @@ size_t win_iocp_handle_service::do_write(
   overlapped.Offset = offset & 0xFFFFFFFF;
   overlapped.OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
   BOOL ok = ::WriteFile(impl.handle_, buffer.data(),
-      static_cast<DWORD>(buffer.size()), 0, &overlapped);
+      transfer_size(buffer.size()), 0, &overlapped);
   if (!ok)
   {
     DWORD last_error = ::GetLastError();
@@ -423,7 +423,7 @@ void win_iocp_handle_service::start_write_op(
     op->Offset = offset & 0xFFFFFFFF;
     op->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
     BOOL ok = ::WriteFile(impl.handle_, buffer.data(),
-        static_cast<DWORD>(buffer.size()),
+        transfer_size(buffer.size()),
         &bytes_transferred, op);
     DWORD last_error = ::GetLastError();
     if (!ok && last_error != ERROR_IO_PENDING
@@ -467,7 +467,7 @@ size_t win_iocp_handle_service::do_read(
   overlapped.Offset = offset & 0xFFFFFFFF;
   overlapped.OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
   BOOL ok = ::ReadFile(impl.handle_, buffer.data(),
-      static_cast<DWORD>(buffer.size()), 0, &overlapped);
+      transfer_size(buffer.size()), 0, &overlapped);
   if (!ok)
   {
     DWORD last_error = ::GetLastError();
@@ -533,7 +533,7 @@ void win_iocp_handle_service::start_read_op(
     op->Offset = offset & 0xFFFFFFFF;
     op->OffsetHigh = (offset >> 32) & 0xFFFFFFFF;
     BOOL ok = ::ReadFile(impl.handle_, buffer.data(),
-        static_cast<DWORD>(buffer.size()),
+        transfer_size(buffer.size()),
         &bytes_transferred, op);
     DWORD last_error = ::GetLastError();
     if (!ok && last_error != ERROR_IO_PENDING

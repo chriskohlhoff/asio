@@ -186,8 +186,9 @@ public:
   {
     // Only the first non-empty buffer is submitted.
     uint64_t offset = impl.offset_;
-    impl.offset_ += buffer_sequence_adapter<asio::const_buffer,
-        ConstBufferSequence>::first(buffers).size();
+    impl.offset_ += win_iocp_handle_service::transfer_size(
+        buffer_sequence_adapter<asio::const_buffer,
+          ConstBufferSequence>::first(buffers).size());
     handle_service_.async_write_some_at(impl, offset, buffers, handler, io_ex);
   }
 
@@ -231,8 +232,9 @@ public:
   {
     // Only the first non-empty buffer is submitted.
     uint64_t offset = impl.offset_;
-    impl.offset_ += buffer_sequence_adapter<asio::mutable_buffer,
-        MutableBufferSequence>::first(buffers).size();
+    impl.offset_ += win_iocp_handle_service::transfer_size(
+        buffer_sequence_adapter<asio::mutable_buffer,
+          MutableBufferSequence>::first(buffers).size());
     handle_service_.async_read_some_at(impl, offset, buffers, handler, io_ex);
   }
 

@@ -289,6 +289,14 @@ public:
     p.v = p.p = 0;
   }
 
+  // Get the number of bytes of a buffer that may be requested in a single
+  // ReadFile or WriteFile call.
+  static DWORD transfer_size(std::size_t buffer_size)
+  {
+    return buffer_size < MAXDWORD
+      ? static_cast<DWORD>(buffer_size) : MAXDWORD;
+  }
+
 private:
   // Prevent the use of the null_buffers type with this service.
   size_t write_some(implementation_type& impl,
