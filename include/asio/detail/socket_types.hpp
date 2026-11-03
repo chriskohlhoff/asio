@@ -429,7 +429,11 @@ ASIO_INLINE_VARIABLE const int max_iov_len = IOV_MAX;
 // POSIX platforms are not required to define IOV_MAX.
 ASIO_INLINE_VARIABLE const int max_iov_len = 16;
 # endif
-# define ASIO_OS_DEF_SA_RESTART SA_RESTART
+# if defined(SA_RESTART)
+#  define ASIO_OS_DEF_SA_RESTART SA_RESTART
+# else // defined(SA_RESTART)
+#  define ASIO_OS_DEF_SA_RESTART 0
+# endif // defined(SA_RESTART)
 # define ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
 # if defined(SA_NOCLDWAIT)
 #  define ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
