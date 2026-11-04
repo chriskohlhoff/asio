@@ -422,6 +422,94 @@ void thread_pool_allocator_test()
   ASIO_CHECK(total_count > 0);
 }
 
+// The default allocator must not add to the executor's size.
+static_assert(sizeof(thread_pool::executor_type) == sizeof(void*),
+    "thread_pool::executor_type must be pointer-sized");
+
+int final_allocator_count = 0;
+
+template <typename T>
+class final_allocator final
+{
+public:
+  using value_type = T;
+
+  final_allocator() noexcept
+  {
+  }
+
+  template <typename U>
+  final_allocator(const final_allocator<U>&) noexcept
+  {
+  }
+
+  bool operator==(const final_allocator&) const noexcept
+  {
+    return true;
+  }
+
+  bool operator!=(const final_allocator&) const noexcept
+  {
+    return false;
+  }
+
+  T* allocate(std::size_t n) const
+  {
+    ++final_allocator_count;
+    return static_cast<T*>(::operator new(sizeof(T) * n));
+  }
+
+  void deallocate(T* p, std::size_t /*n*/) const
+  {
+    ::operator delete(p);
+  }
+};
+
+void thread_pool_executor_final_allocator_test()
+{
+  thread_pool pool(1);
+  int count = 0;
+  final_allocator_count = 0;
+
+  auto ex1 = asio::require(pool.executor(),
+      asio::execution::allocator(final_allocator<void>()));
+
+  ASIO_CHECK(
+      asio::query(ex1, asio::execution::allocator)
+        == final_allocator<void>());
+
+  auto ex2 = asio::require(ex1,
+      asio::execution::blocking.never,
+      asio::execution::outstanding_work.tracked,
+      asio::execution::relationship.continuation);
+
+  ASIO_CHECK(
+      asio::query(ex2, asio::execution::allocator)
+        == final_allocator<void>());
+
+  auto ex3 = ex2;
+  ex3 = ex2;
+  ex3 = std::move(ex2);
+  ASIO_CHECK(ex3 == asio::require(ex1,
+        asio::execution::blocking.never,
+        asio::execution::outstanding_work.tracked,
+        asio::execution::relationship.continuation));
+
+  ex3.execute(bindns::bind(increment, &count));
+  ex3 = asio::require(ex3, asio::execution::blocking.never);
+  ex2 = ex3;
+  ex3 = std::move(ex2);
+  {
+    auto discard = std::move(ex3);
+    (void)discard;
+  }
+
+  pool.wait();
+
+  ASIO_CHECK(count == 1);
+  ASIO_CHECK(final_allocator_count == 1);
+}
+
 ASIO_TEST_SUITE
 (
   "thread_pool",
@@ -430,4 +518,5 @@ ASIO_TEST_SUITE
   ASIO_TEST_CASE(thread_pool_executor_query_test)
   ASIO_TEST_CASE(thread_pool_executor_execute_test)
   ASIO_TEST_CASE(thread_pool_allocator_test)
+  ASIO_TEST_CASE(thread_pool_executor_final_allocator_test)
 )

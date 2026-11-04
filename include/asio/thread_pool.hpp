@@ -243,12 +243,12 @@ private:
 /// Executor implementation type used to submit functions to a thread pool.
 template <typename Allocator, unsigned int Bits>
 class ASIO_EMPTY_BASES thread_pool::basic_executor_type :
-  detail::thread_pool_bits, Allocator
+  detail::thread_pool_bits, detail::allocator_base<Allocator>
 {
 public:
   /// Copy constructor.
   basic_executor_type(const basic_executor_type& other) noexcept
-    : Allocator(static_cast<const Allocator&>(other)),
+    : detail::allocator_base<Allocator>(other.allocator_ref()),
       target_(other.target_)
   {
     if (Bits & outstanding_work_tracked)
@@ -258,7 +258,8 @@ public:
 
   /// Move constructor.
   basic_executor_type(basic_executor_type&& other) noexcept
-    : Allocator(static_cast<Allocator&&>(other)),
+    : detail::allocator_base<Allocator>(
+        static_cast<Allocator&&>(other.allocator_ref())),
       target_(other.target_)
   {
     if (Bits & outstanding_work_tracked)
@@ -300,7 +301,7 @@ private:
   require(execution::blocking_t::possibly_t) const
   {
     return basic_executor_type<Allocator, Bits & ~blocking_mask>(
-        context_ptr(), *this, bits() & ~blocking_mask);
+        context_ptr(), this->allocator_ref(), bits() & ~blocking_mask);
   }
 
   /// Obtain an executor with the @c blocking.always property.
@@ -319,7 +320,7 @@ private:
   {
     return basic_executor_type<Allocator,
         ASIO_UNSPECIFIED((Bits & ~blocking_mask) | blocking_always)>(
-          context_ptr(), *this, bits() & ~blocking_mask);
+          context_ptr(), this->allocator_ref(), bits() & ~blocking_mask);
   }
 
   /// Obtain an executor with the @c blocking.never property.
@@ -337,7 +338,8 @@ private:
   require(execution::blocking_t::never_t) const
   {
     return basic_executor_type<Allocator, Bits & ~blocking_mask>(
-        context_ptr(), *this, (bits() & ~blocking_mask) | blocking_never);
+        context_ptr(), this->allocator_ref(),
+        (bits() & ~blocking_mask) | blocking_never);
   }
 
   /// Obtain an executor with the @c relationship.fork property.
@@ -353,7 +355,7 @@ private:
   constexpr basic_executor_type require(execution::relationship_t::fork_t) const
   {
     return basic_executor_type(context_ptr(),
-        *this, bits() & ~relationship_continuation);
+        this->allocator_ref(), bits() & ~relationship_continuation);
   }
 
   /// Obtain an executor with the @c relationship.continuation property.
@@ -370,7 +372,7 @@ private:
       execution::relationship_t::continuation_t) const
   {
     return basic_executor_type(context_ptr(),
-        *this, bits() | relationship_continuation);
+        this->allocator_ref(), bits() | relationship_continuation);
   }
 
   /// Obtain an executor with the @c outstanding_work.tracked property.
@@ -388,7 +390,7 @@ private:
   require(execution::outstanding_work_t::tracked_t) const
   {
     return basic_executor_type<Allocator, Bits | outstanding_work_tracked>(
-        context_ptr(), *this, bits());
+        context_ptr(), this->allocator_ref(), bits());
   }
 
   /// Obtain an executor with the @c outstanding_work.untracked property.
@@ -406,7 +408,7 @@ private:
   require(execution::outstanding_work_t::untracked_t) const
   {
     return basic_executor_type<Allocator, Bits & ~outstanding_work_tracked>(
-        context_ptr(), *this, bits());
+        context_ptr(), this->allocator_ref(), bits());
   }
 
   /// Obtain an executor with the specified @c allocator property.
@@ -573,7 +575,7 @@ private:
   constexpr Allocator query(
       execution::allocator_t<OtherAllocator>) const noexcept
   {
-    return static_cast<const Allocator&>(*this);
+    return this->allocator_ref();
   }
 
   /// Query the current value of the @c allocator property.
@@ -588,7 +590,7 @@ private:
    */
   constexpr Allocator query(execution::allocator_t<void>) const noexcept
   {
-    return static_cast<const Allocator&>(*this);
+    return this->allocator_ref();
   }
 
   /// Query the occupancy (recommended number of work items) for the pool.
@@ -622,7 +624,7 @@ public:
       const basic_executor_type& b) noexcept
   {
     return a.target_ == b.target_
-      && static_cast<const Allocator&>(a) == static_cast<const Allocator&>(b);
+      && a.allocator_ref() == b.allocator_ref();
   }
 
   /// Compare two executors for inequality.
@@ -633,7 +635,7 @@ public:
       const basic_executor_type& b) noexcept
   {
     return a.target_ != b.target_
-      || static_cast<const Allocator&>(a) != static_cast<const Allocator&>(b);
+      || a.allocator_ref() != b.allocator_ref();
   }
 
   /// Execution function.
@@ -725,7 +727,7 @@ private:
 
   // Constructor used by thread_pool::get_executor().
   explicit basic_executor_type(thread_pool& p) noexcept
-    : Allocator(),
+    : detail::allocator_base<Allocator>(),
       target_(reinterpret_cast<uintptr_t>(&p))
   {
     if (Bits & outstanding_work_tracked)
@@ -735,7 +737,7 @@ private:
   // Constructor used by require().
   basic_executor_type(thread_pool* p,
       const Allocator& a, unsigned int bits) noexcept
-    : Allocator(a),
+    : detail::allocator_base<Allocator>(a),
       target_(reinterpret_cast<uintptr_t>(p) | bits)
   {
     if (Bits & outstanding_work_tracked)
