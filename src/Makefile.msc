@@ -224,6 +224,7 @@ UNIT_TEST_EXES = \
 	tests\unit\ip\basic_resolver_entry.exe \
 	tests\unit\ip\basic_resolver_iterator.exe \
 	tests\unit\ip\basic_resolver_query.exe \
+	tests\unit\ip\basic_resolver_results.exe \
 	tests\unit\ip\host_name.exe \
 	tests\unit\ip\icmp.exe \
 	tests\unit\ip\multicast.exe \
