@@ -331,6 +331,14 @@ functionality, and behaviour of Asio.
     ]
   ]
   [
+    [`ASIO_USE_UTF8`]
+    [
+      On Windows, the messages returned by `asio::system_category()` are
+      encoded using the ANSI code page by default. Define `ASIO_USE_UTF8` to
+      have them encoded as UTF-8 instead.
+    ]
+  ]
+  [
     [`ASIO_ENABLE_CANCELIO`]
     [
       Enables use of the `CancelIo` function on older versions of Windows. If
