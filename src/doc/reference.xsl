@@ -2492,7 +2492,8 @@
   <xsl:param name="name"/>
   <xsl:choose>
     <xsl:when test="$name = 'Executor' and (
-        $class = 'basic_datagram_socket'
+        $class = 'awaitable'
+          or $class = 'basic_datagram_socket'
           or $class = 'basic_raw_socket'
           or $class = 'basic_seq_packet_socket'
           or $class = 'basic_socket'

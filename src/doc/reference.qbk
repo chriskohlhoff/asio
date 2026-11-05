@@ -486,6 +486,56 @@ The type of the associated allocator.
   typedef Allocator allocator_type;
 
 
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
+
 
 [heading Requirements]
 
@@ -16152,7 +16202,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -17731,7 +17781,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 To send a single data buffer use the [link asio.reference.buffer `buffer`] function as follows: 
 
   asio::ip::udp::endpoint destination(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_send_to(
       asio::buffer(data, size), destination, handler);
 
@@ -19364,7 +19414,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -19414,7 +19464,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   asio::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -24654,7 +24704,7 @@ The number of bytes sent.
 To send a single data buffer use the [link asio.reference.buffer `buffer`] function as follows: 
 
   asio::ip::udp::endpoint destination(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.send_to(asio::buffer(data, size), destination);
 
 
@@ -35235,7 +35285,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -35880,7 +35930,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 To send a single data buffer use the [link asio.reference.buffer `buffer`] function as follows: 
 
   asio::ip::udp::endpoint destination(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_send_to(
       asio::buffer(data, size), destination, handler);
 
@@ -37341,7 +37391,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -37391,7 +37441,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   asio::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -41608,7 +41658,7 @@ The number of bytes sent.
 To send a single data buffer use the [link asio.reference.buffer `buffer`] function as follows: 
 
   asio::ip::udp::endpoint destination(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.send_to(asio::buffer(data, size), destination);
 
 
@@ -44848,7 +44898,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -46503,7 +46553,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -46553,7 +46603,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   asio::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -55883,7 +55933,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -57233,7 +57283,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -57280,7 +57330,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   asio::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -73590,7 +73640,7 @@ Regardless of whether the asynchronous operation completes immediately or not, t
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.async_connect(endpoint, connect_handler);
 
 
@@ -75518,7 +75568,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   socket.connect(endpoint);
 
 
@@ -75568,7 +75618,7 @@ The socket is automatically opened if it is not already open. If the connect fai
 
   asio::ip::tcp::socket socket(my_context);
   asio::ip::tcp::endpoint endpoint(
-      asio::ip::address::from_string("1.2.3.4"), 12345);
+      asio::ip::make_address("1.2.3.4"), 12345);
   asio::error_code ec;
   socket.connect(endpoint, ec);
   if (ec)
@@ -89071,6 +89121,56 @@ The allocator type used for allocating storage for the buffers container.
 
   typedef Allocator allocator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
 
 
 [heading Requirements]
@@ -107238,6 +107338,56 @@ The allocator type. The allocator is used when constructing the shared state for
 
   typedef Allocator allocator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
 
 
 [heading Requirements]
@@ -133932,7 +134082,7 @@ Executor implementation type used to submit functions to an [link asio.reference
       typename Allocator,
       uintptr_t Bits>
   class basic_executor_type :
-    Allocator
+    detail::allocator_base< Allocator >
 
 
 [heading Member Functions]
@@ -148904,7 +149054,7 @@ Setting the option to join a multicast group:
   asio::ip::udp::socket socket(my_context);
   ...
   asio::ip::address multicast_address =
-    asio::ip::address::from_string("225.0.0.1");
+    asio::ip::make_address("225.0.0.1");
   asio::ip::multicast::join_group option(multicast_address);
   socket.set_option(option);
 
@@ -148996,7 +149146,7 @@ Setting the option to leave a multicast group:
   asio::ip::udp::socket socket(my_context);
   ...
   asio::ip::address multicast_address =
-    asio::ip::address::from_string("225.0.0.1");
+    asio::ip::make_address("225.0.0.1");
   asio::ip::multicast::leave_group option(multicast_address);
   socket.set_option(option);
 
@@ -149090,7 +149240,7 @@ Setting the option:
   asio::ip::udp::socket socket(my_context);
   ...
   asio::ip::address_v4 local_interface =
-    asio::ip::address_v4::from_string("1.2.3.4");
+    asio::ip::make_address_v4("1.2.3.4");
   asio::ip::multicast::outbound_interface option(local_interface);
   socket.set_option(option);
 
@@ -188792,7 +188942,7 @@ Executor implementation type used to submit functions to a thread pool.
       typename Allocator,
       unsigned int Bits>
   class basic_executor_type :
-    Allocator
+    detail::allocator_base< Allocator >
 
 
 [heading Member Functions]
@@ -192109,6 +192259,56 @@ The allocator type. The allocator is used when constructing the `std::promise` o
 
   typedef Allocator allocator_type;
 
+
+[heading Types]
+[table
+  [[Name][Description]]
+
+  [
+
+    [[link asio.reference.channel_traits__container [*container]]]
+    [Determine the container for the specified elements. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits__rebind [*rebind]]]
+    [Rebind the traits to a new set of signatures. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_cancelled_signature [*receive_cancelled_signature]]]
+    [The signature of a channel cancellation notification. ]
+  
+  ]
+
+  [
+
+    [[link asio.reference.channel_traits.receive_closed_signature [*receive_closed_signature]]]
+    [The signature of a channel closed notification. ]
+  
+  ]
+
+]
+
+[heading Member Functions]
+[table
+  [[Name][Description]]
+
+  [
+    [[link asio.reference.channel_traits.invoke_receive_cancelled [*invoke_receive_cancelled]] [static]]
+    [Invoke the specified handler with a cancellation notification. ]
+  ]
+  
+  [
+    [[link asio.reference.channel_traits.invoke_receive_closed [*invoke_receive_closed]] [static]]
+    [Invoke the specified handler with a closed notification. ]
+  ]
+  
+]
 
 
 [heading Requirements]
