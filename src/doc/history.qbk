@@ -7,6 +7,239 @@
 
 [section:history Revision History]
 
+[heading Asio 1.39.0]
+
+* Added `asio::eager`, a completion token that initiates an asynchronous
+  operation immediately and returns a move-only handle to it. The handle is
+  later invoked, once, with any completion token to wait for the operation's
+  result:[br]
+  ``
+    auto op = my_socket.async_read_some(my_buffer, asio::eager);
+
+    // ... do other work while the read runs ...
+
+    std::size_t n = co_await std::move(op)(asio::use_awaitable);
+  ``[br]
+  The handle's type may be named using the `eager_async_operation` alias.
+  Destroying a handle without waiting on it does not cancel the operation, and
+  its result is discarded. To cancel the operation, call `cancel`, or bind a
+  cancellation slot to the completion handler passed when waiting.
+
+* Added `asio::trampoline<>` and the `make_trampoline()` function. A
+  trampoline adapts an executor so that function objects submitted from within
+  a trampolined call are added to a thread-local queue, rather than being run
+  recursively:[br]
+  ``
+    auto ex = asio::make_trampoline(my_io_context.get_executor(), 4);
+    asio::post(ex, my_handler);
+  ``
+
+* Added `execution::staging_executor` and the `execution::stage()` function.
+  The `stage()` function returns an executor adapter that records required and
+  preferred properties, and applies them when `execute()` is called or when a
+  polymorphic executor is created from it:[br]
+  ``
+    asio::any_io_executor ex = asio::prefer(
+        asio::require(asio::execution::stage(my_executor),
+          asio::execution::blocking.never),
+        asio::execution::relationship.continuation);
+  ``[br]
+  This reduces the number of intermediate polymorphic executors created by
+  `require`/`prefer` chains.
+
+* Added overloads of `cancel_after` that take a "trigger" asynchronous
+  operation in place of a timeout. The adapted operation is cancelled if it
+  does not complete before the trigger operation completes:[br]
+  ``
+    my_socket.async_read_some(my_buffer,
+        asio::cancel_after(my_trigger_timer.async_wait(),
+          [](asio::error_code ec, std::size_t n)
+          {
+            // ...
+          }));
+  ``
+
+* Added support for sending and receiving multiple datagrams in a single call,
+  using the new `basic_datagram_socket` member functions `send_multiple`,
+  `send_to_multiple`, `receive_multiple` and `receive_from_multiple`, and their
+  asynchronous counterparts. These use [^sendmmsg] and [^recvmmsg] where
+  available, or [^sendmsg_x] and [^recvmsg_x] on macOS. Other platforms,
+  including Windows, transfer a single datagram per call:[br]
+  ``
+    std::array<asio::const_buffer, 3> buffers = {{
+      asio::buffer(message1),
+      asio::buffer(message2),
+      asio::buffer(message3) }};
+
+    std::array<udp::endpoint, 3> destinations = {{
+      udp::endpoint(asio::ip::make_address("192.168.1.1"), 12345),
+      udp::endpoint(asio::ip::make_address("192.168.1.2"), 12345),
+      udp::endpoint(asio::ip::make_address("192.168.1.3"), 12345) }};
+
+    std::size_t n = my_socket.send_to_multiple(buffers, destinations);
+  ``
+
+* Promoted `channel` and `concurrent_channel`, and their supporting types,
+  from the `experimental` namespace into the `asio` namespace. The names
+  `experimental::channel` and `experimental::concurrent_channel` are retained
+  as aliases.
+
+* Added `can_send` and `can_receive` to `basic_channel` and
+  `basic_concurrent_channel`.
+
+* Added `try_peek` to `basic_channel`, which may be used to inspect the next
+  message without consuming it. This operation is not available on
+  `basic_concurrent_channel`.
+
+* Added a "spin" reactor backend, enabled at compile time by defining
+  `ASIO_ENABLE_SPIN_REACTOR`. The spin reactor treats all descriptors as
+  always ready, avoiding demultiplexing system calls such as [^epoll_wait] and
+  [^select]. The order and frequency with which descriptors are offered may be
+  configured per descriptor:[br]
+  ``
+    reactor.descriptors.control.priority=10
+    reactor.descriptors.bulk.interval=4
+    reactor.descriptors.bulk.offset=1
+  ``
+
+* Added the I/O control commands `socket_base::descriptor_name` and
+  `posix::descriptor_base::descriptor_name`. These associate a name with a
+  descriptor, which the implementation may use to look up per-descriptor
+  configuration. Whether the name is used is backend-dependent. It is
+  currently used by the spin reactor.
+
+* Added a Perfetto-format handler tracking backend, enabled by compiling with
+  `-DASIO_ENABLE_HANDLER_TRACKING=perfetto`. The backend may be configured
+  through environment variables or from code. For further information, see
+  [link asio.overview.core.handler_tracking Handler Tracking].
+
+* Added a dependency-free implementation of `spawn()` for clang and gcc on
+  LP64 data models, covering Linux and macOS on x86-64 and AArch64. This
+  implementation is used by default for standalone Asio, and Boost.Context is
+  then required only for other targets. Boost.Asio continues to prefer
+  Boost.Context by default, and the new implementation must be selected
+  explicitly by defining `BOOST_ASIO_DISABLE_BOOST_CONTEXT_FIBER`.
+
+* Added a string accessor to `asio::config`.
+
+* Added `awaitable` to the forward declarations in `asio/fwd.hpp`.
+
+* Added support for `final` allocator types to the `io_context` executor.
+
+* Added the `ASIO_USE_UTF8` configuration macro. When defined, the system
+  error messages returned on Windows are encoded as UTF-8 rather than in the
+  ANSI code page.
+
+* Changed custom handler tracking so that `ASIO_HANDLER_CREATION` may be
+  called without the execution context argument. Custom handler tracking
+  implementations must support this form.
+
+* Added an associated executor to `experimental::promise`'s wait operation.
+
+* Changed `poll()` to run the scheduler's task at most once per call.
+  Previously, `poll()` could run indefinitely if the reactor kept yielding new
+  work. The previous behaviour may be obtained by calling `poll()` in a
+  loop:[br]
+  ``
+    while (my_io_context.poll() > 0) {}
+  ``
+
+* Optimised the scheduler's dispatch path.
+
+* Optimised `awaitable<>`-based coroutines.
+
+* Optimised the completion of asynchronous operations, including immediate
+  completion and `any_completion_handler`.
+
+* Optimised `execution::any_executor` and `any_io_executor`, including
+  conversion between polymorphic executors with compatible properties.
+
+* Optimised the reactor's speculative path.
+
+* Optimised the recycling allocator, and gave `any_completion_handler` its own
+  recycled memory slot.
+
+* Reduced the size of the `thread_pool` executor by packing its runtime
+  properties into its pointer.
+
+* Improved inlining on clang, and stopped destroying the error category
+  singletons.
+
+* Optimised `read_until` and `async_read_until` with a character delimiter to
+  search contiguous buffers using `memchr`.
+
+* Fixed a potential deadlock where the reactor's shutdown and error paths held
+  a descriptor's mutex while calling a completion handler.
+
+* Fixed an issue with `cancel_after` and `cancel_at` when used with reentrant
+  cancellation.
+
+* Ensured `spawn()` posts its handler if the coroutine completes immediately.
+
+* Ensured pending channel sends can still be received after the channel has
+  been closed.
+
+* Fixed the channel `try_send*` functions to work with multiple message
+  signatures.
+
+* Fixed the associator binder move constructors to also move the bound object.
+
+* Fixed duplicate work counting when using a polymorphic I/O executor.
+
+* Fixed the `async_connect` operations' continuation hooks.
+
+* Fixed the work dispatcher's move constructor for Networking TS executors.
+
+* Added a missing equality operator to `detail::recycling_allocator`.
+
+* Made `no_error_t`'s default constructor `noexcept`.
+
+* Ensured the Apple configuration macros are available by including
+  `Availability.h`.
+
+* Fixed a `struct`/`class` inconsistency in `io_uring_service`.
+
+* Fixed a use-after-free when destroying a nested `any_completion_handler`.
+
+* Fixed `experimental::ranged_parallel_group` to not bind an executor to
+  operations that have none.
+
+* Fixed the accumulation of IOCP wake-up packets when the `io_context` is not
+  running.
+
+* Fixed the position accounting for multi-buffer operations on Windows
+  `stream_file` objects.
+
+* Fixed the truncation of buffers of 4 GiB or more on Windows handles.
+
+* Fixed iteration over empty resolver results.
+
+* Fixed the IPv6 `multicast::enable_loopback` socket option size on Solaris
+  and illumos.
+
+* Fixed thread sanitizer support for toolchains that do not provide
+  [^sanitizer/tsan_interface.h].
+
+* Fixed compilation on platforms that do not define `SA_RESTART`.
+
+* Fixed compilation of the socket operations when bounds safety attributes are
+  enabled.
+
+* Fixed implicit integer conversion warnings in `getnameinfo`.
+
+* Fixed unused private field warnings with [^clang-cl].
+
+* Fixed linker warnings on OpenBSD by avoiding `sprintf` and `strcat`.
+
+* Fixed a [^-Wmissing-field-initializers] warning in the [^/dev/poll] reactor
+  on illumos.
+
+* Updated the documentation examples to use `make_address` rather than the
+  deprecated `from_string` functions.
+
+* Updated the porthopper example to use `asio::streambuf` rather than the
+  deprecated `strstream`.
+
 [heading Asio 1.38.2]
 
 * Added a `"scheduler"` / `"assume_continuation"` configuration parameter. When
