@@ -1,5 +1,7 @@
-asio version 1.38.2
-Released Sunday, 19 July 2026.
+asio version 1.39.0
+Released Saturday, 07 November 2026.
+
+This is a development release. The latest stable release is 1.38.2.
 
 Visit https://think-async.com/ or see packaged doc/index.html for API
 documentation and a tutorial.
