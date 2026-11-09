@@ -261,7 +261,14 @@ bool kqueue_reactor::start_unready_op(int op_type, socket_type descriptor,
           EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
       ASIO_KQUEUE_EV_SET(&events[1], descriptor, EVFILT_WRITE,
           EV_ADD | EV_CLEAR, 0, 0, descriptor_data);
-      ::kevent(kqueue_fd_, events, descriptor_data->num_kevents_, 0, 0, 0);
+      if (::kevent(kqueue_fd_, events,
+            descriptor_data->num_kevents_, 0, 0, 0) == -1)
+      {
+        op->ec_ = asio::error_code(errno,
+            asio::error::get_system_category());
+        on_immediate(op, is_continuation, immediate_arg);
+        return;
+      }
     }
   }
 
