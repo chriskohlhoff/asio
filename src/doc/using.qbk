@@ -370,6 +370,24 @@ functionality, and behaviour of Asio.
     ]
   ]
   [
+    [`ASIO_NO_WINSOCK_INIT`]
+    [
+      Disables automatic initialisation and cleanup of Windows Sockets.
+
+      When this macro is defined, the application is responsible for managing
+      the WSA lifetime:
+
+      * WSAStartup must be called successfully before any interaction
+        with Asio.
+
+      * Each call to WSAStartup must be matched by a corresponding call
+        to WSACleanup.
+
+      * All Asio objects must be destroyed before the final call to
+        WSACleanup.
+    ]
+  ]
+  [
     [`ASIO_NO_TYPEID`]
     [
       Disables uses of the `typeid` operator in asio. Defined automatically if

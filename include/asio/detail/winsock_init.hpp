@@ -17,7 +17,7 @@
 
 #include "asio/detail/config.hpp"
 
-#if defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+#if (defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)) && !defined(ASIO_NO_WINSOCK_INIT)
 
 #include "asio/detail/socket_types.hpp"
 
@@ -86,7 +86,7 @@ public:
   //   #pragma init_seg(lib)
   //   asio::detail::winsock_init<>::manual manual_winsock_init;
   //   #pragma warning(pop)
-  class manual
+  class ASIO_DEPRECATED_MSG("Use ASIO_NO_WINSOCK_INIT") manual
   {
   public:
     manual()
@@ -127,6 +127,6 @@ ASIO_INLINE_NAMESPACE_END
 # include "asio/detail/impl/winsock_init.ipp"
 #endif // defined(ASIO_HEADER_ONLY)
 
-#endif // defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)
+#endif // (defined(ASIO_WINDOWS) || defined(ASIO_CYGWIN_W32_SOCKETS)) && !defined(ASIO_NO_WINSOCK_INIT)
 
 #endif // ASIO_DETAIL_WINSOCK_INIT_HPP
