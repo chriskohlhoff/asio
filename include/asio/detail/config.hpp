@@ -721,7 +721,13 @@
 #  elif defined(__GNUC__)
 #   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
 #    if (__cplusplus >= 201402)
-#     define ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
+#     if defined(__has_include)
+#      if __has_include(<experimental/string_view>)
+#       define ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
+#      endif // __has_include(<experimental/string_view>)
+#     else // defined(__has_include)
+#      define ASIO_HAS_STD_EXPERIMENTAL_STRING_VIEW 1
+#     endif // defined(__has_include)
 #    endif // (__cplusplus >= 201402)
 #   endif // ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) || (__GNUC__ > 4)
 #  endif // defined(__GNUC__)
